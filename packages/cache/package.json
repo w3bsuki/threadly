@@ -18,7 +18,7 @@
   "dependencies": {
     "@upstash/redis": "^1.35.0",
     "@repo/error-handling": "workspace:*",
-    "@t3-oss/env-nextjs": "^0.13.4",
+    "@t3-oss/env-nextjs": "^0.13.7",
     "zod": "^3.25.28"
   },
   "devDependencies": {
