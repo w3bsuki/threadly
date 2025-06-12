@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
 export default function SellingPage() {
-  // Redirect to dashboard as the main selling page
-  redirect('/selling/dashboard');
+  // Redirect to new product page as the main selling page
+  redirect('/selling/new');
 }

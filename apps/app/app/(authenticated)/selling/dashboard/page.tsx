@@ -25,8 +25,25 @@ import { AnalyticsCharts } from './components/analytics-charts';
 const title = 'Seller Dashboard';
 const description = 'Analytics and insights for your business';
 
-const formatPrice = (price: number): string => {
-  return `$${price.toFixed(2)}`;
+const formatPrice = (price: number | string): string => {
+  const numPrice = typeof price === 'string' ? parseFloat(price) : price;
+  return `$${numPrice.toFixed(2)}`;
+};
+
+// Safe Decimal conversion with error handling
+const safeDecimalToNumber = (decimal: any): number => {
+  try {
+    if (decimal === null || decimal === undefined) return 0;
+    if (typeof decimal === 'number') return decimal;
+    if (typeof decimal === 'string') return parseFloat(decimal);
+    if (decimal.toNumber && typeof decimal.toNumber === 'function') {
+      return decimal.toNumber();
+    }
+    return parseFloat(decimal.toString());
+  } catch (error) {
+    console.error('Error converting decimal:', error);
+    return 0;
+  }
 };
 
 export const metadata: Metadata = {
@@ -87,8 +104,8 @@ const SellerDashboardPage = async () => {
     redirect('/sign-in');
   }
 
-  // Calculate analytics
-  const totalRevenue = dbUser.sales.reduce((sum, sale) => sum + sale.product.price.toNumber(), 0);
+  // Calculate analytics with safe Decimal conversion
+  const totalRevenue = dbUser.sales.reduce((sum, sale) => sum + safeDecimalToNumber(sale.product.price), 0);
   const totalSales = dbUser.sales.length;
   const totalListings = dbUser.listings.length;
   const activeLis = dbUser.listings.filter(listing => listing.status === 'AVAILABLE').length;
@@ -107,7 +124,7 @@ const SellerDashboardPage = async () => {
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
   
   const recentSales = dbUser.sales.filter(sale => sale.createdAt >= thirtyDaysAgo);
-  const recentRevenue = recentSales.reduce((sum, sale) => sum + sale.product.price.toNumber(), 0);
+  const recentRevenue = recentSales.reduce((sum, sale) => sum + safeDecimalToNumber(sale.product.price), 0);
 
   // Calculate trends (mock data for demo - would integrate with PostHog for real data)
   const revenueTrend = recentRevenue > 0 ? '+12.5%' : '0%';
@@ -282,7 +299,7 @@ const SellerDashboardPage = async () => {
                           </p>
                         </div>
                         <div className="text-right">
-                          <div className="font-semibold">{formatPrice(product.price.toNumber())}</div>
+                          <div className="font-semibold">{formatPrice(safeDecimalToNumber(product.price))}</div>
                           <Badge variant={product.status === 'SOLD' ? 'default' : 'secondary'}>
                             {product.status}
                           </Badge>
