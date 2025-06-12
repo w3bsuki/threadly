@@ -65,10 +65,10 @@ export function AppLayout({ children, isAdmin }: AppLayoutProps) {
           {/* Logo */}
           <div className="flex h-16 shrink-0 items-center">
             <Link href="/" className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold">T</span>
+              <div className="h-8 w-8 rounded-lg bg-black flex items-center justify-center">
+                <span className="text-white font-bold">T</span>
               </div>
-              <span className="text-xl font-semibold">Threadly</span>
+              <span className="text-xl font-semibold text-black">Threadly</span>
             </Link>
           </div>
 
@@ -82,10 +82,10 @@ export function AppLayout({ children, isAdmin }: AppLayoutProps) {
                       <Link
                         href={item.href}
                         className={cn(
-                          'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-medium transition-colors',
+                          'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-medium',
                           pathname === item.href
-                            ? 'bg-secondary text-secondary-foreground'
-                            : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                            ? 'bg-gray-100 text-black'
+                            : 'text-gray-600 hover:text-black hover:bg-gray-50'
                         )}
                       >
                         <item.icon className="h-5 w-5 shrink-0" />
@@ -114,14 +114,14 @@ export function AppLayout({ children, isAdmin }: AppLayoutProps) {
 
               {/* Quick Actions */}
               <li>
-                <div className="text-xs font-semibold leading-6 text-muted-foreground">
+                <div className="text-xs font-semibold leading-6 text-gray-400">
                   Quick Actions
                 </div>
                 <ul role="list" className="-mx-2 mt-2 space-y-1">
                   <li>
                     <Link
                       href="/selling/new"
-                      className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-medium bg-primary text-primary-foreground hover:bg-primary/90"
+                      className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-medium bg-black text-white hover:bg-gray-800"
                     >
                       <PlusIcon className="h-5 w-5 shrink-0" />
                       List New Item
@@ -132,7 +132,7 @@ export function AppLayout({ children, isAdmin }: AppLayoutProps) {
                       href={process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3001'}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                      className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-medium text-gray-600 hover:text-black hover:bg-gray-50"
                     >
                       <HeartIcon className="h-5 w-5 shrink-0" />
                       Browse Shop

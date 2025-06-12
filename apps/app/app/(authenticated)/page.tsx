@@ -129,63 +129,65 @@ const App = async () => {
   return (
     <div className="space-y-6">
       
-      {/* Header */}
+      {/* Clean Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Welcome back, {user.firstName}! Here's what's happening with your account.
+        <h1 className="text-3xl font-bold text-black">Dashboard</h1>
+        <p className="text-gray-500 mt-1">
+          Welcome back, {user.firstName}. Here's what's happening with your account.
         </p>
       </div>
 
-      {/* Quick Actions */}
+      {/* Key Metrics - Clean Design */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+        <Card className="border border-gray-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Listings</CardTitle>
-            <PackageIcon className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-gray-700">Total Revenue</CardTitle>
+            <DollarSignIcon className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{activeListings}</div>
-            <p className="text-xs text-muted-foreground">
-              Items currently for sale
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <DollarSignIcon className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${((totalRevenue || 0) / 100).toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-black">
+              ${((totalRevenue || 0) / 100).toFixed(2)}
+            </div>
+            <p className="text-xs text-gray-500">
               From {completedSales} completed sales
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border border-gray-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Messages</CardTitle>
-            <MessageCircleIcon className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-gray-700">Active Listings</CardTitle>
+            <PackageIcon className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{unreadMessages}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-black">{activeListings}</div>
+            <p className="text-xs text-gray-500">
+              Items currently for sale
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border border-gray-200">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-gray-700">Messages</CardTitle>
+            <MessageCircleIcon className="h-4 w-4 text-gray-400" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-black">{unreadMessages}</div>
+            <p className="text-xs text-gray-500">
               Unread messages
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border border-gray-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Quick Action</CardTitle>
-            <PlusIcon className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-gray-700">Quick Action</CardTitle>
+            <PlusIcon className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent>
             <Link href="/selling/new">
-              <Button className="w-full">
+              <Button className="w-full bg-black text-white hover:bg-gray-800">
                 <PlusIcon className="mr-2 h-4 w-4" />
                 List New Item
               </Button>
@@ -197,7 +199,7 @@ const App = async () => {
       {/* Recent Activity */}
       <div className="grid gap-4 md:grid-cols-2">
         {/* Recent Orders */}
-        <Card>
+        <Card className="border border-gray-200">
           <CardHeader>
             <CardTitle>Recent Orders</CardTitle>
             <CardDescription>Your latest purchases</CardDescription>
@@ -264,38 +266,38 @@ const App = async () => {
         </Card>
 
         {/* Quick Links */}
-        <Card>
+        <Card className="border border-gray-200">
           <CardHeader>
             <CardTitle>Quick Links</CardTitle>
             <CardDescription>Common actions and shortcuts</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-3">
+            <div className="space-y-2">
               <Link href="/selling/listings">
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="ghost" className="w-full justify-start hover:bg-gray-50">
                   <PackageIcon className="mr-2 h-4 w-4" />
                   Manage My Listings
                 </Button>
               </Link>
               <Link href="/selling/history">
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="ghost" className="w-full justify-start hover:bg-gray-50">
                   <TrendingUpIcon className="mr-2 h-4 w-4" />
                   Sales History
                 </Button>
               </Link>
               <Link href="/messages">
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="ghost" className="w-full justify-start hover:bg-gray-50">
                   <MessageCircleIcon className="mr-2 h-4 w-4" />
                   Messages
                   {unreadMessages > 0 && (
-                    <Badge className="ml-auto" variant="destructive">
+                    <Badge className="ml-auto bg-black text-white">
                       {unreadMessages}
                     </Badge>
                   )}
                 </Button>
               </Link>
               <Link href="/profile">
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="ghost" className="w-full justify-start hover:bg-gray-50">
                   <EyeIcon className="mr-2 h-4 w-4" />
                   Profile Settings
                 </Button>

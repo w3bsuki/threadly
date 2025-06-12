@@ -1,5 +1,5 @@
 import { database } from './index';
-import type { Prisma } from '@prisma/client';
+import type { Prisma, Condition } from './generated/client';
 
 export class DatabaseOptimizer {
   // Optimized product queries
@@ -107,7 +107,7 @@ export class DatabaseOptimizer {
     categoryId?: string;
     minPrice?: number;
     maxPrice?: number;
-    condition?: string;
+    condition?: Condition;
     limit?: number;
     skip?: number;
   } = {}) {

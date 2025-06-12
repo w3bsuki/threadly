@@ -38,22 +38,16 @@
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
   
-  /* THREADLY BRAND COLORS - Premium Fashion Marketplace */
-  --brand-primary: oklch(0.4 0.2 250);        /* Threadly Deep Blue */
-  --brand-primary-foreground: oklch(0.98 0 0); /* Near White */
-  --brand-secondary: oklch(0.8 0.1 120);       /* Threadly Green */
-  --brand-secondary-foreground: oklch(0.2 0 0); /* Dark */
-  --brand-accent: oklch(0.6 0.15 40);          /* Threadly Orange */
-  --brand-accent-foreground: oklch(0.98 0 0);   /* Near White */
-  --brand-purple: oklch(0.5 0.2 300);          /* Threadly Purple */
-  --brand-purple-foreground: oklch(0.98 0 0);   /* Near White */
+  /* CLEAN BLACK/WHITE SYSTEM - Minimal & Functional */
+  --brand-primary: oklch(0.2 0 0);             /* Clean Black */
+  --brand-primary-foreground: oklch(1 0 0);    /* Pure White */
+  --brand-secondary: oklch(0.96 0 0);          /* Light Gray */
+  --brand-secondary-foreground: oklch(0.2 0 0); /* Clean Black */
   
-  /* MARKETPLACE-SPECIFIC COLORS */
-  --success-gentle: oklch(0.9 0.05 165);       /* Light success bg */
-  --warning-gentle: oklch(0.9 0.1 60);         /* Light warning bg */
-  --info-gentle: oklch(0.9 0.05 250);          /* Light info bg */
-  --premium-gold: oklch(0.7 0.15 85);          /* Premium tier indicator */
-  --verified-badge: oklch(0.45 0.2 250);       /* Verified seller badge */
+  /* SIMPLIFIED FUNCTIONAL COLORS */
+  --success-light: oklch(0.95 0 0);            /* Light gray bg */
+  --warning-light: oklch(0.95 0 0);            /* Light gray bg */
+  --info-light: oklch(0.95 0 0);               /* Light gray bg */
   
   --radius: 0.625rem;
   --sidebar: oklch(0.985 0 0);
