@@ -17,9 +17,7 @@ const dictionaries: Record<string, () => Promise<Dictionary>> =
         import(`./dictionaries/${locale}.json`)
           .then((mod) => mod.default)
           .catch((err) => {
-              `Failed to load dictionary for locale: ${locale}`,
-              err
-            );
+            // Silently fall back to English on error
             return import('./dictionaries/en.json').then((mod) => mod.default);
           }),
     ])
@@ -35,9 +33,7 @@ export const getDictionary = async (locale: string): Promise<Dictionary> => {
   try {
     return await dictionaries[normalizedLocale]();
   } catch (error) {
-      `Error loading dictionary for locale "${normalizedLocale}", falling back to "en"`,
-      error
-    );
+    // Silently fall back to English on error
     return dictionaries['en']();
   }
 };
