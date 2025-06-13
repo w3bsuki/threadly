@@ -1,6 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from '@repo/auth/server';
 import { NextResponse } from 'next/server';
-import type { NextMiddleware } from 'next/server';
 
 const isPublicRoute = createRouteMatcher([
   '/sign-in(.*)',
@@ -9,7 +8,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/health(.*)',
 ]);
 
-export default clerkMiddleware(async (auth, request) => {
+const middleware = clerkMiddleware(async (auth, request) => {
   // SECURITY: Only log in development mode, avoid exposing sensitive URL parameters
   if (process.env.NODE_ENV === 'development') {
     const urlPath = request.nextUrl.pathname;
@@ -29,7 +28,9 @@ export default clerkMiddleware(async (auth, request) => {
   }
   
   return NextResponse.next();
-}) as NextMiddleware;
+});
+
+export default middleware;
 
 export const config = {
   matcher: [
