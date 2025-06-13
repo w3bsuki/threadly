@@ -1,5 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from '@repo/auth/server';
 import { NextResponse } from 'next/server';
+import type { NextMiddleware } from 'next/server';
 
 const isPublicRoute = createRouteMatcher([
   '/sign-in(.*)',
@@ -28,7 +29,7 @@ export default clerkMiddleware(async (auth, request) => {
   }
   
   return NextResponse.next();
-});
+}) as NextMiddleware;
 
 export const config = {
   matcher: [
