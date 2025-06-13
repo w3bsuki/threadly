@@ -69,7 +69,6 @@ export function ProductForm({ userId }: ProductFormProps) {
         toast.success('Product created successfully!');
         router.push(`/selling/listings`);
       } else {
-        if (process.env.NODE_ENV === "development") console.error('Server validation failed:', result);
         if (result.details) {
           // Show specific validation errors
           result.details.forEach((detail: any) => {
@@ -80,7 +79,6 @@ export function ProductForm({ userId }: ProductFormProps) {
         }
       }
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error('Error creating product:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to create product');
     } finally {
       setIsSubmitting(false);

@@ -48,10 +48,8 @@ const validateProduct = () => {
 
   try {
     const validated = createProductSchema.parse(productData);
-    console.log('Product is valid:', validated);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.error('Validation errors:', error.errors);
     }
   }
 };
@@ -62,12 +60,10 @@ const sanitizeUserInput = () => {
   
   // Remove all HTML
   const sanitized = sanitizeText(userMessage);
-  console.log('Sanitized:', sanitized);
   
   // Filter profanity
   const withProfanity = 'This is a damn good product!';
   const filtered = filterProfanity(withProfanity);
-  console.log('Filtered:', filtered);
 };
 
 // Example 3: Validate email with disposable check
@@ -81,9 +77,7 @@ const validateEmail = async () => {
   for (const email of emails) {
     try {
       emailSchema.parse(email);
-      console.log(`✓ ${email} is valid`);
     } catch (error) {
-      console.log(`✗ ${email} is invalid`);
     }
   }
 };
@@ -98,10 +92,6 @@ const checkPassword = () => {
   
   passwords.forEach(pwd => {
     const result = checkPasswordStrength(pwd);
-    console.log(`Password: ${pwd}`);
-    console.log(`Score: ${result.score}/4`);
-    console.log(`Feedback: ${result.feedback.join(', ')}`);
-    console.log(`Strong: ${result.isStrong}\n`);
   });
 };
 
@@ -111,7 +101,6 @@ import { NextRequest, NextResponse } from 'next/server';
 export const POST = withValidation(
   async (request: NextRequest, data: z.infer<typeof createMessageSchema>) => {
     // Data is already validated and typed
-    console.log('Validated message:', data);
     
     // Sanitize the content before saving
     const sanitizedContent = filterProfanity(data.content);
@@ -129,6 +118,5 @@ const validateBusinessRules = () => {
   const title = 'AMAZING DEAL!!!! BUY NOW!!!!';
   
   if (!isValidProductTitle(title)) {
-    console.log('Title violates marketplace standards');
   }
 };

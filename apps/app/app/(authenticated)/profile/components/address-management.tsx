@@ -13,7 +13,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@repo/design-system/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@repo/design-system/components/ui/dialog';
 import { MapPin, Plus, Edit, Trash2, Star } from 'lucide-react';
-// Use a simple console.log for now instead of sonner
 // import { toast } from 'sonner';
 
 const addressSchema = z.object({
@@ -84,8 +83,6 @@ export function AddressManagement() {
         setAddresses(data.addresses);
       }
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error('Failed to fetch addresses:', error);
-      if (process.env.NODE_ENV === "development") console.error('Failed to load addresses');
     } finally {
       setIsLoading(false);
     }
@@ -112,13 +109,11 @@ export function AddressManagement() {
         throw new Error('Failed to save address');
       }
 
-      if (process.env.NODE_ENV === "development") console.log(editingAddress ? 'Address updated successfully' : 'Address added successfully');
       setDialogOpen(false);
       setEditingAddress(null);
       form.reset();
       fetchAddresses();
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error('Failed to save address');
     } finally {
       setIsSubmitting(false);
     }
@@ -137,10 +132,8 @@ export function AddressManagement() {
         throw new Error('Failed to delete address');
       }
 
-      if (process.env.NODE_ENV === "development") console.log('Address deleted successfully');
       fetchAddresses();
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error('Failed to delete address');
     }
   };
 

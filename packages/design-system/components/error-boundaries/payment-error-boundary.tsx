@@ -51,7 +51,6 @@ export class PaymentErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log payment-specific error
-    console.error('PaymentErrorBoundary caught an error:', error, errorInfo);
     
     // Report to payment monitoring
     this.reportPaymentError(error, errorInfo);

@@ -62,10 +62,8 @@ export async function sendWelcomeEmail(
       react: WelcomeTemplate(data),
     });
 
-    console.log('Welcome email sent:', result.data?.id);
     return { success: true, id: result.data?.id };
   } catch (error) {
-    console.error('Failed to send welcome email:', error);
     return { success: false, error };
   }
 }
@@ -85,10 +83,8 @@ export async function sendOrderConfirmationEmail(
       react: OrderConfirmationTemplate(data),
     });
 
-    console.log('Order confirmation email sent:', result.data?.id);
     return { success: true, id: result.data?.id };
   } catch (error) {
-    console.error('Failed to send order confirmation email:', error);
     return { success: false, error };
   }
 }
@@ -108,10 +104,8 @@ export async function sendOrderShippedEmail(
       react: OrderShippedTemplate(data),
     });
 
-    console.log('Order shipped email sent:', result.data?.id);
     return { success: true, id: result.data?.id };
   } catch (error) {
-    console.error('Failed to send order shipped email:', error);
     return { success: false, error };
   }
 }
@@ -131,10 +125,8 @@ export async function sendContactEmail(
       replyTo: data.email,
     });
 
-    console.log('Contact email sent:', result.data?.id);
     return { success: true, id: result.data?.id };
   } catch (error) {
-    console.error('Failed to send contact email:', error);
     return { success: false, error };
   }
 }
@@ -162,10 +154,8 @@ export async function sendTestEmail(to: string) {
       `,
     });
 
-    console.log('Test email sent:', result.data?.id);
     return { success: true, id: result.data?.id };
   } catch (error) {
-    console.error('Failed to send test email:', error);
     return { success: false, error };
   }
 }

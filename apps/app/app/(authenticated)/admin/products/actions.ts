@@ -195,7 +195,6 @@ export async function bulkUpdateProducts({
     revalidatePath('/admin/products');
     return { success: true, count: productIds.length };
   } catch (error) {
-    console.error('Bulk update failed:', error);
     throw new Error('Failed to update products');
   }
 }

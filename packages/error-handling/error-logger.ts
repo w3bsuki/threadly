@@ -94,7 +94,6 @@ class ErrorLogger {
     
     // Log to console in development
     if (process.env.NODE_ENV === 'development') {
-      console.error('[Error Logger]', errorObj, context);
     }
     
     // Send to Sentry
@@ -141,7 +140,6 @@ class ErrorLogger {
       try {
         await this.sendBatchToMonitoring(errors);
       } catch (err) {
-        console.error('Failed to send error batch:', err);
       }
     }
   }
@@ -151,7 +149,6 @@ class ErrorLogger {
     // For now, we'll just log
     if (process.env.NODE_ENV === 'production') {
       // TODO: Implement actual batch sending
-      console.log(`Would send ${errors.length} errors to monitoring`);
     }
   }
 

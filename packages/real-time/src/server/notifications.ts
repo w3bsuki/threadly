@@ -53,7 +53,6 @@ export class NotificationService {
         });
       }
     } catch (error) {
-      console.error('Failed to send real-time notification:', error);
       // Continue without real-time notification
     }
 
@@ -210,7 +209,6 @@ export class NotificationService {
   async scheduleWeeklyReports() {
     // This would be implemented with a cron job
     // For now, it's a placeholder
-    console.log('Weekly reports scheduled');
   }
 }
 

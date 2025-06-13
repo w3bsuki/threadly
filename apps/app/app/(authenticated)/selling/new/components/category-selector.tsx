@@ -23,7 +23,6 @@ export function CategorySelector({ value, onValueChange, placeholder = "Select a
         const fetchedCategories = await getCategoriesFlat();
         setCategories(fetchedCategories);
       } catch (err) {
-        if (process.env.NODE_ENV === "development") console.error('Failed to load categories:', err);
         setError('Failed to load categories. Please refresh the page.');
         setCategories([]);
       } finally {

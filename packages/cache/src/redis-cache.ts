@@ -33,7 +33,6 @@ export class RedisCache implements CacheService {
       this.stats.hits++;
       return result as T;
     } catch (error) {
-      console.error(`Cache get error for key ${key}:`, error);
       this.stats.misses++;
       return null;
     }
@@ -55,7 +54,6 @@ export class RedisCache implements CacheService {
         }
       }
     } catch (error) {
-      console.error(`Cache set error for key ${key}:`, error);
       // Don't throw, just log the error to avoid breaking the app
     }
   }
@@ -67,7 +65,6 @@ export class RedisCache implements CacheService {
         { retries: 3, minTimeout: 100 }
       );
     } catch (error) {
-      console.error(`Cache delete error for key ${key}:`, error);
     }
   }
 
@@ -79,7 +76,6 @@ export class RedisCache implements CacheService {
       );
       return result === 1;
     } catch (error) {
-      console.error(`Cache exists error for key ${key}:`, error);
       return false;
     }
   }
@@ -91,7 +87,6 @@ export class RedisCache implements CacheService {
         { retries: 3, minTimeout: 100 }
       );
     } catch (error) {
-      console.error(`Cache expire error for key ${key}:`, error);
     }
   }
 
@@ -102,7 +97,6 @@ export class RedisCache implements CacheService {
         { retries: 3, minTimeout: 100 }
       );
     } catch (error) {
-      console.error('Cache clear error:', error);
     }
   }
 
@@ -118,7 +112,6 @@ export class RedisCache implements CacheService {
         await this.redis.del(tagKey);
       }
     } catch (error) {
-      console.error(`Cache invalidate by tag error for tag ${tag}:`, error);
     }
   }
 
@@ -142,7 +135,6 @@ export class RedisCache implements CacheService {
       // Set TTL for tag keys to prevent memory leaks
       await this.redis.expire(tagKey, 7 * 24 * 60 * 60); // 1 week
     } catch (error) {
-      console.error(`Error adding key ${key} to tag ${tag}:`, error);
     }
   }
 
@@ -184,7 +176,6 @@ export class RedisCache implements CacheService {
         return result as T;
       });
     } catch (error) {
-      console.error('Cache mget error:', error);
       return keys.map(() => null);
     }
   }
@@ -210,7 +201,6 @@ export class RedisCache implements CacheService {
         }
       }
     } catch (error) {
-      console.error('Cache mset error:', error);
     }
   }
 }

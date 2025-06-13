@@ -94,7 +94,6 @@ function UserTable({ users }: { users: UserWithDetails[] }) {
       // Refresh the page using router
       router.refresh();
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error('Bulk action failed:', error);
     } finally {
       setIsUpdating(false);
     }

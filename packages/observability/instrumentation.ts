@@ -101,19 +101,15 @@ const edgeConfig = {
 export const initializeSentry = () => {
   // Only initialize if DSN is provided
   if (!env.NEXT_PUBLIC_SENTRY_DSN) {
-    console.log('Sentry DSN not configured, skipping initialization');
     return;
   }
   
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     init(nodeConfig);
-    console.log('Sentry initialized for Node.js runtime');
   } else if (process.env.NEXT_RUNTIME === 'edge') {
     init(edgeConfig);
-    console.log('Sentry initialized for Edge runtime');
   } else {
     // Client-side initialization
     init(baseConfig);
-    console.log('Sentry initialized for client runtime');
   }
 };

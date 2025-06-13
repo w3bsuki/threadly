@@ -7,7 +7,6 @@ try {
   const basehubModule = require('basehub/next-toolbar');
   Toolbar = basehubModule.Toolbar;
 } catch (error) {
-  console.warn('BaseHub next-toolbar not available, Toolbar component disabled');
 }
 
 // Fallback Toolbar component

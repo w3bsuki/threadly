@@ -59,11 +59,9 @@ export const ContactForm = ({ dictionary }: ContactFormProps) => {
       // TODO: Replace with actual API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      if (process.env.NODE_ENV === "development") console.log('Contact form submission:', data);
       setSubmitSuccess(true);
       form.reset();
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error('Contact form error:', error);
     } finally {
       setIsSubmitting(false);
     }

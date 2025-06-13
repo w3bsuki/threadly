@@ -23,7 +23,6 @@ export function ServiceWorkerRegistration({
       navigator.serviceWorker
         .register(swPath)
         .then((registration) => {
-          console.log('ServiceWorker registered successfully:', registration.scope);
 
           // Check for updates
           registration.addEventListener('updatefound', () => {
@@ -31,7 +30,6 @@ export function ServiceWorkerRegistration({
             if (newWorker) {
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  console.log('New content is available; please refresh.');
                   onUpdate?.();
                 }
               });
@@ -41,18 +39,15 @@ export function ServiceWorkerRegistration({
           // Listen for messages from service worker
           navigator.serviceWorker.addEventListener('message', (event) => {
             if (event.data.type === 'SYNC_AVAILABLE') {
-              console.log('Background sync available');
             }
           });
         })
         .catch((error) => {
-          console.error('ServiceWorker registration failed:', error);
           onError?.(error);
         });
 
       // Handle service worker updates
       navigator.serviceWorker.addEventListener('controllerchange', () => {
-        console.log('ServiceWorker controller changed, reloading page');
         window.location.reload();
       });
     }

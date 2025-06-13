@@ -42,7 +42,6 @@ export function useCSRF() {
       if (response.status === 403) {
         const data = await response.json().catch(() => null);
         if (data?.error === 'CSRF validation failed') {
-          if (process.env.NODE_ENV === "development") console.error('CSRF token validation failed. Please refresh the page.');
           // Optionally, you could trigger a token refresh here
         }
       }

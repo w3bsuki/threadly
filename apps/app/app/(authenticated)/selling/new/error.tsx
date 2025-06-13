@@ -11,7 +11,6 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  console.error('Selling page error:', error);
 
   return (
     <div className="mx-auto w-full max-w-2xl p-8">

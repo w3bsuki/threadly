@@ -174,7 +174,6 @@ export function getCSRFTokenFromCookie(): string | null {
 export function addCSRFHeader(headers: HeadersInit = {}): HeadersInit {
   const token = getCSRFTokenFromCookie();
   if (!token) {
-    console.warn('CSRF token not found in cookies');
     return headers;
   }
   

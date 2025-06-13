@@ -245,7 +245,6 @@ export const handlers = [
 
   // Fallback for unhandled requests
   http.all('*', ({ request }) => {
-    console.warn(`Unhandled ${request.method} request to ${request.url}`);
     return HttpResponse.json(
       { error: 'Endpoint not mocked' },
       { status: 404 }

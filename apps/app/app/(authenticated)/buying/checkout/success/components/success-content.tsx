@@ -89,7 +89,6 @@ export function SuccessContent({ paymentIntentId, userId }: SuccessContentProps)
           throw new Error('Payment not successful');
         }
       } catch (err) {
-        if (process.env.NODE_ENV === "development") console.error('Error fetching order:', err);
         setError(err instanceof Error ? err.message : 'Failed to load order details');
       } finally {
         setLoading(false);

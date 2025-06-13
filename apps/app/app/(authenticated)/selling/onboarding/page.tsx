@@ -64,7 +64,6 @@ const SellerOnboardingPage = () => {
       
       setAccountStatus(data);
     } catch (error) {
-      console.error('Error checking account status:', error);
       toast.error('Failed to check account status');
     } finally {
       setLoading(false);
@@ -87,7 +86,6 @@ const SellerOnboardingPage = () => {
       // Redirect to Stripe onboarding
       window.location.href = data.url;
     } catch (error) {
-      console.error('Error starting onboarding:', error);
       if (error instanceof Error && error.message.includes('not configured')) {
         toast.error('Payment processing is not available at the moment.');
       } else {
@@ -110,7 +108,6 @@ const SellerOnboardingPage = () => {
       // Redirect to Stripe onboarding
       window.location.href = data.url;
     } catch (error) {
-      console.error('Error refreshing onboarding:', error);
       toast.error('Failed to refresh onboarding. Please try again.');
       setConnecting(false);
     }

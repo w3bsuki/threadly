@@ -54,7 +54,6 @@ export async function testStripeConnectEndpoints() {
   const results: TestResult[] = [];
 
   // Test 1: Create onboarding link
-  console.log('Testing: Create onboarding link...');
   const onboardingResult = await makeAuthenticatedRequest(
     '/api/stripe/connect/onboarding',
     'POST'
@@ -62,7 +61,6 @@ export async function testStripeConnectEndpoints() {
   results.push(onboardingResult);
 
   // Test 2: Check account status
-  console.log('Testing: Check account status...');
   const statusResult = await makeAuthenticatedRequest(
     '/api/stripe/connect/status',
     'GET'
@@ -70,7 +68,6 @@ export async function testStripeConnectEndpoints() {
   results.push(statusResult);
 
   // Test 3: Get dashboard link (will fail if not onboarded)
-  console.log('Testing: Get dashboard link...');
   const dashboardResult = await makeAuthenticatedRequest(
     '/api/stripe/connect/dashboard',
     'POST'
@@ -78,7 +75,6 @@ export async function testStripeConnectEndpoints() {
   results.push(dashboardResult);
 
   // Test 4: Check dashboard access
-  console.log('Testing: Check dashboard access...');
   const dashboardCheckResult = await makeAuthenticatedRequest(
     '/api/stripe/connect/dashboard',
     'GET'
@@ -86,7 +82,6 @@ export async function testStripeConnectEndpoints() {
   results.push(dashboardCheckResult);
 
   // Test 5: Refresh onboarding link
-  console.log('Testing: Refresh onboarding link...');
   const refreshResult = await makeAuthenticatedRequest(
     '/api/stripe/connect/onboarding',
     'GET'

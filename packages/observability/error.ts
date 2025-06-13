@@ -17,7 +17,6 @@ export const parseError = (error: unknown): string => {
     log.error(`Parsing error: ${message}`);
   } catch (newError) {
     // biome-ignore lint/suspicious/noConsole: Need console here
-    console.error('Error parsing error:', newError);
   }
 
   return message;
@@ -47,6 +46,5 @@ export const logError = (message: string, error: unknown): void => {
   } catch (loggingError) {
     // Fallback to console if logging fails
     // biome-ignore lint/suspicious/noConsole: Need console here
-    console.error('Logging failed:', loggingError, 'Original error:', error);
   }
 };

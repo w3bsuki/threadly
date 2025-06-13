@@ -65,7 +65,6 @@ const handlePaymentIntentSucceeded = async (
   paymentIntent: Stripe.PaymentIntent
 ) => {
   try {
-    console.info('Payment intent succeeded', { 
       paymentIntentId: paymentIntent.id,
       amount: paymentIntent.amount,
       metadata: paymentIntent.metadata 
@@ -73,14 +72,12 @@ const handlePaymentIntentSucceeded = async (
 
     // Validate and extract order details from metadata
     if (!paymentIntent.metadata) {
-      console.error('No metadata in payment intent', { paymentIntentId: paymentIntent.id });
       return;
     }
 
     const { buyerId, productId, sellerId, orderId } = paymentIntent.metadata;
     
     if (!buyerId || !orderId) {
-      console.error('Missing required metadata in payment intent', { 
         paymentIntentId: paymentIntent.id,
         metadata: paymentIntent.metadata,
         missing: {
@@ -98,7 +95,6 @@ const handlePaymentIntentSucceeded = async (
     });
 
     if (!dbUser) {
-      console.error('Database user not found for Clerk ID', { 
         clerkId: buyerId, 
         paymentIntentId: paymentIntent.id 
       });
@@ -149,7 +145,6 @@ const handlePaymentIntentSucceeded = async (
       },
     });
 
-    console.info('Order payment processed successfully', { 
       orderId: result.order.id,
       productId,
       buyerId,
@@ -195,7 +190,6 @@ export const POST = async (request: Request): Promise<Response> => {
         break;
       }
       default: {
-        console.warn(`Unhandled event type ${event.type}`);
       }
     }
 

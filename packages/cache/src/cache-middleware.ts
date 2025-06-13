@@ -230,7 +230,6 @@ export class EdgeCache {
       
       await cache.put(key, cachedResponse);
     } catch (error) {
-      console.error('Edge cache set error:', error);
     }
   }
   
@@ -241,7 +240,6 @@ export class EdgeCache {
       const cache = await this.cache.open('edge-cache');
       await cache.delete(key);
     } catch (error) {
-      console.error('Edge cache delete error:', error);
     }
   }
 }

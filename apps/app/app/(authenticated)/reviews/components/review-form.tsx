@@ -64,7 +64,6 @@ export function ReviewForm({ orderId, productTitle, sellerName, onSuccess }: Rev
         setError(result.error || 'Failed to submit review');
       }
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error('Error submitting review:', error);
       setError('An unexpected error occurred');
     } finally {
       setIsSubmitting(false);

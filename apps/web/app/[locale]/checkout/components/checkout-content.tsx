@@ -57,7 +57,6 @@ export const CheckoutContent = () => {
       // Clear cart and redirect to success page
       clearCart();
       const successUrl = `/checkout/success`;
-      if (process.env.NODE_ENV === "development") console.log('Redirecting to:', successUrl);
       router.push(successUrl);
     }, 2000);
   };

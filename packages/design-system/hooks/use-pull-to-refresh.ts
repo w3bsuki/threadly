@@ -83,7 +83,6 @@ export function usePullToRefresh({
       try {
         await onRefresh();
       } catch (error) {
-        console.error('Pull to refresh failed:', error);
       } finally {
         setState({
           isPulling: false,

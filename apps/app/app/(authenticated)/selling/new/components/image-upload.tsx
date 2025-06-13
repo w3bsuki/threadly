@@ -18,21 +18,18 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
 
   const { startUpload, isUploading: isUploadThingUploading } = useUploadThing("productImages", {
     onClientUploadComplete: (res) => {
-      if (process.env.NODE_ENV === "development") console.log("Upload complete - Files: ", res);
       const newUrls = res?.map((file) => file.url) || [];
       const updatedUrls = [...value, ...newUrls].slice(0, maxFiles);
       onChange(updatedUrls);
       setIsUploading(false);
     },
     onUploadError: (error: Error) => {
-      if (process.env.NODE_ENV === "development") console.error("UploadThing error:", error);
       setIsUploading(false);
       
       // Show user-friendly error message
       alert(`Upload failed: ${error.message}. Please try again.`);
     },
     onUploadBegin: (name) => {
-      if (process.env.NODE_ENV === "development") console.log("Beginning upload: ", name);
       setIsUploading(true);
     },
   });
@@ -55,7 +52,6 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
     try {
       await startUpload(validFiles);
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error("Upload error:", error);
       alert("Upload failed. Please check your internet connection and try again.");
     }
   };

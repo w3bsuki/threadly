@@ -7,7 +7,6 @@ let arcjetKey: string | undefined;
 try {
   arcjetKey = keys().ARCJET_KEY;
 } catch (error) {
-  console.warn('Arcjet key not available:', error);
 }
 
 // Mock rate limiter for when Arcjet is not configured
@@ -39,7 +38,6 @@ const getArcjet = () => {
       characteristics: ['ip.src'],
     });
   } catch (error) {
-    console.error('Failed to initialize Arcjet:', error);
     return null;
   }
 };
@@ -149,7 +147,6 @@ export async function checkRateLimit(
 ) {
   if (!arcjetKey) {
     // If no Arcjet key is configured, allow the request
-    console.warn('Arcjet key not configured, skipping rate limiting');
     return { allowed: true, decision: null };
   }
 
@@ -157,7 +154,6 @@ export async function checkRateLimit(
     const decision = await rateLimiter.protect(request);
 
     if (decision.isDenied()) {
-      console.warn(`Rate limit exceeded: ${JSON.stringify(decision.reason, null, 2)}`);
       
       // Get rate limit headers for the response
       const headers = new Headers();
@@ -188,7 +184,6 @@ export async function checkRateLimit(
 
     return { allowed: true, decision };
   } catch (error) {
-    console.error('Rate limit check failed:', error);
     // On error, allow the request to proceed
     return { allowed: true, decision: null };
   }

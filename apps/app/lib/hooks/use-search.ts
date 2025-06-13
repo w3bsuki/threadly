@@ -160,7 +160,6 @@ export function useSearch(initialFilters: SearchFilters = {}) {
             resultCount: data.results?.totalHits || 0,
           }),
         }).catch(err => {
-          if (process.env.NODE_ENV === "development") console.error('Failed to track search history:', err);
         });
       }
     } catch (err) {

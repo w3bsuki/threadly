@@ -61,7 +61,6 @@ const handleUserCreated = async (data: UserJSON) => {
       distinctId: data.id,
     });
 
-    console.info('User created in database', { userId: data.id, email });
     return new Response('User created', { status: 201 });
   } catch (error) {
     logError('Error creating user in database', error);
@@ -105,7 +104,6 @@ const handleUserUpdated = async (data: UserJSON) => {
       distinctId: data.id,
     });
 
-    console.info('User updated in database', { userId: data.id, email });
     return new Response('User updated', { status: 201 });
   } catch (error) {
     logError('Error updating user in database', error);
@@ -144,7 +142,6 @@ const handleUserDeleted = async (data: DeletedObjectJSON) => {
       distinctId: data.id,
     });
 
-    console.info('User deleted from database', { userId: data.id, userFound: !!user });
     return new Response('User deleted', { status: 201 });
   } catch (error) {
     logError('Error deleting user in database', error);
@@ -259,7 +256,6 @@ export const POST = async (request: Request): Promise<Response> => {
       'svix-signature': svixSignature,
     }) as WebhookEvent;
   } catch (error) {
-    console.error('Error verifying webhook:', error);
     return new Response('Error occured', {
       status: 400,
     });
@@ -269,7 +265,6 @@ export const POST = async (request: Request): Promise<Response> => {
   const { id } = event.data;
   const eventType = event.type;
 
-  console.info('Webhook', { id, eventType, body });
 
   let response: Response = new Response('', { status: 201 });
 

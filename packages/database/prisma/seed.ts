@@ -3,7 +3,6 @@ import { PrismaClient } from '../generated/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Starting database seeding...');
 
   // Create comprehensive category structure inspired by Vinted/Depop best practices
   const categories = [
@@ -301,7 +300,6 @@ async function main() {
 
     let category;
     if (existingCategory) {
-      console.log(`⏭️  Category already exists: ${categoryInfo.name}`);
       category = existingCategory;
     } else {
       category = await prisma.category.create({
@@ -310,7 +308,6 @@ async function main() {
           parentId: parentId || null,
         },
       });
-      console.log(`✅ Created category: ${categoryInfo.name}`);
     }
 
     if (children) {
@@ -327,13 +324,10 @@ async function main() {
     await createCategory(category);
   }
 
-  console.log('🎉 Database seeding completed!');
-  console.log(`📊 Created ${await prisma.category.count()} categories total`);
 }
 
 main()
   .catch((e) => {
-    console.error('❌ Error during seeding:', e);
     process.exit(1);
   })
   .finally(async () => {

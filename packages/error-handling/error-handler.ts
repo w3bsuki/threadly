@@ -215,21 +215,17 @@ export class GracefulShutdown {
     if (this.isShuttingDown) return;
     
     this.isShuttingDown = true;
-    console.log(`Graceful shutdown initiated by ${signal}`);
     
     // Give pending requests time to complete
     setTimeout(() => {
-      console.error('Forced shutdown after timeout');
       process.exit(1);
     }, 30000); // 30 seconds timeout
     
     try {
       // Run all shutdown handlers
       await Promise.all(this.shutdownHandlers.map(handler => handler()));
-      console.log('Graceful shutdown completed');
       process.exit(0);
     } catch (error) {
-      console.error('Error during shutdown:', error);
       process.exit(1);
     }
   }

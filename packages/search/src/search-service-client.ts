@@ -104,9 +104,7 @@ export function createSearchService(
         const searchProducts = products.map(p => transformProductForSearch(p));
         await searchEngine.index(searchProducts);
 
-        console.log(`Successfully indexed ${searchProducts.length} products`);
       } catch (error) {
-        console.error('Failed to index all products:', error);
         throw error;
       }
     },
@@ -126,7 +124,6 @@ export function createSearchService(
         // Invalidate related cache
         await cacheService.invalidateProduct(productId);
       } catch (error) {
-        console.error(`Failed to index product ${productId}:`, error);
         throw error;
       }
     },
@@ -137,7 +134,6 @@ export function createSearchService(
         await searchEngine.deleteProduct(productId);
         await cacheService.invalidateProduct(productId);
       } catch (error) {
-        console.error(`Failed to remove product ${productId}:`, error);
         throw error;
       }
     },
@@ -166,7 +162,6 @@ export function createSearchService(
 
         return result;
       } catch (error) {
-        console.error('Search failed:', error);
         throw error;
       }
     },
@@ -183,7 +178,6 @@ export function createSearchService(
           [CACHE_TAGS.SEARCH]
         );
       } catch (error) {
-        console.error('Failed to get search suggestions:', error);
         return [];
       }
     },
@@ -200,7 +194,6 @@ export function createSearchService(
           [CACHE_TAGS.PRODUCTS]
         );
       } catch (error) {
-        console.error('Failed to get popular products:', error);
         return [];
       }
     },
@@ -217,7 +210,6 @@ export function createSearchService(
           [CACHE_TAGS.PRODUCTS]
         );
       } catch (error) {
-        console.error(`Failed to get similar products for ${productId}:`, error);
         return [];
       }
     },
@@ -234,7 +226,6 @@ export function createSearchService(
           [CACHE_TAGS.PRODUCTS, CACHE_TAGS.CATEGORIES]
         );
       } catch (error) {
-        console.error(`Failed to get products for category ${category}:`, error);
         return [];
       }
     },
@@ -244,7 +235,6 @@ export function createSearchService(
       try {
         await searchEngine.trackClick(productId, query, position);
       } catch (error) {
-        console.error('Failed to track product click:', error);
       }
     },
 
@@ -252,7 +242,6 @@ export function createSearchService(
       try {
         await searchEngine.trackConversion(productId, query);
       } catch (error) {
-        console.error('Failed to track product conversion:', error);
       }
     },
 
@@ -285,7 +274,6 @@ export function createSearchService(
           [CACHE_TAGS.SEARCH]
         );
       } catch (error) {
-        console.error('Failed to get autocomplete results:', error);
         return [];
       }
     },
@@ -310,7 +298,6 @@ export function createSearchService(
           [CACHE_TAGS.SEARCH]
         );
       } catch (error) {
-        console.error('Failed to get facet data:', error);
         return {};
       }
     },
@@ -357,15 +344,12 @@ export function createSearchService(
           const searchProducts = products.map(p => transformProductForSearch(p));
           await searchEngine.index(searchProducts);
 
-          console.log(`Indexed batch: ${skip + 1} to ${skip + products.length}`);
           
           skip += batchSize;
           hasMore = products.length === batchSize;
         }
 
-        console.log('Product reindexing completed');
       } catch (error) {
-        console.error('Failed to reindex products:', error);
         throw error;
       }
     }

@@ -95,14 +95,12 @@ export function FeedbackForm({ userEmail }: FeedbackFormProps) {
       const result = await response.json();
 
       if (result.success) {
-        if (process.env.NODE_ENV === "development") console.log('Feedback sent successfully!');
         form.reset();
         setSelectedRating(undefined);
       } else {
         throw new Error(result.error || 'Failed to send feedback');
       }
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error('Feedback submission error:', error);
     } finally {
       setIsSubmitting(false);
     }

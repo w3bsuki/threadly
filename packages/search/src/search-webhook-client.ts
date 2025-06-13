@@ -21,7 +21,6 @@ export class SearchWebhookClient {
 
   private async sendWebhook(payload: SearchWebhookPayload): Promise<boolean> {
     if (!this.enabled) {
-      console.log('Search webhook disabled, skipping:', payload);
       return false;
     }
 
@@ -37,15 +36,12 @@ export class SearchWebhookClient {
 
       if (!response.ok) {
         const error = await response.text();
-        console.error('Search webhook failed:', response.status, error);
         return false;
       }
 
       const result = await response.json();
-      console.log('Search webhook success:', result.message);
       return true;
     } catch (error) {
-      console.error('Search webhook error:', error);
       return false;
     }
   }
@@ -108,7 +104,6 @@ export class SearchWebhookClient {
 
       return response.ok;
     } catch (error) {
-      console.error('Search service health check failed:', error);
       return false;
     }
   }
@@ -153,7 +148,6 @@ export const searchIndexing = {
       const client = getSearchWebhookClient();
       return await client.onProductCreated(productId);
     } catch (error) {
-      console.error('Failed to trigger product created indexing:', error);
       return false;
     }
   },
@@ -163,7 +157,6 @@ export const searchIndexing = {
       const client = getSearchWebhookClient();
       return await client.onProductUpdated(productId);
     } catch (error) {
-      console.error('Failed to trigger product updated indexing:', error);
       return false;
     }
   },
@@ -173,7 +166,6 @@ export const searchIndexing = {
       const client = getSearchWebhookClient();
       return await client.onProductDeleted(productId);
     } catch (error) {
-      console.error('Failed to trigger product deleted indexing:', error);
       return false;
     }
   },
@@ -186,7 +178,6 @@ export const searchIndexing = {
       const client = getSearchWebhookClient();
       return await client.triggerBulkIndex(force);
     } catch (error) {
-      console.error('Failed to trigger bulk indexing:', error);
       return false;
     }
   },
@@ -199,7 +190,6 @@ export const searchIndexing = {
       const client = getSearchWebhookClient();
       return await client.healthCheck();
     } catch (error) {
-      console.error('Search health check failed:', error);
       return false;
     }
   },

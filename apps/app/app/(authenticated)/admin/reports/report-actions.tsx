@@ -40,7 +40,6 @@ export function ReportActions({ report }: ReportActionsProps) {
       await action();
       router.refresh();
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error('Action failed:', error);
       // In a real app, you'd show a toast notification here
       alert('Action failed. Please try again.');
     } finally {

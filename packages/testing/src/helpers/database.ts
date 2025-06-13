@@ -18,7 +18,6 @@ export class TestDatabase {
     try {
       await database.$executeRawUnsafe(`TRUNCATE TABLE ${tables} CASCADE;`);
     } catch (error) {
-      console.log({ error });
     }
   }
 

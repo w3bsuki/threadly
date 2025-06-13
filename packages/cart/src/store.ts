@@ -145,7 +145,6 @@ export const createCartStore = (config?: CartConfig) => {
               }
             }
           } catch (error) {
-            console.error('Cart sync failed:', error);
           }
         },
 
@@ -171,7 +170,6 @@ export const createCartStore = (config?: CartConfig) => {
               });
               channel.close();
             } catch (error) {
-              console.warn('BroadcastChannel not available:', error);
             }
           }
         },
@@ -194,7 +192,6 @@ export const createCartStore = (config?: CartConfig) => {
               };
               return () => channel.close();
             } catch (error) {
-              console.warn('BroadcastChannel not available:', error);
               return () => {};
             }
           }

@@ -18,8 +18,6 @@ if (hasToken) {
       token: env.BASEHUB_TOKEN,
     });
   } catch (error) {
-    console.warn('BaseHub not available:', error);
-    hasToken && console.warn('CMS functionality will be disabled');
   }
 }
 
@@ -128,7 +126,6 @@ export const blog = {
       const data = await basehub.query(blog.postsQuery);
       return data.blog.posts.items;
     } catch (error) {
-      console.warn('Failed to fetch blog posts:', error);
       return [];
     }
   },
@@ -142,7 +139,6 @@ export const blog = {
       const data = await basehub.query(blog.latestPostQuery);
       return data.blog.posts.item;
     } catch (error) {
-      console.warn('Failed to fetch latest blog post:', error);
       return null;
     }
   },
@@ -157,7 +153,6 @@ export const blog = {
       const data = await basehub.query(query);
       return data.blog.posts.item;
     } catch (error) {
-      console.warn('Failed to fetch blog post:', error);
       return null;
     }
   },
@@ -237,7 +232,6 @@ export const legal = {
       const data = await basehub.query(legal.postsQuery);
       return data.legalPages.items;
     } catch (error) {
-      console.warn('Failed to fetch legal posts:', error);
       return [];
     }
   },
@@ -251,7 +245,6 @@ export const legal = {
       const data = await basehub.query(legal.latestPostQuery);
       return data.legalPages.item;
     } catch (error) {
-      console.warn('Failed to fetch latest legal post:', error);
       return null;
     }
   },
@@ -266,7 +259,6 @@ export const legal = {
       const data = await basehub.query(query);
       return data.legalPages.item;
     } catch (error) {
-      console.warn('Failed to fetch legal post:', error);
       return null;
     }
   },

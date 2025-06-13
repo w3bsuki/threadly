@@ -44,7 +44,6 @@ const cacheFirst = async (request, cacheName) => {
     }
     return networkResponse;
   } catch (error) {
-    console.warn('Network request failed:', error);
     throw error;
   }
 };
@@ -65,7 +64,6 @@ const networkFirst = async (request, cacheName, timeout = 3000) => {
     }
     return networkResponse;
   } catch (error) {
-    console.warn('Network request failed, trying cache:', error);
     const cachedResponse = await cache.match(request);
     if (cachedResponse) {
       return cachedResponse;
@@ -85,7 +83,6 @@ const staleWhileRevalidate = async (request, cacheName) => {
     }
     return response;
   }).catch(error => {
-    console.warn('Background fetch failed:', error);
   });
   
   // Return cached version immediately if available
@@ -112,12 +109,10 @@ const cleanupCache = async (cacheName, maxSize) => {
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
-  console.log('Service Worker installing...');
   
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Caching app shell...');
         return cache.addAll(STATIC_ASSETS);
       })
       .then(() => {
@@ -125,14 +120,12 @@ self.addEventListener('install', (event) => {
         return self.skipWaiting();
       })
       .catch(error => {
-        console.error('Failed to cache app shell:', error);
       })
   );
 });
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  console.log('Service Worker activating...');
   
   event.waitUntil(
     caches.keys()
@@ -143,7 +136,6 @@ self.addEventListener('activate', (event) => {
                 cacheName !== DYNAMIC_CACHE && 
                 cacheName !== IMAGE_CACHE && 
                 cacheName !== API_CACHE) {
-              console.log('Deleting old cache:', cacheName);
               return caches.delete(cacheName);
             }
           })
@@ -154,7 +146,6 @@ self.addEventListener('activate', (event) => {
         return self.clients.claim();
       })
       .catch(error => {
-        console.error('Failed to clean up caches:', error);
       })
   );
 });
@@ -270,7 +261,6 @@ self.addEventListener('fetch', (event) => {
 
 // Background sync for failed requests
 self.addEventListener('sync', (event) => {
-  console.log('Background sync triggered:', event.tag);
   
   if (event.tag === 'background-sync') {
     event.waitUntil(
@@ -286,7 +276,6 @@ self.addEventListener('sync', (event) => {
 
 // Push notifications (for future use)
 self.addEventListener('push', (event) => {
-  console.log('Push notification received:', event);
   
   const options = {
     body: event.data ? event.data.text() : 'New update available!',
@@ -312,7 +301,6 @@ self.addEventListener('push', (event) => {
 
 // Notification click handling
 self.addEventListener('notificationclick', (event) => {
-  console.log('Notification clicked:', event);
   
   event.notification.close();
   
@@ -334,7 +322,6 @@ self.addEventListener('notificationclick', (event) => {
 
 // Message handling from main thread
 self.addEventListener('message', (event) => {
-  console.log('Message received in SW:', event.data);
   
   if (event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
@@ -345,4 +332,3 @@ self.addEventListener('message', (event) => {
   }
 });
 
-console.log('Threadly Service Worker loaded successfully');

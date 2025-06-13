@@ -41,7 +41,6 @@ const safeDecimalToNumber = (decimal: any): number => {
     }
     return parseFloat(decimal.toString());
   } catch (error) {
-    console.error('Error converting decimal:', error);
     return 0;
   }
 };

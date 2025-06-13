@@ -63,7 +63,6 @@ export function OrderActions({ orderId, status, productTitle, buyerName }: Order
         toast.error(data.error || 'Failed to ship order');
       }
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error('Ship order error:', error);
       toast.error('Failed to ship order. Please try again.');
     } finally {
       setIsLoading(false);
@@ -91,7 +90,6 @@ export function OrderActions({ orderId, status, productTitle, buyerName }: Order
         toast.error(data.error || 'Failed to mark order as delivered');
       }
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error('Deliver order error:', error);
       toast.error('Failed to mark order as delivered. Please try again.');
     } finally {
       setIsLoading(false);

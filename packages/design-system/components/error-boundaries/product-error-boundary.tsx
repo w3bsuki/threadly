@@ -54,7 +54,6 @@ export class ProductErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('ProductErrorBoundary caught an error:', error, errorInfo);
     
     // Report product-specific error
     this.reportProductError(error, errorInfo);

@@ -105,9 +105,7 @@ export class MarketplaceSearchService {
       const searchProducts = products.map(p => this.transformProductForSearch(p));
       await this.searchEngine.index(searchProducts);
 
-      console.log(`Successfully indexed ${searchProducts.length} products`);
     } catch (error) {
-      console.error('Failed to index all products:', error);
       throw error;
     }
   }
@@ -146,7 +144,6 @@ export class MarketplaceSearchService {
       // Invalidate related cache
       await this.cacheService.invalidateProduct(productId);
     } catch (error) {
-      console.error(`Failed to index product ${productId}:`, error);
       throw error;
     }
   }
@@ -157,7 +154,6 @@ export class MarketplaceSearchService {
       await this.searchEngine.deleteProduct(productId);
       await this.cacheService.invalidateProduct(productId);
     } catch (error) {
-      console.error(`Failed to remove product ${productId}:`, error);
       throw error;
     }
   }
@@ -186,7 +182,6 @@ export class MarketplaceSearchService {
 
       return result;
     } catch (error) {
-      console.error('Search failed:', error);
       throw error;
     }
   }
@@ -203,7 +198,6 @@ export class MarketplaceSearchService {
         [CACHE_TAGS.SEARCH]
       );
     } catch (error) {
-      console.error('Failed to get search suggestions:', error);
       return [];
     }
   }
@@ -220,7 +214,6 @@ export class MarketplaceSearchService {
         [CACHE_TAGS.PRODUCTS]
       );
     } catch (error) {
-      console.error('Failed to get popular products:', error);
       return [];
     }
   }
@@ -237,7 +230,6 @@ export class MarketplaceSearchService {
         [CACHE_TAGS.PRODUCTS]
       );
     } catch (error) {
-      console.error(`Failed to get similar products for ${productId}:`, error);
       return [];
     }
   }
@@ -254,7 +246,6 @@ export class MarketplaceSearchService {
         [CACHE_TAGS.PRODUCTS, CACHE_TAGS.CATEGORIES]
       );
     } catch (error) {
-      console.error(`Failed to get products for category ${category}:`, error);
       return [];
     }
   }
@@ -264,7 +255,6 @@ export class MarketplaceSearchService {
     try {
       await this.searchEngine.trackClick(productId, query, position);
     } catch (error) {
-      console.error('Failed to track product click:', error);
     }
   }
 
@@ -272,7 +262,6 @@ export class MarketplaceSearchService {
     try {
       await this.searchEngine.trackConversion(productId, query);
     } catch (error) {
-      console.error('Failed to track product conversion:', error);
     }
   }
 
@@ -305,7 +294,6 @@ export class MarketplaceSearchService {
         [CACHE_TAGS.SEARCH]
       );
     } catch (error) {
-      console.error('Failed to get autocomplete results:', error);
       return [];
     }
   }
@@ -330,7 +318,6 @@ export class MarketplaceSearchService {
         [CACHE_TAGS.SEARCH]
       );
     } catch (error) {
-      console.error('Failed to get facet data:', error);
       return {};
     }
   }
@@ -388,15 +375,12 @@ export class MarketplaceSearchService {
         const searchProducts = products.map(p => this.transformProductForSearch(p));
         await this.searchEngine.index(searchProducts);
 
-        console.log(`Indexed batch: ${skip + 1} to ${skip + products.length}`);
         
         skip += batchSize;
         hasMore = products.length === batchSize;
       }
 
-      console.log('Product reindexing completed');
     } catch (error) {
-      console.error('Failed to reindex products:', error);
       throw error;
     }
   }

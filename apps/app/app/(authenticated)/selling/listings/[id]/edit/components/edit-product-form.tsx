@@ -96,10 +96,8 @@ export function EditProductForm({ product, userId }: EditProductFormProps) {
       if (result.success) {
         router.push('/selling/listings');
       } else {
-        if (process.env.NODE_ENV === "development") console.error('Failed to update product:', result.error);
       }
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error('Error updating product:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -118,10 +116,8 @@ export function EditProductForm({ product, userId }: EditProductFormProps) {
       if (result.success) {
         router.push('/selling/listings');
       } else {
-        if (process.env.NODE_ENV === "development") console.error('Failed to delete product:', result.error);
       }
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error('Error deleting product:', error);
     } finally {
       setIsDeleting(false);
     }

@@ -44,7 +44,6 @@ export function SearchHistory({ onSearchSelect, currentQuery }: SearchHistoryPro
       const data = await response.json();
       setHistory(data.searchHistory);
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error('Failed to load search history:', error);
     } finally {
       setIsLoading(false);
     }
@@ -61,7 +60,6 @@ export function SearchHistory({ onSearchSelect, currentQuery }: SearchHistoryPro
       setHistory([]);
       toast.success('Search history cleared');
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error('Failed to clear history:', error);
       toast.error('Failed to clear search history');
     }
   };

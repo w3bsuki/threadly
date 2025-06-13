@@ -59,7 +59,6 @@ export class APIErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('APIErrorBoundary caught an error:', error, errorInfo);
     
     // Report API-specific error
     this.reportAPIError(error, errorInfo);

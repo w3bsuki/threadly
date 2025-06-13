@@ -67,7 +67,6 @@ export const filterProfanity = (text: string, replacement = '***'): string => {
     return profanityFilter.clean(text);
   } catch (error) {
     // If profanity filter fails, return original text
-    console.error('Profanity filter error:', error);
     return text;
   }
 };
@@ -79,7 +78,6 @@ export const containsProfanity = (text: string): boolean => {
   try {
     return profanityFilter.isProfane(text);
   } catch (error) {
-    console.error('Profanity check error:', error);
     return false;
   }
 };

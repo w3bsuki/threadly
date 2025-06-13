@@ -39,7 +39,6 @@ export function ProductActions({ product }: ProductActionsProps) {
       await action();
       router.refresh();
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error('Action failed:', error);
     } finally {
       setIsLoading(false);
     }

@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
     const platformFeeInCents = Math.round(calculatePlatformFee(product.price.toNumber()) * 100);
     
     // Create payment intent parameters
-    const paymentIntentParams: any = {
+    const paymentIntentParams: Parameters<typeof stripe.paymentIntents.create>[0] = {
       amount: amountInCents,
       currency: 'usd',
       metadata: {

@@ -152,10 +152,8 @@ export function useNotifications() {
           setNotifications(data.notifications || []);
           setUnreadCount(data.unreadCount || 0);
         } else {
-          console.error('Failed to fetch notifications:', data.error);
         }
       } catch (error) {
-        console.error('Error fetching notifications:', error);
       } finally {
         setIsLoading(false);
       }
@@ -192,7 +190,6 @@ export function useNotifications() {
       );
       setUnreadCount(prev => Math.max(0, prev - 1));
     } catch (error) {
-      console.error('Failed to mark notification as read:', error);
     }
   }, []);
 
@@ -205,7 +202,6 @@ export function useNotifications() {
       setNotifications(prev => prev.map(n => ({ ...n, read: true })));
       setUnreadCount(0);
     } catch (error) {
-      console.error('Failed to mark all notifications as read:', error);
     }
   }, []);
 

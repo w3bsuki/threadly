@@ -26,7 +26,6 @@ export function RealTimeProvider({ children, config, userId }: RealTimeProviderP
 
   useEffect(() => {
     if (!config.pusherKey || !config.pusherCluster) {
-      console.warn('[RealTime] Missing Pusher configuration');
       return;
     }
 
@@ -50,7 +49,6 @@ export function RealTimeProvider({ children, config, userId }: RealTimeProviderP
 
     const userChannel = `private-user-${userId}`;
     const subscription = client.subscribe(userChannel, 'connected', () => {
-      console.log(`[RealTime] Subscribed to user channel: ${userChannel}`);
     });
 
     return () => {

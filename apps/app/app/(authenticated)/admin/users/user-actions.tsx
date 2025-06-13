@@ -41,7 +41,6 @@ export function UserActions({ user }: UserActionsProps) {
       await action();
       router.refresh();
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error('Action failed:', error);
     } finally {
       setIsLoading(false);
     }

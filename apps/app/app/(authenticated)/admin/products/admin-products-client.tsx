@@ -89,7 +89,6 @@ function ProductTable({ products }: { products: ProductWithDetails[] }) {
       // Use router.refresh() instead of window.location.reload()
       router.refresh();
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error('Bulk action failed:', error);
     } finally {
       setIsUpdating(false);
     }

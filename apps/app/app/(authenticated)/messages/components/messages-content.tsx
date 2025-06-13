@@ -193,7 +193,6 @@ export function MessagesContent({
         // Mark as read if the message is from another user
         if (data.senderId !== currentUserId) {
           markMessagesAsRead(selectedConversation.id).catch(error => {
-            if (process.env.NODE_ENV === "development") console.error('Failed to mark messages as read:', error);
           });
         }
       }
@@ -302,10 +301,8 @@ export function MessagesContent({
         router.refresh();
         setShowNewConversation(false);
       } else {
-        if (process.env.NODE_ENV === "development") console.error('Failed to create conversation:', result.error);
       }
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error('Error creating conversation:', error);
     } finally {
       setIsCreatingConversation(false);
     }
@@ -326,7 +323,6 @@ export function MessagesContent({
         router.refresh();
       }
     } catch (error) {
-      if (process.env.NODE_ENV === "development") console.error('Failed to send message:', error);
     } finally {
       setIsSending(false);
     }

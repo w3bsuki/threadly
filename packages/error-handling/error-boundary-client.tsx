@@ -60,7 +60,6 @@ export class ErrorBoundary extends Component<Props, State> {
     
     // Log to console in development
     if (process.env.NODE_ENV === 'development') {
-      console.error('ErrorBoundary caught an error:', error, errorInfo);
     }
     
     // Report to Sentry
@@ -161,7 +160,6 @@ export class ErrorBoundary extends Component<Props, State> {
 // Hook for functional components
 export function useErrorHandler() {
   return (error: Error, errorInfo?: { componentStack?: string }) => {
-    console.error('useErrorHandler:', error);
     
     Sentry.withScope((scope) => {
       scope.setTag('errorBoundary', false);

@@ -169,7 +169,6 @@ export async function testAccessibility(container: HTMLElement) {
 
   interactiveElements.forEach(element => {
     if (!element.getAttribute('aria-label') && !element.textContent?.trim()) {
-      console.warn(`Interactive element without accessible name:`, element);
     }
   });
 

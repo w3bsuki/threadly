@@ -63,10 +63,6 @@ export class TimeTestUtils {
 // Console utilities
 export class ConsoleTestUtils {
   private static originalConsole = {
-    log: console.log,
-    error: console.error,
-    warn: console.warn,
-    info: console.info,
   };
 
   static mockConsole() {
@@ -77,19 +73,11 @@ export class ConsoleTestUtils {
       info: vi.fn(),
     };
 
-    console.log = mocks.log;
-    console.error = mocks.error;
-    console.warn = mocks.warn;
-    console.info = mocks.info;
 
     return mocks;
   }
 
   static restoreConsole() {
-    console.log = this.originalConsole.log;
-    console.error = this.originalConsole.error;
-    console.warn = this.originalConsole.warn;
-    console.info = this.originalConsole.info;
   }
 
   static suppressConsole(types: ('log' | 'error' | 'warn' | 'info')[] = ['error']) {
@@ -435,7 +423,6 @@ export class TestCleanup {
         try {
           await cleanup();
         } catch (error) {
-          console.error('Cleanup error:', error);
         }
       })
     );

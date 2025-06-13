@@ -14,7 +14,6 @@ const initializeSearch = () => {
 
     searchIndexing.init(baseUrl);
     
-    console.info('Search indexing client initialized with base URL:', baseUrl);
   } catch (error) {
     logError('Failed to initialize search indexing client:', error);
   }

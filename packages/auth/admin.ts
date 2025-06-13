@@ -2,7 +2,6 @@
 // This file will be deprecated in favor of using createAdminClient directly
 // DO NOT USE IN NEW CODE - use app-level admin client instead
 
-console.warn('Direct import of @repo/auth/admin is deprecated. Use createAdminClient from your app instead.');
 
 export const requireAdmin = async () => {
   throw new Error('Direct usage of requireAdmin is deprecated. Use createAdminClient from your app.');

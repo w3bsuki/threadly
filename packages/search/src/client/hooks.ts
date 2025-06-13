@@ -128,7 +128,6 @@ export function useSearchSuggestions(query: string, enabled = true) {
           setSuggestions(data);
         }
       } catch (error) {
-        console.error('Failed to fetch suggestions:', error);
       } finally {
         setLoading(false);
       }
@@ -162,7 +161,6 @@ export function useAutocomplete(query: string, enabled = true) {
           setSuggestions(data);
         }
       } catch (error) {
-        console.error('Failed to fetch autocomplete:', error);
       } finally {
         setLoading(false);
       }
@@ -193,7 +191,6 @@ export function useSearchFacets(query?: string) {
           setFacets(data);
         }
       } catch (error) {
-        console.error('Failed to fetch facets:', error);
       } finally {
         setLoading(false);
       }
@@ -219,7 +216,6 @@ export function usePopularProducts(limit = 10) {
           setProducts(data);
         }
       } catch (error) {
-        console.error('Failed to fetch popular products:', error);
       } finally {
         setLoading(false);
       }
@@ -251,7 +247,6 @@ export function useSimilarProducts(productId: string, limit = 6) {
           setProducts(data);
         }
       } catch (error) {
-        console.error('Failed to fetch similar products:', error);
       } finally {
         setLoading(false);
       }
@@ -275,7 +270,6 @@ export function useSearchAnalytics() {
         body: JSON.stringify({ productId, query, position }),
       });
     } catch (error) {
-      console.error('Failed to track click:', error);
     }
   }, []);
 
@@ -289,7 +283,6 @@ export function useSearchAnalytics() {
         body: JSON.stringify({ productId, query }),
       });
     } catch (error) {
-      console.error('Failed to track conversion:', error);
     }
   }, []);
 
@@ -307,7 +300,6 @@ export function useSearchHistory() {
       try {
         setHistory(JSON.parse(saved));
       } catch (error) {
-        console.error('Failed to parse search history:', error);
       }
     }
   }, []);

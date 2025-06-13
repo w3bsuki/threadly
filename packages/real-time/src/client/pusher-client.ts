@@ -21,11 +21,9 @@ export class PusherClient implements RealTimeClient {
 
     // Connection state monitoring
     this.pusher.connection.bind('connected', () => {
-      console.log('[RealTime] Connected to Pusher');
     });
 
     this.pusher.connection.bind('error', (err: any) => {
-      console.error('[RealTime] Connection error:', err);
     });
   }
 

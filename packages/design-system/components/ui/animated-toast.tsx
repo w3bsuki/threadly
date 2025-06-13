@@ -97,7 +97,6 @@ export function AnimatedToastDemo() {
             description: 'Something went wrong. Please try again.',
             action: {
               label: 'Retry',
-              onClick: () => console.log('Retrying...'),
             },
           })
         }

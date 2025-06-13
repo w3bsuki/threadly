@@ -2,7 +2,6 @@
 // DO NOT USE IN NEW CODE - use createEmailService from email-service-client instead
 // This file will be removed in the next major version
 
-console.warn('Direct import of email-service.ts is deprecated. Use createEmailService from email-service-client instead.');
 
 import { Resend } from 'resend';
 import { database } from '@repo/database';
@@ -196,7 +195,6 @@ export class EmailService {
     });
 
     if (error) {
-      console.error('Failed to send payment received email:', error);
     }
 
     return data;
@@ -231,7 +229,6 @@ export class EmailService {
     });
 
     if (error) {
-      console.error('Failed to send weekly report email:', error);
     }
 
     return data;
@@ -249,7 +246,6 @@ export class EmailService {
     const { data, error } = await this.resend.batch.send(emails);
 
     if (error) {
-      console.error('Failed to send bulk emails:', error);
     }
 
     return data;

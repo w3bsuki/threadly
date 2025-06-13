@@ -86,7 +86,6 @@ export class AlgoliaSearch implements SearchEngine, SearchIndexable {
         allowCompressionOfIntegerArray: true,
       });
     } catch (error) {
-      console.error('Failed to configure Algolia index:', error);
     }
   }
 
@@ -102,7 +101,6 @@ export class AlgoliaSearch implements SearchEngine, SearchIndexable {
         );
       }
     } catch (error) {
-      console.error('Failed to index products:', error);
       throw error;
     }
   }
@@ -114,7 +112,6 @@ export class AlgoliaSearch implements SearchEngine, SearchIndexable {
         { retries: 3, minTimeout: 500 }
       );
     } catch (error) {
-      console.error(`Failed to update product ${product.id}:`, error);
       throw error;
     }
   }
@@ -126,7 +123,6 @@ export class AlgoliaSearch implements SearchEngine, SearchIndexable {
         { retries: 3, minTimeout: 500 }
       );
     } catch (error) {
-      console.error(`Failed to delete product ${productId}:`, error);
       throw error;
     }
   }
@@ -135,7 +131,6 @@ export class AlgoliaSearch implements SearchEngine, SearchIndexable {
     try {
       await this.searchIndex.clearObjects();
     } catch (error) {
-      console.error('Failed to clear index:', error);
       throw error;
     }
   }
@@ -148,7 +143,6 @@ export class AlgoliaSearch implements SearchEngine, SearchIndexable {
         fileSize: 0,
       };
     } catch (error) {
-      console.error('Failed to get index stats:', error);
       return { objectCount: 0, fileSize: 0 };
     }
   }
@@ -236,7 +230,6 @@ export class AlgoliaSearch implements SearchEngine, SearchIndexable {
         filters,
       };
     } catch (error) {
-      console.error('Search failed:', error);
       throw error;
     }
   }
@@ -276,7 +269,6 @@ export class AlgoliaSearch implements SearchEngine, SearchIndexable {
 
       return suggestions;
     } catch (error) {
-      console.error('Failed to get search suggestions:', error);
       return [];
     }
   }
@@ -291,7 +283,6 @@ export class AlgoliaSearch implements SearchEngine, SearchIndexable {
 
       return result.hits as SearchProduct[];
     } catch (error) {
-      console.error('Failed to get popular products:', error);
       return [];
     }
   }
@@ -314,7 +305,6 @@ export class AlgoliaSearch implements SearchEngine, SearchIndexable {
 
       return result.hits.slice(0, limit) as SearchProduct[];
     } catch (error) {
-      console.error(`Failed to get similar products for ${productId}:`, error);
       return [];
     }
   }
@@ -328,7 +318,6 @@ export class AlgoliaSearch implements SearchEngine, SearchIndexable {
 
       return result.hits as SearchProduct[];
     } catch (error) {
-      console.error(`Failed to get products for category ${category}:`, error);
       return [];
     }
   }
@@ -338,18 +327,14 @@ export class AlgoliaSearch implements SearchEngine, SearchIndexable {
     try {
       // Note: This requires Algolia Insights API
       // Implementation would depend on your analytics setup
-      console.log(`Click tracked: ${productId} at position ${position} for query "${query}"`);
     } catch (error) {
-      console.error('Failed to track click:', error);
     }
   }
 
   async trackConversion(productId: string, query: string): Promise<void> {
     try {
       // Note: This requires Algolia Insights API
-      console.log(`Conversion tracked: ${productId} for query "${query}"`);
     } catch (error) {
-      console.error('Failed to track conversion:', error);
     }
   }
 
@@ -365,7 +350,6 @@ export class AlgoliaSearch implements SearchEngine, SearchIndexable {
         conversionRate: 0,
       };
     } catch (error) {
-      console.error('Failed to get analytics:', error);
       return {
         totalSearches: 0,
         topQueries: [],

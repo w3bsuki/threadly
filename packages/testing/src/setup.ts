@@ -8,7 +8,6 @@ beforeAll(() => {
   // Start MSW server
   server.listen({ onUnhandledRequest: 'error' });
   
-  // Mock console.error to reduce noise in tests
   vi.spyOn(console, 'error').mockImplementation(() => {});
   
   // Mock window.matchMedia

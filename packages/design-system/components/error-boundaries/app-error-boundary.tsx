@@ -49,7 +49,6 @@ export class AppErrorBoundary extends Component<Props, State> {
 
     // Log error for monitoring
     if (typeof window !== 'undefined') {
-      console.error('AppErrorBoundary caught an error:', error, errorInfo);
       
       // Report to error tracking service (Sentry, LogRocket, etc.)
       this.reportError(error, errorInfo);

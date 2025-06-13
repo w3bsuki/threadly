@@ -15,7 +15,6 @@ export class MarketplaceCacheService {
       }
     } catch (error) {
       // Fallback to memory cache
-      console.warn('Redis unavailable, using in-memory cache');
       this.cache = getMemoryCache();
       this.useMemoryCache = true;
     }
