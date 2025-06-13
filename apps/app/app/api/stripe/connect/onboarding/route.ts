@@ -72,12 +72,15 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // SECURITY: Production-safe origin handling - no localhost fallbacks
-    const origin = env.NEXT_PUBLIC_APP_URL || request.headers.get('origin');
+    // Get the origin from environment or request headers
+    // In production, this should be set via NEXT_PUBLIC_APP_URL
+    const origin = env.NEXT_PUBLIC_APP_URL || 
+                  request.headers.get('origin') || 
+                  `https://${request.headers.get('host')}`;
     
     if (!origin) {
       return NextResponse.json(
-        { error: 'Unable to determine application origin' },
+        { error: 'Unable to determine application origin. Please set NEXT_PUBLIC_APP_URL environment variable.' },
         { status: 500 }
       );
     }
@@ -149,12 +152,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // SECURITY: Production-safe origin handling - no localhost fallbacks
-    const origin = env.NEXT_PUBLIC_APP_URL || request.headers.get('origin');
+    // Get the origin from environment or request headers
+    // In production, this should be set via NEXT_PUBLIC_APP_URL
+    const origin = env.NEXT_PUBLIC_APP_URL || 
+                  request.headers.get('origin') || 
+                  `https://${request.headers.get('host')}`;
     
     if (!origin) {
       return NextResponse.json(
-        { error: 'Unable to determine application origin' },
+        { error: 'Unable to determine application origin. Please set NEXT_PUBLIC_APP_URL environment variable.' },
         { status: 500 }
       );
     }

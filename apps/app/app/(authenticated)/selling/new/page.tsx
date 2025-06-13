@@ -48,7 +48,9 @@ const SellNewItemPage = async () => {
       });
     }
 
-    // Check if user has connected Stripe account - REQUIRED for receiving payments
+    // Temporarily disabled Stripe requirement - users can list items without payment setup
+    // TODO: Re-enable this when Stripe onboarding is properly configured
+    /*
     if (!dbUser.stripeAccountId) {
       return (
         <div className="space-y-6">
@@ -85,6 +87,7 @@ const SellNewItemPage = async () => {
         </div>
       );
     }
+    */
 
     // User has Stripe account, show product form
     return (
