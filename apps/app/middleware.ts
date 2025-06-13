@@ -8,7 +8,8 @@ const isPublicRoute = createRouteMatcher([
   '/api/health(.*)',
 ]);
 
-const middleware = clerkMiddleware(async (auth, request) => {
+// Temporarily use any to bypass TypeScript inference issue
+const middleware: any = clerkMiddleware(async (auth, request) => {
   // SECURITY: Only log in development mode, avoid exposing sensitive URL parameters
   if (process.env.NODE_ENV === 'development') {
     const urlPath = request.nextUrl.pathname;
