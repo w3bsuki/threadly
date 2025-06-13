@@ -1,6 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "ignoreCommand": "echo 'Skipping build for this app'",
+  "buildCommand": "cd ../.. && pnpm build --filter=api",
+  "framework": "nextjs",
+  "installCommand": "pnpm install",
+  "ignoreCommand": "node scripts/skip-ci.js",
   "crons": [
     {
       "path": "/cron/keep-alive",

@@ -52,15 +52,6 @@ export function SignInCTA({
     ? `${appUrl}/sign-in?redirect_url=${encodeURIComponent(redirectPath)}`
     : `${appUrl}/sign-in`;
 
-  // Debug logging for production issues
-  if (process.env.NODE_ENV === 'development') {
-      appUrl,
-      signInUrl,
-      redirectPath,
-      currentHost: typeof window !== 'undefined' ? window.location.host : 'server',
-      envAppUrl: env.NEXT_PUBLIC_APP_URL
-    });
-  }
 
   return (
     <Button 
