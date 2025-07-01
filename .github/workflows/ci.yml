@@ -37,7 +37,7 @@ jobs:
 
       - name: Cache pnpm store
         id: cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -67,7 +67,7 @@ jobs:
           version: ${{ env.PNPM_VERSION }}
 
       - name: Restore cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.pnpm-store
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -103,7 +103,7 @@ jobs:
           version: ${{ env.PNPM_VERSION }}
 
       - name: Restore cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.pnpm-store
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -164,7 +164,7 @@ jobs:
           version: ${{ env.PNPM_VERSION }}
 
       - name: Restore cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.pnpm-store
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -214,7 +214,7 @@ jobs:
           version: ${{ env.PNPM_VERSION }}
 
       - name: Restore cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.pnpm-store
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -254,7 +254,7 @@ jobs:
           version: ${{ env.PNPM_VERSION }}
 
       - name: Restore cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.pnpm-store
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -273,7 +273,7 @@ jobs:
         run: pnpm --filter=@repo/${{ matrix.app }} build
 
       - name: Cache build artifacts
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             apps/${{ matrix.app }}/.next
@@ -307,7 +307,7 @@ jobs:
         run: npm install --global vercel@latest
 
       - name: Restore build cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             apps/${{ matrix.app }}/.next
@@ -368,7 +368,7 @@ jobs:
         run: npm install --global vercel@latest
 
       - name: Restore build cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             apps/${{ matrix.app }}/.next
