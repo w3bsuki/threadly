@@ -7,7 +7,6 @@ import { AnalyticsProvider } from '@repo/analytics';
 import type { ReactNode } from 'react';
 import { Footer } from './components/footer';
 import { Header } from './components/header';
-import { BottomNavMobile } from './components/bottom-nav-mobile';
 
 type RootLayoutProperties = {
   readonly children: ReactNode;
@@ -27,13 +26,18 @@ const RootLayout = ({ children }: RootLayoutProperties) => {
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
       <body>
+        {/* Skip to main content link for accessibility */}
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-black text-white px-4 py-2 rounded-md z-[100]">
+          Skip to main content
+        </a>
         <AnalyticsProvider>
           <DesignSystemProvider>
             <ServiceWorkerRegistration />
             <Header />
-            {children}
+            <main id="main-content" className="min-h-screen">
+              {children}
+            </main>
             <Footer />
-            <BottomNavMobile cartCount={0} savedCount={0} />
           </DesignSystemProvider>
         </AnalyticsProvider>
         <Toolbar />
