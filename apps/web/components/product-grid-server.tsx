@@ -7,7 +7,7 @@ import type {
   Category,
   Condition
 } from '@repo/database';
-import { logError } from '@repo/observability/server';
+import { parseError } from '@repo/observability/server';
 
 // Type for our transformed product data
 interface TransformedProduct {
@@ -284,7 +284,7 @@ export async function ProductGridServer({
     );
 
   } catch (error) {
-    logError('Failed to fetch products:', error);
+    console.error('Failed to fetch products:', parseError(error));
     
     // Return empty state on error
     return (
