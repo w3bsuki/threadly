@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/lib/stores/cart-store';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Separator } from '@repo/design-system/components/ui/separator';
-import { Badge } from '@repo/design-system/components/ui/badge';
-import { Alert, AlertDescription } from '@repo/design-system/components/ui/alert';
-import { Skeleton } from '@repo/design-system/components/ui/skeleton';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Button } from '@repo/design-system/components';
+import { Separator } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
+import { Alert, AlertDescription } from '@repo/design-system/components';
+import { Skeleton } from '@repo/design-system/components';
 import { CheckCircle2, Package, Truck, MessageSquare, ShoppingBag, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';

@@ -1,7 +1,7 @@
 import { database } from '@repo/database';
 import { currentUser } from '@repo/auth/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { logError } from '@repo/observability/error';
+import { logError } from '@repo/observability/server';
 
 // GET /api/favorites/check - Check if products are favorited
 export async function GET(request: NextRequest) {

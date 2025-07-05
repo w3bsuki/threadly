@@ -5,19 +5,42 @@ import { useSearch } from '../../../../lib/hooks/use-search';
 import { useAnalyticsEvents } from '@repo/analytics';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Card, CardContent } from '@repo/design-system/components/ui/card';
-import { Badge } from '@repo/design-system/components/ui/badge';
-import { Button } from '@repo/design-system/components/ui/button';
+import { Card, CardContent } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
+import { Button } from '@repo/design-system/components';
 import { Search, Filter, Grid, Heart } from 'lucide-react';
-import { ProductPlaceholder } from '../../components/product-placeholder';
-import { useEffect, useState } from 'react';
-
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount / 100);
+// Inline ProductPlaceholder for loading states
+const ProductPlaceholder = ({ className = "w-full h-full" }: { className?: string }) => {
+  return (
+    <div className={`bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center ${className}`}>
+      <svg
+        width="80"
+        height="80"
+        viewBox="0 0 80 80"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="text-gray-300"
+      >
+        <path
+          d="M20 25 C20 25, 25 20, 40 20 C55 20, 60 25, 60 25"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          fill="none"
+        />
+        <path
+          d="M40 20 L40 15 C40 12, 42 10, 45 10 C48 10, 50 12, 50 15"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          fill="none"
+        />
+      </svg>
+    </div>
+  );
 };
+import { useEffect, useState } from 'react';
+import { formatCurrency } from '@/lib/utils/currency';
 
 interface SearchFilters {
   categories?: string[];

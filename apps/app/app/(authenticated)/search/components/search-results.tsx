@@ -2,11 +2,11 @@
 
 import { useSearch, type SearchFilters } from '@/lib/hooks/use-search';
 import { AddToCartButton } from '@/components/add-to-cart-button';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Badge } from '@repo/design-system/components/ui/badge';
-import { LazyImage } from '@repo/design-system/components/ui/lazy-image';
+import { Button } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
+import { LazyImage } from '@repo/design-system/components';
 import { AlertCircle, Loader2, Search } from 'lucide-react';
-import { Alert, AlertDescription } from '@repo/design-system/components/ui/alert';
+import { Alert, AlertDescription } from '@repo/design-system/components';
 import { SearchFilters as SearchFiltersComponent } from './search-filters';
 import { SavedSearches } from './saved-searches';
 import { SearchHistory } from './search-history';

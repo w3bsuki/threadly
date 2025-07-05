@@ -1,8 +1,8 @@
 import { database } from '@repo/database';
 import { Metadata } from 'next';
 import { ProductGrid } from '../products/components/product-grid';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Badge } from '@repo/design-system/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
 import Link from 'next/link';
 import { TrendingUp, Users, Package, Star } from 'lucide-react';
 

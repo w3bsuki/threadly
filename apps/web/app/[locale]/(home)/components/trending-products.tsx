@@ -1,17 +1,12 @@
-import { Button } from '@repo/design-system/components/ui/button';
+import { Button } from '@repo/design-system/components';
 import { Heart, Eye, MapPin, Star } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { database } from '@repo/database';
 import { getCacheService } from '@repo/cache';
-import { logError } from '@repo/observability/error';
+import { logError } from '@repo/observability/server';
 
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount / 100);
-};
+import { formatCurrency } from '@/lib/utils/currency';
 
 export const TrendingProducts = async () => {
   try {

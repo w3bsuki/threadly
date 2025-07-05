@@ -2,10 +2,10 @@ import { currentUser } from '@repo/auth/server';
 import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { Header } from '../components/header';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Badge } from '@repo/design-system/components/ui/badge';
-import { Separator } from '@repo/design-system/components/ui/separator';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Button } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
+import { Separator } from '@repo/design-system/components';
 import { 
   LifeBuoy, 
   MessageCircle, 

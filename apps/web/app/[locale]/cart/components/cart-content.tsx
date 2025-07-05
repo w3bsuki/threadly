@@ -3,18 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCartStore } from "../../../../lib/stores/cart-store";
-import { Button } from "@repo/design-system/components/ui/button";
-import { Card, CardContent } from "@repo/design-system/components/ui/card";
-import { Separator } from "@repo/design-system/components/ui/separator";
-import { Badge } from "@repo/design-system/components/ui/badge";
+import { Button } from '@repo/design-system/components';
+import { Card, CardContent } from '@repo/design-system/components';
+import { Separator } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
-
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount); // Price is already in dollars
-};
+import { formatCurrency } from "@/lib/utils/currency";
 
 const conditionLabels = {
   NEW_WITH_TAGS: "New with tags",

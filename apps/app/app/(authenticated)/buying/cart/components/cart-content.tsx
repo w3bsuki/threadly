@@ -1,13 +1,13 @@
 'use client';
 
 import { useCartStore } from '../../../../../lib/stores/cart-store';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Separator } from '@repo/design-system/components/ui/separator';
-import { Badge } from '@repo/design-system/components/ui/badge';
+import { Button } from '@repo/design-system/components';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Separator } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
 import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 import Link from 'next/link';
-import { LazyImage } from '@repo/design-system/components/ui/lazy-image';
+import { LazyImage } from '@repo/design-system/components';
 import { useState } from 'react';
 
 interface CartContentProps {

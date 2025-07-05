@@ -4,8 +4,8 @@ import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { Header } from '../components/header';
 import { ReviewForm } from './components/review-form';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Badge } from '@repo/design-system/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
 import { Star, Package, Calendar } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@repo/design-system/components/ui/button";
+import { Button } from '@repo/design-system/components';
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@repo/design-system/lib/utils";
 

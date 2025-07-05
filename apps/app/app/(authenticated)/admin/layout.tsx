@@ -1,5 +1,5 @@
 import { requireAdmin } from '@/lib/auth/admin';
-import { Card } from '@repo/design-system/components/ui/card';
+import { Card } from '@repo/design-system/components';
 import { 
   Users, 
   Package, 

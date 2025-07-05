@@ -3,8 +3,8 @@ import { env } from '@/env';
 import { blog, legal } from '@repo/cms';
 import { database } from '@repo/database';
 import type { MetadataRoute } from 'next';
-import { log } from '@repo/observability/log';
-import { logError, parseError } from '@repo/observability/error';
+import { log } from '@repo/observability/server';
+import { logError, parseError } from '@repo/observability/server';
 
 const appFolders = fs.readdirSync('app', { withFileTypes: true });
 const pages = appFolders

@@ -2,23 +2,24 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Input } from '@repo/design-system/components/ui/input';
-import { Label } from '@repo/design-system/components/ui/label';
-import { Separator } from '@repo/design-system/components/ui/separator';
-import { Badge } from '@repo/design-system/components/ui/badge';
-import { RadioGroup, RadioGroupItem } from '@repo/design-system/components/ui/radio-group';
-import { Checkbox } from '@repo/design-system/components/ui/checkbox';
+import { Button } from '@repo/design-system/components';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Input } from '@repo/design-system/components';
+import { Label } from '@repo/design-system/components';
+import { Separator } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
+import { RadioGroup, RadioGroupItem } from '@repo/design-system/components';
+import { Checkbox } from '@repo/design-system/components';
 import { CreditCard, Truck, Shield, AlertCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components';
 import Image from 'next/image';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { Alert, AlertDescription } from '@repo/design-system/components/ui/alert';
+import { Alert, AlertDescription } from '@repo/design-system/components';
+import { formatCurrency } from '@/lib/utils/currency';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -78,13 +79,6 @@ function CheckoutForm({ user, product, savedAddress }: SingleProductCheckoutProp
   const shippingCost = product.price > 50 ? 0 : shippingCosts[selectedShipping];
   const platformFee = product.price * 0.05;
   const total = product.price + shippingCost;
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
 
   const onSubmit = async (data: CheckoutFormData) => {
     if (!stripe || !elements) {

@@ -13,8 +13,8 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@repo/design-system/components/ui/dropdown-menu';
-import { Button } from '@repo/design-system/components/ui/button';
+} from '@repo/design-system/components';
+import { Button } from '@repo/design-system/components';
 import { resolveReport, dismissReport, escalateReport } from './actions';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';

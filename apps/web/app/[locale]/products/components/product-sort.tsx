@@ -7,7 +7,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@repo/design-system/components/ui/select";
+} from '@repo/design-system/components';
 
 interface ProductSortProps {
   currentSort?: string;

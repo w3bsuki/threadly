@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button } from '@repo/design-system/components/ui/button';
+import { Button } from '@repo/design-system/components';
 import { UserPlus, UserMinus, Loader2 } from 'lucide-react';
 import { useUser } from '@repo/auth/client';
 

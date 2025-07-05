@@ -1,10 +1,10 @@
 import { auth } from '@repo/auth/server';
-import { database } from '@repo/database';
+import { database, type Prisma } from '@repo/database';
 import { generalApiLimit, checkRateLimit } from '@repo/security';
 import { searchIndexing } from '@/lib/search-init';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { logError } from '@repo/observability/error';
+import { logError } from '@repo/observability/server';
 import { 
   createProductSchema,
   productConditionSchema,
@@ -128,7 +128,7 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     // Build where clause for filtering
-    const where: any = {
+    const where: Prisma.ProductWhereInput = {
       status: 'AVAILABLE', // Only show available products
     };
 
@@ -177,7 +177,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Build orderBy clause
-    let orderBy: any = {};
+    let orderBy: Prisma.ProductOrderByWithRelationInput = {};
     switch (sortBy) {
       case 'newest':
         orderBy = { createdAt: 'desc' };

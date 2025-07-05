@@ -9,11 +9,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@repo/design-system/components/ui/dialog';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Input } from '@repo/design-system/components/ui/input';
-import { Label } from '@repo/design-system/components/ui/label';
-import { Switch } from '@repo/design-system/components/ui/switch';
+} from '@repo/design-system/components';
+import { Button } from '@repo/design-system/components';
+import { Input } from '@repo/design-system/components';
+import { Label } from '@repo/design-system/components';
+import { Switch } from '@repo/design-system/components';
 import { toast } from '@/components/toast';
 
 interface SavedSearchDialogProps {

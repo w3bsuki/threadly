@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { database } from '@repo/database';
 import { generalApiLimit, checkRateLimit } from '@repo/security';
 import { getCacheService } from '@repo/cache';
-import { logError } from '@repo/observability/error';
+import { logError } from '@repo/observability/server';
 
 // Initialize cache service
 const cache = getCacheService({

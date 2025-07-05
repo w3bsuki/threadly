@@ -5,12 +5,12 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from '@repo/design-system/components/ui/avatar';
+} from '@repo/design-system/components';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from '@repo/design-system/components/ui/tooltip';
+} from '@repo/design-system/components';
 
 type PresenceAvatarProps = {
   info?: Liveblocks['UserMeta']['info'];

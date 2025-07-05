@@ -1,5 +1,5 @@
 import { ProductGridSkeleton } from '@/components/skeletons';
-import { Skeleton } from '@repo/design-system/components/ui/skeleton';
+import { Skeleton } from '@repo/design-system/components';
 
 export default function Loading() {
   return (

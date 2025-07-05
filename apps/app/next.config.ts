@@ -1,15 +1,25 @@
 import { env } from '@/env';
 import { withToolbar } from '@repo/feature-flags/lib/toolbar';
 import { config, withAnalyzer } from '@repo/next-config';
-// import { withLogging, withSentry } from '@repo/observability/next-config';
+import { withLogging, withSentry } from '@repo/observability/next-config';
 import type { NextConfig } from 'next';
 
-// Temporarily disable logging and sentry to fix build error
+// Start with base configuration
 let nextConfig: NextConfig = withToolbar(config);
 
-// if (env.VERCEL) {
-//   nextConfig = withSentry(nextConfig);
-// }
+// Enable Sentry for error tracking and performance monitoring
+try {
+  nextConfig = withSentry(nextConfig);
+} catch (error) {
+  console.warn('Sentry configuration failed, continuing without Sentry:', error);
+}
+
+// Enable logging for better observability
+try {
+  nextConfig = withLogging(nextConfig);
+} catch (error) {
+  console.warn('Logging configuration failed, continuing without enhanced logging:', error);
+}
 
 if (env.ANALYZE === 'true') {
   nextConfig = withAnalyzer(nextConfig);

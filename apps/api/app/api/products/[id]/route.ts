@@ -1,11 +1,11 @@
 import { auth } from '@repo/auth/server';
-import { database } from '@repo/database';
+import { database, type Prisma } from '@repo/database';
 import { getCacheService } from '@repo/cache';
 import { generalApiLimit, checkRateLimit } from '@repo/security';
 import { searchIndexing } from '@/lib/search-init';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { logError } from '@repo/observability/error';
+import { logError } from '@repo/observability/server';
 import { 
   updateProductSchema,
   productConditionSchema,
@@ -318,7 +318,7 @@ export async function PUT(
     }
 
     // Sanitize and prepare update data
-    const updateData: any = {};
+    const updateData: Prisma.ProductUpdateInput = {};
     
     // Only include fields that were provided and sanitize them
     if (validatedData.title !== undefined) {

@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@repo/design-system/components/ui/sheet';
-import { Badge } from '@repo/design-system/components/ui/badge';
-import { Separator } from '@repo/design-system/components/ui/separator';
+import { Button } from '@repo/design-system/components';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
+import { Separator } from '@repo/design-system/components';
 import { 
   Home, 
   Search, 
@@ -15,11 +15,14 @@ import {
   Grid3X3,
   SlidersHorizontal,
   X,
-  ChevronUp
+  ChevronUp,
+  Plus,
+  Crown
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@repo/design-system/lib/utils';
+import { env } from '@/env';
 
 interface BottomNavMobileProps {
   cartCount?: number;
@@ -40,6 +43,13 @@ const navItems = [
     activePattern: /^\/products/
   },
   { 
+    icon: Grid3X3, 
+    label: 'Categories', 
+    href: '#',
+    isModal: true,
+    activePattern: /^\/categories/
+  },
+  { 
     icon: Heart, 
     label: 'Saved', 
     href: '/favorites',
@@ -50,13 +60,32 @@ const navItems = [
     label: 'Cart', 
     href: '/cart',
     activePattern: /^\/cart/
-  },
-  { 
-    icon: User, 
-    label: 'Account', 
-    href: '/account',
-    activePattern: /^\/account/
   }
+];
+
+const categories = [
+  { name: "All", href: "/", icon: "🛍️" },
+  { name: "Women", href: "/women", icon: "👗" },
+  { name: "Men", href: "/men", icon: "👔" },
+  { name: "Kids", href: "/kids", icon: "👶" },
+  { name: "Unisex", href: "/unisex", icon: "👕" },
+  { name: "Designer", href: "/designer", isDesigner: true, icon: "👑" },
+];
+
+const subCategories = [
+  { name: "T-shirts", icon: "👕" },
+  { name: "Shirts", icon: "👔" },
+  { name: "Jackets", icon: "🧥" },
+  { name: "Dresses", icon: "👗" },
+  { name: "Jeans", icon: "👖" },
+  { name: "Sweaters", icon: "🧶" },
+  { name: "Coats", icon: "🧥" },
+  { name: "Sneakers", icon: "👟" },
+  { name: "Boots", icon: "🥾" },
+  { name: "Bags", icon: "👜" },
+  { name: "Watches", icon: "⌚" },
+  { name: "Jewelry", icon: "💎" },
+  { name: "Belts", icon: "👒" }
 ];
 
 const filterCategories = [
@@ -91,9 +120,8 @@ const sizes = [
 
 export function BottomNavMobile({ cartCount = 0, savedCount = 0 }: BottomNavMobileProps) {
   const pathname = usePathname();
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState({
     category: 'All Categories',
     priceRange: '',
@@ -101,23 +129,8 @@ export function BottomNavMobile({ cartCount = 0, savedCount = 0 }: BottomNavMobi
     sizes: [] as string[]
   });
 
-  // Hide/show bottom nav on scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsVisible(false); // Hide when scrolling down
-      } else {
-        setIsVisible(true); // Show when scrolling up
-      }
-      
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  // Bottom nav should always be visible - remove scroll handling
+  // The top section handles hide-on-scroll, bottom nav stays fixed
 
   const handleSizeToggle = (size: string) => {
     setSelectedFilters(prev => ({
@@ -146,16 +159,99 @@ export function BottomNavMobile({ cartCount = 0, savedCount = 0 }: BottomNavMobi
     <>
       {/* Bottom Navigation */}
       <nav 
-        className={cn(
-          "fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 md:hidden transition-transform duration-300",
-          isVisible ? "translate-y-0" : "translate-y-full"
-        )}
+        className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 md:hidden"
       >
         <div className="grid grid-cols-5 h-16">
           {navItems.map((item) => {
             const isActive = item.activePattern.test(pathname);
             const Icon = item.icon;
             
+            if (item.isModal && item.label === 'Categories') {
+              return (
+                <Sheet key={item.label} open={isCategoriesOpen} onOpenChange={setIsCategoriesOpen}>
+                  <SheetTrigger asChild>
+                    <button
+                      className={cn(
+                        "flex flex-col items-center justify-center space-y-1 text-xs transition-colors",
+                        "min-h-[44px] min-w-[44px] p-2", // Ensure minimum touch target size
+                        "hover:bg-gray-50 active:bg-gray-100 rounded-lg mx-1",
+                        isActive 
+                          ? "text-black font-medium" 
+                          : "text-gray-500 hover:text-gray-700"
+                      )}
+                      aria-label={item.label}
+                    >
+                      <div className="relative">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <span className="text-[10px] leading-none max-w-full truncate">{item.label}</span>
+                    </button>
+                  </SheetTrigger>
+                  
+                  <SheetContent side="bottom" className="h-[75vh] rounded-t-2xl">
+                    <SheetHeader className="pb-4">
+                      <SheetTitle className="text-xl font-semibold">
+                        Categories
+                      </SheetTitle>
+                      <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto" />
+                    </SheetHeader>
+
+                    <div className="space-y-6 pb-6 overflow-y-auto">
+                      {/* Main Categories */}
+                      <div>
+                        <h3 className="font-medium text-gray-900 mb-3">Shop by Category</h3>
+                        <div className="grid grid-cols-2 gap-3">
+                          {categories.map((category) => (
+                            <Link
+                              key={category.name}
+                              href={category.href}
+                              onClick={() => setIsCategoriesOpen(false)}
+                            >
+                              <Button
+                                variant="outline"
+                                size="lg"
+                                className={cn(
+                                  "w-full h-12 justify-start text-left",
+                                  category.isDesigner && "border-amber-400 text-amber-700 bg-gradient-to-r from-amber-50 to-yellow-50"
+                                )}
+                              >
+                                <span className="mr-2 text-lg">{category.icon}</span>
+                                {category.name}
+                              </Button>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      {/* Subcategories */}
+                      <div>
+                        <h3 className="font-medium text-gray-900 mb-3">Quick Browse</h3>
+                        <div className="flex flex-wrap gap-2">
+                          {subCategories.map((subCategory) => (
+                            <Link
+                              key={subCategory.name}
+                              href={`/categories/items/${subCategory.name.toLowerCase()}`}
+                              onClick={() => setIsCategoriesOpen(false)}
+                            >
+                              <Badge 
+                                variant="outline" 
+                                className="text-sm py-2 px-3 hover:bg-gray-50 flex items-center gap-1"
+                              >
+                                <span className="text-xs">{subCategory.icon}</span>
+                                {subCategory.name}
+                              </Badge>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              );
+            }
+
             return (
               <Link
                 key={item.href}
@@ -197,21 +293,35 @@ export function BottomNavMobile({ cartCount = 0, savedCount = 0 }: BottomNavMobi
         </div>
       </nav>
 
-      {/* Filter Floating Action Button */}
-      {(pathname.includes('/products') || pathname === '/') && (
+      {/* Contextual Floating Action Button */}
+      {pathname === '/' ? (
+        /* Sell FAB on Home page */
+        <Link href={`${env.NEXT_PUBLIC_APP_URL}/selling/new`}>
+          <Button
+            className={cn(
+              "fixed bottom-20 right-4 z-30 h-12 w-12 rounded-full shadow-lg bg-black text-white hover:bg-gray-800 md:hidden",
+              "min-h-[44px] min-w-[44px]", // Ensure minimum touch target
+              "active:scale-95 active:bg-gray-700" // Better touch feedback
+            )}
+            aria-label="Start selling"
+          >
+            <Plus className="h-5 w-5" />
+          </Button>
+        </Link>
+      ) : (pathname.includes('/products') || pathname.includes('/search')) && (
+        /* Filter FAB on Browse pages */
         <Sheet open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
           <SheetTrigger asChild>
             <Button
               className={cn(
-                "fixed bottom-20 right-4 z-30 h-14 w-14 rounded-full shadow-lg bg-black text-white hover:bg-gray-800 md:hidden transition-transform duration-300",
+                "fixed bottom-20 right-4 z-30 h-12 w-12 rounded-full shadow-lg bg-black text-white hover:bg-gray-800 md:hidden",
                 "min-h-[44px] min-w-[44px]", // Ensure minimum touch target
-                "active:scale-95 active:bg-gray-700", // Better touch feedback
-                isVisible ? "translate-y-0" : "translate-y-16"
+                "active:scale-95 active:bg-gray-700" // Better touch feedback
               )}
               aria-label="Open filters"
             >
               <div className="relative">
-                <Filter className="h-6 w-6" />
+                <Filter className="h-5 w-5" />
                 {hasActiveFilters && (
                   <div className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full" />
                 )}

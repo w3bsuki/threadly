@@ -13,23 +13,23 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@repo/design-system": "workspace:*",
-    "@repo/database": "workspace:*",
-    "@repo/auth": "workspace:*",
     "@repo/analytics": "workspace:*",
-    "recharts": "^2.8.0",
-    "date-fns": "^2.30.0",
+    "@repo/auth": "workspace:*",
+    "@repo/database": "workspace:*",
+    "@repo/design-system": "workspace:*",
     "clsx": "^2.0.0",
+    "date-fns": "^2.30.0",
     "lucide-react": "^0.294.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "recharts": "^2.8.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "typescript": "^5.3.0",
-    "tsup": "^8.0.0"
+    "@types/react": "^18.3.23",
+    "@types/react-dom": "^18.3.7",
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.0"
   },
   "exports": {
     ".": {

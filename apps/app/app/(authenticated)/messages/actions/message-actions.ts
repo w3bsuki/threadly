@@ -8,8 +8,8 @@ import { sanitizeForDisplay } from '@repo/validation/sanitize';
 // Email imports will be dynamically imported when needed
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { log } from '@repo/observability/log';
-import { logError } from '@repo/observability/error';
+import { log } from '@repo/observability/server';
+import { logError } from '@repo/observability/server';
 
 // Services will be initialized inside functions to avoid build-time issues
 

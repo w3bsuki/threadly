@@ -2,9 +2,9 @@ import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Badge } from '@repo/design-system/components/ui/badge';
+import { Button } from '@repo/design-system/components';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
 import Image from 'next/image';
 import { 
   PlusIcon, 
@@ -16,8 +16,8 @@ import {
   EyeIcon,
   HeartIcon
 } from 'lucide-react';
-import { log } from '@repo/observability/log';
-import { logError } from '@repo/observability/error';
+import { log } from '@repo/observability/server';
+import { logError } from '@repo/observability/server';
 
 const title = 'Dashboard - Threadly';
 const description = 'Manage your listings, orders, and account.';

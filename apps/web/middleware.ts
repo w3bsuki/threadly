@@ -1,6 +1,6 @@
 import { env } from '@/env';
 import { internationalizationMiddleware } from '@repo/internationalization/middleware';
-import { parseError } from '@repo/observability/error';
+import { parseError } from '@repo/observability/server';
 import { secure } from '@repo/security';
 import {
   noseconeMiddleware,

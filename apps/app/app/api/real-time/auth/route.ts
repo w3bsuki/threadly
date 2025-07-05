@@ -1,8 +1,8 @@
 import { currentUser } from '@repo/auth/server';
 import { getPusherServer } from '@repo/real-time/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { log } from '@repo/observability/log';
-import { logError } from '@repo/observability/error';
+import { log } from '@repo/observability/server';
+import { logError } from '@repo/observability/server';
 
 // Initialize on first request to avoid build-time errors
 let pusherServer: any;

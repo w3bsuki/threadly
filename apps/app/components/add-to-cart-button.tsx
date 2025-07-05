@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useCartStore, type CartItem } from '@/lib/stores/cart-store';
-import { Button } from '@repo/design-system/components/ui/button';
+import { Button } from '@repo/design-system/components';
 import { ShoppingCart, Check } from 'lucide-react';
 import { cn } from '@repo/design-system/lib/utils';
 import { useMobileTouch } from '@repo/design-system';

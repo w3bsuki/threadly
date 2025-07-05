@@ -1,7 +1,7 @@
 'use client';
 
-import { Alert, AlertDescription, AlertTitle } from '@repo/design-system/components/ui/alert';
-import { Button } from '@repo/design-system/components/ui/button';
+import { Alert, AlertDescription, AlertTitle } from '@repo/design-system/components';
+import { Button } from '@repo/design-system/components';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 
 export default function Error({

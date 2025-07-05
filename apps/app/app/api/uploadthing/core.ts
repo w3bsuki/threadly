@@ -1,8 +1,8 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 import { currentUser } from "@repo/auth/server";
-import { log } from "@repo/observability/log";
-import { logError } from "@repo/observability/error";
+import { log } from "@repo/observability/server";
+import { logError } from "@repo/observability/server";
 
 const f = createUploadthing({
   /**

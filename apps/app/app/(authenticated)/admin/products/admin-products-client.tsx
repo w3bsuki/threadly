@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Badge } from '@repo/design-system/components/ui/badge';
-import { Input } from '@repo/design-system/components/ui/input';
-import { Checkbox } from '@repo/design-system/components/ui/checkbox';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Button } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
+import { Input } from '@repo/design-system/components';
+import { Checkbox } from '@repo/design-system/components';
 import { 
   Search,
   Trash2,
@@ -18,7 +18,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@repo/design-system/components/ui/select';
+} from '@repo/design-system/components';
 import Image from 'next/image';
 import { ProductActions } from './product-actions';
 import { bulkUpdateProducts } from './actions';

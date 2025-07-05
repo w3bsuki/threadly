@@ -4,8 +4,8 @@ import { database } from '@repo/database';
 import { stripe, calculatePlatformFee, isStripeConfigured } from '@repo/payments';
 import { paymentRateLimit, checkRateLimit } from '@repo/security';
 import { z } from 'zod';
-import { log } from '@repo/observability/log';
-import { logError } from '@repo/observability/error';
+import { log } from '@repo/observability/server';
+import { logError } from '@repo/observability/server';
 
 const createCheckoutSessionSchema = z.object({
   productId: z.string().min(1),

@@ -22,7 +22,7 @@ import {
   
   // Types
   z,
-} from '@repo/validation';
+} from './index';
 
 // Example 1: Validate a product submission
 const validateProduct = () => {

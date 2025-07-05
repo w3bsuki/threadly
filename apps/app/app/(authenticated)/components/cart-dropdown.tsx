@@ -1,10 +1,10 @@
 'use client';
 
 import { useCartStore } from '@/lib/stores/cart-store';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@repo/design-system/components/ui/sheet';
-import { Badge } from '@repo/design-system/components/ui/badge';
-import { Separator } from '@repo/design-system/components/ui/separator';
+import { Button } from '@repo/design-system/components';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
+import { Separator } from '@repo/design-system/components';
 import { ShoppingCart, Minus, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';

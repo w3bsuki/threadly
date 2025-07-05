@@ -56,6 +56,24 @@ export interface SearchResponse {
 // Use local API endpoint for search
 const API_BASE = '';
 
+// Product type definition
+interface Product {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  condition: string;
+  brand?: string;
+  size?: string;
+  color?: string;
+  images: { imageUrl: string }[];
+  category?: { name: string };
+  seller: { firstName?: string; lastName?: string };
+  views?: number;
+  _count?: { favorites?: number };
+  createdAt: string;
+}
+
 export function useSearch(initialFilters: SearchFilters = {}) {
   const [filters, setFilters] = useState<SearchFilters>(initialFilters);
   const [results, setResults] = useState<SearchResult | null>(null);
@@ -115,7 +133,7 @@ export function useSearch(initialFilters: SearchFilters = {}) {
       
       // Transform to expected format
       const searchResult: SearchResult = {
-        hits: products.map((p: any) => ({
+        hits: products.map((p: Product) => ({
           id: p.id,
           title: p.title,
           description: p.description,
@@ -124,7 +142,7 @@ export function useSearch(initialFilters: SearchFilters = {}) {
           brand: p.brand,
           size: p.size,
           color: p.color,
-          images: p.images.map((img: any) => img.imageUrl),
+          images: p.images.map((img: { imageUrl: string }) => img.imageUrl),
           categoryName: p.category?.name || 'Other',
           sellerName: `${p.seller.firstName || ''} ${p.seller.lastName || ''}`.trim() || 'Anonymous',
           sellerRating: 4.5, // Default for now

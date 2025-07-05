@@ -1,23 +1,18 @@
 'use client';
 
 import { useCartStore } from '@/lib/stores/cart-store';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Input } from '@repo/design-system/components/ui/input';
-import { Label } from '@repo/design-system/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@repo/design-system/components/ui/radio-group';
-import { Separator } from '@repo/design-system/components/ui/separator';
+import { Button } from '@repo/design-system/components';
+import { Input } from '@repo/design-system/components';
+import { Label } from '@repo/design-system/components';
+import { RadioGroup, RadioGroupItem } from '@repo/design-system/components';
+import { Separator } from '@repo/design-system/components';
 import { ArrowLeft, CreditCard, Truck, Shield, Lock } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount / 100);
-};
+import { formatCurrency } from '@/lib/utils/currency';
 
 export const CheckoutContent = () => {
   const router = useRouter();

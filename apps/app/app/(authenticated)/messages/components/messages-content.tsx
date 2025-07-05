@@ -3,14 +3,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useChannel, useTypingIndicator } from '@repo/real-time/client';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Badge } from '@repo/design-system/components/ui/badge';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Input } from '@repo/design-system/components/ui/input';
-import { Avatar, AvatarFallback, AvatarImage } from '@repo/design-system/components/ui/avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/design-system/components/ui/tabs';
-import { ScrollArea } from '@repo/design-system/components/ui/scroll-area';
-import { Separator } from '@repo/design-system/components/ui/separator';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
+import { Button } from '@repo/design-system/components';
+import { Input } from '@repo/design-system/components';
+import { Avatar, AvatarFallback, AvatarImage } from '@repo/design-system/components';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/design-system/components';
+import { ScrollArea } from '@repo/design-system/components';
+import { Separator } from '@repo/design-system/components';
 import { 
   MessageCircle, 
   Send, 

@@ -3,10 +3,10 @@ import { database } from '@repo/database';
 import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { Header } from '../components/header';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Badge } from '@repo/design-system/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@repo/design-system/components/ui/avatar';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Button } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
+import { Avatar, AvatarFallback, AvatarImage } from '@repo/design-system/components';
 import { 
   Users, 
   UserPlus, 

@@ -4,7 +4,7 @@ import { messageRateLimit, checkRateLimit } from '@repo/security';
 import { sanitizeForDisplay } from '@repo/validation/sanitize';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { logError } from '@repo/observability/error';
+import { logError } from '@repo/observability/server';
 
 // Schema for listing messages
 const listMessagesSchema = z.object({

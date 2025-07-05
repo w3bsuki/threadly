@@ -2,8 +2,8 @@
 
 import { currentUser } from '@repo/auth/server';
 import { redirect } from 'next/navigation';
-import { log } from '@repo/observability/log';
-import { logError } from '@repo/observability/error';
+import { log } from '@repo/observability/server';
+import { logError } from '@repo/observability/server';
 
 export async function createProductSimple(input: any) {
   log.info('Simple create product called with:', input);

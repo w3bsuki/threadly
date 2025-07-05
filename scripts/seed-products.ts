@@ -11,7 +11,6 @@ const prisma = new PrismaClient({
 });
 
 async function seedProducts() {
-  console.log('🌱 Seeding sample products...');
 
   try {
     // First, create a test user if it doesn't exist
@@ -27,7 +26,6 @@ async function seedProducts() {
       },
     });
 
-    console.log('✅ Test user ready');
 
     // Get some categories
     const womenClothing = await prisma.category.findFirst({
@@ -115,14 +113,11 @@ async function seedProducts() {
           }
         },
       });
-      console.log(`✅ Created product: ${product.title}`);
     }
 
-    console.log('\n🎉 Sample products seeded successfully!');
     
     // Show summary
     const totalProducts = await prisma.product.count();
-    console.log(`\n📊 Total products in database: ${totalProducts}`);
 
   } catch (error) {
     console.error('❌ Error seeding products:', error);

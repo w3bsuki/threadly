@@ -4,7 +4,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@repo/design-system/components/ui/popover';
+} from '@repo/design-system/components';
 
 /**
  * Displays rich content in a portal, triggered by a button.

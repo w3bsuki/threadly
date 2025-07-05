@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@repo/design-system/components/ui/button';
+import { Button } from '@repo/design-system/components';
 import { fonts } from '@repo/design-system/lib/fonts';
 import { captureException } from '@sentry/nextjs';
 import type NextError from 'next/error';

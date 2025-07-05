@@ -8,7 +8,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from '@repo/design-system/components/ui/pagination';
+} from '@repo/design-system/components';
 
 /**
  * Pagination with page navigation, next and previous links.

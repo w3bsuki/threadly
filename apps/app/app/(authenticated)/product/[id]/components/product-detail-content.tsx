@@ -3,13 +3,13 @@
 import { useState, useTransition } from 'react';
 import Link from 'next/link';
 import { ProductImageGallery } from '@repo/design-system/components/marketplace/product-image';
-import { LazyImage } from '@repo/design-system/components/ui/lazy-image';
+import { LazyImage } from '@repo/design-system/components';
 import { useRouter } from 'next/navigation';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Badge } from '@repo/design-system/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@repo/design-system/components/ui/avatar';
-import { Separator } from '@repo/design-system/components/ui/separator';
+import { Button } from '@repo/design-system/components';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
+import { Avatar, AvatarFallback, AvatarImage } from '@repo/design-system/components';
+import { Separator } from '@repo/design-system/components';
 import { toast } from '@/components/toast';
 import { ReportDialog } from '@/components/report-dialog';
 import {
@@ -36,7 +36,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@repo/design-system/components/ui/dropdown-menu';
+} from '@repo/design-system/components';
 import { cn } from '@repo/design-system/lib/utils';
 
 interface ProductDetailContentProps {

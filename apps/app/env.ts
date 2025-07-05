@@ -17,6 +17,7 @@ import { keys as webhooks } from '@repo/webhooks/keys';
 import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 
+// Seller dashboard app environment configuration - Full feature set
 export const env = createEnv({
   extends: [
     auth(),
@@ -36,13 +37,24 @@ export const env = createEnv({
     storage(),
     webhooks(),
   ],
-  server: {},
+  server: {
+    // Seller dashboard server variables
+    PORT: process.env.NODE_ENV === 'production' 
+      ? z.string().optional()
+      : z.string().default('3000'),
+  },
   client: {
+    // Client-side variables for seller functionality
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().startsWith('pk_').optional(),
     NEXT_PUBLIC_APP_URL: z.string().url().optional(),
+    NEXT_PUBLIC_API_URL: z.string().url().optional(),
+    NEXT_PUBLIC_WEB_URL: z.string().url().optional(),
   },
   runtimeEnv: {
+    PORT: process.env.PORT || '3000',
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    NEXT_PUBLIC_WEB_URL: process.env.NEXT_PUBLIC_WEB_URL,
   },
 });

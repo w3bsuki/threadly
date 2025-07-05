@@ -6,13 +6,13 @@ import { useState, useEffect, useRef } from "react";
 import { useCartStore } from "../../../../../lib/stores/cart-store";
 import { useFavorites } from "../../../../../lib/hooks/use-favorites";
 import { useAnalyticsEvents } from "@repo/analytics";
-import { Badge } from "@repo/design-system/components/ui/badge";
-import { Button } from "@repo/design-system/components/ui/button";
+import { Badge } from '@repo/design-system/components';
+import { Button } from '@repo/design-system/components';
 import { SignInCTA } from "../../../../../components/sign-in-cta";
-import { Card, CardContent } from "@repo/design-system/components/ui/card";
+import { Card, CardContent } from '@repo/design-system/components';
 import { toast } from "@repo/design-system";
 import { useRouter } from "next/navigation";
-import { Separator } from "@repo/design-system/components/ui/separator";
+import { Separator } from '@repo/design-system/components';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -20,7 +20,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@repo/design-system/components/ui/breadcrumb";
+} from '@repo/design-system/components';
 import {
   Heart,
   Share2,
@@ -37,14 +37,8 @@ import {
   Truck,
 } from "lucide-react";
 import { cn } from "@repo/design-system/lib/utils";
-import { logError } from '@repo/observability/error';
-
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount); // Price is already in dollars
-};
+// Removed server-only import from client component
+import { formatCurrency } from '@/lib/utils/currency';
 
 interface Product {
   id: string;
@@ -147,7 +141,7 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
   const handleToggleFavorite = async () => {
     const result = await toggleFavorite(product.id);
     if (!result.success) {
-      logError('Failed to toggle favorite:', result.error);
+      console.error('Failed to toggle favorite:', result.error);
     } else {
       // Track favorite action
       trackProductFavorite({

@@ -2,24 +2,24 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Input } from '@repo/design-system/components/ui/input';
-import { Label } from '@repo/design-system/components/ui/label';
-import { Separator } from '@repo/design-system/components/ui/separator';
-import { Badge } from '@repo/design-system/components/ui/badge';
-import { RadioGroup, RadioGroupItem } from '@repo/design-system/components/ui/radio-group';
-import { Checkbox } from '@repo/design-system/components/ui/checkbox';
+import { Button } from '@repo/design-system/components';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Input } from '@repo/design-system/components';
+import { Label } from '@repo/design-system/components';
+import { Separator } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
+import { RadioGroup, RadioGroupItem } from '@repo/design-system/components';
+import { Checkbox } from '@repo/design-system/components';
 import { CreditCard, Truck, Shield, AlertCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components';
 import Image from 'next/image';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { formatCurrency } from '@repo/payments/client';
-import { Alert, AlertDescription } from '@repo/design-system/components/ui/alert';
+import { Alert, AlertDescription } from '@repo/design-system/components';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 

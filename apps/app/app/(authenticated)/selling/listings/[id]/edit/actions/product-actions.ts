@@ -23,8 +23,8 @@ import {
   isAllowedImageUrl,
   isPriceInRange,
 } from '@repo/validation/validators';
-import { log } from '@repo/observability/log';
-import { logError } from '@repo/observability/error';
+import { log } from '@repo/observability/server';
+import { logError } from '@repo/observability/server';
 
 const updateProductSchema = z.object({
   title: z.string()

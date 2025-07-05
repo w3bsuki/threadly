@@ -9,7 +9,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@repo/design-system/components/ui/sheet';
+} from '@repo/design-system/components';
 
 /**
  * Extends the Dialog component to display content that complements the main

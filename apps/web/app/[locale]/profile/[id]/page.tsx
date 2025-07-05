@@ -2,9 +2,9 @@ import { database } from '@repo/database';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { Star, MapPin, Package, Calendar, Heart } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Badge } from '@repo/design-system/components/ui/badge';
-import { Button } from '@repo/design-system/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
+import { Button } from '@repo/design-system/components';
 import Link from 'next/link';
 
 interface Props {

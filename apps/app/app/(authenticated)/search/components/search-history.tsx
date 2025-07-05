@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button } from '@repo/design-system/components/ui/button';
+import { Button } from '@repo/design-system/components';
 import { Clock, X, TrendingUp, Search, Loader2 } from 'lucide-react';
 import { toast } from '@/components/toast';
 

@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Textarea } from '@repo/design-system/components/ui/textarea';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components/ui/form';
-import { Alert, AlertDescription } from '@repo/design-system/components/ui/alert';
+import { Button } from '@repo/design-system/components';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Textarea } from '@repo/design-system/components';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components';
+import { Alert, AlertDescription } from '@repo/design-system/components';
 import { Star, AlertCircle } from 'lucide-react';
 import { createReview } from '../actions/create-review';
 

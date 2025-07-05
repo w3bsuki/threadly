@@ -1,10 +1,10 @@
-import { Button } from '@repo/design-system/components/ui/button';
+import { Button } from '@repo/design-system/components';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { database } from '@repo/database';
 import { getCacheService } from '@repo/cache';
-import { logError } from '@repo/observability/error';
+import { logError } from '@repo/observability/server';
 
 const colorSchemes = [
   'from-pink-500 to-rose-500',

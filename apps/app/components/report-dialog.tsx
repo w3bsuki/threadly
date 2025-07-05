@@ -9,11 +9,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@repo/design-system/components/ui/dialog';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Label } from '@repo/design-system/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@repo/design-system/components/ui/radio-group';
-import { Textarea } from '@repo/design-system/components/ui/textarea';
+} from '@repo/design-system/components';
+import { Button } from '@repo/design-system/components';
+import { Label } from '@repo/design-system/components';
+import { RadioGroup, RadioGroupItem } from '@repo/design-system/components';
+import { Textarea } from '@repo/design-system/components';
 import { toast } from '@/components/toast';
 
 interface ReportDialogProps {

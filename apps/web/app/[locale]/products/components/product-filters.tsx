@@ -2,17 +2,17 @@
 
 import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
-import { Label } from "@repo/design-system/components/ui/label";
-import { Checkbox } from "@repo/design-system/components/ui/checkbox";
-import { Slider } from "@repo/design-system/components/ui/slider";
-import { Button } from "@repo/design-system/components/ui/button";
-import { Input } from "@repo/design-system/components/ui/input";
+import { Label } from '@repo/design-system/components';
+import { Checkbox } from '@repo/design-system/components';
+import { Slider } from '@repo/design-system/components';
+import { Button } from '@repo/design-system/components';
+import { Input } from '@repo/design-system/components';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@repo/design-system/components/ui/accordion";
+} from '@repo/design-system/components';
 
 interface Category {
   id: string;

@@ -5,7 +5,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@repo/design-system/components/ui/tabs';
+} from '@repo/design-system/components';
 
 /**
  * A set of layered sections of content—known as tab panels—that are displayed

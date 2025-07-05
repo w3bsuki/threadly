@@ -5,7 +5,7 @@ export const Footer = () => {
     <footer className="bg-white border-t border-gray-200 mt-16">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Main Footer Links */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <nav aria-label="Footer navigation" className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>
             <h3 className="font-semibold text-gray-900 mb-3">Threadly</h3>
             <ul className="space-y-2">
@@ -45,7 +45,7 @@ export const Footer = () => {
               <li><Link href="/help/returns" className="text-sm text-gray-600 hover:text-gray-900">Returns</Link></li>
             </ul>
           </div>
-        </div>
+        </nav>
 
         {/* Bottom Section */}
         <div className="mt-8 pt-8 border-t border-gray-200 flex flex-col md:flex-row md:items-center md:justify-between">

@@ -59,7 +59,6 @@ const categories = [
 ];
 
 async function seedCategories() {
-  console.log('🌱 Seeding categories...');
 
   for (const category of categories) {
     // Create parent category
@@ -72,7 +71,6 @@ async function seedCategories() {
       },
     });
 
-    console.log(`✅ Created parent category: ${parent.name}`);
 
     // Create child categories
     for (const child of category.children) {
@@ -86,11 +84,9 @@ async function seedCategories() {
         },
       });
 
-      console.log(`  ↳ Created child category: ${childCategory.name}`);
     }
   }
 
-  console.log('🎉 Categories seeded successfully!');
 }
 
 async function main() {

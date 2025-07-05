@@ -5,7 +5,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@repo/design-system/components/ui/accordion';
+} from '@repo/design-system/components';
 
 /**
  * A vertically stacked set of interactive headings that each reveal a section

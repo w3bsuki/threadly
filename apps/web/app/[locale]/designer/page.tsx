@@ -1,6 +1,6 @@
 import { ProductGrid } from '../(home)/components/product-grid';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Badge } from '@repo/design-system/components/ui/badge';
+import { Button } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
 import { Crown, Shield, Star, Award, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';

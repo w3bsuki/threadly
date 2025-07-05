@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Input } from '@repo/design-system/components/ui/input';
-import { Separator } from '@repo/design-system/components/ui/separator';
-import { Badge } from '@repo/design-system/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Button } from '@repo/design-system/components';
+import { Input } from '@repo/design-system/components';
+import { Separator } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
 import { 
   MessageCircle, 
   Search, 

@@ -3,7 +3,7 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { redirect } from 'next/navigation';
-import { logError } from '@repo/observability/error';
+import { logError } from '@repo/observability/server';
 
 export async function testFullProductCreation() {
   try {

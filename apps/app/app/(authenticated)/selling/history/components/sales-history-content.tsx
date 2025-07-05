@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Badge } from '@repo/design-system/components/ui/badge';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/design-system/components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@repo/design-system/components/ui/table';
-import { Avatar, AvatarFallback, AvatarImage } from '@repo/design-system/components/ui/avatar';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
+import { Button } from '@repo/design-system/components';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/design-system/components';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@repo/design-system/components';
+import { Avatar, AvatarFallback, AvatarImage } from '@repo/design-system/components';
 import { CalendarIcon, DollarSign, Package, TrendingUp, ShoppingBag, Star, ExternalLink } from 'lucide-react';
 import { format } from 'date-fns';
 import Link from 'next/link';

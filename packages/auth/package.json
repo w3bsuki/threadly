@@ -7,20 +7,43 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.20.0",
-    "@clerk/themes": "^2.2.46",
+    "@clerk/nextjs": "^6.23.3",
+    "@clerk/themes": "^2.2.54",
+    "@repo/observability": "workspace:*",
     "@t3-oss/env-nextjs": "^0.13.4",
     "next-themes": "^0.4.6",
     "react": "^19.1.0",
     "server-only": "^0.0.1",
     "zod": "^3.25.28"
   },
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "default": "./index.ts"
+    },
+    "./server": {
+      "types": "./server.ts",
+      "default": "./server.ts"
+    },
+    "./client": {
+      "types": "./client.tsx",
+      "default": "./client.tsx"
+    },
+    "./keys": {
+      "types": "./keys.ts",
+      "default": "./keys.ts"
+    },
+    "./middleware": {
+      "types": "./middleware.ts",
+      "default": "./middleware.ts"
+    }
+  },
   "devDependencies": {
-    "@clerk/types": "^4.59.1",
+    "@clerk/types": "^4.63.0",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "22.15.21",
     "@types/react": "19.1.5",
-    "@types/react-dom": "^19.1.5",
+    "@types/react-dom": "^19.1.6",
     "typescript": "^5.8.3"
   }
 }

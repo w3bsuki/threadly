@@ -29,7 +29,7 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from '@repo/design-system/components/ui/avatar';
+} from '@repo/design-system/components';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -37,12 +37,12 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@repo/design-system/components/ui/breadcrumb';
+} from '@repo/design-system/components';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@repo/design-system/components/ui/collapsible';
+} from '@repo/design-system/components';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,8 +52,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from '@repo/design-system/components/ui/dropdown-menu';
-import { Separator } from '@repo/design-system/components/ui/separator';
+} from '@repo/design-system/components';
+import { Separator } from '@repo/design-system/components';
 import {
   Sidebar,
   SidebarContent,
@@ -72,7 +72,7 @@ import {
   SidebarProvider,
   SidebarRail,
   SidebarTrigger,
-} from '@repo/design-system/components/ui/sidebar';
+} from '@repo/design-system/components';
 import { useState } from 'react';
 
 const meta: Meta<typeof Sidebar> = {

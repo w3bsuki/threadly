@@ -9,7 +9,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from '@repo/design-system/components/ui/drawer';
+} from '@repo/design-system/components';
 
 /**
  * A drawer component for React.

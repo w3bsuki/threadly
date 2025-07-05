@@ -1,14 +1,14 @@
 'use client';
 
 import { UserButton } from '@repo/auth/client';
-import { Button } from '@repo/design-system/components/ui/button';
+import { Button } from '@repo/design-system/components';
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@repo/design-system/components/ui/sheet';
+} from '@repo/design-system/components';
 import { cn } from '@repo/design-system/lib/utils';
 import {
   HomeIcon,

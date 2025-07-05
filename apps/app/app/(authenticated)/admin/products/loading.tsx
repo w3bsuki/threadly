@@ -1,6 +1,6 @@
 import { AdminTableSkeleton } from '@/components/skeletons';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Skeleton } from '@repo/design-system/components/ui/skeleton';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Skeleton } from '@repo/design-system/components';
 
 export default function Loading() {
   return (

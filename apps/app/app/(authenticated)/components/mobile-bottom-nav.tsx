@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from '@repo/design-system/components/ui/button';
-import { Badge } from '@repo/design-system/components/ui/badge';
+import { Button } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
 import { cn } from '@repo/design-system/lib/utils';
 import { 
   Home, 

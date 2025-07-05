@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
 import { BarChart3, TrendingUp, Activity } from 'lucide-react';
 
 interface AnalyticsChartsProps {

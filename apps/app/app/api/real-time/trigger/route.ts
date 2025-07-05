@@ -2,8 +2,8 @@ import { currentUser } from '@repo/auth/server';
 import { getPusherServer } from '@repo/real-time/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { log } from '@repo/observability/log';
-import { logError } from '@repo/observability/error';
+import { log } from '@repo/observability/server';
+import { logError } from '@repo/observability/server';
 
 const triggerSchema = z.object({
   channel: z.string(),

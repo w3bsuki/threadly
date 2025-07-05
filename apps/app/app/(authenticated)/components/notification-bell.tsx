@@ -1,15 +1,15 @@
 'use client';
 
 import { useNotifications } from '@repo/real-time/client';
-import { Button } from '@repo/design-system/components/ui/button';
+import { Button } from '@repo/design-system/components';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@repo/design-system/components/ui/dropdown-menu';
-import { Badge } from '@repo/design-system/components/ui/badge';
+} from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
 import { Bell, Check, CheckCheck } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { NotificationSkeleton } from '@/components/skeletons';

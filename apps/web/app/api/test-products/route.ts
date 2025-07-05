@@ -1,7 +1,7 @@
 import { database } from '@repo/database';
 import { NextResponse } from 'next/server';
-import { log } from '@repo/observability/log';
-import { logError } from '@repo/observability/error';
+import { log } from '@repo/observability/server';
+import { logError } from '@repo/observability/server';
 
 export async function GET() {
   try {

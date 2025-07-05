@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { database } from '@repo/database';
-import { log } from '@repo/observability/log';
-import { logError } from '@repo/observability/error';
+import { log } from '@repo/observability/server';
+import { logError } from '@repo/observability/server';
 
 export async function POST(request: NextRequest) {
   try {

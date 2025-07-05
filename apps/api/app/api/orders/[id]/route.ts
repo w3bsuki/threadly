@@ -1,8 +1,8 @@
-import { database } from '@repo/database';
+import { database, type Prisma } from '@repo/database';
 import { currentUser } from '@repo/auth/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { logError } from '@repo/observability/error';
+import { logError } from '@repo/observability/server';
 
 // Schema for updating an order
 const updateOrderSchema = z.object({
@@ -116,7 +116,7 @@ export async function PUT(
     const validatedData = updateOrderSchema.parse(body);
 
     // Different permissions for different updates
-    const updateData: any = {};
+    const updateData: Prisma.OrderUpdateInput = {};
 
     // Sellers can update shipping info
     if (order.sellerId === user.id) {

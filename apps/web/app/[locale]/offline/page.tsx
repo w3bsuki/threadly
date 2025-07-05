@@ -1,5 +1,5 @@
-import { Button } from '@repo/design-system/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
+import { Button } from '@repo/design-system/components';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/design-system/components';
 import { WifiOff, RefreshCw, Home, Search } from 'lucide-react';
 import Link from 'next/link';
 

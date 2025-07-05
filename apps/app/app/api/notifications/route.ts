@@ -3,8 +3,8 @@ import { database } from '@repo/database';
 import { getNotificationService } from '@repo/real-time/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { log } from '@repo/observability/log';
-import { logError } from '@repo/observability/error';
+import { log } from '@repo/observability/server';
+import { logError } from '@repo/observability/server';
 
 const createNotificationSchema = z.object({
   title: z.string().min(1).max(255),

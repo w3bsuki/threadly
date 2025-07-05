@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@repo/design-system/components/ui/button';
+import { Button } from '@repo/design-system/components';
 import { 
   Dialog,
   DialogContent,
@@ -11,9 +11,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@repo/design-system/components/ui/dialog';
-import { Input } from '@repo/design-system/components/ui/input';
-import { Label } from '@repo/design-system/components/ui/label';
+} from '@repo/design-system/components';
+import { Input } from '@repo/design-system/components';
+import { Label } from '@repo/design-system/components';
 import { Truck, CheckCircle, Package, MessageCircle, Eye } from 'lucide-react';
 import { toast } from '@/components/toast';
 

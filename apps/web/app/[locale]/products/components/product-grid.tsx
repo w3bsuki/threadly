@@ -2,17 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Badge } from "@repo/design-system/components/ui/badge";
-import { Card, CardContent } from "@repo/design-system/components/ui/card";
+import { Badge } from '@repo/design-system/components';
+import { Card, CardContent } from '@repo/design-system/components';
 import { Heart } from "lucide-react";
 import { cn } from "@repo/design-system/lib/utils";
-
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount / 100); // Assuming price is stored in cents
-};
+import { formatCurrency } from "@/lib/utils/currency";
 
 interface Product {
   id: string;

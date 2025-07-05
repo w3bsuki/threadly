@@ -4,7 +4,7 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from '@repo/design-system/components/ui/avatar';
+} from '@repo/design-system/components';
 
 /**
  * An image element with a fallback for representing the user.

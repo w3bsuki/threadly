@@ -7,7 +7,6 @@ if (!process.env.DATABASE_URL) {
 }
 
 async function testCategories() {
-  console.log('🔍 Testing categories...\n');
   
   const prisma = new PrismaClient({
     datasourceUrl: process.env.DATABASE_URL,
@@ -24,9 +23,7 @@ async function testCategories() {
       }
     });
 
-    console.log('📁 All Categories:');
     categories.forEach(cat => {
-      console.log(`  • ID: ${cat.id} | Name: ${cat.name} | Parent: ${cat.parent?.name || 'None'}`);
     });
 
   } catch (error) {

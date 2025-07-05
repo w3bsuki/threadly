@@ -7,7 +7,6 @@ if (!process.env.DATABASE_URL) {
 }
 
 async function fixPlaceholderImages() {
-  console.log('🔍 Checking for placehold.co URLs in the database...\n');
   
   const prisma = new PrismaClient({
     datasourceUrl: process.env.DATABASE_URL,
@@ -31,20 +30,15 @@ async function fixPlaceholderImages() {
       }
     });
 
-    console.log(`📊 Found ${placeholderImages.length} images with placehold.co URLs\n`);
 
     if (placeholderImages.length === 0) {
-      console.log('✅ No placehold.co URLs found in database');
       return;
     }
 
     // Show which products are affected
-    console.log('🔍 Affected products:');
     placeholderImages.forEach(img => {
-      console.log(`  • ${img.product.title} (${img.imageUrl})`);
     });
 
-    console.log('\n🔧 Updating placehold.co URLs to use picsum.photos...\n');
 
     // Update each image to use picsum.photos instead
     let updateCount = 0;
@@ -67,11 +61,9 @@ async function fixPlaceholderImages() {
         data: { imageUrl: newImageUrl }
       });
 
-      console.log(`  ✅ Updated: ${img.product.title} -> ${newImageUrl}`);
       updateCount++;
     }
 
-    console.log(`\n🎉 Successfully updated ${updateCount} product images!`);
 
     // Verify the fix
     const remainingPlaceholders = await prisma.productImage.count({
@@ -83,9 +75,7 @@ async function fixPlaceholderImages() {
     });
 
     if (remainingPlaceholders === 0) {
-      console.log('✅ All placehold.co URLs have been successfully replaced!');
     } else {
-      console.log(`⚠️  Warning: ${remainingPlaceholders} placehold.co URLs still remain`);
     }
 
   } catch (error) {

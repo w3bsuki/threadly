@@ -1,18 +1,13 @@
 'use client';
 
 import { useCartStore } from '@/lib/stores/cart-store';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@repo/design-system/components/ui/sheet';
+import { Button } from '@repo/design-system/components';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@repo/design-system/components';
 import { ShoppingBag, X, Plus, Minus } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount); // Price is already in dollars
-};
+import { formatCurrency } from '@/lib/utils/currency';
 
 export const CartDropdown = () => {
   const { items, isOpen, closeCart, removeItem, updateQuantity, getTotalItems, getTotalPrice } = useCartStore();
@@ -54,9 +49,13 @@ export const CartDropdown = () => {
       <SheetContent className="w-full sm:max-w-md">
         <SheetHeader>
           <SheetTitle className="flex items-center justify-between">
-            <span>Shopping Cart ({itemCount})</span>
+            <span>Shopping Cart <span aria-live="polite" aria-atomic="true">({itemCount} {itemCount === 1 ? 'item' : 'items'})</span></span>
           </SheetTitle>
         </SheetHeader>
+        {/* Screen reader announcement for cart updates */}
+        <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+          {itemCount > 0 ? `Shopping cart contains ${itemCount} ${itemCount === 1 ? 'item' : 'items'}` : 'Shopping cart is empty'}
+        </div>
 
         <div className="mt-6 h-full flex flex-col">
           {items.length === 0 ? (

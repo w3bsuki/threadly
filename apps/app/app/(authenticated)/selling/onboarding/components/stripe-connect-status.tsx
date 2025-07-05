@@ -1,5 +1,5 @@
-import { Badge } from '@repo/design-system/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
+import { Badge } from '@repo/design-system/components';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/design-system/components';
 import { CheckCircle2, AlertCircle, XCircle, Clock, Ban } from 'lucide-react';
 
 type AccountStatus = {

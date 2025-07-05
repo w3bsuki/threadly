@@ -35,9 +35,6 @@
     "@radix-ui/react-toggle": "^1.1.9",
     "@radix-ui/react-toggle-group": "^1.1.10",
     "@radix-ui/react-tooltip": "^1.2.7",
-    "@repo/analytics": "workspace:*",
-    "@repo/auth": "workspace:*",
-    "@repo/observability": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -60,12 +57,36 @@
     "vaul": "^1.1.2",
     "zod": "^3.25.28"
   },
+  "exports": {
+    ".": {
+      "types": "./index.tsx",
+      "default": "./index.tsx"
+    },
+    "./components": {
+      "types": "./components.ts",
+      "default": "./components.ts"
+    },
+    "./lib/utils": {
+      "types": "./lib/utils.ts",
+      "default": "./lib/utils.ts"
+    },
+    "./lib/animations": {
+      "types": "./lib/animations.ts",
+      "default": "./lib/animations.ts"
+    },
+    "./hooks": {
+      "types": "./hooks/index.ts",
+      "default": "./hooks/index.ts"
+    },
+    "./postcss.config.mjs": "./postcss.config.mjs",
+    "./styles/globals.css": "./styles/globals.css"
+  },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@tailwindcss/postcss": "^4.1.8",
+    "@tailwindcss/postcss": "^4.1.11",
     "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^22.15.21",
-    "@types/react": "^19.1.5",
+    "@types/react": "^19.1.8",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.8",

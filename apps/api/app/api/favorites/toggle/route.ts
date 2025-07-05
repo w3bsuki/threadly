@@ -2,7 +2,7 @@ import { database } from '@repo/database';
 import { currentUser } from '@repo/auth/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { logError } from '@repo/observability/error';
+import { logError } from '@repo/observability/server';
 
 const toggleFavoriteSchema = z.object({
   productId: z.string().min(1),

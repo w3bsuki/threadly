@@ -27,7 +27,8 @@
     "seed": "tsx scripts/seed-all.ts",
     "seed:categories": "tsx scripts/seed-categories.ts",
     "seed:products": "tsx scripts/seed-products.ts",
-    "clean": "git clean -xdf node_modules"
+    "clean": "git clean -xdf node_modules",
+    "typecheck": "turbo typecheck"
   },
   "devDependencies": {
     "@auto-it/first-time-contributor": "^11.3.0",

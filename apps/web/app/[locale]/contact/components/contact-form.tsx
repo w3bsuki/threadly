@@ -1,15 +1,15 @@
 'use client';
 
-import { Button } from '@repo/design-system/components/ui/button';
-import { Calendar } from '@repo/design-system/components/ui/calendar';
-import { Input } from '@repo/design-system/components/ui/input';
-import { Label } from '@repo/design-system/components/ui/label';
+import { Button } from '@repo/design-system/components';
+import { Calendar } from '@repo/design-system/components';
+import { Input } from '@repo/design-system/components';
+import { Label } from '@repo/design-system/components';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@repo/design-system/components/ui/popover';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components/ui/form';
+} from '@repo/design-system/components';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components';
 import { cn } from '@repo/design-system/lib/utils';
 import type { Dictionary } from '@repo/internationalization';
 import { format } from 'date-fns';

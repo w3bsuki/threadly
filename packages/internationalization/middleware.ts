@@ -11,13 +11,31 @@ const I18nMiddleware = createI18nMiddleware({
   defaultLocale: 'en',
   urlMappingStrategy: 'rewriteDefault',
   resolveLocaleFromRequest: (request: NextRequest) => {
-    const headers = Object.fromEntries(request.headers.entries());
-    const negotiator = new Negotiator({ headers });
-    const acceptedLanguages = negotiator.languages();
+    try {
+      const headers = Object.fromEntries(request.headers.entries());
+      const negotiator = new Negotiator({ headers });
+      const acceptedLanguages = negotiator.languages();
 
-    const matchedLocale = matchLocale(acceptedLanguages, locales, 'en');
+      // Filter out invalid locales to prevent RangeError
+      const validAcceptedLanguages = acceptedLanguages.filter(lang => {
+        try {
+          Intl.getCanonicalLocales(lang);
+          return true;
+        } catch {
+          return false;
+        }
+      });
 
-    return matchedLocale;
+      if (validAcceptedLanguages.length === 0) {
+        return 'en';
+      }
+
+      const matchedLocale = matchLocale(validAcceptedLanguages, locales, 'en');
+      return matchedLocale;
+    } catch (error) {
+      // Fallback to default locale on any error
+      return 'en';
+    }
   },
 });
 

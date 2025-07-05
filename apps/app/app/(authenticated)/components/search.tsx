@@ -2,9 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Input } from '@repo/design-system/components/ui/input';
-import { Badge } from '@repo/design-system/components/ui/badge';
+import { Button } from '@repo/design-system/components';
+import { Input } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
 import { useAutocomplete, useSearchHistory } from '@repo/search/client';
 import { ArrowRightIcon, SearchIcon, Clock, X } from 'lucide-react';
 

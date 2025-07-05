@@ -1,5 +1,5 @@
 import { cn } from '@repo/design-system/lib/utils';
-import { Skeleton } from '@repo/design-system/components/ui/skeleton';
+import { Skeleton } from '@repo/design-system/components';
 
 export function ProductGridSkeleton({ count = 8 }: { count?: number }) {
   return (

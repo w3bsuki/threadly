@@ -3,12 +3,12 @@ import { database } from '@repo/database';
 import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { ProductForm } from './components/product-form';
-import { Alert, AlertDescription, AlertTitle } from '@repo/design-system/components/ui/alert';
-import { Button } from '@repo/design-system/components/ui/button';
+import { Alert, AlertDescription, AlertTitle } from '@repo/design-system/components';
+import { Button } from '@repo/design-system/components';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { log } from '@repo/observability/log';
-import { logError } from '@repo/observability/error';
+import { log } from '@repo/observability/server';
+import { logError } from '@repo/observability/server';
 
 const title = 'Sell New Item';
 const description = 'List your fashion item for sale on Threadly';

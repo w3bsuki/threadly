@@ -1,6 +1,6 @@
 import { searchIndexing } from '@repo/search/search-webhook-client';
 import { env } from '@/env';
-import { logError } from '@repo/observability/error';
+import { logError } from '@repo/observability/server';
 
 // Initialize search webhook client
 const initializeSearch = () => {

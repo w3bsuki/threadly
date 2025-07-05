@@ -1,16 +1,46 @@
 'use client';
 
-import { Button } from '@repo/design-system/components/ui/button';
-import { Badge } from '@repo/design-system/components/ui/badge';
+import { Button } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
 import { usePullToRefresh } from '@repo/design-system/hooks/use-pull-to-refresh';
-import { PullToRefreshIndicator } from '@repo/design-system/components/ui/pull-to-refresh';
+import { PullToRefreshIndicator } from '@repo/design-system/components';
 import { Heart, Filter, Grid, List, ChevronDown, Crown, X, Eye } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
-import { ProductPlaceholder } from './product-placeholder';
+// Inline ProductPlaceholder for loading states
+const ProductPlaceholder = ({ className = "w-full h-full" }: { className?: string }) => {
+  return (
+    <div className={`bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center ${className}`}>
+      <svg
+        width="80"
+        height="80"
+        viewBox="0 0 80 80"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="text-gray-300"
+      >
+        <path
+          d="M20 25 C20 25, 25 20, 40 20 C55 20, 60 25, 60 25"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          fill="none"
+        />
+        <path
+          d="M40 20 L40 15 C40 12, 42 10, 45 10 C48 10, 50 12, 50 15"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          fill="none"
+        />
+      </svg>
+    </div>
+  );
+};
 import { useFavorites } from '../lib/hooks/use-favorites';
 import { ProductQuickView } from '../app/[locale]/components/product-quick-view';
+import { formatCurrency } from '../lib/utils/currency';
 
 // TypeScript interfaces - REAL data structures
 export interface Product {
@@ -44,7 +74,6 @@ interface FilterState {
   size: string;
   priceRange: [number, number];
   condition: string;
-  sortBy: 'newest' | 'price-low' | 'price-high' | 'popular';
   searchQuery: string;
 }
 
@@ -91,7 +120,7 @@ const ProductCard = ({ product }: {
   };
 
   return (
-  <div className="group relative bg-white">
+  <article className="group relative bg-white" aria-label={`Product: ${product.title}`}>
     {/* Main card content - opens quick view dialog */}
     <ProductQuickView 
       product={transformedProduct}
@@ -109,7 +138,6 @@ const ProductCard = ({ product }: {
             ) : (
               <ProductPlaceholder 
                 className="h-full w-full object-cover object-center group-hover:opacity-75 transition-opacity" 
-                seed={product.id}
               />
             )}
             
@@ -120,7 +148,8 @@ const ProductCard = ({ product }: {
               className={`absolute top-2 right-2 p-2 rounded-full transition-all z-10 ${
                 isFavorited(product.id) ? 'bg-red-500 text-white' : 'bg-white/80 text-gray-600 hover:bg-white'
               } backdrop-blur-sm`}
-              aria-label="Add to favourites"
+              aria-label={isFavorited(product.id) ? `Remove ${product.title} from favorites` : `Add ${product.title} to favorites`}
+              aria-pressed={isFavorited(product.id)}
             >
               <Heart className={`h-4 w-4 ${isFavorited(product.id) ? 'fill-current' : ''}`} />
             </button>
@@ -167,11 +196,11 @@ const ProductCard = ({ product }: {
             
             <div className="flex items-center space-x-2">
               <span className="text-lg font-semibold text-gray-900">
-                ${product.price.toFixed(2)}
+                {formatCurrency(product.price)}
               </span>
               {product.originalPrice && (
                 <span className="text-sm text-gray-500 line-through">
-                  ${product.originalPrice.toFixed(2)}
+                  {formatCurrency(product.originalPrice)}
                 </span>
               )}
             </div>
@@ -182,7 +211,7 @@ const ProductCard = ({ product }: {
         </div>
       }
     />
-  </div>
+  </article>
   );
 };
 
@@ -194,7 +223,6 @@ const useProductFilters = (products: Product[], defaultCategory?: string) => {
     size: 'All sizes',
     priceRange: [0, 5000],
     condition: 'All conditions',
-    sortBy: 'newest',
     searchQuery: ''
   });
 
@@ -244,22 +272,8 @@ const useProductFilters = (products: Product[], defaultCategory?: string) => {
       );
     }
 
-    // Sort products
-    switch (filters.sortBy) {
-      case 'price-low':
-        filtered.sort((a, b) => a.price - b.price);
-        break;
-      case 'price-high':
-        filtered.sort((a, b) => b.price - a.price);
-        break;
-      case 'popular':
-        filtered.sort((a, b) => (b._count?.favorites || 0) - (a._count?.favorites || 0));
-        break;
-      case 'newest':
-      default:
-        // Already in newest order from server
-        break;
-    }
+    // Products are already sorted by the server based on URL params
+    // No client-side sorting needed since MobileQuickFilters handles it
 
     return filtered;
   }, [products, filters, defaultCategory]);
@@ -275,7 +289,6 @@ const useProductFilters = (products: Product[], defaultCategory?: string) => {
       size: 'All sizes',
       priceRange: [0, 5000],
       condition: 'All conditions',
-      sortBy: 'newest',
       searchQuery: ''
     });
   }, []);
@@ -378,13 +391,7 @@ export function ProductGridClient({
     categories: ['All', ...filterOptions.categories],
     brands: ['All brands', ...filterOptions.brands],
     sizes: ['All sizes', ...filterOptions.sizes],
-    conditions: ['All conditions', 'LIKE_NEW', 'VERY_GOOD', 'GOOD'],
-    sortOptions: [
-      { value: 'newest' as const, label: 'Newest first' },
-      { value: 'price-low' as const, label: 'Price: Low to High' },
-      { value: 'price-high' as const, label: 'Price: High to Low' },
-      { value: 'popular' as const, label: 'Most Popular' },
-    ]
+    conditions: ['All conditions', 'LIKE_NEW', 'VERY_GOOD', 'GOOD']
   };
 
   return (
@@ -472,19 +479,6 @@ export function ProductGridClient({
           <span className="text-sm text-gray-600 hidden md:block font-medium">
             {filteredProducts.length} of {filterOptions.totalCount} items
           </span>
-
-          {/* Sort */}
-          <select
-            value={filters.sortBy}
-            onChange={(e) => updateFilter('sortBy', e.target.value)}
-            className="text-sm border border-gray-200 rounded px-3 py-1.5"
-          >
-            {realFilterOptions.sortOptions.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@repo/design-system/components/ui/button';
+import { Button } from '@repo/design-system/components';
 import { env } from '@/env';
 import Link from 'next/link';
 import { ReactNode } from 'react';

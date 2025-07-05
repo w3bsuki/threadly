@@ -8,8 +8,8 @@ import { PostHogIdentifier } from './components/posthog-identifier';
 import { ToastProvider } from '@/components/toast';
 import { AppLayout } from './components/app-layout';
 import { redirect } from 'next/navigation';
-import { log } from '@repo/observability/log';
-import { logError } from '@repo/observability/error';
+import { log } from '@repo/observability/server';
+import { logError } from '@repo/observability/server';
 
 type AppLayoutProperties = {
   readonly children: ReactNode;

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
-const glob = require('glob');
+import fs from 'fs';
+import path from 'path';
+import { glob } from 'glob';
 
 // Patterns to remove
 const consolePatterns = [
@@ -32,12 +32,13 @@ let totalRemoved = 0;
 let filesProcessed = 0;
 
 // Process each file pattern
-filePatterns.forEach(pattern => {
-  const files = glob.sync(pattern, {
-    ignore: excludeDirs
-  });
+async function processFiles() {
+  for (const pattern of filePatterns) {
+    const files = await glob(pattern, {
+      ignore: excludeDirs
+    });
 
-  files.forEach(file => {
+    files.forEach(file => {
     let content = fs.readFileSync(file, 'utf8');
     let originalContent = content;
     let removedCount = 0;
@@ -62,6 +63,8 @@ filePatterns.forEach(pattern => {
       filesProcessed++;
     }
   });
-});
+}
 
-console.log(`\n✅ Complete! Removed ${totalRemoved} console statements from ${filesProcessed} files.`);
+processFiles().then(() => {
+  console.log(`\n✅ Complete! Removed ${totalRemoved} console statements from ${filesProcessed} files.`);
+}).catch(console.error);

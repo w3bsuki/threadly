@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Card } from '@repo/design-system/components/ui/card';
+import { Button } from '@repo/design-system/components';
+import { Card } from '@repo/design-system/components';
 import { X, Upload, Image as ImageIcon } from 'lucide-react';
 import { cn } from '@repo/design-system/lib/utils';
 import { useUploadThing } from '@/lib/uploadthing';

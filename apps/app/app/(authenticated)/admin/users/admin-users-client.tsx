@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Badge } from '@repo/design-system/components/ui/badge';
-import { Input } from '@repo/design-system/components/ui/input';
-import { Checkbox } from '@repo/design-system/components/ui/checkbox';
-import { LazyAvatar } from '@repo/design-system/components/ui/lazy-image';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Button } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
+import { Input } from '@repo/design-system/components';
+import { Checkbox } from '@repo/design-system/components';
+import { LazyAvatar } from '@repo/design-system/components';
 import { 
   MoreVertical, 
   Search,
@@ -24,7 +24,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@repo/design-system/components/ui/dropdown-menu';
+} from '@repo/design-system/components';
 import Link from 'next/link';
 import { UserActions } from './user-actions';
 import { bulkUpdateUsers } from './actions';

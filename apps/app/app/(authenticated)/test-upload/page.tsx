@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Input } from '@repo/design-system/components/ui/input';
-import { Textarea } from '@repo/design-system/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
+import { Button } from '@repo/design-system/components';
+import { Input } from '@repo/design-system/components';
+import { Textarea } from '@repo/design-system/components';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
 
 export default function TestUploadPage() {
   const [loading, setLoading] = useState(false);

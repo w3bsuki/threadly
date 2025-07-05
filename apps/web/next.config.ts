@@ -38,6 +38,16 @@ nextConfig.images = {
   ],
 };
 
+// Suppress require-in-the-middle warnings from Sentry
+nextConfig.webpack = (config, { isServer }) => {
+  if (isServer) {
+    config.ignoreWarnings = [
+      { module: /require-in-the-middle/ },
+    ];
+  }
+  return config;
+};
+
 if (process.env.NODE_ENV === 'production') {
   const redirects: NextConfig['redirects'] = async () => [
     {

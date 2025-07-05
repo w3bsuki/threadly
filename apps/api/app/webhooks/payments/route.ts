@@ -2,7 +2,7 @@ import { env } from '@/env';
 import { analytics } from '@repo/analytics/posthog/server';
 import { clerkClient } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { parseError, logError } from '@repo/observability/error';
+import { parseError, logError } from '@repo/observability/server';
 import { stripe } from '@repo/payments';
 import type { Stripe } from '@repo/payments';
 import { headers } from 'next/headers';
@@ -187,8 +187,6 @@ export const POST = async (request: Request): Promise<Response> => {
       default: {
       }
     }
-
-    await analytics.shutdown();
 
     return NextResponse.json({ result: event, ok: true });
   } catch (error) {

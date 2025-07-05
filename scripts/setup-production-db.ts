@@ -38,10 +38,8 @@ async function parsePostgreSQLUrl(url: string): Promise<DatabaseConfig> {
 
 async function validateConnection(): Promise<boolean> {
   try {
-    console.log('🔍 Validating database connection...');
     
     await database.$queryRaw`SELECT 1`;
-    console.log('✅ Database connection successful');
     return true;
   } catch (error) {
     console.error('❌ Database connection failed:', error);
@@ -51,7 +49,6 @@ async function validateConnection(): Promise<boolean> {
 
 async function runMigrations(): Promise<boolean> {
   try {
-    console.log('🚀 Running database migrations...');
     
     const { stdout, stderr } = await execAsync('pnpm db:push', {
       cwd: process.cwd()
@@ -62,8 +59,6 @@ async function runMigrations(): Promise<boolean> {
       return false;
     }
     
-    console.log('✅ Database migrations completed');
-    console.log(stdout);
     return true;
   } catch (error) {
     console.error('❌ Migration error:', error);
@@ -72,7 +67,6 @@ async function runMigrations(): Promise<boolean> {
 }
 
 async function createEssentialCategories(): Promise<void> {
-  console.log('📦 Creating essential categories...');
   
   const categories = [
     { name: 'Women\'s Clothing', slug: 'womens-clothing' },
@@ -92,7 +86,6 @@ async function createEssentialCategories(): Promise<void> {
         update: {},
         create: category
       });
-      console.log(`✅ Category created: ${category.name}`);
     } catch (error) {
       console.warn(`⚠️  Category ${category.name} may already exist`);
     }
@@ -101,7 +94,6 @@ async function createEssentialCategories(): Promise<void> {
 
 async function validateOperations(): Promise<boolean> {
   try {
-    console.log('🧪 Testing database operations...');
     
     // Test basic CRUD operations
     const testOps = [
@@ -114,13 +106,11 @@ async function validateOperations(): Promise<boolean> {
     ];
 
     const results = await Promise.all(testOps);
-    console.log('📊 Database counts:', {
       categories: results[0],
       users: results[1],
       products: results[2]
     });
 
-    console.log('✅ All database operations working correctly');
     return true;
   } catch (error) {
     console.error('❌ Database operation test failed:', error);
@@ -130,7 +120,6 @@ async function validateOperations(): Promise<boolean> {
 
 async function setupIndexes(): Promise<void> {
   try {
-    console.log('🔧 Setting up performance indexes...');
     
     // Critical indexes for production performance
     const indexes = [
@@ -143,10 +132,8 @@ async function setupIndexes(): Promise<void> {
     for (const indexQuery of indexes) {
       try {
         await database.$executeRawUnsafe(indexQuery);
-        console.log('✅ Index created successfully');
       } catch (error: any) {
         if (error.code === '42P07') {
-          console.log('ℹ️  Index already exists, skipping...');
         } else {
           console.warn('⚠️  Index creation warning:', error.message);
         }
@@ -158,7 +145,6 @@ async function setupIndexes(): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  console.log('🚀 Starting Production Database Setup\n');
 
   const databaseUrl = process.env.DATABASE_URL;
   if (!databaseUrl) {
@@ -174,12 +160,6 @@ async function main(): Promise<void> {
   try {
     // Parse and display connection info
     const config = await parsePostgreSQLUrl(databaseUrl);
-    console.log('🔗 Connecting to PostgreSQL:');
-    console.log(`   Host: ${config.host}:${config.port}`);
-    console.log(`   Database: ${config.database}`);
-    console.log(`   User: ${config.user}`);
-    console.log(`   SSL: ${config.ssl ? 'enabled' : 'disabled'}`);
-    console.log('');
 
     // Step 1: Validate connection
     const connectionValid = await validateConnection();
@@ -205,12 +185,6 @@ async function main(): Promise<void> {
       process.exit(1);
     }
 
-    console.log('\n🎉 Production database setup completed successfully!');
-    console.log('\n📋 Next steps:');
-    console.log('   1. Update your production environment variables');
-    console.log('   2. Deploy your application');
-    console.log('   3. Test all functionality in production');
-    console.log('   4. Set up automated backups');
 
   } catch (error) {
     console.error('\n❌ Setup failed:', error);
@@ -222,7 +196,6 @@ async function main(): Promise<void> {
 
 // Handle graceful shutdown
 process.on('SIGINT', async () => {
-  console.log('\n🛑 Setup interrupted by user');
   await database.$disconnect();
   process.exit(0);
 });

@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { testFullProductCreation } from '../actions/test-full-create';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
+import { Button } from '@repo/design-system/components';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
 
 export default function TestCreationPage() {
   const [result, setResult] = useState<any>(null);

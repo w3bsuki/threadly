@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Dialog, DialogContent, DialogTrigger } from '@repo/design-system/components/ui/dialog';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Badge } from '@repo/design-system/components/ui/badge';
-import { Separator } from '@repo/design-system/components/ui/separator';
+import { Dialog, DialogContent, DialogTrigger } from '@repo/design-system/components';
+import { Button } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
+import { Separator } from '@repo/design-system/components';
 import { 
   Heart, 
   Share2, 
@@ -23,6 +23,7 @@ import Link from 'next/link';
 import { cn } from '@repo/design-system/lib/utils';
 import { toast } from '@repo/design-system';
 import { useCartStore } from '../../../lib/stores/cart-store';
+import { formatCurrency } from '../../../lib/utils/currency';
 
 interface ProductQuickViewProps {
   product: {
@@ -317,11 +318,11 @@ export function ProductQuickView({ product, trigger }: ProductQuickViewProps) {
               
               <div className="flex items-center space-x-3 mb-3">
                 <span className="text-2xl font-bold text-gray-900">
-                  ${product.price.toFixed(2)}
+                  {formatCurrency(product.price)}
                 </span>
                 {product.originalPrice && (
                   <span className="text-lg text-gray-500 line-through">
-                    ${product.originalPrice.toFixed(2)}
+                    {formatCurrency(product.originalPrice)}
                   </span>
                 )}
               </div>

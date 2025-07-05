@@ -1,4 +1,4 @@
-import { Button } from '@repo/design-system/components/ui/button';
+import { Button } from '@repo/design-system/components';
 import { ArrowRight, Star, Users, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 import type { Dictionary } from '@repo/internationalization';

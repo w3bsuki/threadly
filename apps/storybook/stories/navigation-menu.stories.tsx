@@ -8,7 +8,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from '@repo/design-system/components/ui/navigation-menu';
+} from '@repo/design-system/components';
 
 /**
  * A collection of links for navigating websites.

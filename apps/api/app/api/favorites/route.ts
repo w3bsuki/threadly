@@ -3,7 +3,7 @@ import { currentUser } from '@repo/auth/server';
 import { generalApiLimit, checkRateLimit } from '@repo/security';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { logError } from '@repo/observability/error';
+import { logError } from '@repo/observability/server';
 
 // Schema for toggling favorites
 const toggleFavoriteSchema = z.object({

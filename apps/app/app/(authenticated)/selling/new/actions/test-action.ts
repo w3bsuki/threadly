@@ -1,4 +1,4 @@
-import { log } from '@repo/observability/log';
+import { log } from '@repo/observability/server';
 'use server';
 
 export async function testServerAction() {

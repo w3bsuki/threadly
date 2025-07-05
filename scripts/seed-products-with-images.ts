@@ -12,7 +12,6 @@ const prisma = new PrismaClient({
 });
 
 async function seedProductsWithImages() {
-  console.log('🌱 Seeding sample products with real images...');
 
   try {
     // First, create a test user if it doesn't exist
@@ -29,7 +28,6 @@ async function seedProductsWithImages() {
       },
     });
 
-    console.log('✅ Test user ready');
 
     // Get some categories
     const womenClothing = await prisma.category.findFirst({
@@ -208,14 +206,12 @@ async function seedProductsWithImages() {
           },
         });
         
-        console.log(`✅ Created: ${product.title} (${product.images.length} images)`);
         createdCount++;
       } catch (error) {
         console.error(`❌ Failed to create ${productInfo.title}:`, error);
       }
     }
 
-    console.log(`\n🎉 Successfully created ${createdCount} products with images!`);
     
     // Show summary
     const totalProducts = await prisma.product.count();
@@ -227,10 +223,6 @@ async function seedProductsWithImages() {
       }
     });
     
-    console.log(`\n📊 Database Summary:`);
-    console.log(`Total products: ${totalProducts}`);
-    console.log(`Products with images: ${productsWithImages}`);
-    console.log(`Products without images: ${totalProducts - productsWithImages}`);
 
   } catch (error) {
     console.error('❌ Error seeding products:', error);

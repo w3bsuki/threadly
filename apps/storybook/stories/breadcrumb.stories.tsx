@@ -8,7 +8,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@repo/design-system/components/ui/breadcrumb';
+} from '@repo/design-system/components';
 
 /**
  * Displays the path to the current resource using a hierarchy of links.

@@ -3,7 +3,7 @@ import { database } from '@repo/database';
 import { generalApiLimit, checkRateLimit } from '@repo/security';
 import { getCacheService } from '@repo/cache';
 import { currentUser } from '@repo/auth/server';
-import { logError } from '@repo/observability/error';
+import { logError } from '@repo/observability/server';
 
 // Initialize cache service
 const cache = getCacheService({

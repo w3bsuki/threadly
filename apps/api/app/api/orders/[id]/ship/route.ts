@@ -3,7 +3,7 @@ import { database } from '@repo/database';
 import { auth } from '@repo/auth/server';
 import { generalApiLimit, checkRateLimit } from '@repo/security';
 import { z } from 'zod';
-import { logError } from '@repo/observability/error';
+import { logError } from '@repo/observability/server';
 
 const shipOrderSchema = z.object({
   trackingNumber: z.string().min(1, 'Tracking number is required').optional(),

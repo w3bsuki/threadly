@@ -1,9 +1,9 @@
-import { database } from '@repo/database';
+import { database, type Prisma } from '@repo/database';
 import { currentUser } from '@repo/auth/server';
 import { generalApiLimit, checkRateLimit } from '@repo/security';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { logError } from '@repo/observability/error';
+import { logError } from '@repo/observability/server';
 
 // Schema for creating an order
 const createOrderSchema = z.object({
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Build where clause
-    const where: any = {};
+    const where: Prisma.OrderWhereInput = {};
     
     if (role === 'buyer') {
       where.buyerId = dbUser.id;
@@ -60,8 +60,8 @@ export async function GET(request: NextRequest) {
       where.sellerId = dbUser.id;
     }
 
-    if (status) {
-      where.status = status;
+    if (status && ['PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED'].includes(status)) {
+      where.status = status as 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
     }
 
     // Get orders with related data

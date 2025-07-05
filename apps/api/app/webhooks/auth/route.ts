@@ -8,7 +8,7 @@ import type {
   UserJSON,
   WebhookEvent,
 } from '@repo/auth/server';
-import { logError } from '@repo/observability/error';
+import { logError } from '@repo/observability/server';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { Webhook } from 'svix';
@@ -301,8 +301,6 @@ export const POST = async (request: Request): Promise<Response> => {
       break;
     }
   }
-
-  await analytics.shutdown();
 
   return response;
 };

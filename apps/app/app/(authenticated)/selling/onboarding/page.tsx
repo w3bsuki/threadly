@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { StripeConnectStatus } from './components/stripe-connect-status';
-import { Button } from '@repo/design-system/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '@repo/design-system/components/ui/alert';
-import { Badge } from '@repo/design-system/components/ui/badge';
+import { Button } from '@repo/design-system/components';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Alert, AlertDescription, AlertTitle } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
 import { Loader2, CheckCircle2, AlertCircle, DollarSign, Package, ShieldCheck, TrendingUp, Zap, RefreshCw } from 'lucide-react';
 import { toast } from '@/components/toast';
 

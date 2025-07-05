@@ -3,7 +3,7 @@ import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import Stripe from 'stripe';
 import { env } from '@/env';
-import { logError } from '@repo/observability/error';
+import { logError } from '@repo/observability/server';
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-05-28.basil',

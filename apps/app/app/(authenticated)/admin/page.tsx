@@ -1,5 +1,5 @@
 import { database } from '@repo/database';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
 import { 
   Users, 
   Package, 

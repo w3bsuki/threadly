@@ -1,7 +1,7 @@
 import { database } from '@repo/database';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@repo/design-system/components/ui/card';
-import { Badge } from '@repo/design-system/components/ui/badge';
-import { Progress } from '@repo/design-system/components/ui/progress';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
+import { Progress } from '@repo/design-system/components';
 import { 
   Activity, 
   Users, 
