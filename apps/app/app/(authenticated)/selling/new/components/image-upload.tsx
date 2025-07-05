@@ -17,7 +17,7 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
   const [isUploading, setIsUploading] = useState(false);
 
   const { startUpload, isUploading: isUploadThingUploading } = useUploadThing("productImages", {
-    onClientUploadComplete: (res) => {
+    onClientUploadComplete: (res: Array<{ url: string }>) => {
       const newUrls = res?.map((file) => file.url) || [];
       const updatedUrls = [...value, ...newUrls].slice(0, maxFiles);
       onChange(updatedUrls);
@@ -29,7 +29,7 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
       // Show user-friendly error message
       alert(`Upload failed: ${error.message}. Please try again.`);
     },
-    onUploadBegin: (name) => {
+    onUploadBegin: (name: string) => {
       setIsUploading(true);
     },
   });
