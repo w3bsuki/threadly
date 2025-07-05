@@ -14,10 +14,10 @@ export const keys = () =>
       NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NODE_ENV === 'production'
         ? z.string().startsWith('pk_')
         : z.string().startsWith('pk_').optional(),
-      NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string().startsWith('/').default('/sign-in'),
-      NEXT_PUBLIC_CLERK_SIGN_UP_URL: z.string().startsWith('/').default('/sign-up'),
-      NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: z.string().startsWith('/').default('/'),
-      NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z.string().startsWith('/').default('/'),
+      NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string().default('/sign-in'),
+      NEXT_PUBLIC_CLERK_SIGN_UP_URL: z.string().default('/sign-up'),
+      NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: z.string().default('/'),
+      NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z.string().default('/'),
       NEXT_PUBLIC_CLERK_DOMAIN: z.string().optional(),
       NEXT_PUBLIC_CLERK_IS_SATELLITE: z.string().optional(),
     },
