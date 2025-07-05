@@ -7,7 +7,7 @@ import type {
   Category,
   Condition
 } from '@repo/database';
-import { logError } from '@repo/observability/error';
+import { logError } from '@repo/observability/server';
 
 // Type for our transformed product data
 interface TransformedProduct {
@@ -93,11 +93,17 @@ function transformProduct(
 interface ProductGridServerProps {
   category?: string;
   limit?: number;
+  sort?: string;
+  brand?: string;
+  condition?: string;
 }
 
 export async function ProductGridServer({ 
   category, 
-  limit = 24 
+  limit = 24,
+  sort,
+  brand,
+  condition
 }: ProductGridServerProps) {
   try {
     // Build the where clause based on category
@@ -150,6 +156,45 @@ export async function ProductGridServer({
       }
     }
 
+    // Add brand filter
+    if (brand && brand !== 'other') {
+      whereClause.brand = {
+        contains: brand,
+        mode: 'insensitive'
+      };
+    } else if (brand === 'other') {
+      // Show products without popular brands
+      whereClause.AND = whereClause.AND || [];
+      whereClause.AND.push({
+        NOT: {
+          OR: [
+            { brand: { contains: 'nike', mode: 'insensitive' } },
+            { brand: { contains: 'adidas', mode: 'insensitive' } },
+            { brand: { contains: 'zara', mode: 'insensitive' } },
+            { brand: { contains: 'h&m', mode: 'insensitive' } },
+            { brand: { contains: 'uniqlo', mode: 'insensitive' } },
+            { brand: { contains: 'gucci', mode: 'insensitive' } },
+            { brand: { contains: 'prada', mode: 'insensitive' } },
+          ]
+        }
+      });
+    }
+
+    // Add condition filter
+    if (condition) {
+      whereClause.condition = condition;
+    }
+
+    // Add sorting
+    let orderBy: any = { createdAt: 'desc' }; // default newest
+    if (sort === 'price-asc') {
+      orderBy = { price: 'asc' };
+    } else if (sort === 'price-desc') {
+      orderBy = { price: 'desc' };
+    } else if (sort === 'popular') {
+      orderBy = { views: 'desc' };
+    }
+
     // Fetch real products from database
     const products = await database.product.findMany({
       where: whereClause,
@@ -163,7 +208,7 @@ export async function ProductGridServer({
           select: { favorites: true }
         }
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy,
       take: limit,
     });
 
