@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 import { cartService, type CartItem } from '../services/cart-service';
-import { toast } from 'sonner';
+import { toast } from '@repo/design-system/components';
 
 interface ServerCartState {
   items: CartItem[];
