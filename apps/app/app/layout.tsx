@@ -25,14 +25,7 @@ const RootLayout = ({ children }: RootLayoutProperties) => (
         helpUrl={env.NEXT_PUBLIC_DOCS_URL}
       >
         <AnalyticsProvider>
-          <DesignSystemProvider
-            privacyUrl={new URL(
-              '/legal/privacy',
-              env.NEXT_PUBLIC_WEB_URL
-            ).toString()}
-            termsUrl={new URL('/legal/terms', env.NEXT_PUBLIC_WEB_URL).toString()}
-            helpUrl={env.NEXT_PUBLIC_DOCS_URL}
-          >
+          <DesignSystemProvider>
             <ToastProvider />
             {children}
           </DesignSystemProvider>
