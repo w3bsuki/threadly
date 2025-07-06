@@ -11,7 +11,12 @@ export async function onRequestError(
     path: string;
     method: string;
     headers: { [key: string]: string | string[] | undefined };
+  },
+  context: {
+    routerKind: string;
+    routePath: string;
+    routeType: string;
   }
 ) {
-  await captureRequestError(error, request);
+  await captureRequestError(error, request, context);
 }
