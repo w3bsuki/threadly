@@ -46,7 +46,6 @@ export async function addToCart(input: {
       id: user.id,
       email: user.email || undefined,
       role: user.role as 'BUYER' | 'SELLER' | 'ADMIN',
-      stripeCustomerId: user.stripeCustomerId || undefined,
     });
 
     // Find product with enhanced monitoring
