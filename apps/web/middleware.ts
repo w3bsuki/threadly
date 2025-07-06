@@ -1,5 +1,5 @@
 import { env } from '@/env';
-import { authMiddleware } from '@repo/auth/middleware';
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { internationalizationMiddleware } from '@repo/internationalization/middleware';
 import { parseError } from '@repo/observability/server';
 import { secure } from '@repo/security';
@@ -11,7 +11,6 @@ import {
 import {
   type NextRequest,
   NextResponse,
-  type NextMiddleware,
 } from 'next/server';
 
 export const config = {
@@ -25,16 +24,16 @@ const securityHeaders = env.FLAGS_SECRET
   : noseconeMiddleware(noseconeOptions);
 
 // Protected routes that require authentication
-const protectedRoutes = [
-  '/profile',
-  '/favorites', 
-  '/cart',
-  '/checkout',
-  '/messages',
-  '/orders'
-];
+const isProtectedRoute = createRouteMatcher([
+  '/profile(.*)',
+  '/favorites(.*)', 
+  '/cart(.*)',
+  '/checkout(.*)',
+  '/messages(.*)',
+  '/orders(.*)'
+]);
 
-const middlewareHandler = async (auth: any, request: NextRequest): Promise<NextResponse | Response | void | undefined> => {
+export default clerkMiddleware(async (auth, request: NextRequest) => {
   // Handle internationalization first
   const i18nResponse = internationalizationMiddleware(request);
   if (i18nResponse) {
@@ -42,11 +41,7 @@ const middlewareHandler = async (auth: any, request: NextRequest): Promise<NextR
   }
 
   // Check if current route requires authentication
-  const isProtectedRoute = protectedRoutes.some(route => 
-    request.nextUrl.pathname.includes(route)
-  );
-
-  if (isProtectedRoute) {
+  if (isProtectedRoute(request)) {
     await auth.protect();
   }
 
@@ -74,6 +69,4 @@ const middlewareHandler = async (auth: any, request: NextRequest): Promise<NextR
 
     return NextResponse.json({ error: message }, { status: 403 });
   }
-};
-
-export default authMiddleware(middlewareHandler) as any;
+});
