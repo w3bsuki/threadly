@@ -76,4 +76,4 @@ const middlewareHandler = async (auth: any, request: NextRequest): Promise<NextR
   }
 };
 
-export default authMiddleware(middlewareHandler);
+export default authMiddleware(middlewareHandler) as any;
