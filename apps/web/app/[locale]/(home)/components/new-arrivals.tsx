@@ -23,7 +23,7 @@ const formatTimeAgo = (date: Date) => {
   }
 };
 
-export const NewArrivals = async () => {
+export const NewArrivals = async (): Promise<JSX.Element> => {
   const cache = getCacheService({
     url: process.env.UPSTASH_REDIS_REST_URL || process.env.REDIS_URL || 'redis://localhost:6379',
     token: process.env.UPSTASH_REDIS_REST_TOKEN || undefined,

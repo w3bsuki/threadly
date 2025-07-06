@@ -254,6 +254,15 @@ export class MarketplaceCacheService {
     await this.cache.mset(cacheOperations);
   }
 
+  // Generic cache methods
+  async get<T>(key: string): Promise<T | null> {
+    return this.cache.get(key);
+  }
+
+  async set<T>(key: string, value: T, options?: { ttl?: number; tags?: string[] }): Promise<void> {
+    return this.cache.set(key, value, options);
+  }
+
   // Cache-aside pattern wrapper
   async remember<T>(
     key: string,

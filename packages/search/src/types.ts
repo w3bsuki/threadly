@@ -46,6 +46,7 @@ export interface SearchFilters {
   availableForTrade?: boolean;
   location?: string;
   sortBy?: 'relevance' | 'price_asc' | 'price_desc' | 'newest' | 'most_viewed' | 'most_favorited';
+  [key: string]: unknown;
 }
 
 export interface SearchResult {
@@ -130,3 +131,6 @@ export const SEARCH_SETTINGS = {
     materials: 30,
   },
 } as const;
+
+// Re-export types from history for convenience
+export type { SavedSearch, SearchHistoryItem } from './history';

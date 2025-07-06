@@ -77,8 +77,8 @@ export function useSearch(options: UseSearchOptions = {}): UseSearchReturn {
   const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
   const [lastFilters, setLastFilters] = useState<SearchFilters | null>(null);
 
-  const debounceRef = useRef<NodeJS.Timeout>();
-  const abortControllerRef = useRef<AbortController>();
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   /**
    * Main search function

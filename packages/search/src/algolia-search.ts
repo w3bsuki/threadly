@@ -12,7 +12,7 @@ import type {
 } from './types';
 import { SEARCH_FACETS, SEARCH_SETTINGS } from './types';
 
-export class AlgoliaSearch implements SearchEngine, SearchIndexable {
+export class AlgoliaSearchService implements SearchEngine, SearchIndexable {
   private client: ReturnType<typeof algoliasearch>;
   private searchIndex: any; // Using any for Algolia index type
   private indexName: string;
@@ -150,8 +150,8 @@ export class AlgoliaSearch implements SearchEngine, SearchIndexable {
   // Search methods
   async search(
     filters: SearchFilters,
-    page = 0,
-    hitsPerPage = SEARCH_SETTINGS.DEFAULT_HITS_PER_PAGE
+    page: number = 0,
+    hitsPerPage: number = SEARCH_SETTINGS.DEFAULT_HITS_PER_PAGE
   ): Promise<SearchResult> {
     try {
       const searchParams: any = {
@@ -234,7 +234,7 @@ export class AlgoliaSearch implements SearchEngine, SearchIndexable {
     }
   }
 
-  async searchSuggestions(query: string, limit = SEARCH_SETTINGS.DEFAULT_SUGGESTION_LIMIT): Promise<SearchSuggestion[]> {
+  async searchSuggestions(query: string, limit: number = SEARCH_SETTINGS.DEFAULT_SUGGESTION_LIMIT): Promise<SearchSuggestion[]> {
     try {
       if (!query || query.length < 2) return [];
 
@@ -273,7 +273,7 @@ export class AlgoliaSearch implements SearchEngine, SearchIndexable {
     }
   }
 
-  async getPopularProducts(limit = SEARCH_SETTINGS.POPULAR_PRODUCTS_LIMIT): Promise<SearchProduct[]> {
+  async getPopularProducts(limit: number = SEARCH_SETTINGS.POPULAR_PRODUCTS_LIMIT): Promise<SearchProduct[]> {
     try {
       const result = await this.searchIndex.search('', {
         hitsPerPage: limit,
@@ -287,7 +287,7 @@ export class AlgoliaSearch implements SearchEngine, SearchIndexable {
     }
   }
 
-  async getSimilarProducts(productId: string, limit = SEARCH_SETTINGS.SIMILAR_PRODUCTS_LIMIT): Promise<SearchProduct[]> {
+  async getSimilarProducts(productId: string, limit: number = SEARCH_SETTINGS.SIMILAR_PRODUCTS_LIMIT): Promise<SearchProduct[]> {
     try {
       // First get the product to find similar ones
       const product = await this.searchIndex.getObject(productId) as SearchProduct;
@@ -309,7 +309,7 @@ export class AlgoliaSearch implements SearchEngine, SearchIndexable {
     }
   }
 
-  async getProductsByCategory(category: string, limit = 20): Promise<SearchProduct[]> {
+  async getProductsByCategory(category: string, limit: number = 20): Promise<SearchProduct[]> {
     try {
       const result = await this.searchIndex.search('', {
         hitsPerPage: limit,
@@ -371,11 +371,11 @@ export class AlgoliaSearch implements SearchEngine, SearchIndexable {
 }
 
 // Singleton instance
-let algoliaSearch: AlgoliaSearch | null = null;
+let algoliaSearch: AlgoliaSearchService | null = null;
 
-export function getAlgoliaSearch(config?: SearchConfig): AlgoliaSearch {
+export function getAlgoliaSearch(config?: SearchConfig): AlgoliaSearchService {
   if (!algoliaSearch && config) {
-    algoliaSearch = new AlgoliaSearch(config);
+    algoliaSearch = new AlgoliaSearchService(config);
   }
   
   if (!algoliaSearch) {

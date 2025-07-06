@@ -325,7 +325,7 @@ export class SearchApiHandler {
  * Convenience functions for Next.js API routes
  */
 
-export function createSearchHandler(config?: Parameters<typeof SearchApiHandler.prototype.constructor>[0]) {
+export function createSearchHandler(config?: ConstructorParameters<typeof SearchApiHandler>[0]) {
   const handler = new SearchApiHandler(config);
   
   return {

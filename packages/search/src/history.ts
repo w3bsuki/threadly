@@ -9,8 +9,8 @@ export interface SearchHistoryItem {
   id: string;
   query: string;
   filters?: Record<string, unknown>;
-  resultsCount: number;
-  timestamp: Date;
+  resultCount: number;
+  createdAt: Date;
   userId?: string;
 }
 
@@ -19,7 +19,7 @@ export interface SavedSearch {
   name: string;
   query: string;
   filters?: Record<string, unknown>;
-  alertsEnabled: boolean;
+  alertEnabled: boolean;
   userId: string;
   createdAt: Date;
   updatedAt: Date;
@@ -35,7 +35,7 @@ export class SearchHistoryService {
   /**
    * Add search to local history
    */
-  static addToLocalHistory(query: string, filters?: Record<string, unknown>, resultsCount = 0): void {
+  static addToLocalHistory(query: string, filters?: Record<string, unknown>, resultCount = 0): void {
     if (typeof window === 'undefined') return;
 
     try {
@@ -44,8 +44,8 @@ export class SearchHistoryService {
         id: `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         query: query.trim(),
         filters,
-        resultsCount,
-        timestamp: new Date(),
+        resultCount,
+        createdAt: new Date(),
       };
 
       // Remove duplicates and add new item
@@ -71,7 +71,7 @@ export class SearchHistoryService {
       const parsed = JSON.parse(stored);
       return Array.isArray(parsed) ? parsed.map(item => ({
         ...item,
-        timestamp: new Date(item.timestamp),
+        createdAt: new Date(item.createdAt),
       })) : [];
     } catch (error) {
       console.warn('Failed to load search history:', error);
@@ -114,7 +114,7 @@ export class SearchHistoryService {
     userId: string,
     query: string,
     filters?: Record<string, unknown>,
-    resultsCount = 0
+    resultCount = 0
   ): Promise<SearchHistoryItem | null> {
     try {
       // Check if search already exists for this user
@@ -130,8 +130,8 @@ export class SearchHistoryService {
         const updated = await database.searchHistory.update({
           where: { id: existing.id },
           data: {
-            resultsCount,
-            timestamp: new Date(),
+            resultCount,
+            createdAt: new Date(),
           },
         });
 
@@ -139,8 +139,8 @@ export class SearchHistoryService {
           id: updated.id,
           query: updated.query,
           filters: updated.filters as Record<string, unknown> || undefined,
-          resultsCount: updated.resultsCount,
-          timestamp: updated.timestamp,
+          resultCount: updated.resultCount,
+          createdAt: updated.createdAt,
           userId: updated.userId,
         };
       } else {
@@ -150,8 +150,8 @@ export class SearchHistoryService {
             userId,
             query: query.trim(),
             filters: filters as any,
-            resultsCount,
-            timestamp: new Date(),
+            resultCount,
+            createdAt: new Date(),
           },
         });
 
@@ -159,8 +159,8 @@ export class SearchHistoryService {
           id: created.id,
           query: created.query,
           filters: created.filters as Record<string, unknown> || undefined,
-          resultsCount: created.resultsCount,
-          timestamp: created.timestamp,
+          resultCount: created.resultCount,
+          createdAt: created.createdAt,
           userId: created.userId,
         };
       }
@@ -177,7 +177,7 @@ export class SearchHistoryService {
     try {
       const history = await database.searchHistory.findMany({
         where: { userId },
-        orderBy: { timestamp: 'desc' },
+        orderBy: { createdAt: 'desc' },
         take: limit,
       });
 
@@ -185,8 +185,8 @@ export class SearchHistoryService {
         id: item.id,
         query: item.query,
         filters: item.filters as Record<string, unknown> || undefined,
-        resultsCount: item.resultsCount,
-        timestamp: item.timestamp,
+        resultCount: item.resultCount,
+        createdAt: item.createdAt,
         userId: item.userId,
       }));
     } catch (error) {
@@ -223,7 +223,7 @@ export class SavedSearchService {
     name: string,
     query: string,
     filters?: Record<string, unknown>,
-    alertsEnabled = false
+    alertEnabled = false
   ): Promise<SavedSearch | null> {
     try {
       const saved = await database.savedSearch.create({
@@ -232,7 +232,7 @@ export class SavedSearchService {
           name: name.trim(),
           query: query.trim(),
           filters: filters as any,
-          alertsEnabled,
+          alertEnabled,
         },
       });
 
@@ -241,7 +241,7 @@ export class SavedSearchService {
         name: saved.name,
         query: saved.query,
         filters: saved.filters as Record<string, unknown> || undefined,
-        alertsEnabled: saved.alertsEnabled,
+        alertEnabled: saved.alertEnabled,
         userId: saved.userId,
         createdAt: saved.createdAt,
         updatedAt: saved.updatedAt,
@@ -267,7 +267,7 @@ export class SavedSearchService {
         name: item.name,
         query: item.query,
         filters: item.filters as Record<string, unknown> || undefined,
-        alertsEnabled: item.alertsEnabled,
+        alertEnabled: item.alertEnabled,
         userId: item.userId,
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
@@ -300,7 +300,7 @@ export class SavedSearchService {
         name: updated.name,
         query: updated.query,
         filters: updated.filters as Record<string, unknown> || undefined,
-        alertsEnabled: updated.alertsEnabled,
+        alertEnabled: updated.alertEnabled,
         userId: updated.userId,
         createdAt: updated.createdAt,
         updatedAt: updated.updatedAt,
@@ -333,7 +333,7 @@ export class SavedSearchService {
     try {
       await database.savedSearch.update({
         where: { id, userId },
-        data: { alertsEnabled: enabled },
+        data: { alertEnabled: enabled },
       });
       return true;
     } catch (error) {

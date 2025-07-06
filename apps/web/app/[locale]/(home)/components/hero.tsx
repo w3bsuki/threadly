@@ -11,7 +11,7 @@ type HeroProps = {
   dictionary: Dictionary;
 };
 
-export const Hero = ({ dictionary }: HeroProps) => {
+export const Hero = ({ dictionary }: HeroProps): JSX.Element => {
   return (
     <div className="w-full bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
     <div className="container mx-auto">
