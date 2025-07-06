@@ -34,7 +34,7 @@ const protectedRoutes = [
   '/orders'
 ];
 
-const middleware: NextMiddleware = authMiddleware(async (auth, request: NextRequest): Promise<NextResponse | undefined> => {
+const middleware = authMiddleware(async (auth, request: NextRequest) => {
   // Handle internationalization first
   const i18nResponse = internationalizationMiddleware(request);
   if (i18nResponse) {
