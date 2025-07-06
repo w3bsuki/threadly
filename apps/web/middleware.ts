@@ -34,7 +34,7 @@ const protectedRoutes = [
   '/orders'
 ];
 
-export default authMiddleware(async (auth, request: NextRequest) => {
+const middlewareHandler = async (auth: any, request: NextRequest): Promise<NextResponse | Response | void | undefined> => {
   // Handle internationalization first
   const i18nResponse = internationalizationMiddleware(request);
   if (i18nResponse) {
@@ -74,4 +74,6 @@ export default authMiddleware(async (auth, request: NextRequest) => {
 
     return NextResponse.json({ error: message }, { status: 403 });
   }
-});
+};
+
+export default authMiddleware(middlewareHandler);
