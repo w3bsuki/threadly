@@ -1,4 +1,5 @@
 import { env } from '@/env';
+import { authMiddleware } from '@repo/auth/middleware';
 import { internationalizationMiddleware } from '@repo/internationalization/middleware';
 import { parseError } from '@repo/observability/server';
 import { secure } from '@repo/security';
@@ -10,6 +11,7 @@ import {
 import {
   type NextRequest,
   NextResponse,
+  type NextMiddleware,
 } from 'next/server';
 
 export const config = {
@@ -22,16 +24,36 @@ const securityHeaders = env.FLAGS_SECRET
   ? noseconeMiddleware(noseconeOptionsWithToolbar)
   : noseconeMiddleware(noseconeOptions);
 
-export default async function middleware(request: NextRequest) {
+// Protected routes that require authentication
+const protectedRoutes = [
+  '/profile',
+  '/favorites', 
+  '/cart',
+  '/checkout',
+  '/messages',
+  '/orders'
+];
+
+const middleware: NextMiddleware = authMiddleware(async (auth, request: NextRequest): Promise<NextResponse | undefined> => {
   // Handle internationalization first
   const i18nResponse = internationalizationMiddleware(request);
   if (i18nResponse) {
     return i18nResponse;
   }
 
+  // Check if current route requires authentication
+  const isProtectedRoute = protectedRoutes.some(route => 
+    request.nextUrl.pathname.includes(route)
+  );
+
+  if (isProtectedRoute) {
+    await auth.protect();
+  }
+
   // Continue with security middleware if no i18n redirect/rewrite needed
   if (!env.ARCJET_KEY) {
-    return securityHeaders();
+    const response = await securityHeaders();
+    return NextResponse.next({ headers: response.headers });
   }
 
   try {
@@ -45,10 +67,13 @@ export default async function middleware(request: NextRequest) {
       request
     );
 
-    return securityHeaders();
+    const response = await securityHeaders();
+    return NextResponse.next({ headers: response.headers });
   } catch (error) {
     const message = parseError(error);
 
     return NextResponse.json({ error: message }, { status: 403 });
   }
-}
+});
+
+export default middleware;

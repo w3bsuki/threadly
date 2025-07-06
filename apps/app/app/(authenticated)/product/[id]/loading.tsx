@@ -1,4 +1,4 @@
-import { ProductDetailSkeleton } from '@/components/skeletons';
+import { ProductDetailSkeleton } from '@repo/design-system/components';
 
 export default function Loading() {
   return <ProductDetailSkeleton />;

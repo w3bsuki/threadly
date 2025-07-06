@@ -7,7 +7,7 @@ type CTAProps = {
   dictionary: Dictionary;
 };
 
-export const CTA = async ({ dictionary }: CTAProps) => (
+export const CTA = async ({ dictionary }: CTAProps): Promise<JSX.Element> => (
   <section className="w-full bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 py-16 lg:py-24">
     <div className="container mx-auto px-4">
       <div className="grid items-center gap-12 lg:grid-cols-2">
@@ -23,23 +23,23 @@ export const CTA = async ({ dictionary }: CTAProps) => (
             </p>
           </div>
 
-          {/* Stats */}
+          {/* Key Benefits */}
           <div className="mb-8 grid grid-cols-3 gap-6">
             <div className="text-center">
-              <div className="mb-2 font-bold text-2xl md:text-3xl">50K+</div>
-              <div className="text-sm text-purple-200">Active Members</div>
+              <div className="mb-2 font-bold text-2xl md:text-3xl">✓</div>
+              <div className="text-sm text-purple-200">Verified Quality</div>
             </div>
             <div className="text-center">
-              <div className="mb-2 font-bold text-2xl md:text-3xl">100K+</div>
-              <div className="text-sm text-purple-200">Items Sold</div>
+              <div className="mb-2 font-bold text-2xl md:text-3xl">♻️</div>
+              <div className="text-sm text-purple-200">Eco-Friendly</div>
             </div>
             <div className="text-center">
-              <div className="mb-2 font-bold text-2xl md:text-3xl">4.9★</div>
-              <div className="text-sm text-purple-200">User Rating</div>
+              <div className="mb-2 font-bold text-2xl md:text-3xl">🛡️</div>
+              <div className="text-sm text-purple-200">Secure Platform</div>
             </div>
           </div>
 
-          {/* Social Proof */}
+          {/* Community Message */}
           <div className="mb-8 flex items-center gap-4">
             <div className="flex -space-x-2">
               {[1, 2, 3, 4].map((i) => (
@@ -50,8 +50,8 @@ export const CTA = async ({ dictionary }: CTAProps) => (
               ))}
             </div>
             <div>
-              <div className="font-medium">Join 1,000+ new members this week</div>
-              <div className="text-sm text-purple-200">Rating: 4.9/5 stars</div>
+              <div className="font-medium">Join our growing fashion community</div>
+              <div className="text-sm text-purple-200">Discover unique style, sustainably</div>
             </div>
           </div>
 
@@ -128,10 +128,10 @@ export const CTA = async ({ dictionary }: CTAProps) => (
       {/* Bottom Banner */}
       <div className="mt-16 rounded-2xl border border-white/20 bg-white/5 p-6 text-center backdrop-blur-sm md:p-8">
         <h3 className="mb-2 font-bold text-xl text-white md:text-2xl">
-          🎉 Limited Time: No Selling Fees for New Members
+          🌱 Start Your Sustainable Fashion Journey
         </h3>
         <p className="text-purple-100">
-          Sign up this month and sell with 0% commission for your first 30 days
+          Every purchase and sale contributes to a more sustainable future for fashion
         </p>
       </div>
     </div>

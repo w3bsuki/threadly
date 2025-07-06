@@ -3,6 +3,7 @@ import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
+import { savedSearchSchema, queryParamsSchema, sanitizeForDisplay } from '@repo/validation';
 
 export async function GET(request: NextRequest) {
   try {
@@ -41,12 +42,23 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, query, filters, alertEnabled } = body;
-
-    // Validate input
-    if (!name || !query) {
-      return NextResponse.json({ error: 'Name and query are required' }, { status: 400 });
+    
+    // Validate input with Zod schema
+    const validationResult = savedSearchSchema.safeParse(body);
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { 
+          error: 'Invalid input', 
+          details: validationResult.error.errors.map(e => ({
+            field: e.path.join('.'),
+            message: e.message
+          }))
+        }, 
+        { status: 400 }
+      );
     }
+
+    const { name, query, filters, alertEnabled } = validationResult.data;
 
     // Get user's database ID
     const dbUser = await database.user.findUnique({
@@ -58,12 +70,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    // Sanitize user inputs
+    const sanitizedData = {
+      name: sanitizeForDisplay(name),
+      query: sanitizeForDisplay(query.toLowerCase()),
+      filters: filters || undefined,
+      alertEnabled: alertEnabled ?? true,
+    };
+
     // Check if user already has this search saved
     const existingSearch = await database.savedSearch.findFirst({
       where: {
         userId: dbUser.id,
-        query: query.toLowerCase(),
-        filters: filters as any,
+        query: sanitizedData.query,
+        filters: sanitizedData.filters as any,
       }
     });
 
@@ -71,14 +91,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'You already have this search saved' }, { status: 400 });
     }
 
-    // Create saved search
+    // Create saved search with sanitized data
     const savedSearch = await database.savedSearch.create({
       data: {
         userId: dbUser.id,
-        name,
-        query: query.toLowerCase(),
-        filters: filters || undefined,
-        alertEnabled: alertEnabled ?? true,
+        ...sanitizedData,
       },
     });
 
@@ -99,8 +116,19 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
-    if (!id) {
-      return NextResponse.json({ error: 'Search ID is required' }, { status: 400 });
+    // Validate query parameters
+    const queryValidation = queryParamsSchema.safeParse({ id });
+    if (!queryValidation.success || !id) {
+      return NextResponse.json(
+        { 
+          error: 'Invalid search ID', 
+          details: queryValidation.error?.errors.map(e => ({
+            field: e.path.join('.'),
+            message: e.message
+          })) || [{ field: 'id', message: 'Search ID is required' }]
+        }, 
+        { status: 400 }
+      );
     }
 
     // Get user's database ID

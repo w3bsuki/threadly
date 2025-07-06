@@ -1,4 +1,4 @@
-import { SearchResultsSkeleton } from '@/components/skeletons';
+import { SearchResultsSkeleton } from '@repo/design-system/components';
 
 export default function Loading() {
   return (

@@ -9,6 +9,7 @@ import { Badge } from '@repo/design-system/components';
 import { Heart, Package, ExternalLink, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { formatPrice } from '@repo/commerce/utils';
 
 const title = 'My Favorites';
 const description = 'Items you have saved and loved';
@@ -81,9 +82,6 @@ const FavoritesPage = async () => {
     return seller.email?.split('@')[0] || 'Unknown Seller';
   };
 
-  const formatPrice = (price: number) => {
-    return `$${(price / 100).toFixed(2)}`;
-  };
 
   return (
     <>

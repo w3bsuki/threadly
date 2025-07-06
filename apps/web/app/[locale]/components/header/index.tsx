@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CartDropdown } from './cart-dropdown';
+import { SignInButton, SignUpButton, UserButton, useUser } from '@repo/auth/client';
 
 const categories = [
   { name: "All", href: "/", icon: "🛍️" },
@@ -84,6 +85,7 @@ interface SearchSuggestion {
 }
 
 export const Header = () => {
+  const { isSignedIn, user } = useUser();
   const [isMenuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -392,16 +394,19 @@ export const Header = () => {
             <div className="flex items-center space-x-2">
               {/* Mobile Actions - Simplified */}
               <div className="flex items-center space-x-2 md:hidden">
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  className="min-w-[44px] min-h-[44px] p-3 hover:bg-gray-100 active:bg-gray-200"
-                  asChild
-                >
-                  <Link href={`${env.NEXT_PUBLIC_APP_URL}/sign-in`}>
-                    <User className="h-5 w-5" />
-                  </Link>
-                </Button>
+                {isSignedIn ? (
+                  <UserButton />
+                ) : (
+                  <SignInButton mode="modal">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      className="min-w-[44px] min-h-[44px] p-3"
+                    >
+                      <User className="h-5 w-5" />
+                    </Button>
+                  </SignInButton>
+                )}
                 
                 <CartDropdown />
                 
@@ -416,7 +421,7 @@ export const Header = () => {
                   aria-label="Toggle navigation menu"
                   aria-expanded={isMenuOpen}
                   aria-controls="mobile-menu"
-                  className="min-w-[44px] min-h-[44px] p-3 hover:bg-gray-100 active:bg-gray-200"
+                  className="min-w-[44px] min-h-[44px] p-3"
                   style={{ WebkitTapHighlightColor: 'transparent' }}
                 >
                   {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -428,7 +433,6 @@ export const Header = () => {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="text-gray-700 hover:text-black hover:bg-gray-50 font-medium px-4"
                   asChild
                 >
                   <Link href="/products">
@@ -439,23 +443,27 @@ export const Header = () => {
                 
                 <CartDropdown />
                 
-                <Button variant="ghost" size="sm" className="text-gray-700 hover:text-black" asChild>
+                <Button variant="ghost" size="sm" asChild>
                   <Link href="/favorites">
                     <Heart className="h-4 w-4 mr-1" />
                     Saved
                   </Link>
                 </Button>
                 
-                <Button variant="ghost" size="sm" className="text-gray-700 hover:text-black" asChild>
-                  <Link href={`${env.NEXT_PUBLIC_APP_URL}/sign-in`}>
-                    <User className="h-4 w-4 mr-1" />
-                    Sign In
-                  </Link>
-                </Button>
+                {isSignedIn ? (
+                  <UserButton />
+                ) : (
+                  <SignInButton mode="modal">
+                    <Button variant="ghost" size="sm">
+                      <User className="h-4 w-4 mr-1" />
+                      Sign In
+                    </Button>
+                  </SignInButton>
+                )}
                 
                 <Button 
                   size="sm" 
-                  className="bg-black text-white hover:bg-gray-800 font-medium px-4"
+                  variant="default"
                   asChild
                 >
                   <Link href={`${env.NEXT_PUBLIC_APP_URL}/selling/new`}>
@@ -479,10 +487,10 @@ export const Header = () => {
                   <Link
                     key={category.name}
                     href={category.href}
-                    className={`text-sm font-medium transition-colors flex items-center ${
+                    className={`text-sm font-medium transition-colors duration-200 flex items-center ${
                       category.isDesigner
-                        ? "text-amber-700 hover:text-amber-800 font-semibold"
-                        : "text-gray-700 hover:text-black"
+                        ? "text-amber-700 hover:text-amber-900 font-semibold"
+                        : "text-gray-700 hover:text-gray-900"
                     }`}
                   >
                     {category.isDesigner && <Crown className="h-4 w-4 mr-1" />}
@@ -498,7 +506,7 @@ export const Header = () => {
                   <Link
                     key={collection.name}
                     href={collection.href}
-                    className="flex items-center space-x-1 text-sm text-gray-600 hover:text-black transition-colors"
+                    className="flex items-center space-x-1 text-sm text-gray-600 hover:text-gray-900 transition-colors duration-200"
                   >
                     <span className="text-base">{collection.icon}</span>
                     <span>{collection.name}</span>
@@ -549,12 +557,21 @@ export const Header = () => {
 
               {/* User Actions */}
               <div className="space-y-2 pb-4 border-b border-gray-100">
-                <Button variant="ghost" className="w-full justify-start text-gray-700 min-h-[44px]" asChild>
-                  <Link href={`${env.NEXT_PUBLIC_APP_URL}/sign-in`} onClick={() => setMenuOpen(false)}>
-                    <User className="h-5 w-5 mr-3" />
-                    Sign In / Join
-                  </Link>
-                </Button>
+                {isSignedIn ? (
+                  <div className="flex items-center px-3 py-2">
+                    <UserButton />
+                    <span className="ml-3 text-gray-700">
+                      {user?.firstName} {user?.lastName}
+                    </span>
+                  </div>
+                ) : (
+                  <SignInButton mode="modal">
+                    <Button variant="ghost" className="w-full justify-start text-gray-700 min-h-[44px]">
+                      <User className="h-5 w-5 mr-3" />
+                      Sign In / Join
+                    </Button>
+                  </SignInButton>
+                )}
                 
                 <Button variant="ghost" className="w-full justify-start text-gray-700 min-h-[44px]" asChild>
                   <Link href="/favorites" onClick={() => setMenuOpen(false)}>

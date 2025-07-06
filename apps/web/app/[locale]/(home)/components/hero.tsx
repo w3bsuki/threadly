@@ -57,35 +57,35 @@ export const Hero = ({ dictionary }: HeroProps) => {
           </div>
         </form>
 
-        {/* Quick Stats */}
+        {/* Value Highlights */}
         <div className="flex flex-wrap items-center justify-center gap-8 text-center">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <div className="rounded-full bg-purple-100 p-2">
               <ShoppingBag className="h-5 w-5 text-purple-600" />
             </div>
-            <div>
-              <div className="font-bold text-xl text-gray-900">50K+</div>
-              <div className="text-sm text-gray-600">Items Listed</div>
+            <div className="text-left">
+              <div className="font-semibold text-gray-900">Curated Selection</div>
+              <div className="text-sm text-gray-600">Quality verified items</div>
             </div>
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <div className="rounded-full bg-pink-100 p-2">
               <Heart className="h-5 w-5 text-pink-600" />
             </div>
-            <div>
-              <div className="font-bold text-xl text-gray-900">25K+</div>
-              <div className="text-sm text-gray-600">Happy Customers</div>
+            <div className="text-left">
+              <div className="font-semibold text-gray-900">Sustainable Choice</div>
+              <div className="text-sm text-gray-600">Eco-friendly fashion</div>
             </div>
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <div className="rounded-full bg-orange-100 p-2">
               <Sparkles className="h-5 w-5 text-orange-600" />
             </div>
-            <div>
-              <div className="font-bold text-xl text-gray-900">1000+</div>
-              <div className="text-sm text-gray-600">New Daily</div>
+            <div className="text-left">
+              <div className="font-semibold text-gray-900">Unique Finds</div>
+              <div className="text-sm text-gray-600">One-of-a-kind pieces</div>
             </div>
           </div>
         </div>

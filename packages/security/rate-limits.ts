@@ -24,6 +24,7 @@ let _authRateLimit: any;
 let _paymentRateLimit: any;
 let _uploadRateLimit: any;
 let _messageRateLimit: any;
+let _webhookRateLimit: any;
 
 // Initialize Arcjet instance only when needed
 const getArcjet = () => {
@@ -137,6 +138,25 @@ export const messageRateLimit = {
       );
     }
     return _messageRateLimit.protect(request);
+  },
+};
+
+// Webhook rate limit: 5 requests per minute (strict for security)
+export const webhookRateLimit = {
+  protect: async (request: Request) => {
+    if (!_webhookRateLimit) {
+      const aj = getArcjet();
+      if (!aj) return mockRateLimiter.protect();
+      
+      _webhookRateLimit = aj.withRule(
+        fixedWindow({
+          mode: 'LIVE',
+          window: '1m',
+          max: 5,
+        })
+      );
+    }
+    return _webhookRateLimit.protect(request);
   },
 };
 

@@ -1,9 +1,25 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { database } from '@repo/database';
 import { auth } from '@repo/auth/server';
+import { generalApiLimit, checkRateLimit } from '@repo/security';
 
 // DELETE /api/cart/clear - Clear entire cart
-export async function DELETE() {
+export async function DELETE(request: NextRequest) {
+  // Check rate limit first
+  const rateLimitResult = await checkRateLimit(generalApiLimit, request);
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      { 
+        error: rateLimitResult.error?.message || 'Rate limit exceeded',
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+      },
+      { 
+        status: 429,
+        headers: rateLimitResult.headers,
+      }
+    );
+  }
+
   try {
     const user = await auth();
     if (!user?.id) {

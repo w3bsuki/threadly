@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
+import { MarketplaceSearchService } from '@repo/search/search-service';
 
 // SECURITY: Enhanced validation schema with stricter rules
 const createProductSchema = z.object({
@@ -102,7 +103,22 @@ export async function createProduct(input: z.infer<typeof createProductSchema>) 
       },
     });
 
-    // Search indexing removed for now - can be added back later
+    // Index the product for search functionality
+    try {
+      // Initialize search service (this should be configured in environment)
+      const searchService = new MarketplaceSearchService({
+        appId: process.env.ALGOLIA_APP_ID!,
+        apiKey: process.env.ALGOLIA_ADMIN_API_KEY!,
+        searchOnlyApiKey: process.env.ALGOLIA_SEARCH_API_KEY!,
+        indexName: process.env.ALGOLIA_INDEX_NAME || 'products',
+      });
+      
+      await searchService.indexProduct(product.id);
+      log('Successfully indexed product for search:', product.id);
+    } catch (searchError) {
+      // Log search indexing errors but don't fail the product creation
+      logError('Failed to index product for search (non-critical):', searchError);
+    }
     
     return { success: true, productId: product.id };
   } catch (error) {

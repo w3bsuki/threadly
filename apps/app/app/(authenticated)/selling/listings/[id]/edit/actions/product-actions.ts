@@ -25,6 +25,7 @@ import {
 } from '@repo/validation/validators';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
+import { MarketplaceSearchService } from '@repo/search/search-service';
 
 const updateProductSchema = z.object({
   title: z.string()
@@ -155,6 +156,22 @@ export async function updateProduct(productId: string, input: z.infer<typeof upd
       return product;
     });
 
+    // Update search index after successful product update
+    try {
+      const searchService = new MarketplaceSearchService({
+        appId: process.env.ALGOLIA_APP_ID!,
+        apiKey: process.env.ALGOLIA_ADMIN_API_KEY!,
+        searchOnlyApiKey: process.env.ALGOLIA_SEARCH_API_KEY!,
+        indexName: process.env.ALGOLIA_INDEX_NAME || 'products',
+      });
+      
+      await searchService.indexProduct(productId);
+      log('Successfully updated product in search index:', productId);
+    } catch (searchError) {
+      // Log search indexing errors but don't fail the product update
+      logError('Failed to update product in search index (non-critical):', searchError);
+    }
+
     return {
       success: true,
       product: updatedProduct,
@@ -242,6 +259,22 @@ export async function deleteProduct(productId: string) {
           },
         });
       });
+    }
+
+    // Remove product from search index after deletion
+    try {
+      const searchService = new MarketplaceSearchService({
+        appId: process.env.ALGOLIA_APP_ID!,
+        apiKey: process.env.ALGOLIA_ADMIN_API_KEY!,
+        searchOnlyApiKey: process.env.ALGOLIA_SEARCH_API_KEY!,
+        indexName: process.env.ALGOLIA_INDEX_NAME || 'products',
+      });
+      
+      await searchService.removeProduct(productId);
+      log('Successfully removed product from search index:', productId);
+    } catch (searchError) {
+      // Log search indexing errors but don't fail the product deletion
+      logError('Failed to remove product from search index (non-critical):', searchError);
     }
 
     return {

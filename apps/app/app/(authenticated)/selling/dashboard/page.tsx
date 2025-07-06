@@ -25,25 +25,8 @@ import { AnalyticsCharts } from './components/analytics-charts';
 const title = 'Seller Dashboard';
 const description = 'Analytics and insights for your business';
 
-const formatPrice = (price: number | string): string => {
-  const numPrice = typeof price === 'string' ? parseFloat(price) : price;
-  return `$${numPrice.toFixed(2)}`;
-};
-
-// Safe Decimal conversion with error handling
-const safeDecimalToNumber = (decimal: any): number => {
-  try {
-    if (decimal === null || decimal === undefined) return 0;
-    if (typeof decimal === 'number') return decimal;
-    if (typeof decimal === 'string') return parseFloat(decimal);
-    if (decimal.toNumber && typeof decimal.toNumber === 'function') {
-      return decimal.toNumber();
-    }
-    return parseFloat(decimal.toString());
-  } catch (error) {
-    return 0;
-  }
-};
+// Import proper commerce utilities
+import { formatPrice, toNumber } from '@repo/commerce/utils';
 
 export const metadata: Metadata = {
   title,
@@ -104,7 +87,7 @@ const SellerDashboardPage = async () => {
   }
 
   // Calculate analytics with safe Decimal conversion
-  const totalRevenue = dbUser.sales.reduce((sum, sale) => sum + safeDecimalToNumber(sale.product.price), 0);
+  const totalRevenue = dbUser.sales.reduce((sum, sale) => sum + toNumber(sale.product.price), 0);
   const totalSales = dbUser.sales.length;
   const totalListings = dbUser.listings.length;
   const activeLis = dbUser.listings.filter(listing => listing.status === 'AVAILABLE').length;
@@ -123,13 +106,91 @@ const SellerDashboardPage = async () => {
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
   
   const recentSales = dbUser.sales.filter(sale => sale.createdAt >= thirtyDaysAgo);
-  const recentRevenue = recentSales.reduce((sum, sale) => sum + safeDecimalToNumber(sale.product.price), 0);
+  const recentRevenue = recentSales.reduce((sum, sale) => sum + toNumber(sale.product.price), 0);
 
-  // Calculate trends (mock data for demo - would integrate with PostHog for real data)
-  const revenueTrend = recentRevenue > 0 ? '+12.5%' : '0%';
-  const salesTrend = recentSales.length > 0 ? '+8.2%' : '0%';
-  const viewsTrend = '+15.3%';
-  const followersTrend = totalFollowers > 0 ? '+6.1%' : '0%';
+  // Get daily analytics for the last 7 days
+  const last7Days = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (6 - i));
+    return date;
+  });
+
+  // Calculate daily revenue, sales, and views
+  const dailyAnalytics = await Promise.all(
+    last7Days.map(async (date) => {
+      const startOfDay = new Date(date);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(date);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      const dailySales = await database.order.findMany({
+        where: {
+          sellerId: dbUser.id,
+          status: 'DELIVERED',
+          createdAt: {
+            gte: startOfDay,
+            lte: endOfDay
+          }
+        },
+        include: {
+          product: {
+            select: {
+              price: true
+            }
+          }
+        }
+      });
+
+      const dailyRevenue = dailySales.reduce((sum, sale) => sum + safeDecimalToNumber(sale.product.price), 0);
+      
+      return {
+        day: date.toLocaleDateString('en-US', { weekday: 'short' }),
+        revenue: dailyRevenue,
+        sales: dailySales.length,
+        views: Math.floor(Math.random() * 100) + 20 // TODO: Implement real view tracking
+      };
+    })
+  );
+
+  // Calculate real trends
+  const currentWeekRevenue = dailyAnalytics.reduce((sum, day) => sum + day.revenue, 0);
+  const currentWeekSales = dailyAnalytics.reduce((sum, day) => sum + day.sales, 0);
+  const currentWeekViews = dailyAnalytics.reduce((sum, day) => sum + day.views, 0);
+
+  // Get previous week data for comparison
+  const last14Days = new Date();
+  last14Days.setDate(last14Days.getDate() - 14);
+  const previousWeekSales = await database.order.findMany({
+    where: {
+      sellerId: dbUser.id,
+      status: 'DELIVERED',
+      createdAt: {
+        gte: last14Days,
+        lt: thirtyDaysAgo
+      }
+    },
+    include: {
+      product: {
+        select: {
+          price: true
+        }
+      }
+    }
+  });
+
+  const previousWeekRevenue = previousWeekSales.reduce((sum, sale) => sum + safeDecimalToNumber(sale.product.price), 0);
+  
+  // Calculate real trend percentages
+  const revenueTrend = previousWeekRevenue > 0 
+    ? `${currentWeekRevenue >= previousWeekRevenue ? '+' : ''}${(((currentWeekRevenue - previousWeekRevenue) / previousWeekRevenue) * 100).toFixed(1)}%`
+    : currentWeekRevenue > 0 ? '+100%' : '0%';
+    
+  const salesTrend = previousWeekSales.length > 0
+    ? `${currentWeekSales >= previousWeekSales.length ? '+' : ''}${(((currentWeekSales - previousWeekSales.length) / previousWeekSales.length) * 100).toFixed(1)}%`
+    : currentWeekSales > 0 ? '+100%' : '0%';
+    
+  const viewsTrend = '+15.3%'; // TODO: Calculate real views trend when view tracking is implemented
+  const followersTrend = totalFollowers > 0 ? '+6.1%' : '0%'; // TODO: Implement follower trend tracking
 
   const stats = [
     {
@@ -276,6 +337,10 @@ const SellerDashboardPage = async () => {
               revenueData={recentRevenue}
               salesData={totalSales}
               viewsData={totalViews}
+              dailyAnalytics={dailyAnalytics}
+              revenueTrend={revenueTrend}
+              salesTrend={salesTrend}
+              viewsTrend={viewsTrend}
             />
           </TabsContent>
 

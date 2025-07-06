@@ -3,6 +3,7 @@ import { getSearchService } from '@repo/search';
 import { z } from 'zod';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
+import { generalApiLimit, checkRateLimit } from '@repo/security';
 
 let searchService: ReturnType<typeof getSearchService> | null = null;
 
@@ -29,6 +30,21 @@ const searchRequestSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  // Check rate limit first
+  const rateLimitResult = await checkRateLimit(generalApiLimit, request);
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      { 
+        error: rateLimitResult.error?.message || 'Rate limit exceeded',
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+      },
+      { 
+        status: 429,
+        headers: rateLimitResult.headers,
+      }
+    );
+  }
+
   try {
     // Initialize search service on first request
     if (!searchService) {
@@ -77,6 +93,21 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
+  // Check rate limit first
+  const rateLimitResult = await checkRateLimit(generalApiLimit, request);
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      { 
+        error: rateLimitResult.error?.message || 'Rate limit exceeded',
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+      },
+      { 
+        status: 429,
+        headers: rateLimitResult.headers,
+      }
+    );
+  }
+
   try {
     // Initialize search service on first request
     if (!searchService) {

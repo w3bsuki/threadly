@@ -57,7 +57,7 @@ const Home = async ({ params, searchParams }: HomeProps) => {
         {/* Products Grid - More space for browsing */}
         <div className="max-w-7xl mx-auto px-4 pt-6 pb-6">
           <ProductGridServer 
-            limit={50} 
+            limit={24} 
             sort={sort}
             brand={brand}
             condition={condition}

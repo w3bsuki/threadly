@@ -1,22 +1,35 @@
 'use client';
 
-import { fonts } from '@repo/design-system/lib/fonts';
-// import { ErrorPage } from '@repo/error-handling/error-pages';
-import type NextError from 'next/error';
+import { captureException } from '@sentry/nextjs';
 import { useEffect } from 'react';
-import * as Sentry from '@sentry/nextjs';
+import { Button } from '@repo/design-system/components';
+import { fonts } from '@repo/design-system/lib/fonts';
 
-type GlobalErrorProperties = {
-  readonly error: NextError & { digest?: string };
-  readonly reset: () => void;
+type GlobalErrorProps = {
+  error: Error & { digest?: string };
+  reset: () => void;
 };
 
-const GlobalError = ({ error, reset }: GlobalErrorProperties) => {
+/**
+ * Global error boundary for Seller Dashboard (Next.js 15 App Router)
+ * Captures React rendering errors and reports them to Sentry
+ * 
+ * This component follows Next.js 15 best practices for error handling
+ * and provides seller-focused error recovery options.
+ */
+export default function GlobalError({ error, reset }: GlobalErrorProps): JSX.Element {
   useEffect(() => {
-    // Capture exception with Sentry
-    Sentry.captureException(error, {
+    // Report the error to Sentry with seller-specific context
+    captureException(error, {
       tags: {
-        location: 'global-error-boundary',
+        component: 'GlobalError',
+        app: 'seller-dashboard',
+        errorBoundary: true,
+      },
+      extra: {
+        digest: error.digest,
+        timestamp: new Date().toISOString(),
+        userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : undefined,
       },
     });
   }, [error]);
@@ -24,26 +37,102 @@ const GlobalError = ({ error, reset }: GlobalErrorProperties) => {
   return (
     <html lang="en" className={fonts}>
       <body>
-        <div className="min-h-screen flex items-center justify-center p-4">
-          <div className="max-w-md w-full text-center">
-            <h1 className="text-2xl font-bold mb-4">Something went wrong!</h1>
-            <p className="text-gray-600 mb-6">
-              {'statusCode' in error ? `Error ${error.statusCode}` : 'An unexpected error occurred'}
-            </p>
+        <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4">
+          <div className="w-full max-w-md space-y-6 text-center">
+            {/* Error Icon */}
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+              <svg
+                className="h-8 w-8 text-red-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+
+            {/* Error Message */}
+            <div className="space-y-2">
+              <h1 className="text-2xl font-bold text-gray-900">
+                Dashboard Error
+              </h1>
+              <p className="text-gray-600">
+                We've encountered an issue with your seller dashboard. Our technical team has been notified and is working to resolve this immediately.
+              </p>
+            </div>
+
+            {/* Error Details */}
             {error.digest && (
-              <p className="text-sm text-gray-500 mb-4">Error ID: {error.digest}</p>
+              <div className="rounded-lg bg-gray-100 p-3">
+                <p className="text-sm text-gray-600">
+                  <strong>Error ID:</strong> {error.digest}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Please include this ID if contacting support.
+                </p>
+              </div>
             )}
-            <button
-              onClick={reset}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              Try again
-            </button>
+
+            {/* Actions */}
+            <div className="space-y-3">
+              <Button
+                onClick={reset}
+                className="w-full"
+                size="lg"
+              >
+                Retry dashboard
+              </Button>
+              
+              <Button
+                variant="outline"
+                onClick={() => window.location.href = '/selling/dashboard'}
+                className="w-full"
+                size="lg"
+              >
+                Return to dashboard
+              </Button>
+              
+              <Button
+                variant="ghost"
+                onClick={() => window.location.href = '/profile'}
+                className="w-full"
+                size="sm"
+              >
+                Go to profile settings
+              </Button>
+            </div>
+
+            {/* Support Information */}
+            <div className="rounded-lg bg-blue-50 p-4 text-sm">
+              <p className="text-blue-800">
+                <strong>Need immediate help?</strong>
+              </p>
+              <p className="text-blue-700">
+                Contact our seller support team if this issue persists or affects your business operations.
+              </p>
+            </div>
+
+            {/* Error Details for Development */}
+            {process.env.NODE_ENV === 'development' && (
+              <details className="mt-6 text-left">
+                <summary className="cursor-pointer text-sm text-gray-500">
+                  Error details (development only)
+                </summary>
+                <pre className="mt-2 overflow-auto rounded bg-gray-100 p-3 text-xs text-gray-700">
+                  {error.message}
+                  {error.stack && `\n\n${error.stack}`}
+                </pre>
+              </details>
+            )}
           </div>
         </div>
       </body>
     </html>
   );
-};
-
-export default GlobalError;
+}

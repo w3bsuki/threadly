@@ -1,4 +1,4 @@
-import { AdminTableSkeleton } from '@/components/skeletons';
+import { TableSkeleton } from '@repo/design-system/components';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
 import { Skeleton } from '@repo/design-system/components';
 
@@ -36,7 +36,7 @@ export default function Loading() {
           </div>
         </CardHeader>
         <CardContent>
-          <AdminTableSkeleton rows={10} cols={6} />
+          <TableSkeleton rows={10} cols={6} />
         </CardContent>
       </Card>
     </div>

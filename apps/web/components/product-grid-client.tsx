@@ -414,12 +414,12 @@ export function ProductGridClient({
             variant="outline" 
             size="default"
             onClick={() => setShowFilters(!showFilters)}
-            className="hidden md:flex font-medium border-gray-300 hover:border-gray-400 hover:bg-gray-50 px-6 py-2.5"
+            className="hidden md:flex"
           >
             <Filter className="h-4 w-4 mr-2" />
             Filters
             {activeFilterCount > 0 && (
-              <Badge variant="secondary" className="ml-2 bg-black text-white text-xs">
+              <Badge variant="secondary" className="ml-2">
                 {activeFilterCount}
               </Badge>
             )}
@@ -430,7 +430,7 @@ export function ProductGridClient({
             <select
               value={filters.category}
               onChange={(e) => updateFilter('category', e.target.value)}
-              className="text-xs text-gray-600 border border-gray-200 rounded px-3 py-1.5 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-black"
+              className="text-sm border border-gray-200 rounded-md px-3 py-1.5 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors duration-200"
             >
               {realFilterOptions.categories.map(category => (
                 <option key={category} value={category}>{category}</option>
@@ -440,7 +440,7 @@ export function ProductGridClient({
             <select
               value={filters.brand}
               onChange={(e) => updateFilter('brand', e.target.value)}
-              className="text-xs text-gray-600 border border-gray-200 rounded px-3 py-1.5 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-black"
+              className="text-sm border border-gray-200 rounded-md px-3 py-1.5 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors duration-200"
             >
               {realFilterOptions.brands.map(brand => (
                 <option key={brand} value={brand}>{brand}</option>
@@ -450,7 +450,7 @@ export function ProductGridClient({
             <select
               value={filters.condition}
               onChange={(e) => updateFilter('condition', e.target.value)}
-              className="text-xs text-gray-600 border border-gray-200 rounded px-3 py-1.5 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-black"
+              className="text-sm border border-gray-200 rounded-md px-3 py-1.5 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black transition-colors duration-200"
             >
               {realFilterOptions.conditions.map(condition => (
                 <option key={condition} value={condition}>

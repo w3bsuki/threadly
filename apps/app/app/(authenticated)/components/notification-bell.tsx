@@ -12,7 +12,7 @@ import {
 import { Badge } from '@repo/design-system/components';
 import { Bell, Check, CheckCheck } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { NotificationSkeleton } from '@/components/skeletons';
+import { NotificationSkeleton } from '@repo/design-system/components';
 
 export function NotificationBell() {
   const { notifications, unreadCount, isLoading, markAsRead, markAllAsRead } = useNotifications();

@@ -5,8 +5,11 @@ import type { NextConfig } from 'next';
 
 let nextConfig: NextConfig = withLogging(config);
 
-if (env.VERCEL) {
+// Enable Sentry for all environments where DSN is provided
+try {
   nextConfig = withSentry(nextConfig);
+} catch (error) {
+  console.warn('Sentry configuration failed, continuing without Sentry:', error);
 }
 
 if (env.ANALYZE === 'true') {

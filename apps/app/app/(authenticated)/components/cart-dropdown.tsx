@@ -1,6 +1,6 @@
 'use client';
 
-import { useCartStore } from '@/lib/stores/cart-store';
+import { useCartStore } from '@repo/commerce';
 import { Button } from '@repo/design-system/components';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@repo/design-system/components';
 import { Badge } from '@repo/design-system/components';

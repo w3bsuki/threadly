@@ -3,6 +3,7 @@ import { currentUser } from '@repo/auth/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { logError } from '@repo/observability/server';
+import { generalApiLimit, checkRateLimit } from '@repo/security';
 
 // Schema for creating a review
 const createReviewSchema = z.object({
@@ -13,6 +14,21 @@ const createReviewSchema = z.object({
 
 // GET /api/reviews - Get reviews for a user or product
 export async function GET(request: NextRequest) {
+  // Check rate limit first
+  const rateLimitResult = await checkRateLimit(generalApiLimit, request);
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      { 
+        error: rateLimitResult.error?.message || 'Rate limit exceeded',
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+      },
+      { 
+        status: 429,
+        headers: rateLimitResult.headers,
+      }
+    );
+  }
+
   try {
     const searchParams = request.nextUrl.searchParams;
     const userId = searchParams.get('userId');
@@ -116,6 +132,21 @@ export async function GET(request: NextRequest) {
 
 // POST /api/reviews - Create a review after order completion
 export async function POST(request: NextRequest) {
+  // Check rate limit first
+  const rateLimitResult = await checkRateLimit(generalApiLimit, request);
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      { 
+        error: rateLimitResult.error?.message || 'Rate limit exceeded',
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+      },
+      { 
+        status: 429,
+        headers: rateLimitResult.headers,
+      }
+    );
+  }
+
   try {
     const user = await currentUser();
     if (!user) {

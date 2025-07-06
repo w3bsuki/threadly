@@ -9,6 +9,7 @@ import type {
   WebhookEvent,
 } from '@repo/auth/server';
 import { logError } from '@repo/observability/server';
+import { webhookRateLimit, checkRateLimit } from '@repo/security';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { Webhook } from 'svix';
@@ -224,6 +225,27 @@ const handleOrganizationMembershipDeleted = (
 export const POST = async (request: Request): Promise<Response> => {
   if (!env.CLERK_WEBHOOK_SECRET) {
     return NextResponse.json({ message: 'Not configured', ok: false });
+  }
+
+  // Check rate limit first for security
+  const rateLimitResult = await checkRateLimit(webhookRateLimit, request);
+  if (!rateLimitResult.allowed) {
+    logError('Auth webhook rate limit exceeded', {
+      rateLimitResult,
+      headers: Object.fromEntries(request.headers.entries())
+    });
+    
+    return NextResponse.json(
+      { 
+        error: rateLimitResult.error?.message || 'Rate limit exceeded',
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED',
+        ok: false 
+      },
+      { 
+        status: 429,
+        headers: rateLimitResult.headers,
+      }
+    );
   }
 
   // Get the headers

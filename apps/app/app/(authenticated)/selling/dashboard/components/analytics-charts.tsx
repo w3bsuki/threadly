@@ -2,33 +2,48 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
 import { BarChart3, TrendingUp, Activity } from 'lucide-react';
+import { formatPrice } from '@repo/commerce/utils';
 
 interface AnalyticsChartsProps {
   revenueData: number;
   salesData: number;
   viewsData: number;
+  dailyAnalytics: Array<{
+    day: string;
+    revenue: number;
+    sales: number;
+    views: number;
+  }>;
+  revenueTrend: string;
+  salesTrend: string;
+  viewsTrend: string;
 }
 
-export function AnalyticsCharts({ revenueData, salesData, viewsData }: AnalyticsChartsProps) {
-  // Mock chart data - in production this would come from PostHog or analytics service
+export function AnalyticsCharts({ 
+  revenueData, 
+  salesData, 
+  viewsData, 
+  dailyAnalytics, 
+  revenueTrend, 
+  salesTrend, 
+  viewsTrend 
+}: AnalyticsChartsProps) {
+  // Real chart data from database analytics
   const chartData = {
-    revenue: Array.from({ length: 7 }, (_, i) => ({
-      day: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i],
-      value: Math.floor(Math.random() * 500) + 100
+    revenue: dailyAnalytics.map(day => ({
+      day: day.day,
+      value: day.revenue
     })),
-    sales: Array.from({ length: 7 }, (_, i) => ({
-      day: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i],
-      value: Math.floor(Math.random() * 10) + 1
+    sales: dailyAnalytics.map(day => ({
+      day: day.day,
+      value: day.sales
     })),
-    views: Array.from({ length: 7 }, (_, i) => ({
-      day: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i],
-      value: Math.floor(Math.random() * 100) + 20
+    views: dailyAnalytics.map(day => ({
+      day: day.day,
+      value: day.views
     }))
   };
 
-  const formatPrice = (price: number) => {
-    return `$${(price / 100).toFixed(2)}`;
-  };
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -41,7 +56,7 @@ export function AnalyticsCharts({ revenueData, salesData, viewsData }: Analytics
         <CardContent>
           <div className="text-2xl font-bold">{formatPrice(revenueData)}</div>
           <p className="text-xs text-muted-foreground">
-            +20.1% from last week
+            {revenueTrend} from last week
           </p>
           <div className="mt-4 h-[60px] flex items-end justify-between gap-1">
             {chartData.revenue.map((item, index) => (
@@ -66,7 +81,7 @@ export function AnalyticsCharts({ revenueData, salesData, viewsData }: Analytics
         <CardContent>
           <div className="text-2xl font-bold">{salesData}</div>
           <p className="text-xs text-muted-foreground">
-            +15.3% from last week
+            {salesTrend} from last week
           </p>
           <div className="mt-4 h-[60px] flex items-end justify-between gap-1">
             {chartData.sales.map((item, index) => (
@@ -91,7 +106,7 @@ export function AnalyticsCharts({ revenueData, salesData, viewsData }: Analytics
         <CardContent>
           <div className="text-2xl font-bold">{viewsData.toLocaleString()}</div>
           <p className="text-xs text-muted-foreground">
-            +8.7% from last week
+            {viewsTrend} from last week
           </p>
           <div className="mt-4 h-[60px] flex items-end justify-between gap-1">
             {chartData.views.map((item, index) => (

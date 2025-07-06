@@ -370,16 +370,27 @@ export function ProductQuickView({ product, trigger }: ProductQuickViewProps) {
 
             {/* Desktop Action Buttons */}
             <div className="hidden md:block space-y-3">
-              <Button 
-                className="w-full bg-black text-white hover:bg-gray-800 h-12 text-base font-medium"
-                onClick={() => {
-                  setIsOpen(false);
-                  window.location.href = `/checkout/${product.id}`;
-                }}
-              >
-                <ShoppingCart className="h-5 w-5 mr-2" />
-                Buy Now
-              </Button>
+              <div className="grid grid-cols-2 gap-3">
+                <Button 
+                  variant="outline"
+                  className="h-12 text-base font-medium"
+                  onClick={handleAddToCart}
+                >
+                  <Plus className="h-5 w-5 mr-2" />
+                  Add to Cart
+                </Button>
+                
+                <Button 
+                  className="bg-black text-white hover:bg-gray-800 h-12 text-base font-medium"
+                  onClick={() => {
+                    setIsOpen(false);
+                    window.location.href = `/checkout/${product.id}`;
+                  }}
+                >
+                  <ShoppingCart className="h-5 w-5 mr-2" />
+                  Buy Now
+                </Button>
+              </div>
               
               <div className="grid grid-cols-2 gap-3">
                 <Button 

@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { useCartStore } from '@/lib/stores/cart-store';
+import { useCartStore } from '@repo/commerce';
 import { useState, useEffect } from 'react';
 
 interface MobileBottomNavProps {

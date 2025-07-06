@@ -5,13 +5,22 @@ import { database } from '@repo/database';
 import { revalidatePath } from 'next/cache';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
+import { suspendUserSchema, updateUserRoleSchema, bulkOperationSchema, sanitizeForDisplay } from '@repo/validation';
 
 export async function updateUserRole(userId: string, role: 'USER' | 'ADMIN' | 'MODERATOR') {
   await requireAdmin();
   
+  // Validate input
+  const validationResult = updateUserRoleSchema.safeParse({ userId, role });
+  if (!validationResult.success) {
+    throw new Error(`Invalid input: ${validationResult.error.errors.map(e => e.message).join(', ')}`);
+  }
+  
+  const { userId: validatedUserId, role: validatedRole } = validationResult.data;
+  
   await database.user.update({
-    where: { id: userId },
-    data: { role }
+    where: { id: validatedUserId },
+    data: { role: validatedRole }
   });
   
   revalidatePath('/admin/users');
@@ -21,9 +30,20 @@ export async function updateUserRole(userId: string, role: 'USER' | 'ADMIN' | 'M
 export async function suspendUser(userId: string, reason?: string) {
   await requireAdmin();
   
+  // Validate input
+  const validationResult = suspendUserSchema.safeParse({ userId, reason });
+  if (!validationResult.success) {
+    throw new Error(`Invalid input: ${validationResult.error.errors.map(e => e.message).join(', ')}`);
+  }
+  
+  const { userId: validatedUserId, reason: validatedReason } = validationResult.data;
+  
+  // Sanitize reason if provided
+  const sanitizedReason = validatedReason ? sanitizeForDisplay(validatedReason) : 'Policy violation';
+  
   // Get user info first
   const user = await database.user.findUnique({
-    where: { id: userId },
+    where: { id: validatedUserId },
     select: { id: true, firstName: true, lastName: true, suspended: true }
   });
   
@@ -37,24 +57,24 @@ export async function suspendUser(userId: string, reason?: string) {
   
   // Update user suspended status
   await database.user.update({
-    where: { id: userId },
+    where: { id: validatedUserId },
     data: {
       suspended: true,
       suspendedAt: new Date(),
-      suspendedReason: reason || 'Policy violation'
+      suspendedReason: sanitizedReason
     }
   });
   
   // Mark all user's products as removed
   await database.product.updateMany({
-    where: { sellerId: userId },
+    where: { sellerId: validatedUserId },
     data: { status: 'REMOVED' }
   });
   
   // Cancel active orders where user is seller
   await database.order.updateMany({
     where: {
-      sellerId: userId,
+      sellerId: validatedUserId,
       status: { in: ['PENDING', 'PAID'] }
     },
     data: {
@@ -65,13 +85,13 @@ export async function suspendUser(userId: string, reason?: string) {
   // Send notification to user
   await database.notification.create({
     data: {
-      userId: userId,
+      userId: validatedUserId,
       title: 'Account Suspended',
       message: 'Your account has been suspended due to policy violations. All active listings have been removed and pending orders cancelled. Contact support for more information.',
       type: 'SYSTEM',
       metadata: JSON.stringify({
         action: 'suspended',
-        reason: reason || 'Policy violation',
+        reason: sanitizedReason,
         timestamp: new Date().toISOString(),
       }),
     },
@@ -184,14 +204,26 @@ export async function bulkUpdateUsers({
 }) {
   await requireAdmin();
 
-  if (userIds.length === 0) {
+  // Validate input
+  const validationResult = bulkOperationSchema.safeParse({ 
+    ids: userIds, 
+    action,
+    data: {} 
+  });
+  if (!validationResult.success) {
+    throw new Error(`Invalid input: ${validationResult.error.errors.map(e => e.message).join(', ')}`);
+  }
+
+  const { ids: validatedUserIds } = validationResult.data;
+
+  if (validatedUserIds.length === 0) {
     throw new Error('No users selected');
   }
 
   try {
     // Get users info for notifications
     const users = await database.user.findMany({
-      where: { id: { in: userIds } },
+      where: { id: { in: validatedUserIds } },
       select: { 
         id: true, 
         firstName: true, 

@@ -134,5 +134,46 @@ export type {
 export { useIsMobile } from './hooks/use-mobile';
 export { usePullToRefresh } from './hooks/use-pull-to-refresh';
 
+// Feedback components - Loading states and skeletons
+export { 
+  LoadingSpinner,
+  LoadingButton,
+  PageLoadingOverlay,
+  ListSkeleton,
+  TableSkeleton,
+  ProfileSkeleton,
+  DashboardSkeleton,
+  NotificationSkeleton
+} from './components/feedback';
+
+// Commerce components - E-commerce specific skeletons
+export {
+  ProductCardSkeleton,
+  ProductGridSkeleton,
+  ProductDetailSkeleton,
+  CartSkeleton,
+  CheckoutSkeleton,
+  OrderListSkeleton,
+  CategoryGridSkeleton,
+  TrendingProductsSkeleton,
+  HeroSkeleton
+} from './components/commerce';
+
+// Messaging components - Chat and communication skeletons
+export {
+  MessageListSkeleton,
+  ConversationSkeleton,
+  ChatInputSkeleton,
+  MessageBubbleSkeleton
+} from './components/messaging';
+
+// Search components - Search interface skeletons
+export {
+  SearchResultsSkeleton,
+  SearchInputSkeleton,
+  SearchSuggestionsSkeleton,
+  SearchFiltersSkeleton
+} from './components/search';
+
 // Utils
 export { cn } from './lib/utils';

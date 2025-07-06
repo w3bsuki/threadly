@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useCartStore } from '../../../../../lib/stores/cart-store';
+import { useCartStore } from '@repo/commerce';
+import { useCheckout } from '@/lib/hooks/use-checkout';
 import { Button } from '@repo/design-system/components';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
 import { Input } from '@repo/design-system/components';
@@ -15,8 +16,9 @@ import { Checkbox } from '@repo/design-system/components';
 import { ShoppingBag, CreditCard, Truck, Shield } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components';
+import { checkoutFormSchema, type CheckoutFormData } from '@repo/commerce';
+import { formatCurrency } from '@repo/utils';
 import Link from 'next/link';
 import Image from 'next/image';
 import { createOrder } from '../actions/create-order';
@@ -24,30 +26,6 @@ import { loadStripe } from '@stripe/stripe-js';
 import { env } from '../../../../../env';
 
 const stripePromise = loadStripe(env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
-
-const checkoutSchema = z.object({
-  // Shipping Information
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
-  email: z.string().email('Valid email is required'),
-  phone: z.string().min(10, 'Valid phone number is required'),
-  
-  // Address
-  address: z.string().min(1, 'Address is required'),
-  city: z.string().min(1, 'City is required'),
-  state: z.string().min(1, 'State is required'),
-  zipCode: z.string().min(5, 'Valid zip code is required'),
-  country: z.string().min(1, 'Country is required'),
-  
-  // Shipping Options
-  shippingMethod: z.enum(['standard', 'express', 'overnight']),
-  
-  // Optional
-  notes: z.string().optional(),
-  saveAddress: z.boolean(),
-});
-
-type CheckoutFormData = z.infer<typeof checkoutSchema>;
 
 interface CheckoutContentProps {
   user: {

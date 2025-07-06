@@ -3,6 +3,7 @@ import { currentUser } from '@repo/auth/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { logError } from '@repo/observability/server';
+import { generalApiLimit, checkRateLimit } from '@repo/security';
 
 // Schema for updating an order
 const updateOrderSchema = z.object({
@@ -17,6 +18,21 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Check rate limit first
+  const rateLimitResult = await checkRateLimit(generalApiLimit, request);
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      { 
+        error: rateLimitResult.error?.message || 'Rate limit exceeded',
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+      },
+      { 
+        status: 429,
+        headers: rateLimitResult.headers,
+      }
+    );
+  }
+
   try {
     const user = await currentUser();
     if (!user) {
@@ -91,6 +107,21 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Check rate limit first
+  const rateLimitResult = await checkRateLimit(generalApiLimit, request);
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      { 
+        error: rateLimitResult.error?.message || 'Rate limit exceeded',
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+      },
+      { 
+        status: 429,
+        headers: rateLimitResult.headers,
+      }
+    );
+  }
+
   try {
     const user = await currentUser();
     if (!user) {
@@ -195,6 +226,21 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Check rate limit first
+  const rateLimitResult = await checkRateLimit(generalApiLimit, request);
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      { 
+        error: rateLimitResult.error?.message || 'Rate limit exceeded',
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+      },
+      { 
+        status: 429,
+        headers: rateLimitResult.headers,
+      }
+    );
+  }
+
   try {
     const user = await currentUser();
     if (!user) {

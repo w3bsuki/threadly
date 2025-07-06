@@ -4,6 +4,7 @@ import { fonts } from '@repo/design-system/lib/fonts';
 import { cn } from '@repo/design-system/lib/utils';
 import { Toolbar } from '@repo/feature-flags/components/toolbar';
 import { AnalyticsProvider } from '@repo/analytics';
+import { ClerkProvider } from '@repo/auth/client';
 import type { ReactNode } from 'react';
 import { Footer } from './components/footer';
 import { Header } from './components/header';
@@ -30,16 +31,18 @@ const RootLayout = ({ children }: RootLayoutProperties) => {
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-black text-white px-4 py-2 rounded-md z-[100]">
           Skip to main content
         </a>
-        <AnalyticsProvider>
-          <DesignSystemProvider>
-            <ServiceWorkerRegistration />
-            <Header />
-            <main id="main-content" className="min-h-screen">
-              {children}
-            </main>
-            <Footer />
-          </DesignSystemProvider>
-        </AnalyticsProvider>
+        <ClerkProvider>
+          <AnalyticsProvider>
+            <DesignSystemProvider>
+              <ServiceWorkerRegistration />
+              <Header />
+              <main id="main-content" className="min-h-screen">
+                {children}
+              </main>
+              <Footer />
+            </DesignSystemProvider>
+          </AnalyticsProvider>
+        </ClerkProvider>
         <Toolbar />
       </body>
     </html>

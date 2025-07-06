@@ -17,6 +17,8 @@
     "@repo/auth": "workspace:*",
     "@repo/cache": "workspace:*",
     "@repo/cart": "workspace:*",
+    "@repo/commerce": "workspace:*",
+    "@repo/utils": "workspace:*",
     "@repo/collaboration": "workspace:*",
     "@repo/database": "workspace:*",
     "@repo/design-system": "workspace:*",

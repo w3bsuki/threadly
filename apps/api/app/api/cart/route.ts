@@ -1,10 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { database } from '@repo/database';
 import { auth } from '@repo/auth/server';
+import { generalApiLimit, checkRateLimit } from '@repo/security';
 import { z } from 'zod';
 
 // GET /api/cart - Get user's cart
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // Check rate limit first
+  const rateLimitResult = await checkRateLimit(generalApiLimit, request);
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      { 
+        error: rateLimitResult.error?.message || 'Rate limit exceeded',
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+      },
+      { 
+        status: 429,
+        headers: rateLimitResult.headers,
+      }
+    );
+  }
+
   try {
     const user = await auth();
     if (!user?.id) {
@@ -62,6 +78,21 @@ const addToCartSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  // Check rate limit first
+  const rateLimitResult = await checkRateLimit(generalApiLimit, request);
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      { 
+        error: rateLimitResult.error?.message || 'Rate limit exceeded',
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+      },
+      { 
+        status: 429,
+        headers: rateLimitResult.headers,
+      }
+    );
+  }
+
   try {
     const user = await auth();
     if (!user?.id) {
@@ -159,6 +190,21 @@ export async function POST(request: NextRequest) {
 
 // DELETE /api/cart/:productId - Remove item from cart
 export async function DELETE(request: NextRequest) {
+  // Check rate limit first
+  const rateLimitResult = await checkRateLimit(generalApiLimit, request);
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      { 
+        error: rateLimitResult.error?.message || 'Rate limit exceeded',
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+      },
+      { 
+        status: 429,
+        headers: rateLimitResult.headers,
+      }
+    );
+  }
+
   try {
     const user = await auth();
     if (!user?.id) {
@@ -192,6 +238,21 @@ export async function DELETE(request: NextRequest) {
 
 // PATCH /api/cart/clear - Clear entire cart
 export async function PATCH(request: NextRequest) {
+  // Check rate limit first
+  const rateLimitResult = await checkRateLimit(generalApiLimit, request);
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      { 
+        error: rateLimitResult.error?.message || 'Rate limit exceeded',
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+      },
+      { 
+        status: 429,
+        headers: rateLimitResult.headers,
+      }
+    );
+  }
+
   try {
     const user = await auth();
     if (!user?.id) {

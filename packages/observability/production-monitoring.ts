@@ -176,6 +176,29 @@ export function generateSentrySetupGuide(config: {
   };
 }
 
+// Extend window type for Sentry
+declare global {
+  interface Window {
+    Sentry?: {
+      captureUserFeedback: (feedback: {
+        event_id: string;
+        name: string;
+        email: string;
+        comments: string;
+      }) => void;
+      setUser: (user: { id: string; email?: string; username?: string }) => void;
+      addBreadcrumb: (breadcrumb: {
+        message: string;
+        category: string;
+        level: string;
+        timestamp: number;
+      }) => void;
+      withScope: (callback: (scope: any) => void) => void;
+      captureException: (error: Error) => void;
+    };
+  }
+}
+
 export function createErrorReportingUtils() {
   return {
     // Capture user feedback
@@ -220,11 +243,11 @@ export function createErrorReportingUtils() {
     // Capture exception with context
     captureExceptionWithContext: (error: Error, context: Record<string, any>) => {
       if (typeof window !== 'undefined' && window.Sentry) {
-        window.Sentry.withScope((scope) => {
+        window.Sentry.withScope((scope: any) => {
           Object.entries(context).forEach(([key, value]) => {
             scope.setTag(key, value);
           });
-          window.Sentry.captureException(error);
+          window.Sentry!.captureException(error);
         });
       }
     }
@@ -269,9 +292,10 @@ export function validateProductionReadiness(): {
     };
     
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
     return {
       ready: false,
-      issues: [`Monitoring configuration validation failed: ${error.message}`],
+      issues: [`Monitoring configuration validation failed: ${errorMessage}`],
       recommendations: ['Fix monitoring configuration before deploying to production']
     };
   }

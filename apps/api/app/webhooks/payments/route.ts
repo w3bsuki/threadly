@@ -5,6 +5,7 @@ import { database } from '@repo/database';
 import { parseError, logError } from '@repo/observability/server';
 import { stripe } from '@repo/payments';
 import type { Stripe } from '@repo/payments';
+import { webhookRateLimit, checkRateLimit } from '@repo/security';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 
@@ -154,6 +155,27 @@ const handlePaymentIntentSucceeded = async (
 export const POST = async (request: Request): Promise<Response> => {
   if (!env.STRIPE_WEBHOOK_SECRET) {
     return NextResponse.json({ message: 'Not configured', ok: false });
+  }
+
+  // Check rate limit first for security
+  const rateLimitResult = await checkRateLimit(webhookRateLimit, request);
+  if (!rateLimitResult.allowed) {
+    logError('Webhook rate limit exceeded', {
+      rateLimitResult,
+      headers: Object.fromEntries(request.headers.entries())
+    });
+    
+    return NextResponse.json(
+      { 
+        error: rateLimitResult.error?.message || 'Rate limit exceeded',
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED',
+        ok: false 
+      },
+      { 
+        status: 429,
+        headers: rateLimitResult.headers,
+      }
+    );
   }
 
   try {

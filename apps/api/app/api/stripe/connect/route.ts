@@ -4,6 +4,7 @@ import { database } from '@repo/database';
 import Stripe from 'stripe';
 import { env } from '@/env';
 import { logError } from '@repo/observability/server';
+import { paymentRateLimit, checkRateLimit } from '@repo/security';
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-05-28.basil',
@@ -11,6 +12,21 @@ const stripe = new Stripe(env.STRIPE_SECRET_KEY!, {
 
 // POST /api/stripe/connect - Create Stripe Connect onboarding link
 export async function POST(request: NextRequest) {
+  // Check rate limit first for security
+  const rateLimitResult = await checkRateLimit(paymentRateLimit, request);
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      { 
+        error: rateLimitResult.error?.message || 'Rate limit exceeded',
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+      },
+      { 
+        status: 429,
+        headers: rateLimitResult.headers,
+      }
+    );
+  }
+
   try {
     const user = await currentUser();
     if (!user) {
@@ -73,6 +89,21 @@ export async function POST(request: NextRequest) {
 
 // GET /api/stripe/connect - Get Stripe Connect account status
 export async function GET(request: NextRequest) {
+  // Check rate limit first for security
+  const rateLimitResult = await checkRateLimit(paymentRateLimit, request);
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      { 
+        error: rateLimitResult.error?.message || 'Rate limit exceeded',
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+      },
+      { 
+        status: 429,
+        headers: rateLimitResult.headers,
+      }
+    );
+  }
+
   try {
     const user = await currentUser();
     if (!user) {

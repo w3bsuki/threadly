@@ -237,42 +237,40 @@ export async function ProductGridServer({
     // Transform products for the UI
     const transformedProducts = finalProducts.map(transformProduct);
 
-    // Get filter options from actual data
-    const categories = await database.category.findMany({
-      select: { name: true },
-      where: {
-        products: {
-          some: { status: ProductStatus.AVAILABLE }
-        }
-      },
-    });
-
-    const brands = await database.product.groupBy({
-      by: ['brand'],
-      where: { 
-        status: ProductStatus.AVAILABLE,
-        brand: { not: null }
-      },
-      _count: true,
-      orderBy: { _count: { brand: 'desc' } },
-      take: 10,
-    });
-
-    const sizes = await database.product.groupBy({
-      by: ['size'],
-      where: { status: ProductStatus.AVAILABLE },
-      _count: true,
-      orderBy: { _count: { size: 'desc' } },
-      take: 10,
-    });
+    // Get filter options - for now without caching until we fix the config
+    const [categories, brands, sizes] = await Promise.all([
+      database.category.findMany({
+        select: { name: true },
+        where: {
+          products: {
+            some: { status: ProductStatus.AVAILABLE }
+          }
+        },
+      }),
+      database.product.groupBy({
+        by: ['brand'],
+        where: { 
+          status: ProductStatus.AVAILABLE,
+          brand: { not: null }
+        },
+        _count: true,
+        orderBy: { _count: { brand: 'desc' } },
+        take: 10,
+      }),
+      database.product.groupBy({
+        by: ['size'],
+        where: { status: ProductStatus.AVAILABLE },
+        _count: true,
+        orderBy: { _count: { size: 'desc' } },
+        take: 10,
+      })
+    ]);
 
     const filterOptions = {
       categories: categories.map(c => c.name),
       brands: brands.map(b => b.brand).filter(Boolean) as string[],
       sizes: sizes.map(s => s.size).filter(Boolean) as string[],
-      totalCount: await database.product.count({
-        where: { status: ProductStatus.AVAILABLE }
-      })
+      totalCount: finalProducts.length // Use the actual count from products we fetched
     };
 
     return (

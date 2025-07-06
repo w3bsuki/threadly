@@ -18,6 +18,9 @@ export * from './sanitize';
 // Export validation middleware
 export * from './middleware';
 
+// Export security middleware
+export * from './security-middleware';
+
 // Export custom validators
 export * from './validators';
 

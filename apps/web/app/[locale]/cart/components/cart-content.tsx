@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCartStore } from "../../../../lib/stores/cart-store";
+import { useCartSync } from "../../../../lib/hooks/use-cart-sync";
 import { Button } from '@repo/design-system/components';
 import { Card, CardContent } from '@repo/design-system/components';
 import { Separator } from '@repo/design-system/components';
@@ -19,7 +19,7 @@ const conditionLabels = {
 };
 
 export function CartContent() {
-  const { items, removeItem, updateQuantity, clearCart, getTotalPrice } = useCartStore();
+  const { items, removeItem, updateQuantity, clearCart, getTotalPrice } = useCartSync();
 
   if (items.length === 0) {
     return (
@@ -169,8 +169,8 @@ export function CartContent() {
                   <span>{formatCurrency(totalPrice)}</span>
                 </div>
                 
-                <Button className="w-full mt-6" size="lg">
-                  Proceed to Checkout
+                <Button className="w-full mt-6" size="lg" asChild>
+                  <Link href="/checkout">Proceed to Checkout</Link>
                 </Button>
                 
                 <Button variant="outline" className="w-full mt-2" asChild>

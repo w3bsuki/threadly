@@ -1,4 +1,4 @@
-import { OrderListSkeleton } from '@/components/skeletons';
+import { OrderListSkeleton } from '@repo/design-system/components';
 
 export default function Loading() {
   return <OrderListSkeleton />;

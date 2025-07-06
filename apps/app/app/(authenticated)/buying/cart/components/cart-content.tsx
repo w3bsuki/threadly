@@ -1,6 +1,6 @@
 'use client';
 
-import { useCartStore } from '../../../../../lib/stores/cart-store';
+import { useCartStore } from '@repo/commerce';
 import { Button } from '@repo/design-system/components';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
 import { Separator } from '@repo/design-system/components';
@@ -8,6 +8,7 @@ import { Badge } from '@repo/design-system/components';
 import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 import Link from 'next/link';
 import { LazyImage } from '@repo/design-system/components';
+import { formatCurrency } from '@repo/utils';
 import { useState } from 'react';
 
 interface CartContentProps {
@@ -163,11 +164,11 @@ export function CartContent({ userId }: CartContentProps) {
 
                     <div className="text-right">
                       <div className="font-semibold">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        {formatCurrency(item.price * item.quantity)}
                       </div>
                       {item.quantity > 1 && (
                         <div className="text-xs text-muted-foreground">
-                          ${item.price.toFixed(2)} each
+                          {formatCurrency(item.price)} each
                         </div>
                       )}
                     </div>
@@ -189,7 +190,7 @@ export function CartContent({ userId }: CartContentProps) {
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span>Subtotal ({totalItems} items)</span>
-                <span>${totalPrice.toFixed(2)}</span>
+                <span>{formatCurrency(totalPrice)}</span>
               </div>
               
               <div className="flex justify-between text-sm">
@@ -198,14 +199,14 @@ export function CartContent({ userId }: CartContentProps) {
                   {shippingFee === 0 ? (
                     <span className="text-green-600">Free</span>
                   ) : (
-                    `$${shippingFee.toFixed(2)}`
+                    formatCurrency(shippingFee)
                   )}
                 </span>
               </div>
 
               {totalPrice < 100 && (
                 <div className="text-xs text-muted-foreground">
-                  Add ${(100 - totalPrice).toFixed(2)} more for free shipping
+                  Add {formatCurrency(100 - totalPrice)} more for free shipping
                 </div>
               )}
 
@@ -213,7 +214,7 @@ export function CartContent({ userId }: CartContentProps) {
 
               <div className="flex justify-between font-semibold">
                 <span>Total</span>
-                <span>${finalTotal.toFixed(2)}</span>
+                <span>{formatCurrency(finalTotal)}</span>
               </div>
             </div>
 
@@ -222,7 +223,7 @@ export function CartContent({ userId }: CartContentProps) {
               size="lg"
               onClick={handleCheckout}
             >
-              Checkout - ${finalTotal.toFixed(2)}
+              Checkout - {formatCurrency(finalTotal)}
             </Button>
 
             <div className="text-xs text-muted-foreground text-center">

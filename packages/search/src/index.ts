@@ -1,5 +1,23 @@
+// Core types and interfaces
 export * from './types';
+
+// Search engines
 export * from './algolia-search';
+export { UnifiedSearchService } from './unified-search';
+
+// History and saved searches
+export { 
+  SearchHistoryService, 
+  SavedSearchService,
+  type SearchHistoryItem,
+  type SavedSearch 
+} from './history';
+
+// API route handlers
+export { 
+  SearchApiHandler, 
+  createSearchHandler 
+} from './api-routes';
 
 // Legacy export - deprecated
 export * from './search-service';

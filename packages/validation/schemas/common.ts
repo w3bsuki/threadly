@@ -203,3 +203,64 @@ export const createSizeLimitedSchema = <T extends z.ZodTypeAny>(
     return val;
   }, schema);
 };
+
+// Saved search validation schema
+export const savedSearchSchema = z.object({
+  name: z.string().trim().min(1, 'Name is required').max(100, 'Name must be at most 100 characters')
+    .refine((text) => !/<[^>]*>/.test(text), {
+      message: 'HTML tags are not allowed',
+    }),
+  query: z.string().trim().min(1, 'Query is required').max(200, 'Query must be at most 200 characters')
+    .refine((text) => !/<[^>]*>/.test(text), {
+      message: 'HTML tags are not allowed',
+    }),
+  filters: z.record(z.string(), z.any()).optional(),
+  alertEnabled: z.boolean().default(true),
+});
+
+// Report validation schema
+export const reportSchema = z.object({
+  type: z.enum(['PRODUCT', 'USER'], {
+    errorMap: () => ({ message: 'Report type must be either PRODUCT or USER' }),
+  }),
+  targetId: z.string().cuid('Invalid target ID format'),
+  reason: z.string().trim().min(1, 'Reason is required').max(100, 'Reason must be at most 100 characters')
+    .refine((text) => !/<[^>]*>/.test(text), {
+      message: 'HTML tags are not allowed',
+    }),
+  description: z.string().trim().max(500, 'Description must be at most 500 characters')
+    .refine((text) => !/<[^>]*>/.test(text), {
+      message: 'HTML tags are not allowed',
+    }).optional(),
+});
+
+// Query parameter validation schemas
+export const queryParamsSchema = z.object({
+  id: z.string().cuid('Invalid ID format').optional(),
+  page: z.coerce.number().int().min(1).max(1000).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+  status: z.string().optional(),
+});
+
+// Admin action validation schemas
+export const suspendUserSchema = z.object({
+  userId: z.string().cuid('Invalid user ID format'),
+  reason: z.string().trim().min(1, 'Reason is required').max(200, 'Reason must be at most 200 characters')
+    .refine((text) => !/<[^>]*>/.test(text), {
+      message: 'HTML tags are not allowed',
+    }).optional(),
+});
+
+export const updateUserRoleSchema = z.object({
+  userId: z.string().cuid('Invalid user ID format'),
+  role: z.enum(['USER', 'ADMIN', 'MODERATOR'], {
+    errorMap: () => ({ message: 'Invalid role' }),
+  }),
+});
+
+// Bulk operation validation
+export const bulkOperationSchema = z.object({
+  ids: z.array(z.string().cuid('Invalid ID format')).min(1, 'At least one ID is required').max(100, 'Maximum 100 IDs allowed'),
+  action: z.string().min(1, 'Action is required'),
+  data: z.record(z.string(), z.any()).optional(),
+});

@@ -11,7 +11,7 @@ import { SearchFilters as SearchFiltersComponent } from './search-filters';
 import { SavedSearches } from './saved-searches';
 import { SearchHistory } from './search-history';
 import { RecentlyViewed } from './recently-viewed';
-import { SearchResultsSkeleton } from '@/components/skeletons';
+import { SearchResultsSkeleton } from '@repo/design-system/components';
 
 interface SearchResultsProps {
   initialQuery?: string;

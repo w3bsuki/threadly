@@ -48,9 +48,8 @@ const SellNewItemPage = async () => {
       });
     }
 
-    // Temporarily disabled Stripe requirement - users can list items without payment setup
-    // TODO: Re-enable this when Stripe onboarding is properly configured
-    /*
+    // Stripe verification is required for sellers to list items
+    // This ensures proper payment processing and marketplace functionality
     if (!dbUser.stripeAccountId) {
       return (
         <div className="space-y-6">
@@ -87,7 +86,6 @@ const SellNewItemPage = async () => {
         </div>
       );
     }
-    */
 
     // User has Stripe account, show product form
     return (

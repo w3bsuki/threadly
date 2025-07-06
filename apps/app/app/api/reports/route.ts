@@ -3,6 +3,7 @@ import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
+import { reportSchema, queryParamsSchema, sanitizeForDisplay } from '@repo/validation';
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,12 +13,23 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { type, targetId, reason, description } = body;
-
-    // Validate input
-    if (!type || !targetId || !reason) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    
+    // Validate input with Zod schema
+    const validationResult = reportSchema.safeParse(body);
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { 
+          error: 'Invalid input', 
+          details: validationResult.error.errors.map(e => ({
+            field: e.path.join('.'),
+            message: e.message
+          }))
+        }, 
+        { status: 400 }
+      );
     }
+
+    const { type, targetId, reason, description } = validationResult.data;
 
     // Get user's database ID
     const dbUser = await database.user.findUnique({
@@ -45,12 +57,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'You have already reported this item' }, { status: 400 });
     }
 
+    // Sanitize user inputs
+    const sanitizedData = {
+      reason: sanitizeForDisplay(reason),
+      description: description ? sanitizeForDisplay(description) : undefined,
+    };
+
     // Create the report
     const reportData: any = {
       reporterId: dbUser.id,
       type,
-      reason,
-      description,
+      reason: sanitizedData.reason,
+      description: sanitizedData.description,
       status: 'PENDING',
     };
 
@@ -75,7 +93,7 @@ export async function POST(request: NextRequest) {
     const notifications = adminsAndMods.map(admin => ({
       userId: admin.id,
       title: `New ${type.toLowerCase()} report`,
-      message: `A ${type.toLowerCase()} has been reported for: ${reason}`,
+      message: `A ${type.toLowerCase()} has been reported for: ${sanitizedData.reason}`,
       type: 'SYSTEM' as const,
       metadata: JSON.stringify({
         reportId: report.id,
@@ -106,6 +124,25 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
+    const page = searchParams.get('page');
+    const limit = searchParams.get('limit');
+
+    // Validate query parameters
+    const queryValidation = queryParamsSchema.safeParse({ status, page, limit });
+    if (!queryValidation.success) {
+      return NextResponse.json(
+        { 
+          error: 'Invalid query parameters', 
+          details: queryValidation.error.errors.map(e => ({
+            field: e.path.join('.'),
+            message: e.message
+          }))
+        }, 
+        { status: 400 }
+      );
+    }
+
+    const { page: validatedPage, limit: validatedLimit } = queryValidation.data;
 
     // Get user's database ID
     const dbUser = await database.user.findUnique({
@@ -162,7 +199,8 @@ export async function GET(request: NextRequest) {
         }
       },
       orderBy: { createdAt: 'desc' },
-      take: 50,
+      skip: (validatedPage - 1) * validatedLimit,
+      take: validatedLimit,
     });
 
     return NextResponse.json({ reports });

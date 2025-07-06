@@ -1,156 +1,121 @@
-import { env } from '@/env';
 import { Button } from '@repo/design-system/components';
-import { Check, Minus, MoveRight, PhoneCall } from 'lucide-react';
+import { Shield, Heart, Zap, HelpCircle } from 'lucide-react';
 import Link from 'next/link';
 
-const Pricing = () => (
+const SellingInfo = () => (
   <div className="w-full py-20 lg:py-40">
     <div className="container mx-auto">
-      <div className="flex flex-col items-center justify-center gap-4 text-center">
-        <div className="flex flex-col gap-2">
-          <h2 className="max-w-xl text-center font-regular text-3xl tracking-tighter md:text-5xl">
-            Prices that make sense!
-          </h2>
-          <p className="max-w-xl text-center text-lg text-muted-foreground leading-relaxed tracking-tight">
-            Managing a small business today is already tough.
+      <div className="flex flex-col items-center justify-center gap-12 text-center">
+        {/* Header */}
+        <div className="flex flex-col gap-4 max-w-3xl">
+          <h1 className="text-center font-bold text-4xl tracking-tighter md:text-6xl">
+            Sell on Threadly
+          </h1>
+          <p className="text-center text-xl text-muted-foreground leading-relaxed">
+            Turn your unworn clothes into cash while contributing to sustainable fashion. 
+            It's completely free to list, and you only pay when you sell.
           </p>
         </div>
-        <div className="grid w-full grid-cols-3 divide-x pt-20 text-left lg:grid-cols-4">
-          <div className="col-span-3 lg:col-span-1" />
-          <div className="flex flex-col gap-2 px-3 py-1 md:px-6 md:py-4">
-            <p className="text-2xl">Startup</p>
-            <p className="text-muted-foreground text-sm">
-              Our goal is to streamline SMB trade, making it easier and faster
-              than ever for everyone and everywhere.
+
+        {/* How it Works */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-4xl">
+          <div className="flex flex-col items-center text-center gap-4 p-6">
+            <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center">
+              <span className="text-2xl font-bold text-purple-600">1</span>
+            </div>
+            <h3 className="text-xl font-semibold">List Your Items</h3>
+            <p className="text-muted-foreground">
+              Upload photos, add descriptions, and set your price. Listing is always free.
             </p>
-            <p className="mt-8 flex flex-col gap-2 text-xl lg:flex-row lg:items-center">
-              <span className="text-4xl">$40</span>
-              <span className="text-muted-foreground text-sm"> / month</span>
+          </div>
+          
+          <div className="flex flex-col items-center text-center gap-4 p-6">
+            <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center">
+              <span className="text-2xl font-bold text-purple-600">2</span>
+            </div>
+            <h3 className="text-xl font-semibold">Connect with Buyers</h3>
+            <p className="text-muted-foreground">
+              Chat with interested buyers and answer questions about your items.
             </p>
-            <Button variant="outline" className="mt-8 gap-4" asChild>
-              <Link href={env.NEXT_PUBLIC_APP_URL || '/sign-up'}>
-                Try it <MoveRight className="h-4 w-4" />
-              </Link>
-            </Button>
           </div>
-          <div className="flex flex-col gap-2 px-3 py-1 md:px-6 md:py-4">
-            <p className="text-2xl">Growth</p>
-            <p className="text-muted-foreground text-sm">
-              Our goal is to streamline SMB trade, making it easier and faster
-              than ever for everyone and everywhere.
+          
+          <div className="flex flex-col items-center text-center gap-4 p-6">
+            <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center">
+              <span className="text-2xl font-bold text-purple-600">3</span>
+            </div>
+            <h3 className="text-xl font-semibold">Get Paid</h3>
+            <p className="text-muted-foreground">
+              Once sold and delivered, funds are released to your account minus our small commission.
             </p>
-            <p className="mt-8 flex flex-col gap-2 text-xl lg:flex-row lg:items-center">
-              <span className="text-4xl">$40</span>
-              <span className="text-muted-foreground text-sm"> / month</span>
+          </div>
+        </div>
+
+        {/* Fees Structure */}
+        <div className="w-full max-w-2xl bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8">
+          <h2 className="text-2xl font-bold text-center mb-6">Simple, Fair Fees</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="text-center">
+              <div className="text-4xl font-bold text-purple-600 mb-2">Free</div>
+              <div className="text-lg font-semibold mb-2">Listing Items</div>
+              <div className="text-muted-foreground text-sm">
+                No upfront costs to list your clothes
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl font-bold text-purple-600 mb-2">Small %</div>
+              <div className="text-lg font-semibold mb-2">When You Sell</div>
+              <div className="text-muted-foreground text-sm">
+                Commission only on successful sales
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Benefits */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-4xl">
+          <div className="flex flex-col items-center text-center gap-4">
+            <Shield className="w-12 h-12 text-purple-600" />
+            <h3 className="text-xl font-semibold">Seller Protection</h3>
+            <p className="text-muted-foreground">
+              Protected payments and dispute resolution to keep your transactions safe.
             </p>
-            <Button className="mt-8 gap-4" asChild>
-              <Link href={env.NEXT_PUBLIC_APP_URL || '/sign-up'}>
-                Try it <MoveRight className="h-4 w-4" />
-              </Link>
-            </Button>
           </div>
-          <div className="flex flex-col gap-2 px-3 py-1 md:px-6 md:py-4">
-            <p className="text-2xl">Enterprise</p>
-            <p className="text-muted-foreground text-sm">
-              Our goal is to streamline SMB trade, making it easier and faster
-              than ever for everyone and everywhere.
+          
+          <div className="flex flex-col items-center text-center gap-4">
+            <Heart className="w-12 h-12 text-pink-600" />
+            <h3 className="text-xl font-semibold">Sustainable Impact</h3>
+            <p className="text-muted-foreground">
+              Help reduce fashion waste by giving your clothes a second life.
             </p>
-            <p className="mt-8 flex flex-col gap-2 text-xl lg:flex-row lg:items-center">
-              <span className="text-4xl">$40</span>
-              <span className="text-muted-foreground text-sm"> / month</span>
+          </div>
+          
+          <div className="flex flex-col items-center text-center gap-4">
+            <Zap className="w-12 h-12 text-orange-600" />
+            <h3 className="text-xl font-semibold">Quick & Easy</h3>
+            <p className="text-muted-foreground">
+              List items in minutes with our streamlined selling process.
             </p>
-            <Button variant="outline" className="mt-8 gap-4" asChild>
-              <Link href="/contact">
-                Contact us <PhoneCall className="h-4 w-4" />
-              </Link>
-            </Button>
           </div>
-          <div className="col-span-3 px-3 py-4 lg:col-span-1 lg:px-6">
-            <b>Features</b>
-          </div>
-          <div />
-          <div />
-          <div />
-          {/* New Line */}
-          <div className="col-span-3 px-3 py-4 lg:col-span-1 lg:px-6">SSO</div>
-          <div className="flex justify-center px-3 py-1 md:px-6 md:py-4">
-            <Check className="h-4 w-4 text-primary" />
-          </div>
-          <div className="flex justify-center px-3 py-1 md:px-6 md:py-4">
-            <Check className="h-4 w-4 text-primary" />
-          </div>
-          <div className="flex justify-center px-3 py-1 md:px-6 md:py-4">
-            <Check className="h-4 w-4 text-primary" />
-          </div>
-          {/* New Line */}
-          <div className="col-span-3 px-3 py-4 lg:col-span-1 lg:px-6">
-            AI Assistant
-          </div>
-          <div className="flex justify-center px-3 py-1 md:px-6 md:py-4">
-            <Minus className="h-4 w-4 text-muted-foreground" />
-          </div>
-          <div className="flex justify-center px-3 py-1 md:px-6 md:py-4">
-            <Check className="h-4 w-4 text-primary" />
-          </div>
-          <div className="flex justify-center px-3 py-1 md:px-6 md:py-4">
-            <Check className="h-4 w-4 text-primary" />
-          </div>
-          {/* New Line */}
-          <div className="col-span-3 px-3 py-4 lg:col-span-1 lg:px-6">
-            Version Control
-          </div>
-          <div className="flex justify-center px-3 py-1 md:px-6 md:py-4">
-            <Minus className="h-4 w-4 text-muted-foreground" />
-          </div>
-          <div className="flex justify-center px-3 py-1 md:px-6 md:py-4">
-            <Check className="h-4 w-4 text-primary" />
-          </div>
-          <div className="flex justify-center px-3 py-1 md:px-6 md:py-4">
-            <Check className="h-4 w-4 text-primary" />
-          </div>
-          {/* New Line */}
-          <div className="col-span-3 px-3 py-4 lg:col-span-1 lg:px-6">
-            Members
-          </div>
-          <div className="flex justify-center px-3 py-1 md:px-6 md:py-4">
-            <p className="text-muted-foreground text-sm">5 members</p>
-          </div>
-          <div className="flex justify-center px-3 py-1 md:px-6 md:py-4">
-            <p className="text-muted-foreground text-sm">25 members</p>
-          </div>
-          <div className="flex justify-center px-3 py-1 md:px-6 md:py-4">
-            <p className="text-muted-foreground text-sm">100+ members</p>
-          </div>
-          {/* New Line */}
-          <div className="col-span-3 px-3 py-4 lg:col-span-1 lg:px-6">
-            Multiplayer Mode
-          </div>
-          <div className="flex justify-center px-3 py-1 md:px-6 md:py-4">
-            <Minus className="h-4 w-4 text-muted-foreground" />
-          </div>
-          <div className="flex justify-center px-3 py-1 md:px-6 md:py-4">
-            <Check className="h-4 w-4 text-primary" />
-          </div>
-          <div className="flex justify-center px-3 py-1 md:px-6 md:py-4">
-            <Check className="h-4 w-4 text-primary" />
-          </div>
-          {/* New Line */}
-          <div className="col-span-3 px-3 py-4 lg:col-span-1 lg:px-6">
-            Orchestration
-          </div>
-          <div className="flex justify-center px-3 py-1 md:px-6 md:py-4">
-            <Minus className="h-4 w-4 text-muted-foreground" />
-          </div>
-          <div className="flex justify-center px-3 py-1 md:px-6 md:py-4">
-            <Check className="h-4 w-4 text-primary" />
-          </div>
-          <div className="flex justify-center px-3 py-1 md:px-6 md:py-4">
-            <Check className="h-4 w-4 text-primary" />
-          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Button size="lg" className="gap-3 bg-gradient-to-r from-purple-600 to-pink-600 px-8 py-6 text-lg text-white hover:from-purple-700 hover:to-pink-700" asChild>
+            <Link href="/auth/register">
+              Start Selling Today
+            </Link>
+          </Button>
+          
+          <Button size="lg" variant="outline" className="gap-3 px-8 py-6 text-lg" asChild>
+            <Link href="/contact">
+              <HelpCircle className="h-5 w-5" />
+              Questions? Contact Us
+            </Link>
+          </Button>
         </div>
       </div>
     </div>
   </div>
 );
 
-export default Pricing;
+export default SellingInfo;

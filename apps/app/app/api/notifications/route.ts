@@ -5,10 +5,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
+import { queryParamsSchema, sanitizeForDisplay } from '@repo/validation';
 
 const createNotificationSchema = z.object({
-  title: z.string().min(1).max(255),
-  message: z.string().min(1).max(1000),
+  title: z.string().trim().min(1).max(255)
+    .refine((text) => !/<[^>]*>/.test(text), {
+      message: 'HTML tags are not allowed',
+    }),
+  message: z.string().trim().min(1).max(1000)
+    .refine((text) => !/<[^>]*>/.test(text), {
+      message: 'HTML tags are not allowed',
+    }),
   type: z.enum(['order', 'message', 'payment', 'system']),
   metadata: z.record(z.any()).optional(),
 });
@@ -33,9 +40,26 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
+    const page = searchParams.get('page');
+    const limit = searchParams.get('limit');
     const unreadOnly = searchParams.get('unread') === 'true';
+
+    // Validate query parameters
+    const queryValidation = queryParamsSchema.safeParse({ page, limit });
+    if (!queryValidation.success) {
+      return NextResponse.json(
+        { 
+          error: 'Invalid query parameters', 
+          details: queryValidation.error.errors.map(e => ({
+            field: e.path.join('.'),
+            message: e.message
+          }))
+        }, 
+        { status: 400 }
+      );
+    }
+
+    const { page: validatedPage, limit: validatedLimit } = queryValidation.data;
 
     const notifications = await database.notification.findMany({
       where: {
@@ -43,8 +67,8 @@ export async function GET(request: NextRequest) {
         ...(unreadOnly && { read: false }),
       },
       orderBy: { createdAt: 'desc' },
-      skip: (page - 1) * limit,
-      take: limit,
+      skip: (validatedPage - 1) * validatedLimit,
+      take: validatedLimit,
     });
 
     const notificationService = getNotificationService();
@@ -53,8 +77,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       notifications,
       unreadCount,
-      page,
-      limit,
+      page: validatedPage,
+      limit: validatedLimit,
     });
   } catch (error) {
     logError('[Notifications GET] Error:', error);
@@ -86,15 +110,34 @@ export async function POST(request: NextRequest) {
 
     // This would need admin check in real implementation
     const body = await request.json();
-    const { title, message, type, metadata } = createNotificationSchema.parse(body);
+    
+    // Validate input with Zod schema
+    const validationResult = createNotificationSchema.safeParse(body);
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { 
+          error: 'Invalid input', 
+          details: validationResult.error.errors.map(e => ({
+            field: e.path.join('.'),
+            message: e.message
+          }))
+        }, 
+        { status: 400 }
+      );
+    }
 
-    const notificationService = getNotificationService();
-    const notification = await notificationService.notify(dbUser.id, {
-      title,
-      message,
+    const { title, message, type, metadata } = validationResult.data;
+
+    // Sanitize user inputs
+    const sanitizedData = {
+      title: sanitizeForDisplay(title),
+      message: sanitizeForDisplay(message),
       type,
       metadata,
-    });
+    };
+
+    const notificationService = getNotificationService();
+    const notification = await notificationService.notify(dbUser.id, sanitizedData);
 
     return NextResponse.json(notification);
   } catch (error) {

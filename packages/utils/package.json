@@ -1,0 +1,39 @@
+{
+  "name": "@repo/utils",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./price": {
+      "types": "./src/price.ts",
+      "default": "./src/price.ts"
+    },
+    "./currency": {
+      "types": "./src/currency.ts",
+      "default": "./src/currency.ts"
+    },
+    "./decimal": {
+      "types": "./src/decimal.ts",
+      "default": "./src/decimal.ts"
+    },
+    "./hooks": {
+      "types": "./src/hooks/index.ts",
+      "default": "./src/hooks/index.ts"
+    }
+  },
+  "dependencies": {
+    "react": "19.1.0"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/react": "19.1.5",
+    "typescript": "^5.8.3"
+  }
+}

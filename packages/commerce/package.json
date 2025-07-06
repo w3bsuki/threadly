@@ -1,0 +1,52 @@
+{
+  "name": "@repo/commerce",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@repo/cart": "workspace:*",
+    "@repo/database": "workspace:*",
+    "@repo/utils": "workspace:*",
+    "react": "19.1.0",
+    "zod": "^3.25.28",
+    "zustand": "^5.0.5"
+  },
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "default": "./index.ts"
+    },
+    "./cart": {
+      "types": "./cart/index.ts",
+      "default": "./cart/index.ts"
+    },
+    "./checkout": {
+      "types": "./checkout/index.ts",
+      "default": "./checkout/index.ts"
+    },
+    "./orders": {
+      "types": "./orders/index.ts",
+      "default": "./orders/index.ts"
+    },
+    "./products": {
+      "types": "./products/index.ts",
+      "default": "./products/index.ts"
+    },
+    "./types": {
+      "types": "./types/index.ts",
+      "default": "./types/index.ts"
+    },
+    "./hooks": {
+      "types": "./hooks/index.ts",
+      "default": "./hooks/index.ts"
+    }
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/react": "19.1.5",
+    "typescript": "^5.8.3"
+  }
+}
