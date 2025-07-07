@@ -114,7 +114,7 @@ export async function createProduct(input: z.infer<typeof createProductSchema>) 
       });
       
       await searchService.indexProduct(product.id);
-      log('Successfully indexed product for search:', product.id);
+      log.info('Successfully indexed product for search:', { productId: product.id });
     } catch (searchError) {
       // Log search indexing errors but don't fail the product creation
       logError('Failed to index product for search (non-critical):', searchError);
