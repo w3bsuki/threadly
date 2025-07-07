@@ -16,17 +16,21 @@ export function useCheckout() {
   const checkoutStore = useCheckoutStore();
 
   const calculateCosts = useCallback(() => {
-    const subtotal = checkoutStore.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    if (!checkoutStore.session) {
+      return { subtotal: 0, shipping: 0, tax: 0, total: 0 };
+    }
+    
+    const subtotal = checkoutStore.session.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const shipping = calculateShipping(
-      checkoutStore.shippingAddress,
+      checkoutStore.session.shippingAddress || null,
       checkoutStore.shippingMethod,
       subtotal
     );
-    const tax = calculateTax(subtotal, checkoutStore.shippingAddress);
+    const tax = calculateTax(subtotal, checkoutStore.session.shippingAddress || null);
     const total = calculateTotal(subtotal, shipping, tax);
 
     return { subtotal, shipping, tax, total };
-  }, [checkoutStore.cartItems, checkoutStore.shippingAddress, checkoutStore.shippingMethod]);
+  }, [checkoutStore.session, checkoutStore.shippingMethod]);
 
   const updateCheckoutData = useCallback((data: Partial<CheckoutFormData>) => {
     if (data.shippingAddress) {
@@ -45,10 +49,10 @@ export function useCheckout() {
 
   const processCheckout = useCallback(async () => {
     try {
-      checkoutStore.setLoading(true);
+      checkoutStore.setProcessing(true);
       
       // Validate checkout data
-      if (!checkoutStore.shippingAddress || !checkoutStore.paymentMethod) {
+      if (!checkoutStore.session || !checkoutStore.session.shippingAddress || !checkoutStore.session.paymentMethod) {
         throw new Error('Please complete all required fields');
       }
 
@@ -60,10 +64,10 @@ export function useCheckout() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items: checkoutStore.cartItems,
-          shippingAddress: checkoutStore.shippingAddress,
-          billingAddress: checkoutStore.billingAddress || checkoutStore.shippingAddress,
-          paymentMethod: checkoutStore.paymentMethod,
+          items: checkoutStore.session.items,
+          shippingAddress: checkoutStore.session.shippingAddress,
+          billingAddress: checkoutStore.session.billingAddress || checkoutStore.session.shippingAddress,
+          paymentMethod: checkoutStore.session.paymentMethod,
           shippingMethod: checkoutStore.shippingMethod,
           costs,
           userId: user?.id,
@@ -77,7 +81,7 @@ export function useCheckout() {
       const order = await response.json();
       
       // Clear checkout state
-      checkoutStore.clearCheckout();
+      checkoutStore.reset();
       
       return { success: true, orderId: order.id };
     } catch (error) {
@@ -85,7 +89,7 @@ export function useCheckout() {
       toast.error(message);
       return { success: false, error: message };
     } finally {
-      checkoutStore.setLoading(false);
+      checkoutStore.setProcessing(false);
     }
   }, [checkoutStore, calculateCosts, user]);
 
