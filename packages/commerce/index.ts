@@ -10,13 +10,13 @@ export * from './checkout/utils';
 export * from './checkout/store';
 export { useCheckout } from './checkout/hooks';
 export { 
-  checkoutSchema,
-  shippingAddressSchema,
-  billingAddressSchema,
+  checkoutFormSchema,
+  addressSchema,
   paymentMethodSchema,
-  type CheckoutData,
-  type ShippingAddress,
-  type BillingAddress
+  createOrderSchema,
+  type Address,
+  type CheckoutFormData,
+  type CreateOrderData
 } from './checkout/schemas';
 export * from './orders';
 export * from './products';
