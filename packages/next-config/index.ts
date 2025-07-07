@@ -43,6 +43,24 @@ const baseConfig: NextConfig = {
       config.plugins.push(new PrismaPlugin());
     }
 
+    // Externalize Node.js modules for client-side bundles
+    if (!isServer) {
+      config.externals = config.externals || [];
+      config.externals.push({
+        '@prisma/client/runtime/library': 'commonjs @prisma/client/runtime/library',
+      });
+      
+      // Fallback for Node.js modules that shouldn't be bundled on client
+      config.resolve = config.resolve || {};
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        child_process: false,
+        'fs/promises': false,
+        async_hooks: false,
+      };
+    }
+
     config.ignoreWarnings = [{ module: otelRegex }];
 
     return config;

@@ -23,6 +23,10 @@
       "types": "./src/decimal.ts",
       "default": "./src/decimal.ts"
     },
+    "./decimal-server": {
+      "types": "./src/decimal-server.ts",
+      "default": "./src/decimal-server.ts"
+    },
     "./hooks": {
       "types": "./src/hooks/index.ts",
       "default": "./src/hooks/index.ts"

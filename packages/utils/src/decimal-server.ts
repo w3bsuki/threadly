@@ -1,17 +1,16 @@
-// Type definition for Decimal-like objects
-interface DecimalLike {
-  toString(): string;
-  toNumber?(): number;
-}
+import { Decimal } from '@prisma/client/runtime/library';
 
-type DecimalValue = DecimalLike | string | number | null | undefined;
+/**
+ * Server-side decimal utilities that use Prisma's Decimal type
+ * This file should only be imported in server-side code
+ */
 
 /**
  * Safely converts a Prisma Decimal to a JavaScript number
  * @param decimal - The Prisma Decimal value to convert
  * @returns The decimal as a JavaScript number, or 0 if conversion fails
  */
-export function decimalToNumber(decimal: DecimalValue): number {
+export function decimalToNumber(decimal: Decimal | null | undefined): number {
   if (!decimal) return 0;
   
   try {
@@ -21,27 +20,20 @@ export function decimalToNumber(decimal: DecimalValue): number {
       return isNaN(parsed) ? 0 : parsed;
     }
     
+    // Handle Decimal object
+    if (decimal && typeof decimal.toNumber === 'function') {
+      return decimal.toNumber();
+    }
+    
     // Handle direct number
     if (typeof decimal === 'number') {
       return decimal;
     }
     
-    // Handle Decimal object
-    if (decimal && typeof decimal === 'object') {
-      // If it has a toNumber method, use it
-      if ('toNumber' in decimal && typeof decimal.toNumber === 'function') {
-        return decimal.toNumber();
-      }
-      
-      // Otherwise, try to convert to string first
-      if ('toString' in decimal && typeof decimal.toString === 'function') {
-        const stringValue = decimal.toString();
-        const parsed = parseFloat(stringValue);
-        return isNaN(parsed) ? 0 : parsed;
-      }
-    }
-    
-    return 0;
+    // Try to convert to string first, then to number
+    const stringValue = decimal.toString();
+    const parsed = parseFloat(stringValue);
+    return isNaN(parsed) ? 0 : parsed;
   } catch (error) {
     console.warn('Failed to convert Decimal to number:', error);
     return 0;
@@ -49,21 +41,21 @@ export function decimalToNumber(decimal: DecimalValue): number {
 }
 
 /**
- * Creates a decimal-like object from a value
+ * Safely converts a JavaScript number to a Prisma Decimal
  * @param value - The number value to convert
- * @returns A decimal-like object
+ * @returns A new Decimal instance
  */
-export function numberToDecimal(value: number | string | null | undefined): DecimalLike {
-  const numValue = value === null || value === undefined ? 0 : Number(value);
+export function numberToDecimal(value: number | string | null | undefined): Decimal {
+  if (value === null || value === undefined) {
+    return new Decimal(0);
+  }
   
-  return {
-    toString(): string {
-      return String(numValue);
-    },
-    toNumber(): number {
-      return numValue;
-    }
-  };
+  try {
+    return new Decimal(value);
+  } catch (error) {
+    console.warn('Failed to convert to Decimal:', error);
+    return new Decimal(0);
+  }
 }
 
 /**
@@ -74,7 +66,7 @@ export function numberToDecimal(value: number | string | null | undefined): Deci
  * @returns Formatted currency string
  */
 export function formatDecimalAsCurrency(
-  decimal: DecimalValue,
+  decimal: Decimal | null | undefined,
   currency: string = 'USD',
   locale: string = 'en-US'
 ): string {
@@ -100,18 +92,17 @@ export function formatDecimalAsCurrency(
  * @returns The sum as a new Decimal
  */
 export function addDecimals(
-  a: DecimalValue,
-  b: DecimalValue
-): DecimalLike {
-  const numA = decimalToNumber(a);
-  const numB = decimalToNumber(b);
+  a: Decimal | null | undefined,
+  b: Decimal | null | undefined
+): Decimal {
+  const decimalA = a ? new Decimal(a) : new Decimal(0);
+  const decimalB = b ? new Decimal(b) : new Decimal(0);
   
   try {
-    const sum = numA + numB;
-    return numberToDecimal(sum);
+    return decimalA.add(decimalB);
   } catch (error) {
     console.warn('Failed to add decimals:', error);
-    return numberToDecimal(0);
+    return new Decimal(0);
   }
 }
 
@@ -122,18 +113,17 @@ export function addDecimals(
  * @returns The product as a new Decimal
  */
 export function multiplyDecimals(
-  a: DecimalValue,
-  b: DecimalValue
-): DecimalLike {
-  const numA = decimalToNumber(a);
-  const numB = decimalToNumber(b);
+  a: Decimal | null | undefined,
+  b: Decimal | null | undefined
+): Decimal {
+  const decimalA = a ? new Decimal(a) : new Decimal(0);
+  const decimalB = b ? new Decimal(b) : new Decimal(1);
   
   try {
-    const product = numA * numB;
-    return numberToDecimal(product);
+    return decimalA.mul(decimalB);
   } catch (error) {
     console.warn('Failed to multiply decimals:', error);
-    return numberToDecimal(0);
+    return new Decimal(0);
   }
 }
 
@@ -144,17 +134,17 @@ export function multiplyDecimals(
  * @returns The percentage amount as a new Decimal
  */
 export function calculatePercentage(
-  value: DecimalValue,
+  value: Decimal | null | undefined,
   percentage: number
-): DecimalLike {
-  const numValue = decimalToNumber(value);
+): Decimal {
+  const decimal = value ? new Decimal(value) : new Decimal(0);
+  const percentageDecimal = new Decimal(percentage).div(100);
   
   try {
-    const result = numValue * (percentage / 100);
-    return numberToDecimal(result);
+    return decimal.mul(percentageDecimal);
   } catch (error) {
     console.warn('Failed to calculate percentage:', error);
-    return numberToDecimal(0);
+    return new Decimal(0);
   }
 }
 
@@ -165,17 +155,15 @@ export function calculatePercentage(
  * @returns Rounded Decimal value
  */
 export function roundDecimal(
-  decimal: DecimalValue,
+  decimal: Decimal | null | undefined,
   decimalPlaces: number = 2
-): DecimalLike {
-  const numValue = decimalToNumber(decimal);
+): Decimal {
+  if (!decimal) return new Decimal(0);
   
   try {
-    const factor = Math.pow(10, decimalPlaces);
-    const rounded = Math.round(numValue * factor) / factor;
-    return numberToDecimal(rounded);
+    return new Decimal(decimal).toDecimalPlaces(decimalPlaces);
   } catch (error) {
     console.warn('Failed to round decimal:', error);
-    return numberToDecimal(0);
+    return new Decimal(0);
   }
 }
