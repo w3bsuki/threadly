@@ -45,7 +45,7 @@ export function CheckoutContent({ user }: CheckoutContentProps) {
   const [error, setError] = useState<string | null>(null);
 
   const form = useForm<CheckoutFormData>({
-    resolver: zodResolver(checkoutSchema),
+    resolver: zodResolver(checkoutFormSchema),
     defaultValues: {
       firstName: user.firstName || '',
       lastName: user.lastName || '',
