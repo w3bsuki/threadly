@@ -226,12 +226,12 @@ export function SearchHistory({ onSearchSelect, className }: SearchHistoryProps)
               <div>
                 <div className="font-medium">{item.query}</div>
                 <div className="text-sm text-gray-500">
-                  {item.resultsCount} results
+                  {item.resultCount} results
                 </div>
               </div>
             </div>
             <div className="text-xs text-gray-400">
-              {new Date(item.timestamp).toLocaleDateString()}
+              {new Date(item.createdAt).toLocaleDateString()}
             </div>
           </div>
         ))}
@@ -337,10 +337,10 @@ export function SavedSearches({ onSearchSelect, className }: SavedSearchesProps)
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => toggleSearchAlerts(savedSearch.id, !savedSearch.alertsEnabled)}
+                  onClick={() => toggleSearchAlerts(savedSearch.id, !savedSearch.alertEnabled)}
                   className="p-1"
                 >
-                  {savedSearch.alertsEnabled ? (
+                  {savedSearch.alertEnabled ? (
                     <Bell className="h-4 w-4 text-blue-500" />
                   ) : (
                     <BellOff className="h-4 w-4 text-gray-400" />
@@ -430,10 +430,10 @@ export function SaveSearchForm({ filters, onSave, onCancel, className }: SaveSea
       </div>
 
       <div className="flex gap-2">
-        <Button type="submit" disabled={!name.trim()}>
+        <Button disabled={!name.trim()}>
           Save Search
         </Button>
-        <Button type="button" variant="outline" onClick={onCancel}>
+        <Button variant="outline" onClick={onCancel}>
           Cancel
         </Button>
       </div>
