@@ -22,11 +22,11 @@ export function useCheckout() {
     
     const subtotal = checkoutStore.session.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const shipping = calculateShipping(
-      checkoutStore.session.shippingAddress || null,
+      checkoutStore.session.shippingAddress || undefined,
       checkoutStore.shippingMethod,
       subtotal
     );
-    const tax = calculateTax(subtotal, checkoutStore.session.shippingAddress || null);
+    const tax = calculateTax(subtotal, checkoutStore.session.shippingAddress || undefined);
     const total = calculateTotal(subtotal, shipping, tax);
 
     return { subtotal, shipping, tax, total };
