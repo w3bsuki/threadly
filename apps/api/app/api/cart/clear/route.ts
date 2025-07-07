@@ -21,13 +21,13 @@ export async function DELETE(request: NextRequest) {
   }
 
   try {
-    const user = await auth();
-    if (!user?.id) {
+    const { userId } = await auth();
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     await database.cartItem.deleteMany({
-      where: { userId: user.id }
+      where: { userId }
     });
 
     return NextResponse.json({ success: true });

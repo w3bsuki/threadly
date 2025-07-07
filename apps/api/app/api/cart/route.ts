@@ -22,13 +22,13 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const user = await auth();
-    if (!user?.id) {
+    const { userId } = await auth();
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const cartItems = await database.cartItem.findMany({
-      where: { userId: user.id },
+      where: { userId },
       include: {
         product: {
           include: {
@@ -94,8 +94,8 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const user = await auth();
-    if (!user?.id) {
+    const { userId } = await auth();
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Can't add own products to cart
-    if (product.sellerId === user.id) {
+    if (product.sellerId === userId) {
       return NextResponse.json({ error: 'Cannot add your own product to cart' }, { status: 400 });
     }
 
@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
     const existingItem = await database.cartItem.findUnique({
       where: {
         userId_productId: {
-          userId: user.id,
+          userId: userId,
           productId
         }
       }
@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
     // Add to cart
     const cartItem = await database.cartItem.create({
       data: {
-        userId: user.id,
+        userId: userId,
         productId
       },
       include: {
@@ -206,8 +206,8 @@ export async function DELETE(request: NextRequest) {
   }
 
   try {
-    const user = await auth();
-    if (!user?.id) {
+    const { userId } = await auth();
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -220,7 +220,7 @@ export async function DELETE(request: NextRequest) {
 
     const deleted = await database.cartItem.deleteMany({
       where: {
-        userId: user.id,
+        userId: userId,
         productId
       }
     });
@@ -254,15 +254,15 @@ export async function PATCH(request: NextRequest) {
   }
 
   try {
-    const user = await auth();
-    if (!user?.id) {
+    const { userId } = await auth();
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const url = new URL(request.url);
     if (url.pathname.endsWith('/clear')) {
       await database.cartItem.deleteMany({
-        where: { userId: user.id }
+        where: { userId: userId }
       });
 
       return NextResponse.json({ success: true });
