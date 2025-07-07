@@ -69,58 +69,58 @@ export default async function BrowsePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container py-8">
+      <div className="container py-6 lg:py-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-8 lg:mb-12">
+          <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3 lg:mb-4">
             Browse Threadly
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto px-4">
             Discover unique fashion finds from trusted sellers in our community marketplace
           </p>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-12">
-          <Card>
-            <CardContent className="p-6 text-center">
-              <Package className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900">{totalProducts.toLocaleString()}</div>
-              <div className="text-sm text-gray-600">Items Available</div>
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 mb-8 lg:mb-12">
+          <Card className="border-0 shadow-sm bg-blue-50">
+            <CardContent className="p-4 lg:p-6 text-center">
+              <Package className="h-6 w-6 lg:h-8 lg:w-8 text-blue-600 mx-auto mb-2" />
+              <div className="text-xl lg:text-2xl font-bold text-gray-900">{totalProducts.toLocaleString()}</div>
+              <div className="text-xs lg:text-sm text-gray-600">Items Available</div>
             </CardContent>
           </Card>
           
-          <Card>
-            <CardContent className="p-6 text-center">
-              <Users className="h-8 w-8 text-green-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900">{totalUsers.toLocaleString()}</div>
-              <div className="text-sm text-gray-600">Community Members</div>
+          <Card className="border-0 shadow-sm bg-green-50">
+            <CardContent className="p-4 lg:p-6 text-center">
+              <Users className="h-6 w-6 lg:h-8 lg:w-8 text-green-600 mx-auto mb-2" />
+              <div className="text-xl lg:text-2xl font-bold text-gray-900">{totalUsers.toLocaleString()}</div>
+              <div className="text-xs lg:text-sm text-gray-600">Community Members</div>
             </CardContent>
           </Card>
           
-          <Card>
-            <CardContent className="p-6 text-center">
-              <Star className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900">{completedOrders.toLocaleString()}</div>
-              <div className="text-sm text-gray-600">Happy Customers</div>
+          <Card className="border-0 shadow-sm bg-yellow-50 col-span-2 lg:col-span-1">
+            <CardContent className="p-4 lg:p-6 text-center">
+              <Star className="h-6 w-6 lg:h-8 lg:w-8 text-yellow-600 mx-auto mb-2" />
+              <div className="text-xl lg:text-2xl font-bold text-gray-900">{completedOrders.toLocaleString()}</div>
+              <div className="text-xs lg:text-sm text-gray-600">Happy Customers</div>
             </CardContent>
           </Card>
         </div>
 
         {/* Popular Categories */}
-        <section className="mb-12">
-          <div className="flex items-center gap-2 mb-6">
+        <section className="mb-8 lg:mb-12">
+          <div className="flex items-center gap-2 mb-4 lg:mb-6">
             <TrendingUp className="h-5 w-5 text-blue-600" />
-            <h2 className="text-2xl font-semibold">Popular Categories</h2>
+            <h2 className="text-xl lg:text-2xl font-semibold">Popular Categories</h2>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-4">
             {popularCategories.map((category) => (
               <Link key={category.id} href={`/products?category=${category.slug}`}>
-                <Card className="hover:shadow-lg transition-shadow">
-                  <CardContent className="p-4 text-center">
-                    <h3 className="font-medium text-gray-900">{category.name}</h3>
-                    <p className="text-sm text-gray-600 mt-1">
+                <Card className="hover:shadow-md transition-all duration-200 border-0 shadow-sm hover:scale-[1.02] bg-white">
+                  <CardContent className="p-3 lg:p-4 text-center">
+                    <h3 className="font-medium text-gray-900 text-sm lg:text-base">{category.name}</h3>
+                    <p className="text-xs lg:text-sm text-gray-600 mt-1">
                       {category._count.products} items
                     </p>
                   </CardContent>
@@ -131,12 +131,12 @@ export default async function BrowsePage() {
         </section>
 
         {/* Trending Products */}
-        <section className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-semibold">Trending Items</h2>
+        <section className="mb-8 lg:mb-12">
+          <div className="flex items-center justify-between mb-4 lg:mb-6">
+            <h2 className="text-xl lg:text-2xl font-semibold">Trending Items</h2>
             <Link 
               href="/products?sort=popular" 
-              className="text-blue-600 hover:text-blue-700 font-medium"
+              className="text-blue-600 hover:text-blue-700 font-medium text-sm lg:text-base transition-colors"
             >
               View all trending →
             </Link>
@@ -160,33 +160,33 @@ export default async function BrowsePage() {
 
         {/* Top Sellers */}
         <section>
-          <h2 className="text-2xl font-semibold mb-6">Top Sellers</h2>
+          <h2 className="text-xl lg:text-2xl font-semibold mb-4 lg:mb-6">Top Sellers</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
             {topSellers.map((seller) => (
               <Link key={seller.id} href={`/profile/${seller.id}`}>
-                <Card className="hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                <Card className="hover:shadow-md transition-all duration-200 border-0 shadow-sm hover:scale-[1.02] bg-white">
+                  <CardContent className="p-4 lg:p-6">
+                    <div className="flex items-center gap-3 lg:gap-4 mb-3 lg:mb-4">
+                      <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gray-200 rounded-full flex items-center justify-center">
                         {seller.imageUrl ? (
                           <img
                             src={seller.imageUrl}
                             alt={`${seller.firstName} ${seller.lastName}`}
-                            className="w-12 h-12 rounded-full object-cover"
+                            className="w-10 h-10 lg:w-12 lg:h-12 rounded-full object-cover"
                           />
                         ) : (
-                          <span className="text-lg font-semibold text-gray-600">
+                          <span className="text-sm lg:text-lg font-semibold text-gray-600">
                             {(seller.firstName?.[0] || seller.lastName?.[0] || 'U').toUpperCase()}
                           </span>
                         )}
                       </div>
                       
-                      <div className="flex-1">
-                        <h3 className="font-medium text-gray-900">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-gray-900 text-sm lg:text-base truncate">
                           {seller.firstName} {seller.lastName}
                         </h3>
-                        <div className="flex items-center gap-4 mt-1 text-sm text-gray-600">
+                        <div className="flex items-center gap-3 lg:gap-4 mt-1 text-xs lg:text-sm text-gray-600">
                           <span>{seller._count.listings} items</span>
                           {seller.averageRating && (
                             <div className="flex items-center gap-1">
@@ -199,7 +199,7 @@ export default async function BrowsePage() {
                     </div>
                     
                     <div className="text-center">
-                      <Badge variant="secondary">
+                      <Badge variant="secondary" className="text-xs">
                         {seller._count.receivedReviews} reviews
                       </Badge>
                     </div>

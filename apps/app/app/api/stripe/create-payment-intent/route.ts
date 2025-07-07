@@ -67,17 +67,26 @@ export async function POST(request: NextRequest) {
       paymentIntentData.metadata!.type = 'cart';
       paymentIntentData.metadata!.itemCount = orderItems.length.toString();
       
+      // CRITICAL FIX: Store ALL order-related IDs
       if (orderId) {
         paymentIntentData.metadata!.orderId = orderId;
       }
       
-      // Add product IDs to metadata for webhook processing
-      if (orderItems.length > 0) {
-        paymentIntentData.metadata!.productId = orderItems[0].productId;
-      }
+      // Store all product IDs and seller IDs for webhook processing
+      const productIds = orderItems.map(item => item.productId);
+      const uniqueProductIds = [...new Set(productIds)];
       
-      // For cart, we'll need to handle multiple sellers differently
-      // For now, we'll process this as a single marketplace transaction
+      // Store as JSON array in metadata (Stripe allows up to 500 chars per value)
+      paymentIntentData.metadata!.productIds = JSON.stringify(uniqueProductIds);
+      
+      // Get unique seller IDs for the products
+      const products = await database.product.findMany({
+        where: { id: { in: uniqueProductIds } },
+        select: { id: true, sellerId: true }
+      });
+      
+      const sellerIds = [...new Set(products.map(p => p.sellerId))];
+      paymentIntentData.metadata!.sellerIds = JSON.stringify(sellerIds);
       
       // Calculate platform fee (5% for Threadly)
       const platformFeeAmount = Math.round(amount * 0.05 * 100); // 5% in cents

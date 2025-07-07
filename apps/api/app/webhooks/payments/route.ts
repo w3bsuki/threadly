@@ -73,17 +73,23 @@ const handlePaymentIntentSucceeded = async (
       return;
     }
 
-    const { buyerId, productId, sellerId, orderId } = paymentIntent.metadata;
+    const { buyerId, type, orderId, productId, productIds, sellerIds } = paymentIntent.metadata;
     
-    if (!buyerId || !orderId) {
-      logError('[Payment Intent] Missing required metadata', {
+    if (!buyerId) {
+      logError('[Payment Intent] Missing buyer ID', {
         paymentIntentId: paymentIntent.id,
-        metadata: paymentIntent.metadata,
-        missing: {
-          buyerId: !buyerId,
-          orderId: !orderId
-        }
+        metadata: paymentIntent.metadata
       });
+      return;
+    }
+
+    // Check if this payment was already processed (idempotency)
+    const existingPayment = await database.payment.findFirst({
+      where: { stripePaymentId: paymentIntent.id }
+    });
+
+    if (existingPayment) {
+      // Payment already processed, skip to avoid duplicates
       return;
     }
 
@@ -101,49 +107,119 @@ const handlePaymentIntentSucceeded = async (
       return;
     }
 
-    // Start a transaction to update order, product, and create payment
-    const result = await database.$transaction(async (tx) => {
-      // Update order status to PAID
-      const order = await tx.order.update({
-        where: { id: orderId },
-        data: { 
-          status: 'PAID',
-        },
-      });
+    // Handle cart purchases vs single product purchases
+    if (type === 'cart' && productIds) {
+      // Parse product IDs from JSON
+      const parsedProductIds = JSON.parse(productIds) as string[];
+      
+      // Start a transaction to update all orders and products
+      const result = await database.$transaction(async (tx) => {
+        // Find all orders for this buyer with these products in PENDING status
+        const orders = await tx.order.findMany({
+          where: {
+            buyerId: dbUser.id,
+            productId: { in: parsedProductIds },
+            status: 'PENDING',
+          },
+          include: {
+            product: true
+          }
+        });
 
-      // Mark product as SOLD
-      await tx.product.update({
-        where: { id: productId },
-        data: { 
-          status: 'SOLD',
-        },
-      });
+        if (orders.length === 0) {
+          throw new Error('No pending orders found for this payment');
+        }
 
-      // Create payment record
-      const payment = await tx.payment.create({
-        data: {
-          orderId: order.id,
-          stripePaymentId: paymentIntent.id,
-          amount: paymentIntent.amount / 100, // Convert from cents
-          status: 'completed',
-        },
-      });
+        // Update all orders to PAID status
+        const updatedOrders = await Promise.all(
+          orders.map(order => 
+            tx.order.update({
+              where: { id: order.id },
+              data: { status: 'PAID' },
+            })
+          )
+        );
 
-      return { order, payment };
-    });
+        // Mark all products as SOLD
+        await Promise.all(
+          parsedProductIds.map(productId =>
+            tx.product.update({
+              where: { id: productId },
+              data: { status: 'SOLD' },
+            })
+          )
+        );
+
+        // Create payment records for each order
+        const payments = await Promise.all(
+          orders.map(order =>
+            tx.payment.create({
+              data: {
+                orderId: order.id,
+                stripePaymentId: paymentIntent.id,
+                amount: order.amount.toNumber(),
+                status: 'completed',
+              },
+            })
+          )
+        );
+
+        return { orders: updatedOrders, payments };
+      });
+    } else if (orderId && productId) {
+      // Single product purchase
+      const result = await database.$transaction(async (tx) => {
+        // Update order status to PAID
+        const order = await tx.order.update({
+          where: { id: orderId },
+          data: { 
+            status: 'PAID',
+          },
+        });
+
+        // Mark product as SOLD
+        await tx.product.update({
+          where: { id: productId },
+          data: { 
+            status: 'SOLD',
+          },
+        });
+
+        // Create payment record
+        const payment = await tx.payment.create({
+          data: {
+            orderId: order.id,
+            stripePaymentId: paymentIntent.id,
+            amount: paymentIntent.amount / 100, // Convert from cents
+            status: 'completed',
+          },
+        });
+
+        return { order, payment };
+      });
+    } else {
+      logError('[Payment Intent] Invalid metadata structure', {
+        paymentIntentId: paymentIntent.id,
+        metadata: paymentIntent.metadata
+      });
+      return;
+    }
 
     // Track in analytics
     analytics.capture({
-      event: 'Order Paid',
+      event: 'Payment Processed',
       distinctId: buyerId, // Use Clerk ID for analytics consistency
       properties: {
-        orderId: result.order.id,
+        paymentIntentId: paymentIntent.id,
         amount: paymentIntent.amount / 100,
-        productId,
-        sellerId,
+        type: type || 'single',
+        itemCount: type === 'cart' ? JSON.parse(productIds || '[]').length : 1,
         databaseUserId: dbUser.id,
       },
     });
+
+    // TODO: Send confirmation emails and notifications
+    // This should be done asynchronously to not block the webhook response
 
     // Successfully processed payment intent
   } catch (error) {

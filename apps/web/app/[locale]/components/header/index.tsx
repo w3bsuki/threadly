@@ -392,39 +392,44 @@ export const Header = () => {
 
             {/* Right: Actions */}
             <div className="flex items-center space-x-2">
-              {/* Mobile Actions - Simplified */}
-              <div className="flex items-center space-x-2 md:hidden">
+              {/* Mobile Actions - Optimized for Touch */}
+              <div className="flex items-center space-x-1 md:hidden">
                 {isSignedIn ? (
-                  <UserButton />
+                  <div className="min-w-[44px] min-h-[44px] flex items-center justify-center">
+                    <UserButton />
+                  </div>
                 ) : (
                   <SignInButton mode="modal">
                     <Button 
                       variant="ghost" 
-                      size="sm"
-                      className="min-w-[44px] min-h-[44px] p-3"
+                      size="icon"
+                      className="min-w-[44px] min-h-[44px] touch-manipulation"
+                      aria-label="Sign in or create account"
                     >
                       <User className="h-5 w-5" />
                     </Button>
                   </SignInButton>
                 )}
                 
-                <CartDropdown />
+                <div className="min-w-[44px] min-h-[44px] flex items-center justify-center">
+                  <CartDropdown />
+                </div>
                 
                 <Button 
                   variant="ghost" 
-                  size="sm"
+                  size="icon"
                   onClick={toggleMenu}
-                  onTouchStart={(e) => {
-                    e.preventDefault();
-                    toggleMenu();
-                  }}
-                  aria-label="Toggle navigation menu"
+                  aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
                   aria-expanded={isMenuOpen}
                   aria-controls="mobile-menu"
-                  className="min-w-[44px] min-h-[44px] p-3"
+                  className="min-w-[44px] min-h-[44px] touch-manipulation transition-transform duration-200 active:scale-95"
                   style={{ WebkitTapHighlightColor: 'transparent' }}
                 >
-                  {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                  {isMenuOpen ? (
+                    <X className="h-5 w-5" aria-hidden="true" />
+                  ) : (
+                    <Menu className="h-5 w-5" aria-hidden="true" />
+                  )}
                 </Button>
               </div>
 
@@ -522,67 +527,94 @@ export const Header = () => {
           <div 
             ref={menuRef}
             id="mobile-menu"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="mobile-menu-heading"
+            role="navigation"
+            aria-label="Mobile navigation menu"
             className="md:hidden border-t border-gray-200 bg-white shadow-lg"
           >
             <div className="px-4 py-4 space-y-4">
-              {/* Visually hidden heading for accessibility */}
-              <h2 id="mobile-menu-heading" className="sr-only">Navigation Menu</h2>
+              {/* Screen reader announcement */}
+              <div className="sr-only" aria-live="polite">
+                Navigation menu {isMenuOpen ? 'opened' : 'closed'}
+              </div>
               
               {/* Primary Actions - Buy/Sell */}
-              <div className="space-y-3 pb-4 border-b border-gray-100">
+              <div className="space-y-3 pb-4 border-b border-gray-100" role="group" aria-label="Primary actions">
                 <Button 
-                  className="w-full bg-black text-white hover:bg-gray-800 text-lg py-3 min-h-[48px]" 
+                  className="w-full bg-black text-white hover:bg-gray-800 text-lg py-3 min-h-[48px] touch-manipulation" 
                   asChild
                 >
-                  <Link href="/products" onClick={() => setMenuOpen(false)}>
-                    <ShoppingBag className="h-5 w-5 mr-2" />
+                  <Link 
+                    href="/products" 
+                    onClick={() => setMenuOpen(false)}
+                    aria-describedby="browse-description"
+                  >
+                    <ShoppingBag className="h-5 w-5 mr-2" aria-hidden="true" />
                     Browse & Buy
                   </Link>
                 </Button>
+                <div id="browse-description" className="sr-only">
+                  Browse and purchase items from our marketplace
+                </div>
                 
                 <Button 
                   variant="outline" 
-                  className="w-full border-black text-black hover:bg-gray-50 text-lg py-3 min-h-[48px]" 
+                  className="w-full border-black text-black hover:bg-gray-50 text-lg py-3 min-h-[48px] touch-manipulation" 
                   asChild
                 >
-                  <Link href={`${env.NEXT_PUBLIC_APP_URL}/selling/new`} onClick={() => setMenuOpen(false)}>
-                    <Plus className="h-5 w-5 mr-2" />
+                  <Link 
+                    href={`${env.NEXT_PUBLIC_APP_URL}/selling/new`} 
+                    onClick={() => setMenuOpen(false)}
+                    aria-describedby="sell-description"
+                  >
+                    <Plus className="h-5 w-5 mr-2" aria-hidden="true" />
                     Start Selling
                   </Link>
                 </Button>
+                <div id="sell-description" className="sr-only">
+                  List your items for sale on our marketplace
+                </div>
               </div>
 
               {/* User Actions */}
-              <div className="space-y-2 pb-4 border-b border-gray-100">
+              <div className="space-y-2 pb-4 border-b border-gray-100" role="group" aria-label="User account actions">
                 {isSignedIn ? (
-                  <div className="flex items-center px-3 py-2">
+                  <div className="flex items-center px-3 py-3 min-h-[44px]" role="button" tabIndex={0}>
                     <UserButton />
-                    <span className="ml-3 text-gray-700">
+                    <span className="ml-3 text-gray-700" aria-label={`Signed in as ${user?.firstName} ${user?.lastName}`}>
                       {user?.firstName} {user?.lastName}
                     </span>
                   </div>
                 ) : (
                   <SignInButton mode="modal">
-                    <Button variant="ghost" className="w-full justify-start text-gray-700 min-h-[44px]">
-                      <User className="h-5 w-5 mr-3" />
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-start text-gray-700 min-h-[44px] touch-manipulation"
+                      aria-label="Sign in to your account or create a new account"
+                    >
+                      <User className="h-5 w-5 mr-3" aria-hidden="true" />
                       Sign In / Join
                     </Button>
                   </SignInButton>
                 )}
                 
-                <Button variant="ghost" className="w-full justify-start text-gray-700 min-h-[44px]" asChild>
-                  <Link href="/favorites" onClick={() => setMenuOpen(false)}>
-                    <Heart className="h-5 w-5 mr-3" />
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start text-gray-700 min-h-[44px] touch-manipulation" 
+                  asChild
+                >
+                  <Link 
+                    href="/favorites" 
+                    onClick={() => setMenuOpen(false)}
+                    aria-label="View your saved items"
+                  >
+                    <Heart className="h-5 w-5 mr-3" aria-hidden="true" />
                     Saved Items
                   </Link>
                 </Button>
                 
-                <div className="flex items-center justify-between px-3 py-2">
-                  <span className="text-gray-700 flex items-center">
-                    <ShoppingBag className="h-5 w-5 mr-3" />
+                <div className="flex items-center justify-between px-3 py-3 min-h-[44px]">
+                  <span className="text-gray-700 flex items-center" aria-label="Shopping cart">
+                    <ShoppingBag className="h-5 w-5 mr-3" aria-hidden="true" />
                     My Cart
                   </span>
                   <CartDropdown />
@@ -590,15 +622,31 @@ export const Header = () => {
               </div>
 
               {/* Additional Links */}
-              <nav aria-label="Mobile navigation" className="space-y-2">
-                <Button variant="ghost" className="w-full justify-start text-gray-600 min-h-[44px] text-sm" asChild>
-                  <Link href="/how-it-works" onClick={() => setMenuOpen(false)}>
+              <nav aria-label="Additional navigation links" className="space-y-2">
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start text-gray-600 min-h-[44px] text-sm touch-manipulation" 
+                  asChild
+                >
+                  <Link 
+                    href="/how-it-works" 
+                    onClick={() => setMenuOpen(false)}
+                    aria-label="Learn how Threadly works"
+                  >
                     How It Works
                   </Link>
                 </Button>
                 
-                <Button variant="ghost" className="w-full justify-start text-gray-600 min-h-[44px] text-sm" asChild>
-                  <Link href="/contact" onClick={() => setMenuOpen(false)}>
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start text-gray-600 min-h-[44px] text-sm touch-manipulation" 
+                  asChild
+                >
+                  <Link 
+                    href="/contact" 
+                    onClick={() => setMenuOpen(false)}
+                    aria-label="Get help and support"
+                  >
                     Help & Support
                   </Link>
                 </Button>

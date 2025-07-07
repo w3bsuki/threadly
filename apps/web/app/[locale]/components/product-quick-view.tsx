@@ -160,7 +160,7 @@ export function ProductQuickView({ product, trigger }: ProductQuickViewProps) {
         )}
       </DialogTrigger>
       
-      <DialogContent className="max-w-4xl max-h-[95vh] overflow-hidden p-0 m-2 md:m-6">
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden p-0 m-2 md:m-4 lg:m-6">
         {/* Close button */}
         <Button
           variant="ghost"
@@ -171,10 +171,10 @@ export function ProductQuickView({ product, trigger }: ProductQuickViewProps) {
           <X className="h-4 w-4" />
         </Button>
 
-        <div className="flex flex-col md:grid md:grid-cols-2 max-h-[95vh]">
+        <div className="flex flex-col lg:grid lg:grid-cols-5 max-h-[90vh]">
           {/* Image Section */}
-          <div className="relative bg-gray-100 md:min-h-0">
-            <div className="aspect-[4/3] md:aspect-square relative">
+          <div className="relative bg-gray-100 lg:col-span-3 lg:min-h-0">
+            <div className="aspect-[4/3] lg:aspect-[4/3] relative">
               {validImages.length > 0 ? (
                 <Image
                   src={validImages[currentImageIndex] || validImages[0]}
@@ -241,31 +241,31 @@ export function ProductQuickView({ product, trigger }: ProductQuickViewProps) {
           </div>
 
           {/* Product Details */}
-          <div className="flex-1 flex flex-col">
+          <div className="flex-1 flex flex-col lg:col-span-2">
             {/* Mobile: Sticky action bar at bottom */}
-            <div className="md:hidden order-last bg-white border-t p-4 space-y-3">
-              <div className="grid grid-cols-2 gap-3">
+            <div className="lg:hidden order-last bg-white border-t p-3 space-y-2">
+              <div className="grid grid-cols-2 gap-2">
                 <Button 
-                  className="h-12 text-base font-medium"
+                  className="h-10 text-sm font-medium"
                   variant={isProductInCart ? "secondary" : "default"}
                   onClick={handleAddToCart}
                   disabled={isProductInCart}
                 >
                   {isProductInCart ? (
                     <>
-                      <ShoppingCart className="h-5 w-5 mr-2 fill-current" />
+                      <ShoppingCart className="h-4 w-4 mr-1 fill-current" />
                       In Cart
                     </>
                   ) : (
                     <>
-                      <Plus className="h-5 w-5 mr-2" />
+                      <Plus className="h-4 w-4 mr-1" />
                       Add to Cart
                     </>
                   )}
                 </Button>
                 
                 <Button 
-                  className="h-12 text-base font-medium bg-black text-white hover:bg-gray-800"
+                  className="h-10 text-sm font-medium bg-black text-white hover:bg-gray-800"
                   onClick={() => {
                     if (!isProductInCart) {
                       handleAddToCart();
@@ -274,27 +274,27 @@ export function ProductQuickView({ product, trigger }: ProductQuickViewProps) {
                     window.location.href = '/cart';
                   }}
                 >
-                  <ShoppingCart className="h-5 w-5 mr-2" />
+                  <ShoppingCart className="h-4 w-4 mr-1" />
                   Buy Now
                 </Button>
               </div>
               
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 <Button 
                   variant="outline" 
                   onClick={handleToggleLike}
                   className={cn(
-                    "h-10",
+                    "h-9 text-sm",
                     isLiked ? "border-red-300 text-red-600 bg-red-50" : ""
                   )}
                 >
-                  <Heart className={cn("h-4 w-4 mr-2", isLiked && "fill-current")} />
+                  <Heart className={cn("h-4 w-4 mr-1", isLiked && "fill-current")} />
                   {isLiked ? 'Saved' : 'Save'}
                 </Button>
                 
                 <Button 
                   variant="outline" 
-                  className="h-10"
+                  className="h-9 text-sm"
                   onClick={() => setIsOpen(false)}
                   asChild
                 >
@@ -306,7 +306,7 @@ export function ProductQuickView({ product, trigger }: ProductQuickViewProps) {
             </div>
 
             {/* Content area */}
-            <div className="p-4 md:p-6 overflow-y-auto flex-1">
+            <div className="p-3 lg:p-6 overflow-y-auto flex-1">
             {/* Header */}
             <div className="mb-4">
               <p className="text-sm text-gray-500 uppercase tracking-wide font-medium mb-1">
@@ -369,7 +369,7 @@ export function ProductQuickView({ product, trigger }: ProductQuickViewProps) {
             <Separator className="my-4" />
 
             {/* Desktop Action Buttons */}
-            <div className="hidden md:block space-y-3">
+            <div className="hidden lg:block space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <Button 
                   variant="outline"

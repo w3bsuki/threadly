@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@repo/design-system/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
     variants: {
       variant: {
@@ -22,17 +22,17 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         // THREADLY BRAND VARIANTS
         "brand-primary":
-          "bg-[oklch(var(--brand-primary))] text-[oklch(var(--brand-primary-foreground))] shadow-xs hover:bg-[oklch(var(--brand-primary)/.9)] focus-visible:ring-[oklch(var(--brand-primary)/.3)] hover:shadow-md transition-all duration-200",
+          "bg-[oklch(var(--brand-primary))] text-[oklch(var(--brand-primary-foreground))] shadow-xs hover:bg-[oklch(var(--brand-primary)/.9)] focus-visible:ring-[oklch(var(--brand-primary)/.3)] transition-colors duration-150",
         "brand-secondary": 
-          "bg-[oklch(var(--brand-secondary))] text-[oklch(var(--brand-secondary-foreground))] shadow-xs hover:bg-[oklch(var(--brand-secondary)/.9)] focus-visible:ring-[oklch(var(--brand-secondary)/.3)] hover:shadow-md transition-all duration-200",
+          "bg-[oklch(var(--brand-secondary))] text-[oklch(var(--brand-secondary-foreground))] shadow-xs hover:bg-[oklch(var(--brand-secondary)/.9)] focus-visible:ring-[oklch(var(--brand-secondary)/.3)] transition-colors duration-150",
         "brand-accent":
-          "bg-[oklch(var(--brand-accent))] text-[oklch(var(--brand-accent-foreground))] shadow-xs hover:bg-[oklch(var(--brand-accent)/.9)] focus-visible:ring-[oklch(var(--brand-accent)/.3)] hover:shadow-md transition-all duration-200",
+          "bg-[oklch(var(--brand-accent))] text-[oklch(var(--brand-accent-foreground))] shadow-xs hover:bg-[oklch(var(--brand-accent)/.9)] focus-visible:ring-[oklch(var(--brand-accent)/.3)] transition-colors duration-150",
         "brand-gradient":
-          "bg-gradient-to-r from-[oklch(var(--brand-primary))] via-[oklch(var(--brand-purple))] to-[oklch(var(--brand-accent))] text-white shadow-lg hover:shadow-xl hover:scale-[1.03] active:scale-[0.97] focus-visible:ring-[oklch(var(--brand-primary)/.4)] animate-gradient bg-[length:200%_200%] font-semibold",
+          "bg-gradient-to-r from-[oklch(var(--brand-primary))] via-[oklch(var(--brand-purple))] to-[oklch(var(--brand-accent))] text-white shadow-lg hover:shadow-lg hover:opacity-90 focus-visible:ring-[oklch(var(--brand-primary)/.4)] animate-gradient bg-[length:200%_200%] font-semibold transition-all duration-150",
         "brand-outline":
-          "border border-[oklch(var(--brand-primary))] text-[oklch(var(--brand-primary))] bg-background hover:bg-[oklch(var(--brand-primary))] hover:text-[oklch(var(--brand-primary-foreground))] focus-visible:ring-[oklch(var(--brand-primary)/.3)] transition-all duration-200",
+          "border border-[oklch(var(--brand-primary))] text-[oklch(var(--brand-primary))] bg-background hover:bg-[oklch(var(--brand-primary))] hover:text-[oklch(var(--brand-primary-foreground))] focus-visible:ring-[oklch(var(--brand-primary)/.3)] transition-colors duration-150",
         "brand-ghost":
-          "text-[oklch(var(--brand-primary))] hover:bg-[oklch(var(--brand-primary)/.1)] hover:text-[oklch(var(--brand-primary))] focus-visible:ring-[oklch(var(--brand-primary)/.2)]",
+          "text-[oklch(var(--brand-primary))] hover:bg-[oklch(var(--brand-primary)/.1)] hover:text-[oklch(var(--brand-primary))] focus-visible:ring-[oklch(var(--brand-primary)/.2)] transition-colors duration-150",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

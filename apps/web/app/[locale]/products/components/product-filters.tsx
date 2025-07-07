@@ -76,28 +76,42 @@ export function ProductFilters({ categories, currentFilters }: ProductFiltersPro
     router.push(pathname);
   };
 
+  // Count active filters
+  const activeFiltersCount = Object.values(currentFilters).filter(Boolean).length;
+  
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Filters</h2>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={clearFilters}
-          className="text-xs"
-        >
-          Clear all
-        </Button>
+        <div>
+          <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+          {activeFiltersCount > 0 && (
+            <span className="text-sm text-gray-500 mt-1">
+              {activeFiltersCount} active filter{activeFiltersCount !== 1 ? 's' : ''}
+            </span>
+          )}
+        </div>
+        {activeFiltersCount > 0 && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearFilters}
+            className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+          >
+            Clear all
+          </Button>
+        )}
       </div>
 
-      <Accordion type="multiple" defaultValue={["category", "price", "condition"]}>
-        <AccordionItem value="category">
-          <AccordionTrigger>Category</AccordionTrigger>
-          <AccordionContent>
-            <div className="space-y-2">
+      <Accordion type="multiple" defaultValue={["category", "price", "condition"]} className="w-full">
+        <AccordionItem value="category" className="border-b border-gray-100">
+          <AccordionTrigger className="py-4 hover:no-underline text-sm font-medium text-gray-900">
+            Category
+          </AccordionTrigger>
+          <AccordionContent className="pb-4">
+            <div className="space-y-3">
               {categories.map((category) => (
                 <div key={category.id}>
-                  <Label className="flex items-center gap-2 cursor-pointer">
+                  <Label className="flex items-center gap-3 cursor-pointer py-2 px-2 -mx-2 rounded-md hover:bg-gray-50 transition-colors">
                     <Checkbox
                       checked={currentFilters.category === category.id}
                       onCheckedChange={(checked) => {
@@ -105,13 +119,14 @@ export function ProductFilters({ categories, currentFilters }: ProductFiltersPro
                           category: checked ? category.id : undefined,
                         });
                       }}
+                      className="h-4 w-4"
                     />
-                    <span className="text-sm">{category.name}</span>
+                    <span className="text-sm font-medium text-gray-700">{category.name}</span>
                   </Label>
                   {category.children && category.children.length > 0 && (
-                    <div className="ml-6 mt-2 space-y-2">
+                    <div className="ml-7 mt-2 space-y-2">
                       {category.children.map((child) => (
-                        <Label key={child.id} className="flex items-center gap-2 cursor-pointer">
+                        <Label key={child.id} className="flex items-center gap-3 cursor-pointer py-1.5 px-2 -mx-2 rounded-md hover:bg-gray-50 transition-colors">
                           <Checkbox
                             checked={currentFilters.category === child.id}
                             onCheckedChange={(checked) => {
@@ -119,8 +134,9 @@ export function ProductFilters({ categories, currentFilters }: ProductFiltersPro
                                 category: checked ? child.id : undefined,
                               });
                             }}
+                            className="h-4 w-4"
                           />
-                          <span className="text-sm">{child.name}</span>
+                          <span className="text-sm text-gray-600">{child.name}</span>
                         </Label>
                       ))}
                     </div>
@@ -131,36 +147,51 @@ export function ProductFilters({ categories, currentFilters }: ProductFiltersPro
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="price">
-          <AccordionTrigger>Price Range</AccordionTrigger>
-          <AccordionContent>
-            <div className="space-y-4">
-              <Slider
-                value={priceRange}
-                onValueChange={setPriceRange}
-                max={1000}
-                step={10}
-                className="w-full"
-              />
-              <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  value={priceRange[0]}
-                  onChange={(e) => setPriceRange([parseInt(e.target.value), priceRange[1]])}
-                  className="h-8"
+        <AccordionItem value="price" className="border-b border-gray-100">
+          <AccordionTrigger className="py-4 hover:no-underline text-sm font-medium text-gray-900">
+            Price Range
+          </AccordionTrigger>
+          <AccordionContent className="pb-4">
+            <div className="space-y-5">
+              <div className="px-2">
+                <Slider
+                  value={priceRange}
+                  onValueChange={setPriceRange}
+                  max={1000}
+                  step={10}
+                  className="w-full"
                 />
-                <span className="text-sm">-</span>
-                <Input
-                  type="number"
-                  value={priceRange[1]}
-                  onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                  className="h-8"
-                />
+                <div className="flex justify-between text-xs text-gray-500 mt-2">
+                  <span>$0</span>
+                  <span>$1000+</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-xs text-gray-600 mb-1 block">Min Price</Label>
+                  <Input
+                    type="number"
+                    value={priceRange[0]}
+                    onChange={(e) => setPriceRange([parseInt(e.target.value) || 0, priceRange[1]])}
+                    className="h-9 text-sm"
+                    placeholder="0"
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs text-gray-600 mb-1 block">Max Price</Label>
+                  <Input
+                    type="number"
+                    value={priceRange[1]}
+                    onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value) || 1000])}
+                    className="h-9 text-sm"
+                    placeholder="1000"
+                  />
+                </div>
               </div>
               <Button
                 size="sm"
-                variant="secondary"
-                className="w-full"
+                variant="brand-primary"
+                className="w-full h-9"
                 onClick={() => {
                   updateFilters({
                     minPrice: priceRange[0] > 0 ? priceRange[0].toString() : undefined,
@@ -174,12 +205,14 @@ export function ProductFilters({ categories, currentFilters }: ProductFiltersPro
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value="condition">
-          <AccordionTrigger>Condition</AccordionTrigger>
-          <AccordionContent>
-            <div className="space-y-2">
+        <AccordionItem value="condition" className="border-b-0">
+          <AccordionTrigger className="py-4 hover:no-underline text-sm font-medium text-gray-900">
+            Condition
+          </AccordionTrigger>
+          <AccordionContent className="pb-4">
+            <div className="space-y-3">
               {conditions.map((condition) => (
-                <Label key={condition.value} className="flex items-center gap-2 cursor-pointer">
+                <Label key={condition.value} className="flex items-center gap-3 cursor-pointer py-2 px-2 -mx-2 rounded-md hover:bg-gray-50 transition-colors">
                   <Checkbox
                     checked={currentFilters.condition === condition.value}
                     onCheckedChange={(checked) => {
@@ -187,14 +220,29 @@ export function ProductFilters({ categories, currentFilters }: ProductFiltersPro
                         condition: checked ? condition.value : undefined,
                       });
                     }}
+                    className="h-4 w-4"
                   />
-                  <span className="text-sm">{condition.label}</span>
+                  <span className="text-sm text-gray-700">{condition.label}</span>
                 </Label>
               ))}
             </div>
           </AccordionContent>
         </AccordionItem>
       </Accordion>
+      
+      {/* Quick Actions */}
+      {activeFiltersCount > 0 && (
+        <div className="pt-4 border-t border-gray-100">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={clearFilters}
+            className="w-full text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+          >
+            Clear All Filters
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,8 +1,11 @@
 import { database } from "@repo/database";
 import { ProductGrid } from "./product-grid";
 import { ProductFilters } from "./product-filters";
+import { ProductFiltersMobile } from "./product-filters-mobile";
 import { ProductSort } from "./product-sort";
 import { Pagination } from "./pagination";
+import { Separator } from '@repo/design-system/components';
+import { SlidersHorizontal } from 'lucide-react';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -166,46 +169,87 @@ export async function ProductsContent({ searchParams }: ProductsContentProps) {
   });
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold">Browse Products</h1>
-            <p className="text-muted-foreground mt-2">
-              {totalCount} products available
-            </p>
+    <div className="min-h-screen bg-white">
+      {/* Spacer for mobile navigation */}
+      <div className="h-32 md:hidden" />
+      
+      {/* Products Grid - Same container as main page */}
+      <div className="max-w-7xl mx-auto px-4 pt-6 pb-6">
+        {/* Header Section */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                Browse Products
+              </h1>
+              <p className="text-sm text-gray-600">
+                {totalCount.toLocaleString()} products available
+              </p>
+            </div>
+            
+            {/* Desktop Sort */}
+            <div className="hidden lg:block">
+              <ProductSort currentSort={searchParams.sort} />
+            </div>
           </div>
-          <ProductSort currentSort={searchParams.sort} />
-        </div>
 
-        <div className="grid lg:grid-cols-4 gap-8">
-          <aside className="lg:col-span-1">
-            <ProductFilters 
+          {/* Mobile Filter and Sort Bar */}
+          <div className="lg:hidden flex items-center gap-3 mb-6">
+            <ProductFiltersMobile 
               categories={categories}
               currentFilters={searchParams}
             />
+            <div className="flex-1">
+              <ProductSort currentSort={searchParams.sort} />
+            </div>
+          </div>
+        </div>
+
+        {/* Main Layout - Sidebar + Grid */}
+        <div className="grid lg:grid-cols-4 gap-6">
+          {/* Desktop Sidebar Filters */}
+          <aside className="hidden lg:block lg:col-span-1">
+            <div className="sticky top-24">
+              <ProductFilters 
+                categories={categories}
+                currentFilters={searchParams}
+              />
+            </div>
           </aside>
 
+          {/* Product Grid */}
           <main className="lg:col-span-3">
             {transformedProducts.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-muted-foreground">No products found</p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Try adjusting your filters
-                </p>
+                <div className="max-w-md mx-auto">
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    No products found
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-6">
+                    Try adjusting your filters or search terms to find what you're looking for
+                  </p>
+                  <div className="lg:hidden">
+                    <ProductFiltersMobile 
+                      categories={categories}
+                      currentFilters={searchParams}
+                    />
+                  </div>
+                </div>
               </div>
             ) : (
-              <>
+              <div className="space-y-6">
                 <ProductGrid products={transformedProducts} />
                 {totalPages > 1 && (
-                  <Pagination
-                    currentPage={page}
-                    totalPages={totalPages}
-                    baseUrl="/products"
-                    searchParams={searchParams}
-                  />
+                  <div className="border-t pt-6">
+                    <Pagination
+                      currentPage={page}
+                      totalPages={totalPages}
+                      baseUrl="/products"
+                      searchParams={searchParams}
+                    />
+                  </div>
                 )}
-              </>
+              </div>
             )}
           </main>
         </div>
