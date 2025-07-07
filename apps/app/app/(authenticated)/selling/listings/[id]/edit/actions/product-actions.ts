@@ -271,7 +271,7 @@ export async function deleteProduct(productId: string) {
       });
       
       await searchService.removeProduct(productId);
-      log('Successfully removed product from search index:', productId);
+      log.info('Successfully removed product from search index:', { productId });
     } catch (searchError) {
       // Log search indexing errors but don't fail the product deletion
       logError('Failed to remove product from search index (non-critical):', searchError);
