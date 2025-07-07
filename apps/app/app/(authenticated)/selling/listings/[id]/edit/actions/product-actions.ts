@@ -166,7 +166,7 @@ export async function updateProduct(productId: string, input: z.infer<typeof upd
       });
       
       await searchService.indexProduct(productId);
-      log('Successfully updated product in search index:', productId);
+      log.info('Successfully updated product in search index:', productId);
     } catch (searchError) {
       // Log search indexing errors but don't fail the product update
       logError('Failed to update product in search index (non-critical):', searchError);
