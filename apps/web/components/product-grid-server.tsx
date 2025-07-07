@@ -282,9 +282,10 @@ export async function ProductGridServer({
     );
 
   } catch (error) {
-    console.error('Failed to fetch products:', parseError(error));
+    const errorMessage = parseError(error);
+    console.error('Failed to fetch products:', errorMessage);
     
-    // Return empty state on error
+    // Return empty state on error with more details in development
     return (
       <div className="max-w-7xl mx-auto px-4 py-12 text-center">
         <h2 className="text-2xl font-semibold text-gray-900 mb-4">
@@ -293,6 +294,11 @@ export async function ProductGridServer({
         <p className="text-gray-600 mb-8">
           We're having trouble loading products right now. Please try again later.
         </p>
+        {process.env.NODE_ENV === 'development' && (
+          <p className="text-sm text-red-600 mb-4">
+            Error: {errorMessage}
+          </p>
+        )}
         <a 
           href="/" 
           className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-black hover:bg-gray-800"
