@@ -2,7 +2,7 @@ import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
-import { safeDecimalToNumber } from '@repo/utils';
+import { safeDecimalToNumber } from '@repo/utils/decimal';
 import { Header } from '../../components/header';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
 import { Badge } from '@repo/design-system/components';
