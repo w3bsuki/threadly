@@ -106,6 +106,7 @@ async function validateOperations(): Promise<boolean> {
     ];
 
     const results = await Promise.all(testOps);
+    console.log('✅ Database operations tested successfully:', {
       categories: results[0],
       users: results[1],
       products: results[2]

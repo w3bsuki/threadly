@@ -1,4 +1,4 @@
-import { formatPrice, databaseDollarsToStripeCents } from '@repo/utils/src/price';
+import { formatPrice, databaseDollarsToStripeCents } from '@repo/utils/price';
 
 /**
  * Format price from database (stored as dollars) for display
