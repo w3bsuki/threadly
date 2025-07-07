@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { logError } from '@repo/observability/server';
+import { getSecureResponseHeaders } from './security-utils';
 
 export interface APIResponse<T = any> {
   success: boolean;
@@ -17,6 +19,7 @@ export interface APIResponse<T = any> {
     version: string;
     timestamp: string;
     requestId?: string;
+    processingTime?: string;
   };
 }
 
@@ -39,7 +42,8 @@ export class APIResponseBuilder {
     data: T,
     message?: string,
     statusCode: number = 200,
-    pagination?: APIResponse<T>['pagination']
+    pagination?: APIResponse<T>['pagination'],
+    processingTime?: string
   ): NextResponse<APIResponse<T>> {
     const response: APIResponse<T> = {
       success: true,
@@ -49,30 +53,52 @@ export class APIResponseBuilder {
       meta: {
         version: this.version,
         timestamp: new Date().toISOString(),
+        processingTime,
       },
     };
 
-    return NextResponse.json(response, { status: statusCode });
+    const headers = {
+      ...getSecureResponseHeaders(),
+      'Content-Type': 'application/json',
+    };
+
+    return NextResponse.json(response, { status: statusCode, headers });
   }
 
   static error(
     error: string,
     statusCode: number = 400,
     code?: string,
-    details?: any
+    details?: any,
+    logToConsole: boolean = true
   ): NextResponse<APIErrorResponse> {
     const response: APIErrorResponse = {
       success: false,
       error,
       code,
-      details,
+      details: process.env.NODE_ENV === 'development' ? details : undefined, // Hide details in production
       meta: {
         version: this.version,
         timestamp: new Date().toISOString(),
       },
     };
 
-    return NextResponse.json(response, { status: statusCode });
+    // Log security-relevant errors
+    if (logToConsole && statusCode >= 400) {
+      logError(`API Error (${statusCode})`, {
+        error,
+        code,
+        statusCode,
+        details: process.env.NODE_ENV === 'development' ? details : '[HIDDEN]',
+      });
+    }
+
+    const headers = {
+      ...getSecureResponseHeaders(),
+      'Content-Type': 'application/json',
+    };
+
+    return NextResponse.json(response, { status: statusCode, headers });
   }
 
   static notFound(resource: string = 'Resource'): NextResponse<APIErrorResponse> {

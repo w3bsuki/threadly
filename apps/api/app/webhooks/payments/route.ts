@@ -229,8 +229,15 @@ const handlePaymentIntentSucceeded = async (
 };
 
 export const POST = async (request: Request): Promise<Response> => {
-  if (!env.STRIPE_WEBHOOK_SECRET) {
-    return NextResponse.json({ message: 'Not configured', ok: false });
+  if (!env.STRIPE_WEBHOOK_SECRET || env.STRIPE_WEBHOOK_SECRET.includes('placeholder')) {
+    logError('Stripe webhook secret not properly configured', {
+      hasSecret: !!env.STRIPE_WEBHOOK_SECRET,
+      secretFormat: env.STRIPE_WEBHOOK_SECRET?.substring(0, 10) + '...',
+    });
+    return NextResponse.json({ 
+      message: 'Webhook endpoint not configured', 
+      ok: false 
+    }, { status: 503 });
   }
 
   // Check rate limit first for security

@@ -1,7 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { generalApiLimit, checkRateLimit } from '@repo/security';
 
 // Simple stub implementation - search functionality will be implemented later
 export async function GET(request: NextRequest) {
+  // Check rate limit for public endpoint
+  const rateLimitResult = await checkRateLimit(generalApiLimit, request);
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      {
+        error: rateLimitResult.error?.message || 'Rate limit exceeded',
+      },
+      { 
+        status: 429,
+        headers: rateLimitResult.headers,
+      }
+    );
+  }
+
   return NextResponse.json({
     message: 'Search service not configured - using database fallback',
     source: 'database',
@@ -19,6 +34,20 @@ export async function GET(request: NextRequest) {
 
 // Health check for search service
 export async function POST(request: NextRequest) {
+  // Check rate limit for public endpoint
+  const rateLimitResult = await checkRateLimit(generalApiLimit, request);
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      {
+        error: rateLimitResult.error?.message || 'Rate limit exceeded',
+      },
+      { 
+        status: 429,
+        headers: rateLimitResult.headers,
+      }
+    );
+  }
+
   return NextResponse.json({
     status: 'not_implemented',
     message: 'Search service not yet configured',

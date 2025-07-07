@@ -3,8 +3,15 @@
 echo "🚀 Starting Threadly Development Environment"
 echo "=========================================="
 
-# Export DATABASE_URL for all processes
-export DATABASE_URL="postgresql://threadly_owner:npg_qwPJ5Ziazf4O@ep-soft-art-a2tlilgq-pooler.eu-central-1.aws.neon.tech/threadly?sslmode=require"
+# Check if DATABASE_URL is set in environment
+if [ -z "$DATABASE_URL" ]; then
+    echo "❌ ERROR: DATABASE_URL environment variable is not set"
+    echo "Please set DATABASE_URL in your environment or .env.local file"
+    echo "Example: export DATABASE_URL=\"postgresql://user:password@host:port/db?sslmode=require\""
+    exit 1
+fi
+
+echo "✅ Database URL configured via environment variable"
 
 # Kill any existing processes on our ports
 echo "🧹 Cleaning up old processes..."
