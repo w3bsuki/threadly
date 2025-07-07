@@ -1,8 +1,8 @@
 import { env } from '@/env';
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { internationalizationMiddleware } from '@repo/internationalization/middleware';
-import { parseError } from '@repo/observability/server';
-import { secure } from '@repo/security';
+import { parseError } from '@repo/observability/middleware-error';
+import { secure } from '@repo/security/middleware-exports';
 import {
   noseconeMiddleware,
   noseconeOptions,

@@ -11,6 +11,10 @@
       "types": "./server.ts",
       "default": "./server.ts"
     },
+    "./middleware-error": {
+      "types": "./middleware-error.ts",
+      "default": "./middleware-error.ts"
+    },
     "./next-config": {
       "types": "./next-config.ts",
       "default": "./next-config.ts"
