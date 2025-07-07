@@ -2,7 +2,7 @@ import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
-import { safeDecimalToNumber } from '@repo/utils/decimal';
+import { decimalToNumber } from '@repo/utils/decimal';
 import { Header } from '../../components/header';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
 import { Badge } from '@repo/design-system/components';
@@ -142,7 +142,7 @@ const SellerDashboardPage = async () => {
         }
       });
 
-      const dailyRevenue = dailySales.reduce((sum, sale) => sum + safeDecimalToNumber(sale.product.price), 0);
+      const dailyRevenue = dailySales.reduce((sum, sale) => sum + decimalToNumber(sale.product.price), 0);
       
       return {
         day: date.toLocaleDateString('en-US', { weekday: 'short' }),
@@ -179,7 +179,7 @@ const SellerDashboardPage = async () => {
     }
   });
 
-  const previousWeekRevenue = previousWeekSales.reduce((sum, sale) => sum + safeDecimalToNumber(sale.product.price), 0);
+  const previousWeekRevenue = previousWeekSales.reduce((sum, sale) => sum + decimalToNumber(sale.product.price), 0);
   
   // Calculate real trend percentages
   const revenueTrend = previousWeekRevenue > 0 
@@ -364,7 +364,7 @@ const SellerDashboardPage = async () => {
                           </p>
                         </div>
                         <div className="text-right">
-                          <div className="font-semibold">{formatPrice(safeDecimalToNumber(product.price))}</div>
+                          <div className="font-semibold">{formatPrice(decimalToNumber(product.price))}</div>
                           <Badge variant={product.status === 'SOLD' ? 'default' : 'secondary'}>
                             {product.status}
                           </Badge>
