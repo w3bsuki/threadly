@@ -31,14 +31,14 @@ export const checkoutFormSchema = z.object({
   city: z.string().min(1, 'City is required'),
   state: z.string().min(1, 'State is required'),
   zipCode: z.string().regex(/^\d{5}(-\d{4})?$/, 'Invalid ZIP code'),
-  country: z.string().default('United States'),
+  country: z.string().min(1, 'Country is required'),
   
-  // Shipping method
-  shippingMethod: z.enum(['standard', 'express', 'overnight']).default('standard'),
+  // Shipping method (required)
+  shippingMethod: z.enum(['standard', 'express', 'overnight']),
   
   // Optional fields
   notes: z.string().optional(),
-  saveAddress: z.boolean().default(false),
+  saveAddress: z.boolean(),
 });
 
 // Complete checkout form schema with nested addresses (for API)
