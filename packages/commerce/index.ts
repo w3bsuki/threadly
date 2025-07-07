@@ -11,11 +11,13 @@ export * from './checkout/store';
 export { useCheckout } from './checkout/hooks';
 export { 
   checkoutFormSchema,
+  completeCheckoutFormSchema,
   addressSchema,
   paymentMethodSchema,
   createOrderSchema,
   type Address,
   type CheckoutFormData,
+  type CompleteCheckoutFormData,
   type CreateOrderData
 } from './checkout/schemas';
 export * from './orders';

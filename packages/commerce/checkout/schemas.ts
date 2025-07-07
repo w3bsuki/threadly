@@ -18,8 +18,31 @@ export const paymentMethodSchema = z.object({
   token: z.string().optional(), // Stripe token or PayPal payment ID
 });
 
-// Checkout form schema
+// Simple checkout form schema (flat structure for UI)
 export const checkoutFormSchema = z.object({
+  // Personal information
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
+  email: z.string().email('Invalid email address'),
+  phone: z.string().optional(),
+  
+  // Address fields (flat structure)
+  address: z.string().min(1, 'Address is required'),
+  city: z.string().min(1, 'City is required'),
+  state: z.string().min(1, 'State is required'),
+  zipCode: z.string().regex(/^\d{5}(-\d{4})?$/, 'Invalid ZIP code'),
+  country: z.string().default('United States'),
+  
+  // Shipping method
+  shippingMethod: z.enum(['standard', 'express', 'overnight']).default('standard'),
+  
+  // Optional fields
+  notes: z.string().optional(),
+  saveAddress: z.boolean().default(false),
+});
+
+// Complete checkout form schema with nested addresses (for API)
+export const completeCheckoutFormSchema = z.object({
   email: z.string().email('Invalid email address'),
   shippingAddress: addressSchema,
   billingAddress: addressSchema.optional(),
@@ -52,4 +75,5 @@ export const createOrderSchema = z.object({
 export type Address = z.infer<typeof addressSchema>;
 export type PaymentMethod = z.infer<typeof paymentMethodSchema>;
 export type CheckoutFormData = z.infer<typeof checkoutFormSchema>;
+export type CompleteCheckoutFormData = z.infer<typeof completeCheckoutFormSchema>;
 export type CreateOrderData = z.infer<typeof createOrderSchema>;
