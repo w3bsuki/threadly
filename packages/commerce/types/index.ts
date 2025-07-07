@@ -82,6 +82,8 @@ export interface Order {
   notes?: string;
   createdAt: Date;
   updatedAt: Date;
+  shippedAt?: Date;
+  deliveredAt?: Date;
 }
 
 export interface OrderItem {
