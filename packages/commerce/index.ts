@@ -5,7 +5,19 @@ export * from './types';
 
 // Export all modules (avoiding conflicts)
 export * from './cart';
-export * from './checkout';
+// Export from checkout but exclude conflicting PaymentMethod type
+export * from './checkout/utils';
+export * from './checkout/store';
+export { useCheckout } from './checkout/hooks';
+export { 
+  checkoutSchema,
+  shippingAddressSchema,
+  billingAddressSchema,
+  paymentMethodSchema,
+  type CheckoutData,
+  type ShippingAddress,
+  type BillingAddress
+} from './checkout/schemas';
 export * from './orders';
 export * from './products';
 
