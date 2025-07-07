@@ -10,6 +10,12 @@
       "require": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./client": {
+      "types": "./dist/client/index.d.ts",
+      "import": "./dist/client/index.js",
+      "require": "./dist/client/index.js",
+      "default": "./dist/client/index.js"
+    },
     "./search-webhook-client": {
       "types": "./dist/search-webhook-client.d.ts",
       "import": "./dist/search-webhook-client.js",
