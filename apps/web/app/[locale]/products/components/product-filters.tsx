@@ -102,48 +102,68 @@ export function ProductFilters({ categories, currentFilters }: ProductFiltersPro
         )}
       </div>
 
-      <Accordion type="multiple" defaultValue={["category", "price", "condition"]} className="w-full">
+      <Accordion type="multiple" defaultValue={[]} className="w-full">
         <AccordionItem value="category" className="border-b border-gray-100">
           <AccordionTrigger className="py-4 hover:no-underline text-sm font-medium text-gray-900">
             Category
           </AccordionTrigger>
           <AccordionContent className="pb-4">
-            <div className="space-y-3">
+            <Accordion type="multiple" defaultValue={[]} className="w-full space-y-2">
               {categories.map((category) => (
                 <div key={category.id}>
-                  <Label className="flex items-center gap-3 cursor-pointer py-2 px-2 -mx-2 rounded-md hover:bg-gray-50 transition-colors">
-                    <Checkbox
-                      checked={currentFilters.category === category.id}
-                      onCheckedChange={(checked) => {
-                        updateFilters({
-                          category: checked ? category.id : undefined,
-                        });
-                      }}
-                      className="h-4 w-4"
-                    />
-                    <span className="text-sm font-medium text-gray-700">{category.name}</span>
-                  </Label>
-                  {category.children && category.children.length > 0 && (
-                    <div className="ml-7 mt-2 space-y-2">
-                      {category.children.map((child) => (
-                        <Label key={child.id} className="flex items-center gap-3 cursor-pointer py-1.5 px-2 -mx-2 rounded-md hover:bg-gray-50 transition-colors">
+                  {category.children && category.children.length > 0 ? (
+                    <AccordionItem value={category.id} className="border-0">
+                      <AccordionTrigger className="py-2 px-2 -mx-2 rounded-md hover:bg-gray-50 hover:no-underline">
+                        <div className="flex items-center gap-3 w-full">
                           <Checkbox
-                            checked={currentFilters.category === child.id}
+                            checked={currentFilters.category === category.id}
                             onCheckedChange={(checked) => {
                               updateFilters({
-                                category: checked ? child.id : undefined,
+                                category: checked ? category.id : undefined,
                               });
                             }}
+                            onClick={(e) => e.stopPropagation()}
                             className="h-4 w-4"
                           />
-                          <span className="text-sm text-gray-600">{child.name}</span>
-                        </Label>
-                      ))}
-                    </div>
+                          <span className="text-sm font-medium text-gray-700">{category.name}</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pl-7 pt-2">
+                        <div className="space-y-2">
+                          {category.children.map((child) => (
+                            <Label key={child.id} className="flex items-center gap-3 cursor-pointer py-1.5 px-2 -mx-2 rounded-md hover:bg-gray-50 transition-colors">
+                              <Checkbox
+                                checked={currentFilters.category === child.id}
+                                onCheckedChange={(checked) => {
+                                  updateFilters({
+                                    category: checked ? child.id : undefined,
+                                  });
+                                }}
+                                className="h-4 w-4"
+                              />
+                              <span className="text-sm text-gray-600">{child.name}</span>
+                            </Label>
+                          ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ) : (
+                    <Label className="flex items-center gap-3 cursor-pointer py-2 px-2 -mx-2 rounded-md hover:bg-gray-50 transition-colors">
+                      <Checkbox
+                        checked={currentFilters.category === category.id}
+                        onCheckedChange={(checked) => {
+                          updateFilters({
+                            category: checked ? category.id : undefined,
+                          });
+                        }}
+                        className="h-4 w-4"
+                      />
+                      <span className="text-sm font-medium text-gray-700">{category.name}</span>
+                    </Label>
                   )}
                 </div>
               ))}
-            </div>
+            </Accordion>
           </AccordionContent>
         </AccordionItem>
 

@@ -39,7 +39,7 @@ export const useServerCartStore = create<ServerCartState>((set, get) => ({
       const items = await cartService.getCart();
       set({ items, isInitialized: true });
     } catch (error) {
-      console.error('Failed to initialize cart:', error);
+      // Error is handled by the service layer
     } finally {
       set({ isLoading: false });
     }

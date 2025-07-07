@@ -9,6 +9,7 @@ import { Package, Truck, CheckCircle, AlertCircle } from 'lucide-react';
 import { Header } from '../../components/header';
 import { OrderActions } from './components/order-actions';
 import Link from 'next/link';
+import { decimalToNumber } from '@repo/utils';
 
 const title = 'My Orders';
 const description = 'Manage your sales and order fulfillment';
@@ -104,7 +105,7 @@ const OrdersPage = async () => {
     paid: orders.filter(o => o.status === 'PAID').length,
     shipped: orders.filter(o => o.status === 'SHIPPED').length,
     delivered: orders.filter(o => o.status === 'DELIVERED').length,
-    revenue: orders.filter(o => o.status !== 'CANCELLED').reduce((sum, o) => sum + o.amount.toNumber(), 0),
+    revenue: orders.filter(o => o.status !== 'CANCELLED').reduce((sum, o) => sum + decimalToNumber(o.amount), 0),
   };
 
   return (

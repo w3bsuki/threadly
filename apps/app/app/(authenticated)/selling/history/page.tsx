@@ -3,6 +3,7 @@ import { database } from '@repo/database';
 import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { SalesHistoryContent } from './components/sales-history-content';
+import { decimalToNumber } from '@repo/utils';
 
 const title = 'Sales History';
 const description = 'Track your sales performance and earnings';
@@ -94,7 +95,7 @@ const SalesHistoryPage = async () => {
     if (!acc[month]) {
       acc[month] = { month, total_sales: BigInt(0), order_count: BigInt(0) };
     }
-    acc[month].total_sales += BigInt(Math.round(order.amount.toNumber()));
+    acc[month].total_sales += BigInt(Math.round(decimalToNumber(order.amount)));
     acc[month].order_count += BigInt(1);
     return acc;
   }, {} as Record<string, { month: string; total_sales: bigint; order_count: bigint }>);
@@ -161,20 +162,20 @@ const SalesHistoryPage = async () => {
       
       <SalesHistoryContent 
         salesData={{
-          _sum: { amount: salesData._sum?.amount ? salesData._sum.amount.toNumber() : null },
+          _sum: { amount: decimalToNumber(salesData._sum?.amount) },
           _count: salesData._count || 0
         }}
         recentOrders={recentOrders.map(order => ({
           ...order,
-          amount: order.amount.toNumber()
+          amount: decimalToNumber(order.amount)
         }))}
         monthlyStats={monthlyStatsArray}
         topProducts={enrichedTopProducts.map(product => ({
           ...product,
-          _sum: { amount: product._sum?.amount ? product._sum.amount.toNumber() : null },
+          _sum: { amount: decimalToNumber(product._sum?.amount) },
           product: product.product ? {
             ...product.product,
-            price: product.product.price.toNumber()
+            price: decimalToNumber(product.product.price)
           } : undefined
         }))}
       />

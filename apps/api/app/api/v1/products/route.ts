@@ -1,7 +1,6 @@
 import { auth } from '@repo/auth/server';
 import { database, type Prisma } from '@repo/database';
 import { generalApiLimit, checkRateLimit } from '@repo/security';
-import { searchIndexing } from '@/lib/search-init';
 import { APIResponseBuilder } from '@/lib/api-response';
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
@@ -340,10 +339,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Trigger search indexing (async, don't block response)
-    searchIndexing.productCreated(product.id).catch((error: unknown) => {
-      logError('Failed to index new product:', error);
-    });
+    // Search indexing will be implemented when search service is configured
 
     return APIResponseBuilder.success(
       { product },

@@ -1,4 +1,5 @@
 import { database } from '@repo/database';
+import type { Prisma } from '@repo/database';
 import { currentUser } from '@repo/auth/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -45,7 +46,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Build where clause
-    const where: any = {};
+    const where: Prisma.ReviewWhereInput = {};
     
     if (userId) {
       where.reviewedId = userId;

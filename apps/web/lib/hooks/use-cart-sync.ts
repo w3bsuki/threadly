@@ -27,7 +27,6 @@ export function useCartSync() {
   } = useCartStore();
 
   const handleError = useCallback((error: string) => {
-    console.error('Cart sync error:', error);
     toast.error(error);
   }, []);
 

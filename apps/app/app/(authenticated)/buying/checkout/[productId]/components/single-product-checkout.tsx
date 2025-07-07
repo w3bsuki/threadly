@@ -20,6 +20,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { formatCurrency } from '@repo/payments/client';
 import { Alert, AlertDescription } from '@repo/design-system/components';
+import { decimalToNumber } from '@repo/utils';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -46,10 +47,50 @@ const checkoutSchema = z.object({
 
 type CheckoutFormData = z.infer<typeof checkoutSchema>;
 
+interface EmailAddress {
+  emailAddress: string;
+}
+
+interface User {
+  id: string;
+  firstName: string | null;
+  lastName: string | null;
+  emailAddresses: EmailAddress[];
+}
+
+interface ProductImage {
+  id: string;
+  imageUrl: string;
+  alt?: string | null;
+  productId?: string;
+  displayOrder?: number;
+}
+
+interface Product {
+  id: string;
+  title: string;
+  brand: string | null;
+  size: string | null;
+  price: number | { toNumber(): number }; // Prisma Decimal or number
+  sellerId: string;
+  images: ProductImage[];
+}
+
+interface SavedAddress {
+  firstName: string | null;
+  lastName: string | null;
+  phone: string | null;
+  streetLine1: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+}
+
 interface SingleProductCheckoutProps {
-  user: any;
-  product: any;
-  savedAddress: any;
+  user: User;
+  product: Product;
+  savedAddress: SavedAddress | null;
 }
 
 function CheckoutForm({ user, product, savedAddress }: SingleProductCheckoutProps) {
@@ -58,21 +99,24 @@ function CheckoutForm({ user, product, savedAddress }: SingleProductCheckoutProp
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Convert product price from Prisma Decimal to number (cents to dollars)
+  const productPrice = decimalToNumber(product.price) / 100;
 
   const form = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
-      firstName: user.firstName || '',
-      lastName: user.lastName || '',
+      firstName: savedAddress?.firstName || user.firstName || '',
+      lastName: savedAddress?.lastName || user.lastName || '',
       email: user.emailAddresses[0]?.emailAddress || '',
-      phone: '',
-      address: savedAddress?.address || '',
+      phone: savedAddress?.phone || '',
+      address: savedAddress?.streetLine1 || '',
       city: savedAddress?.city || '',
       state: savedAddress?.state || '',
       zipCode: savedAddress?.zipCode || '',
-      country: 'United States',
+      country: savedAddress?.country || 'United States',
       shippingMethod: 'standard',
-      saveAddress: true,
+      saveAddress: !savedAddress, // Only check if no saved address exists
     },
   });
 
@@ -83,9 +127,9 @@ function CheckoutForm({ user, product, savedAddress }: SingleProductCheckoutProp
   };
 
   const selectedShipping = form.watch('shippingMethod');
-  const shippingCost = product.price > 50 ? 0 : shippingCosts[selectedShipping];
-  const platformFee = product.price * 0.05;
-  const total = product.price + shippingCost;
+  const shippingCost = productPrice > 50 ? 0 : shippingCosts[selectedShipping];
+  const platformFee = productPrice * 0.05;
+  const total = productPrice + shippingCost;
 
   const onSubmit = async (data: CheckoutFormData) => {
     if (!stripe || !elements) {
@@ -96,6 +140,31 @@ function CheckoutForm({ user, product, savedAddress }: SingleProductCheckoutProp
     setError(null);
 
     try {
+      // Save address if requested
+      if (data.saveAddress) {
+        try {
+          await fetch('/api/addresses', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              firstName: data.firstName,
+              lastName: data.lastName,
+              streetLine1: data.address,
+              city: data.city,
+              state: data.state,
+              zipCode: data.zipCode,
+              country: data.country === 'United States' ? 'US' : data.country,
+              phone: data.phone,
+              type: 'SHIPPING',
+              isDefault: !savedAddress, // Set as default if no existing saved address
+            }),
+          });
+        } catch (addressError) {
+          // Continue with payment even if address saving fails
+          // Address saving failure is not critical for payment flow
+        }
+      }
+
       // Confirm the payment
       const result = await stripe.confirmPayment({
         elements,
@@ -302,7 +371,7 @@ function CheckoutForm({ user, product, savedAddress }: SingleProductCheckoutProp
                           </Label>
                         </div>
                         <p className="font-medium">
-                          {product.price > 50 ? 'FREE' : formatCurrency(shippingCosts.standard)}
+                          {productPrice > 50 ? 'FREE' : formatCurrency(shippingCosts.standard)}
                         </p>
                       </div>
                       <div className="flex items-center justify-between p-4 border rounded-lg">
@@ -378,7 +447,7 @@ function CheckoutForm({ user, product, savedAddress }: SingleProductCheckoutProp
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span>Item Price</span>
-                <span>{formatCurrency(product.price)}</span>
+                <span>{formatCurrency(productPrice)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Shipping</span>

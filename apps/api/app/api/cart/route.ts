@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { database } from '@repo/database';
 import { auth } from '@repo/auth/server';
 import { generalApiLimit, checkRateLimit } from '@repo/security';
+import { logError } from '@repo/observability/server';
 import { z } from 'zod';
 
 // GET /api/cart - Get user's cart
@@ -67,7 +68,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ items });
   } catch (error) {
-    console.error('Error fetching cart:', error);
+    logError('Error fetching cart', error);
     return NextResponse.json({ error: 'Failed to fetch cart' }, { status: 500 });
   }
 }
@@ -180,7 +181,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ item }, { status: 201 });
   } catch (error) {
-    console.error('Error adding to cart:', error);
+    logError('Error adding to cart', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
     }
@@ -231,7 +232,7 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error removing from cart:', error);
+    logError('Error removing from cart', error);
     return NextResponse.json({ error: 'Failed to remove from cart' }, { status: 500 });
   }
 }
@@ -270,7 +271,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ error: 'Invalid endpoint' }, { status: 404 });
   } catch (error) {
-    console.error('Error clearing cart:', error);
+    logError('Error clearing cart', error);
     return NextResponse.json({ error: 'Failed to clear cart' }, { status: 500 });
   }
 }

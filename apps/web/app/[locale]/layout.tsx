@@ -8,6 +8,7 @@ import { ClerkProvider } from '@repo/auth/client';
 import type { ReactNode } from 'react';
 import { Footer } from './components/footer';
 import { Header } from './components/header';
+import { PerformanceMonitor } from './components/performance-monitor';
 
 type RootLayoutProperties = {
   readonly children: ReactNode;
@@ -35,6 +36,7 @@ const RootLayout = ({ children }: RootLayoutProperties) => {
           <AnalyticsProvider>
             <DesignSystemProvider>
               <ServiceWorkerRegistration />
+              <PerformanceMonitor debug={process.env.NODE_ENV === 'development'} />
               <Header />
               <main id="main-content" className="min-h-screen">
                 {children}

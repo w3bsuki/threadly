@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Badge } from '@repo/design-system/components';
 import { Heart, Crown, Eye } from "lucide-react";
@@ -8,6 +7,8 @@ import { cn } from "@repo/design-system/lib/utils";
 import { formatCurrency } from "@/lib/utils/currency";
 import { useState } from "react";
 import { ProductQuickView } from "../../components/product-quick-view";
+import { ProductImage } from "../../components/optimized-image";
+import { ProductGridSkeleton } from "../../components/loading-skeleton";
 
 // Inline ProductPlaceholder for loading states
 const ProductPlaceholder = ({ className = "w-full h-full" }: { className?: string }) => {
@@ -81,6 +82,7 @@ interface Product {
 
 interface ProductGridProps {
   products: Product[];
+  isCompact?: boolean;
 }
 
 const conditionLabels = {
@@ -156,12 +158,10 @@ const ProductCard = ({ product }: { product: Product }) => {
           <div className="cursor-pointer">
             <div className="aspect-[3/4] overflow-hidden rounded-lg bg-gray-100 relative">
               {product.images.length > 0 ? (
-                <Image
+                <ProductImage
                   src={product.images[0].imageUrl}
                   alt={product.images[0].alt || product.title}
-                  fill
-                  className="object-cover object-center group-hover:opacity-75 transition-opacity"
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  className="group-hover:opacity-75 transition-opacity"
                 />
               ) : (
                 <ProductPlaceholder 
@@ -238,9 +238,13 @@ const ProductCard = ({ product }: { product: Product }) => {
   );
 };
 
-export function ProductGrid({ products }: ProductGridProps) {
+export function ProductGrid({ products, isCompact = false }: ProductGridProps) {
+  const gridClass = isCompact 
+    ? "grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7"
+    : "grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
+
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-3">
+    <div className={gridClass}>
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}

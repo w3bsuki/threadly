@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
 
-const stripe = new Stripe(env.STRIPE_SECRET_KEY!, {
+const stripe = new Stripe((env as any).STRIPE_SECRET_KEY || 'sk_test_invalid', {
   apiVersion: '2025-05-28.basil',
 });
 
@@ -17,6 +17,10 @@ const verifyPaymentSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    if (!(env as any).STRIPE_SECRET_KEY) {
+      return NextResponse.json({ error: 'Stripe not configured' }, { status: 503 });
+    }
+
     const user = await currentUser();
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

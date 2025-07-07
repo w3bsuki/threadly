@@ -10,6 +10,7 @@ import { Heart, Package, ExternalLink, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { formatPrice } from '@repo/commerce/utils';
+import { decimalToNumber } from '@repo/utils';
 
 const title = 'My Favorites';
 const description = 'Items you have saved and loved';
@@ -161,7 +162,7 @@ const FavoritesPage = async () => {
                   </CardTitle>
                   <div className="flex items-center justify-between">
                     <span className="text-2xl font-bold text-green-600">
-                      {formatPrice(favorite.product.price.toNumber())}
+                      {formatPrice(decimalToNumber(favorite.product.price))}
                     </span>
                     <Badge variant="outline">
                       {favorite.product.category.name}

@@ -1,4 +1,5 @@
 import { database } from '@repo/database';
+import type { Prisma } from '@repo/database';
 import { generalApiLimit, checkRateLimit } from '@repo/security';
 import { NextRequest, NextResponse } from 'next/server';
 import { log } from '@repo/observability/server';
@@ -25,7 +26,7 @@ export async function GET(request: NextRequest) {
 
     // Handle refresh requests (pull-to-refresh)
     if (refresh === 'true') {
-      const whereClause: any = {
+      const whereClause: Prisma.ProductWhereInput = {
         status: 'AVAILABLE',
       };
 

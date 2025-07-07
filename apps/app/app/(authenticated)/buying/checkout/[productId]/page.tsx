@@ -60,14 +60,12 @@ const CheckoutPage = async ({ params }: CheckoutPageProps) => {
     redirect(`/product/${product.id}`);
   }
 
-  // Get user's saved address if any
-  const lastOrder = await database.order.findFirst({
-    where: { buyerId: user.id },
-    orderBy: { createdAt: 'desc' },
-    select: {
-      id: true,
-      // Note: Order model doesn't have shipping address fields yet
-      // We'll need to add them or use a separate address model
+  // Get user's default shipping address
+  const defaultAddress = await database.address.findFirst({
+    where: {
+      user: { clerkId: user.id },
+      type: 'SHIPPING',
+      isDefault: true,
     },
   });
 
@@ -86,7 +84,7 @@ const CheckoutPage = async ({ params }: CheckoutPageProps) => {
           <SingleProductCheckout 
             user={user} 
             product={product}
-            savedAddress={null} // TODO: Implement saved addresses
+            savedAddress={defaultAddress}
           />
         </div>
       </div>

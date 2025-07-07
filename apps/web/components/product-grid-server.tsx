@@ -1,4 +1,5 @@
 import { database, ProductStatus } from '@repo/database';
+import type { Prisma } from '@repo/database';
 import { ProductGridClient } from './product-grid-client';
 import type { 
   Product, 
@@ -7,7 +8,7 @@ import type {
   Category,
   Condition
 } from '@repo/database';
-import { parseError } from '@repo/observability/server';
+import { parseError, logError } from '@repo/observability/server';
 
 // Type for our transformed product data
 interface TransformedProduct {
@@ -107,7 +108,7 @@ export async function ProductGridServer({
 }: ProductGridServerProps) {
   try {
     // Build the where clause based on category
-    const whereClause: any = {
+    const whereClause: Prisma.ProductWhereInput = {
       status: ProductStatus.AVAILABLE,
     };
 
@@ -164,29 +165,34 @@ export async function ProductGridServer({
       };
     } else if (brand === 'other') {
       // Show products without popular brands
-      whereClause.AND = whereClause.AND || [];
-      whereClause.AND.push({
+      const notFilter: Prisma.ProductWhereInput = {
         NOT: {
           OR: [
-            { brand: { contains: 'nike', mode: 'insensitive' } },
-            { brand: { contains: 'adidas', mode: 'insensitive' } },
-            { brand: { contains: 'zara', mode: 'insensitive' } },
-            { brand: { contains: 'h&m', mode: 'insensitive' } },
-            { brand: { contains: 'uniqlo', mode: 'insensitive' } },
-            { brand: { contains: 'gucci', mode: 'insensitive' } },
-            { brand: { contains: 'prada', mode: 'insensitive' } },
+            { brand: { contains: 'nike', mode: 'insensitive' as any } },
+            { brand: { contains: 'adidas', mode: 'insensitive' as any } },
+            { brand: { contains: 'zara', mode: 'insensitive' as any } },
+            { brand: { contains: 'h&m', mode: 'insensitive' as any } },
+            { brand: { contains: 'uniqlo', mode: 'insensitive' as any } },
+            { brand: { contains: 'gucci', mode: 'insensitive' as any } },
+            { brand: { contains: 'prada', mode: 'insensitive' as any } },
           ]
         }
-      });
+      };
+      
+      if (whereClause.AND) {
+        whereClause.AND = Array.isArray(whereClause.AND) ? [...whereClause.AND, notFilter] : [whereClause.AND, notFilter];
+      } else {
+        whereClause.AND = notFilter;
+      }
     }
 
     // Add condition filter
     if (condition) {
-      whereClause.condition = condition;
+      whereClause.condition = condition as any; // Type assertion for condition enum
     }
 
     // Add sorting
-    let orderBy: any = { createdAt: 'desc' }; // default newest
+    let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: 'desc' }; // default newest
     if (sort === 'price-asc') {
       orderBy = { price: 'asc' };
     } else if (sort === 'price-desc') {
@@ -283,7 +289,7 @@ export async function ProductGridServer({
 
   } catch (error) {
     const errorMessage = parseError(error);
-    console.error('Failed to fetch products:', errorMessage);
+    logError('Failed to fetch products', error);
     
     // Return empty state on error with more details in development
     return (

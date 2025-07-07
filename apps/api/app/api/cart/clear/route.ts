@@ -32,7 +32,8 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error clearing cart:', error);
+    const { log } = await import('@repo/observability/server');
+    log.error('Error clearing cart', { error, userId });
     return NextResponse.json({ error: 'Failed to clear cart' }, { status: 500 });
   }
 }

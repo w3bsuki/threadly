@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
+import { decimalToNumber } from '@repo/utils';
 
 const createOrderSchema = z.object({
   items: z.array(z.object({
@@ -78,7 +79,7 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
     // Verify prices haven't changed
     for (const orderItem of validatedInput.items) {
       const product = products.find(p => p.id === orderItem.productId);
-      if (!product || Math.abs(product.price.toNumber() - orderItem.price) > 0.01) {
+      if (!product || Math.abs(decimalToNumber(product.price) - orderItem.price) > 0.01) {
         return {
           success: false,
           error: 'Product prices have changed. Please refresh your cart.',

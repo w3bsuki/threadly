@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/co
 import { Badge } from '@repo/design-system/components';
 import { Package, Eye, ShoppingCart, Star, ExternalLink } from 'lucide-react';
 import Image from 'next/image';
+import { decimalToNumber } from '@repo/utils';
 
 const title = 'My Orders';
 const description = 'Track your orders and purchases';
@@ -176,7 +177,7 @@ const MyOrdersPage = async () => {
                         {getStatusText(order.status)}
                       </Badge>
                       <p className="text-lg font-semibold mt-1">
-                        ${order.amount.toFixed(2)}
+                        ${(decimalToNumber(order.amount) / 100).toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -212,7 +213,7 @@ const MyOrdersPage = async () => {
                             : order.seller.email}
                         </span>
                         <span className="font-medium">
-                          ${order.amount.toFixed(2)}
+                          ${(decimalToNumber(order.amount) / 100).toFixed(2)}
                         </span>
                       </div>
                     </div>
@@ -314,7 +315,7 @@ const MyOrdersPage = async () => {
               <CardContent className="p-4">
                 <div className="text-center">
                   <p className="text-2xl font-bold">
-                    ${orders.reduce((sum, o) => sum + o.amount.toNumber(), 0).toFixed(2)}
+                    ${(orders.reduce((sum, o) => sum + decimalToNumber(o.amount), 0) / 100).toFixed(2)}
                   </p>
                   <p className="text-sm text-muted-foreground">Total Spent</p>
                 </div>

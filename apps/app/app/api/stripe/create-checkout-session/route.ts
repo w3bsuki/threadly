@@ -6,6 +6,7 @@ import { paymentRateLimit, checkRateLimit } from '@repo/security';
 import { z } from 'zod';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
+import { decimalToNumber } from '@repo/utils';
 
 const createCheckoutSessionSchema = z.object({
   productId: z.string().min(1),
@@ -122,8 +123,8 @@ export async function POST(request: NextRequest) {
     });
 
     // Calculate fees
-    const amountInCents = Math.round(product.price.toNumber() * 100);
-    const platformFeeInCents = Math.round(calculatePlatformFee(product.price.toNumber()) * 100);
+    const amountInCents = Math.round(decimalToNumber(product.price) * 100);
+    const platformFeeInCents = Math.round(calculatePlatformFee(decimalToNumber(product.price)) * 100);
     
     // Create payment intent parameters
     const paymentIntentParams: Parameters<typeof stripe.paymentIntents.create>[0] = {

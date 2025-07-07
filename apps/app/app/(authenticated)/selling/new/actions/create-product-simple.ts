@@ -5,7 +5,14 @@ import { redirect } from 'next/navigation';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
 
-export async function createProductSimple(input: any) {
+interface CreateProductInput {
+  title?: string;
+  description?: string;
+  price?: number;
+  [key: string]: unknown;
+}
+
+export async function createProductSimple(input: CreateProductInput) {
   log.info('Simple create product called with:', input);
   
   try {

@@ -140,9 +140,7 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
 
   const handleToggleFavorite = async () => {
     const result = await toggleFavorite(product.id);
-    if (!result.success) {
-      console.error('Failed to toggle favorite:', result.error);
-    } else {
+    if (result.success) {
       // Track favorite action
       trackProductFavorite({
         id: product.id,

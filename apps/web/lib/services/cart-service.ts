@@ -41,7 +41,6 @@ class CartService {
       const data: CartResponse = await response.json();
       return data.items;
     } catch (error) {
-      console.error('Error fetching cart:', error);
       return [];
     }
   }
@@ -65,7 +64,6 @@ class CartService {
       const data = await response.json();
       return data.item;
     } catch (error) {
-      console.error('Error adding to cart:', error);
       throw error;
     }
   }
@@ -86,7 +84,6 @@ class CartService {
 
       return true;
     } catch (error) {
-      console.error('Error removing from cart:', error);
       return false;
     }
   }
@@ -107,7 +104,6 @@ class CartService {
 
       return true;
     } catch (error) {
-      console.error('Error clearing cart:', error);
       return false;
     }
   }
@@ -119,7 +115,6 @@ class CartService {
         await this.addToCart(item.productId);
       } catch (error) {
         // Continue with other items if one fails
-        console.error(`Failed to sync item ${item.productId}:`, error);
       }
     }
   }

@@ -1,4 +1,5 @@
 import { database } from '@repo/database';
+import type { Prisma } from '@repo/database';
 import { generalApiLimit, checkRateLimit } from '@repo/security';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -42,7 +43,7 @@ export async function GET(request: NextRequest) {
     const validatedParams = GetProductsSchema.parse(queryParams);
 
     // Build where clause
-    const where: any = {
+    const where: Prisma.ProductWhereInput = {
       status: 'AVAILABLE',
     };
 
@@ -67,21 +68,24 @@ export async function GET(request: NextRequest) {
     // Add search filter if specified
     if (validatedParams.search) {
       const searchTerm = validatedParams.search.toLowerCase();
-      where.AND = [
-        where.AND || {},
-        {
-          OR: [
-            { title: { contains: searchTerm, mode: 'insensitive' } },
-            { brand: { contains: searchTerm, mode: 'insensitive' } },
-            { description: { contains: searchTerm, mode: 'insensitive' } },
-            { category: { name: { contains: searchTerm, mode: 'insensitive' } } }
-          ]
-        }
-      ];
+      const searchFilter: Prisma.ProductWhereInput = {
+        OR: [
+          { title: { contains: searchTerm, mode: 'insensitive' } },
+          { brand: { contains: searchTerm, mode: 'insensitive' } },
+          { description: { contains: searchTerm, mode: 'insensitive' } },
+          { category: { name: { contains: searchTerm, mode: 'insensitive' } } }
+        ]
+      };
+      
+      if (where.AND) {
+        where.AND = Array.isArray(where.AND) ? [...where.AND, searchFilter] : [where.AND, searchFilter];
+      } else {
+        where.AND = searchFilter;
+      }
     }
 
     // Build orderBy clause
-    let orderBy: any;
+    let orderBy: Prisma.ProductOrderByWithRelationInput | Prisma.ProductOrderByWithRelationInput[];
     switch (validatedParams.sortBy) {
       case 'price-low':
         orderBy = { price: 'asc' };

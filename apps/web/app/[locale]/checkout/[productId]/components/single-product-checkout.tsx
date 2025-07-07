@@ -39,10 +39,62 @@ const checkoutSchema = z.object({
 
 type CheckoutFormData = z.infer<typeof checkoutSchema>;
 
+import type { Prisma } from '@repo/database';
+
+interface User {
+  id: string;
+  firstName: string | null;
+  lastName: string | null;
+  email: string;
+  clerkId: string;
+}
+
+interface ProductImage {
+  id: string;
+  imageUrl: string;
+  alt: string | null;
+  productId: string;
+  displayOrder: number;
+}
+
+interface Product {
+  id: string;
+  title: string;
+  brand: string | null;
+  size: string | null;
+  price: Prisma.Decimal;
+  sellerId: string;
+  images: ProductImage[];
+  seller: {
+    id: string;
+    firstName: string | null;
+    lastName: string | null;
+    imageUrl: string | null;
+    stripeAccountId: string | null;
+  };
+  category: {
+    id: string;
+    name: string;
+  } | null;
+}
+
+interface SavedAddress {
+  id: string;
+  firstName: string;
+  lastName: string;
+  streetLine1: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+  phone: string | null;
+  type: string;
+}
+
 interface SingleProductCheckoutProps {
-  user: any;
-  product: any;
-  savedAddress: any;
+  user: User;
+  product: Product;
+  savedAddress: SavedAddress | null;
 }
 
 function CheckoutForm({ user, product, savedAddress }: SingleProductCheckoutProps) {
@@ -58,12 +110,12 @@ function CheckoutForm({ user, product, savedAddress }: SingleProductCheckoutProp
       firstName: user.firstName || '',
       lastName: user.lastName || '',
       email: user.email || '',
-      phone: '',
-      address: savedAddress?.street || '',
+      phone: savedAddress?.phone || '',
+      address: savedAddress?.streetLine1 || '',
       city: savedAddress?.city || '',
       state: savedAddress?.state || '',
-      zipCode: savedAddress?.postalCode || '',
-      country: 'United States',
+      zipCode: savedAddress?.zipCode || '',
+      country: savedAddress?.country || 'United States',
       shippingMethod: 'standard',
       saveAddress: true,
     },
@@ -76,9 +128,10 @@ function CheckoutForm({ user, product, savedAddress }: SingleProductCheckoutProp
   };
 
   const selectedShipping = form.watch('shippingMethod');
-  const shippingCost = product.price > 50 ? 0 : shippingCosts[selectedShipping];
-  const platformFee = product.price * 0.05;
-  const total = product.price + shippingCost;
+  const productPrice = Number(product.price);
+  const shippingCost = productPrice > 50 ? 0 : shippingCosts[selectedShipping];
+  const platformFee = productPrice * 0.05;
+  const total = productPrice + shippingCost;
 
   const onSubmit = async (data: CheckoutFormData) => {
     if (!stripe || !elements) {
@@ -276,7 +329,7 @@ function CheckoutForm({ user, product, savedAddress }: SingleProductCheckoutProp
                             </Label>
                           </div>
                           <p className="font-medium">
-                            {product.price > 50 ? 'FREE' : formatCurrency(shippingCosts.standard)}
+                            {productPrice > 50 ? 'FREE' : formatCurrency(shippingCosts.standard)}
                           </p>
                         </div>
                         <div className="flex items-center justify-between p-4 border rounded-lg">
@@ -352,7 +405,7 @@ function CheckoutForm({ user, product, savedAddress }: SingleProductCheckoutProp
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span>Item Price</span>
-                  <span>{formatCurrency(product.price)}</span>
+                  <span>{formatCurrency(productPrice)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>

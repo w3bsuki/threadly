@@ -20,7 +20,7 @@ import {
   Crown
 } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { cn } from '@repo/design-system/lib/utils';
 import { env } from '@/env';
 
@@ -120,6 +120,8 @@ const sizes = [
 
 export function BottomNavMobile({ cartCount = 0, savedCount = 0 }: BottomNavMobileProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState({
@@ -128,6 +130,36 @@ export function BottomNavMobile({ cartCount = 0, savedCount = 0 }: BottomNavMobi
     condition: '',
     sizes: [] as string[]
   });
+
+  // Initialize filters from URL params
+  useEffect(() => {
+    const gender = searchParams.get('gender') || '';
+    const minPrice = searchParams.get('minPrice') || '';
+    const maxPrice = searchParams.get('maxPrice') || '';
+    const condition = searchParams.get('condition') || '';
+    
+    // Map URL params to display values
+    let category = 'All Categories';
+    if (gender) {
+      category = gender.charAt(0).toUpperCase() + gender.slice(1);
+    }
+    
+    let priceRange = '';
+    if (minPrice && maxPrice) {
+      priceRange = `${minPrice}-${maxPrice}`;
+    } else if (minPrice) {
+      priceRange = minPrice === '200' ? 'over-200' : `${minPrice}-`;
+    } else if (maxPrice) {
+      priceRange = maxPrice === '25' ? 'under-25' : `-${maxPrice}`;
+    }
+    
+    setSelectedFilters({
+      category,
+      priceRange,
+      condition: condition || '',
+      sizes: [] // Size filtering not yet implemented in API
+    });
+  }, [searchParams]);
 
   // Bottom nav should always be visible - remove scroll handling
   // The top section handles hide-on-scroll, bottom nav stays fixed
@@ -454,7 +486,59 @@ export function BottomNavMobile({ cartCount = 0, savedCount = 0 }: BottomNavMobi
               <Button 
                 className="w-full bg-black text-white hover:bg-gray-800 h-12 text-lg"
                 onClick={() => {
-                  // Apply filters logic here
+                  // Build URL params from selected filters
+                  const params = new URLSearchParams();
+                  
+                  // Add category/gender filter
+                  if (selectedFilters.category !== 'All Categories') {
+                    params.set('gender', selectedFilters.category.toLowerCase());
+                  }
+                  
+                  // Add price range filter
+                  if (selectedFilters.priceRange) {
+                    switch (selectedFilters.priceRange) {
+                      case 'under-25':
+                        params.set('maxPrice', '25');
+                        break;
+                      case '25-50':
+                        params.set('minPrice', '25');
+                        params.set('maxPrice', '50');
+                        break;
+                      case '50-100':
+                        params.set('minPrice', '50');
+                        params.set('maxPrice', '100');
+                        break;
+                      case '100-200':
+                        params.set('minPrice', '100');
+                        params.set('maxPrice', '200');
+                        break;
+                      case 'over-200':
+                        params.set('minPrice', '200');
+                        break;
+                    }
+                  }
+                  
+                  // Add condition filter
+                  if (selectedFilters.condition) {
+                    // Convert display condition to API format
+                    const conditionMap: { [key: string]: string } = {
+                      'New with tags': 'NEW_WITH_TAGS',
+                      'New without tags': 'NEW_WITHOUT_TAGS',
+                      'Very good': 'VERY_GOOD',
+                      'Good': 'GOOD',
+                      'Satisfactory': 'SATISFACTORY'
+                    };
+                    const apiCondition = conditionMap[selectedFilters.condition];
+                    if (apiCondition) {
+                      params.set('condition', apiCondition);
+                    }
+                  }
+                  
+                  // Size filtering not yet supported by API
+                  
+                  // Navigate to products page with filters
+                  const url = params.toString() ? `/products?${params.toString()}` : '/products';
+                  router.push(url);
                   setIsFiltersOpen(false);
                 }}
               >

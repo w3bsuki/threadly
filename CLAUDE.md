@@ -210,11 +210,62 @@ Before commits:
 - No `console.log` in production
 - No `any` types
 
-## Documentation
+## Documentation Usage
 
-- `docs/next-forge-reference/` - Architecture patterns
-- `apps/*/CLAUDE.md` - App-specific patterns
-- Keep docs concise and actionable
+**ALWAYS read documentation before starting any task:**
+- **`/PROJECT_CONTEXT.md`** - Single source of truth for current state, progress, and priorities
+- **`/docs/next-forge-reference/`** - Architecture patterns and technical guidelines
+- **`/docs/agent-templates.md`** - Templates for spawning parallel agents
+- **`/docs/deployment/`** - DevOps and deployment procedures
+
+### Documentation Update Protocol
+After EVERY significant task:
+1. Update relevant sections in PROJECT_CONTEXT.md
+2. Mark completed items in the progress tracking
+3. Document any new patterns or technical decisions
+4. Update metrics if they've changed
+
+## Agent Orchestration
+
+When using the Task tool to spawn agents for parallel work:
+
+### Agent Deployment Guidelines
+1. **Read PROJECT_CONTEXT.md first** - Understand current priorities and blockers
+2. **Use appropriate template** from `/docs/agent-templates.md`
+3. **Assign clear working directories** - Prevent conflicts
+4. **Define measurable success criteria** - Enable progress tracking
+5. **Require documentation updates** - Keep PROJECT_CONTEXT.md current
+
+### Example Agent Usage
+```
+Task Description: "Fix seller dashboard functionality"
+Prompt: [Use Dashboard Agent Template with specific tasks:
+- Fix missing safeDecimalToNumber function
+- Remove mock data from analytics
+- Implement real-time updates]
+```
+
+### Coordination Rules
+- Launch complementary agents (e.g., Web + API agents)
+- Avoid overlapping work areas
+- Review agent updates before proceeding
+- Monitor PROJECT_CONTEXT.md for progress
+
+### Agent Capabilities Matrix
+| Agent Type | Focus Area | Can Modify | Updates Required |
+|------------|------------|------------|------------------|
+| Web App | /apps/web | Frontend code | UI/UX progress |
+| Dashboard | /apps/app | Seller features | Feature status |
+| API | /apps/api | Backend logic | Security status |
+| Testing | All areas | Test files | Coverage metrics |
+| Performance | All areas | Optimizations | Performance data |
+
+## Documentation Philosophy
+
+- **PROJECT_CONTEXT.md is the single source of truth** - Always current
+- **Read before you code** - Context prevents mistakes
+- **Update after you code** - Keep others informed
+- **Archive completed work** - Maintain clean workspace
 
 ## CRITICAL: DEPENDENCY MANAGEMENT RULES
 

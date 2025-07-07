@@ -1,9 +1,17 @@
 import { database } from "@repo/database";
+import type { Prisma } from "@repo/database";
 import { ProductGrid } from "./product-grid";
 import { ProductFilters } from "./product-filters";
+import { CollapsibleFilters } from "./collapsible-filters";
 import { ProductFiltersMobile } from "./product-filters-mobile";
 import { ProductSort } from "./product-sort";
+import { QuickFilters } from "./quick-filters";
 import { Pagination } from "./pagination";
+import { PromotionalBanner } from "./promotional-banner";
+import { LayoutSwitcher, ViewMode } from "./layout-switcher";
+import { ProductListView } from "./product-list-view";
+import { EnhancedHeader } from "./enhanced-header";
+import { ProductsClientWrapper } from "./products-client-wrapper";
 import { Separator } from '@repo/design-system/components';
 import { SlidersHorizontal } from 'lucide-react';
 
@@ -26,7 +34,7 @@ export async function ProductsContent({ searchParams }: ProductsContentProps) {
   const skip = (page - 1) * ITEMS_PER_PAGE;
 
   // Build where clause for filtering
-  const where: any = {
+  const where: Prisma.ProductWhereInput = {
     status: "AVAILABLE",
   };
 
@@ -81,11 +89,11 @@ export async function ProductsContent({ searchParams }: ProductsContentProps) {
   }
 
   if (searchParams.condition) {
-    where.condition = searchParams.condition;
+    where.condition = searchParams.condition as any; // Type assertion for condition enum
   }
 
   // Build orderBy for sorting
-  let orderBy: any = { createdAt: "desc" }; // default to newest
+  let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: "desc" }; // default to newest
   
   if (searchParams.sort === "price-asc") {
     orderBy = { price: "asc" };
@@ -170,6 +178,9 @@ export async function ProductsContent({ searchParams }: ProductsContentProps) {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Promotional Banner */}
+      <PromotionalBanner />
+      
       {/* Spacer for mobile navigation */}
       <div className="h-32 md:hidden" />
       
@@ -177,21 +188,10 @@ export async function ProductsContent({ searchParams }: ProductsContentProps) {
       <div className="max-w-7xl mx-auto px-4 pt-6 pb-6">
         {/* Header Section */}
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-                Browse Products
-              </h1>
-              <p className="text-sm text-gray-600">
-                {totalCount.toLocaleString()} products available
-              </p>
-            </div>
-            
-            {/* Desktop Sort */}
-            <div className="hidden lg:block">
-              <ProductSort currentSort={searchParams.sort} />
-            </div>
-          </div>
+          <EnhancedHeader 
+            totalCount={totalCount}
+            currentFilters={searchParams}
+          />
 
           {/* Mobile Filter and Sort Bar */}
           <div className="lg:hidden flex items-center gap-3 mb-6">
@@ -206,11 +206,11 @@ export async function ProductsContent({ searchParams }: ProductsContentProps) {
         </div>
 
         {/* Main Layout - Sidebar + Grid */}
-        <div className="grid lg:grid-cols-4 gap-6">
+        <div className="lg:flex lg:gap-6">
           {/* Desktop Sidebar Filters */}
-          <aside className="hidden lg:block lg:col-span-1">
+          <aside className="hidden lg:block">
             <div className="sticky top-24">
-              <ProductFilters 
+              <CollapsibleFilters 
                 categories={categories}
                 currentFilters={searchParams}
               />
@@ -218,7 +218,7 @@ export async function ProductsContent({ searchParams }: ProductsContentProps) {
           </aside>
 
           {/* Product Grid */}
-          <main className="lg:col-span-3">
+          <main className="flex-1 min-w-0">
             {transformedProducts.length === 0 ? (
               <div className="text-center py-12">
                 <div className="max-w-md mx-auto">
@@ -238,9 +238,12 @@ export async function ProductsContent({ searchParams }: ProductsContentProps) {
               </div>
             ) : (
               <div className="space-y-6">
-                <ProductGrid products={transformedProducts} />
+                <ProductsClientWrapper 
+                  products={transformedProducts}
+                  searchParams={searchParams}
+                />
                 {totalPages > 1 && (
-                  <div className="border-t pt-6">
+                  <div className="border-t pt-6 mt-8">
                     <Pagination
                       currentPage={page}
                       totalPages={totalPages}

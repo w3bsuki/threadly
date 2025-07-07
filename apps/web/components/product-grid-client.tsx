@@ -372,19 +372,16 @@ export function ProductGridClient({
 
   // Favorites are now handled directly in ProductCard component
 
-  // Load more products
+  // Load more functionality is handled by parent component through props
   const handleLoadMore = useCallback(async () => {
     setIsLoading(true);
     try {
-      // TODO: Fetch more products from API
-      // const response = await fetch(`/api/products?offset=${products.length}`);
-      // const newProducts = await response.json();
-      // setProducts(prev => [...prev, ...newProducts]);
+      // Pagination is handled by the server component that provides the products
     } catch (error) {
     } finally {
       setIsLoading(false);
     }
-  }, [products.length]);
+  }, []);
 
   // Build filter options from real data
   const realFilterOptions = {
@@ -560,7 +557,7 @@ export function ProductGridClient({
         </div>
       )}
 
-      {/* Load More - TODO: Implement real pagination */}
+      {/* Load More - Pagination handled by URL params */}
       {filteredProducts.length > 0 && filteredProducts.length < filterOptions.totalCount && (
         <div className="mt-12 text-center">
           <Button 

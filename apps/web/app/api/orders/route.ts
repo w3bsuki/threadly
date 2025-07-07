@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
       return createdOrders;
     });
 
-    console.log('Successfully created cart orders:', {
+    log.info('Successfully created cart orders', {
       orderIds: orders.map(o => o.id),
       userId: dbUser.id,
       total: validatedData.costs.total,
@@ -168,7 +168,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Failed to create cart orders:', error);
+    logError('Failed to create cart orders', error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(

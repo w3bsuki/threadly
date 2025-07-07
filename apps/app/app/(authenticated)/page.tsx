@@ -1,5 +1,6 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
+import type { Prisma } from '@repo/database';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Button } from '@repo/design-system/components';
@@ -18,6 +19,7 @@ import {
 } from 'lucide-react';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
+import { decimalToNumber } from '@repo/utils';
 
 const title = 'Dashboard - Threadly';
 const description = 'Manage your listings, orders, and account.';
@@ -67,10 +69,30 @@ const App = async () => {
     );
   }
 
+  // Define types for the query results
+  type OrderAggregateResult = Prisma.GetOrderAggregateType<{
+    _sum: { amount: true };
+    _count: true;
+  }>;
+
+  type RecentOrder = {
+    id: string;
+    amount: Prisma.Decimal | null;
+    status: string;
+    createdAt: Date;
+    product: {
+      id: string;
+      title: string;
+      images: {
+        imageUrl: string;
+      }[];
+    };
+  };
+
   // Simplified queries for better performance with error handling
   let activeListings = 0;
-  let totalSales: any = { _sum: { amount: null }, _count: 0 };
-  let recentOrders: any[] = [];
+  let totalSales: OrderAggregateResult = { _sum: { amount: null }, _count: 0 };
+  let recentOrders: RecentOrder[] = [];
 
   try {
     [activeListings, totalSales, recentOrders] = await Promise.all([
@@ -123,7 +145,7 @@ const App = async () => {
   // Simplified unread messages count - just set to 0 for now to avoid complex query
   const unreadMessages = 0;
 
-  const totalRevenue = totalSales?._sum?.amount ? totalSales._sum.amount.toNumber() : 0;
+  const totalRevenue = decimalToNumber(totalSales?._sum?.amount);
   const completedSales = totalSales?._count || 0;
 
   return (
@@ -223,7 +245,7 @@ const App = async () => {
                         {order.product.title}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        ${((order.amount || 0) / 100).toFixed(2)}
+                        ${(decimalToNumber(order.amount) / 100).toFixed(2)}
                       </p>
                     </div>
                     <Badge variant={

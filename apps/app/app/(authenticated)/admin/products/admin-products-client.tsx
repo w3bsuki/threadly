@@ -23,12 +23,13 @@ import Image from 'next/image';
 import { ProductActions } from './product-actions';
 import { bulkUpdateProducts } from './actions';
 import { useRouter } from 'next/navigation';
+import { decimalToNumber } from '@repo/utils';
 
 interface ProductWithDetails {
   id: string;
   title: string;
   description: string | null;
-  price: { toNumber(): number };
+  price: any;
   status: string;
   createdAt: Date;
   views: number;
@@ -204,7 +205,7 @@ function ProductTable({ products }: { products: ProductWithDetails[] }) {
                   </Badge>
                 </td>
                 <td className="p-2">
-                  <p className="font-medium">${product.price.toNumber().toFixed(2)}</p>
+                  <p className="font-medium">${(decimalToNumber(product.price) / 100).toFixed(2)}</p>
                 </td>
                 <td className="p-2">
                   <div className="text-sm">

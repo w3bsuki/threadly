@@ -7,6 +7,12 @@
 [![Turborepo](https://img.shields.io/badge/Turborepo-Latest-red?logo=turborepo)](https://turbo.build)
 [![Prisma](https://img.shields.io/badge/Prisma-ORM-green?logo=prisma)](https://www.prisma.io)
 
+## 📋 Documentation
+
+- **[PROJECT_CONTEXT.md](PROJECT_CONTEXT.md)** - Current project status and priorities
+- **[CLAUDE.md](CLAUDE.md)** - Development patterns and AI assistant guidelines  
+- **[docs/](docs/)** - Technical documentation and deployment guides
+
 ## 🚀 Quick Start
 
 Get Threadly running locally in under 5 minutes:

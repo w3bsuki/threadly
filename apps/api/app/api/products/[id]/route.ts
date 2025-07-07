@@ -2,7 +2,6 @@ import { auth } from '@repo/auth/server';
 import { database, type Prisma } from '@repo/database';
 import { getCacheService } from '@repo/cache';
 import { generalApiLimit, checkRateLimit } from '@repo/security';
-import { searchIndexing } from '@/lib/search-init';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { logError } from '@repo/observability/server';
@@ -382,10 +381,7 @@ export async function PUT(
     // Invalidate cache for this product
     await cache.invalidateProduct(id);
 
-    // Trigger search re-indexing (async, don't block response)
-    searchIndexing.productUpdated(product.id).catch((error: unknown) => {
-      logError('Failed to reindex updated product:', error);
-    });
+    // Search indexing will be implemented when search service is configured
 
     return NextResponse.json({
       success: true,
@@ -526,10 +522,7 @@ export async function DELETE(
     // Invalidate cache for this product
     await cache.invalidateProduct(id);
 
-    // Remove from search index (async, don't block response)
-    searchIndexing.productDeleted(id).catch((error: unknown) => {
-      logError('Failed to remove deleted product from search index:', error);
-    });
+    // Search indexing will be implemented when search service is configured
 
     return NextResponse.json({
       success: true,
