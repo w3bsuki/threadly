@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useCallback } from 'react';
-import { useUser } from '@clerk/nextjs';
+import { useUser } from '@repo/auth/client';
 import { useCartStore } from '@repo/commerce';
 import { 
   getCartItems,

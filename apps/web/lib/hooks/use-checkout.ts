@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback } from 'react';
-import { useUser } from '@clerk/nextjs';
+import { useUser } from '@repo/auth/client';
 
 // Simplified checkout hook since the new checkout component handles its own state
 export function useCheckout() {
