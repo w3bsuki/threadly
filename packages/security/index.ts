@@ -16,6 +16,7 @@ export {
   paymentRateLimit,
   uploadRateLimit,
   messageRateLimit,
+  webhookRateLimit,
   checkRateLimit,
   type RateLimitResult,
 } from './rate-limits';

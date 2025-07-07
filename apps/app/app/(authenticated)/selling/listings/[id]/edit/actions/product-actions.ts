@@ -25,7 +25,7 @@ import {
 } from '@repo/validation/validators';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
-import { MarketplaceSearchService } from '@repo/search/search-service';
+import { MarketplaceSearchService } from '@repo/search';
 
 const updateProductSchema = z.object({
   title: z.string()

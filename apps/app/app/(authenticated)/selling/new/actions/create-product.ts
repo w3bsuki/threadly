@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
-import { MarketplaceSearchService } from '@repo/search/search-service';
+import { MarketplaceSearchService } from '@repo/search';
 
 // SECURITY: Enhanced validation schema with stricter rules
 const createProductSchema = z.object({

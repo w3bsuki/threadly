@@ -24,8 +24,8 @@ export async function DELETE(
   }
 
   try {
-    const user = await auth();
-    if (!user?.id) {
+    const { userId } = await auth();
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -33,7 +33,7 @@ export async function DELETE(
 
     const deleted = await database.cartItem.deleteMany({
       where: {
-        userId: user.id,
+        userId,
         productId
       }
     });
