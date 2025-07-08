@@ -35,10 +35,20 @@ export class ErrorBoundary extends Component<Props, State> {
             componentStack: errorInfo.componentStack,
           },
         },
+        tags: {
+          errorBoundary: 'WebAppErrorBoundary',
+          environment: process.env.NODE_ENV,
+        },
+        level: 'error',
       });
     }
 
     this.props.onError?.(error, errorInfo);
+
+    // Log to console in development
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Web App Error Boundary caught an error:', error, errorInfo);
+    }
   }
 
   render() {
