@@ -39,12 +39,12 @@ const subCategories = [
 
 // Collections for desktop "Shop by Type"
 const collections = [
-  { name: "Clothing", href: "/collections/clothing", icon: "👕" },
-  { name: "Shoes", href: "/collections/shoes", icon: "👟" },
-  { name: "Jewelry", href: "/collections/jewelry", icon: "💎" },
-  { name: "Bags", href: "/collections/bags", icon: "👜" },
-  { name: "Accessories", href: "/collections/accessories", icon: "⌚" },
-  { name: "Home", href: "/collections/home", icon: "🏠" },
+  { name: "Clothing", href: "/products?category=clothing", icon: "👕" },
+  { name: "Shoes", href: "/products?category=shoes", icon: "👟" },
+  { name: "Jewelry", href: "/products?category=jewelry", icon: "💎" },
+  { name: "Bags", href: "/products?category=bags", icon: "👜" },
+  { name: "Accessories", href: "/products?category=accessories", icon: "⌚" },
+  { name: "Browse All", href: "/products", icon: "🛍️" },
 ];
 
 // Filter options
@@ -728,7 +728,7 @@ export const Header = () => {
               {subCategories.slice(0, 6).map((subCategory) => (
                 <Link
                   key={subCategory.name}
-                  href={`/categories/items/${subCategory.name.toLowerCase()}`}
+                  href={`/products?search=${encodeURIComponent(subCategory.name.toLowerCase())}`}
                   className="flex-shrink-0"
                 >
                   <Button
