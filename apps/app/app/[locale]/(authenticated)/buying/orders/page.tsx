@@ -52,7 +52,7 @@ const MyOrdersPage = async ({ params }: { params: Promise<{ locale: string }> })
         <Button asChild>
           <a href={process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3001'} target="_blank" rel="noopener noreferrer">
             <ShoppingCart className="h-4 w-4 mr-2" />
-            {dictionary.dashboard.actions.continueShopping}
+            {dictionary.dashboard.dashboard.actions.continueShopping}
             <ExternalLink className="h-3 w-3 ml-1" />
           </a>
         </Button>

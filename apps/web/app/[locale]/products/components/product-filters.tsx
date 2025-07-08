@@ -39,11 +39,11 @@ export function ProductFilters({ categories, currentFilters, dictionary }: Produ
   
   // Map conditions from dictionary
   const conditions = [
-    { value: "NEW_WITH_TAGS", label: dictionary.product.conditions.newWithTags },
-    { value: "NEW_WITHOUT_TAGS", label: dictionary.product.conditions.newWithoutTags },
-    { value: "VERY_GOOD", label: dictionary.product.conditions.veryGood },
-    { value: "GOOD", label: dictionary.product.conditions.good },
-    { value: "SATISFACTORY", label: dictionary.product.conditions.satisfactory },
+    { value: "NEW_WITH_TAGS", label: dictionary.web.global.filters.newWithTags },
+    { value: "NEW_WITHOUT_TAGS", label: dictionary.web.global.filters.newWithTags }, // Using newWithTags as fallback
+    { value: "VERY_GOOD", label: dictionary.web.global.filters.veryGood },
+    { value: "GOOD", label: dictionary.web.global.filters.good },
+    { value: "SATISFACTORY", label: dictionary.web.global.filters.fair }, // Using fair as fallback
   ];
   
   const [priceRange, setPriceRange] = useState([
@@ -86,7 +86,7 @@ export function ProductFilters({ categories, currentFilters, dictionary }: Produ
     <div className="space-y-6 bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">{dictionary.search.filters}</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{dictionary.web.global.filters.filters}</h2>
           {activeFiltersCount > 0 && (
             <span className="text-sm text-gray-500 mt-1">
               {activeFiltersCount} active filter{activeFiltersCount !== 1 ? 's' : ''}
@@ -100,7 +100,7 @@ export function ProductFilters({ categories, currentFilters, dictionary }: Produ
             onClick={clearFilters}
             className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
           >
-            {dictionary.search.filters.clearAllFilters}
+            {dictionary.web.global.filters.clearAll}
           </Button>
         )}
       </div>
@@ -108,7 +108,7 @@ export function ProductFilters({ categories, currentFilters, dictionary }: Produ
       <Accordion type="multiple" defaultValue={[]} className="w-full">
         <AccordionItem value="category" className="border-b border-gray-100">
           <AccordionTrigger className="py-4 hover:no-underline text-sm font-medium text-gray-900">
-            {dictionary.search.filters.categories}
+            {dictionary.web.global.filters.categories}
           </AccordionTrigger>
           <AccordionContent className="pb-4">
             <Accordion type="multiple" defaultValue={[]} className="w-full space-y-2">
@@ -172,7 +172,7 @@ export function ProductFilters({ categories, currentFilters, dictionary }: Produ
 
         <AccordionItem value="price" className="border-b border-gray-100">
           <AccordionTrigger className="py-4 hover:no-underline text-sm font-medium text-gray-900">
-            {dictionary.search.filters.priceRange}
+            Price Range
           </AccordionTrigger>
           <AccordionContent className="pb-4">
             <div className="space-y-5">
@@ -191,7 +191,7 @@ export function ProductFilters({ categories, currentFilters, dictionary }: Produ
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label className="text-xs text-gray-600 mb-1 block">{dictionary.search.filters.min} {dictionary.search.filters.price}</Label>
+                  <Label className="text-xs text-gray-600 mb-1 block">Min Price</Label>
                   <Input
                     type="number"
                     value={priceRange[0]}
@@ -201,7 +201,7 @@ export function ProductFilters({ categories, currentFilters, dictionary }: Produ
                   />
                 </div>
                 <div>
-                  <Label className="text-xs text-gray-600 mb-1 block">{dictionary.search.filters.max} {dictionary.search.filters.price}</Label>
+                  <Label className="text-xs text-gray-600 mb-1 block">Max Price</Label>
                   <Input
                     type="number"
                     value={priceRange[1]}
@@ -222,7 +222,7 @@ export function ProductFilters({ categories, currentFilters, dictionary }: Produ
                   });
                 }}
               >
-                {dictionary.search.filters.applyFilters}
+                {dictionary.web.global.filters.applyFilters}
               </Button>
             </div>
           </AccordionContent>
@@ -230,7 +230,7 @@ export function ProductFilters({ categories, currentFilters, dictionary }: Produ
 
         <AccordionItem value="condition" className="border-b-0">
           <AccordionTrigger className="py-4 hover:no-underline text-sm font-medium text-gray-900">
-            {dictionary.search.filters.condition}
+            {dictionary.web.global.filters.condition}
           </AccordionTrigger>
           <AccordionContent className="pb-4">
             <div className="space-y-3">
@@ -262,7 +262,7 @@ export function ProductFilters({ categories, currentFilters, dictionary }: Produ
             onClick={clearFilters}
             className="w-full text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
           >
-            {dictionary.search.filters.clearAllFilters}
+            {dictionary.web.global.filters.clearAll}
           </Button>
         </div>
       )}

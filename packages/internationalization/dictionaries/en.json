@@ -84,6 +84,14 @@
         "by": "by",
         "in": "in"
       },
+      "time": {
+        "minutes": "minutes",
+        "hours": "hours",
+        "day": "day",
+        "days": "days",
+        "ago": "ago",
+        "recently": "recently"
+      },
       "accessibility": {
         "openMenu": "Open navigation menu",
         "closeMenu": "Close navigation menu",

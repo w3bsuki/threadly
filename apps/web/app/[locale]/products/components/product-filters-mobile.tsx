@@ -50,11 +50,11 @@ export function ProductFiltersMobile({ categories, currentFilters, dictionary }:
   
   // Map conditions from dictionary
   const conditions = [
-    { value: "NEW_WITH_TAGS", label: dictionary.product.conditions.newWithTags },
-    { value: "NEW_WITHOUT_TAGS", label: dictionary.product.conditions.newWithoutTags },
-    { value: "VERY_GOOD", label: dictionary.product.conditions.veryGood },
-    { value: "GOOD", label: dictionary.product.conditions.good },
-    { value: "SATISFACTORY", label: dictionary.product.conditions.satisfactory },
+    { value: "NEW_WITH_TAGS", label: dictionary.web.global.filters.newWithTags },
+    { value: "NEW_WITHOUT_TAGS", label: dictionary.web.global.filters.newWithTags }, // Using newWithTags as fallback
+    { value: "VERY_GOOD", label: dictionary.web.global.filters.veryGood },
+    { value: "GOOD", label: dictionary.web.global.filters.good },
+    { value: "SATISFACTORY", label: dictionary.web.global.filters.fair }, // Using fair as fallback
   ];
   
   const [priceRange, setPriceRange] = useState([
@@ -142,8 +142,8 @@ export function ProductFiltersMobile({ categories, currentFilters, dictionary }:
           className="relative min-h-[44px] min-w-[44px] touch-manipulation"
         >
           <SlidersHorizontal className="h-4 w-4 mr-2" />
-          <span className="hidden sm:inline">{dictionary.search.filters}</span>
-          <span className="sm:hidden">{dictionary.search.filters}</span>
+          <span className="hidden sm:inline">{dictionary.web.global.filters.filters}</span>
+          <span className="sm:hidden">{dictionary.web.global.filters.filters}</span>
           {activeFiltersCount > 0 && (
             <Badge 
               variant="destructive" 
@@ -162,7 +162,7 @@ export function ProductFiltersMobile({ categories, currentFilters, dictionary }:
         <div className="px-4 py-6">
           <SheetHeader className="pb-4">
             <div className="flex items-center justify-between">
-              <SheetTitle>{dictionary.search.filters}</SheetTitle>
+              <SheetTitle>{dictionary.web.global.filters.filters}</SheetTitle>
               <Button
                 variant="ghost"
                 size="sm"
@@ -178,14 +178,14 @@ export function ProductFiltersMobile({ categories, currentFilters, dictionary }:
           {activeFiltersCount > 0 && (
             <div className="mb-6 p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-medium">{dictionary.search.filters}</span>
+                <span className="text-sm font-medium">{dictionary.web.global.filters.filters}</span>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={clearFilters}
                   className="text-xs h-6 px-2"
                 >
-                  {dictionary.search.filters.clearAllFilters}
+                  {dictionary.web.global.filters.clearAll}
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -214,7 +214,7 @@ export function ProductFiltersMobile({ categories, currentFilters, dictionary }:
           <Accordion type="multiple" defaultValue={["category", "price", "condition"]}>
             <AccordionItem value="category">
               <AccordionTrigger className="text-base py-4">
-                {dictionary.search.filters.categories}
+                {dictionary.web.global.filters.categories}
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-4 pb-4">
@@ -258,7 +258,7 @@ export function ProductFiltersMobile({ categories, currentFilters, dictionary }:
 
             <AccordionItem value="price">
               <AccordionTrigger className="text-base py-4">
-                {dictionary.search.filters.priceRange}
+                Price Range
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-6 pb-4">
@@ -273,7 +273,7 @@ export function ProductFiltersMobile({ categories, currentFilters, dictionary }:
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="flex-1">
-                      <Label className="text-xs text-gray-600 mb-1 block">{dictionary.search.filters.min}</Label>
+                      <Label className="text-xs text-gray-600 mb-1 block">Min</Label>
                       <Input
                         type="number"
                         value={priceRange[0]}
@@ -283,7 +283,7 @@ export function ProductFiltersMobile({ categories, currentFilters, dictionary }:
                       />
                     </div>
                     <div className="flex-1">
-                      <Label className="text-xs text-gray-600 mb-1 block">{dictionary.search.filters.max}</Label>
+                      <Label className="text-xs text-gray-600 mb-1 block">Max</Label>
                       <Input
                         type="number"
                         value={priceRange[1]}
@@ -299,7 +299,7 @@ export function ProductFiltersMobile({ categories, currentFilters, dictionary }:
                     className="w-full"
                     onClick={applyPriceFilter}
                   >
-                    {dictionary.search.filters.applyFilters}
+                    {dictionary.web.global.filters.applyFilters}
                   </Button>
                 </div>
               </AccordionContent>
@@ -307,7 +307,7 @@ export function ProductFiltersMobile({ categories, currentFilters, dictionary }:
 
             <AccordionItem value="condition">
               <AccordionTrigger className="text-base py-4">
-                {dictionary.search.filters.condition}
+                {dictionary.web.global.filters.condition}
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-3 pb-4">
@@ -338,7 +338,7 @@ export function ProductFiltersMobile({ categories, currentFilters, dictionary }:
               className="w-full"
               onClick={() => setIsOpen(false)}
             >
-              {dictionary.search.filters.applyFilters}
+              {dictionary.web.global.filters.applyFilters}
             </Button>
             <Button
               size="mobile"
@@ -346,7 +346,7 @@ export function ProductFiltersMobile({ categories, currentFilters, dictionary }:
               className="w-full"
               onClick={clearFilters}
             >
-              {dictionary.search.filters.clearAllFilters}
+              {dictionary.web.global.filters.clearAll}
             </Button>
           </div>
         </div>

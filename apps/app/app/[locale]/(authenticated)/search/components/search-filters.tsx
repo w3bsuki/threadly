@@ -277,7 +277,7 @@ export function SearchFilters({ filters, onFiltersChange, onClearFilters, facets
 
               {/* Colors */}
               <div className="space-y-3">
-                <h4 className="font-medium">{dictionary.dashboard.search.filters.colors}</h4>
+                <h4 className="font-medium">Color</h4>
                 <div className="grid grid-cols-4 gap-2">
                   {COLORS.map(color => (
                     <div

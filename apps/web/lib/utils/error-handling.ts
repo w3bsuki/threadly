@@ -23,7 +23,7 @@ export async function handleDatabaseError(
   });
 
   // Log error with context
-  logError(error, {
+  logError(parseError(error), {
     operation,
     type: 'database_error',
     ...context,

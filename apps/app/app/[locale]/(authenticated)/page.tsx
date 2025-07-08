@@ -67,8 +67,8 @@ const App = async ({ params }: { params: Promise<{ locale: string }> }) => {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{dictionary.dashboard.title}</h1>
-          <p className="text-muted-foreground">{dictionary.dashboard.loadingAccount}</p>
+          <h1 className="text-3xl font-bold tracking-tight">{dictionary.dashboard.dashboard.title}</h1>
+          <p className="text-muted-foreground">{dictionary.dashboard.dashboard.loadingAccount}</p>
         </div>
       </div>
     );
@@ -158,9 +158,9 @@ const App = async ({ params }: { params: Promise<{ locale: string }> }) => {
       
       {/* Clean Header */}
       <div>
-        <h1 className="text-3xl font-bold text-black">{dictionary.dashboard.title}</h1>
+        <h1 className="text-3xl font-bold text-black">{dictionary.dashboard.dashboard.title}</h1>
         <p className="text-gray-500 mt-1">
-          {dictionary.dashboard.welcomeMessage.replace('{{name}}', user.firstName || '')}
+          {dictionary.dashboard.dashboard.welcomeMessage.replace('{{name}}', user.firstName || '')}
         </p>
       </div>
 
@@ -168,7 +168,7 @@ const App = async ({ params }: { params: Promise<{ locale: string }> }) => {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="border border-gray-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-700">{dictionary.dashboard.metrics.totalRevenue}</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-700">{dictionary.dashboard.dashboard.metrics.totalRevenue}</CardTitle>
             <DollarSignIcon className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent>
@@ -176,47 +176,47 @@ const App = async ({ params }: { params: Promise<{ locale: string }> }) => {
               ${((totalRevenue || 0) / 100).toFixed(2)}
             </div>
             <p className="text-xs text-gray-500">
-              {completedSales} {dictionary.dashboard.metrics.completedSales}
+              {completedSales} {dictionary.dashboard.dashboard.metrics.completedSales}
             </p>
           </CardContent>
         </Card>
 
         <Card className="border border-gray-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-700">{dictionary.dashboard.metrics.activeListings}</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-700">{dictionary.dashboard.dashboard.metrics.activeListings}</CardTitle>
             <PackageIcon className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-black">{activeListings}</div>
             <p className="text-xs text-gray-500">
-              {dictionary.dashboard.metrics.itemsCurrentlyForSale}
+              {dictionary.dashboard.dashboard.metrics.itemsCurrentlyForSale}
             </p>
           </CardContent>
         </Card>
 
         <Card className="border border-gray-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-700">{dictionary.dashboard.metrics.messages}</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-700">{dictionary.dashboard.dashboard.metrics.messages}</CardTitle>
             <MessageCircleIcon className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-black">{unreadMessages}</div>
             <p className="text-xs text-gray-500">
-              {dictionary.dashboard.metrics.unreadMessages}
+              {dictionary.dashboard.dashboard.metrics.unreadMessages}
             </p>
           </CardContent>
         </Card>
 
         <Card className="border border-gray-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-700">{dictionary.dashboard.metrics.quickAction}</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-700">{dictionary.dashboard.dashboard.metrics.quickAction}</CardTitle>
             <PlusIcon className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent>
             <Link href="/selling/new">
               <Button className="w-full bg-black text-white hover:bg-gray-800">
                 <PlusIcon className="mr-2 h-4 w-4" />
-                {dictionary.dashboard.actions.listNewItem}
+                {dictionary.dashboard.dashboard.actions.listNewItem}
               </Button>
             </Link>
           </CardContent>
@@ -228,8 +228,8 @@ const App = async ({ params }: { params: Promise<{ locale: string }> }) => {
         {/* Recent Orders */}
         <Card className="border border-gray-200">
           <CardHeader>
-            <CardTitle>{dictionary.dashboard.recentOrders.title}</CardTitle>
-            <CardDescription>{dictionary.dashboard.recentOrders.description}</CardDescription>
+            <CardTitle>{dictionary.dashboard.dashboard.recentOrders.title}</CardTitle>
+            <CardDescription>{dictionary.dashboard.dashboard.recentOrders.description}</CardDescription>
           </CardHeader>
           <CardContent>
             {recentOrders.length > 0 ? (
@@ -267,16 +267,16 @@ const App = async ({ params }: { params: Promise<{ locale: string }> }) => {
                 ))}
                 <Link href="/buying/orders">
                   <Button variant="outline" className="w-full">
-                    {dictionary.dashboard.recentOrders.viewAllOrders}
+                    {dictionary.dashboard.dashboard.recentOrders.viewAllOrders}
                   </Button>
                 </Link>
               </div>
             ) : (
               <div className="text-center py-6">
                 <ShoppingBagIcon className="mx-auto h-12 w-12 text-muted-foreground" />
-                <h3 className="mt-2 text-sm font-semibold">{dictionary.dashboard.recentOrders.noOrdersTitle}</h3>
+                <h3 className="mt-2 text-sm font-semibold">{dictionary.dashboard.dashboard.recentOrders.noOrdersTitle}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  {dictionary.dashboard.recentOrders.noOrdersDescription}
+                  {dictionary.dashboard.dashboard.recentOrders.noOrdersDescription}
                 </p>
                 <div className="mt-6">
                   <a
@@ -286,7 +286,7 @@ const App = async ({ params }: { params: Promise<{ locale: string }> }) => {
                   >
                     <Button>
                       <HeartIcon className="mr-2 h-4 w-4" />
-                      {dictionary.dashboard.recentOrders.browseShop}
+                      {dictionary.dashboard.dashboard.recentOrders.browseShop}
                     </Button>
                   </a>
                 </div>
@@ -298,21 +298,21 @@ const App = async ({ params }: { params: Promise<{ locale: string }> }) => {
         {/* Quick Links */}
         <Card className="border border-gray-200">
           <CardHeader>
-            <CardTitle>{dictionary.dashboard.quickLinks.title}</CardTitle>
-            <CardDescription>{dictionary.dashboard.quickLinks.description}</CardDescription>
+            <CardTitle>{dictionary.dashboard.dashboard.quickLinks.title}</CardTitle>
+            <CardDescription>{dictionary.dashboard.dashboard.quickLinks.description}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               <Link href="/selling/listings">
                 <Button variant="ghost" className="w-full justify-start hover:bg-gray-50">
                   <PackageIcon className="mr-2 h-4 w-4" />
-                  {dictionary.dashboard.quickLinks.manageListings}
+                  {dictionary.dashboard.dashboard.quickLinks.manageListings}
                 </Button>
               </Link>
               <Link href="/selling/history">
                 <Button variant="ghost" className="w-full justify-start hover:bg-gray-50">
                   <TrendingUpIcon className="mr-2 h-4 w-4" />
-                  {dictionary.dashboard.quickLinks.salesHistory}
+                  {dictionary.dashboard.dashboard.quickLinks.salesHistory}
                 </Button>
               </Link>
               <Link href="/messages">
@@ -329,7 +329,7 @@ const App = async ({ params }: { params: Promise<{ locale: string }> }) => {
               <Link href="/profile">
                 <Button variant="ghost" className="w-full justify-start hover:bg-gray-50">
                   <EyeIcon className="mr-2 h-4 w-4" />
-                  {dictionary.dashboard.quickLinks.profileSettings}
+                  {dictionary.dashboard.dashboard.quickLinks.profileSettings}
                 </Button>
               </Link>
             </div>
@@ -341,8 +341,8 @@ const App = async ({ params }: { params: Promise<{ locale: string }> }) => {
       {activeListings === 0 && completedSales === 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>{dictionary.dashboard.gettingStarted.title}</CardTitle>
-            <CardDescription>{dictionary.dashboard.gettingStarted.description}</CardDescription>
+            <CardTitle>{dictionary.dashboard.dashboard.gettingStarted.title}</CardTitle>
+            <CardDescription>{dictionary.dashboard.dashboard.gettingStarted.description}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-3">
@@ -350,21 +350,21 @@ const App = async ({ params }: { params: Promise<{ locale: string }> }) => {
                 <div className="rounded-full bg-primary/10 p-3 mx-auto w-fit">
                   <PlusIcon className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="mt-2 font-semibold">{dictionary.dashboard.gettingStarted.listFirstItem}</h3>
+                <h3 className="mt-2 font-semibold">{dictionary.dashboard.dashboard.gettingStarted.listFirstItem}</h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {dictionary.dashboard.gettingStarted.listItemDescription}
+                  {dictionary.dashboard.dashboard.gettingStarted.listItemDescription}
                 </p>
                 <Link href="/selling/new">
-                  <Button className="mt-3" size="sm">{dictionary.dashboard.gettingStarted.getStarted}</Button>
+                  <Button className="mt-3" size="sm">{dictionary.dashboard.dashboard.gettingStarted.getStarted}</Button>
                 </Link>
               </div>
               <div className="text-center">
                 <div className="rounded-full bg-primary/10 p-3 mx-auto w-fit">
                   <HeartIcon className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="mt-2 font-semibold">{dictionary.dashboard.gettingStarted.exploreShop}</h3>
+                <h3 className="mt-2 font-semibold">{dictionary.dashboard.dashboard.gettingStarted.exploreShop}</h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {dictionary.dashboard.gettingStarted.exploreDescription}
+                  {dictionary.dashboard.dashboard.gettingStarted.exploreDescription}
                 </p>
                 <a
                   href={process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3001'}
@@ -372,7 +372,7 @@ const App = async ({ params }: { params: Promise<{ locale: string }> }) => {
                   rel="noopener noreferrer"
                 >
                   <Button variant="outline" className="mt-3" size="sm">
-                    {dictionary.dashboard.gettingStarted.browseNow}
+                    {dictionary.dashboard.dashboard.gettingStarted.browseNow}
                   </Button>
                 </a>
               </div>
@@ -380,13 +380,13 @@ const App = async ({ params }: { params: Promise<{ locale: string }> }) => {
                 <div className="rounded-full bg-primary/10 p-3 mx-auto w-fit">
                   <EyeIcon className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="mt-2 font-semibold">{dictionary.dashboard.gettingStarted.completeProfile}</h3>
+                <h3 className="mt-2 font-semibold">{dictionary.dashboard.dashboard.gettingStarted.completeProfile}</h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {dictionary.dashboard.gettingStarted.profileDescription}
+                  {dictionary.dashboard.dashboard.gettingStarted.profileDescription}
                 </p>
                 <Link href="/profile">
                   <Button variant="outline" className="mt-3" size="sm">
-                    {dictionary.dashboard.gettingStarted.editProfile}
+                    {dictionary.dashboard.dashboard.gettingStarted.editProfile}
                   </Button>
                 </Link>
               </div>

@@ -53,7 +53,7 @@ export function CollapsibleFilters({ categories, currentFilters, dictionary }: C
             <Filter className="h-5 w-5 text-gray-600" />
           </div>
           <div className="writing-mode-vertical text-xs text-gray-500 font-medium">
-            {dictionary.search.filters}
+            {dictionary.web.global.filters.filters}
           </div>
         </div>
       )}

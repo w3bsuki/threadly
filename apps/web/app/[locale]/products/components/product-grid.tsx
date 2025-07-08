@@ -127,14 +127,14 @@ const ProductCard = ({ product, dictionary }: { product: Product; dictionary: Di
   
   // Map condition labels from dictionary
   const conditionLabels = {
-    NEW: dictionary.product?.conditions?.new || "New",
-    NEW_WITH_TAGS: dictionary.product?.conditions?.newWithTags || "New with tags",
-    NEW_WITHOUT_TAGS: dictionary.product?.conditions?.newWithoutTags || "New without tags",
-    LIKE_NEW: dictionary.product?.conditions?.likeNew || "Like New", 
-    EXCELLENT: dictionary.product?.conditions?.excellent || "Excellent",
-    VERY_GOOD: dictionary.product?.conditions?.veryGood || "Very good",
-    GOOD: dictionary.product?.conditions?.good || "Good",
-    SATISFACTORY: dictionary.product?.conditions?.satisfactory || "Fair"
+    NEW: "New",
+    NEW_WITH_TAGS: dictionary.web?.global?.filters?.newWithTags || "New with tags",
+    NEW_WITHOUT_TAGS: dictionary.web?.global?.filters?.newWithTags || "New without tags",
+    LIKE_NEW: dictionary.web?.global?.filters?.likeNew || "Like New", 
+    EXCELLENT: "Excellent",
+    VERY_GOOD: dictionary.web?.global?.filters?.veryGood || "Very good",
+    GOOD: dictionary.web?.global?.filters?.good || "Good",
+    SATISFACTORY: dictionary.web?.global?.filters?.fair || "Fair"
   };
 
   // Transform product data to match ProductQuickView interface
@@ -194,7 +194,7 @@ const ProductCard = ({ product, dictionary }: { product: Product; dictionary: Di
               <div className="absolute bottom-2 left-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <div className="w-full bg-black/80 text-white backdrop-blur-sm text-xs py-2 px-3 rounded flex items-center justify-center">
                   <Eye className="h-3 w-3 mr-1" />
-                  {dictionary.product?.quickView || 'Quick View'}
+                  {'Quick View'}
                 </div>
               </div>
 
@@ -210,7 +210,7 @@ const ProductCard = ({ product, dictionary }: { product: Product; dictionary: Di
                 <div className="absolute top-2 left-2 mt-7">
                   <Badge className="text-xs bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 border-0">
                     <Crown className="h-3 w-3 mr-1" />
-                    {dictionary.product?.badges?.designer || 'Designer'}
+                    {dictionary.web?.global?.categories?.designer || 'Designer'}
                   </Badge>
                 </div>
               )}
@@ -236,7 +236,7 @@ const ProductCard = ({ product, dictionary }: { product: Product; dictionary: Di
                 </span>
               </div>
               
-              <p className="text-xs text-gray-500">{dictionary.product?.size || 'Size'} One Size</p>
+              <p className="text-xs text-gray-500">{dictionary.web?.global?.filters?.size || 'Size'} One Size</p>
               <p className="text-xs text-gray-400">{product.seller.firstName} • {uploadedAgo}</p>
             </div>
           </div>
