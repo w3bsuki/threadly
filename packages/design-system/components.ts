@@ -45,7 +45,7 @@ export { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSepa
 export { Separator } from './components/ui/separator';
 export { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from './components/ui/sheet';
 export { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarMenuSkeleton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarSeparator, SidebarTrigger, useSidebar } from './components/ui/sidebar';
-export { Skeleton } from './components/ui/skeleton';
+export { Skeleton, SkeletonShimmer, SkeletonText, SkeletonAvatar } from './components/ui/skeleton';
 export { Slider } from './components/ui/slider';
 export { Toaster } from './components/ui/sonner';
 export { toast } from 'sonner';

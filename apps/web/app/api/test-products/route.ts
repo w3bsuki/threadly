@@ -1,10 +1,27 @@
 import { database } from '@repo/database';
-import { NextResponse } from 'next/server';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
+import { NextRequest } from 'next/server';
+import { createSuccessResponse, createErrorResponse } from '@repo/api-utils';
+import { generalApiLimit, checkRateLimit } from '@repo/security';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    // Rate limiting for test endpoint
+    const rateLimitResult = await checkRateLimit(generalApiLimit, request);
+    if (!rateLimitResult.allowed) {
+      return createErrorResponse(
+        new Error('Rate limit exceeded'),
+        { status: 429, headers: rateLimitResult.headers }
+      );
+    }
+
+    // Only allow in development
+    if (process.env.NODE_ENV === 'production') {
+      return createErrorResponse(
+        new Error('Test endpoint not available in production'),
+        { status: 403 }
+      );
+    }
+
     const products = await database.product.findMany({
       where: {
         status: 'AVAILABLE',
@@ -41,20 +58,11 @@ export async function GET() {
       take: 10,
     });
 
-    return NextResponse.json({
-      success: true,
+    return createSuccessResponse({
       count: products.length,
       products,
     });
   } catch (error) {
-    logError('Failed to fetch products:', error);
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to fetch products',
-        details: error instanceof Error ? error.message : String(error)
-      },
-      { status: 500 }
-    );
+    return createErrorResponse(error);
   }
 }

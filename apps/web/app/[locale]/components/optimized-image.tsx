@@ -53,12 +53,15 @@ export function OptimizedImage({
 }: OptimizedImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   // Use provided blur or generate one
   const finalBlurDataURL = blurDataURL || (placeholder === 'blur' ? generateBlurDataURL() : undefined);
 
   const handleLoad = () => {
     setIsLoading(false);
+    // Add a small delay for smooth transition
+    setTimeout(() => setIsVisible(true), 50);
     onLoad?.();
   };
 
@@ -88,8 +91,10 @@ export function OptimizedImage({
     src,
     alt,
     className: cn(
-      "transition-opacity duration-300",
-      isLoading ? "opacity-0" : "opacity-100",
+      "transition-all duration-700 ease-in-out",
+      isLoading ? "opacity-0 scale-110 blur-sm" : "opacity-100 scale-100 blur-0",
+      !isVisible && !isLoading ? "opacity-0" : "",
+      isVisible ? "opacity-100" : "",
       className
     ),
     sizes,
@@ -105,20 +110,22 @@ export function OptimizedImage({
 
   if (fill) {
     return (
-      <div className="relative">
+      <div className="relative overflow-hidden">
         <Image
           {...imageProps}
           fill
         />
         {isLoading && (
-          <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse">
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent to-gray-300/20" />
+          </div>
         )}
       </div>
     );
   }
 
   return (
-    <div className="relative" style={{ width, height }}>
+    <div className="relative overflow-hidden" style={{ width, height }}>
       <Image
         {...imageProps}
         width={width}
@@ -126,9 +133,11 @@ export function OptimizedImage({
       />
       {isLoading && (
         <div 
-          className="absolute inset-0 bg-gray-200 animate-pulse"
+          className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse"
           style={{ width, height }}
-        />
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-transparent to-gray-300/20" />
+        </div>
       )}
     </div>
   );

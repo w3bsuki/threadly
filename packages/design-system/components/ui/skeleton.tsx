@@ -4,10 +4,85 @@ function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="skeleton"
-      className={cn("bg-accent animate-pulse rounded-md", className)}
+      className={cn(
+        "bg-gradient-to-r from-gray-200/80 via-gray-100 to-gray-200/80",
+        "animate-shimmer bg-[length:200%_100%] rounded-md",
+        "relative overflow-hidden",
+        className
+      )}
+      style={{
+        backgroundImage: "linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)"
+      }}
       {...props}
     />
   )
 }
 
-export { Skeleton }
+// Enhanced skeleton with shimmer effect
+function SkeletonShimmer({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="skeleton-shimmer"
+      className={cn(
+        "bg-gradient-to-r from-gray-200/60 via-gray-50 to-gray-200/60",
+        "animate-shimmer bg-[length:200%_100%] rounded-md",
+        "relative overflow-hidden",
+        className
+      )}
+      style={{
+        backgroundImage: "linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent)"
+      }}
+      {...props}
+    />
+  )
+}
+
+// Content-aware skeleton for text
+function SkeletonText({ 
+  lines = 1, 
+  className, 
+  lineClassName,
+  ...props 
+}: React.ComponentProps<"div"> & { 
+  lines?: number;
+  lineClassName?: string;
+}) {
+  return (
+    <div className={cn("space-y-2", className)} {...props}>
+      {Array.from({ length: lines }).map((_, i) => (
+        <Skeleton
+          key={i}
+          className={cn(
+            "h-4",
+            i === lines - 1 && lines > 1 ? "w-3/4" : "w-full",
+            lineClassName
+          )}
+        />
+      ))}
+    </div>
+  )
+}
+
+// Avatar skeleton
+function SkeletonAvatar({ 
+  size = "md",
+  className,
+  ...props 
+}: React.ComponentProps<"div"> & { 
+  size?: "sm" | "md" | "lg";
+}) {
+  const sizeClasses = {
+    sm: "w-8 h-8",
+    md: "w-10 h-10",
+    lg: "w-12 h-12"
+  };
+
+  return (
+    <Skeleton
+      className={cn("rounded-full", sizeClasses[size], className)}
+      {...props}
+    />
+  )
+}
+
+export { Skeleton, SkeletonShimmer, SkeletonText, SkeletonAvatar }

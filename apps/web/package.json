@@ -23,6 +23,7 @@
     "@hookform/resolvers": "^5.1.1",
     "@radix-ui/react-icons": "^1.3.2",
     "@repo/analytics": "workspace:*",
+    "@repo/api-utils": "workspace:*",
     "@repo/auth": "workspace:*",
     "@repo/cache": "workspace:*",
     "@repo/cart": "workspace:*",

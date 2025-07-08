@@ -519,6 +519,9 @@ importers:
       '@repo/analytics':
         specifier: workspace:*
         version: link:../../packages/analytics
+      '@repo/api-utils':
+        specifier: workspace:*
+        version: link:../../packages/api-utils
       '@repo/auth':
         specifier: workspace:*
         version: link:../../packages/auth
@@ -793,6 +796,28 @@ importers:
       '@types/react-dom':
         specifier: ^19.1.6
         version: 19.1.6(@types/react@19.1.5)
+
+  packages/api-utils:
+    dependencies:
+      '@repo/observability':
+        specifier: workspace:*
+        version: link:../observability
+      '@repo/security':
+        specifier: workspace:*
+        version: link:../security
+      zod:
+        specifier: ^3.22.4
+        version: 3.25.74
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      tsup:
+        specifier: ^8.0.0
+        version: 8.5.0(jiti@2.4.2)(postcss@8.5.6)(tsx@4.20.1)(typescript@5.8.3)(yaml@2.7.0)
+      typescript:
+        specifier: ^5.3.0
+        version: 5.8.3
 
   packages/auth:
     dependencies:
