@@ -33,15 +33,21 @@ export function useCheckout() {
   }, [checkoutStore.session, checkoutStore.shippingMethod]);
 
   const updateCheckoutData = useCallback((data: Partial<CheckoutFormData>) => {
-    if (data.shippingAddress) {
-      checkoutStore.setShippingAddress(data.shippingAddress);
+    // Convert flat form data to address object for shipping
+    if (data.address || data.city || data.state || data.zipCode || data.country) {
+      const shippingAddress = {
+        name: `${data.firstName || ''} ${data.lastName || ''}`.trim(),
+        street: data.address || '',
+        apartment: '',
+        city: data.city || '',
+        state: data.state || '',
+        postalCode: data.zipCode || '',
+        country: data.country || 'US',
+        phone: data.phone,
+      };
+      checkoutStore.setShippingAddress(shippingAddress);
     }
-    if (data.billingAddress) {
-      checkoutStore.setBillingAddress(data.billingAddress);
-    }
-    if (data.paymentMethod) {
-      checkoutStore.setPaymentMethod(data.paymentMethod);
-    }
+    
     if (data.shippingMethod) {
       checkoutStore.setShippingMethod(data.shippingMethod);
     }
