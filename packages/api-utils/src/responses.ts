@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { StandardApiError, parseError } from './errors';
+import { StandardApiError, parseError, ErrorCode } from './errors';
 
 export interface ApiSuccessResponse<T = unknown> {
   success: true;
@@ -55,6 +55,8 @@ export function createErrorResponse(
     status?: number;
     headers?: HeadersInit;
     logError?: boolean;
+    errorCode?: ErrorCode;
+    details?: unknown;
   }
 ): NextResponse<ApiErrorResponse> {
   const standardError = parseError(error);
@@ -74,10 +76,10 @@ export function createErrorResponse(
   const response: ApiErrorResponse = {
     success: false,
     error: {
-      code: standardError.code,
+      code: options?.errorCode || standardError.code,
       message: standardError.message,
-      ...(standardError.details && { details: standardError.details }),
-      ...(standardError.context && { context: standardError.context }),
+      ...(options?.details ? { details: options.details } : standardError.details ? { details: standardError.details } : {}),
+      ...(standardError.context ? { context: standardError.context } : {}),
     },
   };
 

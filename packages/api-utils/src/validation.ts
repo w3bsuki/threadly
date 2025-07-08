@@ -8,28 +8,19 @@ export interface ValidationContext {
   userRole?: string;
 }
 
-export async function validateInput<T>(
-  schema: z.ZodSchema<T>,
+export type ValidationResult<T> = 
+  | { success: true; data: T }
+  | { success: false; error: z.ZodError };
+
+export function validateInput<T>(
   input: unknown,
-  context?: ValidationContext
-): Promise<T> {
-  try {
-    return await schema.parseAsync(input);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      throw createApiError(
-        ErrorCode.VALIDATION_FAILED,
-        'Input validation failed',
-        error.errors,
-        context ? { 
-          userId: context.userId,
-          userRole: context.userRole,
-          url: context.request.url 
-        } : undefined
-      );
-    }
-    throw error;
+  schema: z.ZodSchema<T>
+): ValidationResult<T> {
+  const result = schema.safeParse(input);
+  if (result.success) {
+    return { success: true, data: result.data };
   }
+  return { success: false, error: result.error };
 }
 
 export async function validateSearchParams<T>(
@@ -40,7 +31,20 @@ export async function validateSearchParams<T>(
   const { searchParams } = new URL(request.url);
   const params = Object.fromEntries(searchParams.entries());
   
-  return validateInput(schema, params, { request, ...context });
+  const result = validateInput(params, schema);
+  if (!result.success) {
+    throw createApiError(
+      ErrorCode.VALIDATION_FAILED,
+      'Search params validation failed',
+      result.error.errors,
+      context ? { 
+        userId: context.userId,
+        userRole: context.userRole,
+        url: request.url 
+      } : undefined
+    );
+  }
+  return result.data;
 }
 
 export async function validateBody<T>(
@@ -50,7 +54,20 @@ export async function validateBody<T>(
 ): Promise<T> {
   try {
     const body = await request.json();
-    return validateInput(schema, body, { request, ...context });
+    const result = validateInput(body, schema);
+    if (!result.success) {
+      throw createApiError(
+        ErrorCode.VALIDATION_FAILED,
+        'Body validation failed',
+        result.error.errors,
+        context ? { 
+          userId: context.userId,
+          userRole: context.userRole,
+          url: request.url 
+        } : undefined
+      );
+    }
+    return result.data;
   } catch (error) {
     if (error instanceof SyntaxError) {
       throw createApiError(
@@ -73,11 +90,27 @@ export async function validateFormData<T>(
     formData.forEach((value, key) => {
       data[key] = value.toString();
     });
-    return validateInput(schema, data, { request, ...context });
+    const result = validateInput(data, schema);
+    if (!result.success) {
+      throw createApiError(
+        ErrorCode.VALIDATION_FAILED,
+        'Form data validation failed',
+        result.error.errors,
+        context ? { 
+          userId: context.userId,
+          userRole: context.userRole,
+          url: request.url 
+        } : undefined
+      );
+    }
+    return result.data;
   } catch (error) {
+    if (error instanceof createApiError) {
+      throw error;
+    }
     throw createApiError(
       ErrorCode.INVALID_INPUT,
-      'Invalid form data'
+      'Failed to parse form data'
     );
   }
 }

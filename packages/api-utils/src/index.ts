@@ -23,6 +23,7 @@ export {
 // Validation utilities
 export {
   type ValidationContext,
+  type ValidationResult,
   validateInput,
   validateSearchParams,
   validateBody,
