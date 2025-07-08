@@ -8,7 +8,7 @@ import { decimalToNumber } from '@repo/utils';
 import { 
   createSuccessResponse, 
   createErrorResponse, 
-  validateRequest,
+  validateInput,
   ErrorCode
 } from '@repo/api-utils';
 
@@ -62,18 +62,18 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const validatedData = validateRequest(body, createCheckoutSessionSchema);
-    if (!validatedData.success) {
+    const validationResult = validateInput(body, createCheckoutSessionSchema);
+    if (!validationResult.success) {
       return createErrorResponse(
         new Error('Invalid request data'),
         { 
           status: 400, 
           errorCode: ErrorCode.VALIDATION_FAILED,
-          details: validatedData.errors
+          details: validationResult.error.errors
         }
       );
     }
-    const { productId, sellerId } = validatedData.data;
+    const { productId, sellerId } = validationResult.data;
 
     // Verify product exists and is available
     const product = await database.product.findUnique({

@@ -5,7 +5,7 @@ import { generalApiLimit, checkRateLimit } from '@repo/security';
 import { 
   createSuccessResponse, 
   createErrorResponse, 
-  validateRequest,
+  validateInput,
   ErrorCode
 } from '@repo/api-utils';
 
@@ -71,18 +71,18 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const validatedData = validateRequest(body, searchRequestSchema);
-    if (!validatedData.success) {
+    const validationResult = validateInput(body, searchRequestSchema);
+    if (!validationResult.success) {
       return createErrorResponse(
         new Error('Invalid search parameters'),
         { 
           status: 400, 
           errorCode: ErrorCode.VALIDATION_FAILED,
-          details: validatedData.errors
+          details: validationResult.error.errors
         }
       );
     }
-    const { filters, page, hitsPerPage } = validatedData.data;
+    const { filters, page, hitsPerPage } = validationResult.data;
 
     const result = await searchService.search(filters, page, hitsPerPage);
 

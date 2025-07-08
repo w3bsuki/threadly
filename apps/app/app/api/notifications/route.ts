@@ -7,7 +7,7 @@ import { queryParamsSchema, sanitizeForDisplay } from '@repo/validation';
 import { 
   createSuccessResponse, 
   createErrorResponse, 
-  validateRequest,
+  validateInput,
   ErrorCode,
   createPaginationMeta
 } from '@repo/api-utils';
@@ -126,19 +126,19 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     // Validate input with helper function
-    const validatedData = validateRequest(body, createNotificationSchema);
-    if (!validatedData.success) {
+    const validationResult = validateInput(body, createNotificationSchema);
+    if (!validationResult.success) {
       return createErrorResponse(
         new Error('Invalid input'),
         { 
           status: 400, 
           errorCode: ErrorCode.VALIDATION_FAILED,
-          details: validatedData.errors
+          details: validationResult.error.errors
         }
       );
     }
 
-    const { title, message, type, metadata } = validatedData.data;
+    const { title, message, type, metadata } = validationResult.data;
 
     // Sanitize user inputs
     const sanitizedData = {
