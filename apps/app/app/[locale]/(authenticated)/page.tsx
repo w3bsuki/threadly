@@ -63,7 +63,7 @@ const App = async ({ params }: { params: Promise<{ locale: string }> }) => {
       });
     }
   } catch (error) {
-    logError('Database error:', error);
+    logError('Database error during user creation/lookup', error);
     return (
       <div className="space-y-6">
         <div>
@@ -143,7 +143,7 @@ const App = async ({ params }: { params: Promise<{ locale: string }> }) => {
       })
     ]);
   } catch (error) {
-    logError('Error fetching dashboard data:', error);
+    logError('Error fetching dashboard data', error);
     // Use default values if queries fail
   }
 
