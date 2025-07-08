@@ -1,9 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { getSearchService } from '@repo/search';
 import { z } from 'zod';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
 import { generalApiLimit, checkRateLimit } from '@repo/security';
+import { 
+  createSuccessResponse, 
+  createErrorResponse, 
+  validateRequest,
+  ErrorCode
+} from '@repo/api-utils';
 
 let searchService: ReturnType<typeof getSearchService> | null = null;
 
@@ -33,14 +37,12 @@ export async function POST(request: NextRequest) {
   // Check rate limit first
   const rateLimitResult = await checkRateLimit(generalApiLimit, request);
   if (!rateLimitResult.allowed) {
-    return NextResponse.json(
-      { 
-        error: rateLimitResult.error?.message || 'Rate limit exceeded',
-        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
-      },
+    return createErrorResponse(
+      new Error(rateLimitResult.error?.message || 'Rate limit exceeded'),
       { 
         status: 429,
         headers: rateLimitResult.headers,
+        errorCode: ErrorCode.RATE_LIMIT_EXCEEDED
       }
     );
   }
@@ -54,10 +56,9 @@ export async function POST(request: NextRequest) {
       const indexName = process.env.ALGOLIA_INDEX_NAME;
 
       if (!appId || !apiKey || !searchOnlyApiKey || !indexName) {
-        logError('[Search API] Missing required environment variables', new Error('Missing Algolia environment variables'));
-        return NextResponse.json(
-          { error: 'Search service not configured' },
-          { status: 503 }
+        return createErrorResponse(
+          new Error('Search service not configured'),
+          { status: 503, errorCode: ErrorCode.SERVICE_UNAVAILABLE }
         );
       }
 
@@ -70,25 +71,24 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { filters, page, hitsPerPage } = searchRequestSchema.parse(body);
+    const validatedData = validateRequest(body, searchRequestSchema);
+    if (!validatedData.success) {
+      return createErrorResponse(
+        new Error('Invalid search parameters'),
+        { 
+          status: 400, 
+          errorCode: ErrorCode.VALIDATION_FAILED,
+          details: validatedData.errors
+        }
+      );
+    }
+    const { filters, page, hitsPerPage } = validatedData.data;
 
     const result = await searchService.search(filters, page, hitsPerPage);
 
-    return NextResponse.json(result);
+    return createSuccessResponse(result);
   } catch (error) {
-    logError('[Search API] Error:', error);
-    
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: 'Invalid search parameters', details: error.errors },
-        { status: 400 }
-      );
-    }
-
-    return NextResponse.json(
-      { error: 'Search failed' },
-      { status: 500 }
-    );
+    return createErrorResponse(error);
   }
 }
 
@@ -96,14 +96,12 @@ export async function GET(request: NextRequest) {
   // Check rate limit first
   const rateLimitResult = await checkRateLimit(generalApiLimit, request);
   if (!rateLimitResult.allowed) {
-    return NextResponse.json(
-      { 
-        error: rateLimitResult.error?.message || 'Rate limit exceeded',
-        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
-      },
+    return createErrorResponse(
+      new Error(rateLimitResult.error?.message || 'Rate limit exceeded'),
       { 
         status: 429,
         headers: rateLimitResult.headers,
+        errorCode: ErrorCode.RATE_LIMIT_EXCEEDED
       }
     );
   }
@@ -117,10 +115,9 @@ export async function GET(request: NextRequest) {
       const indexName = process.env.ALGOLIA_INDEX_NAME;
 
       if (!appId || !apiKey || !searchOnlyApiKey || !indexName) {
-        logError('[Search API] Missing required environment variables', new Error('Missing Algolia environment variables'));
-        return NextResponse.json(
-          { error: 'Search service not configured' },
-          { status: 503 }
+        return createErrorResponse(
+          new Error('Search service not configured'),
+          { status: 503, errorCode: ErrorCode.SERVICE_UNAVAILABLE }
         );
       }
 
@@ -149,12 +146,8 @@ export async function GET(request: NextRequest) {
 
     const result = await searchService.search(filters, page);
 
-    return NextResponse.json(result);
+    return createSuccessResponse(result);
   } catch (error) {
-    logError('[Search API] Error:', error);
-    return NextResponse.json(
-      { error: 'Search failed' },
-      { status: 500 }
-    );
+    return createErrorResponse(error);
   }
 }

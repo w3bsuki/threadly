@@ -1,12 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { stripe, calculatePlatformFee, isStripeConfigured } from '@repo/payments';
 import { paymentRateLimit, checkRateLimit } from '@repo/security';
 import { z } from 'zod';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
 import { decimalToNumber } from '@repo/utils';
+import { 
+  createSuccessResponse, 
+  createErrorResponse, 
+  validateRequest,
+  ErrorCode
+} from '@repo/api-utils';
 
 const createCheckoutSessionSchema = z.object({
   productId: z.string().min(1),
@@ -18,26 +22,30 @@ export async function POST(request: NextRequest) {
     // Check rate limit
     const rateLimitResult = await checkRateLimit(paymentRateLimit, request);
     if (!rateLimitResult.allowed) {
-      return NextResponse.json(
-        { error: rateLimitResult.error?.message || 'Rate limit exceeded' },
+      return createErrorResponse(
+        new Error(rateLimitResult.error?.message || 'Rate limit exceeded'),
         { 
           status: 429,
           headers: rateLimitResult.headers,
+          errorCode: ErrorCode.RATE_LIMIT_EXCEEDED
         }
       );
     }
 
     // Check if Stripe is configured
     if (!isStripeConfigured()) {
-      return NextResponse.json(
-        { error: 'Payment processing is not configured' },
-        { status: 503 }
+      return createErrorResponse(
+        new Error('Payment processing is not configured'),
+        { status: 503, errorCode: ErrorCode.SERVICE_UNAVAILABLE }
       );
     }
 
     const clerkUser = await currentUser();
     if (!clerkUser) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return createErrorResponse(
+        new Error('Unauthorized'),
+        { status: 401, errorCode: ErrorCode.UNAUTHORIZED }
+      );
     }
 
     // SECURITY: Get database user to ensure proper ID comparison
@@ -47,11 +55,25 @@ export async function POST(request: NextRequest) {
     });
 
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return createErrorResponse(
+        new Error('User not found'),
+        { status: 404, errorCode: ErrorCode.NOT_FOUND }
+      );
     }
 
     const body = await request.json();
-    const { productId, sellerId } = createCheckoutSessionSchema.parse(body);
+    const validatedData = validateRequest(body, createCheckoutSessionSchema);
+    if (!validatedData.success) {
+      return createErrorResponse(
+        new Error('Invalid request data'),
+        { 
+          status: 400, 
+          errorCode: ErrorCode.VALIDATION_FAILED,
+          details: validatedData.errors
+        }
+      );
+    }
+    const { productId, sellerId } = validatedData.data;
 
     // Verify product exists and is available
     const product = await database.product.findUnique({
@@ -69,17 +91,17 @@ export async function POST(request: NextRequest) {
     });
 
     if (!product) {
-      return NextResponse.json(
-        { error: 'Product not available' },
-        { status: 404 }
+      return createErrorResponse(
+        new Error('Product not available'),
+        { status: 404, errorCode: ErrorCode.NOT_FOUND }
       );
     }
 
     // SECURITY: Proper ID comparison - database user ID vs database seller ID
     if (product.sellerId === user.id) {
-      return NextResponse.json(
-        { error: 'Cannot purchase your own product' },
-        { status: 400 }
+      return createErrorResponse(
+        new Error('Cannot purchase your own product'),
+        { status: 400, errorCode: ErrorCode.INVALID_INPUT }
       );
     }
 
@@ -159,24 +181,12 @@ export async function POST(request: NextRequest) {
       data: { status: 'RESERVED' },
     });
 
-    return NextResponse.json({
+    return createSuccessResponse({
       clientSecret: paymentIntent.client_secret,
       orderId: order.id,
     });
 
   } catch (error) {
-    logError('Checkout session creation error:', error);
-    
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
-      );
-    }
-
-    return NextResponse.json(
-      { error: 'Failed to create checkout session' },
-      { status: 500 }
-    );
+    return createErrorResponse(error);
   }
 }

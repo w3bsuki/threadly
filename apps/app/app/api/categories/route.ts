@@ -1,7 +1,5 @@
-import { NextResponse } from 'next/server';
 import { database } from '@repo/database';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
+import { createSuccessResponse, createErrorResponse } from '@repo/api-utils';
 
 export async function GET() {
   try {
@@ -16,21 +14,10 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json({
-      success: true,
-      categories,
-      count: categories.length,
+    return createSuccessResponse(categories, {
+      meta: { count: categories.length }
     });
   } catch (error) {
-    logError('Categories fetch error:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : 'Failed to fetch categories',
-        categories: [],
-        count: 0,
-      },
-      { status: 500 }
-    );
+    return createErrorResponse(error);
   }
 }

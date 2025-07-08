@@ -1,11 +1,16 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { getNotificationService } from '@repo/real-time/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { z } from 'zod';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
 import { queryParamsSchema, sanitizeForDisplay } from '@repo/validation';
+import { 
+  createSuccessResponse, 
+  createErrorResponse, 
+  validateRequest,
+  ErrorCode,
+  createPaginationMeta
+} from '@repo/api-utils';
 
 const createNotificationSchema = z.object({
   title: z.string().trim().min(1).max(255)
@@ -26,7 +31,10 @@ export async function GET(request: NextRequest) {
     const user = await currentUser();
     
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return createErrorResponse(
+        new Error('Unauthorized'),
+        { status: 401, errorCode: ErrorCode.UNAUTHORIZED }
+      );
     }
 
     // Get database user from Clerk ID
@@ -36,7 +44,10 @@ export async function GET(request: NextRequest) {
     });
 
     if (!dbUser) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return createErrorResponse(
+        new Error('User not found'),
+        { status: 404, errorCode: ErrorCode.NOT_FOUND }
+      );
     }
 
     const { searchParams } = new URL(request.url);
@@ -47,15 +58,13 @@ export async function GET(request: NextRequest) {
     // Validate query parameters
     const queryValidation = queryParamsSchema.safeParse({ page, limit });
     if (!queryValidation.success) {
-      return NextResponse.json(
+      return createErrorResponse(
+        new Error('Invalid query parameters'),
         { 
-          error: 'Invalid query parameters', 
-          details: queryValidation.error.errors.map(e => ({
-            field: e.path.join('.'),
-            message: e.message
-          }))
-        }, 
-        { status: 400 }
+          status: 400, 
+          errorCode: ErrorCode.VALIDATION_FAILED,
+          details: queryValidation.error.errors 
+        }
       );
     }
 
@@ -74,18 +83,17 @@ export async function GET(request: NextRequest) {
     const notificationService = getNotificationService();
     const unreadCount = await notificationService.getUnreadCount(dbUser.id);
 
-    return NextResponse.json({
-      notifications,
-      unreadCount,
-      page: validatedPage,
-      limit: validatedLimit,
+    return createSuccessResponse(notifications, {
+      pagination: createPaginationMeta(validatedPage, validatedLimit, await database.notification.count({
+        where: {
+          userId: dbUser.id,
+          ...(unreadOnly && { read: false }),
+        }
+      })),
+      meta: { unreadCount }
     });
   } catch (error) {
-    logError('[Notifications GET] Error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch notifications' },
-      { status: 500 }
-    );
+    return createErrorResponse(error);
   }
 }
 
@@ -95,7 +103,10 @@ export async function POST(request: NextRequest) {
     const user = await currentUser();
     
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return createErrorResponse(
+        new Error('Unauthorized'),
+        { status: 401, errorCode: ErrorCode.UNAUTHORIZED }
+      );
     }
 
     // Get database user from Clerk ID
@@ -105,28 +116,29 @@ export async function POST(request: NextRequest) {
     });
 
     if (!dbUser) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return createErrorResponse(
+        new Error('User not found'),
+        { status: 404, errorCode: ErrorCode.NOT_FOUND }
+      );
     }
 
     // This would need admin check in real implementation
     const body = await request.json();
     
-    // Validate input with Zod schema
-    const validationResult = createNotificationSchema.safeParse(body);
-    if (!validationResult.success) {
-      return NextResponse.json(
+    // Validate input with helper function
+    const validatedData = validateRequest(body, createNotificationSchema);
+    if (!validatedData.success) {
+      return createErrorResponse(
+        new Error('Invalid input'),
         { 
-          error: 'Invalid input', 
-          details: validationResult.error.errors.map(e => ({
-            field: e.path.join('.'),
-            message: e.message
-          }))
-        }, 
-        { status: 400 }
+          status: 400, 
+          errorCode: ErrorCode.VALIDATION_FAILED,
+          details: validatedData.errors
+        }
       );
     }
 
-    const { title, message, type, metadata } = validationResult.data;
+    const { title, message, type, metadata } = validatedData.data;
 
     // Sanitize user inputs
     const sanitizedData = {
@@ -139,12 +151,8 @@ export async function POST(request: NextRequest) {
     const notificationService = getNotificationService();
     const notification = await notificationService.notify(dbUser.id, sanitizedData);
 
-    return NextResponse.json(notification);
+    return createSuccessResponse(notification);
   } catch (error) {
-    logError('[Notifications POST] Error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create notification' },
-      { status: 500 }
-    );
+    return createErrorResponse(error);
   }
 }
