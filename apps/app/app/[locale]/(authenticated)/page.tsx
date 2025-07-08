@@ -5,7 +5,7 @@ import type { Metadata } from 'next';
 import { logError } from '@repo/observability/server';
 import { decimalToNumber } from '@repo/utils';
 import { getDictionary } from '@repo/internationalization';
-import { DashboardContent } from './components/dashboard-content';
+import { SimpleDashboard } from './components/simple-dashboard';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -139,7 +139,7 @@ const App = async ({ params }: { params: Promise<{ locale: string }> }) => {
   const completedSales = totalSales?._count || 0;
 
   return (
-    <DashboardContent 
+    <SimpleDashboard 
       user={user}
       dictionary={dictionary}
       metrics={{
