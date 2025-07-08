@@ -22,6 +22,7 @@ import {
   ArrowDownRight
 } from 'lucide-react';
 import { AnalyticsCharts } from './components/analytics-charts';
+import { AnalyticsErrorBoundary } from '@/components/error-boundaries';
 
 const title = 'Seller Dashboard';
 const description = 'Analytics and insights for your business';
@@ -334,15 +335,17 @@ const SellerDashboardPage = async () => {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-4">
-            <AnalyticsCharts 
-              revenueData={recentRevenue}
-              salesData={totalSales}
-              viewsData={totalViews}
-              dailyAnalytics={dailyAnalytics}
-              revenueTrend={revenueTrend}
-              salesTrend={salesTrend}
-              viewsTrend={viewsTrend}
-            />
+            <AnalyticsErrorBoundary>
+              <AnalyticsCharts 
+                revenueData={recentRevenue}
+                salesData={totalSales}
+                viewsData={totalViews}
+                dailyAnalytics={dailyAnalytics}
+                revenueTrend={revenueTrend}
+                salesTrend={salesTrend}
+                viewsTrend={viewsTrend}
+              />
+            </AnalyticsErrorBoundary>
           </TabsContent>
 
           <TabsContent value="products" className="space-y-4">

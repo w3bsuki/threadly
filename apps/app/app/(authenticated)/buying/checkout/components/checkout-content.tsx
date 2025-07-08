@@ -18,6 +18,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components';
 import { checkoutFormSchema, type CheckoutFormData } from '@repo/commerce';
+import { PaymentErrorBoundary } from '@/components/error-boundaries';
 import { formatCurrency } from '@repo/utils';
 import Link from 'next/link';
 import Image from 'next/image';

@@ -16,6 +16,7 @@ import { createProduct } from '../actions/create-product';
 import { ImageUpload } from './image-upload';
 import { CategorySelector } from './category-selector';
 import { toast } from '@/components/toast';
+import { FormErrorBoundary } from '@/components/error-boundaries';
 
 const productSchema = z.object({
   title: z.string().min(1, 'Title is required').max(100, 'Title must be less than 100 characters'),

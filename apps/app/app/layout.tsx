@@ -7,6 +7,7 @@ import { Toolbar } from '@repo/feature-flags/components/toolbar';
 import { AuthProvider } from '@repo/auth/provider';
 import { AnalyticsProvider } from '@repo/analytics';
 import { ToastProvider } from '@/components/toast';
+import { AppErrorBoundary } from '@/components/error-boundaries';
 import type { ReactNode } from 'react';
 
 type RootLayoutProperties = {
@@ -16,22 +17,24 @@ type RootLayoutProperties = {
 const RootLayout = ({ children }: RootLayoutProperties) => (
   <html lang="en" className={fonts} suppressHydrationWarning>
     <body>
-      <AuthProvider
-        privacyUrl={new URL(
-          '/legal/privacy',
-          env.NEXT_PUBLIC_WEB_URL
-        ).toString()}
-        termsUrl={new URL('/legal/terms', env.NEXT_PUBLIC_WEB_URL).toString()}
-        helpUrl={env.NEXT_PUBLIC_DOCS_URL}
-      >
-        <AnalyticsProvider>
-          <DesignSystemProvider>
-            <ToastProvider />
-            {children}
-          </DesignSystemProvider>
-        </AnalyticsProvider>
-      </AuthProvider>
-      <Toolbar />
+      <AppErrorBoundary>
+        <AuthProvider
+          privacyUrl={new URL(
+            '/legal/privacy',
+            env.NEXT_PUBLIC_WEB_URL
+          ).toString()}
+          termsUrl={new URL('/legal/terms', env.NEXT_PUBLIC_WEB_URL).toString()}
+          helpUrl={env.NEXT_PUBLIC_DOCS_URL}
+        >
+          <AnalyticsProvider>
+            <DesignSystemProvider>
+              <ToastProvider />
+              {children}
+            </DesignSystemProvider>
+          </AnalyticsProvider>
+        </AuthProvider>
+        <Toolbar />
+      </AppErrorBoundary>
     </body>
   </html>
 );
