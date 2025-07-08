@@ -20,8 +20,11 @@ export async function DELETE(request: NextRequest) {
     );
   }
 
+  let userId: string | null = null;
+  
   try {
-    const { userId } = await auth();
+    const authResult = await auth();
+    userId = authResult.userId;
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

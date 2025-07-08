@@ -217,14 +217,12 @@ export function withSecurity<T = any, Q = any>(
           request
         );
         
-        if (!rateLimitResult.success) {
+        if (!rateLimitResult.allowed) {
           return NextResponse.json(
             { error: 'Rate limit exceeded' },
             { 
               status: 429,
-              headers: {
-                'Retry-After': rateLimitResult.retryAfter?.toString() || '60'
-              }
+              headers: rateLimitResult.headers || { 'Retry-After': '60' }
             }
           );
         }
@@ -272,7 +270,7 @@ export function withSecurity<T = any, Q = any>(
       
       // Log request metrics
       const duration = performance.now() - startTime;
-      log('API request processed', {
+      log.info('API request processed', {
         method: request.method,
         url: request.url,
         status: response.status,

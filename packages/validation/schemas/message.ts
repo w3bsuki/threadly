@@ -32,9 +32,14 @@ export const conversationStatusSchema = z.enum([
 });
 
 // Message content validation (with profanity filter applied later)
-export const messageContentSchema = safeTextSchema
+export const messageContentSchema = z
+  .string()
+  .trim()
   .min(1, 'Message cannot be empty')
-  .max(1000, 'Message must be at most 1000 characters');
+  .max(1000, 'Message must be at most 1000 characters')
+  .refine((text) => !/<[^>]*>/.test(text), {
+    message: 'HTML tags are not allowed',
+  });
 
 // Create message schema
 export const createMessageSchema = z.object({
@@ -99,14 +104,18 @@ export const reportMessageSchema = z.object({
     'SCAM',
     'OTHER',
   ]),
-  description: safeTextSchema.max(500),
+  description: z.string().trim().min(1).max(500).refine((text) => !/<[^>]*>/.test(text), {
+    message: 'HTML tags are not allowed',
+  }),
 });
 
 // Block conversation schema
 export const blockConversationSchema = z.object({
   conversationId: cuidSchema,
   blockUserId: uuidSchema,
-  reason: safeTextSchema.max(200).optional(),
+  reason: z.string().trim().min(1).max(200).refine((text) => !/<[^>]*>/.test(text), {
+    message: 'HTML tags are not allowed',
+  }).optional(),
 });
 
 // Typing indicator schema
@@ -130,7 +139,9 @@ export const conversationSettingsSchema = z.object({
 
 // Automated message templates
 export const messageTemplateSchema = z.object({
-  name: safeTextSchema.max(50),
+  name: z.string().trim().min(1).max(50).refine((text) => !/<[^>]*>/.test(text), {
+    message: 'HTML tags are not allowed',
+  }),
   content: messageContentSchema,
   category: z.enum([
     'GREETING',
@@ -155,7 +166,9 @@ export const quickReplySchema = z.object({
 
 // Message search schema
 export const messageSearchSchema = z.object({
-  query: safeTextSchema.max(100),
+  query: z.string().trim().min(1).max(100).refine((text) => !/<[^>]*>/.test(text), {
+    message: 'HTML tags are not allowed',
+  }),
   conversationId: cuidSchema.optional(),
   senderId: uuidSchema.optional(),
   dateFrom: z.coerce.date().optional(),

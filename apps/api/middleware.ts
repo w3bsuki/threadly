@@ -1,17 +1,7 @@
-import {
-  noseconeMiddleware,
-  noseconeOptions,
-  noseconeOptionsWithToolbar,
-} from '@repo/security/middleware';
 import { csrfMiddleware } from '@repo/security';
 import { NextResponse } from 'next/server';
 import type { NextMiddleware, NextRequest } from 'next/server';
 import { logError } from '@repo/observability/server';
-import { env } from './env';
-
-const securityHeaders = env.FLAGS_SECRET
-  ? noseconeMiddleware(noseconeOptionsWithToolbar)
-  : noseconeMiddleware(noseconeOptions);
 
 // Security validation helpers
 const isWebhookPath = (pathname: string) => 
@@ -47,24 +37,31 @@ const isSuspiciousRequest = (req: NextRequest): boolean => {
   );
 };
 
-const addSecurityHeaders = (response: NextResponse): NextResponse => {
+const addSecurityHeaders = (response: Response | NextResponse): NextResponse => {
+  // If it's a plain Response, convert to NextResponse
+  const nextResponse = response instanceof NextResponse ? response : new NextResponse(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: response.headers,
+  });
+  
   // Core security headers
-  response.headers.set('X-Content-Type-Options', 'nosniff');
-  response.headers.set('X-Frame-Options', 'DENY');
-  response.headers.set('X-XSS-Protection', '1; mode=block');
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  nextResponse.headers.set('X-Content-Type-Options', 'nosniff');
+  nextResponse.headers.set('X-Frame-Options', 'DENY');
+  nextResponse.headers.set('X-XSS-Protection', '1; mode=block');
+  nextResponse.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  nextResponse.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   
   // HSTS for HTTPS (only in production)
   if (process.env.NODE_ENV === 'production') {
-    response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+    nextResponse.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
   }
   
   // API-specific headers
-  response.headers.set('X-API-Version', 'v1');
-  response.headers.set('X-Powered-By', 'Threadly');
+  nextResponse.headers.set('X-API-Version', 'v1');
+  nextResponse.headers.set('X-Powered-By', 'Threadly');
   
-  return response;
+  return nextResponse;
 };
 
 export const middleware: NextMiddleware = async (req: NextRequest) => {
@@ -83,9 +80,8 @@ export const middleware: NextMiddleware = async (req: NextRequest) => {
       return new NextResponse('Forbidden', { status: 403 });
     }
     
-    // Apply base security headers
-    const securityResponse = securityHeaders();
-    let response = securityResponse || NextResponse.next();
+    // Start with a fresh response
+    let response: NextResponse = NextResponse.next();
     
     // Skip CSRF for webhooks and health checks
     const isWebhook = isWebhookPath(req.nextUrl.pathname);
@@ -102,7 +98,7 @@ export const middleware: NextMiddleware = async (req: NextRequest) => {
     }
     
     // Add additional security headers
-    response = addSecurityHeaders(response);
+    response = addSecurityHeaders(response as Response | NextResponse);
     
     // Add request timing header for monitoring
     const processingTime = Date.now() - startTime;

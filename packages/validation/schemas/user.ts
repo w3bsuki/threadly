@@ -54,10 +54,16 @@ export const createUserProfileSchema = z.object({
   password: passwordSchema,
   confirmPassword: z.string(),
   
-  firstName: safeTextSchema.max(50).optional(),
-  lastName: safeTextSchema.max(50).optional(),
+  firstName: z.string().trim().min(1).max(50).refine((text) => !/<[^>]*>/.test(text), {
+    message: 'HTML tags are not allowed',
+  }).optional(),
+  lastName: z.string().trim().min(1).max(50).refine((text) => !/<[^>]*>/.test(text), {
+    message: 'HTML tags are not allowed',
+  }).optional(),
   
-  bio: safeTextSchema.max(500).optional(),
+  bio: z.string().trim().min(1).max(500).refine((text) => !/<[^>]*>/.test(text), {
+    message: 'HTML tags are not allowed',
+  }).optional(),
   website: urlSchema.optional(),
   
   phone: phoneSchema.optional(),
@@ -85,10 +91,16 @@ export const createUserProfileSchema = z.object({
 export const updateUserProfileSchema = z.object({
   username: usernameSchema.optional(),
   
-  firstName: safeTextSchema.max(50).optional(),
-  lastName: safeTextSchema.max(50).optional(),
+  firstName: z.string().trim().min(1).max(50).refine((text) => !/<[^>]*>/.test(text), {
+    message: 'HTML tags are not allowed',
+  }).optional(),
+  lastName: z.string().trim().min(1).max(50).refine((text) => !/<[^>]*>/.test(text), {
+    message: 'HTML tags are not allowed',
+  }).optional(),
   
-  bio: safeTextSchema.max(500).optional(),
+  bio: z.string().trim().min(1).max(500).refine((text) => !/<[^>]*>/.test(text), {
+    message: 'HTML tags are not allowed',
+  }).optional(),
   website: urlSchema.optional(),
   
   phone: phoneSchema.optional(),
@@ -144,7 +156,9 @@ export const passwordResetSchema = z.object({
 
 // User search schema
 export const userSearchSchema = z.object({
-  query: safeTextSchema.max(50).optional(),
+  query: z.string().trim().min(1).max(50).refine((text) => !/<[^>]*>/.test(text), {
+    message: 'HTML tags are not allowed',
+  }).optional(),
   role: userRoleSchema.optional(),
   status: userStatusSchema.optional(),
   hasProducts: z.boolean().optional(),
@@ -158,7 +172,9 @@ export const followUserSchema = z.object({
 // Block/unblock schema
 export const blockUserSchema = z.object({
   userId: uuidSchema,
-  reason: safeTextSchema.max(200).optional(),
+  reason: z.string().trim().min(1).max(200).refine((text) => !/<[^>]*>/.test(text), {
+    message: 'HTML tags are not allowed',
+  }).optional(),
 });
 
 // Report user schema
@@ -172,7 +188,9 @@ export const reportUserSchema = z.object({
     'SCAM',
     'OTHER',
   ]),
-  description: safeTextSchema.max(500),
+  description: z.string().trim().min(1).max(500).refine((text) => !/<[^>]*>/.test(text), {
+    message: 'HTML tags are not allowed',
+  }),
 });
 
 // User settings schema
@@ -185,7 +203,9 @@ export const userSettingsSchema = z.object({
 
 // Bank account schema (for sellers)
 export const bankAccountSchema = z.object({
-  accountHolderName: safeTextSchema.max(100),
+  accountHolderName: z.string().trim().min(1).max(100).refine((text) => !/<[^>]*>/.test(text), {
+    message: 'HTML tags are not allowed',
+  }),
   accountNumber: z.string()
     .regex(/^\d{8,17}$/, 'Invalid account number')
     .transform((val) => val.slice(-4).padStart(val.length, '*')), // Mask all but last 4 digits
@@ -195,7 +215,9 @@ export const bankAccountSchema = z.object({
 
 // Seller verification schema
 export const sellerVerificationSchema = z.object({
-  businessName: safeTextSchema.max(100).optional(),
+  businessName: z.string().trim().min(1).max(100).refine((text) => !/<[^>]*>/.test(text), {
+    message: 'HTML tags are not allowed',
+  }).optional(),
   taxId: z.string()
     .regex(/^\d{2}-\d{7}$|^\d{3}-\d{2}-\d{4}$/, 'Invalid tax ID format')
     .optional(),

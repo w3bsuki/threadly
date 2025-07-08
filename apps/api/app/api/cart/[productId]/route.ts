@@ -23,13 +23,18 @@ export async function DELETE(
     );
   }
 
+  let userId: string | null = null;
+  let productId: string | undefined;
+  
   try {
-    const { userId } = await auth();
+    const authResult = await auth();
+    userId = authResult.userId;
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { productId } = await params;
+    const resolvedParams = await params;
+    productId = resolvedParams.productId;
 
     const deleted = await database.cartItem.deleteMany({
       where: {
