@@ -4,9 +4,11 @@ import { redirect, notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { Header } from '../../components/header';
 import { ProductDetailContent } from './components/product-detail-content';
+import { getDictionary } from '@repo/internationalization';
 
 interface ProductPageProps {
   params: Promise<{
+    locale: string;
     id: string;
   }>;
 }
@@ -14,7 +16,8 @@ interface ProductPageProps {
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
-  const { id } = await params;
+  const { locale, id } = await params;
+  const dictionary = await getDictionary(locale);
   const product = await database.product.findFirst({
     where: {
       id,
@@ -52,6 +55,8 @@ export async function generateMetadata({
 }
 
 const ProductPage = async ({ params }: ProductPageProps) => {
+  const { locale, id } = await params;
+  const dictionary = await getDictionary(locale);
   const user = await currentUser();
   
   if (!user) {
@@ -66,8 +71,6 @@ const ProductPage = async ({ params }: ProductPageProps) => {
   if (!dbUser) {
     redirect('/sign-in');
   }
-
-  const { id } = await params;
   
   // Fetch product with all necessary details
   const product = await database.product.findFirst({
@@ -194,6 +197,7 @@ const ProductPage = async ({ params }: ProductPageProps) => {
       <Header 
         pages={['Dashboard', 'Browse', 'Product']} 
         page={product.title}
+        dictionary={dictionary}
       />
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <ProductDetailContent

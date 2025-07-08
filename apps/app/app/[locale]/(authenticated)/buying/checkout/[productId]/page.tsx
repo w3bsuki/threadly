@@ -4,23 +4,28 @@ import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { Header } from '../../../components/header';
 import { SingleProductCheckout } from './components/single-product-checkout';
+import { getDictionary } from '@repo/internationalization';
 
-const title = 'Checkout';
-const description = 'Complete your purchase';
-
-export const metadata: Metadata = {
-  title,
-  description,
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; productId: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const dictionary = await getDictionary(locale);
+  
+  return {
+    title: 'Checkout',
+    description: 'Complete your purchase',
+  };
+}
 
 interface CheckoutPageProps {
   params: Promise<{
+    locale: string;
     productId: string;
   }>;
 }
 
 const CheckoutPage = async ({ params }: CheckoutPageProps) => {
-  const { productId } = await params;
+  const { locale, productId } = await params;
+  const dictionary = await getDictionary(locale);
   const user = await currentUser();
 
   if (!user) {
@@ -71,7 +76,7 @@ const CheckoutPage = async ({ params }: CheckoutPageProps) => {
 
   return (
     <>
-      <Header pages={['Dashboard', 'Buying', 'Checkout']} page="Checkout" />
+      <Header pages={['Dashboard', 'Buying', 'Checkout']} page="Checkout" dictionary={dictionary} />
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <div className="mx-auto w-full max-w-4xl">
           <div className="mb-6">

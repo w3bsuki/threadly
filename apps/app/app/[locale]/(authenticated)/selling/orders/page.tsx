@@ -124,7 +124,7 @@ const OrdersPage = async ({
 
   return (
     <>
-      <Header pages={['Dashboard', 'Selling', 'Orders']} page="Orders" />
+      <Header pages={['Dashboard', 'Selling', 'Orders']} page="Orders" dictionary={dictionary} />
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <div className="flex items-center justify-between">
           <div>

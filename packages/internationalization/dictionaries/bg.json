@@ -749,6 +749,152 @@
         "title": "Продаване - Threadly",
         "description": "Създайте и управлявайте вашите обяви за продажба"
       }
+    },
+    "modals": {
+      "regionSelector": {
+        "title": "Изберете вашия регион",
+        "subtitle": "Изберете вашата държава/регион",
+        "language": "Език",
+        "currency": "Валута",
+        "yourSelection": "Вашият избор:",
+        "cancel": "Отказ",
+        "savePreferences": "Запази предпочитанията"
+      },
+      "report": {
+        "title": "Докладвай",
+        "selectReason": "Изберете причина",
+        "additionalDetails": "Допълнителни детайли (по избор)",
+        "cancel": "Отказ",
+        "submitReport": "Изпрати доклад",
+        "submitting": "Изпращане..."
+      },
+      "savedSearch": {
+        "title": "Запази търсенето",
+        "searchName": "Име на търсенето",
+        "enableAlerts": "Включи известия",
+        "alertsDescription": "Получавайте известия когато нови артикули съвпадат с това търсене",
+        "cancel": "Отказ",
+        "saveSearch": "Запази търсенето",
+        "saving": "Запазване..."
+      },
+      "address": {
+        "addTitle": "Добави адрес",
+        "editTitle": "Редактирай адрес",
+        "addNew": "Добави нов адрес",
+        "cancel": "Отказ",
+        "saveAddress": "Запази адрес",
+        "saving": "Запазване...",
+        "deleting": "Изтриване...",
+        "deleteConfirm": "Сигурни ли сте, че искате да изтриете този адрес?",
+        "setAsDefault": "Задай като основен"
+      }
+    },
+    "dropdowns": {
+      "cart": {
+        "title": "Количка за пазаруване",
+        "empty": "Вашата количка е празна",
+        "emptyDescription": "Добавете артикули към вашата количка, за да ги видите тук",
+        "continueShopping": "Продължи пазаруването",
+        "checkout": "Плащане",
+        "subtotal": "Междинна сума",
+        "shippingNote": "Доставката и данъците се изчисляват при плащането"
+      },
+      "notifications": {
+        "title": "Известия",
+        "markAllRead": "Маркирай всички като прочетени",
+        "noNotifications": "Все още няма известия",
+        "viewAll": "Виж всички известия"
+      },
+      "userMenu": {
+        "profile": "Профил",
+        "orders": "Поръчки",
+        "settings": "Настройки",
+        "help": "Помощ",
+        "signOut": "Излез"
+      }
+    },
+    "forms": {
+      "common": {
+        "firstName": "Име",
+        "lastName": "Фамилия",
+        "email": "Имейл",
+        "phone": "Телефон",
+        "address": "Адрес",
+        "addressLine1": "Адрес ред 1",
+        "addressLine2": "Адрес ред 2 (по избор)",
+        "city": "Град",
+        "state": "Област/Щат",
+        "postalCode": "Пощенски код",
+        "country": "Държава",
+        "optional": "(по избор)",
+        "required": "(задължително)",
+        "selectOption": "Изберете опция",
+        "loading": "Зареждане...",
+        "submit": "Изпрати",
+        "save": "Запази",
+        "cancel": "Отказ",
+        "delete": "Изтрий",
+        "edit": "Редактирай",
+        "update": "Обнови",
+        "confirm": "Потвърди",
+        "close": "Затвори",
+        "back": "Назад",
+        "next": "Напред",
+        "finish": "Завърши",
+        "search": "Търси",
+        "filter": "Филтрирай",
+        "sort": "Сортирай",
+        "reset": "Нулирай"
+      },
+      "validation": {
+        "required": "Това поле е задължително",
+        "invalidEmail": "Моля въведете валиден имейл адрес",
+        "minLength": "Минимум {{min}} символа",
+        "maxLength": "Максимум {{max}} символа",
+        "phoneFormat": "Моля въведете валиден телефонен номер",
+        "postalCodeFormat": "Моля въведете валиден пощенски код"
+      }
+    },
+    "tooltips": {
+      "favoriteItem": "Добави към любими",
+      "removeFromFavorites": "Премахни от любими",
+      "shareItem": "Сподели артикул",
+      "reportItem": "Докладвай артикул",
+      "quickView": "Бърз преглед",
+      "addToCart": "Добави в количката",
+      "viewDetails": "Виж детайли",
+      "editItem": "Редактирай артикул",
+      "deleteItem": "Изтрий артикул",
+      "viewProfile": "Виж профил",
+      "sendMessage": "Изпрати съобщение",
+      "followUser": "Последвай потребител",
+      "unfollowUser": "Спри да следваш"
+    },
+    "countries": {
+      "unitedStates": "Съединени щати",
+      "canada": "Канада",
+      "mexico": "Мексико",
+      "unitedKingdom": "Великобритания",
+      "germany": "Германия",
+      "france": "Франция",
+      "italy": "Италия",
+      "spain": "Испания",
+      "bulgaria": "България",
+      "romania": "Румъния",
+      "greece": "Гърция"
+    },
+    "currencies": {
+      "usd": "USD - Щатски долар",
+      "eur": "EUR - Евро",
+      "gbp": "GBP - Британска лира",
+      "bgn": "BGN - Български лев",
+      "cad": "CAD - Канадски долар",
+      "mxn": "MXN - Мексиканско песо"
+    },
+    "addressTypes": {
+      "shipping": "Адрес за доставка",
+      "billing": "Адрес за фактуриране",
+      "both": "Доставка и фактуриране"
     }
   },
   "product": {

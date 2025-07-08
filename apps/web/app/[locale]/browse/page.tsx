@@ -5,13 +5,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/co
 import { Badge } from '@repo/design-system/components';
 import Link from 'next/link';
 import { TrendingUp, Users, Package, Star } from 'lucide-react';
+import { getDictionary } from '@repo/internationalization';
 
 export const metadata: Metadata = {
   title: 'Browse Products - Threadly',
   description: 'Discover trending fashion items and popular sellers on Threadly marketplace.',
 };
 
-export default async function BrowsePage() {
+export default async function BrowsePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const dictionary = await getDictionary(locale);
   // Fetch trending products
   const trendingProducts = await database.product.findMany({
     where: { status: 'AVAILABLE' },
@@ -142,20 +145,23 @@ export default async function BrowsePage() {
             </Link>
           </div>
           
-          <ProductGrid products={trendingProducts.map(product => ({
-            ...product,
-            price: Number(product.price),
-            category: product.category?.name || 'Other',
-            brand: product.brand || undefined,
-            images: product.images.map(img => ({
-              ...img,
-              alt: img.alt || undefined
-            })),
-            seller: {
-              ...product.seller,
-              firstName: product.seller.firstName || ''
-            }
-          }))} />
+          <ProductGrid 
+            products={trendingProducts.map(product => ({
+              ...product,
+              price: Number(product.price),
+              category: product.category?.name || 'Other',
+              brand: product.brand || undefined,
+              images: product.images.map(img => ({
+                ...img,
+                alt: img.alt || undefined
+              })),
+              seller: {
+                ...product.seller,
+                firstName: product.seller.firstName || ''
+              }
+            }))} 
+            dictionary={dictionary}
+          />
         </section>
 
         {/* Top Sellers */}

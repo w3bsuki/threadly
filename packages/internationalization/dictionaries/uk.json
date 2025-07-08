@@ -749,6 +749,152 @@
         "title": "Selling - Threadly",
         "description": "Create and manage your listings for sale"
       }
+    },
+    "modals": {
+      "regionSelector": {
+        "title": "Select your region",
+        "subtitle": "Choose your country/region",
+        "language": "Language",
+        "currency": "Currency",
+        "yourSelection": "Your selection:",
+        "cancel": "Cancel",
+        "savePreferences": "Save preferences"
+      },
+      "report": {
+        "title": "Report",
+        "selectReason": "Select a reason",
+        "additionalDetails": "Additional details (optional)",
+        "cancel": "Cancel",
+        "submitReport": "Submit Report",
+        "submitting": "Submitting..."
+      },
+      "savedSearch": {
+        "title": "Save Search",
+        "searchName": "Search Name",
+        "enableAlerts": "Enable Alerts",
+        "alertsDescription": "Get notified when new items match this search",
+        "cancel": "Cancel",
+        "saveSearch": "Save Search",
+        "saving": "Saving..."
+      },
+      "address": {
+        "addTitle": "Add Address",
+        "editTitle": "Edit Address",
+        "addNew": "Add New Address",
+        "cancel": "Cancel",
+        "saveAddress": "Save Address",
+        "saving": "Saving...",
+        "deleting": "Deleting...",
+        "deleteConfirm": "Are you sure you want to delete this address?",
+        "setAsDefault": "Set as default"
+      }
+    },
+    "dropdowns": {
+      "cart": {
+        "title": "Shopping Cart",
+        "empty": "Your cart is empty",
+        "emptyDescription": "Add items to your cart to see them here",
+        "continueShopping": "Continue Shopping",
+        "checkout": "Checkout",
+        "subtotal": "Subtotal",
+        "shippingNote": "Shipping and taxes calculated at checkout"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "markAllRead": "Mark all read",
+        "noNotifications": "No notifications yet",
+        "viewAll": "View all notifications"
+      },
+      "userMenu": {
+        "profile": "Profile",
+        "orders": "Orders",
+        "settings": "Settings",
+        "help": "Help",
+        "signOut": "Sign Out"
+      }
+    },
+    "forms": {
+      "common": {
+        "firstName": "First name",
+        "lastName": "Last name",
+        "email": "Email",
+        "phone": "Phone",
+        "address": "Address",
+        "addressLine1": "Address line 1",
+        "addressLine2": "Address line 2 (optional)",
+        "city": "City",
+        "state": "State/Province",
+        "postalCode": "Postal code",
+        "country": "Country",
+        "optional": "(optional)",
+        "required": "(required)",
+        "selectOption": "Select an option",
+        "loading": "Loading...",
+        "submit": "Submit",
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "update": "Update",
+        "confirm": "Confirm",
+        "close": "Close",
+        "back": "Back",
+        "next": "Next",
+        "finish": "Finish",
+        "search": "Search",
+        "filter": "Filter",
+        "sort": "Sort",
+        "reset": "Reset"
+      },
+      "validation": {
+        "required": "This field is required",
+        "invalidEmail": "Please enter a valid email address",
+        "minLength": "Minimum {{min}} characters",
+        "maxLength": "Maximum {{max}} characters",
+        "phoneFormat": "Please enter a valid phone number",
+        "postalCodeFormat": "Please enter a valid postal code"
+      }
+    },
+    "tooltips": {
+      "favoriteItem": "Add to favorites",
+      "removeFromFavorites": "Remove from favorites",
+      "shareItem": "Share item",
+      "reportItem": "Report item",
+      "quickView": "Quick view",
+      "addToCart": "Add to cart",
+      "viewDetails": "View details",
+      "editItem": "Edit item",
+      "deleteItem": "Delete item",
+      "viewProfile": "View profile",
+      "sendMessage": "Send message",
+      "followUser": "Follow user",
+      "unfollowUser": "Unfollow"
+    },
+    "countries": {
+      "unitedStates": "United States",
+      "canada": "Canada",
+      "mexico": "Mexico",
+      "unitedKingdom": "United Kingdom",
+      "germany": "Germany",
+      "france": "France",
+      "italy": "Italy",
+      "spain": "Spain",
+      "bulgaria": "Bulgaria",
+      "romania": "Romania",
+      "greece": "Greece"
+    },
+    "currencies": {
+      "usd": "USD - US Dollar",
+      "eur": "EUR - Euro",
+      "gbp": "GBP - British Pound",
+      "bgn": "BGN - Bulgarian Lev",
+      "cad": "CAD - Canadian Dollar",
+      "mxn": "MXN - Mexican Peso"
+    },
+    "addressTypes": {
+      "shipping": "Shipping address",
+      "billing": "Billing address",
+      "both": "Shipping and billing"
     }
   },
   "product": {

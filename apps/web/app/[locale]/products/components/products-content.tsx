@@ -15,6 +15,7 @@ import { EnhancedHeader } from "./enhanced-header";
 import { ProductsClientWrapper } from "./products-client-wrapper";
 import { Separator } from '@repo/design-system/components';
 import { SlidersHorizontal } from 'lucide-react';
+import { withDatabaseErrorHandling } from '@/lib/utils/error-handling';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -105,41 +106,54 @@ export async function ProductsContent({ searchParams, dictionary }: ProductsCont
     orderBy = { views: "desc" };
   }
 
-  // Fetch products with pagination
+  // Fetch products with pagination and error handling
   const [products, totalCount] = await Promise.all([
-    database.product.findMany({
-      where,
-      orderBy,
-      skip,
-      take: ITEMS_PER_PAGE,
-      include: {
-        images: {
-          orderBy: { displayOrder: "asc" },
-          take: 1,
-        },
-        seller: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            imageUrl: true,
+    withDatabaseErrorHandling(
+      'fetchProducts',
+      () => database.product.findMany({
+        where,
+        orderBy,
+        skip,
+        take: ITEMS_PER_PAGE,
+        include: {
+          images: {
+            orderBy: { displayOrder: "asc" },
+            take: 1,
+          },
+          seller: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              imageUrl: true,
+            },
+          },
+          category: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+            },
+          },
+          _count: {
+            select: {
+              favorites: true,
+            },
           },
         },
-        category: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-        _count: {
-          select: {
-            favorites: true,
-          },
-        },
-      },
-    }),
-    database.product.count({ where }),
+      }),
+      {
+        where,
+        orderBy,
+        page,
+        itemsPerPage: ITEMS_PER_PAGE,
+      }
+    ),
+    withDatabaseErrorHandling(
+      'countProducts',
+      () => database.product.count({ where }),
+      { where }
+    ),
   ]);
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
@@ -168,15 +182,19 @@ export async function ProductsContent({ searchParams, dictionary }: ProductsCont
     createdAt: product.createdAt,
   }));
 
-  // Fetch categories for filters
-  const categories = await database.category.findMany({
-    where: {
-      parentId: null, // Only top-level categories
-    },
-    include: {
-      children: true,
-    },
-  });
+  // Fetch categories for filters with error handling
+  const categories = await withDatabaseErrorHandling(
+    'fetchCategories',
+    () => database.category.findMany({
+      where: {
+        parentId: null, // Only top-level categories
+      },
+      include: {
+        children: true,
+      },
+    }),
+    { parentId: null }
+  );
 
   return (
     <div className="min-h-screen bg-white">

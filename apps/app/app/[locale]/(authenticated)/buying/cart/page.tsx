@@ -3,16 +3,21 @@ import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { Header } from '../../components/header';
 import { CartContent } from './components/cart-content';
+import { getDictionary } from '@repo/internationalization';
 
-const title = 'Shopping Cart';
-const description = 'Review your items and checkout';
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const dictionary = await getDictionary(locale);
+  
+  return {
+    title: 'Shopping Cart',
+    description: 'Review your items and checkout',
+  };
+}
 
-export const metadata: Metadata = {
-  title,
-  description,
-};
-
-const CartPage = async () => {
+const CartPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
+  const { locale } = await params;
+  const dictionary = await getDictionary(locale);
   const user = await currentUser();
 
   if (!user) {
@@ -21,7 +26,7 @@ const CartPage = async () => {
 
   return (
     <>
-      <Header pages={['Dashboard', 'Buying', 'Cart']} page="Cart" />
+      <Header pages={['Dashboard', 'Buying', 'Cart']} page="Cart" dictionary={dictionary} />
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <div className="mx-auto w-full max-w-4xl">
           <div className="mb-6">

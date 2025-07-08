@@ -18,16 +18,21 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { FollowButton } from './components/follow-button';
+import { getDictionary } from '@repo/internationalization';
 
-const title = 'Following';
-const description = 'Sellers and users you follow';
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const dictionary = await getDictionary(locale);
+  
+  return {
+    title: 'Following',
+    description: 'Sellers and users you follow',
+  };
+}
 
-export const metadata: Metadata = {
-  title,
-  description,
-};
-
-const FollowingPage = async () => {
+const FollowingPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
+  const { locale } = await params;
+  const dictionary = await getDictionary(locale);
   const user = await currentUser();
   
   if (!user) {
@@ -146,7 +151,7 @@ const FollowingPage = async () => {
 
   return (
     <>
-      <Header pages={['Dashboard', 'Following']} page="Following" />
+      <Header pages={['Dashboard', 'Following']} page="Following" dictionary={dictionary} />
       <div className="flex flex-1 flex-col gap-6 p-4 pt-0">
         <div className="flex items-center justify-between">
           <div>

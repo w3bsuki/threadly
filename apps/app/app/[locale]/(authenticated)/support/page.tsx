@@ -20,16 +20,21 @@ import {
   ExternalLink
 } from 'lucide-react';
 import Link from 'next/link';
+import { getDictionary } from '@repo/internationalization';
 
-const title = 'Support Center';
-const description = 'Get help with your Threadly experience';
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const dictionary = await getDictionary(locale);
+  
+  return {
+    title: 'Support Center',
+    description: 'Get help with your Threadly experience',
+  };
+}
 
-export const metadata: Metadata = {
-  title,
-  description,
-};
-
-const SupportPage = async () => {
+const SupportPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
+  const { locale } = await params;
+  const dictionary = await getDictionary(locale);
   const user = await currentUser();
   
   if (!user) {
@@ -105,7 +110,7 @@ const SupportPage = async () => {
 
   return (
     <>
-      <Header pages={['Dashboard', 'Support']} page="Support" />
+      <Header pages={['Dashboard', 'Support']} page="Support" dictionary={dictionary} />
       <div className="flex flex-1 flex-col gap-6 p-4 pt-0">
         <div className="text-center">
           <LifeBuoy className="h-16 w-16 text-primary mx-auto mb-4" />

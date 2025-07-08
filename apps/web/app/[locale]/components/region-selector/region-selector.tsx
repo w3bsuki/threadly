@@ -22,6 +22,7 @@ import {
 } from '@repo/internationalization/client';
 import { Globe } from 'lucide-react';
 import { useGeoDetection } from './use-geo-detection';
+import { useTranslation } from '../providers/i18n-provider';
 
 interface RegionSelectorProps {
   isOpen?: boolean;
@@ -43,6 +44,7 @@ export function RegionSelector({
   const params = useParams();
   const currentLocale = params.locale as string;
   const geoData = useGeoDetection();
+  const dictionary = useTranslation();
 
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
 

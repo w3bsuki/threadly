@@ -8,16 +8,21 @@ import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/co
 import { Badge } from '@repo/design-system/components';
 import { Star, Package, Calendar } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { getDictionary } from '@repo/internationalization';
 
-const title = 'Reviews';
-const description = 'Manage your reviews and feedback';
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const dictionary = await getDictionary(locale);
+  
+  return {
+    title: 'Reviews',
+    description: 'Manage your reviews and feedback',
+  };
+}
 
-export const metadata: Metadata = {
-  title,
-  description,
-};
-
-const ReviewsPage = async () => {
+const ReviewsPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
+  const { locale } = await params;
+  const dictionary = await getDictionary(locale);
   const user = await currentUser();
   
   if (!user) {
@@ -146,7 +151,7 @@ const ReviewsPage = async () => {
 
   return (
     <>
-      <Header pages={['Dashboard', 'Reviews']} page="Reviews" />
+      <Header pages={['Dashboard', 'Reviews']} page="Reviews" dictionary={dictionary} />
       <div className="flex flex-1 flex-col gap-6 p-4 pt-0">
         <div className="mb-6">
           <h1 className="text-2xl font-bold">Reviews</h1>

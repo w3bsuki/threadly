@@ -8,10 +8,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { formatCurrency } from '@/lib/utils/currency';
+import { useTranslation } from '../providers/i18n-provider';
 
 export const CartDropdown = () => {
   const { items, isOpen, closeCart, removeItem, updateQuantity, getTotalItems, getTotalPrice } = useCartStore();
   const [mounted, setMounted] = useState(false);
+  const dictionary = useTranslation();
 
   useEffect(() => {
     setMounted(true);
@@ -49,7 +51,7 @@ export const CartDropdown = () => {
       <SheetContent className="w-full sm:max-w-md">
         <SheetHeader>
           <SheetTitle className="flex items-center justify-between">
-            <span>Shopping Cart <span aria-live="polite" aria-atomic="true">({itemCount} {itemCount === 1 ? 'item' : 'items'})</span></span>
+            <span>{dictionary.web?.global?.navigation?.cart || 'Shopping Cart'} <span aria-live="polite" aria-atomic="true">({itemCount})</span></span>
           </SheetTitle>
         </SheetHeader>
         {/* Screen reader announcement for cart updates */}

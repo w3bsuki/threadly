@@ -11,16 +11,21 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { formatPrice } from '@repo/commerce/utils';
 import { decimalToNumber } from '@repo/utils';
+import { getDictionary } from '@repo/internationalization';
 
-const title = 'My Favorites';
-const description = 'Items you have saved and loved';
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const dictionary = await getDictionary(locale);
+  
+  return {
+    title: 'My Favorites',
+    description: 'Items you have saved and loved',
+  };
+}
 
-export const metadata: Metadata = {
-  title,
-  description,
-};
-
-const FavoritesPage = async () => {
+const FavoritesPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
+  const { locale } = await params;
+  const dictionary = await getDictionary(locale);
   const user = await currentUser();
   
   if (!user) {
@@ -86,7 +91,7 @@ const FavoritesPage = async () => {
 
   return (
     <>
-      <Header pages={['Dashboard', 'Buying', 'Favorites']} page="Favorites" />
+      <Header pages={['Dashboard', 'Buying', 'Favorites']} page="Favorites" dictionary={dictionary} />
       <div className="flex flex-1 flex-col gap-6 p-4 pt-0">
         <div className="flex items-center justify-between">
           <div>

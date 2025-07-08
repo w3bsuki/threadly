@@ -4,23 +4,28 @@ import { redirect, notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { Header } from '../../../../components/header';
 import { EditProductForm } from './components/edit-product-form';
+import { getDictionary } from '@repo/internationalization';
 
-const title = 'Edit Product';
-const description = 'Update your product listing';
-
-export const metadata: Metadata = {
-  title,
-  description,
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; id: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const dictionary = await getDictionary(locale);
+  
+  return {
+    title: 'Edit Product',
+    description: 'Update your product listing',
+  };
+}
 
 interface EditProductPageProps {
   params: Promise<{
+    locale: string;
     id: string;
   }>;
 }
 
 const EditProductPage = async ({ params }: EditProductPageProps) => {
-  const { id } = await params;
+  const { locale, id } = await params;
+  const dictionary = await getDictionary(locale);
   const user = await currentUser();
 
   if (!user) {
@@ -49,7 +54,7 @@ const EditProductPage = async ({ params }: EditProductPageProps) => {
 
   return (
     <>
-      <Header pages={['Dashboard', 'Selling', 'Edit Listing']} page="Edit Listing" />
+      <Header pages={['Dashboard', 'Selling', 'Edit Listing']} page="Edit Listing" dictionary={dictionary} />
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <div className="mx-auto w-full max-w-2xl">
           <div className="mb-6">
