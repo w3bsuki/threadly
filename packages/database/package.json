@@ -40,5 +40,8 @@
     "bufferutil": "^4.0.9",
     "prisma": "6.4.1",
     "typescript": "^5.8.3"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }
