@@ -1,5 +1,6 @@
 import { database } from "@repo/database";
 import type { Prisma } from "@repo/database";
+import type { Dictionary } from "@repo/internationalization";
 import { ProductGrid } from "./product-grid";
 import { ProductFilters } from "./product-filters";
 import { CollapsibleFilters } from "./collapsible-filters";
@@ -27,9 +28,10 @@ interface ProductsContentProps {
     sort?: string;
     page?: string;
   };
+  dictionary: Dictionary;
 }
 
-export async function ProductsContent({ searchParams }: ProductsContentProps) {
+export async function ProductsContent({ searchParams, dictionary }: ProductsContentProps) {
   const page = parseInt(searchParams.page || "1");
   const skip = (page - 1) * ITEMS_PER_PAGE;
 
@@ -198,6 +200,7 @@ export async function ProductsContent({ searchParams }: ProductsContentProps) {
             <ProductFiltersMobile 
               categories={categories}
               currentFilters={searchParams}
+              dictionary={dictionary}
             />
             <div className="flex-1">
               <ProductSort currentSort={searchParams.sort} />
@@ -213,6 +216,7 @@ export async function ProductsContent({ searchParams }: ProductsContentProps) {
               <CollapsibleFilters 
                 categories={categories}
                 currentFilters={searchParams}
+                dictionary={dictionary}
               />
             </div>
           </aside>
@@ -232,6 +236,7 @@ export async function ProductsContent({ searchParams }: ProductsContentProps) {
                     <ProductFiltersMobile 
                       categories={categories}
                       currentFilters={searchParams}
+                      dictionary={dictionary}
                     />
                   </div>
                 </div>
@@ -241,6 +246,7 @@ export async function ProductsContent({ searchParams }: ProductsContentProps) {
                 <ProductsClientWrapper 
                   products={transformedProducts}
                   searchParams={searchParams}
+                  dictionary={dictionary}
                 />
                 {totalPages > 1 && (
                   <div className="border-t pt-6 mt-8">

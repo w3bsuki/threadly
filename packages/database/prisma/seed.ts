@@ -324,6 +324,226 @@ async function main() {
     await createCategory(category);
   }
 
+  // Create test users if they don't exist
+  const testUsers = [
+    {
+      clerkId: 'user_demo1',
+      email: 'sofia@example.com',
+      firstName: 'Sofia',
+      lastName: 'Petrova',
+      location: 'Sofia, Bulgaria',
+      averageRating: 4.8,
+      totalSales: 25
+    },
+    {
+      clerkId: 'user_demo2', 
+      email: 'maria@example.com',
+      firstName: 'Maria',
+      lastName: 'Dimitrova',
+      location: 'Plovdiv, Bulgaria',
+      averageRating: 4.6,
+      totalSales: 18
+    },
+    {
+      clerkId: 'user_demo3',
+      email: 'ana@example.com', 
+      firstName: 'Ana',
+      lastName: 'Todorova',
+      location: 'Varna, Bulgaria',
+      averageRating: 4.9,
+      totalSales: 32
+    }
+  ];
+
+  const users = [];
+  for (const userData of testUsers) {
+    const existingUser = await prisma.user.findUnique({
+      where: { clerkId: userData.clerkId }
+    });
+    
+    if (!existingUser) {
+      const user = await prisma.user.create({
+        data: userData
+      });
+      users.push(user);
+    } else {
+      users.push(existingUser);
+    }
+  }
+
+  // Get some categories for products
+  const womenClothing = await prisma.category.findFirst({
+    where: { slug: 'women-dresses' }
+  });
+  const womenShoes = await prisma.category.findFirst({
+    where: { slug: 'women-sneakers' }
+  });
+  const womenBags = await prisma.category.findFirst({
+    where: { slug: 'women-handbags' }
+  });
+  const menClothing = await prisma.category.findFirst({
+    where: { slug: 'men-tshirts' }
+  });
+  const menShoes = await prisma.category.findFirst({
+    where: { slug: 'men-sneakers' }
+  });
+
+  // Sample products data
+  const sampleProducts = [
+    {
+      title: 'Elegant Black Evening Dress',
+      description: 'Beautiful black evening dress in excellent condition. Perfect for special occasions. Size S, worn only once.',
+      price: 85.00,
+      condition: 'VERY_GOOD',
+      size: 'S',
+      brand: 'Zara',
+      color: 'Black',
+      categoryId: womenClothing?.id,
+      sellerId: users[0]?.id,
+      images: [
+        { imageUrl: 'https://images.unsplash.com/photo-1566479179817-c0d04e9bc8c0?w=400', displayOrder: 0 },
+        { imageUrl: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400', displayOrder: 1 }
+      ]
+    },
+    {
+      title: 'White Nike Air Force 1 Sneakers',
+      description: 'Classic white Nike Air Force 1 sneakers. Lightly worn, great condition. Size 38 EU.',
+      price: 65.00,
+      condition: 'GOOD',
+      size: '38',
+      brand: 'Nike',
+      color: 'White',
+      categoryId: womenShoes?.id,
+      sellerId: users[1]?.id,
+      images: [
+        { imageUrl: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400', displayOrder: 0 }
+      ]
+    },
+    {
+      title: 'Vintage Leather Handbag',
+      description: 'Authentic vintage leather handbag in brown. Classic design that never goes out of style.',
+      price: 120.00,
+      condition: 'VERY_GOOD',
+      size: 'One Size',
+      brand: 'Coach',
+      color: 'Brown',
+      categoryId: womenBags?.id,
+      sellerId: users[2]?.id,
+      images: [
+        { imageUrl: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400', displayOrder: 0 }
+      ]
+    },
+    {
+      title: 'Graphic T-Shirt - Band Tee',
+      description: 'Cool vintage-style band t-shirt. Size M, 100% cotton. Great for casual wear.',
+      price: 25.00,
+      condition: 'GOOD',
+      size: 'M',
+      brand: 'H&M',
+      color: 'Black',
+      categoryId: menClothing?.id,
+      sellerId: users[0]?.id,
+      images: [
+        { imageUrl: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400', displayOrder: 0 }
+      ]
+    },
+    {
+      title: 'Adidas Ultraboost Running Shoes',
+      description: 'Comfortable Adidas Ultraboost running shoes. Size 42 EU, worn a few times.',
+      price: 95.00,
+      condition: 'VERY_GOOD',
+      size: '42',
+      brand: 'Adidas',
+      color: 'Grey',
+      categoryId: menShoes?.id,
+      sellerId: users[1]?.id,
+      images: [
+        { imageUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400', displayOrder: 0 }
+      ]
+    },
+    {
+      title: 'Designer Floral Summer Dress',
+      description: 'Beautiful floral summer dress from a luxury brand. Size M, perfect condition.',
+      price: 150.00,
+      condition: 'NEW_WITH_TAGS',
+      size: 'M',
+      brand: 'Gucci',
+      color: 'Floral',
+      categoryId: womenClothing?.id,
+      sellerId: users[2]?.id,
+      images: [
+        { imageUrl: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400', displayOrder: 0 }
+      ]
+    },
+    {
+      title: 'Red High Heels',
+      description: 'Stunning red high heels, perfect for special occasions. Size 37, minimal wear.',
+      price: 75.00,
+      condition: 'VERY_GOOD',
+      size: '37',
+      brand: 'Zara',
+      color: 'Red',
+      categoryId: womenShoes?.id,
+      sellerId: users[0]?.id,
+      images: [
+        { imageUrl: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400', displayOrder: 0 }
+      ]
+    },
+    {
+      title: 'Vintage Denim Jacket',
+      description: 'Classic vintage denim jacket. Size L, authentic 90s style. Great quality.',
+      price: 55.00,
+      condition: 'GOOD',
+      size: 'L',
+      brand: "Levi's",
+      color: 'Blue',
+      categoryId: womenClothing?.id,
+      sellerId: users[1]?.id,
+      images: [
+        { imageUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400', displayOrder: 0 }
+      ]
+    }
+  ];
+
+  // Create products if they don't exist
+  for (const productData of sampleProducts) {
+    if (!productData.categoryId || !productData.sellerId) continue;
+    
+    const { images, ...productInfo } = productData;
+    
+    const existingProduct = await prisma.product.findFirst({
+      where: { 
+        title: productInfo.title,
+        sellerId: productInfo.sellerId 
+      }
+    });
+
+    if (!existingProduct) {
+      const product = await prisma.product.create({
+        data: {
+          ...productInfo,
+          price: productInfo.price,
+          status: 'AVAILABLE'
+        }
+      });
+
+      // Add images
+      for (const imageData of images) {
+        await prisma.productImage.create({
+          data: {
+            ...imageData,
+            productId: product.id
+          }
+        });
+      }
+    }
+  }
+
+  console.log('✅ Database seeded successfully!');
+  console.log(`📦 Created ${sampleProducts.length} sample products`);
+  console.log(`👥 Created ${testUsers.length} test users`);
+  console.log(`🏷️ Created comprehensive category structure`);
+
 }
 
 main()

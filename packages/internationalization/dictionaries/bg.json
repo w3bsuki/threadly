@@ -31,6 +31,14 @@
         "howItWorks": "Как работи",
         "helpAndSupport": "Помощ и поддръжка"
       },
+      "time": {
+        "minutes": "минути",
+        "hours": "часа",
+        "day": "ден",
+        "days": "дни",
+        "ago": "преди",
+        "recently": "наскоро"
+      },
       "subCategories": {
         "tshirts": "Тениски",
         "shirts": "Ризи",
@@ -637,6 +645,9 @@
         "clearAllFilters": "Изчисти всички филтри",
         "applyFilters": "Приложи филтрите",
         "showingResults": "Показване на {{count}} резултата",
+        "min": "Мин",
+        "max": "Макс",
+        "price": "Цена",
         "conditions": {
           "new": "Ново",
           "likeNew": "Като ново",
@@ -738,6 +749,23 @@
         "title": "Продаване - Threadly",
         "description": "Създайте и управлявайте вашите обяви за продажба"
       }
+    }
+  },
+  "product": {
+    "quickView": "Бърз преглед",
+    "size": "Размер",
+    "badges": {
+      "designer": "Дизайнерски"
+    },
+    "conditions": {
+      "new": "Ново",
+      "newWithTags": "Ново с етикети",
+      "newWithoutTags": "Ново без етикети",
+      "likeNew": "Като ново",
+      "excellent": "Отлично",
+      "veryGood": "Много добро",
+      "good": "Добро",
+      "satisfactory": "Задоволително"
     }
   }
 }

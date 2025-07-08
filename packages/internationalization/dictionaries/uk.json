@@ -31,6 +31,14 @@
         "howItWorks": "How It Works",
         "helpAndSupport": "Help & Support"
       },
+      "time": {
+        "minutes": "minutes",
+        "hours": "hours",
+        "day": "day",
+        "days": "days",
+        "ago": "ago",
+        "recently": "recently"
+      },
       "subCategories": {
         "tshirts": "T-shirts",
         "shirts": "Shirts",
@@ -637,6 +645,9 @@
         "clearAllFilters": "Clear All Filters",
         "applyFilters": "Apply Filters",
         "showingResults": "Showing {{count}} results",
+        "min": "Min",
+        "max": "Max",
+        "price": "Price",
         "conditions": {
           "new": "New",
           "likeNew": "Like New",
@@ -738,6 +749,23 @@
         "title": "Selling - Threadly",
         "description": "Create and manage your listings for sale"
       }
+    }
+  },
+  "product": {
+    "quickView": "Quick View",
+    "size": "Size",
+    "badges": {
+      "designer": "Designer"
+    },
+    "conditions": {
+      "new": "New",
+      "newWithTags": "New with tags",
+      "newWithoutTags": "New without tags",
+      "likeNew": "Like new",
+      "excellent": "Excellent",
+      "veryGood": "Very good",
+      "good": "Good",
+      "satisfactory": "Satisfactory"
     }
   }
 }

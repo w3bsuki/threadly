@@ -621,9 +621,6 @@ importers:
       react-hook-form:
         specifier: ^7.57.0
         version: 7.57.0(react@19.1.0)
-      sharp:
-        specifier: ^0.34.2
-        version: 0.34.2
       shiki:
         specifier: ^3.4.2
         version: 3.6.0
@@ -664,6 +661,9 @@ importers:
       postcss:
         specifier: ^8.5.4
         version: 8.5.6
+      sharp:
+        specifier: ^0.34.2
+        version: 0.34.2
       tailwindcss:
         specifier: ^4.1.8
         version: 4.1.11

@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, Filter } from 'lucide-react';
 import { Button } from '@repo/design-system/components';
 import { cn } from '@repo/design-system/lib/utils';
 import { ProductFilters } from './product-filters';
+import type { Dictionary } from '@repo/internationalization';
 
 interface Category {
   id: string;
@@ -21,9 +22,10 @@ interface CollapsibleFiltersProps {
     maxPrice?: string;
     condition?: string;
   };
+  dictionary: Dictionary;
 }
 
-export function CollapsibleFilters({ categories, currentFilters }: CollapsibleFiltersProps) {
+export function CollapsibleFilters({ categories, currentFilters, dictionary }: CollapsibleFiltersProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
@@ -51,7 +53,7 @@ export function CollapsibleFilters({ categories, currentFilters }: CollapsibleFi
             <Filter className="h-5 w-5 text-gray-600" />
           </div>
           <div className="writing-mode-vertical text-xs text-gray-500 font-medium">
-            Filters
+            {dictionary.search.filters}
           </div>
         </div>
       )}
@@ -62,6 +64,7 @@ export function CollapsibleFilters({ categories, currentFilters }: CollapsibleFi
           <ProductFilters 
             categories={categories}
             currentFilters={currentFilters}
+            dictionary={dictionary}
           />
         </div>
       )}

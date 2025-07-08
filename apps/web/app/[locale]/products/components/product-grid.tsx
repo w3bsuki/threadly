@@ -9,6 +9,7 @@ import { useState } from "react";
 import { ProductQuickView } from "../../components/product-quick-view";
 import { ProductImage } from "../../components/optimized-image";
 import { ProductGridSkeleton } from "../../components/loading-skeleton";
+import type { Dictionary } from '@repo/internationalization';
 
 // Inline ProductPlaceholder for loading states
 const ProductPlaceholder = ({ className = "w-full h-full" }: { className?: string }) => {
@@ -42,17 +43,17 @@ const ProductPlaceholder = ({ className = "w-full h-full" }: { className?: strin
 };
 
 // Get time ago string
-function getTimeAgo(date: Date): string {
+function getTimeAgo(date: Date, dictionary: Dictionary): string {
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffMins = Math.floor(diffMs / 60000);
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
 
-  if (diffMins < 60) return `${diffMins} minutes ago`;
-  if (diffHours < 24) return `${diffHours} hours ago`;
-  if (diffDays === 1) return '1 day ago';
-  return `${diffDays} days ago`;
+  if (diffMins < 60) return `${diffMins} ${dictionary.web?.global?.time?.minutes || 'minutes'} ${dictionary.web?.global?.time?.ago || 'ago'}`;
+  if (diffHours < 24) return `${diffHours} ${dictionary.web?.global?.time?.hours || 'hours'} ${dictionary.web?.global?.time?.ago || 'ago'}`;
+  if (diffDays === 1) return `1 ${dictionary.web?.global?.time?.day || 'day'} ${dictionary.web?.global?.time?.ago || 'ago'}`;
+  return `${diffDays} ${dictionary.web?.global?.time?.days || 'days'} ${dictionary.web?.global?.time?.ago || 'ago'}`;
 }
 
 interface Product {
@@ -83,15 +84,10 @@ interface Product {
 interface ProductGridProps {
   products: Product[];
   isCompact?: boolean;
+  dictionary: Dictionary;
 }
 
-const conditionLabels = {
-  NEW: "New",
-  LIKE_NEW: "Like New", 
-  EXCELLENT: "Excellent",
-  GOOD: "Good",
-  SATISFACTORY: "Fair"
-};
+// Condition labels will be mapped from dictionary
 
 const conditionColors = {
   NEW: "bg-green-100 text-green-800",
@@ -109,7 +105,7 @@ const designerBrands = [
 ];
 
 // Product card component
-const ProductCard = ({ product }: { product: Product }) => {
+const ProductCard = ({ product, dictionary }: { product: Product; dictionary: Dictionary }) => {
   const [isFavorited, setIsFavorited] = useState(false);
   const [isPending, setIsPending] = useState(false);
 
@@ -127,7 +123,19 @@ const ProductCard = ({ product }: { product: Product }) => {
   const isDesigner = product.brand ? 
     designerBrands.some(brand => product.brand!.toUpperCase().includes(brand)) : false;
 
-  const uploadedAgo = product.createdAt ? getTimeAgo(product.createdAt) : 'recently';
+  const uploadedAgo = product.createdAt ? getTimeAgo(product.createdAt, dictionary) : dictionary.web?.global?.time?.recently || 'recently';
+  
+  // Map condition labels from dictionary
+  const conditionLabels = {
+    NEW: dictionary.product?.conditions?.new || "New",
+    NEW_WITH_TAGS: dictionary.product?.conditions?.newWithTags || "New with tags",
+    NEW_WITHOUT_TAGS: dictionary.product?.conditions?.newWithoutTags || "New without tags",
+    LIKE_NEW: dictionary.product?.conditions?.likeNew || "Like New", 
+    EXCELLENT: dictionary.product?.conditions?.excellent || "Excellent",
+    VERY_GOOD: dictionary.product?.conditions?.veryGood || "Very good",
+    GOOD: dictionary.product?.conditions?.good || "Good",
+    SATISFACTORY: dictionary.product?.conditions?.satisfactory || "Fair"
+  };
 
   // Transform product data to match ProductQuickView interface
   const transformedProduct = {
@@ -186,7 +194,7 @@ const ProductCard = ({ product }: { product: Product }) => {
               <div className="absolute bottom-2 left-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <div className="w-full bg-black/80 text-white backdrop-blur-sm text-xs py-2 px-3 rounded flex items-center justify-center">
                   <Eye className="h-3 w-3 mr-1" />
-                  Quick View
+                  {dictionary.product?.quickView || 'Quick View'}
                 </div>
               </div>
 
@@ -202,7 +210,7 @@ const ProductCard = ({ product }: { product: Product }) => {
                 <div className="absolute top-2 left-2 mt-7">
                   <Badge className="text-xs bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 border-0">
                     <Crown className="h-3 w-3 mr-1" />
-                    Designer
+                    {dictionary.product?.badges?.designer || 'Designer'}
                   </Badge>
                 </div>
               )}
@@ -228,7 +236,7 @@ const ProductCard = ({ product }: { product: Product }) => {
                 </span>
               </div>
               
-              <p className="text-xs text-gray-500">Size One Size</p>
+              <p className="text-xs text-gray-500">{dictionary.product?.size || 'Size'} One Size</p>
               <p className="text-xs text-gray-400">{product.seller.firstName} • {uploadedAgo}</p>
             </div>
           </div>
@@ -238,7 +246,7 @@ const ProductCard = ({ product }: { product: Product }) => {
   );
 };
 
-export function ProductGrid({ products, isCompact = false }: ProductGridProps) {
+export function ProductGrid({ products, isCompact = false, dictionary }: ProductGridProps) {
   const gridClass = isCompact 
     ? "grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7"
     : "grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
@@ -246,7 +254,7 @@ export function ProductGrid({ products, isCompact = false }: ProductGridProps) {
   return (
     <div className={gridClass}>
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard key={product.id} product={product} dictionary={dictionary} />
       ))}
     </div>
   );

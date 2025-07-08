@@ -6,6 +6,7 @@ import { ProductListView } from "./product-list-view";
 import { LayoutSwitcher, ViewMode } from "./layout-switcher";
 import { ProductSort } from "./product-sort";
 import { QuickFilters } from "./quick-filters";
+import type { Dictionary } from '@repo/internationalization';
 
 interface Product {
   id: string;
@@ -42,9 +43,10 @@ interface ProductsClientWrapperProps {
     maxPrice?: string;
     sort?: string;
   };
+  dictionary: Dictionary;
 }
 
-export function ProductsClientWrapper({ products, searchParams }: ProductsClientWrapperProps) {
+export function ProductsClientWrapper({ products, searchParams, dictionary }: ProductsClientWrapperProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
 
   return (
@@ -66,7 +68,7 @@ export function ProductsClientWrapper({ products, searchParams }: ProductsClient
         {viewMode === 'list' ? (
           <ProductListView products={products} />
         ) : (
-          <ProductGrid products={products} isCompact={viewMode === 'compact'} />
+          <ProductGrid products={products} isCompact={viewMode === 'compact'} dictionary={dictionary} />
         )}
       </div>
     </>

@@ -17,8 +17,10 @@ export async function generateMetadata({
 }
 
 export default async function ProductsPage({
+  params,
   searchParams,
 }: {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{ 
     category?: string;
     minPrice?: string;
@@ -28,6 +30,9 @@ export default async function ProductsPage({
     page?: string;
   }>;
 }) {
+  const { locale } = await params;
   const resolvedSearchParams = await searchParams;
-  return <ProductsContent searchParams={resolvedSearchParams} />;
+  const dictionary = await getDictionary(locale);
+  
+  return <ProductsContent searchParams={resolvedSearchParams} dictionary={dictionary} />;
 }
