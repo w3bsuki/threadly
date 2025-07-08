@@ -1,8 +1,9 @@
 import type { CartItem } from '@repo/cart';
 import type { CheckoutItem, CheckoutSession, ShippingAddress } from '../types';
+import { getRegionByCountryCode, calculateShippingRate as calculateRegionalShipping, type Region } from '@repo/internationalization/regions';
 
-// Constants for calculations
-export const TAX_RATE = 0.0875; // 8.75% default tax rate
+// Legacy constants for backward compatibility
+export const TAX_RATE = 0.0875; // 8.75% default tax rate (US)
 export const SHIPPING_RATES = {
   standard: 9.99,
   express: 19.99,
@@ -22,15 +23,26 @@ export function cartToCheckoutItems(cartItems: CartItem[]): CheckoutItem[] {
   }));
 }
 
-// Calculate checkout totals
+// Calculate checkout totals with regional support
 export function calculateCheckoutTotals(
   items: CheckoutItem[],
   shippingMethod: keyof typeof SHIPPING_RATES = 'standard',
-  taxRate: number = TAX_RATE
+  taxRate?: number,
+  shippingAddress?: ShippingAddress
 ): Pick<CheckoutSession, 'subtotal' | 'tax' | 'shipping' | 'total'> {
   const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const shipping = SHIPPING_RATES[shippingMethod];
-  const tax = subtotal * taxRate;
+  
+  // Get region-specific rates
+  const region = shippingAddress?.country ? getRegionByCountryCode(shippingAddress.country) : undefined;
+  
+  // Calculate shipping with regional rules
+  const shipping = region 
+    ? calculateRegionalShipping(subtotal, region, shippingMethod)
+    : SHIPPING_RATES[shippingMethod];
+  
+  // Use regional tax rate if available
+  const effectiveTaxRate = region ? region.taxRate : (taxRate ?? TAX_RATE);
+  const tax = subtotal * effectiveTaxRate;
   const total = subtotal + tax + shipping;
 
   return {
@@ -77,19 +89,21 @@ export function formatAddress(address: ShippingAddress): string {
   return lines.join('\n');
 }
 
-// Create checkout session
+// Create checkout session with regional support
 export function createCheckoutSession(
   items: CartItem[],
   options?: {
     shippingMethod?: keyof typeof SHIPPING_RATES;
     taxRate?: number;
+    shippingAddress?: ShippingAddress;
   }
 ): CheckoutSession {
   const checkoutItems = cartToCheckoutItems(items);
   const totals = calculateCheckoutTotals(
     checkoutItems,
     options?.shippingMethod,
-    options?.taxRate
+    options?.taxRate,
+    options?.shippingAddress
   );
 
   return {
@@ -155,7 +169,13 @@ export function calculateShipping(
   shippingMethod: keyof typeof SHIPPING_RATES = 'standard',
   subtotal?: number
 ): number {
-  // Free shipping for orders over $75
+  const region = shippingAddress?.country ? getRegionByCountryCode(shippingAddress.country) : undefined;
+  
+  if (region && subtotal !== undefined) {
+    return calculateRegionalShipping(subtotal, region, shippingMethod);
+  }
+  
+  // Fallback to legacy logic
   if (subtotal && subtotal >= 75) {
     return 0;
   }
@@ -166,14 +186,18 @@ export function calculateShipping(
 export function calculateTax(
   subtotal: number,
   shippingAddress?: ShippingAddress,
-  taxRate: number = TAX_RATE
+  taxRate?: number
 ): number {
-  // Only apply tax for US addresses
-  if (shippingAddress && shippingAddress.country !== 'US') {
-    return 0;
+  const region = shippingAddress?.country ? getRegionByCountryCode(shippingAddress.country) : undefined;
+  
+  if (region) {
+    // Use regional tax rate
+    return Math.round(subtotal * region.taxRate * 100) / 100;
   }
   
-  return Math.round(subtotal * taxRate * 100) / 100;
+  // Fallback to provided rate or default
+  const effectiveTaxRate = taxRate ?? TAX_RATE;
+  return Math.round(subtotal * effectiveTaxRate * 100) / 100;
 }
 
 export function calculateTotal(

@@ -26,8 +26,8 @@ export const generateMetadata = async ({
   const dictionary = await getDictionary(locale);
 
   return createMetadata({
-    title: 'Threadly - Buy and sell fashion online',
-    description: 'Buy and sell pre-loved fashion items. Discover unique pieces from brands you love at great prices.',
+    title: dictionary.web.home?.meta?.title || 'Threadly - Buy and sell fashion online',
+    description: dictionary.web.home?.meta?.description || 'Buy and sell pre-loved fashion items. Discover unique pieces from brands you love at great prices.',
   });
 };
 

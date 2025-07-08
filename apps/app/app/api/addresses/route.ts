@@ -3,7 +3,7 @@ import { currentUser } from '@repo/auth/server';
 import { 
   createAddress, 
   getUserAddresses 
-} from '../../(authenticated)/profile/actions/address-actions';
+} from '../../[locale]/(authenticated)/profile/actions/address-actions';
 
 export async function GET(): Promise<NextResponse> {
   try {

@@ -9,6 +9,19 @@ import { AnalyticsProvider } from '@repo/analytics';
 import { ToastProvider } from '@/components/toast';
 import { AppErrorBoundary } from '@/components/error-boundaries';
 import type { ReactNode } from 'react';
+import type { Metadata, Viewport } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Threadly Dashboard - Manage Your Fashion Business',
+  description: 'Sell unique fashion items, manage your inventory, and grow your sustainable fashion business on Threadly.',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 type RootLayoutProperties = {
   readonly children: ReactNode;

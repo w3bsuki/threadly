@@ -43,8 +43,8 @@ export const userPreferencesSchema = z.object({
     showPhone: z.boolean().default(false),
     showLocation: z.boolean().default(false),
   }),
-  language: z.enum(['en', 'es', 'fr', 'de', 'pt', 'zh']).default('en'),
-  currency: z.enum(['USD', 'EUR', 'GBP', 'CAD', 'AUD']).default('USD'),
+  language: z.enum(['en', 'es', 'fr', 'de', 'pt', 'zh', 'bg', 'uk']).default('en'),
+  currency: z.enum(['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'BGN', 'UAH']).default('USD'),
 });
 
 // Create user profile schema

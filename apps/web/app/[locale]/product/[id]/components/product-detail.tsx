@@ -39,6 +39,8 @@ import {
 import { cn } from "@repo/design-system/lib/utils";
 // Removed server-only import from client component
 import { formatCurrency } from '@/lib/utils/currency';
+import { getCookie } from 'cookies-next';
+import { getRegionByCountryCode, formatPriceForDisplay, type Region } from '@repo/internationalization/client';
 
 interface Product {
   id: string;
@@ -119,12 +121,25 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
   const router = useRouter();
   
   const isProductInCart = isInCart(product.id);
+  
+  // Get user's region for price display
+  const [userRegion, setUserRegion] = useState<Region | undefined>();
+  const [userCurrency, setUserCurrency] = useState<string>('USD');
 
   const memberSince = new Date(product.seller.joinedAt).getFullYear();
 
   // Check if product is already favorited on mount and track product view
   useEffect(() => {
     checkFavorite(product.id);
+    
+    // Get user's region and currency preferences
+    const regionCode = getCookie('region') as string;
+    const currency = getCookie('preferredCurrency') as string || 'USD';
+    if (regionCode) {
+      const region = getRegionByCountryCode(regionCode);
+      setUserRegion(region);
+    }
+    setUserCurrency(currency);
     
     // Track product view for analytics
     trackProductView({
@@ -357,8 +372,18 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
                 <h1 className="text-2xl md:text-3xl font-bold leading-tight mb-3">
                   {product.title}
                 </h1>
-                <div className="text-3xl md:text-4xl font-bold text-black mb-4">
-                  {formatCurrency(product.price)}
+                <div className="mb-4">
+                  <div className="text-3xl md:text-4xl font-bold text-black">
+                    {userRegion 
+                      ? formatPriceForDisplay(product.price, userRegion, userCurrency as any).displayPrice
+                      : formatCurrency(product.price)
+                    }
+                  </div>
+                  {userRegion && (
+                    <p className="text-sm text-gray-600 mt-1">
+                      {formatPriceForDisplay(product.price, userRegion, userCurrency as any).taxInfo}
+                    </p>
+                  )}
                 </div>
               </div>
               
@@ -625,7 +650,10 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
             onClick={handleBuyNow}
           >
             <ShoppingCart className="mr-2 h-5 w-5" />
-            Buy Now - {formatCurrency(product.price)}
+            Buy Now - {userRegion 
+              ? formatPriceForDisplay(product.price, userRegion, userCurrency as any).displayPrice
+              : formatCurrency(product.price)
+            }
           </Button>
         )}
       </div>

@@ -2,7 +2,108 @@
   "web": {
     "global": {
       "primaryCta": "Start Shopping",
-      "secondaryCta": "Join Threadly"
+      "secondaryCta": "Join Threadly",
+      "categories": {
+        "all": "All",
+        "women": "Women",
+        "men": "Men",
+        "kids": "Kids",
+        "unisex": "Unisex",
+        "designer": "Designer"
+      },
+      "navigation": {
+        "shop": "Shop",
+        "sell": "Sell",
+        "favorites": "Favorites",
+        "messages": "Messages",
+        "cart": "Cart",
+        "profile": "Profile",
+        "searchPlaceholder": "Search for items, brands, or members",
+        "browse": "Browse",
+        "saved": "Saved",
+        "signIn": "Sign In",
+        "signInJoin": "Sign In / Join",
+        "sellNow": "Sell Now",
+        "browseAndBuy": "Browse & Buy",
+        "startSelling": "Start Selling",
+        "savedItems": "Saved Items",
+        "myCart": "My Cart",
+        "howItWorks": "How It Works",
+        "helpAndSupport": "Help & Support"
+      },
+      "subCategories": {
+        "tshirts": "T-shirts",
+        "shirts": "Shirts",
+        "jackets": "Jackets",
+        "dresses": "Dresses",
+        "jeans": "Jeans",
+        "sweaters": "Sweaters",
+        "coats": "Coats",
+        "sneakers": "Sneakers",
+        "boots": "Boots",
+        "bags": "Bags",
+        "watches": "Watches",
+        "jewelry": "Jewelry",
+        "belts": "Belts"
+      },
+      "collections": {
+        "clothing": "Clothing",
+        "shoes": "Shoes",
+        "jewelry": "Jewelry",
+        "bags": "Bags",
+        "accessories": "Accessories",
+        "browseAll": "Browse All",
+        "shopByType": "Shop by Type"
+      },
+      "filters": {
+        "sortBy": "Sort By",
+        "newest": "Newest first",
+        "priceLowToHigh": "Price: Low to High",
+        "priceHighToLow": "Price: High to Low",
+        "mostPopular": "Most Popular",
+        "allBrands": "All Brands",
+        "allConditions": "All Conditions",
+        "newWithTags": "New with tags",
+        "likeNew": "Like new",
+        "veryGood": "Very good",
+        "good": "Good",
+        "fair": "Fair",
+        "brand": "Brand",
+        "condition": "Condition",
+        "size": "Size",
+        "filters": "Filters",
+        "clearAll": "Clear All",
+        "applyFilters": "Apply Filters",
+        "active": "Active",
+        "categories": "Categories"
+      },
+      "suggestions": {
+        "product": "Product",
+        "brand": "Brand",
+        "category": "Category",
+        "by": "by",
+        "in": "in"
+      },
+      "accessibility": {
+        "openMenu": "Open navigation menu",
+        "closeMenu": "Close navigation menu",
+        "clearSearch": "Clear search",
+        "signInCreate": "Sign in or create account",
+        "navigationOpened": "Navigation menu opened",
+        "navigationClosed": "Navigation menu closed",
+        "primaryActions": "Primary actions",
+        "userActions": "User account actions",
+        "additionalLinks": "Additional navigation links",
+        "browseDescription": "Browse and purchase items from our marketplace",
+        "sellDescription": "List your items for sale on our marketplace",
+        "signedInAs": "Signed in as",
+        "signInToAccount": "Sign in to your account or create a new account",
+        "viewSavedItems": "View your saved items",
+        "shoppingCart": "Shopping cart",
+        "learnHow": "Learn how Threadly works",
+        "getHelp": "Get help and support",
+        "skipToMainContent": "Skip to main content"
+      }
     },
     "header": {
       "home": "Home",
@@ -183,6 +284,459 @@
           "resume": "Upload images",
           "cta": "Send message"
         }
+      }
+    },
+    "footer": {
+      "sections": {
+        "company": "Threadly",
+        "discover": "Discover",
+        "selling": "Selling",
+        "help": "Help"
+      },
+      "links": {
+        "about": "About",
+        "howItWorks": "How it works", 
+        "careers": "Careers",
+        "press": "Press",
+        "women": "Women",
+        "men": "Men",
+        "kids": "Kids",
+        "home": "Home",
+        "sellNow": "Sell now",
+        "sellingGuide": "Selling guide",
+        "fees": "Fees",
+        "shipping": "Shipping",
+        "helpCentre": "Help centre",
+        "contactUs": "Contact us",
+        "sizeGuide": "Size guide",
+        "returns": "Returns",
+        "terms": "Terms",
+        "privacy": "Privacy",
+        "cookies": "Cookies"
+      },
+      "copyright": "© 2024 Threadly. All rights reserved."
+    }
+  },
+  "dashboard": {
+    "global": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "create": "Create",
+      "update": "Update",
+      "search": "Search",
+      "filter": "Filter",
+      "export": "Export",
+      "import": "Import",
+      "loading": "Loading...",
+      "error": "Error",
+      "success": "Success",
+      "warning": "Warning",
+      "info": "Info",
+      "confirm": "Confirm",
+      "back": "Back",
+      "next": "Next",
+      "previous": "Previous",
+      "close": "Close",
+      "open": "Open",
+      "viewMore": "View more",
+      "viewLess": "View less",
+      "noData": "No data available",
+      "refresh": "Refresh",
+      "actions": "Actions",
+      "status": "Status",
+      "date": "Date",
+      "time": "Time",
+      "price": "Price",
+      "total": "Total",
+      "currency": "Currency",
+      "language": "Language"
+    },
+    "navigation": {
+      "dashboard": "Dashboard",
+      "orders": "Orders",
+      "listings": "Listings",
+      "messages": "Messages",
+      "analytics": "Analytics",
+      "settings": "Settings",
+      "profile": "Profile",
+      "help": "Help",
+      "logout": "Logout",
+      "notifications": "Notifications"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "welcome": "Welcome back, {{name}}",
+      "welcomeMessage": "Welcome back, {{name}}. Here's what's happening with your account.",
+      "loadingAccount": "Loading your account...",
+      "overview": "Overview",
+      "performance": "Performance",
+      "recentActivity": "Recent Activity",
+      "quickActions": "Quick Actions",
+      "metrics": {
+        "totalRevenue": "Total Revenue",
+        "totalSales": "Total Sales",
+        "activeListings": "Active Listings",
+        "pendingOrders": "Pending Orders",
+        "rating": "Average Rating",
+        "views": "Total Views",
+        "likes": "Total Likes",
+        "revenue": "Revenue",
+        "growth": "Growth",
+        "messages": "Messages",
+        "unreadMessages": "Unread messages",
+        "completedSales": "completed sales",
+        "itemsCurrentlyForSale": "items currently for sale",
+        "quickAction": "Quick Action"
+      },
+      "charts": {
+        "salesOverTime": "Sales Over Time",
+        "topProducts": "Top Products",
+        "revenueBreakdown": "Revenue Breakdown",
+        "customerDemographics": "Customer Demographics"
+      },
+      "empty": {
+        "title": "Start selling on Threadly",
+        "description": "List your first item to begin your journey as a seller",
+        "cta": "Create Listing"
+      },
+      "quickLinks": {
+        "title": "Quick Links",
+        "description": "Common actions and shortcuts",
+        "manageListings": "Manage My Listings",
+        "salesHistory": "Sales History",
+        "profileSettings": "Profile Settings"
+      },
+      "gettingStarted": {
+        "title": "Get Started with Threadly",
+        "description": "Welcome! Here's how to make the most of your account.",
+        "listFirstItem": "List Your First Item",
+        "listItemDescription": "Upload photos and details of items you want to sell.",
+        "exploreShop": "Explore the Shop",
+        "exploreDescription": "Browse thousands of unique fashion items.",
+        "completeProfile": "Complete Your Profile",
+        "profileDescription": "Add your details to build trust with buyers.",
+        "getStarted": "Get Started",
+        "browseNow": "Browse Now",
+        "editProfile": "Edit Profile"
+      },
+      "recentOrders": {
+        "title": "Recent Orders",
+        "description": "Your latest purchases",
+        "viewAllOrders": "View All Orders",
+        "noOrdersTitle": "No orders yet",
+        "noOrdersDescription": "Start shopping to see your orders here.",
+        "browseShop": "Browse Shop"
+      },
+      "actions": {
+        "listNewItem": "List New Item",
+        "continueShopping": "Continue Shopping"
+      }
+    },
+    "orders": {
+      "title": "My Orders",
+      "myOrders": "My Orders",
+      "trackOrders": "Track your orders and purchases",
+      "allOrders": "All Orders",
+      "pending": "pending",
+      "processing": "Processing",
+      "shipped": "shipped",
+      "delivered": "delivered",
+      "cancelled": "Cancelled",
+      "refunded": "Refunded",
+      "orderNumber": "Order #{{number}}",
+      "customer": "Customer",
+      "items": "Items",
+      "shipping": "Shipping",
+      "tracking": "Tracking",
+      "actions": {
+        "markAsShipped": "Mark as Shipped",
+        "printLabel": "Print Label",
+        "viewDetails": "View Details",
+        "contactBuyer": "Contact Buyer",
+        "cancelOrder": "Cancel Order",
+        "issueRefund": "Issue Refund"
+      },
+      "empty": {
+        "title": "No orders yet",
+        "description": "When customers purchase your items, their orders will appear here"
+      }
+    },
+    "listings": {
+      "title": "Listings",
+      "myListings": "My Listings",
+      "active": "Active",
+      "draft": "Draft",
+      "sold": "Sold",
+      "archived": "Archived",
+      "createListing": "Create Listing",
+      "editListing": "Edit Listing",
+      "duplicateListing": "Duplicate",
+      "deleteListing": "Delete",
+      "fields": {
+        "title": "Title",
+        "description": "Description",
+        "category": "Category",
+        "brand": "Brand",
+        "condition": "Condition",
+        "size": "Size",
+        "color": "Color",
+        "material": "Material",
+        "price": "Price",
+        "shipping": "Shipping",
+        "photos": "Photos",
+        "tags": "Tags"
+      },
+      "conditions": {
+        "new": "New with tags",
+        "likeNew": "Like new",
+        "excellent": "Excellent",
+        "good": "Good",
+        "fair": "Fair"
+      },
+      "actions": {
+        "publish": "Publish",
+        "saveDraft": "Save Draft",
+        "preview": "Preview",
+        "share": "Share",
+        "boost": "Boost Listing",
+        "markAsSold": "Mark as Sold"
+      },
+      "empty": {
+        "title": "No listings yet",
+        "description": "Create your first listing to start selling",
+        "cta": "Create Listing"
+      }
+    },
+    "analytics": {
+      "title": "Analytics",
+      "overview": "Overview",
+      "sales": "Sales",
+      "traffic": "Traffic",
+      "conversion": "Conversion",
+      "period": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "last7days": "Last 7 days",
+        "last30days": "Last 30 days",
+        "last90days": "Last 90 days",
+        "lastYear": "Last year",
+        "custom": "Custom range"
+      },
+      "metrics": {
+        "revenue": "Revenue",
+        "orders": "Orders",
+        "averageOrderValue": "Average Order Value",
+        "conversionRate": "Conversion Rate",
+        "pageViews": "Page Views",
+        "uniqueVisitors": "Unique Visitors",
+        "bounceRate": "Bounce Rate",
+        "listingViews": "Listing Views"
+      }
+    },
+    "settings": {
+      "title": "Settings",
+      "account": "Account",
+      "shop": "Shop Settings",
+      "payments": "Payments",
+      "shipping": "Shipping",
+      "notifications": "Notifications",
+      "privacy": "Privacy",
+      "security": "Security",
+      "shopSettings": {
+        "shopName": "Shop Name",
+        "shopDescription": "Shop Description",
+        "shopPolicies": "Shop Policies",
+        "returnPolicy": "Return Policy",
+        "shippingPolicy": "Shipping Policy"
+      },
+      "paymentSettings": {
+        "payoutMethod": "Payout Method",
+        "bankAccount": "Bank Account",
+        "paypalEmail": "PayPal Email",
+        "taxInformation": "Tax Information"
+      }
+    },
+    "onboarding": {
+      "welcome": "Welcome to Threadly",
+      "steps": {
+        "profile": "Complete Profile",
+        "verification": "Verify Identity",
+        "payment": "Setup Payments",
+        "firstListing": "Create First Listing"
+      },
+      "progress": "{{completed}} of {{total}} steps completed"
+    },
+    "admin": {
+      "title": "Admin Panel",
+      "navigation": {
+        "dashboard": "Dashboard",
+        "platformHealth": "Platform Health",
+        "users": "Users",
+        "products": "Products",
+        "reports": "Reports",
+        "messages": "Messages",
+        "settings": "Settings"
+      },
+      "breadcrumbs": {
+        "admin": "Admin",
+        "dashboard": "Dashboard"
+      }
+    },
+    "validation": {
+      "required": "This field is required",
+      "email": "Please enter a valid email address",
+      "minLength": "This field must be at least {{min}} characters",
+      "maxLength": "This field cannot exceed {{max}} characters",
+      "min": "Value must be at least {{min}}",
+      "max": "Value cannot exceed {{max}}",
+      "pattern": "Please enter a valid format",
+      "passwordMismatch": "Passwords do not match",
+      "invalidFile": "Invalid file type",
+      "fileTooLarge": "File is too large",
+      "tryAgain": "Please try again"
+    },
+    "errors": {
+      "general": "An error occurred. Please try again.",
+      "network": "Network problem. Check your connection.",
+      "unauthorized": "You don't have permission for this action.",
+      "notFound": "The requested resource was not found.",
+      "serverError": "Internal server error. Please try again later.",
+      "validation": "Please fix the errors and try again.",
+      "uploadFailed": "File upload failed",
+      "sessionExpired": "Your session has expired. Please sign in again."
+    },
+    "success": {
+      "saved": "Saved successfully",
+      "updated": "Updated successfully",
+      "deleted": "Deleted successfully",
+      "created": "Created successfully",
+      "uploaded": "Uploaded successfully",
+      "sent": "Sent successfully"
+    },
+    "search": {
+      "title": "Search",
+      "resultsFor": "Results for",
+      "noResults": "No results found",
+      "searchPlaceholder": "Search for items, brands, or sellers",
+      "filters": {
+        "sortBy": "Sort by",
+        "mostRelevant": "Most Relevant",
+        "newest": "Newest first",
+        "priceLowToHigh": "Price: Low to High",
+        "priceHighToLow": "Price: High to Low",
+        "mostPopular": "Most Popular",
+        "endingSoon": "Ending Soon",
+        "priceRange": "Price Range",
+        "condition": "Condition",
+        "categories": "Categories",
+        "brands": "Brands",
+        "sizes": "Sizes",
+        "colors": "Colors",
+        "clearAllFilters": "Clear All Filters",
+        "applyFilters": "Apply Filters",
+        "showingResults": "Showing {{count}} results",
+        "conditions": {
+          "new": "New",
+          "likeNew": "Like New",
+          "excellent": "Excellent",
+          "good": "Good",
+          "fair": "Fair"
+        },
+        "colors": {
+          "black": "Black",
+          "white": "White",
+          "gray": "Gray",
+          "brown": "Brown",
+          "red": "Red",
+          "blue": "Blue",
+          "green": "Green",
+          "yellow": "Yellow",
+          "orange": "Orange",
+          "purple": "Purple",
+          "pink": "Pink",
+          "navy": "Navy",
+          "beige": "Beige",
+          "cream": "Cream",
+          "multicolor": "Multicolor"
+        }
+      }
+    },
+    "selling": {
+      "title": "Selling",
+      "newListing": "New Listing",
+      "createListing": "Create Listing",
+      "productForm": {
+        "title": "Product Details",
+        "productTitle": "Product Title",
+        "description": "Description",
+        "category": "Category",
+        "brand": "Brand",
+        "condition": "Condition",
+        "size": "Size",
+        "color": "Color",
+        "price": "Price",
+        "photos": "Photos",
+        "uploadPhotos": "Upload Photos",
+        "maxPhotos": "Maximum {{count}} photos",
+        "dragDrop": "Drag and drop files here",
+        "browseFiles": "Browse files",
+        "saveDraft": "Save Draft",
+        "publishListing": "Publish Listing",
+        "preview": "Preview",
+        "success": "Product created successfully!",
+        "processing": "Processing...",
+        "validation": {
+          "titleRequired": "Title is required",
+          "titleMinLength": "Title must be at least 5 characters",
+          "titleMaxLength": "Title cannot exceed 100 characters",
+          "descriptionRequired": "Description is required",
+          "descriptionMinLength": "Description must be at least 20 characters",
+          "categoryRequired": "Category is required",
+          "conditionRequired": "Condition is required",
+          "priceRequired": "Price is required",
+          "priceMinimum": "Price must be at least $0.01",
+          "priceMaximum": "Price cannot exceed $10,000",
+          "photosRequired": "At least one photo is required",
+          "invalidFileType": "Invalid file type. Only JPEG and PNG allowed",
+          "fileTooLarge": "File is too large. Maximum size 5MB"
+        }
+      },
+      "analytics": {
+        "title": "Sales Analytics",
+        "totalEarnings": "Total Earnings",
+        "thisMonth": "This Month",
+        "lastMonth": "Last Month",
+        "totalSales": "Total Sales",
+        "avgOrderValue": "Average Order Value",
+        "bestSellingProducts": "Best Selling Products",
+        "recentOrders": "Recent Orders",
+        "salesOverTime": "Sales Over Time",
+        "revenue": "Revenue",
+        "orders": "Orders",
+        "performance": "Performance",
+        "trends": "Trends",
+        "noSalesYet": "No sales yet",
+        "startSelling": "Start selling to see analytics here"
+      }
+    },
+    "metadata": {
+      "dashboard": {
+        "title": "Dashboard - Threadly",
+        "description": "Manage your listings, orders, and account."
+      },
+      "orders": {
+        "title": "My Orders",
+        "description": "Track your orders and purchases"
+      },
+      "search": {
+        "title": "Search - Threadly",
+        "description": "Search and discover unique fashion items"
+      },
+      "selling": {
+        "title": "Selling - Threadly",
+        "description": "Create and manage your listings for sale"
       }
     }
   }

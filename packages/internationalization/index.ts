@@ -1,7 +1,7 @@
 import 'server-only';
 import type en from './dictionaries/en.json';
 
-export const locales = ['en', 'bg', 'uk'] as const;
+export const locales = ['bg', 'en', 'uk'] as const;
 
 export type Dictionary = typeof en;
 
@@ -24,3 +24,6 @@ export const getDictionary = async (locale: string): Promise<Dictionary> => {
     return (await import('./dictionaries/en.json')).default;
   }
 };
+
+// Export regions functionality
+export * from './regions';

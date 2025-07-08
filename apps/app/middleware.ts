@@ -1,14 +1,23 @@
 import { clerkMiddleware, createRouteMatcher } from '@repo/auth/server';
+import { internationalizationMiddleware } from '@repo/internationalization/middleware';
 import { NextResponse, type NextRequest } from 'next/server';
 
 const isPublicRoute = createRouteMatcher([
+  '/:locale/sign-in(.*)',
+  '/:locale/sign-up(.*)',
   '/sign-in(.*)',
   '/sign-up(.*)',
   '/api/webhooks(.*)',
   '/api/health(.*)',
 ]);
 
-const middleware = clerkMiddleware(async (auth, request) => {
+const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
+  // Handle internationalization first
+  const i18nResponse = internationalizationMiddleware(request);
+  if (i18nResponse) {
+    return i18nResponse;
+  }
+
   // SECURITY: Only log in development mode, avoid exposing sensitive URL parameters
   if (process.env.NODE_ENV === 'development') {
     const urlPath = request.nextUrl.pathname;

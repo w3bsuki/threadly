@@ -6,15 +6,43 @@
 /**
  * Format cents to display price (e.g., 1999 → $19.99)
  */
-export function formatPrice(cents: number, currency: string = 'USD'): string {
+export function formatPrice(cents: number, currency: string = 'USD', locale?: string): string {
   const dollars = cents / 100;
   
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(dollars);
+  // Map currency to appropriate locale if not provided
+  const defaultLocales: Record<string, string> = {
+    USD: 'en-US',
+    EUR: 'en-GB',
+    GBP: 'en-GB',
+    CAD: 'en-CA',
+    AUD: 'en-AU',
+    BGN: 'bg-BG',
+    UAH: 'uk-UA',
+  };
+  
+  const formatLocale = locale || defaultLocales[currency] || 'en-US';
+  
+  try {
+    return new Intl.NumberFormat(formatLocale, {
+      style: 'currency',
+      currency: currency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(dollars);
+  } catch (error) {
+    // Fallback for unsupported currency/locale combinations
+    const symbols: Record<string, string> = {
+      USD: '$',
+      EUR: '€',
+      GBP: '£',
+      CAD: 'C$',
+      AUD: 'A$',
+      BGN: 'лв',
+      UAH: '₴',
+    };
+    const symbol = symbols[currency] || currency;
+    return `${symbol}${dollars.toFixed(2)}`;
+  }
 }
 
 /**
@@ -72,7 +100,7 @@ export function isPriceValid(cents: number): boolean {
  * Handles both legacy (dollars) and new (cents) formats
  * @deprecated Use formatPrice with proper cents values instead
  */
-export function formatDatabasePrice(value: number, isLegacyDollars: boolean = true): string {
+export function formatDatabasePrice(value: number, isLegacyDollars: boolean = true, currency: string = 'USD'): string {
   const cents = isLegacyDollars ? databaseDollarsToStripeCents(value) : value;
-  return formatPrice(cents);
+  return formatPrice(cents, currency);
 }

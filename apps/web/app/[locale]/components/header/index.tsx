@@ -11,68 +11,16 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CartDropdown } from './cart-dropdown';
 import { SignInButton, SignUpButton, UserButton, useUser } from '@repo/auth/client';
+import { useI18n } from '../providers/i18n-provider';
+import { LanguageSwitcher } from './language-switcher';
 
-const categories = [
-  { name: "All", href: "/", icon: "🛍️" },
-  { name: "Women", href: "/women", icon: "👗" },
-  { name: "Men", href: "/men", icon: "👔" },
-  { name: "Kids", href: "/kids", icon: "👶" },
-  { name: "Unisex", href: "/unisex", icon: "👕" },
-  { name: "Designer", href: "/designer", isDesigner: true, icon: "👑" },
-];
+// We'll define categories inside the component to use translations
 
-const subCategories = [
-  { name: "T-shirts", icon: "👕" },
-  { name: "Shirts", icon: "👔" },
-  { name: "Jackets", icon: "🧥" },
-  { name: "Dresses", icon: "👗" },
-  { name: "Jeans", icon: "👖" },
-  { name: "Sweaters", icon: "🧶" },
-  { name: "Coats", icon: "🧥" },
-  { name: "Sneakers", icon: "👟" },
-  { name: "Boots", icon: "🥾" },
-  { name: "Bags", icon: "👜" },
-  { name: "Watches", icon: "⌚" },
-  { name: "Jewelry", icon: "💎" },
-  { name: "Belts", icon: "👒" }
-];
+// Subcategories will be defined inside the component to use translations
 
-// Collections for desktop "Shop by Type"
-const collections = [
-  { name: "Clothing", href: "/products?category=clothing", icon: "👕" },
-  { name: "Shoes", href: "/products?category=shoes", icon: "👟" },
-  { name: "Jewelry", href: "/products?category=jewelry", icon: "💎" },
-  { name: "Bags", href: "/products?category=bags", icon: "👜" },
-  { name: "Accessories", href: "/products?category=accessories", icon: "⌚" },
-  { name: "Browse All", href: "/products", icon: "🛍️" },
-];
+// Collections will be defined inside the component to use translations
 
-// Filter options
-const sortOptions = [
-  { value: 'newest', label: '📅 Newest first' },
-  { value: 'price-asc', label: '💰 Price: Low to High' },
-  { value: 'price-desc', label: '💎 Price: High to Low' },
-  { value: 'popular', label: '🔥 Most Popular' },
-];
-
-const brandOptions = [
-  { value: '', label: '🛍️ All Brands' },
-  { value: 'nike', label: 'Nike' },
-  { value: 'adidas', label: 'Adidas' },
-  { value: 'zara', label: 'Zara' },
-  { value: 'h&m', label: 'H&M' },
-  { value: 'uniqlo', label: 'Uniqlo' },
-  { value: 'gucci', label: 'Gucci' },
-  { value: 'prada', label: 'Prada' },
-];
-
-const conditionOptions = [
-  { value: '', label: 'All Conditions' },
-  { value: 'NEW_WITH_TAGS', label: '🆕 New with tags' },
-  { value: 'NEW_WITHOUT_TAGS', label: '✨ Like new' },
-  { value: 'VERY_GOOD', label: '👍 Very good' },
-  { value: 'GOOD', label: '👌 Good' },
-];
+// Filter options will be defined inside the component to use translations
 
 const sizeOptions = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
@@ -86,6 +34,7 @@ interface SearchSuggestion {
 
 export const Header = () => {
   const { isSignedIn, user } = useUser();
+  const { dictionary, locale } = useI18n();
   const [isMenuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -98,6 +47,71 @@ export const Header = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
   const router = useRouter();
+  
+  // Define categories with translations
+  const categories = [
+    { name: dictionary.web.global.categories?.all || "All", href: `/${locale}`, icon: "🛍️" },
+    { name: dictionary.web.global.categories?.women || "Women", href: `/${locale}/women`, icon: "👗" },
+    { name: dictionary.web.global.categories?.men || "Men", href: `/${locale}/men`, icon: "👔" },
+    { name: dictionary.web.global.categories?.kids || "Kids", href: `/${locale}/kids`, icon: "👶" },
+    { name: dictionary.web.global.categories?.unisex || "Unisex", href: `/${locale}/unisex`, icon: "👕" },
+    { name: dictionary.web.global.categories?.designer || "Designer", href: `/${locale}/designer`, isDesigner: true, icon: "👑" },
+  ];
+  
+  // Define subcategories with translations
+  const subCategories = [
+    { name: dictionary.web.global.subCategories?.tshirts || "T-shirts", icon: "👕" },
+    { name: dictionary.web.global.subCategories?.shirts || "Shirts", icon: "👔" },
+    { name: dictionary.web.global.subCategories?.jackets || "Jackets", icon: "🧥" },
+    { name: dictionary.web.global.subCategories?.dresses || "Dresses", icon: "👗" },
+    { name: dictionary.web.global.subCategories?.jeans || "Jeans", icon: "👖" },
+    { name: dictionary.web.global.subCategories?.sweaters || "Sweaters", icon: "🧶" },
+    { name: dictionary.web.global.subCategories?.coats || "Coats", icon: "🧥" },
+    { name: dictionary.web.global.subCategories?.sneakers || "Sneakers", icon: "👟" },
+    { name: dictionary.web.global.subCategories?.boots || "Boots", icon: "🥾" },
+    { name: dictionary.web.global.subCategories?.bags || "Bags", icon: "👜" },
+    { name: dictionary.web.global.subCategories?.watches || "Watches", icon: "⌚" },
+    { name: dictionary.web.global.subCategories?.jewelry || "Jewelry", icon: "💎" },
+    { name: dictionary.web.global.subCategories?.belts || "Belts", icon: "👒" }
+  ];
+
+  // Collections for desktop "Shop by Type"
+  const collections = [
+    { name: dictionary.web.global.collections?.clothing || "Clothing", href: `/${locale}/products?category=clothing`, icon: "👕" },
+    { name: dictionary.web.global.collections?.shoes || "Shoes", href: `/${locale}/products?category=shoes`, icon: "👟" },
+    { name: dictionary.web.global.collections?.jewelry || "Jewelry", href: `/${locale}/products?category=jewelry`, icon: "💎" },
+    { name: dictionary.web.global.collections?.bags || "Bags", href: `/${locale}/products?category=bags`, icon: "👜" },
+    { name: dictionary.web.global.collections?.accessories || "Accessories", href: `/${locale}/products?category=accessories`, icon: "⌚" },
+    { name: dictionary.web.global.collections?.browseAll || "Browse All", href: `/${locale}/products`, icon: "🛍️" },
+  ];
+
+  // Filter options
+  const sortOptions = [
+    { value: 'newest', label: `📅 ${dictionary.web.global.filters?.newest || 'Newest first'}` },
+    { value: 'price-asc', label: `💰 ${dictionary.web.global.filters?.priceLowToHigh || 'Price: Low to High'}` },
+    { value: 'price-desc', label: `💎 ${dictionary.web.global.filters?.priceHighToLow || 'Price: High to Low'}` },
+    { value: 'popular', label: `🔥 ${dictionary.web.global.filters?.mostPopular || 'Most Popular'}` },
+  ];
+
+  const brandOptions = [
+    { value: '', label: `🛍️ ${dictionary.web.global.filters?.allBrands || 'All Brands'}` },
+    { value: 'nike', label: 'Nike' },
+    { value: 'adidas', label: 'Adidas' },
+    { value: 'zara', label: 'Zara' },
+    { value: 'h&m', label: 'H&M' },
+    { value: 'uniqlo', label: 'Uniqlo' },
+    { value: 'gucci', label: 'Gucci' },
+    { value: 'prada', label: 'Prada' },
+  ];
+
+  const conditionOptions = [
+    { value: '', label: dictionary.web.global.filters?.allConditions || 'All Conditions' },
+    { value: 'NEW_WITH_TAGS', label: `🆕 ${dictionary.web.global.filters?.newWithTags || 'New with tags'}` },
+    { value: 'NEW_WITHOUT_TAGS', label: `✨ ${dictionary.web.global.filters?.likeNew || 'Like new'}` },
+    { value: 'VERY_GOOD', label: `👍 ${dictionary.web.global.filters?.veryGood || 'Very good'}` },
+    { value: 'GOOD', label: `👌 ${dictionary.web.global.filters?.good || 'Good'}` },
+  ];
+  
   const searchParams = useSearchParams();
   const searchRef = useRef<HTMLDivElement>(null);
   
@@ -310,7 +324,7 @@ export const Header = () => {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       onKeyDown={handleKeyDown}
-                      placeholder="Search for items, brands, or members"
+                      placeholder={dictionary.web.global.navigation?.searchPlaceholder || "Search for items, brands, or members"}
                       className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-black focus:border-black text-sm"
                       role="combobox"
                       aria-expanded={showSuggestions}
@@ -327,7 +341,7 @@ export const Header = () => {
                             setShowSuggestions(false);
                           }}
                           className="text-gray-400 hover:text-gray-600"
-                          aria-label="Clear search"
+                          aria-label={dictionary.web.global.accessibility?.clearSearch || "Clear search"}
                         >
                           <X className="h-4 w-4" />
                         </button>
@@ -442,7 +456,7 @@ export const Header = () => {
                 >
                   <Link href="/products">
                     <ShoppingBag className="h-4 w-4 mr-2" />
-                    Browse
+                    {dictionary.web.global.navigation?.browse || "Browse"}
                   </Link>
                 </Button>
                 
@@ -451,7 +465,7 @@ export const Header = () => {
                 <Button variant="ghost" size="sm" asChild>
                   <Link href="/favorites">
                     <Heart className="h-4 w-4 mr-1" />
-                    Saved
+                    {dictionary.web.global.navigation?.saved || "Saved"}
                   </Link>
                 </Button>
                 
@@ -461,7 +475,7 @@ export const Header = () => {
                   <SignInButton mode="modal">
                     <Button variant="ghost" size="sm">
                       <User className="h-4 w-4 mr-1" />
-                      Sign In
+                      {dictionary.web.global.navigation?.signIn || "Sign In"}
                     </Button>
                   </SignInButton>
                 )}
@@ -472,7 +486,7 @@ export const Header = () => {
                   asChild
                 >
                   <Link href={`${env.NEXT_PUBLIC_APP_URL}/selling/new`}>
-                    Sell Now
+                    {dictionary.web.global.navigation?.sellNow || "Sell Now"}
                   </Link>
                 </Button>
               </div>

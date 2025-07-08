@@ -5,19 +5,25 @@ import { cn } from '@repo/design-system/lib/utils';
 import { Toolbar } from '@repo/feature-flags/components/toolbar';
 import { AnalyticsProvider } from '@repo/analytics';
 import { ClerkProvider } from '@repo/auth/client';
+import { getDictionary } from '@repo/internationalization';
 import type { ReactNode } from 'react';
 import { Footer } from './components/footer';
 import { Header } from './components/header';
 import { PerformanceMonitor } from './components/performance-monitor';
+import { CurrencyProvider } from './components/providers/currency-provider';
+import { I18nProvider } from './components/providers/i18n-provider';
 
 type RootLayoutProperties = {
   readonly children: ReactNode;
+  readonly params: Promise<{ locale: string }>;
 };
 
-const RootLayout = ({ children }: RootLayoutProperties) => {
+const RootLayout = async ({ children, params }: RootLayoutProperties) => {
+  const { locale } = await params;
+  const dictionary = await getDictionary(locale);
   return (
     <html
-      lang="en"
+      lang={locale}
       className={cn(fonts, 'scroll-smooth')}
       suppressHydrationWarning
     >
@@ -30,18 +36,22 @@ const RootLayout = ({ children }: RootLayoutProperties) => {
       <body>
         {/* Skip to main content link for accessibility */}
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-black text-white px-4 py-2 rounded-md z-[100]">
-          Skip to main content
+          {dictionary.web.global.accessibility?.skipToMainContent || "Skip to main content"}
         </a>
         <ClerkProvider>
           <AnalyticsProvider>
             <DesignSystemProvider>
-              <ServiceWorkerRegistration />
-              <PerformanceMonitor debug={process.env.NODE_ENV === 'development'} />
-              <Header />
-              <main id="main-content" className="min-h-screen">
-                {children}
-              </main>
-              <Footer />
+              <I18nProvider dictionary={dictionary} locale={locale}>
+                <CurrencyProvider>
+                  <ServiceWorkerRegistration />
+                  <PerformanceMonitor debug={process.env.NODE_ENV === 'development'} />
+                  <Header />
+                  <main id="main-content" className="min-h-screen">
+                    {children}
+                  </main>
+                  <Footer dictionary={dictionary} />
+                </CurrencyProvider>
+              </I18nProvider>
             </DesignSystemProvider>
           </AnalyticsProvider>
         </ClerkProvider>

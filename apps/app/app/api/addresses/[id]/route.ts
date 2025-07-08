@@ -3,7 +3,7 @@ import { currentUser } from '@repo/auth/server';
 import { 
   updateAddress, 
   deleteAddress 
-} from '../../../(authenticated)/profile/actions/address-actions';
+} from '../../../[locale]/(authenticated)/profile/actions/address-actions';
 
 interface RouteParams {
   params: Promise<{
