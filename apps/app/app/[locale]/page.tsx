@@ -5,6 +5,6 @@ export default async function LocalePage({
 }: { 
   params: Promise<{ locale: string }> 
 }) {
-  const { locale } = await params;
-  redirect(`/${locale}/selling/dashboard`);
+  // Redirect to the authenticated home page
+  redirect(`/`);
 }

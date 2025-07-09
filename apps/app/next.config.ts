@@ -7,6 +7,19 @@ import type { NextConfig } from 'next';
 // Start with base configuration
 let nextConfig: NextConfig = withToolbar(config);
 
+// Add specific configuration for handling dynamic routes with client components
+nextConfig = {
+  ...nextConfig,
+  experimental: {
+    ...nextConfig.experimental,
+    // This helps with client reference manifest generation
+    optimizeCss: false,
+    // Better handling of dynamic routes
+    workerThreads: false,
+    cpus: 1,
+  }
+};
+
 // Enable Sentry for error tracking and performance monitoring
 try {
   nextConfig = withSentry(nextConfig);

@@ -1,17 +1,16 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { showBetaFeature } from '@repo/feature-flags';
-import { NotificationsProvider } from '@repo/notifications/components/provider';
-import { RealTimeWrapper } from './components/real-time-wrapper';
 import type { ReactNode } from 'react';
-import { PostHogIdentifier } from './components/posthog-identifier';
-import { ToastProvider } from '@/components/toast';
 import { AppLayout } from './components/app-layout';
 import { redirect } from 'next/navigation';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
 import { getDictionary } from '@repo/internationalization';
-import { I18nProvider } from './components/i18n-provider';
+import { Providers } from './components/providers';
+
+// Force dynamic rendering to avoid client reference manifest issues
+export const dynamic = 'force-dynamic';
 
 type AppLayoutProperties = {
   readonly children: ReactNode;
@@ -48,22 +47,16 @@ const AuthenticatedLayout = async ({ children, params }: AppLayoutProperties) =>
   }
 
   return (
-    <I18nProvider dictionary={dictionary} locale={locale}>
-      <RealTimeWrapper userId={user.id}>
-        <NotificationsProvider userId={user.id}>
-          <AppLayout isAdmin={isAdmin} dictionary={dictionary}>
-            {betaFeature && (
-              <div className="mb-4 rounded-lg bg-blue-500 p-3 text-center text-sm text-white">
-                Beta feature now available
-              </div>
-            )}
-            {children}
-            <ToastProvider />
-          </AppLayout>
-          <PostHogIdentifier />
-        </NotificationsProvider>
-      </RealTimeWrapper>
-    </I18nProvider>
+    <Providers userId={user.id} dictionary={dictionary} locale={locale}>
+      <AppLayout isAdmin={isAdmin} dictionary={dictionary}>
+        {betaFeature && (
+          <div className="mb-4 rounded-lg bg-blue-500 p-3 text-center text-sm text-white">
+            Beta feature now available
+          </div>
+        )}
+        {children}
+      </AppLayout>
+    </Providers>
   );
 };
 

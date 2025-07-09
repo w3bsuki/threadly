@@ -1,6 +1,9 @@
 import { type ReactNode } from 'react';
 import { getDictionary } from '@repo/internationalization';
 
+// Force dynamic rendering to avoid client reference manifest issues
+export const dynamic = 'force-dynamic';
+
 export default async function LocaleLayout({
   children,
   params,
