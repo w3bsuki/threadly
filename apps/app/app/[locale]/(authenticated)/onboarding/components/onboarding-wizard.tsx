@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@repo/design-system/components/ui/button';
 import { Card, CardContent } from '@repo/design-system/components/ui/card';
 import { ChevronLeft, ChevronRight, Check, Loader2 } from 'lucide-react';
@@ -97,43 +96,35 @@ export function OnboardingWizard({ userId }: OnboardingWizardProps) {
 
       <Card className="mt-8">
         <CardContent className="p-6">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentStep}
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3 }}
-            >
-              {currentStep === 1 && (
-                <RoleSelection
-                  selectedRole={formData.preferredRole}
-                  onSelect={(role) => updateFormData({ preferredRole: role })}
-                />
-              )}
-              
-              {currentStep === 2 && (
-                <InterestsSelection
-                  selectedInterests={formData.interests}
-                  onSelect={(interests) => updateFormData({ interests })}
-                />
-              )}
-              
-              {currentStep === 3 && (
-                <BrandsSelection
-                  selectedBrands={formData.favoriteBrands}
-                  onSelect={(brands) => updateFormData({ favoriteBrands: brands })}
-                />
-              )}
-              
-              {currentStep === 4 && (
-                <LocationSelection
-                  location={formData.location}
-                  onSelect={(location) => updateFormData({ location })}
-                />
-              )}
-            </motion.div>
-          </AnimatePresence>
+          <div className="min-h-[400px]">
+            {currentStep === 1 && (
+              <RoleSelection
+                selectedRole={formData.preferredRole}
+                onSelect={(role) => updateFormData({ preferredRole: role })}
+              />
+            )}
+            
+            {currentStep === 2 && (
+              <InterestsSelection
+                selectedInterests={formData.interests}
+                onSelect={(interests) => updateFormData({ interests })}
+              />
+            )}
+            
+            {currentStep === 3 && (
+              <BrandsSelection
+                selectedBrands={formData.favoriteBrands}
+                onSelect={(brands) => updateFormData({ favoriteBrands: brands })}
+              />
+            )}
+            
+            {currentStep === 4 && (
+              <LocationSelection
+                location={formData.location}
+                onSelect={(location) => updateFormData({ location })}
+              />
+            )}
+          </div>
         </CardContent>
       </Card>
 
