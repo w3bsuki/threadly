@@ -1,5 +1,6 @@
 /* App-specific styles */
 @import "tailwindcss";
+@import "@repo/design-system/styles/globals.css";
 
 /* Source paths for app dashboard - scanning component files */
 @source "./**/*.{ts,tsx}";
@@ -9,7 +10,7 @@
 .shiki {
   background-color: var(--shiki-light-bg);
   color: var(--shiki-light);
-  @apply border-border;
+  @apply border border-gray-200 dark:border-gray-800;
 }
 
 .shiki span {
