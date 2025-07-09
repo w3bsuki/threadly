@@ -33,7 +33,13 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
   const localeMatch = urlPath.match(/^\/([a-z]{2})$/);
   if (localeMatch) {
     const locale = localeMatch[1];
-    return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url));
+    // Check if user is authenticated before redirecting
+    const { userId } = await auth();
+    if (userId) {
+      return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url));
+    } else {
+      return NextResponse.redirect(new URL(`/${locale}/sign-in`, request.url));
+    }
   }
   
   // Protect authenticated routes
