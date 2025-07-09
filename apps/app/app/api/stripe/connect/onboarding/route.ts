@@ -4,14 +4,15 @@ import { database } from '@repo/database';
 import Stripe from 'stripe';
 import { env } from '@/env';
 
-const stripe = new Stripe(env.STRIPE_SECRET_KEY!, {
+// Initialize Stripe only if key is available
+const stripe = env.STRIPE_SECRET_KEY ? new Stripe(env.STRIPE_SECRET_KEY, {
   apiVersion: '2025-05-28.basil',
-});
+}) : null;
 
 export async function POST(request: NextRequest) {
   try {
     // Check if Stripe is configured
-    if (!env.STRIPE_SECRET_KEY) {
+    if (!stripe) {
       return NextResponse.json(
         { error: 'Stripe is not configured. Payment processing is not available.' },
         { status: 503 }
@@ -119,7 +120,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     // Check if Stripe is configured
-    if (!env.STRIPE_SECRET_KEY) {
+    if (!stripe) {
       return NextResponse.json(
         { error: 'Stripe is not configured. Payment processing is not available.' },
         { status: 503 }

@@ -6,9 +6,10 @@ import { env } from '@/env';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
 
-const stripe = new Stripe(env.STRIPE_SECRET_KEY!, {
+// Initialize Stripe only if key is available
+const stripe = env.STRIPE_SECRET_KEY ? new Stripe(env.STRIPE_SECRET_KEY, {
   apiVersion: '2025-05-28.basil',
-});
+}) : null;
 
 export async function GET(request: NextRequest) {
   try {
@@ -35,6 +36,16 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         status: 'not_connected',
         message: 'No Stripe account connected',
+        canAcceptPayments: false,
+        capabilities: {},
+      });
+    }
+
+    // Check if Stripe is configured
+    if (!stripe) {
+      return NextResponse.json({
+        status: 'not_connected',
+        message: 'Payment processing is not configured',
         canAcceptPayments: false,
         capabilities: {},
       });
