@@ -31,17 +31,27 @@ const AuthenticatedLayout = async ({ children, params }: AppLayoutProperties) =>
     logError('Feature flag error:', error);
   }
 
-  // Check if user is admin with error handling
+  // Check if user is admin and has completed onboarding with error handling
   let isAdmin = false;
+  let hasCompletedOnboarding = true;
   try {
     const dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      select: { role: true }
+      select: { 
+        role: true,
+        preferences: {
+          select: {
+            onboardingCompleted: true
+          }
+        }
+      }
     });
     isAdmin = dbUser?.role === 'ADMIN';
+    hasCompletedOnboarding = dbUser?.preferences?.onboardingCompleted ?? false;
   } catch (error) {
     logError('Database user check failed:', error);
   }
+
 
   return (
     <Providers userId={user.id} dictionary={dictionary} locale={locale}>

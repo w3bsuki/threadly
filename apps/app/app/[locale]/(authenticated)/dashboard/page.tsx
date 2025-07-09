@@ -8,6 +8,7 @@ import { RecentOrders } from './components/recent-orders';
 import { QuickActions } from './components/quick-actions';
 import { DashboardStatsLoading } from './components/loading-states';
 import { RecentOrdersLoading } from './components/loading-states';
+import { requireOnboarding } from '../components/onboarding-check';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -27,6 +28,9 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
   if (!user) {
     return null; // This should be handled by the layout auth check
   }
+
+  // Check if user has completed onboarding
+  await requireOnboarding();
 
   return (
     <div className="space-y-6">
