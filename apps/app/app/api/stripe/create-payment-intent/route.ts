@@ -8,9 +8,14 @@ import { z } from 'zod';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
 
-const stripe = new Stripe(env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-05-28.basil',
-});
+// Initialize Stripe with proper error handling
+let stripe: Stripe | null = null;
+
+if (env.STRIPE_SECRET_KEY) {
+  stripe = new Stripe(env.STRIPE_SECRET_KEY, {
+    apiVersion: '2025-05-28.basil',
+  });
+}
 
 const createPaymentIntentSchema = z.object({
   productId: z.string().optional(), // Optional for cart purchases
@@ -28,6 +33,14 @@ const createPaymentIntentSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if Stripe is configured
+    if (!stripe) {
+      return NextResponse.json(
+        { error: 'Payment processing is not configured. Please contact support.' },
+        { status: 503 }
+      );
+    }
+
     // Check rate limit (payment routes need stricter limits)
     const rateLimitResult = await checkRateLimit(paymentRateLimit, request);
     if (!rateLimitResult.allowed) {

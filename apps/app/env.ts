@@ -19,6 +19,17 @@ import { z } from 'zod';
 
 // Seller dashboard app environment configuration - Full feature set
 export const env = createEnv({
+  // Add error handler for missing environment variables
+  onValidationError: (error) => {
+    console.error(
+      '❌ Invalid environment variables detected:',
+      error.flatten().fieldErrors
+    );
+    // In production, we want to fail fast
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('Invalid environment variables - check deployment configuration');
+    }
+  },
   extends: [
     auth(),
     analytics(),
@@ -46,8 +57,12 @@ export const env = createEnv({
   },
   client: {
     // Client-side variables for seller functionality
-    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().startsWith('pk_').optional(),
-    NEXT_PUBLIC_APP_URL: z.string().url().optional(),
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NODE_ENV === 'production'
+      ? z.string().startsWith('pk_')
+      : z.string().startsWith('pk_').optional(),
+    NEXT_PUBLIC_APP_URL: process.env.NODE_ENV === 'production'
+      ? z.string().url()
+      : z.string().url().optional(),
     NEXT_PUBLIC_API_URL: z.string().url().optional(),
     NEXT_PUBLIC_WEB_URL: z.string().url().optional(),
   },

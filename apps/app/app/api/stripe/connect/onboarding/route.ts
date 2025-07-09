@@ -4,10 +4,20 @@ import { database } from '@repo/database';
 import Stripe from 'stripe';
 import { env } from '@/env';
 
-// Initialize Stripe only if key is available
-const stripe = env.STRIPE_SECRET_KEY ? new Stripe(env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-05-28.basil',
-}) : null;
+// Initialize Stripe - throw error if not configured in production
+let stripe: Stripe | null = null;
+
+try {
+  if (env.STRIPE_SECRET_KEY) {
+    stripe = new Stripe(env.STRIPE_SECRET_KEY, {
+      apiVersion: '2025-05-28.basil',
+    });
+  } else if (process.env.NODE_ENV === 'production') {
+    console.error('[Stripe] STRIPE_SECRET_KEY is not configured in production!');
+  }
+} catch (error) {
+  console.error('[Stripe] Failed to initialize Stripe:', error);
+}
 
 export async function POST(request: NextRequest) {
   try {

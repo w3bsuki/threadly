@@ -6,10 +6,18 @@ import { env } from '@/env';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
 
-// Initialize Stripe only if key is available
-const stripe = env.STRIPE_SECRET_KEY ? new Stripe(env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-05-28.basil',
-}) : null;
+// Initialize Stripe - handle missing configuration gracefully
+let stripe: Stripe | null = null;
+
+try {
+  if (env.STRIPE_SECRET_KEY) {
+    stripe = new Stripe(env.STRIPE_SECRET_KEY, {
+      apiVersion: '2025-05-28.basil',
+    });
+  }
+} catch (error) {
+  logError('[Stripe Status] Failed to initialize Stripe:', error);
+}
 
 export async function GET(request: NextRequest) {
   try {
