@@ -55,8 +55,11 @@ const SellerOnboardingPage = () => {
 
   const checkAccountStatus = async () => {
     try {
+      console.log('Checking account status...');
       const response = await fetch(`${window.location.origin}/api/stripe/connect/status`);
       const data = await response.json();
+      
+      console.log('Account status response:', data);
       
       if (!response.ok) {
         throw new Error(data.error || 'Failed to check account status');
@@ -64,6 +67,7 @@ const SellerOnboardingPage = () => {
       
       setAccountStatus(data);
     } catch (error) {
+      console.error('Failed to check account status:', error);
       toast.error('Failed to check account status');
     } finally {
       setLoading(false);
@@ -86,10 +90,19 @@ const SellerOnboardingPage = () => {
       // Redirect to Stripe onboarding
       window.location.href = data.url;
     } catch (error) {
-      if (error instanceof Error && error.message.includes('not configured')) {
-        toast.error('Payment processing is not available at the moment.');
+      console.error('Onboarding error:', error);
+      if (error instanceof Error) {
+        // Show the actual error message from the API
+        toast.error(error.message);
+        
+        // Log full error details for debugging
+        console.error('Full error details:', {
+          message: error.message,
+          stack: error.stack,
+          response: (error as any).response
+        });
       } else {
-        toast.error('Failed to start onboarding. Please try again.');
+        toast.error('Failed to start onboarding. Please check the console for details.');
       }
       setConnecting(false);
     }
