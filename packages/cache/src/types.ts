@@ -45,11 +45,11 @@ export const CACHE_KEYS = {
 } as const;
 
 export const CACHE_TTL = {
-  SHORT: 5 * 60, // 5 minutes
-  MEDIUM: 30 * 60, // 30 minutes
-  LONG: 2 * 60 * 60, // 2 hours
-  VERY_LONG: 24 * 60 * 60, // 24 hours
-  WEEK: 7 * 24 * 60 * 60, // 1 week
+  SHORT: 60, // 1 minute - for frequently changing data like products
+  MEDIUM: 5 * 60, // 5 minutes - for semi-dynamic content
+  LONG: 30 * 60, // 30 minutes - for relatively stable data
+  VERY_LONG: 2 * 60 * 60, // 2 hours - for static content
+  WEEK: 7 * 24 * 60 * 60, // 1 week - for rarely changing data
 } as const;
 
 export const CACHE_TAGS = {

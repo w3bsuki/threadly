@@ -34,6 +34,7 @@ export const env = createEnv({
     PORT: process.env.NODE_ENV === 'production' 
       ? z.string().optional()
       : z.string().default('3001'),
+    ADMIN_SECRET: z.string().optional(),
   },
   client: {
     // Client-side variables for customer marketplace
@@ -44,5 +45,6 @@ export const env = createEnv({
     PORT: process.env.PORT || '3001',
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    ADMIN_SECRET: process.env.ADMIN_SECRET,
   },
 });

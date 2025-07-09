@@ -119,6 +119,30 @@ export async function createProduct(input: z.infer<typeof createProductSchema>) 
       // Log search indexing errors but don't fail the product creation
       logError('Failed to index product for search (non-critical):', searchError);
     }
+
+    // Clear cache on web app so new products show immediately
+    try {
+      const webUrl = process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3001';
+      const adminSecret = process.env.ADMIN_SECRET || 'default-admin-secret';
+      
+      const response = await fetch(`${webUrl}/api/admin/clear-cache`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${adminSecret}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ type: 'products' }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Cache clear failed: ${response.status}`);
+      }
+
+      log.info('Successfully cleared product cache on web app');
+    } catch (cacheError) {
+      // Log cache clearing errors but don't fail the product creation
+      logError('Failed to clear cache on web app (non-critical):', cacheError);
+    }
     
     return { success: true, productId: product.id };
   } catch (error) {
