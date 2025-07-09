@@ -43,7 +43,7 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigation = [
-    { name: dictionary.dashboard.navigation.dashboard, href: '/dashboard', icon: HomeIcon },
+    { name: dictionary.dashboard.navigation.dashboard, href: '/', icon: HomeIcon },
     { name: dictionary.dashboard.navigation.listings, href: '/selling/listings', icon: PackageIcon },
     { name: dictionary.dashboard.dashboard.quickLinks.salesHistory, href: '/selling/history', icon: TrendingUpIcon },
     { name: dictionary.dashboard.navigation.orders, href: '/buying/orders', icon: ShoppingBagIcon },
@@ -52,7 +52,7 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
   ];
 
   const mobileNavigation = [
-    { name: dictionary.web.global.navigation.browse, href: '/dashboard', icon: HomeIcon },
+    { name: dictionary.web.global.navigation.browse, href: '/', icon: HomeIcon },
     { name: dictionary.web.global.navigation.sell, href: '/selling/new', icon: PlusIcon },
     { name: dictionary.dashboard.navigation.orders, href: '/buying/orders', icon: ShoppingBagIcon },
     { name: dictionary.dashboard.navigation.messages, href: '/messages', icon: MessageCircleIcon },
@@ -66,7 +66,7 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
         <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-border bg-background px-6">
           {/* Logo */}
           <div className="flex h-16 shrink-0 items-center">
-            <Link href="/dashboard" className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-black flex items-center justify-center">
                 <span className="text-white font-bold">T</span>
               </div>
@@ -238,7 +238,7 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
 
         {/* Logo */}
         <div className="flex flex-1 items-center justify-center">
-          <Link href="/dashboard" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-bold">T</span>
             </div>
