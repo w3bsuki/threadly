@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation';
+import RedirectComponent from './redirect';
 
 export default async function AuthenticatedPage({
   params,
@@ -6,5 +6,5 @@ export default async function AuthenticatedPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  redirect(`/${locale}/dashboard`);
+  return <RedirectComponent locale={locale} />;
 }
