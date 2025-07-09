@@ -141,9 +141,20 @@ const App = async ({ params }: { params: Promise<{ locale: string }> }) => {
   const totalRevenue = decimalToNumber(totalSales?._sum?.amount);
   const completedSales = totalSales?._count || 0;
 
+  // Convert Decimal values to numbers for serialization
+  const serializedOrders = recentOrders.map(order => ({
+    ...order,
+    amount: order.amount ? decimalToNumber(order.amount) : 0,
+    createdAt: order.createdAt.toISOString(),
+  }));
+
   return (
-    <SimpleDashboard 
-      user={user}
+    <SimpleDashboard
+      user={{
+        id: user.id,
+        firstName: user.firstName,
+        imageUrl: user.imageUrl,
+      }}
       dictionary={dictionary}
       metrics={{
         activeListings,
@@ -151,7 +162,7 @@ const App = async ({ params }: { params: Promise<{ locale: string }> }) => {
         completedSales,
         unreadMessages
       }}
-      recentOrders={recentOrders}
+      recentOrders={serializedOrders as any}
     />
   );
 };

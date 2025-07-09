@@ -9,9 +9,6 @@ import { logError } from '@repo/observability/server';
 import { getDictionary } from '@repo/internationalization';
 import { Providers } from './components/providers';
 
-// Force dynamic rendering to avoid client reference manifest issues
-export const dynamic = 'force-dynamic';
-
 type AppLayoutProperties = {
   readonly children: ReactNode;
   readonly params: Promise<{ locale: string }>;

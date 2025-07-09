@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { decimalToNumber } from '@repo/utils';
 import type { Dictionary } from '@repo/internationalization';
 
 interface SimpleDashboardProps {
@@ -18,9 +17,9 @@ interface SimpleDashboardProps {
   };
   recentOrders: Array<{
     id: string;
-    amount: any;
+    amount: number;
     status: string;
-    createdAt: Date;
+    createdAt: string;
     product: {
       id: string;
       title: string;
@@ -134,7 +133,7 @@ export function SimpleDashboard({ user, dictionary, metrics, recentOrders }: Sim
                       {order.product.title}
                     </p>
                     <p className="text-sm text-gray-500">
-                      ${(decimalToNumber(order.amount) / 100).toFixed(2)}
+                      ${(order.amount / 100).toFixed(2)}
                     </p>
                   </div>
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${

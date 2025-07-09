@@ -7,6 +7,9 @@ import type { NextConfig } from 'next';
 export const performanceConfig: Partial<NextConfig> = {
   // Enable React Compiler for faster builds and smaller bundles
   experimental: {
+    // Fix for client reference manifest generation with dynamic routes
+    serverComponentsExternalPackages: ['@prisma/client'],
+    
     // Optimize package imports for common libraries
     optimizePackageImports: [
       '@repo/design-system',
