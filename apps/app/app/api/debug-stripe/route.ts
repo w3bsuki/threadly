@@ -30,14 +30,14 @@ export async function GET(request: NextRequest) {
           id: true,
           email: true,
           stripeAccountId: true,
-          createdAt: true,
+          joinedAt: true,
         },
       });
       dbUserCheck = {
         exists: !!dbUser,
         hasStripeAccount: !!dbUser?.stripeAccountId,
         userId: dbUser?.id || null,
-        createdAt: dbUser?.createdAt || null,
+        joinedAt: dbUser?.joinedAt || null,
       };
     }
 
