@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { currentUser } from '@clerk/nextjs/server';
+import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 
 export async function checkOnboarding() {
