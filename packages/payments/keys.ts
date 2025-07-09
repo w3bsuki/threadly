@@ -8,9 +8,8 @@ export const keys = () =>
       STRIPE_SECRET_KEY: process.env.NODE_ENV === 'production' 
         ? z.string().startsWith('sk_')
         : z.string().startsWith('sk_').optional(),
-      STRIPE_WEBHOOK_SECRET: process.env.NODE_ENV === 'production'
-        ? z.string().min(1).startsWith('whsec_')
-        : z.string().min(1).startsWith('whsec_').optional(),
+      // Webhook secret is optional - only needed for webhook endpoints
+      STRIPE_WEBHOOK_SECRET: z.string().min(1).startsWith('whsec_').optional(),
     },
     runtimeEnv: {
       STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
