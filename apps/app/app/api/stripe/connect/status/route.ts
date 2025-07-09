@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
       },
       businessType: account.business_type,
       country: account.country,
-      created: account.created ? new Date(account.created * 1000).toISOString() : new Date().toISOString(),
+      created: account.created ? new Date(account.created * 1000).toISOString() : null,
       defaultCurrency: account.default_currency,
       email: account.email,
       payoutSchedule: account.settings?.payouts?.schedule,
