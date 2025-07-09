@@ -1,7 +1,7 @@
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { Webhook } from 'svix';
-import { WebhookEvent } from '@clerk/nextjs/server';
+import { WebhookEvent } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { env } from '@/env';
 
@@ -24,6 +24,12 @@ export async function POST(req: Request) {
   const body = JSON.stringify(payload);
 
   // Create a new Svix instance with your secret.
+  if (!env.CLERK_WEBHOOK_SECRET) {
+    console.error('CLERK_WEBHOOK_SECRET is not set');
+    return new Response('Server configuration error', {
+      status: 500,
+    });
+  }
   const wh = new Webhook(env.CLERK_WEBHOOK_SECRET);
 
   let evt: WebhookEvent;
