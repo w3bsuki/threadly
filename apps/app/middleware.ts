@@ -28,6 +28,14 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
     return NextResponse.next();
   }
   
+  // Redirect authenticated route to dashboard
+  const urlPath = request.nextUrl.pathname;
+  const localeMatch = urlPath.match(/^\/([a-z]{2})$/);
+  if (localeMatch) {
+    const locale = localeMatch[1];
+    return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url));
+  }
+  
   // Protect authenticated routes
   if (!isPublicRoute(request)) {
     const { userId } = await auth();
