@@ -145,13 +145,14 @@ export function useNotifications() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await fetch('/api/notifications?limit=50');
+        const response = await fetch('/api/notifications?page=1&limit=50');
         const data = await response.json();
         
         if (response.ok) {
-          setNotifications(data.notifications || []);
-          setUnreadCount(data.unreadCount || 0);
+          setNotifications(data.data || []);
+          setUnreadCount(data.meta?.unreadCount || 0);
         } else {
+          console.error('Failed to fetch notifications:', data.error);
         }
       } catch (error) {
       } finally {
