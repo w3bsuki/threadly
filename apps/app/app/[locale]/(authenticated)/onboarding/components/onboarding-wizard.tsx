@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@repo/design-system/components/ui/button';
 import { Card, CardContent } from '@repo/design-system/components/ui/card';
-import { Icons } from '@repo/design-system/components/icons';
+import { ChevronLeft, ChevronRight, Check, Loader2 } from 'lucide-react';
 import { StepIndicator } from './step-indicator';
 import { RoleSelection } from './role-selection';
 import { InterestsSelection } from './interests-selection';
@@ -145,7 +145,7 @@ export function OnboardingWizard({ userId }: OnboardingWizardProps) {
               onClick={handleBack}
               disabled={isSubmitting}
             >
-              <Icons.chevronLeft className="w-4 h-4 mr-1" />
+              <ChevronLeft className="w-4 h-4 mr-1" />
               Back
             </Button>
           )}
@@ -163,7 +163,7 @@ export function OnboardingWizard({ userId }: OnboardingWizardProps) {
           {currentStep < totalSteps ? (
             <Button onClick={handleNext}>
               Next
-              <Icons.chevronRight className="w-4 h-4 ml-1" />
+              <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           ) : (
             <Button 
@@ -172,13 +172,13 @@ export function OnboardingWizard({ userId }: OnboardingWizardProps) {
             >
               {isSubmitting ? (
                 <>
-                  <Icons.spinner className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Setting up...
                 </>
               ) : (
                 <>
                   Complete Setup
-                  <Icons.check className="w-4 h-4 ml-1" />
+                  <Check className="w-4 h-4 ml-1" />
                 </>
               )}
             </Button>

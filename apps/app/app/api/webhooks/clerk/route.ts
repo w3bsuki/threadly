@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { Webhook } from 'svix';
 import { WebhookEvent } from '@clerk/nextjs/server';
 import { database } from '@repo/database';
-import { env } from '@repo/env';
+import { env } from '@/env';
 
 export async function POST(req: Request) {
   // Get the headers

@@ -1,4 +1,4 @@
-import { Icons } from '@repo/design-system/components/icons';
+import { ShoppingBag, Store, Repeat, CheckCircle } from 'lucide-react';
 import { cn } from '@repo/design-system/lib/utils';
 import type { UserPreferenceRole } from '@repo/database';
 
@@ -12,19 +12,19 @@ const roles = [
     value: 'BUYER' as UserPreferenceRole,
     title: 'I want to buy',
     description: 'Browse and purchase fashion items',
-    icon: Icons.shoppingBag,
+    icon: ShoppingBag,
   },
   {
     value: 'SELLER' as UserPreferenceRole,
     title: 'I want to sell',
     description: 'List and manage fashion items',
-    icon: Icons.store,
+    icon: Store,
   },
   {
     value: 'BOTH' as UserPreferenceRole,
     title: 'I want to do both',
     description: 'Buy and sell fashion items',
-    icon: Icons.repeat,
+    icon: Repeat,
   },
 ];
 
@@ -74,7 +74,7 @@ export function RoleSelection({ selectedRole, onSelect }: RoleSelectionProps) {
               </div>
               
               {isSelected && (
-                <Icons.checkCircle className="w-5 h-5 text-primary mt-1" />
+                <CheckCircle className="w-5 h-5 text-primary mt-1" />
               )}
             </button>
           );

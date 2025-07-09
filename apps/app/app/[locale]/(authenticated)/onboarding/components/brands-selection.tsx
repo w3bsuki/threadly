@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Input } from '@repo/design-system/components/ui/input';
 import { Badge } from '@repo/design-system/components/ui/badge';
-import { Icons } from '@repo/design-system/components/icons';
+import { Plus, X } from 'lucide-react';
 
 interface BrandsSelectionProps {
   selectedBrands: string[];
@@ -80,7 +80,7 @@ export function BrandsSelection({ selectedBrands, onSelect }: BrandsSelectionPro
             placeholder="Type a brand name..."
             className="pr-10"
           />
-          <Icons.plus
+          <Plus
             className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground cursor-pointer hover:text-foreground"
             onClick={() => addBrand(inputValue)}
           />
@@ -113,7 +113,7 @@ export function BrandsSelection({ selectedBrands, onSelect }: BrandsSelectionPro
                   onClick={() => removeBrand(brand)}
                   className="ml-2 p-0.5 hover:bg-background/20 rounded-full transition-colors"
                 >
-                  <Icons.x className="w-3 h-3" />
+                  <X className="w-3 h-3" />
                 </button>
               </Badge>
             ))}

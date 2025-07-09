@@ -1,6 +1,6 @@
 import { Input } from '@repo/design-system/components/ui/input';
 import { Label } from '@repo/design-system/components/ui/label';
-import { Icons } from '@repo/design-system/components/icons';
+import { MapPin, Info } from 'lucide-react';
 
 interface LocationSelectionProps {
   location: string;
@@ -20,7 +20,7 @@ export function LocationSelection({ location, onSelect }: LocationSelectionProps
       <div className="max-w-md mx-auto space-y-4">
         <div className="space-y-2">
           <Label htmlFor="location" className="flex items-center gap-2">
-            <Icons.mapPin className="w-4 h-4" />
+            <MapPin className="w-4 h-4" />
             Your location
           </Label>
           <Input
@@ -34,7 +34,7 @@ export function LocationSelection({ location, onSelect }: LocationSelectionProps
 
         <div className="bg-muted/50 rounded-lg p-4 text-sm text-muted-foreground">
           <div className="flex items-start gap-2">
-            <Icons.info className="w-4 h-4 mt-0.5 flex-shrink-0" />
+            <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
             <div className="space-y-1">
               <p>
                 Your location is used to:
