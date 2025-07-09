@@ -145,7 +145,7 @@ export function useNotifications() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await fetch('/api/notifications?page=1&limit=50');
+        const response = await fetch(`${window.location.origin}/api/notifications?page=1&limit=50`);
         const data = await response.json();
         
         if (response.ok) {
@@ -182,7 +182,7 @@ export function useNotifications() {
 
   const markAsRead = useCallback(async (notificationId: string) => {
     try {
-      await fetch(`/api/notifications/${notificationId}/read`, {
+      await fetch(`${window.location.origin}/api/notifications/${notificationId}/read`, {
         method: 'PATCH',
       });
       
@@ -196,7 +196,7 @@ export function useNotifications() {
 
   const markAllAsRead = useCallback(async () => {
     try {
-      await fetch('/api/notifications/read-all', {
+      await fetch(`${window.location.origin}/api/notifications/read-all`, {
         method: 'PATCH',
       });
       

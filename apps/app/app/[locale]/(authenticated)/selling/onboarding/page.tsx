@@ -55,7 +55,7 @@ const SellerOnboardingPage = () => {
 
   const checkAccountStatus = async () => {
     try {
-      const response = await fetch('/api/stripe/connect/status');
+      const response = await fetch(`${window.location.origin}/api/stripe/connect/status`);
       const data = await response.json();
       
       if (!response.ok) {
@@ -73,7 +73,7 @@ const SellerOnboardingPage = () => {
   const startOnboarding = async () => {
     setConnecting(true);
     try {
-      const response = await fetch('/api/stripe/connect/onboarding', {
+      const response = await fetch(`${window.location.origin}/api/stripe/connect/onboarding`, {
         method: 'POST',
       });
       
@@ -98,7 +98,7 @@ const SellerOnboardingPage = () => {
   const refreshOnboarding = async () => {
     setConnecting(true);
     try {
-      const response = await fetch('/api/stripe/connect/onboarding');
+      const response = await fetch(`${window.location.origin}/api/stripe/connect/onboarding`);
       const data = await response.json();
       
       if (!response.ok) {

@@ -12,7 +12,14 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
-  // Handle internationalization first
+  const pathname = request.nextUrl.pathname;
+  
+  // Skip i18n for API routes and static assets
+  if (pathname.startsWith('/api/') || pathname.startsWith('/_next/') || pathname.startsWith('/ingest')) {
+    return NextResponse.next();
+  }
+  
+  // Handle internationalization for non-API routes
   const i18nResponse = internationalizationMiddleware(request);
   if (i18nResponse) {
     return i18nResponse;
@@ -21,11 +28,6 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
   // SECURITY: Only log in development mode, avoid exposing sensitive URL parameters
   if (process.env.NODE_ENV === 'development') {
     const urlPath = request.nextUrl.pathname;
-  }
-  
-  // Handle PostHog proxy routes
-  if (request.nextUrl.pathname.startsWith('/ingest')) {
-    return NextResponse.next();
   }
   
   // Redirect authenticated route to dashboard
