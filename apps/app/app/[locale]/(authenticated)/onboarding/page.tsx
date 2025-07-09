@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { auth, currentUser } from '@clerk/nextjs/server';
+import { currentUser } from '@repo/auth/server';
 import { getUserPreferences } from './actions';
 import { OnboardingWizard } from './components/onboarding-wizard';
 
