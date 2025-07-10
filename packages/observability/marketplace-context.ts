@@ -2,7 +2,7 @@
  * Marketplace-specific observability context and utilities for Threadly
  */
 
-import { setUser, setTag, setContext, addBreadcrumb } from '@sentry/nextjs';
+import * as Sentry from '@sentry/nextjs';
 import { log } from './log';
 
 export interface MarketplaceUser {
@@ -44,20 +44,20 @@ export interface SearchContext {
  */
 export function setUserContext(user: MarketplaceUser): void {
   try {
-    setUser({
+    Sentry.setUser({
       id: user.id,
       email: user.email,
       role: user.role,
     });
 
-    setTag('user.role', user.role);
+    Sentry.setTag('user.role', user.role);
     
     if (user.stripeCustomerId) {
-      setTag('stripe.customer_id', user.stripeCustomerId);
+      Sentry.setTag('stripe.customer_id', user.stripeCustomerId);
     }
     
     if (user.stripeConnectAccountId) {
-      setTag('stripe.connect_account_id', user.stripeConnectAccountId);
+      Sentry.setTag('stripe.connect_account_id', user.stripeConnectAccountId);
     }
 
     log.info('User context set for observability', {
@@ -76,7 +76,7 @@ export function setUserContext(user: MarketplaceUser): void {
  */
 export function setProductContext(product: ProductContext): void {
   try {
-    setContext('product', {
+    Sentry.setContext('product', {
       id: product.id,
       title: product.title,
       price: product.price,
@@ -85,10 +85,10 @@ export function setProductContext(product: ProductContext): void {
       status: product.status,
     });
 
-    setTag('product.id', product.id);
-    setTag('product.seller_id', product.sellerId);
-    setTag('product.category_id', product.categoryId);
-    setTag('product.status', product.status);
+    Sentry.setTag('product.id', product.id);
+    Sentry.setTag('product.seller_id', product.sellerId);
+    Sentry.setTag('product.category_id', product.categoryId);
+    Sentry.setTag('product.status', product.status);
   } catch (error) {
     log.error('Failed to set product context', { error });
   }
@@ -99,7 +99,7 @@ export function setProductContext(product: ProductContext): void {
  */
 export function setOrderContext(order: OrderContext): void {
   try {
-    setContext('order', {
+    Sentry.setContext('order', {
       id: order.id,
       buyerId: order.buyerId,
       sellerId: order.sellerId,
@@ -109,14 +109,14 @@ export function setOrderContext(order: OrderContext): void {
       paymentIntentId: order.paymentIntentId,
     });
 
-    setTag('order.id', order.id);
-    setTag('order.buyer_id', order.buyerId);
-    setTag('order.seller_id', order.sellerId);
-    setTag('order.product_id', order.productId);
-    setTag('order.status', order.status);
+    Sentry.setTag('order.id', order.id);
+    Sentry.setTag('order.buyer_id', order.buyerId);
+    Sentry.setTag('order.seller_id', order.sellerId);
+    Sentry.setTag('order.product_id', order.productId);
+    Sentry.setTag('order.status', order.status);
     
     if (order.paymentIntentId) {
-      setTag('stripe.payment_intent_id', order.paymentIntentId);
+      Sentry.setTag('stripe.payment_intent_id', order.paymentIntentId);
     }
   } catch (error) {
     log.error('Failed to set order context', { error });
@@ -128,7 +128,7 @@ export function setOrderContext(order: OrderContext): void {
  */
 export function trackSearchOperation(search: SearchContext): void {
   try {
-    addBreadcrumb({
+    Sentry.addBreadcrumb({
       category: 'search',
       message: `Search performed: "${search.query}"`,
       level: 'info',
@@ -140,11 +140,11 @@ export function trackSearchOperation(search: SearchContext): void {
       },
     });
 
-    setTag('search.query', search.query);
-    setTag('search.result_count', search.resultCount.toString());
+    Sentry.setTag('search.query', search.query);
+    Sentry.setTag('search.result_count', search.resultCount.toString());
     
     if (search.userId) {
-      setTag('search.user_id', search.userId);
+      Sentry.setTag('search.user_id', search.userId);
     }
 
     log.info('Search operation tracked', {
@@ -172,7 +172,7 @@ export function trackApiPerformance(operation: {
   cacheHit?: boolean;
 }): void {
   try {
-    addBreadcrumb({
+    Sentry.addBreadcrumb({
       category: 'api.performance',
       message: `${operation.method} ${operation.endpoint} - ${operation.duration}ms`,
       level: operation.statusCode >= 400 ? 'warning' : 'info',
@@ -190,16 +190,16 @@ export function trackApiPerformance(operation: {
 
     // Tag slow operations
     if (operation.duration > 1000) {
-      setTag('performance.slow_api', 'true');
+      Sentry.setTag('performance.slow_api', 'true');
     }
 
     // Tag external service usage
     if (operation.hasStripe) {
-      setTag('external.stripe', 'true');
+      Sentry.setTag('external.stripe', 'true');
     }
 
     if (operation.cacheHit !== undefined) {
-      setTag('cache.hit', operation.cacheHit.toString());
+      Sentry.setTag('cache.hit', operation.cacheHit.toString());
     }
 
     log.info('API performance tracked', {
@@ -228,21 +228,21 @@ export function trackPaymentOperation(operation: {
   error?: string;
 }): void {
   try {
-    addBreadcrumb({
+    Sentry.addBreadcrumb({
       category: 'payment',
       message: `Payment operation: ${operation.type}`,
       level: operation.type.includes('failed') ? 'error' : 'info',
       data: operation,
     });
 
-    setTag('payment.operation', operation.type);
+    Sentry.setTag('payment.operation', operation.type);
     
     if (operation.orderId) {
-      setTag('payment.order_id', operation.orderId);
+      Sentry.setTag('payment.order_id', operation.orderId);
     }
     
     if (operation.stripeId) {
-      setTag('payment.stripe_id', operation.stripeId);
+      Sentry.setTag('payment.stripe_id', operation.stripeId);
     }
 
     log.info('Payment operation tracked', {
@@ -269,26 +269,26 @@ export function trackImageOperation(operation: {
   error?: string;
 }): void {
   try {
-    addBreadcrumb({
+    Sentry.addBreadcrumb({
       category: 'image',
       message: `Image operation: ${operation.type}`,
       level: operation.type.includes('failed') ? 'error' : 'info',
       data: operation,
     });
 
-    setTag('image.operation', operation.type);
-    setTag('image.user_id', operation.userId);
+    Sentry.setTag('image.operation', operation.type);
+    Sentry.setTag('image.user_id', operation.userId);
     
     if (operation.productId) {
-      setTag('image.product_id', operation.productId);
+      Sentry.setTag('image.product_id', operation.productId);
     }
 
     if (operation.fileSize) {
-      setTag('image.file_size', operation.fileSize.toString());
+      Sentry.setTag('image.file_size', operation.fileSize.toString());
     }
 
     if (operation.fileType) {
-      setTag('image.file_type', operation.fileType);
+      Sentry.setTag('image.file_type', operation.fileType);
     }
 
     log.info('Image operation tracked', {
@@ -308,9 +308,9 @@ export function trackImageOperation(operation: {
  */
 export function clearMarketplaceContext(): void {
   try {
-    setUser(null);
-    setContext('product', null);
-    setContext('order', null);
+    Sentry.setUser(null);
+    Sentry.setContext('product', null);
+    Sentry.setContext('order', null);
     
     log.info('Marketplace context cleared');
   } catch (error) {

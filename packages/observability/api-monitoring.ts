@@ -3,7 +3,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { captureException, withScope } from '@sentry/nextjs';
+import * as Sentry from '@sentry/nextjs';
 import { log } from './log';
 import { trackApiPerformance } from './marketplace-context';
 
@@ -49,7 +49,7 @@ export function withAPIMonitoring<T extends any[]>(
 
     try {
       // Track the operation with enhanced context
-      response = await withScope(async (scope) => {
+      response = await Sentry.withScope(async (scope) => {
         scope.setTag('api.endpoint', endpoint);
         scope.setTag('api.method', method);
         scope.setTag('api.app', 'marketplace');
@@ -78,13 +78,13 @@ export function withAPIMonitoring<T extends any[]>(
       error = err instanceof Error ? err : new Error(String(err));
       
       if (finalConfig.enableErrorTracking) {
-        withScope((scope) => {
+        Sentry.withScope((scope) => {
           scope.setTag('api.endpoint', endpoint);
           scope.setTag('api.method', method);
           scope.setTag('api.error', 'true');
           scope.setLevel('error');
           
-          captureException(error);
+          Sentry.captureException(error);
         });
       }
 
@@ -149,7 +149,7 @@ export function trackDatabaseOperation<T>(
   table: string,
   fn: () => Promise<T>
 ): Promise<T> {
-  return withScope(async (scope) => {
+  return Sentry.withScope(async (scope) => {
     const startTime = Date.now();
     
     scope.setTag('db.operation', operation);
@@ -188,7 +188,7 @@ export function trackDatabaseOperation<T>(
         error: error instanceof Error ? error.message : String(error),
       });
       
-      captureException(error);
+      Sentry.captureException(error);
       throw error;
     }
   });
@@ -201,7 +201,7 @@ export function trackStripeOperation<T>(
   operation: string,
   fn: () => Promise<T>
 ): Promise<T> {
-  return withScope(async (scope) => {
+  return Sentry.withScope(async (scope) => {
     const startTime = Date.now();
     
     scope.setTag('stripe.operation', operation);
@@ -234,7 +234,7 @@ export function trackStripeOperation<T>(
         error: error instanceof Error ? error.message : String(error),
       });
       
-      captureException(error);
+      Sentry.captureException(error);
       throw error;
     }
   });
@@ -248,7 +248,7 @@ export function trackCacheOperation<T>(
   key: string,
   fn: () => Promise<T>
 ): Promise<T> {
-  return withScope(async (scope) => {
+  return Sentry.withScope(async (scope) => {
     const startTime = Date.now();
     
     scope.setTag('cache.operation', operation);
@@ -282,7 +282,7 @@ export function trackCacheOperation<T>(
         error: error instanceof Error ? error.message : String(error),
       });
       
-      captureException(error);
+      Sentry.captureException(error);
       throw error;
     }
   });
@@ -297,7 +297,7 @@ export function trackUploadOperation<T>(
   fileType: string,
   fn: () => Promise<T>
 ): Promise<T> {
-  return withScope(async (scope) => {
+  return Sentry.withScope(async (scope) => {
     const startTime = Date.now();
     
     scope.setTag('upload.file_name', fileName);
@@ -335,7 +335,7 @@ export function trackUploadOperation<T>(
         error: error instanceof Error ? error.message : String(error),
       });
       
-      captureException(error);
+      Sentry.captureException(error);
       throw error;
     }
   });
@@ -349,7 +349,7 @@ export function trackBusinessOperation<T>(
   context: Record<string, any>,
   fn: () => Promise<T>
 ): Promise<T> {
-  return withScope(async (scope) => {
+  return Sentry.withScope(async (scope) => {
     const startTime = Date.now();
     
     scope.setTag('business.operation', operation);
@@ -390,7 +390,7 @@ export function trackBusinessOperation<T>(
         error: error instanceof Error ? error.message : String(error),
       });
       
-      captureException(error);
+      Sentry.captureException(error);
       throw error;
     }
   });
