@@ -1,7 +1,40 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "pnpm build --filter=web",
-  "outputDirectory": "apps/web/.next",
-  "installCommand": "pnpm install",
-  "ignoreCommand": "node apps/web/scripts/skip-ci.js"
+  "version": 2,
+  "builds": [
+    {
+      "src": "apps/web/package.json",
+      "use": "@vercel/next"
+    },
+    {
+      "src": "apps/app/package.json", 
+      "use": "@vercel/next"
+    },
+    {
+      "src": "apps/api/package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/apps/api/api/$1"
+    },
+    {
+      "src": "/dashboard/(.*)",
+      "dest": "/apps/app/$1"
+    },
+    {
+      "src": "/selling/(.*)",
+      "dest": "/apps/app/[locale]/selling/$1"
+    },
+    {
+      "src": "/admin/(.*)",
+      "dest": "/apps/app/[locale]/admin/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/apps/web/$1"
+    }
+  ]
 }
