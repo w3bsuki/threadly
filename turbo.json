@@ -19,6 +19,17 @@
         "dist/**"
       ]
     },
+    "build:production": {
+      "dependsOn": ["^build"],
+      "env": ["CI", "VERCEL"],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        ".basehub/**",
+        "**/generated/**",
+        "dist/**"
+      ]
+    },
     "test": {
       "dependsOn": ["^test"]
     },
