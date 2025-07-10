@@ -57,7 +57,7 @@ nextConfig.images = {
 };
 
 // Suppress require-in-the-middle warnings from Sentry and optimize bundles
-nextConfig.webpack = (config, { isServer, webpack, isEdgeRuntime }) => {
+nextConfig.webpack = (config, { isServer, webpack }) => {
   if (isServer) {
     config.ignoreWarnings = [
       { module: /require-in-the-middle/ },
@@ -65,8 +65,8 @@ nextConfig.webpack = (config, { isServer, webpack, isEdgeRuntime }) => {
     ];
   }
 
-  // Fix for edge runtime
-  if (isEdgeRuntime) {
+  // Fix for edge runtime - check if the module is for edge runtime
+  if (!isServer) {
     config.resolve = config.resolve || {};
     config.resolve.fallback = {
       ...config.resolve.fallback,

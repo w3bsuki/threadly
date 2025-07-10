@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {
   Button,
   Section,
@@ -19,7 +20,7 @@ export function PaymentReceivedEmail({
   orderId,
   productName,
   payoutDate,
-}: PaymentReceivedEmailProps) {
+}: PaymentReceivedEmailProps): React.ReactElement {
   return (
     <BaseTemplate
       preview={`Payment received: $${amount}`}

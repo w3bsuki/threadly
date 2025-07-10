@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {
   Body,
   Container,
@@ -18,7 +19,7 @@ interface BaseTemplateProps {
   children: React.ReactNode;
 }
 
-export function BaseTemplate({ preview, heading, children }: BaseTemplateProps) {
+export function BaseTemplate({ preview, heading, children }: BaseTemplateProps): React.ReactElement {
   return (
     <Html>
       <Head />

@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {
   Button,
   Column,
@@ -31,7 +32,7 @@ export function WeeklyReportEmail({
   totalViews,
   totalMessages,
   topProducts,
-}: WeeklyReportEmailProps) {
+}: WeeklyReportEmailProps): React.ReactElement {
   const weekRange = `${weekStartDate.toLocaleDateString()} - ${weekEndDate.toLocaleDateString()}`;
 
   return (

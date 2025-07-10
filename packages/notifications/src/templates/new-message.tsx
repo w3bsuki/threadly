@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {
   Button,
   Section,
@@ -17,7 +18,7 @@ export function NewMessageEmail({
   senderName,
   messagePreview,
   conversationUrl,
-}: NewMessageEmailProps) {
+}: NewMessageEmailProps): React.ReactElement {
   return (
     <BaseTemplate
       preview={`New message from ${senderName}`}

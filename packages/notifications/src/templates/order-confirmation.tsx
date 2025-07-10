@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {
   Button,
   Column,
@@ -28,7 +29,7 @@ export function OrderConfirmationEmail({
   items,
   total,
   estimatedDelivery,
-}: OrderConfirmationEmailProps) {
+}: OrderConfirmationEmailProps): React.ReactElement {
   return (
     <BaseTemplate
       preview={`Order #${orderId} confirmed`}

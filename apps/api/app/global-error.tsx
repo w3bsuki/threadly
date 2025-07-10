@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import { Button } from '@repo/design-system/components';
 import { fonts } from '@repo/design-system/lib/fonts';
 import { captureException } from '@sentry/nextjs';
@@ -11,7 +12,7 @@ type GlobalErrorProperties = {
   readonly reset: () => void;
 };
 
-const GlobalError = ({ error, reset }: GlobalErrorProperties) => {
+const GlobalError: React.FC<GlobalErrorProperties> = ({ error, reset }) => {
   useEffect(() => {
     captureException(error);
   }, [error]);
