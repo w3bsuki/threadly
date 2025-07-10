@@ -15,7 +15,8 @@ import { formatDistanceToNow } from 'date-fns';
 import { NotificationSkeleton } from '@repo/design-system/components';
 
 export function NotificationBell() {
-  const { notifications, unreadCount, isLoading, markAsRead, markAllAsRead } = useNotifications();
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
+  const isLoading = false; // TODO: Add back once real-time package types are updated
 
   const handleMarkAsRead = async (notificationId: string) => {
     await markAsRead(notificationId);
