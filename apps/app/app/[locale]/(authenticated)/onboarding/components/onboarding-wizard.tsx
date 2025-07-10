@@ -10,6 +10,7 @@ import { RoleSelection } from './role-selection';
 import { InterestsSelection } from './interests-selection';
 import { BrandsSelection } from './brands-selection';
 import { LocationSelection } from './location-selection';
+import { HowItWorks } from './how-it-works';
 import { saveUserPreferences } from '../actions';
 import type { UserPreferenceRole } from '@repo/database';
 
@@ -29,7 +30,7 @@ export function OnboardingWizard({ userId }: OnboardingWizardProps) {
     location: '',
   });
 
-  const totalSteps = 4;
+  const totalSteps = 5;
 
   const handleNext = () => {
     if (currentStep < totalSteps) {
@@ -123,6 +124,10 @@ export function OnboardingWizard({ userId }: OnboardingWizardProps) {
                 location={formData.location}
                 onSelect={(location) => updateFormData({ location })}
               />
+            )}
+            
+            {currentStep === 5 && (
+              <HowItWorks selectedRole={formData.preferredRole} />
             )}
           </div>
         </CardContent>

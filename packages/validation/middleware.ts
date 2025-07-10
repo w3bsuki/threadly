@@ -25,7 +25,7 @@ export interface ValidationError {
  * Format Zod errors for API response
  */
 export const formatZodErrors = (error: ZodError): ValidationError[] => {
-  return error.errors.map((err) => ({
+  return error.issues.map((err) => ({
     path: err.path.join('.'),
     message: err.message,
   }));
@@ -64,7 +64,7 @@ export const validateQuery = <T>(
     const searchParams = request.nextUrl.searchParams;
     const query: Record<string, any> = {};
     
-    searchParams.forEach((value, key) => {
+    searchParams.forEach((value: string, key: string) => {
       // Handle array parameters (e.g., ?tags=a&tags=b)
       if (query[key]) {
         if (Array.isArray(query[key])) {

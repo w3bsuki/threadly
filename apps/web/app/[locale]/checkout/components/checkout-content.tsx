@@ -8,11 +8,11 @@ import { Label } from '@repo/design-system/components';
 import { RadioGroup, RadioGroupItem } from '@repo/design-system/components';
 import { Separator } from '@repo/design-system/components';
 import { Alert, AlertDescription } from '@repo/design-system/components';
-import { ArrowLeft, CreditCard, Truck, Shield, Lock, AlertCircle } from 'lucide-react';
+import { ArrowLeft, CreditCard, Truck, Shield, Lock, AlertCircle, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { formatCurrency } from '@repo/utils/currency';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -38,7 +38,13 @@ const checkoutSchema = z.object({
 
 type CheckoutFormData = z.infer<typeof checkoutSchema>;
 
-function CheckoutForm() {
+interface CheckoutFormProps {
+  clientSecret: string;
+  paymentIntentId: string;
+  orderData: any;
+}
+
+function CheckoutForm({ clientSecret, paymentIntentId, orderData }: CheckoutFormProps) {
   const router = useRouter();
   const { items, clearCart } = useCartStore();
   const stripe = useStripe();
@@ -84,46 +90,11 @@ function CheckoutForm() {
     setError(null);
 
     try {
-      // Create order with Stripe Payment Intent
-      const orderResponse = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          items: items.map(item => ({
-            productId: item.productId,
-            quantity: item.quantity,
-            price: item.price,
-          })),
-          shippingAddress: {
-            street: data.address,
-            city: data.city,
-            state: data.state,
-            postalCode: data.postalCode,
-            country: data.country,
-          },
-          shippingMethod: data.shippingMethod,
-          paymentMethod: { type: 'card' },
-          costs: {
-            subtotal: subtotal,
-            shipping: shippingCost,
-            tax: tax,
-            total: total,
-          },
-        }),
-      });
-
-      const orderData = await orderResponse.json();
-
-      if (!orderResponse.ok) {
-        throw new Error(orderData.error || 'Failed to create order');
-      }
-
-      // Confirm payment with Stripe
+      // Confirm payment with Stripe using the existing payment intent
       const result = await stripe.confirmPayment({
         elements,
-        clientSecret: orderData.paymentIntent.clientSecret,
         confirmParams: {
-          return_url: `${window.location.origin}/checkout/success`,
+          return_url: `${window.location.origin}/checkout/success?payment_intent=${paymentIntentId}`,
           payment_method_data: {
             billing_details: {
               name: `${data.firstName} ${data.lastName}`,
@@ -145,6 +116,35 @@ function CheckoutForm() {
       if (result.error) {
         setError(result.error.message || 'Payment failed');
       } else if (result.paymentIntent?.status === 'succeeded') {
+        // Finalize the order
+        const finalizeResponse = await fetch('/api/checkout/finalize-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            paymentIntentId: result.paymentIntent.id,
+            shippingAddress: {
+              street: data.address,
+              city: data.city,
+              state: data.state,
+              postalCode: data.postalCode,
+              country: data.country,
+            },
+            shippingMethod: data.shippingMethod,
+            contactInfo: {
+              firstName: data.firstName,
+              lastName: data.lastName,
+              email: data.email,
+              phone: data.phone,
+            },
+          }),
+        });
+
+        const finalizeData = await finalizeResponse.json();
+
+        if (!finalizeResponse.ok) {
+          throw new Error(finalizeData.error || 'Failed to finalize order');
+        }
+
         // Clear cart and redirect to success page
         clearCart();
         router.push(`/checkout/success?payment_intent=${result.paymentIntent.id}`);
@@ -370,7 +370,14 @@ function CheckoutForm() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <PaymentElement />
+              {clientSecret ? (
+                <PaymentElement />
+              ) : (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+                  <span className="ml-2 text-gray-600">Loading payment form...</span>
+                </div>
+              )}
               {error && (
                 <Alert variant="destructive" className="mt-4">
                   <AlertCircle className="h-4 w-4" />
@@ -454,7 +461,7 @@ function CheckoutForm() {
                 type="submit" 
                 className="w-full" 
                 size="lg"
-                disabled={!stripe || isProcessing}
+                disabled={!stripe || !clientSecret || isProcessing}
               >
                 {isProcessing ? 'Processing...' : `Pay ${formatCurrency(total)}`}
               </Button>
@@ -469,12 +476,74 @@ function CheckoutForm() {
 export function CheckoutContent() {
   const [mounted, setMounted] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
+  const [orderData, setOrderData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const { items } = useCartStore();
+
+  // Calculate costs
+  const shippingCosts = {
+    standard: 5.99,
+    express: 12.99,
+  };
+
+  const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const shippingCost = subtotal > 50 ? 0 : shippingCosts.standard; // Default to standard shipping
+  const tax = Math.round(subtotal * 0.08); // 8% tax
+  const total = subtotal + shippingCost + tax;
+
+  // Create payment intent when component mounts
+  const createPaymentIntent = useCallback(async () => {
+    if (items.length === 0) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/checkout/payment-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: items.map(item => ({
+            productId: item.productId,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+          costs: {
+            subtotal: subtotal,
+            shipping: shippingCost,
+            tax: tax,
+            total: total,
+          },
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create payment intent');
+      }
+
+      setClientSecret(data.paymentIntent.clientSecret);
+      setPaymentIntentId(data.paymentIntent.id);
+      setOrderData(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to initialize checkout');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [items, subtotal, shippingCost, tax, total]);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (mounted && items.length > 0) {
+      createPaymentIntent();
+    }
+  }, [mounted, items.length, createPaymentIntent]);
 
   if (!mounted) {
     return null;
@@ -501,6 +570,33 @@ export function CheckoutContent() {
     );
   }
 
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-16">
+        <div className="flex items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
+          <span className="ml-2 text-gray-600">Initializing checkout...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error && !clientSecret) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-16">
+        <div className="text-center">
+          <Alert variant="destructive" className="mb-4 max-w-md mx-auto">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+          <Button onClick={() => createPaymentIntent()}>
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Header */}
@@ -515,19 +611,23 @@ export function CheckoutContent() {
         <h1 className="text-3xl font-bold text-gray-900">Checkout</h1>
       </div>
 
-      <Elements 
-        stripe={stripePromise}
-        options={{
-          mode: 'payment',
-          amount: Math.round(items.reduce((sum, item) => sum + (item.price * item.quantity), 0) * 100),
-          currency: 'usd',
-          appearance: {
-            theme: 'stripe',
-          },
-        }}
-      >
-        <CheckoutForm />
-      </Elements>
+      {clientSecret && paymentIntentId && (
+        <Elements 
+          stripe={stripePromise}
+          options={{
+            clientSecret,
+            appearance: {
+              theme: 'stripe',
+            },
+          }}
+        >
+          <CheckoutForm 
+            clientSecret={clientSecret} 
+            paymentIntentId={paymentIntentId}
+            orderData={orderData}
+          />
+        </Elements>
+      )}
     </div>
   );
 };

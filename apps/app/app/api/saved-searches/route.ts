@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { 
           error: 'Invalid input', 
-          details: validationResult.error.errors.map(e => ({
+          details: validationResult.error.issues.map(e => ({
             field: e.path.join('.'),
             message: e.message
           }))
@@ -122,7 +122,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json(
         { 
           error: 'Invalid search ID', 
-          details: queryValidation.error?.errors.map(e => ({
+          details: queryValidation.error?.issues.map(e => ({
             field: e.path.join('.'),
             message: e.message
           })) || [{ field: 'id', message: 'Search ID is required' }]

@@ -14,7 +14,8 @@ export class MemoryCache {
     return item.value;
   }
 
-  async set(key: string, value: any, ttl: number = 3600): Promise<void> {
+  async set(key: string, value: any, ttlOrOptions?: number | { ttl?: number; tags?: string[] }): Promise<void> {
+    const ttl = typeof ttlOrOptions === 'number' ? ttlOrOptions : (ttlOrOptions?.ttl || 3600);
     const expiry = Date.now() + (ttl * 1000);
     this.cache.set(key, { value, expiry });
   }
@@ -30,6 +31,39 @@ export class MemoryCache {
         this.cache.delete(key);
       }
     }
+  }
+
+  async remember<T>(
+    key: string,
+    fetcher: () => Promise<T>,
+    options?: { ttl?: number; tags?: string[] }
+  ): Promise<T> {
+    const cached = await this.get(key);
+    if (cached !== null) {
+      return cached;
+    }
+    
+    const value = await fetcher();
+    await this.set(key, value, options?.ttl);
+    return value;
+  }
+
+  async del(key: string): Promise<void> {
+    return this.delete(key);
+  }
+
+  async invalidateByTag(tag: string): Promise<void> {
+    // Memory cache doesn't support tags, so we'll just skip this
+  }
+
+  async mset(operations: Array<{ key: string; value: any; options?: any }>): Promise<void> {
+    for (const op of operations) {
+      await this.set(op.key, op.value, op.options?.ttl);
+    }
+  }
+
+  async getStats(): Promise<{ size: number }> {
+    return { size: this.cache.size };
   }
 }
 

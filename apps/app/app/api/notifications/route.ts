@@ -22,7 +22,7 @@ const createNotificationSchema = z.object({
       message: 'HTML tags are not allowed',
     }),
   type: z.enum(['order', 'message', 'payment', 'system']),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 // GET /api/notifications - Get user notifications
@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
         { 
           status: 400, 
           errorCode: ErrorCode.VALIDATION_FAILED,
-          details: queryValidation.error.errors 
+          details: queryValidation.error.issues 
         }
       );
     }
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
         { 
           status: 400, 
           errorCode: ErrorCode.VALIDATION_FAILED,
-          details: validationResult.error.errors
+          details: validationResult.error.issues
         }
       );
     }

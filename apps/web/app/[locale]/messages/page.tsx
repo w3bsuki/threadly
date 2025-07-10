@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { Metadata } from 'next';
 import { MessagesContent } from './components/messages-content';
+import { database } from '@repo/database';
 
 export const metadata: Metadata = {
   title: 'Messages - Threadly',
@@ -15,6 +16,57 @@ export default async function MessagesPage() {
     redirect('/sign-in');
   }
 
+  // Ensure user exists in database
+  const dbUser = await database.user.findUnique({
+    where: { clerkId: userId },
+  });
+
+  if (!dbUser) {
+    redirect('/onboarding');
+  }
+
+  // Fetch user's conversations
+  const conversations = await database.conversation.findMany({
+    where: {
+      OR: [
+        { buyerId: dbUser.id },
+        { sellerId: dbUser.id },
+      ],
+    },
+    include: {
+      buyer: true,
+      seller: true,
+      product: {
+        include: {
+          images: {
+            take: 1,
+            orderBy: {
+              displayOrder: 'asc',
+            },
+          },
+        },
+      },
+      messages: {
+        orderBy: {
+          createdAt: 'desc',
+        },
+      },
+      _count: {
+        select: {
+          messages: {
+            where: {
+              senderId: { not: dbUser.id },
+              read: false,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      updatedAt: 'desc',
+    },
+  });
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container py-8">
@@ -26,7 +78,10 @@ export default async function MessagesPage() {
             </p>
           </div>
           
-          <MessagesContent />
+          <MessagesContent 
+            conversations={conversations}
+            currentUserId={dbUser.id}
+          />
         </div>
       </div>
     </div>

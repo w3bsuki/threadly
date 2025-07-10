@@ -81,7 +81,7 @@ export async function updateUserProfile(input: z.infer<typeof updateProfileSchem
       return {
         success: false,
         error: 'Validation failed',
-        details: error.errors,
+        details: error.issues,
       };
     }
 
@@ -121,7 +121,7 @@ export async function updateShippingAddress(input: z.infer<typeof updateAddressS
       return {
         success: false,
         error: 'Validation failed',
-        details: error.errors,
+        details: error.issues,
       };
     }
 
@@ -169,7 +169,7 @@ export async function updateNotificationSettings(input: z.infer<typeof updateNot
       return {
         success: false,
         error: 'Validation failed',
-        details: error.errors,
+        details: error.issues,
       };
     }
 

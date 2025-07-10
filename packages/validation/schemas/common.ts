@@ -66,7 +66,7 @@ export const priceCentsSchema = z
 
 // Currency validation
 export const currencySchema = z.enum(['USD', 'EUR', 'GBP', 'CAD', 'AUD'], {
-  errorMap: () => ({ message: 'Invalid currency' }),
+  message: 'Invalid currency',
 });
 
 // Pagination schemas
@@ -102,7 +102,7 @@ export const imageFileSchema = fileUploadSchema.extend({
     'image/webp',
     'image/gif',
   ], {
-    errorMap: () => ({ message: 'Invalid image format. Allowed: JPEG, PNG, WebP, GIF' }),
+    message: 'Invalid image format. Allowed: JPEG, PNG, WebP, GIF',
   }),
   size: z.number().max(5 * 1024 * 1024, 'Image size must be less than 5MB'),
 });
@@ -221,7 +221,7 @@ export const savedSearchSchema = z.object({
 // Report validation schema
 export const reportSchema = z.object({
   type: z.enum(['PRODUCT', 'USER'], {
-    errorMap: () => ({ message: 'Report type must be either PRODUCT or USER' }),
+    message: 'Report type must be either PRODUCT or USER',
   }),
   targetId: z.string().cuid('Invalid target ID format'),
   reason: z.string().trim().min(1, 'Reason is required').max(100, 'Reason must be at most 100 characters')
@@ -254,7 +254,7 @@ export const suspendUserSchema = z.object({
 export const updateUserRoleSchema = z.object({
   userId: z.string().cuid('Invalid user ID format'),
   role: z.enum(['USER', 'ADMIN', 'MODERATOR'], {
-    errorMap: () => ({ message: 'Invalid role' }),
+    message: 'Invalid role',
   }),
 });
 

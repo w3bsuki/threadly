@@ -16,80 +16,93 @@ import {
   CheckCheck
 } from 'lucide-react';
 
-interface Conversation {
+interface User {
   id: string;
-  otherUser: {
-    id: string;
-    name: string;
-    imageUrl?: string;
-  };
-  product: {
-    id: string;
-    title: string;
-    imageUrl?: string;
-    price: number;
-  };
-  lastMessage: {
-    content: string;
-    timestamp: Date;
-    isRead: boolean;
-    senderId: string;
-  };
-  unreadCount: number;
+  clerkId: string;
+  email: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  imageUrl?: string | null;
 }
 
-// Mock data - replace with real API calls
-const mockConversations: Conversation[] = [
-  {
-    id: '1',
-    otherUser: {
-      id: 'user1',
-      name: 'Sarah Johnson',
-      imageUrl: undefined,
-    },
-    product: {
-      id: 'prod1',
-      title: 'Vintage Leather Jacket',
-      imageUrl: undefined,
-      price: 89.99,
-    },
-    lastMessage: {
-      content: 'Is this still available? I\'m very interested!',
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-      isRead: false,
-      senderId: 'user1',
-    },
-    unreadCount: 2,
-  },
-  {
-    id: '2',
-    otherUser: {
-      id: 'user2',
-      name: 'Mike Chen',
-      imageUrl: undefined,
-    },
-    product: {
-      id: 'prod2',
-      title: 'Designer Sneakers',
-      imageUrl: undefined,
-      price: 125.00,
-    },
-    lastMessage: {
-      content: 'Great! I can ship it out tomorrow.',
-      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-      isRead: true,
-      senderId: 'currentUser',
-    },
-    unreadCount: 0,
-  },
-];
+interface Product {
+  id: string;
+  title: string;
+  price: any; // Decimal type from Prisma
+  status: string;
+  images: Array<{
+    id: string;
+    imageUrl: string;
+    alt?: string | null;
+  }>;
+}
 
-export function MessagesContent() {
+interface Message {
+  id: string;
+  content: string;
+  senderId: string;
+  createdAt: Date;
+  read: boolean;
+}
+
+interface Conversation {
+  id: string;
+  buyerId: string;
+  sellerId: string;
+  productId: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+  buyer: User;
+  seller: User;
+  product: Product;
+  messages: Message[];
+  _count: {
+    messages: number;
+  };
+}
+
+interface MessagesContentProps {
+  conversations: Conversation[];
+  currentUserId: string;
+}
+
+export function MessagesContent({ conversations, currentUserId }: MessagesContentProps) {
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [newMessage, setNewMessage] = useState('');
 
-  const filteredConversations = mockConversations.filter(conversation =>
+  // Transform conversations to match the component's expected format
+  const transformedConversations = conversations.map(conv => {
+    const otherUser = conv.buyerId === currentUserId ? conv.seller : conv.buyer;
+    const lastMessage = conv.messages[conv.messages.length - 1];
+    const unreadCount = conv._count.messages;
+    
+    return {
+      id: conv.id,
+      otherUser: {
+        id: otherUser.id,
+        name: `${otherUser.firstName || ''} ${otherUser.lastName || ''}`.trim() || otherUser.email,
+        imageUrl: otherUser.imageUrl || undefined,
+      },
+      product: {
+        id: conv.product.id,
+        title: conv.product.title,
+        imageUrl: conv.product.images[0]?.imageUrl,
+        price: typeof conv.product.price === 'object' ? conv.product.price.toNumber() : conv.product.price,
+      },
+      lastMessage: lastMessage ? {
+        content: lastMessage.content,
+        timestamp: lastMessage.createdAt,
+        isRead: lastMessage.read,
+        senderId: lastMessage.senderId,
+      } : null,
+      unreadCount,
+      rawConversation: conv,
+    };
+  });
+
+  const filteredConversations = transformedConversations.filter(conversation =>
     conversation.otherUser.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     conversation.product.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -98,114 +111,105 @@ export function MessagesContent() {
     const now = new Date();
     const diff = now.getTime() - date.getTime();
     const hours = diff / (1000 * 60 * 60);
-    const days = diff / (1000 * 60 * 60 * 24);
-
-    if (days >= 1) {
-      return date.toLocaleDateString();
-    } else if (hours >= 1) {
+    
+    if (hours < 1) {
+      const minutes = Math.floor(diff / (1000 * 60));
+      return `${minutes}m ago`;
+    } else if (hours < 24) {
       return `${Math.floor(hours)}h ago`;
     } else {
-      return `${Math.floor(diff / (1000 * 60))}m ago`;
+      const days = Math.floor(hours / 24);
+      return `${days}d ago`;
     }
   };
 
-  const selectedConv = filteredConversations.find(c => c.id === selectedConversation);
-
-  if (mockConversations.length === 0) {
-    return (
-      <Card>
-        <CardContent className="p-12 text-center">
-          <MessageCircle className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No messages yet</h3>
-          <p className="text-gray-600 mb-6">
-            Start buying or selling to connect with other users
-          </p>
-          <Button asChild>
-            <a href="/browse">Browse Items</a>
-          </Button>
-        </CardContent>
-      </Card>
-    );
-  }
+  const selectedConv = transformedConversations.find(c => c.id === selectedConversation);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[600px]">
+    <div className="grid md:grid-cols-3 gap-6">
       {/* Conversations List */}
       <div className="md:col-span-1">
-        <Card className="h-full">
+        <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MessageCircle className="h-5 w-5" />
-              Conversations
-            </CardTitle>
-            <div className="relative">
-              <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <CardTitle>Conversations</CardTitle>
+            <div className="relative mt-2">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="Search conversations..."
+                placeholder="Search messages..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
+                className="pl-9"
               />
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="space-y-1">
-              {filteredConversations.map((conversation) => (
-                <button
-                  key={conversation.id}
-                  onClick={() => setSelectedConversation(conversation.id)}
-                  className={`w-full p-4 text-left hover:bg-gray-50 border-b transition-colors ${
-                    selectedConversation === conversation.id ? 'bg-blue-50 border-blue-200' : ''
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    {/* User Avatar */}
-                    <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                      {conversation.otherUser.imageUrl ? (
-                        <img
-                          src={conversation.otherUser.imageUrl}
-                          alt={conversation.otherUser.name}
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-sm font-medium text-gray-600">
-                          {conversation.otherUser.name.charAt(0).toUpperCase()}
-                        </span>
-                      )}
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
-                        <h4 className="font-medium text-sm truncate">
-                          {conversation.otherUser.name}
-                        </h4>
-                        <div className="flex items-center gap-1">
-                          {conversation.unreadCount > 0 && (
-                            <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
-                              {conversation.unreadCount}
-                            </Badge>
-                          )}
-                          <span className="text-xs text-gray-500">
-                            {formatTime(conversation.lastMessage.timestamp)}
-                          </span>
-                        </div>
+            <div className="divide-y">
+              {filteredConversations.length === 0 ? (
+                <div className="p-6 text-center text-gray-500">
+                  No conversations yet
+                </div>
+              ) : (
+                filteredConversations.map((conversation) => (
+                  <button
+                    key={conversation.id}
+                    onClick={() => setSelectedConversation(conversation.id)}
+                    className={`w-full p-4 hover:bg-gray-50 transition-colors text-left ${
+                      selectedConversation === conversation.id ? 'bg-gray-50' : ''
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
+                        {conversation.otherUser.imageUrl ? (
+                          <img
+                            src={conversation.otherUser.imageUrl}
+                            alt={conversation.otherUser.name}
+                            className="w-10 h-10 rounded-full object-cover"
+                          />
+                        ) : (
+                          <User className="h-5 w-5 text-gray-600" />
+                        )}
                       </div>
                       
-                      <p className="text-xs text-gray-600 mb-2 truncate">
-                        {conversation.product.title} • ${conversation.product.price}
-                      </p>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1">
+                          <h4 className="font-medium text-sm">{conversation.otherUser.name}</h4>
+                          {conversation.lastMessage && (
+                            <span className="text-xs text-gray-500">
+                              {formatTime(new Date(conversation.lastMessage.timestamp))}
+                            </span>
+                          )}
+                        </div>
+                        
+                        <div className="flex items-center gap-2 mb-1">
+                          <Package className="h-3 w-3 text-gray-400" />
+                          <span className="text-xs text-gray-600 truncate">
+                            {conversation.product.title}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            ${conversation.product.price}
+                          </span>
+                        </div>
+                        
+                        {conversation.lastMessage && (
+                          <p className={`text-sm truncate ${
+                            !conversation.lastMessage.isRead && conversation.lastMessage.senderId !== currentUserId
+                              ? 'font-medium text-gray-900'
+                              : 'text-gray-500'
+                          }`}>
+                            {conversation.lastMessage.content}
+                          </p>
+                        )}
+                      </div>
                       
-                      <p className={`text-xs truncate ${
-                        !conversation.lastMessage.isRead && conversation.lastMessage.senderId !== 'currentUser'
-                          ? 'font-medium text-gray-900'
-                          : 'text-gray-500'
-                      }`}>
-                        {conversation.lastMessage.content}
-                      </p>
+                      {conversation.unreadCount > 0 && (
+                        <Badge variant="default" className="ml-2">
+                          {conversation.unreadCount}
+                        </Badge>
+                      )}
                     </div>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
@@ -254,35 +258,48 @@ export function MessagesContent() {
               {/* Messages */}
               <CardContent className="flex-1 p-4 overflow-y-auto">
                 <div className="space-y-4">
-                  {/* Sample messages */}
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                      <span className="text-xs font-medium text-gray-600">
-                        {selectedConv.otherUser.name.charAt(0).toUpperCase()}
-                      </span>
+                  {selectedConv.rawConversation.messages.length === 0 ? (
+                    <div className="text-center text-gray-500 py-8">
+                      No messages yet. Start the conversation!
                     </div>
-                    <div className="flex-1">
-                      <div className="bg-gray-100 rounded-lg p-3 max-w-xs">
-                        <p className="text-sm">Hi! I'm interested in this item. Is it still available?</p>
-                      </div>
-                      <div className="flex items-center gap-1 mt-1">
-                        <Clock className="h-3 w-3 text-gray-400" />
-                        <span className="text-xs text-gray-500">2 hours ago</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3 justify-end">
-                    <div className="flex-1 text-right">
-                      <div className="bg-blue-600 text-white rounded-lg p-3 max-w-xs ml-auto">
-                        <p className="text-sm">Yes, it's still available! Would you like more photos?</p>
-                      </div>
-                      <div className="flex items-center gap-1 mt-1 justify-end">
-                        <CheckCheck className="h-3 w-3 text-gray-400" />
-                        <span className="text-xs text-gray-500">1 hour ago</span>
-                      </div>
-                    </div>
-                  </div>
+                  ) : (
+                    selectedConv.rawConversation.messages.map((message) => {
+                      const isSender = message.senderId === currentUserId;
+                      return (
+                        <div
+                          key={message.id}
+                          className={`flex items-start gap-3 ${isSender ? 'justify-end' : ''}`}
+                        >
+                          {!isSender && (
+                            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                              <span className="text-xs font-medium text-gray-600">
+                                {selectedConv.otherUser.name.charAt(0).toUpperCase()}
+                              </span>
+                            </div>
+                          )}
+                          <div className={`flex-1 ${isSender ? 'text-right' : ''}`}>
+                            <div className={`rounded-lg p-3 max-w-xs ${
+                              isSender 
+                                ? 'bg-blue-600 text-white ml-auto' 
+                                : 'bg-gray-100'
+                            }`}>
+                              <p className="text-sm">{message.content}</p>
+                            </div>
+                            <div className={`flex items-center gap-1 mt-1 ${
+                              isSender ? 'justify-end' : ''
+                            }`}>
+                              {isSender && message.read && (
+                                <CheckCheck className="h-3 w-3 text-gray-400" />
+                              )}
+                              <span className="text-xs text-gray-500">
+                                {formatTime(new Date(message.createdAt))}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
               </CardContent>
 
@@ -295,7 +312,8 @@ export function MessagesContent() {
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyPress={(e) => {
                       if (e.key === 'Enter' && newMessage.trim()) {
-                        // Handle send message
+                        // TODO: Implement send message functionality
+                        console.log('Send message:', newMessage);
                         setNewMessage('');
                       }
                     }}
@@ -306,7 +324,8 @@ export function MessagesContent() {
                     disabled={!newMessage.trim()}
                     onClick={() => {
                       if (newMessage.trim()) {
-                        // Handle send message
+                        // TODO: Implement send message functionality
+                        console.log('Send message:', newMessage);
                         setNewMessage('');
                       }
                     }}

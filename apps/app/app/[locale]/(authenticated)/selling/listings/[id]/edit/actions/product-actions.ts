@@ -184,7 +184,7 @@ export async function updateProduct(productId: string, input: z.infer<typeof upd
       return {
         success: false,
         error: 'Validation failed',
-        details: error.errors,
+        details: error.issues,
       };
     }
 

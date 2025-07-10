@@ -21,19 +21,19 @@ const searchParamsSchema = z.object({
   maxPrice: z.string().transform(Number).optional(),
   sellerRating: z.string().transform(Number).optional(),
   sortBy: z.enum(['relevance', 'price_asc', 'price_desc', 'newest', 'most_viewed', 'most_favorited']).optional(),
-  page: z.string().transform(Number).default('0'),
-  limit: z.string().transform(Number).default('20'),
+  page: z.string().optional().default('0').transform(Number),
+  limit: z.string().optional().default('20').transform(Number),
 });
 
 const suggestionsParamsSchema = z.object({
   q: z.string().min(1),
-  limit: z.string().transform(Number).default('5'),
+  limit: z.string().optional().default('5').transform(Number),
 });
 
 const saveSearchSchema = z.object({
   name: z.string().min(1).max(100),
   query: z.string().min(1),
-  filters: z.record(z.unknown()).optional(),
+  filters: z.record(z.string(), z.unknown()).optional(),
   alertsEnabled: z.boolean().default(false),
 });
 
@@ -101,7 +101,7 @@ export class SearchApiHandler {
     } catch (error) {
       if (error instanceof z.ZodError) {
         return NextResponse.json(
-          { error: 'Invalid search parameters', details: error.errors },
+          { error: 'Invalid search parameters', details: error.issues },
           { status: 400 }
         );
       }
@@ -131,7 +131,7 @@ export class SearchApiHandler {
     } catch (error) {
       if (error instanceof z.ZodError) {
         return NextResponse.json(
-          { error: 'Invalid parameters', details: error.errors },
+          { error: 'Invalid parameters', details: error.issues },
           { status: 400 }
         );
       }
@@ -222,7 +222,7 @@ export class SearchApiHandler {
     } catch (error) {
       if (error instanceof z.ZodError) {
         return NextResponse.json(
-          { error: 'Invalid data', details: error.errors },
+          { error: 'Invalid data', details: error.issues },
           { status: 400 }
         );
       }
@@ -274,7 +274,7 @@ export class SearchApiHandler {
     } catch (error) {
       if (error instanceof z.ZodError) {
         return NextResponse.json(
-          { error: 'Invalid data', details: error.errors },
+          { error: 'Invalid data', details: error.issues },
           { status: 400 }
         );
       }
@@ -308,7 +308,7 @@ export class SearchApiHandler {
     } catch (error) {
       if (error instanceof z.ZodError) {
         return NextResponse.json(
-          { error: 'Invalid data', details: error.errors },
+          { error: 'Invalid data', details: error.issues },
           { status: 400 }
         );
       }

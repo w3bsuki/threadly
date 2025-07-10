@@ -21,14 +21,9 @@ import { z } from 'zod';
 export const env = createEnv({
   // Add error handler for missing environment variables
   onValidationError: (error) => {
-    console.error(
-      '❌ Invalid environment variables detected:',
-      error.flatten().fieldErrors
-    );
+    console.error('❌ Invalid environment variables detected:', error);
     // In production, we want to fail fast
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error('Invalid environment variables - check deployment configuration');
-    }
+    throw new Error('Invalid environment variables - check deployment configuration');
   },
   extends: [
     auth(),

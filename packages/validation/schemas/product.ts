@@ -20,7 +20,7 @@ export const productConditionSchema = z.enum([
   'GOOD',
   'SATISFACTORY',
 ], {
-  errorMap: () => ({ message: 'Invalid product condition' }),
+  message: 'Invalid product condition',
 });
 
 // Product categories
@@ -31,7 +31,7 @@ export const productCategorySchema = z.enum([
   'UNISEX',
   'DESIGNER',
 ], {
-  errorMap: () => ({ message: 'Invalid product category' }),
+  message: 'Invalid product category',
 });
 
 // Product subcategories
@@ -64,7 +64,7 @@ export const productSubcategorySchema = z.enum([
   // General
   'OTHER',
 ], {
-  errorMap: () => ({ message: 'Invalid product subcategory' }),
+  message: 'Invalid product subcategory',
 });
 
 // Product sizes
@@ -81,7 +81,7 @@ export const productSizeSchema = z.enum([
   'ONE_SIZE',
   'CUSTOM',
 ], {
-  errorMap: () => ({ message: 'Invalid product size' }),
+  message: 'Invalid product size',
 });
 
 // Product colors
@@ -104,7 +104,7 @@ export const productColorSchema = z.enum([
   'MULTICOLOR',
   'OTHER',
 ], {
-  errorMap: () => ({ message: 'Invalid product color' }),
+  message: 'Invalid product color',
 });
 
 // Product materials
@@ -121,7 +121,7 @@ export const productMaterialSchema = z.enum([
   'MIXED',
   'OTHER',
 ], {
-  errorMap: () => ({ message: 'Invalid product material' }),
+  message: 'Invalid product material',
 });
 
 // Brand validation

@@ -36,7 +36,7 @@ export async function validateSearchParams<T>(
     throw createApiError(
       ErrorCode.VALIDATION_FAILED,
       'Search params validation failed',
-      result.error.errors,
+      result.error.issues,
       context ? { 
         userId: context.userId,
         userRole: context.userRole,
@@ -59,7 +59,7 @@ export async function validateBody<T>(
       throw createApiError(
         ErrorCode.VALIDATION_FAILED,
         'Body validation failed',
-        result.error.errors,
+        result.error.issues,
         context ? { 
           userId: context.userId,
           userRole: context.userRole,
@@ -95,7 +95,7 @@ export async function validateFormData<T>(
       throw createApiError(
         ErrorCode.VALIDATION_FAILED,
         'Form data validation failed',
-        result.error.errors,
+        result.error.issues,
         context ? { 
           userId: context.userId,
           userRole: context.userRole,

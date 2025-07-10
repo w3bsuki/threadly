@@ -18,7 +18,7 @@ export const messageTypeSchema = z.enum([
   'OFFER',
   'SYSTEM',
 ], {
-  errorMap: () => ({ message: 'Invalid message type' }),
+  message: 'Invalid message type',
 });
 
 // Conversation status
@@ -28,7 +28,7 @@ export const conversationStatusSchema = z.enum([
   'BLOCKED',
   'DELETED',
 ], {
-  errorMap: () => ({ message: 'Invalid conversation status' }),
+  message: 'Invalid conversation status',
 });
 
 // Message content validation (with profanity filter applied later)

@@ -17,17 +17,17 @@ import {
 
 // User roles
 export const userRoleSchema = z.enum(['USER', 'SELLER', 'ADMIN'], {
-  errorMap: () => ({ message: 'Invalid user role' }),
+  message: 'Invalid user role',
 });
 
 // User status
 export const userStatusSchema = z.enum(['ACTIVE', 'SUSPENDED', 'DELETED'], {
-  errorMap: () => ({ message: 'Invalid user status' }),
+  message: 'Invalid user status',
 });
 
 // Profile visibility
 export const profileVisibilitySchema = z.enum(['PUBLIC', 'PRIVATE', 'FOLLOWERS_ONLY'], {
-  errorMap: () => ({ message: 'Invalid profile visibility' }),
+  message: 'Invalid profile visibility',
 });
 
 // User preferences schema

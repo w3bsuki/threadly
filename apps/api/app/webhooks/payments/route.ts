@@ -122,7 +122,12 @@ const handlePaymentIntentSucceeded = async (
             status: 'PENDING',
           },
           include: {
-            product: true
+            product: {
+              select: {
+                id: true,
+                sellerId: true
+              }
+            }
           }
         });
 
@@ -164,6 +169,30 @@ const handlePaymentIntentSucceeded = async (
           )
         );
 
+        // Credit seller balances
+        const sellerUpdates = new Map<string, number>();
+        
+        for (const order of orders) {
+          const sellerId = order.product.sellerId;
+          const platformFee = order.amount.toNumber() * 0.05; // 5% fee
+          const sellerAmount = order.amount.toNumber() - platformFee;
+          
+          const currentAmount = sellerUpdates.get(sellerId) || 0;
+          sellerUpdates.set(sellerId, currentAmount + sellerAmount);
+        }
+        
+        // Update seller balances
+        for (const [sellerId, amount] of sellerUpdates) {
+          await tx.user.update({
+            where: { id: sellerId },
+            data: {
+              sellerBalance: {
+                increment: amount
+              }
+            }
+          });
+        }
+
         return { orders: updatedOrders, payments };
       });
     } else if (orderId && productId) {
@@ -194,6 +223,28 @@ const handlePaymentIntentSucceeded = async (
             status: 'completed',
           },
         });
+
+        // Credit seller balance (minus 5% platform fee)
+        const saleAmount = paymentIntent.amount / 100;
+        const platformFee = saleAmount * 0.05;
+        const sellerAmount = saleAmount - platformFee;
+        
+        // Get product details to find seller
+        const product = await tx.product.findUnique({
+          where: { id: productId },
+          select: { sellerId: true }
+        });
+        
+        if (product) {
+          await tx.user.update({
+            where: { id: product.sellerId },
+            data: {
+              sellerBalance: {
+                increment: sellerAmount
+              }
+            }
+          });
+        }
 
         return { order, payment };
       });

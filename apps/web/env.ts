@@ -7,6 +7,7 @@ import { keys as email } from '@repo/email/keys';
 import { keys as flags } from '@repo/feature-flags/keys';
 import { keys as core } from '@repo/next-config/keys';
 import { keys as observability } from '@repo/observability/keys';
+import { keys as payments } from '@repo/payments/keys';
 import { keys as rateLimit } from '@repo/rate-limit/keys';
 import { keys as search } from '@repo/search/keys';
 import { keys as security } from '@repo/security/keys';
@@ -25,6 +26,7 @@ export const env = createEnv({
     email(),
     flags(),
     observability(),
+    payments(),
     rateLimit(),
     search(),
     security(),

@@ -6,7 +6,7 @@
  */
 
 // Export all schemas
-export * from './schemas';
+export * from './schemas/index';
 export * from './schemas/product';
 export * from './schemas/user';
 export * from './schemas/message';

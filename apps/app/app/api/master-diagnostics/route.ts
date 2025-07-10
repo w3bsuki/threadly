@@ -14,6 +14,7 @@ export async function GET() {
     sections: {} as any,
     errors: [] as string[],
     warnings: [] as string[],
+    deploymentChecklist: {} as any,
   };
 
   // 1. Environment Check
@@ -86,7 +87,7 @@ export async function GET() {
   if (process.env.STRIPE_SECRET_KEY) {
     try {
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-        apiVersion: '2025-05-28.basil',
+        apiVersion: '2025-06-30.basil',
       });
       
       // Try to retrieve account info
@@ -176,7 +177,7 @@ export async function GET() {
   } catch (error: any) {
     envLoadTest.error = {
       message: error.message,
-      invalidVars: error.errors || [],
+      invalidVars: error.issues || [],
     };
     diagnostics.errors.push(`Env validation failed: ${error.message}`);
   }

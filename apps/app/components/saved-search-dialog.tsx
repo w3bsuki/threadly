@@ -14,7 +14,7 @@ import { Button } from '@repo/design-system/components';
 import { Input } from '@repo/design-system/components';
 import { Label } from '@repo/design-system/components';
 import { Switch } from '@repo/design-system/components';
-import { toast } from '@/components/toast';
+import { toast } from '@repo/design-system/components';
 
 interface SavedSearchDialogProps {
   query: string;

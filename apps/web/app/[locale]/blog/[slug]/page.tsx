@@ -1,4 +1,4 @@
-import { Sidebar } from '@/components/sidebar';
+import { ContentSidebar } from '@/components/content-sidebar';
 import { env } from '@/env';
 import { ArrowLeftIcon } from '@radix-ui/react-icons';
 import { blog } from '@repo/cms';
@@ -118,7 +118,7 @@ const BlogPost = async ({ params }: BlogPostProperties) => {
             </div>
           </div>
           <div className="sticky top-24 hidden shrink-0 md:block">
-            <Sidebar
+            <ContentSidebar
               toc={<TableOfContents data={post.body.json.toc} />}
               readingTime={`${post.body.readingTime} min read`}
               date={new Date(post.date)}

@@ -12,7 +12,7 @@ let stripe: Stripe | null = null;
 
 if (env.STRIPE_SECRET_KEY) {
   stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-    apiVersion: '2025-05-28.basil',
+    apiVersion: '2025-06-30.basil',
   });
 }
 
@@ -238,7 +238,7 @@ export async function POST(request: NextRequest) {
     
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid request data', details: error.errors },
+        { error: 'Invalid request data', details: error.issues },
         { status: 400 }
       );
     }

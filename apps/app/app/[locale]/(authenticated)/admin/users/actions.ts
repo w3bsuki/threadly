@@ -13,7 +13,7 @@ export async function updateUserRole(userId: string, role: 'USER' | 'ADMIN' | 'M
   // Validate input
   const validationResult = updateUserRoleSchema.safeParse({ userId, role });
   if (!validationResult.success) {
-    throw new Error(`Invalid input: ${validationResult.error.errors.map(e => e.message).join(', ')}`);
+    throw new Error(`Invalid input: ${validationResult.error.issues.map(e => e.message).join(', ')}`);
   }
   
   const { userId: validatedUserId, role: validatedRole } = validationResult.data;
@@ -33,7 +33,7 @@ export async function suspendUser(userId: string, reason?: string) {
   // Validate input
   const validationResult = suspendUserSchema.safeParse({ userId, reason });
   if (!validationResult.success) {
-    throw new Error(`Invalid input: ${validationResult.error.errors.map(e => e.message).join(', ')}`);
+    throw new Error(`Invalid input: ${validationResult.error.issues.map(e => e.message).join(', ')}`);
   }
   
   const { userId: validatedUserId, reason: validatedReason } = validationResult.data;
@@ -211,7 +211,7 @@ export async function bulkUpdateUsers({
     data: {} 
   });
   if (!validationResult.success) {
-    throw new Error(`Invalid input: ${validationResult.error.errors.map(e => e.message).join(', ')}`);
+    throw new Error(`Invalid input: ${validationResult.error.issues.map(e => e.message).join(', ')}`);
   }
 
   const { ids: validatedUserIds } = validationResult.data;

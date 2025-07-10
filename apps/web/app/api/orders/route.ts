@@ -3,11 +3,7 @@ import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { z } from 'zod';
 import { log, logError } from '@repo/observability/server';
-import Stripe from 'stripe';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-05-28.basil',
-});
+import { stripe, calculatePlatformFee, isStripeConfigured } from '@repo/payments';
 
 const createOrderSchema = z.object({
   items: z.array(z.object({
@@ -43,6 +39,14 @@ const createOrderSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if Stripe is configured
+    if (!isStripeConfigured()) {
+      return NextResponse.json(
+        { error: 'Payment processing is not configured' },
+        { status: 503 }
+      );
+    }
+
     // Authentication
     const user = await currentUser();
     if (!user) {
@@ -81,7 +85,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Calculate platform fee (5% of subtotal)
-    const platformFee = Math.round(validatedData.costs.subtotal * 0.05);
+    const platformFeeInCents = calculatePlatformFee(validatedData.costs.subtotal * 100);
 
     // Create Stripe Payment Intent
     const paymentIntent = await stripe.paymentIntents.create({
@@ -92,7 +96,7 @@ export async function POST(request: NextRequest) {
         orderType: 'cart_checkout',
         itemCount: validatedData.items.length.toString(),
       },
-      application_fee_amount: platformFee * 100, // Platform fee in cents
+      application_fee_amount: platformFeeInCents, // Platform fee in cents
     });
 
     // Create orders in database transaction
@@ -172,7 +176,7 @@ export async function POST(request: NextRequest) {
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid request data', details: error.errors },
+        { error: 'Invalid request data', details: error.issues },
         { status: 400 }
       );
     }

@@ -33,6 +33,14 @@ model User {
   suspended               Boolean   @default(false)
   suspendedAt             DateTime?
   suspendedReason         String?
+  
+  // Seller payout fields
+  sellerBalance           Decimal   @default(0) @db.Decimal(10, 2)
+  bankAccountNumber       String?
+  bankRoutingNumber       String?
+  accountHolderName       String?
+  payoutMethod            PayoutMethod? @default(BANK_TRANSFER)
+  minPayoutAmount         Decimal   @default(20) @db.Decimal(10, 2)
 
   // Relations
   listings            Product[]
@@ -53,8 +61,10 @@ model User {
   reportsAbout        Report[]        @relation("ReportedUser")
   savedSearches       SavedSearch[]
   searchHistory       SearchHistory[]
+  payouts             Payout[]
 
   preferences         UserPreferences?
+  sellerProfile       SellerProfile?
 
   @@index([clerkId])
   @@index([email])
@@ -420,6 +430,46 @@ model SearchHistory {
   @@index([createdAt])
 }
 
+// Seller profile for additional seller information
+model SellerProfile {
+  id                String    @id @default(cuid())
+  userId            String    @unique
+  displayName       String
+  bio               String?
+  shippingFrom      String
+  processingTime    Int       @default(3) // days
+  defaultShippingCost Decimal @default(5) @db.Decimal(10, 2)
+  shippingNotes     String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// Payout requests from sellers
+model Payout {
+  id          String       @id @default(cuid())
+  sellerId    String
+  amount      Decimal      @db.Decimal(10, 2)
+  status      PayoutStatus @default(PENDING)
+  method      PayoutMethod @default(BANK_TRANSFER)
+  reference   String?      // Bank transfer reference or PayPal transaction ID
+  notes       String?      // Admin notes
+  requestedAt DateTime     @default(now())
+  processedAt DateTime?
+  processedBy String?      // Admin who processed the payout
+
+  // Relations
+  seller      User         @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@index([sellerId])
+  @@index([status])
+  @@index([requestedAt])
+}
+
 // Enums
 enum UserRole {
   USER
@@ -485,4 +535,17 @@ enum ReportStatus {
   UNDER_REVIEW
   RESOLVED
   DISMISSED
+}
+
+enum PayoutMethod {
+  BANK_TRANSFER
+  PAYPAL
+}
+
+enum PayoutStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
 }

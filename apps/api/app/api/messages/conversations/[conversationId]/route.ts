@@ -250,7 +250,7 @@ export async function PATCH(
         {
           success: false,
           error: 'Invalid update data',
-          details: error.errors,
+          details: error.issues,
         },
         { status: 400 }
       );

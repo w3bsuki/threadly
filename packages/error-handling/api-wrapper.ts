@@ -108,19 +108,19 @@ export function createApiHandler<T = any>(
             body = config.validation.body.parse(body);
           }
           if (config.validation.query) {
-            query = config.validation.query.parse(query);
+            query = config.validation.query.parse(query) as { [k: string]: string };
           }
           if (config.validation.params) {
-            params = config.validation.params.parse(params);
+            params = config.validation.params.parse(params) as {};
           }
         } catch (error) {
           if (error instanceof z.ZodError) {
             throw new AppError(
-              `Validation error: ${error.errors.map(e => e.message).join(', ')}`,
+              `Validation error: ${error.issues.map(e => e.message).join(', ')}`,
               400,
               ErrorCodes.VALIDATION_ERROR,
               true,
-              { errors: error.errors }
+              { errors: error.issues }
             );
           }
           throw error;

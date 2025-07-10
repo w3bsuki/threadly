@@ -1,8 +1,5 @@
-import { captureRequestError } from '@sentry/nextjs';
-import { initializeSentry } from '@repo/observability/instrumentation';
-
-// Initialize Sentry
-export const register = initializeSentry();
+// Temporarily disabled due to self is not defined error
+export const register = () => {};
 
 // Next.js 15 error handling hook for request errors
 export async function onRequestError(
@@ -18,5 +15,5 @@ export async function onRequestError(
     routeType: string;
   }
 ) {
-  await captureRequestError(error, request, context);
+  console.error('Request error:', error);
 }

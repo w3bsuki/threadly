@@ -15,7 +15,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { createProduct } from '../actions/create-product';
 import { ImageUpload } from './image-upload';
 import { CategorySelector } from './category-selector';
-import { toast } from '@/components/toast';
+import { toast } from '@repo/design-system/components';
 import { FormErrorBoundary } from '@/components/error-boundaries';
 
 const productSchema = z.object({

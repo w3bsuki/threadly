@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/co
 import { Badge } from '@repo/design-system/components';
 import { Avatar, AvatarFallback, AvatarImage } from '@repo/design-system/components';
 import { Separator } from '@repo/design-system/components';
-import { toast } from '@/components/toast';
+import { toast } from '@repo/design-system/components';
 import { ReportDialog } from '@/components/report-dialog';
 import {
   Heart,

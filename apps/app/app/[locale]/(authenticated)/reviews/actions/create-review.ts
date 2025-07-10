@@ -143,7 +143,7 @@ export async function createReview(input: z.infer<typeof createReviewSchema>) {
       return {
         success: false,
         error: 'Invalid review data',
-        details: error.errors,
+        details: error.issues,
       };
     }
 

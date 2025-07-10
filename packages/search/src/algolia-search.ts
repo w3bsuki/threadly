@@ -1,4 +1,4 @@
-import algoliasearch from 'algoliasearch';
+import { algoliasearch } from 'algoliasearch';
 import { withRetry } from '@repo/error-handling';
 import type { 
   SearchConfig, 
@@ -12,81 +12,46 @@ import type {
 } from './types';
 import { SEARCH_FACETS, SEARCH_SETTINGS } from './types';
 
+// Algolia search parameters interface
+interface AlgoliaSearchParams {
+  page: number;
+  hitsPerPage: number;
+  facets: string[];
+  maxValuesPerFacet: number;
+  query?: string;
+  filters?: string;
+  facetFilters?: string[];
+  numericFilters?: string[];
+  sortFacetValuesBy?: string;
+  indexName?: string;
+}
+
 export class AlgoliaSearchService implements SearchEngine, SearchIndexable {
   private client: ReturnType<typeof algoliasearch>;
-  private searchIndex: any; // Using any for Algolia index type
   private indexName: string;
 
   constructor(config: SearchConfig) {
     this.client = algoliasearch(config.appId, config.apiKey);
-    this.searchIndex = this.client.initIndex(config.indexName);
     this.indexName = config.indexName;
     
-    this.configureIndex();
+    // TODO: Fix setSettings API for v5
+    // this.configureIndex();
   }
 
   private async configureIndex() {
-    try {
-      await this.searchIndex.setSettings({
-        // Searchable attributes with priorities
-        searchableAttributes: [
-          'title',
-          'brand',
-          'description',
-          'categoryName',
-          'sellerName',
-          'tags',
-        ],
-        
-        // Attributes for faceting and filtering
-        attributesForFaceting: [
-          'searchable(categoryName)',
-          'searchable(brand)',
-          'condition',
-          'size',
-          'colors',
-          'materials',
-          'sellerRating',
-          'sellerLocation',
-          'availableForTrade',
-          'status',
-        ],
-        
-        // Custom ranking attributes
-        customRanking: [
-          'desc(views)',
-          'desc(favorites)',
-          'desc(sellerRating)',
-          'desc(createdAt)',
-        ],
-        
-        // Ranking formula
-        ranking: [
-          'typo',
-          'geo',
-          'words',
-          'filters',
-          'proximity',
-          'attribute',
-          'exact',
-          'custom',
-        ],
-        
-        // Highlighting
-        highlightPreTag: '<mark>',
-        highlightPostTag: '</mark>',
-        
-        // Pagination
-        hitsPerPage: SEARCH_SETTINGS.DEFAULT_HITS_PER_PAGE,
-        maxValuesPerFacet: 100,
-        
-        // Advanced features
-        removeWordsIfNoResults: 'allOptional',
-        advancedSyntax: true,
-        allowCompressionOfIntegerArray: true,
-      });
-    } catch (error) {
-    }
+    // TODO: Fix setSettings API for Algolia v5
+    // The v5 API has changed and the exact structure for setSettings is unclear
+    // For now, index configuration should be done manually in the Algolia dashboard
+    // or we need to investigate the correct v5 API structure
+    
+    // Original v4 settings preserved for reference:
+    // - searchableAttributes: ['title', 'brand', 'description', 'categoryName', 'sellerName', 'tags']
+    // - attributesForFaceting: ['searchable(categoryName)', 'searchable(brand)', 'condition', 'size', etc.]
+    // - customRanking: ['desc(views)', 'desc(favorites)', 'desc(sellerRating)', 'desc(createdAt)']
+    // - ranking: ['typo', 'geo', 'words', 'filters', 'proximity', 'attribute', 'exact', 'custom']
+    // - highlightPreTag: '<mark>', highlightPostTag: '</mark>'
+    // - hitsPerPage: DEFAULT_HITS_PER_PAGE, maxValuesPerFacet: 100
+    // - removeWordsIfNoResults: 'allOptional', advancedSyntax: true
   }
 
   // Indexing methods
@@ -96,7 +61,10 @@ export class AlgoliaSearchService implements SearchEngine, SearchIndexable {
       
       for (const chunk of chunks) {
         await withRetry(
-          () => this.searchIndex.saveObjects(chunk.map(p => ({ ...p, objectID: p.id }))),
+          () => this.client.saveObjects({
+            indexName: this.indexName,
+            objects: chunk.map(p => ({ ...p, objectID: p.id }))
+          }),
           { retries: 3, minTimeout: 1000 }
         );
       }
@@ -108,7 +76,10 @@ export class AlgoliaSearchService implements SearchEngine, SearchIndexable {
   async updateProduct(product: SearchProduct): Promise<void> {
     try {
       await withRetry(
-        () => this.searchIndex.saveObject({ ...product, objectID: product.id }),
+        () => this.client.saveObject({
+          indexName: this.indexName,
+          body: { ...product, objectID: product.id }
+        }),
         { retries: 3, minTimeout: 500 }
       );
     } catch (error) {
@@ -119,7 +90,10 @@ export class AlgoliaSearchService implements SearchEngine, SearchIndexable {
   async deleteProduct(productId: string): Promise<void> {
     try {
       await withRetry(
-        () => this.searchIndex.deleteObject(productId),
+        () => this.client.deleteObject({
+          indexName: this.indexName,
+          objectID: productId
+        }),
         { retries: 3, minTimeout: 500 }
       );
     } catch (error) {
@@ -129,7 +103,9 @@ export class AlgoliaSearchService implements SearchEngine, SearchIndexable {
 
   async clearIndex(): Promise<void> {
     try {
-      await this.searchIndex.clearObjects();
+      await this.client.clearObjects({
+        indexName: this.indexName
+      });
     } catch (error) {
       throw error;
     }
@@ -137,10 +113,18 @@ export class AlgoliaSearchService implements SearchEngine, SearchIndexable {
 
   async getIndexStats() {
     try {
-      const stats = await this.searchIndex.getTask(0); // This is a simplified approach
+      // In v5, we can use search with empty query to get stats
+      const result = await this.client.searchSingleIndex({
+        indexName: this.indexName,
+        searchParams: {
+          query: '',
+          hitsPerPage: 0,
+          analytics: false
+        }
+      });
       return {
-        objectCount: 0, // Would need to implement proper stats fetching
-        fileSize: 0,
+        objectCount: result.nbHits || 0,
+        fileSize: 0, // File size not available in search response
       };
     } catch (error) {
       return { objectCount: 0, fileSize: 0 };
@@ -154,7 +138,7 @@ export class AlgoliaSearchService implements SearchEngine, SearchIndexable {
     hitsPerPage: number = SEARCH_SETTINGS.DEFAULT_HITS_PER_PAGE
   ): Promise<SearchResult> {
     try {
-      const searchParams: any = {
+      const searchParams: AlgoliaSearchParams = {
         page,
         hitsPerPage: Math.min(hitsPerPage, SEARCH_SETTINGS.MAX_HITS_PER_PAGE),
         facets: Object.values(SEARCH_FACETS),
@@ -216,17 +200,27 @@ export class AlgoliaSearchService implements SearchEngine, SearchIndexable {
       }
 
       const result = await withRetry(
-        () => this.searchIndex.search(filters.query || '', searchParams),
+        () => this.client.searchSingleIndex({
+          indexName: searchParams.indexName || this.indexName,
+          searchParams: {
+            query: filters.query || '',
+            page: searchParams.page,
+            hitsPerPage: searchParams.hitsPerPage,
+            facets: searchParams.facets,
+            maxValuesPerFacet: searchParams.maxValuesPerFacet,
+            filters: searchParams.filters
+          }
+        }),
         { retries: 3, minTimeout: 500 }
       ) as any;
 
       return {
-        hits: result.hits as SearchProduct[],
-        totalHits: result.nbHits,
-        page: result.page,
-        totalPages: result.nbPages,
-        processingTimeMS: result.processingTimeMS,
-        facets: result.facets,
+        hits: result.hits as any as SearchProduct[],
+        totalHits: result.nbHits || 0,
+        page: result.page || 0,
+        totalPages: result.nbPages || 0,
+        processingTimeMS: result.processingTimeMS || 0,
+        facets: result.facets || {},
         filters,
       };
     } catch (error) {
@@ -238,16 +232,20 @@ export class AlgoliaSearchService implements SearchEngine, SearchIndexable {
     try {
       if (!query || query.length < 2) return [];
 
-      const result = await this.searchIndex.search(query, {
-        hitsPerPage: 0,
-        facets: [SEARCH_FACETS.CATEGORIES],
-        maxValuesPerFacet: limit,
+      const result = await this.client.searchSingleIndex({
+        indexName: this.indexName,
+        searchParams: {
+          query,
+          hitsPerPage: 0,
+          facets: [SEARCH_FACETS.CATEGORIES],
+          maxValuesPerFacet: limit,
+        }
       });
 
       const suggestions: SearchSuggestion[] = [];
 
       // Add query-based suggestions
-      if (result.nbHits > 0) {
+      if (result.nbHits && result.nbHits > 0) {
         suggestions.push({
           query,
           count: result.nbHits,
@@ -275,13 +273,17 @@ export class AlgoliaSearchService implements SearchEngine, SearchIndexable {
 
   async getPopularProducts(limit: number = SEARCH_SETTINGS.POPULAR_PRODUCTS_LIMIT): Promise<SearchProduct[]> {
     try {
-      const result = await this.searchIndex.search('', {
-        hitsPerPage: limit,
-        filters: 'status:"AVAILABLE"',
-        // This will use the custom ranking which prioritizes views and favorites
+      const result = await this.client.searchSingleIndex({
+        indexName: this.indexName,
+        searchParams: {
+          query: '',
+          hitsPerPage: limit,
+          filters: 'status:"AVAILABLE"',
+          // This will use the custom ranking which prioritizes views and favorites
+        }
       });
 
-      return result.hits as SearchProduct[];
+      return result.hits as any as SearchProduct[];
     } catch (error) {
       return [];
     }
@@ -290,7 +292,10 @@ export class AlgoliaSearchService implements SearchEngine, SearchIndexable {
   async getSimilarProducts(productId: string, limit: number = SEARCH_SETTINGS.SIMILAR_PRODUCTS_LIMIT): Promise<SearchProduct[]> {
     try {
       // First get the product to find similar ones
-      const product = await this.searchIndex.getObject(productId) as SearchProduct;
+      const product = await this.client.getObject({
+        indexName: this.indexName,
+        objectID: productId
+      }) as unknown as SearchProduct;
       
       if (!product) return [];
 
@@ -298,12 +303,16 @@ export class AlgoliaSearchService implements SearchEngine, SearchIndexable {
       const priceMin = product.price * 0.5;
       const priceMax = product.price * 2;
 
-      const result = await this.searchIndex.search('', {
-        hitsPerPage: limit + 1, // +1 to exclude the original product
-        filters: `status:"AVAILABLE" AND categoryName:"${product.categoryName}" AND price:${priceMin} TO ${priceMax} AND NOT objectID:"${productId}"`,
+      const result = await this.client.searchSingleIndex({
+        indexName: this.indexName,
+        searchParams: {
+          query: '',
+          hitsPerPage: limit + 1, // +1 to exclude the original product
+          filters: `status:"AVAILABLE" AND categoryName:"${product.categoryName}" AND price:${priceMin} TO ${priceMax} AND NOT objectID:"${productId}"`,
+        }
       });
 
-      return result.hits.slice(0, limit) as SearchProduct[];
+      return result.hits.slice(0, limit) as any as SearchProduct[];
     } catch (error) {
       return [];
     }
@@ -311,12 +320,16 @@ export class AlgoliaSearchService implements SearchEngine, SearchIndexable {
 
   async getProductsByCategory(category: string, limit: number = 20): Promise<SearchProduct[]> {
     try {
-      const result = await this.searchIndex.search('', {
-        hitsPerPage: limit,
-        filters: `status:"AVAILABLE" AND categoryName:"${category}"`,
+      const result = await this.client.searchSingleIndex({
+        indexName: this.indexName,
+        searchParams: {
+          query: '',
+          hitsPerPage: limit,
+          filters: `status:"AVAILABLE" AND categoryName:"${category}"`,
+        }
       });
 
-      return result.hits as SearchProduct[];
+      return result.hits as any as SearchProduct[];
     } catch (error) {
       return [];
     }

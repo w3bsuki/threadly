@@ -177,7 +177,7 @@ export async function POST(
         { 
           success: false, 
           error: 'Invalid input data',
-          details: error.errors,
+          details: error.issues,
         },
         { status: 400 }
       );

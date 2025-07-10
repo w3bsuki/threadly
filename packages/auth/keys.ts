@@ -7,7 +7,9 @@ export const keys = () =>
       CLERK_SECRET_KEY: process.env.NODE_ENV === 'production' 
         ? z.string().startsWith('sk_')
         : z.string().startsWith('sk_').optional(),
-      CLERK_WEBHOOK_SECRET: z.string().min(1).startsWith('whsec_').optional(),
+      CLERK_WEBHOOK_SECRET: process.env.NODE_ENV === 'production'
+        ? z.string().min(1).startsWith('whsec_')
+        : z.string().min(1).startsWith('whsec_').optional(),
       CLERK_ENCRYPTION_KEY: z.string().optional(),
     },
     client: {

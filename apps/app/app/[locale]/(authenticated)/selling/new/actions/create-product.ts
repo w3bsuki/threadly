@@ -1,12 +1,12 @@
 'use server';
 
 import { currentUser } from '@repo/auth/server';
+import { ensureUserExists } from '@repo/auth/db';
 import { database } from '@repo/database';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
-import { MarketplaceSearchService } from '@repo/search';
 
 // SECURITY: Enhanced validation schema with stricter rules
 const createProductSchema = z.object({
@@ -55,21 +55,10 @@ export async function createProduct(input: z.infer<typeof createProductSchema>) 
       redirect('/sign-in');
     }
 
-    // First, ensure user exists in our database
-    let dbUser = await database.user.findUnique({
-      where: { clerkId: user.id }
-    });
-
+    // Ensure user exists in our database with sync fallback
+    const dbUser = await ensureUserExists();
     if (!dbUser) {
-      dbUser = await database.user.create({
-        data: {
-          clerkId: user.id,
-          email: user.emailAddresses[0]?.emailAddress || '',
-          firstName: user.firstName || null,
-          lastName: user.lastName || null,
-          imageUrl: user.imageUrl || null,
-        }
-      });
+      throw new Error('Failed to sync user to database');
     }
 
     // SECURITY: Validate and sanitize input
@@ -103,22 +92,12 @@ export async function createProduct(input: z.infer<typeof createProductSchema>) 
       },
     });
 
-    // Index the product for search functionality
-    try {
-      // Initialize search service (this should be configured in environment)
-      const searchService = new MarketplaceSearchService({
-        appId: process.env.ALGOLIA_APP_ID!,
-        apiKey: process.env.ALGOLIA_ADMIN_API_KEY!,
-        searchOnlyApiKey: process.env.ALGOLIA_SEARCH_API_KEY!,
-        indexName: process.env.ALGOLIA_INDEX_NAME || 'products',
-      });
-      
-      await searchService.indexProduct(product.id);
-      log.info('Successfully indexed product for search:', { productId: product.id });
-    } catch (searchError) {
-      // Log search indexing errors but don't fail the product creation
-      logError('Failed to index product for search (non-critical):', searchError);
-    }
+    // Product is automatically searchable via database
+    // UnifiedSearchService will use database search if Algolia is not configured
+    log.info('Product created and searchable:', { 
+      productId: product.id,
+      searchMethod: process.env.ALGOLIA_APP_ID ? 'algolia' : 'database'
+    });
 
     // Clear cache on web app so new products show immediately
     try {
@@ -152,7 +131,7 @@ export async function createProduct(input: z.infer<typeof createProductSchema>) 
       return { 
         success: false, 
         error: 'Validation failed',
-        details: error.errors 
+        details: error.issues 
       };
     }
     

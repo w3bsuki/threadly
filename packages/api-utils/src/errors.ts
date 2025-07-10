@@ -100,7 +100,7 @@ export function parseError(error: unknown): StandardApiError {
     return createApiError(
       ErrorCode.VALIDATION_FAILED,
       'Input validation failed',
-      error.errors
+      error.issues
     );
   }
 

@@ -12,7 +12,14 @@ export async function POST(request: NextRequest) {
     if (!authHeader || authHeader !== `Bearer ${ADMIN_SECRET}`) {
       return NextResponse.json(
         { error: 'Unauthorized' },
-        { status: 401 }
+        { 
+          status: 401,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          }
+        }
       );
     }
 
@@ -43,14 +50,40 @@ export async function POST(request: NextRequest) {
       success: true, 
       message: `Cleared ${type} cache`,
       type 
+    }, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      }
     });
   } catch (error) {
     console.error('Error in clear-cache:', error);
     return NextResponse.json(
       { error: 'Failed to clear cache' },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        }
+      }
     );
   }
+}
+
+// Handle preflight requests
+export async function OPTIONS(request: NextRequest) {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Max-Age': '86400',
+    },
+  });
 }
 
 // Also support GET for easy testing

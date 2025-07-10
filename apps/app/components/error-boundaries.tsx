@@ -5,6 +5,7 @@ import { Button } from '@repo/design-system/components';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
 import { AlertCircle, RefreshCw, Home, BarChart3, CreditCard, Package } from 'lucide-react';
 import Link from 'next/link';
+import { logError, parseError } from '@repo/observability/error';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -29,29 +30,15 @@ export class AppErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundar
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Report to Sentry in production
-    if (process.env.NODE_ENV === 'production' && typeof window !== 'undefined') {
-      if ('Sentry' in window) {
-        (window as any).Sentry?.captureException(error, {
-          contexts: {
-            react: {
-              componentStack: errorInfo.componentStack,
-            },
-          },
-          tags: {
-            errorBoundary: 'AppErrorBoundary',
-          },
-        });
-      }
-    }
+    // Log error using observability service
+    logError('App Error Boundary caught an error', {
+      error,
+      componentStack: errorInfo.componentStack,
+      errorBoundary: 'AppErrorBoundary',
+    });
 
     // Custom error reporting
     this.props.onError?.(error, errorInfo);
-
-    // Log to console in development
-    if (process.env.NODE_ENV === 'development') {
-      console.error('App Error Boundary caught an error:', error, errorInfo);
-    }
   }
 
   render() {
@@ -124,14 +111,11 @@ export class AnalyticsErrorBoundary extends Component<ErrorBoundaryProps, ErrorB
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    if (process.env.NODE_ENV === 'production' && typeof window !== 'undefined') {
-      if ('Sentry' in window) {
-        (window as any).Sentry?.captureException(error, {
-          contexts: { react: { componentStack: errorInfo.componentStack } },
-          tags: { errorBoundary: 'AnalyticsErrorBoundary' },
-        });
-      }
-    }
+    logError('Analytics Error Boundary caught an error', {
+      error,
+      componentStack: errorInfo.componentStack,
+      errorBoundary: 'AnalyticsErrorBoundary',
+    });
 
     this.props.onError?.(error, errorInfo);
   }
@@ -182,15 +166,12 @@ export class PaymentErrorBoundary extends Component<ErrorBoundaryProps, ErrorBou
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Critical error - always report
-    if (typeof window !== 'undefined') {
-      if ('Sentry' in window) {
-        (window as any).Sentry?.captureException(error, {
-          contexts: { react: { componentStack: errorInfo.componentStack } },
-          tags: { errorBoundary: 'PaymentErrorBoundary', critical: true },
-          level: 'error',
-        });
-      }
-    }
+    logError('Payment Error Boundary caught an error', {
+      error,
+      componentStack: errorInfo.componentStack,
+      errorBoundary: 'PaymentErrorBoundary',
+      critical: true,
+    });
 
     this.props.onError?.(error, errorInfo);
   }
@@ -247,14 +228,11 @@ export class ProductErrorBoundary extends Component<ErrorBoundaryProps, ErrorBou
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    if (process.env.NODE_ENV === 'production' && typeof window !== 'undefined') {
-      if ('Sentry' in window) {
-        (window as any).Sentry?.captureException(error, {
-          contexts: { react: { componentStack: errorInfo.componentStack } },
-          tags: { errorBoundary: 'ProductErrorBoundary' },
-        });
-      }
-    }
+    logError('Product Error Boundary caught an error', {
+      error,
+      componentStack: errorInfo.componentStack,
+      errorBoundary: 'ProductErrorBoundary',
+    });
 
     this.props.onError?.(error, errorInfo);
   }
@@ -304,14 +282,11 @@ export class FormErrorBoundary extends Component<ErrorBoundaryProps, ErrorBounda
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    if (process.env.NODE_ENV === 'production' && typeof window !== 'undefined') {
-      if ('Sentry' in window) {
-        (window as any).Sentry?.captureException(error, {
-          contexts: { react: { componentStack: errorInfo.componentStack } },
-          tags: { errorBoundary: 'FormErrorBoundary' },
-        });
-      }
-    }
+    logError('Form Error Boundary caught an error', {
+      error,
+      componentStack: errorInfo.componentStack,
+      errorBoundary: 'FormErrorBoundary',
+    });
 
     this.props.onError?.(error, errorInfo);
   }

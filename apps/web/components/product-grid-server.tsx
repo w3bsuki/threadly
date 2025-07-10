@@ -9,6 +9,7 @@ import type {
   Condition
 } from '@repo/database';
 import { parseError, logError } from '@repo/observability/server';
+import { getCacheService } from '@repo/cache';
 
 // Type for our transformed product data
 interface TransformedProduct {
@@ -106,7 +107,13 @@ export async function ProductGridServer({
   brand,
   condition
 }: ProductGridServerProps) {
+  // Fetching products with filters
+  
   try {
+    const cache = getCacheService({
+      url: process.env.UPSTASH_REDIS_REST_URL || process.env.REDIS_URL || 'redis://localhost:6379',
+      token: process.env.UPSTASH_REDIS_REST_TOKEN || undefined,
+    });
     // Build the where clause based on category
     const whereClause: Prisma.ProductWhereInput = {
       status: ProductStatus.AVAILABLE,
@@ -201,75 +208,121 @@ export async function ProductGridServer({
       orderBy = { views: 'desc' };
     }
 
-    // Fetch real products from database
-    const products = await database.product.findMany({
-      where: whereClause,
-      include: {
-        images: {
-          orderBy: { displayOrder: 'asc' }
-        },
-        seller: true,
-        category: true,
-        _count: {
-          select: { favorites: true }
-        }
+    // Create cache key based on filters
+    const cacheKey = `products:${category || 'all'}:${brand || 'all'}:${condition || 'all'}:${sort || 'newest'}:${limit}`;
+    
+    // Fetch real products from database with caching
+    // Executing product query
+    
+    const products = await cache.remember(
+      cacheKey,
+      async () => {
+        return database.product.findMany({
+          where: whereClause,
+          include: {
+            images: {
+              orderBy: { displayOrder: 'asc' }
+            },
+            seller: true,
+            category: true,
+            _count: {
+              select: { favorites: true }
+            }
+          },
+          orderBy,
+          take: limit,
+        });
       },
-      orderBy,
-      take: limit,
-    });
+      600, // Cache for 10 minutes
+      ['products'] // Cache tags
+    );
+    
+    // Query completed successfully
 
     // If no products found, fetch some general products
     let finalProducts = products;
     if (products.length === 0) {
-      finalProducts = await database.product.findMany({
-        where: {
-          status: ProductStatus.AVAILABLE,
+      // No products found with filters, fetching general products
+      
+      finalProducts = await cache.remember(
+        'products:fallback:general',
+        async () => {
+          return database.product.findMany({
+            where: {
+              status: ProductStatus.AVAILABLE,
+            },
+            include: {
+              images: {
+                orderBy: { displayOrder: 'asc' }
+              },
+              seller: true,
+              category: true,
+              _count: {
+                select: { favorites: true }
+              }
+            },
+            orderBy: { createdAt: 'desc' },
+            take: 12, // Show fewer if no category matches
+          });
         },
-        include: {
-          images: {
-            orderBy: { displayOrder: 'asc' }
-          },
-          seller: true,
-          category: true,
-          _count: {
-            select: { favorites: true }
-          }
-        },
-        orderBy: { createdAt: 'desc' },
-        take: 12, // Show fewer if no category matches
-      });
+        600, // Cache for 10 minutes
+        ['products'] // Cache tags
+      );
+      
+      // Fallback query completed
     }
 
     // Transform products for the UI
     const transformedProducts = finalProducts.map(transformProduct);
 
-    // Get filter options - for now without caching until we fix the config
+    // Get filter options with caching
     const [categories, brands, sizes] = await Promise.all([
-      database.category.findMany({
-        select: { name: true },
-        where: {
-          products: {
-            some: { status: ProductStatus.AVAILABLE }
-          }
+      cache.remember(
+        'filter-options:categories',
+        async () => {
+          return database.category.findMany({
+            select: { name: true },
+            where: {
+              products: {
+                some: { status: ProductStatus.AVAILABLE }
+              }
+            },
+          });
         },
-      }),
-      database.product.groupBy({
-        by: ['brand'],
-        where: { 
-          status: ProductStatus.AVAILABLE,
-          brand: { not: null }
+        1800, // Cache for 30 minutes
+        ['categories'] // Cache tags
+      ),
+      cache.remember(
+        'filter-options:brands',
+        async () => {
+          return database.product.groupBy({
+            by: ['brand'],
+            where: { 
+              status: ProductStatus.AVAILABLE,
+              brand: { not: null }
+            },
+            _count: true,
+            orderBy: { _count: { brand: 'desc' } },
+            take: 10,
+          });
         },
-        _count: true,
-        orderBy: { _count: { brand: 'desc' } },
-        take: 10,
-      }),
-      database.product.groupBy({
-        by: ['size'],
-        where: { status: ProductStatus.AVAILABLE },
-        _count: true,
-        orderBy: { _count: { size: 'desc' } },
-        take: 10,
-      })
+        1800, // Cache for 30 minutes
+        ['products'] // Cache tags
+      ),
+      cache.remember(
+        'filter-options:sizes',
+        async () => {
+          return database.product.groupBy({
+            by: ['size'],
+            where: { status: ProductStatus.AVAILABLE },
+            _count: true,
+            orderBy: { _count: { size: 'desc' } },
+            take: 10,
+          });
+        },
+        1800, // Cache for 30 minutes
+        ['products'] // Cache tags
+      )
     ]);
 
     const filterOptions = {

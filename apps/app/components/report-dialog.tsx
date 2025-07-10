@@ -14,7 +14,7 @@ import { Button } from '@repo/design-system/components';
 import { Label } from '@repo/design-system/components';
 import { RadioGroup, RadioGroupItem } from '@repo/design-system/components';
 import { Textarea } from '@repo/design-system/components';
-import { toast } from '@/components/toast';
+import { toast } from '@repo/design-system/components';
 
 interface ReportDialogProps {
   type: 'PRODUCT' | 'USER';

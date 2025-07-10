@@ -6,7 +6,7 @@ import { fonts } from '@repo/design-system/lib/fonts';
 import { Toolbar } from '@repo/feature-flags/components/toolbar';
 import { AuthProvider } from '@repo/auth/provider';
 import { AnalyticsProvider } from '@repo/analytics';
-import { ToastProvider } from '@/components/toast';
+import { Toaster } from '@repo/design-system/components';
 import { AppErrorBoundary } from '@/components/error-boundaries';
 import type { ReactNode } from 'react';
 import type { Metadata, Viewport } from 'next';
@@ -41,7 +41,7 @@ const RootLayout = ({ children }: RootLayoutProperties) => (
         >
           <AnalyticsProvider>
             <DesignSystemProvider>
-              <ToastProvider />
+              <Toaster />
               {children}
             </DesignSystemProvider>
           </AnalyticsProvider>

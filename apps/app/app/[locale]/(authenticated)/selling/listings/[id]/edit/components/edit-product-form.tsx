@@ -17,7 +17,7 @@ import { Trash2, Save, Eye, EyeOff } from 'lucide-react';
 import { updateProduct, deleteProduct } from '../actions/product-actions';
 import { ImageUpload } from '../../../../new/components/image-upload';
 import { CategorySelector } from '../../../../new/components/category-selector';
-import { toast } from '@/components/toast';
+import { toast } from '@repo/design-system/components';
 
 const editProductSchema = z.object({
   title: z.string().min(1, 'Title is required').max(100, 'Title must be less than 100 characters'),

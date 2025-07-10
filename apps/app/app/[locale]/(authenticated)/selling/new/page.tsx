@@ -32,6 +32,7 @@ const SellNewItemPage = async () => {
       select: { 
         id: true,
         stripeAccountId: true,
+        sellerProfile: true,
       },
     });
 
@@ -44,13 +45,18 @@ const SellNewItemPage = async () => {
           firstName: user.firstName || null,
           lastName: user.lastName || null,
           imageUrl: user.imageUrl || null,
+        },
+        select: {
+          id: true,
+          stripeAccountId: true,
+          sellerProfile: true,
         }
       });
     }
 
-    // Stripe verification is required for sellers to list items
-    // This ensures proper payment processing and marketplace functionality
-    if (!dbUser.stripeAccountId) {
+    // Seller profile is required to list items
+    // This ensures we have shipping and payout information
+    if (!dbUser.sellerProfile) {
       return (
         <div className="space-y-6">
           <div className="flex items-center gap-4">
@@ -68,10 +74,10 @@ const SellNewItemPage = async () => {
           <div className="mx-auto w-full max-w-2xl">
             <Alert className="mb-6">
               <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Seller Account Required</AlertTitle>
+              <AlertTitle>Seller Profile Required</AlertTitle>
               <AlertDescription>
-                You need to connect your Stripe account before you can list items for sale.
-                This allows us to process payments securely and pay you directly.
+                You need to complete your seller profile before you can list items for sale.
+                This includes your payment information and shipping settings.
               </AlertDescription>
             </Alert>
             
@@ -87,7 +93,7 @@ const SellNewItemPage = async () => {
       );
     }
 
-    // User has Stripe account, show product form
+    // User has seller profile, show product form
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">

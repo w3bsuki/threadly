@@ -21,7 +21,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { SavedSearchDialog } from '@/components/saved-search-dialog';
-import { toast } from '@/components/toast';
+import { toast } from '@repo/design-system/components';
 import { type SearchFilters } from '@/lib/hooks/use-search';
 
 interface SavedSearch {

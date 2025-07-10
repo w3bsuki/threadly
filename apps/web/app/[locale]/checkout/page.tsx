@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { CheckoutContent } from './components/checkout-content';
+import { DynamicCheckout } from './components/dynamic-checkout';
 
 export const metadata: Metadata = {
   title: 'Checkout - Threadly',
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <CheckoutContent />
+      <DynamicCheckout />
     </div>
   );
 }

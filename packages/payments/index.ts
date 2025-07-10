@@ -7,7 +7,7 @@ const stripeSecretKey = env.STRIPE_SECRET_KEY;
 
 // Export a properly configured Stripe instance
 export const stripe = new Stripe(stripeSecretKey || '', {
-  apiVersion: '2024-12-18.acacia' as Stripe.LatestApiVersion,
+  apiVersion: '2025-06-30.basil',
   typescript: true,
 });
 

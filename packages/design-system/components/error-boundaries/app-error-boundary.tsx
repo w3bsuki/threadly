@@ -59,24 +59,43 @@ export class AppErrorBoundary extends Component<Props, State> {
   }
 
   private reportError = (error: Error, errorInfo: ErrorInfo) => {
-    // In production, send to error tracking service
-    if (process.env.NODE_ENV === 'production') {
-      // Example: Sentry, LogRocket, or custom error service
-      // Sentry.captureException(error, { contexts: { react: errorInfo } });
-      
-      // For now, we'll prepare the error data structure
-      const errorReport = {
-        errorId: this.state.errorId,
-        message: error.message,
-        stack: error.stack,
-        componentStack: errorInfo.componentStack,
-        timestamp: new Date().toISOString(),
-        userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'server',
-        url: typeof window !== 'undefined' ? window.location.href : 'server',
-      };
+    // Prepare comprehensive error data structure
+    const errorReport = {
+      errorId: this.state.errorId,
+      message: error.message,
+      stack: error.stack,
+      componentStack: errorInfo.componentStack,
+      timestamp: new Date().toISOString(),
+      userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'server',
+      url: typeof window !== 'undefined' ? window.location.href : 'server',
+      props: this.props,
+    };
 
-      // Store locally for now (in production, send to monitoring service)
-      localStorage.setItem(`error_${this.state.errorId}`, JSON.stringify(errorReport));
+    // Console error for development
+    if (process.env.NODE_ENV === 'development') {
+      console.group('🚨 Error Boundary Caught Error');
+      console.error('Error:', error);
+      console.error('Error Info:', errorInfo);
+      console.error('Error Report:', errorReport);
+      console.groupEnd();
+    }
+
+    // Store locally for debugging
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        localStorage.setItem(`error_${this.state.errorId}`, JSON.stringify(errorReport));
+      } catch (storageError) {
+        console.warn('Failed to store error in localStorage:', storageError);
+      }
+    }
+
+    // Call global error handler if available
+    if (typeof window !== 'undefined' && 'reportError' in window) {
+      try {
+        window.reportError(error);
+      } catch (reportError) {
+        console.warn('Failed to report error globally:', reportError);
+      }
     }
   };
 

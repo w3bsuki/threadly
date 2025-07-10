@@ -27,8 +27,19 @@ async function checkProducts() {
       },
     });
 
+    console.log(`\n📊 Total products found: ${products.length}`);
     
     products.forEach((product, index) => {
+      console.log(`
+Product ${index + 1}:
+- ID: ${product.id}
+- Title: ${product.title}
+- Brand: ${product.brand || 'N/A'}
+- Price: $${product.price}
+- Category: ${product.category?.name || 'N/A'}
+- Status: ${product.status}
+- Created: ${product.createdAt.toISOString()}
+      `);
     });
 
     // Test specific searches
@@ -54,8 +65,9 @@ async function checkProducts() {
         ],
       },
     });
-    
+    console.log(`\n🔍 Products containing "leather": ${leatherProducts.length}`);
     leatherProducts.forEach(product => {
+      console.log(`- ${product.title} (${product.brand || 'No brand'})`);
     });
 
     const jacketProducts = await prisma.product.findMany({
@@ -75,8 +87,9 @@ async function checkProducts() {
         ],
       },
     });
-    
+    console.log(`\n🧥 Products containing "jacket": ${jacketProducts.length}`);
     jacketProducts.forEach(product => {
+      console.log(`- ${product.title} (${product.brand || 'No brand'})`);
     });
 
   } catch (error) {

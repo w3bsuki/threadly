@@ -16,7 +16,7 @@ type GlobalErrorProps = {
  * This component follows Next.js 15 best practices for error handling
  * and integrates with our observability infrastructure.
  */
-export default function GlobalError({ error, reset }: GlobalErrorProps): JSX.Element {
+export default function GlobalError({ error, reset }: GlobalErrorProps) {
   useEffect(() => {
     // Report the error to Sentry
     captureException(error, {

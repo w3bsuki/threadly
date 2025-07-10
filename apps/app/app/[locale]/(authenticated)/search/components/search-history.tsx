@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@repo/design-system/components';
 import { Clock, X, TrendingUp, Search, Loader2 } from 'lucide-react';
-import { toast } from '@/components/toast';
+import { toast } from '@repo/design-system/components';
 
 interface SearchHistoryItem {
   id: string;

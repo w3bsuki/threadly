@@ -72,7 +72,7 @@ export async function createAddress(input: z.infer<typeof addressSchema>) {
       return {
         success: false,
         error: 'Invalid address data',
-        details: error.errors,
+        details: error.issues,
       };
     }
 
@@ -149,7 +149,7 @@ export async function updateAddress(addressId: string, input: z.infer<typeof add
       return {
         success: false,
         error: 'Invalid address data',
-        details: error.errors,
+        details: error.issues,
       };
     }
 

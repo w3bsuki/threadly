@@ -76,7 +76,7 @@ function validateAndSanitizeBody<T>(
         error: NextResponse.json(
           {
             error: 'Invalid input',
-            details: validationResult.error.errors.map(e => ({
+            details: validationResult.error.issues.map((e: any) => ({
               field: e.path.join('.'),
               message: e.message
             }))
@@ -132,7 +132,7 @@ function validateAndSanitizeQuery<Q>(
         error: NextResponse.json(
           {
             error: 'Invalid query parameters',
-            details: validationResult.error.errors.map(e => ({
+            details: validationResult.error.issues.map((e: any) => ({
               field: e.path.join('.'),
               message: e.message
             }))
@@ -241,7 +241,7 @@ export function withSecurity<T = any, Q = any>(
           return bodyResult.error;
         }
         
-        bodyData = bodyResult.data;
+        bodyData = bodyResult.data as T;
       }
       
       // Parse and validate query parameters
@@ -257,7 +257,7 @@ export function withSecurity<T = any, Q = any>(
           return queryResult.error;
         }
         
-        queryData = queryResult.data;
+        queryData = queryResult.data as Q;
       }
       
       // Create validated request object

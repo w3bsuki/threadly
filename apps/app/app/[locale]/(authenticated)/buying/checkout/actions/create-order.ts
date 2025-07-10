@@ -286,7 +286,7 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
       return {
         success: false,
         error: 'Invalid order data',
-        details: error.errors,
+        details: error.issues,
       };
     }
 

@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { 
           error: 'Invalid input', 
-          details: validationResult.error.errors.map(e => ({
+          details: validationResult.error.issues.map(e => ({
             field: e.path.join('.'),
             message: e.message
           }))
@@ -133,7 +133,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { 
           error: 'Invalid query parameters', 
-          details: queryValidation.error.errors.map(e => ({
+          details: queryValidation.error.issues.map(e => ({
             field: e.path.join('.'),
             message: e.message
           }))

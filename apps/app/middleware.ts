@@ -59,8 +59,8 @@ export default middleware as any;
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Skip Next.js internals and all static files, unless they're on the public routes
+    '/((?!_next/static|_next/image|favicon.ico).*)',
     // Always run for API routes
     '/(api|trpc)(.*)',
   ],

@@ -1,4 +1,4 @@
-import { Sidebar } from '@/components/sidebar';
+import { ContentSidebar } from '@/components/content-sidebar';
 import { ArrowLeftIcon } from '@radix-ui/react-icons';
 import { legal } from '@repo/cms';
 import { Body } from '@repo/cms/components/body';
@@ -66,7 +66,7 @@ const LegalPage = async ({ params }: LegalPageProperties) => {
           </div>
         </div>
         <div className="sticky top-24 hidden shrink-0 md:block">
-          <Sidebar
+          <ContentSidebar
             toc={<TableOfContents data={post.body.json.toc} />}
             readingTime={`${post.body.readingTime} min read`}
             date={new Date()}

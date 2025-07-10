@@ -6,7 +6,40 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 import confetti from 'canvas-confetti';
 
-export const SuccessContent = () => {
+interface Order {
+  id: string;
+  orderNumber: string;
+  totalAmount: any;
+  createdAt: Date;
+  status: string;
+  product: {
+    id: string;
+    title: string;
+    price: any;
+    images: Array<{
+      imageUrl: string;
+      alt?: string | null;
+    }>;
+  };
+  buyer: {
+    id: string;
+    email: string;
+    firstName?: string | null;
+    lastName?: string | null;
+  };
+  seller: {
+    id: string;
+    email: string;
+    firstName?: string | null;
+    lastName?: string | null;
+  };
+}
+
+interface SuccessContentProps {
+  order: Order;
+}
+
+export const SuccessContent = ({ order }: SuccessContentProps) => {
   
   useEffect(() => {
     // Trigger confetti animation
@@ -59,7 +92,7 @@ export const SuccessContent = () => {
         <div className="bg-gray-50 rounded-lg p-6 mb-8">
           <p className="text-sm text-gray-600 mb-1">Order number</p>
           <p className="text-2xl font-mono font-semibold text-gray-900">
-            #TH-{Math.random().toString(36).substr(2, 9).toUpperCase()}
+            {order.orderNumber}
           </p>
         </div>
 
@@ -107,8 +140,8 @@ export const SuccessContent = () => {
             </Link>
           </Button>
           <Button variant="outline" size="lg" asChild>
-            <Link href="/orders">
-              View Orders
+            <Link href={`/orders/${order.id}`}>
+              View Order Details
             </Link>
           </Button>
         </div>

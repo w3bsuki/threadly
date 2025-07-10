@@ -15,7 +15,7 @@ import {
 import { Input } from '@repo/design-system/components';
 import { Label } from '@repo/design-system/components';
 import { Truck, CheckCircle, Package, MessageCircle, Eye } from 'lucide-react';
-import { toast } from '@/components/toast';
+import { toast } from '@repo/design-system/components';
 
 interface OrderActionsProps {
   orderId: string;

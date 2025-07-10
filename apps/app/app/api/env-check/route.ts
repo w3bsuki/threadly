@@ -118,7 +118,7 @@ export async function GET() {
   const health = {
     isHealthy: requiredInProduction.every(Boolean),
     missingRequired: requiredInProduction.filter(check => !check).length,
-    warnings: [],
+    warnings: [] as string[],
   };
   
   // Add warnings
@@ -152,7 +152,7 @@ export async function GET() {
       canLoadEnv: false,
       error: {
         message: error.message,
-        invalidEnvVars: error.errors || [],
+        invalidEnvVars: error.issues || [],
       },
     };
   }

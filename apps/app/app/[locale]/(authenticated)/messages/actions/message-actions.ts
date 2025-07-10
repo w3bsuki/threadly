@@ -146,7 +146,7 @@ export async function sendMessage(input: z.infer<typeof sendMessageSchema>) {
       return {
         success: false,
         error: 'Invalid message data',
-        details: error.errors,
+        details: error.issues,
       };
     }
 
@@ -269,7 +269,7 @@ export async function createConversation(input: z.infer<typeof createConversatio
       return {
         success: false,
         error: 'Invalid conversation data',
-        details: error.errors,
+        details: error.issues,
       };
     }
 

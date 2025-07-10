@@ -287,4 +287,4 @@ packages/database/generated
 **/SESSION_STATE.md
 **/WORKTREE_ASSIGNMENTS.md
 **/HANDOFF_*.md
-**/TERMINATION_*.md
+**/TERMINATION_*.md.env.local

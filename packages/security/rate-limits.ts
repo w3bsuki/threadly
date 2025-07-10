@@ -1,4 +1,4 @@
-import arcjet, { tokenBucket, fixedWindow } from '@arcjet/next';
+import arcjet, { tokenBucket, fixedWindow, type ArcjetNext } from '@arcjet/next';
 import { keys } from './keys';
 import { NextResponse } from 'next/server';
 
@@ -9,25 +9,18 @@ try {
 } catch (error) {
 }
 
-// Mock rate limiter for when Arcjet is not configured
-const mockRateLimiter = {
-  protect: async () => ({
-    isDenied: () => false,
-    isAllowed: () => true,
-    reason: null,
-  }),
-};
+// Production rate limiting requires proper Arcjet configuration
 
 // Lazy initialization of rate limiters
-let _generalApiLimit: any;
-let _authRateLimit: any;
-let _paymentRateLimit: any;
-let _uploadRateLimit: any;
-let _messageRateLimit: any;
-let _webhookRateLimit: any;
+let _generalApiLimit: ArcjetNext<Record<string, unknown>> | null = null;
+let _authRateLimit: ArcjetNext<Record<string, unknown>> | null = null;
+let _paymentRateLimit: ArcjetNext<Record<string, unknown>> | null = null;
+let _uploadRateLimit: ArcjetNext<Record<string, unknown>> | null = null;
+let _messageRateLimit: ArcjetNext<Record<string, unknown>> | null = null;
+let _webhookRateLimit: ArcjetNext<Record<string, unknown>> | null = null;
 
 // Initialize Arcjet instance only when needed
-const getArcjet = () => {
+const getArcjet = (): ArcjetNext<Record<string, unknown>> | null => {
   if (!arcjetKey) {
     return null;
   }
@@ -39,6 +32,7 @@ const getArcjet = () => {
       characteristics: ['ip.src'],
     });
   } catch (error) {
+    console.warn('Failed to initialize Arcjet:', error);
     return null;
   }
 };
@@ -48,7 +42,9 @@ export const generalApiLimit = {
   protect: async (request: Request) => {
     if (!_generalApiLimit) {
       const aj = getArcjet();
-      if (!aj) return mockRateLimiter.protect();
+      if (!aj) {
+        throw new Error('Rate limiting is not configured. Please set ARCJET_KEY environment variable.');
+      }
       
       _generalApiLimit = aj.withRule(
         tokenBucket({
@@ -68,7 +64,9 @@ export const authRateLimit = {
   protect: async (request: Request) => {
     if (!_authRateLimit) {
       const aj = getArcjet();
-      if (!aj) return mockRateLimiter.protect();
+      if (!aj) {
+        throw new Error('Rate limiting is not configured. Please set ARCJET_KEY environment variable.');
+      }
       
       _authRateLimit = aj.withRule(
         fixedWindow({
@@ -87,7 +85,9 @@ export const paymentRateLimit = {
   protect: async (request: Request) => {
     if (!_paymentRateLimit) {
       const aj = getArcjet();
-      if (!aj) return mockRateLimiter.protect();
+      if (!aj) {
+        throw new Error('Rate limiting is not configured. Please set ARCJET_KEY environment variable.');
+      }
       
       _paymentRateLimit = aj.withRule(
         tokenBucket({
@@ -107,7 +107,9 @@ export const uploadRateLimit = {
   protect: async (request: Request) => {
     if (!_uploadRateLimit) {
       const aj = getArcjet();
-      if (!aj) return mockRateLimiter.protect();
+      if (!aj) {
+        throw new Error('Rate limiting is not configured. Please set ARCJET_KEY environment variable.');
+      }
       
       _uploadRateLimit = aj.withRule(
         fixedWindow({
@@ -126,7 +128,9 @@ export const messageRateLimit = {
   protect: async (request: Request) => {
     if (!_messageRateLimit) {
       const aj = getArcjet();
-      if (!aj) return mockRateLimiter.protect();
+      if (!aj) {
+        throw new Error('Rate limiting is not configured. Please set ARCJET_KEY environment variable.');
+      }
       
       _messageRateLimit = aj.withRule(
         tokenBucket({
@@ -146,7 +150,9 @@ export const webhookRateLimit = {
   protect: async (request: Request) => {
     if (!_webhookRateLimit) {
       const aj = getArcjet();
-      if (!aj) return mockRateLimiter.protect();
+      if (!aj) {
+        throw new Error('Rate limiting is not configured. Please set ARCJET_KEY environment variable.');
+      }
       
       _webhookRateLimit = aj.withRule(
         fixedWindow({
@@ -166,8 +172,7 @@ export async function checkRateLimit(
   request: Request
 ) {
   if (!arcjetKey) {
-    // If no Arcjet key is configured, allow the request
-    return { allowed: true, decision: null };
+    throw new Error('Rate limiting is not configured. Please set ARCJET_KEY environment variable.');
   }
 
   try {

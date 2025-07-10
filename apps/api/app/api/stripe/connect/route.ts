@@ -7,7 +7,7 @@ import { logError } from '@repo/observability/server';
 import { paymentRateLimit, checkRateLimit } from '@repo/security';
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-05-28.basil',
+  apiVersion: '2025-06-30.basil',
 });
 
 // POST /api/stripe/connect - Create Stripe Connect onboarding link

@@ -1,8 +1,37 @@
-import { database } from '@repo/database';
+import { database, type Prisma } from '@repo/database';
 import { getCacheService } from '@repo/cache';
 import { getAlgoliaSearch } from './algolia-search';
 import type { SearchConfig, SearchProduct, SearchFilters, SearchResult } from './types';
 import { CACHE_KEYS, CACHE_TTL, CACHE_TAGS } from '@repo/cache';
+
+// Define the shape of a product with all includes used by search
+type ProductForSearch = Prisma.ProductGetPayload<{
+  include: {
+    category: {
+      select: {
+        name: true;
+      };
+    };
+    seller: {
+      select: {
+        firstName: true;
+        lastName: true;
+        averageRating: true;
+        location: true;
+      };
+    };
+    images: {
+      select: {
+        imageUrl: true;
+      };
+    };
+    _count: {
+      select: {
+        favorites: true;
+      };
+    };
+  };
+}>;
 
 export class MarketplaceSearchService {
   private searchEngine = getAlgoliaSearch();
@@ -13,13 +42,13 @@ export class MarketplaceSearchService {
   }
 
   // Transform database product to search product
-  private transformProductForSearch(product: any): SearchProduct {
+  private transformProductForSearch(product: ProductForSearch): SearchProduct {
     return {
       id: product.id,
       title: product.title,
       description: product.description || '',
       brand: product.brand || '',
-      price: product.price,
+      price: Number(product.price),
       condition: product.condition,
       size: product.size || '',
       categoryId: product.categoryId,
@@ -28,7 +57,7 @@ export class MarketplaceSearchService {
       sellerName: product.seller ? `${product.seller.firstName} ${product.seller.lastName}`.trim() : '',
       sellerRating: product.seller?.averageRating || 0,
       sellerLocation: product.seller?.location || '',
-      images: product.images?.map((img: any) => img.imageUrl).filter(Boolean) || [],
+      images: product.images?.map((img) => img.imageUrl).filter(Boolean) || [],
       views: product.views || 0,
       favorites: product._count?.favorites || 0,
       status: product.status,
@@ -36,11 +65,11 @@ export class MarketplaceSearchService {
       tags: this.generateTags(product),
       colors: this.extractColors(product),
       materials: this.extractMaterials(product),
-      availableForTrade: product.availableForTrade || false,
+      availableForTrade: false, // Field not implemented yet
     };
   }
 
-  private generateTags(product: any): string[] {
+  private generateTags(product: ProductForSearch): string[] {
     const tags: string[] = [];
     
     if (product.brand) tags.push(product.brand.toLowerCase());
@@ -56,7 +85,7 @@ export class MarketplaceSearchService {
     return [...new Set(tags)]; // Remove duplicates
   }
 
-  private extractColors(product: any): string[] {
+  private extractColors(product: ProductForSearch): string[] {
     // This could be enhanced with ML/AI for automatic color detection
     const colorKeywords = [
       'black', 'white', 'red', 'blue', 'green', 'yellow', 'orange', 'purple',
@@ -68,7 +97,7 @@ export class MarketplaceSearchService {
     return colorKeywords.filter(color => text.includes(color));
   }
 
-  private extractMaterials(product: any): string[] {
+  private extractMaterials(product: ProductForSearch): string[] {
     const materialKeywords = [
       'cotton', 'polyester', 'wool', 'silk', 'linen', 'denim', 'leather',
       'suede', 'cashmere', 'viscose', 'nylon', 'spandex', 'elastane',
@@ -175,7 +204,7 @@ export class MarketplaceSearchService {
       }
 
       // Perform search
-      const result = await this.searchEngine.search(filters, page as any, hitsPerPage as any);
+      const result = await this.searchEngine.search(filters, page, hitsPerPage);
 
       // Cache the result
       await this.cacheService.cacheSearchResults(cacheKey, result);
@@ -193,7 +222,7 @@ export class MarketplaceSearchService {
       
       return this.cacheService.remember(
         cacheKey,
-        () => this.searchEngine.searchSuggestions(query, limit as any),
+        () => this.searchEngine.searchSuggestions(query, limit),
         CACHE_TTL.SHORT,
         [CACHE_TAGS.SEARCH]
       );
@@ -209,7 +238,7 @@ export class MarketplaceSearchService {
       
       return this.cacheService.remember(
         cacheKey,
-        () => this.searchEngine.getPopularProducts(limit as any),
+        () => this.searchEngine.getPopularProducts(limit),
         CACHE_TTL.LONG,
         [CACHE_TAGS.PRODUCTS]
       );
@@ -225,7 +254,7 @@ export class MarketplaceSearchService {
       
       return this.cacheService.remember(
         cacheKey,
-        () => this.searchEngine.getSimilarProducts(productId, limit as any),
+        () => this.searchEngine.getSimilarProducts(productId, limit),
         CACHE_TTL.LONG,
         [CACHE_TAGS.PRODUCTS]
       );
@@ -278,7 +307,7 @@ export class MarketplaceSearchService {
           const result = await this.searchEngine.search(
             { query },
             0,
-            limit as any
+            limit
           );
           
           return result.hits.map(hit => ({
@@ -309,7 +338,7 @@ export class MarketplaceSearchService {
           const result = await this.searchEngine.search(
             { query },
             0,
-            0 as any // We only want facets, not hits
+            0 // We only want facets, not hits
           );
           
           return result.facets || {};

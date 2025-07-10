@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
         { 
           status: 400, 
           errorCode: ErrorCode.VALIDATION_FAILED,
-          details: validationResult.error.errors
+          details: validationResult.error.issues
         }
       );
     }

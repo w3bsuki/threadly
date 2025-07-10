@@ -11,7 +11,7 @@ interface DOMPurifyConfig {
   ALLOW_DATA_ATTR?: boolean;
   [key: string]: any;
 }
-import BadWordsFilter from 'bad-words';
+import { Filter as BadWordsFilter } from 'bad-words';
 
 // Initialize profanity filter
 const profanityFilter = new BadWordsFilter();

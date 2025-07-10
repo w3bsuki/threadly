@@ -8,7 +8,7 @@ type SidebarProperties = {
   readonly toc?: ReactNode;
 };
 
-export const Sidebar = async ({
+export const ContentSidebar = async ({
   date,
   readingTime,
   tags,
