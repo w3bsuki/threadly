@@ -2,7 +2,7 @@
 // DO NOT USE IN NEW CODE - use createEmailService from email-service-client instead
 // This file will be removed in the next major version
 
-
+import * as React from 'react';
 import { Resend } from 'resend';
 import { database } from '@repo/database';
 import { log } from '@repo/observability/log';
