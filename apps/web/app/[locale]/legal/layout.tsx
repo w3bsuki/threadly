@@ -1,8 +1,8 @@
 import { Toolbar } from '@repo/cms/components/toolbar';
-import type { ReactNode } from 'react';
+import * as React from 'react';
 
 type LegalLayoutProps = {
-  children: ReactNode;
+  children: React.ReactNode;
   params: Promise<{ locale: string }>;
 };
 
