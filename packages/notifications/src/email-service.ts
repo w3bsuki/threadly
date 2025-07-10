@@ -99,7 +99,7 @@ export class EmailService {
           items: order.items,
           total: order.total,
           estimatedDelivery: order.estimatedDelivery,
-        }) as React.ReactNode,
+        }),
         tags: [
           { name: 'type', value: 'order-confirmation' },
           { name: 'environment', value: this.environment }
@@ -159,7 +159,7 @@ export class EmailService {
         senderName: `${sender?.firstName} ${sender?.lastName}`.trim(),
         messagePreview: message.content.substring(0, 100),
         conversationUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'https://app.threadly.com'}/messages/${conversation.id}`,
-      }) as React.ReactNode,
+      }),
     });
 
     if (error) {
@@ -191,7 +191,7 @@ export class EmailService {
         orderId: order.id,
         productName: order.items[0]?.product?.title || 'Product',
         payoutDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-      }) as React.ReactNode,
+      }),
     });
 
     if (error) {
@@ -225,7 +225,7 @@ export class EmailService {
         totalViews: reportData.totalViews,
         totalMessages: reportData.totalMessages,
         topProducts: reportData.topProducts,
-      }) as React.ReactNode,
+      }),
     });
 
     if (error) {
@@ -240,7 +240,7 @@ export class EmailService {
       from: this.fromEmail,
       to,
       subject,
-      react: content as React.ReactNode,
+      react: content,
     }));
 
     const { data, error } = await this.resend.batch.send(emails);
