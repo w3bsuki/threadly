@@ -69,7 +69,7 @@ export const middleware: NextMiddleware = async (req: NextRequest) => {
   try {
     // Block suspicious requests early
     if (isSuspiciousRequest(req)) {
-      logError('Suspicious request blocked', {
+      console.error('Suspicious request blocked', {
         path: req.nextUrl.pathname,
         userAgent: req.headers.get('user-agent'),
         ip: req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip'),
