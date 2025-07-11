@@ -32,7 +32,7 @@ const values = [
   }
 ];
 
-export const Testimonials = ({ dictionary }: TestimonialsProps) => {
+export const Testimonials = ({ dictionary }: TestimonialsProps): React.ReactElement => {
   return (
     <section className="w-full bg-gradient-to-br from-purple-50 to-pink-50 py-16 lg:py-24">
       <div className="container mx-auto px-4">
