@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
+import { getAlgoliaSyncService } from '@repo/search';
 
 // SECURITY: Enhanced validation schema with stricter rules
 const createProductSchema = z.object({
@@ -89,15 +90,25 @@ export async function createProduct(input: z.infer<typeof createProductSchema>) 
       },
       include: {
         images: true,
+        category: true,
+        seller: true,
+        _count: {
+          select: {
+            favorites: true,
+          },
+        },
       },
     });
 
-    // Product is automatically searchable via database
-    // UnifiedSearchService will use database search if Algolia is not configured
-    log.info('Product created and searchable:', { 
-      productId: product.id,
-      searchMethod: process.env.ALGOLIA_APP_ID ? 'algolia' : 'database'
-    });
+    // Index product to Algolia for search
+    try {
+      const algoliaSync = getAlgoliaSyncService();
+      await algoliaSync.indexProduct(product);
+      log.info('Product indexed to Algolia', { productId: product.id });
+    } catch (algoliaError) {
+      // Log error but don't fail product creation
+      logError('Failed to index product to Algolia (non-critical):', algoliaError);
+    }
 
     // Clear cache on web app so new products show immediately
     try {
