@@ -8,7 +8,7 @@ import { AuthProvider } from '@repo/auth/provider';
 import { AnalyticsProvider } from '@repo/analytics';
 import { Toaster } from '@repo/design-system/components';
 import { AppErrorBoundary } from '@/components/error-boundaries';
-import type { ReactNode } from 'react';
+import * as React from 'react';
 import type { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
@@ -24,7 +24,7 @@ export const viewport: Viewport = {
 };
 
 type RootLayoutProperties = {
-  readonly children: ReactNode;
+  readonly children: React.ReactNode;
 };
 
 const RootLayout = ({ children }: RootLayoutProperties) => (

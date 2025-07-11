@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import * as React from 'react';
 import { getDictionary } from '@repo/internationalization';
 
 // Force dynamic rendering to avoid client reference manifest issues
@@ -8,7 +8,7 @@ export default async function LocaleLayout({
   children,
   params,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
