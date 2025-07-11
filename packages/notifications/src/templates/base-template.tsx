@@ -16,7 +16,7 @@ import {
 interface BaseTemplateProps {
   preview: string;
   heading: string;
-  children: React.ReactNode;
+  children: React.ReactNode | React.ReactNode[];
 }
 
 export function BaseTemplate({ preview, heading, children }: BaseTemplateProps): React.ReactElement {
