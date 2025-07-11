@@ -22,7 +22,7 @@ import {
   Eye
 } from 'lucide-react';
 
-export default async function PlatformHealthPage() {
+const PlatformHealthPage: React.FC = async () => {
   const now = new Date();
   const startOfDay = new Date(now.setHours(0, 0, 0, 0));
   const startOfWeek = new Date(now.setDate(now.getDate() - 7));
@@ -512,4 +512,6 @@ export default async function PlatformHealthPage() {
       </Card>
     </div>
   );
-}
+};
+
+export default PlatformHealthPage;
