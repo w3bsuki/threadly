@@ -16,7 +16,7 @@ import {
 interface BaseTemplateProps {
   preview: string;
   heading: string;
-  children: React.ReactNode | React.ReactNode[];
+  children: React.ReactNode;
 }
 
 export function BaseTemplate({ preview, heading, children }: BaseTemplateProps): React.ReactElement {
@@ -37,7 +37,7 @@ export function BaseTemplate({ preview, heading, children }: BaseTemplateProps):
           
           <Heading style={h1}>{heading}</Heading>
           
-          {children}
+          {children as any}
           
           <Hr style={hr} />
           
