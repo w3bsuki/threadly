@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
 import { Skeleton } from '@repo/design-system/components';
 
-export default function Loading() {
+const Loading: React.FC = () => {
   return (
     <div className="space-y-8">
       <div>
@@ -111,4 +111,6 @@ export default function Loading() {
       </div>
     </div>
   );
-}
+};
+
+export default Loading;
