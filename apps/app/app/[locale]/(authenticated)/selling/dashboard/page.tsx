@@ -139,23 +139,36 @@ const SellerDashboardPage = async ({
       const endOfDay = new Date(date);
       endOfDay.setHours(23, 59, 59, 999);
 
-      const dailySales = await database.order.findMany({
-        where: {
-          sellerId: dbUser.id,
-          status: 'DELIVERED',
-          createdAt: {
-            gte: startOfDay,
-            lte: endOfDay
-          }
-        },
-        include: {
-          product: {
-            select: {
-              price: true
+      const [dailySales, dailyViews] = await Promise.all([
+        database.order.findMany({
+          where: {
+            sellerId: dbUser.id,
+            status: 'DELIVERED',
+            createdAt: {
+              gte: startOfDay,
+              lte: endOfDay
+            }
+          },
+          include: {
+            product: {
+              select: {
+                price: true
+              }
             }
           }
-        }
-      });
+        }),
+        // Get actual daily views by summing all products' views for the day
+        database.product.aggregate({
+          where: {
+            sellerId: dbUser.id,
+            updatedAt: {
+              gte: startOfDay,
+              lte: endOfDay
+            }
+          },
+          _sum: { views: true }
+        })
+      ]);
 
       const dailyRevenue = dailySales.reduce((sum, sale) => sum + decimalToNumber(sale.product.price), 0);
       
@@ -163,7 +176,7 @@ const SellerDashboardPage = async ({
         day: date.toLocaleDateString('en-US', { weekday: 'short' }),
         revenue: dailyRevenue,
         sales: dailySales.length,
-        views: Math.floor(Math.random() * 50) + 10 // Placeholder for daily views
+        views: dailyViews._sum.views || 0
       };
     })
   );

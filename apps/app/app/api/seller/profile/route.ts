@@ -2,7 +2,6 @@ import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { logError } from '@repo/observability/server';
 
 const sellerProfileSchema = z.object({
   displayName: z.string().min(1).max(50),
@@ -27,12 +26,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     const body = await request.json();
+    console.log('Received body:', JSON.stringify(body, null, 2));
+    
     const validated = sellerProfileSchema.parse(body);
+    console.log('Validated data:', JSON.stringify(validated, null, 2));
 
     // Get or create database user
     let dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      select: { id: true }
+      select: { id: true, sellerProfile: true }
     });
 
     if (!dbUser) {
@@ -44,50 +46,79 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           lastName: user.lastName,
           imageUrl: user.imageUrl,
         },
-        select: { id: true }
+        select: { id: true, sellerProfile: true }
       });
     }
 
-    // Create seller profile in a transaction
-    const result = await database.$transaction(async (tx) => {
-      // Update user with payment info
-      const updatedUser = await tx.user.update({
+    // Check if seller profile already exists
+    if (dbUser.sellerProfile) {
+      return NextResponse.json(
+        { error: 'Seller profile already exists' },
+        { status: 409 }
+      );
+    }
+
+    // Update user with payment info if provided
+    if (validated.bankAccountNumber || validated.bankRoutingNumber || validated.accountHolderName) {
+      await database.user.update({
         where: { id: dbUser.id },
         data: {
-          bankAccountNumber: validated.bankAccountNumber,
-          bankRoutingNumber: validated.bankRoutingNumber,
-          accountHolderName: validated.accountHolderName,
+          bankAccountNumber: validated.bankAccountNumber || null,
+          bankRoutingNumber: validated.bankRoutingNumber || null,
+          accountHolderName: validated.accountHolderName || null,
           payoutMethod: validated.payoutMethod === 'bank_transfer' ? 'BANK_TRANSFER' : 'PAYPAL',
         },
       });
+    }
 
-      // Create seller profile
-      const sellerProfile = await tx.sellerProfile.create({
-        data: {
-          userId: dbUser.id,
-          displayName: validated.displayName,
-          bio: validated.bio,
-          shippingFrom: validated.shippingFrom,
-          processingTime: validated.processingTime,
-          defaultShippingCost: validated.defaultShippingCost,
-          shippingNotes: validated.shippingNotes,
-        },
-      });
-
-      return { user: updatedUser, sellerProfile };
+    // Create seller profile
+    const sellerProfile = await database.sellerProfile.create({
+      data: {
+        userId: dbUser.id,
+        displayName: validated.displayName,
+        bio: validated.bio || '',
+        shippingFrom: validated.shippingFrom,
+        processingTime: validated.processingTime,
+        defaultShippingCost: validated.defaultShippingCost,
+        shippingNotes: validated.shippingNotes || '',
+      },
     });
 
     return NextResponse.json({
       success: true,
-      sellerProfile: result.sellerProfile,
+      sellerProfile: sellerProfile,
     });
-  } catch (error) {
-    logError('Failed to create seller profile', error);
+  } catch (error: any) {
+    console.error('=====================');
+    console.error('Failed to create seller profile:');
+    console.error('Error type:', error?.constructor?.name);
+    console.error('Error message:', error?.message);
+    console.error('Error code:', error?.code);
+    console.error('Full error:', error);
+    console.error('=====================');
+    
+    // logError('Failed to create seller profile', error);
     
     if (error instanceof z.ZodError) {
+      console.error('Validation error details:', JSON.stringify(error.issues, null, 2));
       return NextResponse.json(
         { error: 'Invalid data', details: error.issues },
         { status: 400 }
+      );
+    }
+    
+    // Prisma errors
+    if (error?.code === 'P2002') {
+      return NextResponse.json(
+        { error: 'A seller profile already exists for this user' },
+        { status: 409 }
+      );
+    }
+    
+    if (error instanceof Error) {
+      return NextResponse.json(
+        { error: error.message || 'Failed to create seller profile' },
+        { status: 500 }
       );
     }
     

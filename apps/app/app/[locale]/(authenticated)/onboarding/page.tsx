@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { currentUser } from '@repo/auth/server';
 import { getUserPreferences } from './actions';
-import { OnboardingWizard } from './components/onboarding-wizard';
+import { StreamlinedOnboarding } from './components/streamlined-onboarding';
 
 export default async function OnboardingPage() {
   const user = await currentUser();
@@ -16,9 +16,5 @@ export default async function OnboardingPage() {
     redirect('/dashboard');
   }
 
-  return (
-    <div className="min-h-screen bg-background">
-      <OnboardingWizard userId={user.id} />
-    </div>
-  );
+  return <StreamlinedOnboarding userId={user.id} />;
 }

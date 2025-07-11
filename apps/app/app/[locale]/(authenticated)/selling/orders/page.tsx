@@ -245,7 +245,7 @@ const OrdersPage = async ({
                         </div>
                         
                         <div className="text-right">
-                          <p className="text-2xl font-bold">${order.amount.toFixed(2)}</p>
+                          <p className="text-2xl font-bold">${decimalToNumber(order.amount).toFixed(2)}</p>
                           <Badge className={getStatusColor(order.status)}>
                             <div className="flex items-center gap-1">
                               {getStatusIcon(order.status)}
@@ -258,7 +258,7 @@ const OrdersPage = async ({
                       <div className="mt-4 text-sm text-muted-foreground">
                         <p>Ordered: {new Date(order.createdAt).toLocaleDateString()}</p>
                         {order.payment && (
-                          <p>Payment: ${order.payment.amount.toFixed(2)} ({order.payment.status})</p>
+                          <p>Payment: ${decimalToNumber(order.payment.amount).toFixed(2)} ({order.payment.status})</p>
                         )}
                       </div>
 

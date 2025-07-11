@@ -3,6 +3,7 @@ import { database } from '@repo/database';
 import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { MessagesContent } from './components/messages-content';
+import { decimalToNumber } from '@repo/utils';
 
 const title = 'Messages';
 const description = 'Chat with buyers and sellers';
@@ -137,7 +138,7 @@ const MessagesPage = async ({ searchParams }: MessagesPageProps) => {
           ...conv,
           product: {
             ...conv.product,
-            price: conv.product.price.toNumber()
+            price: decimalToNumber(conv.product.price)
           }
         }))}
         currentUserId={dbUser.id}
@@ -145,7 +146,7 @@ const MessagesPage = async ({ searchParams }: MessagesPageProps) => {
         targetUser={targetUser}
         targetProduct={targetProduct ? {
           ...targetProduct,
-          price: targetProduct.price.toNumber()
+          price: decimalToNumber(targetProduct.price)
         } : targetProduct}
         existingConversation={existingConversation}
       />

@@ -79,3 +79,37 @@ export async function getCategories() {
     return [];
   }
 }
+
+export async function completeOnboarding(clerkId: string) {
+  try {
+    const user = await database.user.findUnique({
+      where: { clerkId },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Simply mark onboarding as complete with default preferences
+    await database.userPreferences.upsert({
+      where: { userId: user.id },
+      update: {
+        onboardingCompleted: true,
+      },
+      create: {
+        userId: user.id,
+        preferredRole: 'BOTH', // Default to both buyer and seller
+        interests: [],
+        favoriteBrands: [],
+        location: null,
+        onboardingCompleted: true,
+      },
+    });
+
+    revalidatePath('/onboarding');
+    revalidatePath('/dashboard');
+  } catch (error) {
+    console.error('Failed to complete onboarding:', error);
+    throw new Error('Failed to complete onboarding');
+  }
+}

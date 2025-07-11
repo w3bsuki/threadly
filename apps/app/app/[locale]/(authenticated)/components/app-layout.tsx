@@ -11,18 +11,20 @@ import {
 } from '@repo/design-system/components';
 import { cn } from '@repo/design-system/lib/utils';
 import {
-  HomeIcon,
-  PackageIcon,
-  MessageCircleIcon,
-  UserIcon,
-  MenuIcon,
-  PlusIcon,
-  TrendingUpIcon,
-  ShoppingBagIcon,
-  SettingsIcon,
-  LogOutIcon,
-  HeartIcon,
-  BarChartIcon,
+  LayoutDashboard,
+  Package,
+  MessageCircle,
+  User,
+  Menu,
+  Plus,
+  TrendingUp,
+  ShoppingBag,
+  Settings,
+  LogOut,
+  Heart,
+  BarChart3,
+  Sparkles,
+  Crown,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -43,34 +45,34 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigation = [
-    { name: dictionary.dashboard.navigation.dashboard, href: '/dashboard', icon: HomeIcon },
-    { name: dictionary.dashboard.navigation.listings, href: '/selling/listings', icon: PackageIcon },
-    { name: dictionary.dashboard.dashboard.quickLinks.salesHistory, href: '/selling/history', icon: TrendingUpIcon },
-    { name: dictionary.dashboard.navigation.orders, href: '/buying/orders', icon: ShoppingBagIcon },
-    { name: dictionary.dashboard.navigation.messages, href: '/messages', icon: MessageCircleIcon },
-    { name: dictionary.dashboard.navigation.profile, href: '/profile', icon: UserIcon },
+    { name: dictionary.dashboard.navigation.dashboard, href: '/dashboard', icon: LayoutDashboard },
+    { name: dictionary.dashboard.navigation.listings, href: '/selling/listings', icon: Package },
+    { name: dictionary.dashboard.dashboard.quickLinks.salesHistory, href: '/selling/history', icon: TrendingUp },
+    { name: dictionary.dashboard.navigation.orders, href: '/buying/orders', icon: ShoppingBag },
+    { name: dictionary.dashboard.navigation.messages, href: '/messages', icon: MessageCircle },
+    { name: dictionary.dashboard.navigation.profile, href: '/profile', icon: User },
   ];
 
   const mobileNavigation = [
-    { name: dictionary.web.global.navigation.browse, href: '/dashboard', icon: HomeIcon },
-    { name: dictionary.web.global.navigation.sell, href: '/selling/new', icon: PlusIcon },
-    { name: dictionary.dashboard.navigation.orders, href: '/buying/orders', icon: ShoppingBagIcon },
-    { name: dictionary.dashboard.navigation.messages, href: '/messages', icon: MessageCircleIcon },
-    { name: dictionary.dashboard.navigation.profile, href: '/profile', icon: UserIcon },
+    { name: dictionary.web.global.navigation.browse, href: '/dashboard', icon: LayoutDashboard },
+    { name: dictionary.web.global.navigation.sell, href: '/selling/new', icon: Plus },
+    { name: dictionary.dashboard.navigation.orders, href: '/buying/orders', icon: ShoppingBag },
+    { name: dictionary.dashboard.navigation.messages, href: '/messages', icon: MessageCircle },
+    { name: dictionary.dashboard.navigation.profile, href: '/profile', icon: User },
   ];
 
   return (
     <div className="min-h-screen bg-background">
       {/* Desktop Sidebar */}
       <aside className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-border bg-background px-6">
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-border bg-card px-6 shadow-sm backdrop-blur-sm">
           {/* Logo */}
           <div className="flex h-16 shrink-0 items-center">
-            <Link href="/dashboard" className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-black flex items-center justify-center">
-                <span className="text-white font-bold">T</span>
+            <Link href="/dashboard" className="flex items-center gap-3 group">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-200 group-hover:scale-105 border border-primary/20">
+                <span className="text-primary-foreground font-bold text-lg">T</span>
               </div>
-              <span className="text-xl font-semibold text-black">Threadly</span>
+              <span className="text-xl font-bold text-card-foreground group-hover:text-primary transition-colors duration-200">Threadly</span>
             </Link>
           </div>
 
@@ -84,10 +86,10 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
                       <Link
                         href={item.href}
                         className={cn(
-                          'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-medium',
+                          'group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-medium transition-all duration-200 border',
                           pathname === item.href
-                            ? 'bg-gray-100 text-black'
-                            : 'text-gray-600 hover:text-black hover:bg-gray-50'
+                            ? 'bg-primary text-primary-foreground shadow-sm border-primary'
+                            : 'text-card-foreground hover:text-primary hover:bg-primary/10 hover:shadow-sm border-border hover:border-primary/30'
                         )}
                       >
                         <item.icon className="h-5 w-5 shrink-0" />
@@ -100,13 +102,13 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
                       <Link
                         href="/admin"
                         className={cn(
-                          'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-medium transition-colors',
+                          'group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-medium transition-all duration-200 border',
                           pathname.startsWith('/admin')
-                            ? 'bg-secondary text-secondary-foreground'
-                            : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                            ? 'bg-primary text-primary-foreground shadow-sm border-primary'
+                            : 'text-card-foreground hover:text-primary hover:bg-primary/10 hover:shadow-sm border-border hover:border-primary/30'
                         )}
                       >
-                        <BarChartIcon className="h-5 w-5 shrink-0" />
+                        <BarChart3 className="h-5 w-5 shrink-0" />
                         {dictionary.dashboard.admin.title}
                       </Link>
                     </li>
@@ -116,16 +118,16 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
 
               {/* Quick Actions */}
               <li>
-                <div className="text-xs font-semibold leading-6 text-gray-400">
+                <div className="text-xs font-semibold leading-6 text-card-foreground/70 uppercase tracking-wider mb-1 pb-2 border-b border-border/50">
                   {dictionary.dashboard.dashboard.quickActions}
                 </div>
-                <ul role="list" className="-mx-2 mt-2 space-y-1">
+                <ul role="list" className="-mx-2 mt-3 space-y-2">
                   <li>
                     <Link
                       href="/selling/new"
-                      className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-medium bg-black text-white hover:bg-gray-800"
+                      className="group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 shadow-sm hover:shadow-md border border-primary"
                     >
-                      <PlusIcon className="h-5 w-5 shrink-0" />
+                      <Sparkles className="h-5 w-5 shrink-0" />
                       {dictionary.dashboard.dashboard.actions.listNewItem}
                     </Link>
                   </li>
@@ -134,9 +136,9 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
                       href={process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3001'}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-medium text-gray-600 hover:text-black hover:bg-gray-50"
+                      className="group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-medium text-card-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200 hover:shadow-sm border border-border hover:border-primary/30"
                     >
-                      <HeartIcon className="h-5 w-5 shrink-0" />
+                      <Crown className="h-5 w-5 shrink-0" />
                       {dictionary.dashboard.dashboard.recentOrders.browseShop}
                     </a>
                   </li>
@@ -161,8 +163,13 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
       <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-border bg-background px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 lg:hidden">
         <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="-m-2.5 p-2.5">
-              <MenuIcon className="h-6 w-6" />
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="min-h-[44px] min-w-[44px] touch-manipulation transition-all duration-200 active:scale-95"
+              style={{ WebkitTapHighlightColor: 'transparent' }}
+            >
+              <Menu className="h-6 w-6" />
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-72">
@@ -177,11 +184,12 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
                       href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
                       className={cn(
-                        'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-medium',
+                        'group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-medium min-h-[48px] items-center transition-all duration-200 active:scale-95 touch-manipulation',
                         pathname === item.href
                           ? 'bg-secondary text-secondary-foreground'
                           : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                       )}
+                      style={{ WebkitTapHighlightColor: 'transparent' }}
                     >
                       <item.icon className="h-5 w-5 shrink-0" />
                       {item.name}
@@ -194,13 +202,14 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
                       href="/admin"
                       onClick={() => setMobileMenuOpen(false)}
                       className={cn(
-                        'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-medium',
+                        'group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-medium min-h-[48px] items-center transition-all duration-200 active:scale-95 touch-manipulation',
                         pathname.startsWith('/admin')
                           ? 'bg-secondary text-secondary-foreground'
                           : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                       )}
+                      style={{ WebkitTapHighlightColor: 'transparent' }}
                     >
-                      <BarChartIcon className="h-5 w-5 shrink-0" />
+                      <BarChart3 className="h-5 w-5 shrink-0" />
                       {dictionary.dashboard.admin.title}
                     </Link>
                   </li>
@@ -212,22 +221,30 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
                   href={process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3001'}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                  className="group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-medium min-h-[48px] items-center transition-all duration-200 active:scale-95 touch-manipulation text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                  style={{ WebkitTapHighlightColor: 'transparent' }}
                 >
-                  <HeartIcon className="h-5 w-5 shrink-0" />
+                  <Crown className="h-5 w-5 shrink-0" />
                   {dictionary.dashboard.dashboard.recentOrders.browseShop}
                 </a>
               </div>
 
               <div className="absolute bottom-4 left-4 right-4">
                 <div className="flex items-center gap-2">
-                  <div suppressHydrationWarning>
+                  <div suppressHydrationWarning className="min-h-[44px] min-w-[44px] flex items-center justify-center">
                     <UserButton />
                   </div>
-                  <ModeToggle />
+                  <div className="min-h-[44px] min-w-[44px] flex items-center justify-center">
+                    <ModeToggle />
+                  </div>
                   <SignOutButton>
-                    <Button variant="ghost" size="icon">
-                      <LogOutIcon className="h-5 w-5" />
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="min-h-[44px] min-w-[44px] touch-manipulation transition-all duration-200 active:scale-95"
+                      style={{ WebkitTapHighlightColor: 'transparent' }}
+                    >
+                      <LogOut className="h-5 w-5" />
                     </Button>
                   </SignOutButton>
                 </div>
@@ -238,17 +255,19 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
 
         {/* Logo */}
         <div className="flex flex-1 items-center justify-center">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+          <Link href="/dashboard" className="flex items-center gap-2 group">
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-200 group-hover:scale-105 border border-primary/20">
               <span className="text-primary-foreground font-bold">T</span>
             </div>
-            <span className="text-xl font-semibold">Threadly</span>
+            <span className="text-xl font-bold group-hover:text-primary transition-colors duration-200">Threadly</span>
           </Link>
         </div>
 
         {/* Right side actions */}
         <div className="flex items-center gap-2">
-          <NotificationBell />
+          <div className="min-h-[44px] min-w-[44px] flex items-center justify-center">
+            <NotificationBell />
+          </div>
         </div>
       </div>
 
@@ -259,37 +278,57 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
         </div>
       </main>
 
-      {/* Mobile Bottom Navigation */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border">
-        <div className="grid grid-cols-5 gap-1">
-          {mobileNavigation.map((item) => {
-            const isActive = pathname === item.href || 
-              (item.href !== '/' && pathname.startsWith(item.href));
-            
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={cn(
-                  'flex flex-col items-center justify-center py-2 px-1 text-xs',
-                  isActive
-                    ? 'text-primary'
-                    : 'text-muted-foreground'
-                )}
-              >
-                <item.icon className={cn(
-                  'h-5 w-5 mb-1',
-                  item.href === '/selling/new' && 'h-6 w-6'
-                )} />
-                <span className={cn(
-                  'text-[10px]',
-                  item.href === '/selling/new' && 'font-semibold'
-                )}>
-                  {item.name}
-                </span>
-              </Link>
-            );
-          })}
+      {/* Enhanced Mobile Bottom Navigation */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border shadow-lg">
+        <div className="relative">
+          {/* Navigation Items */}
+          <div className="grid grid-cols-5 gap-1 px-2 py-2">
+            {mobileNavigation.map((item) => {
+              const isActive = pathname === item.href || 
+                (item.href !== '/' && pathname.startsWith(item.href));
+              
+              // Special handling for FAB (selling/new)
+              if (item.href === '/selling/new') {
+                return (
+                  <div key={item.name} className="flex justify-center items-center">
+                    <Link
+                      href={item.href}
+                      className="relative bg-primary text-primary-foreground rounded-full p-3 min-h-[56px] min-w-[56px] flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95 touch-manipulation"
+                      style={{ WebkitTapHighlightColor: 'transparent' }}
+                    >
+                      <item.icon className="h-6 w-6" />
+                      <span className="sr-only">{item.name}</span>
+                    </Link>
+                  </div>
+                );
+              }
+              
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={cn(
+                    'flex flex-col items-center justify-center py-2 px-1 text-xs min-h-[48px] rounded-lg transition-all duration-200 active:scale-95 touch-manipulation',
+                    isActive
+                      ? 'text-primary bg-primary/10'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                  )}
+                  style={{ WebkitTapHighlightColor: 'transparent' }}
+                >
+                  <item.icon className={cn(
+                    'h-5 w-5 mb-1 transition-transform duration-200',
+                    isActive && 'scale-110'
+                  )} />
+                  <span className={cn(
+                    'text-[10px] font-medium',
+                    isActive && 'font-semibold'
+                  )}>
+                    {item.name}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </nav>
     </div>

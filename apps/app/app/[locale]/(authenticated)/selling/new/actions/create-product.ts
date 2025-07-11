@@ -1,7 +1,7 @@
 'use server';
 
 import { currentUser } from '@repo/auth/server';
-import { ensureUserExists } from '@repo/auth/db';
+import { ensureUserExists } from '@repo/auth/sync';
 import { database } from '@repo/database';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';

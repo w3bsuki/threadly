@@ -6,6 +6,7 @@ import { env } from '@/env';
 import { z } from 'zod';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
+import { decimalToNumber } from '@repo/utils';
 
 // Initialize Stripe with proper error handling
 let stripe: Stripe | null = null;
@@ -127,9 +128,9 @@ export async function POST(request: NextRequest) {
         order: {
           ...primaryOrder,
           // Virtual properties to match the expected format
-          subtotal: orders.reduce((sum, o) => sum + o.amount.toNumber(), 0),
+          subtotal: orders.reduce((sum, o) => sum + decimalToNumber(o.amount), 0),
           shippingCost: 9.99, // Default shipping
-          tax: orders.reduce((sum, o) => sum + o.amount.toNumber(), 0) * 0.08,
+          tax: orders.reduce((sum, o) => sum + decimalToNumber(o.amount), 0) * 0.08,
           total: paymentIntent.amount / 100,
           shippingMethod: 'standard',
           shippingFirstName: user.firstName || '',
@@ -145,7 +146,7 @@ export async function POST(request: NextRequest) {
             productId: o.productId,
             title: o.product.title,
             description: o.product.description || '',
-            price: o.product.price.toNumber(),
+            price: decimalToNumber(o.product.price),
             quantity: 1,
             condition: o.product.condition,
             product: o.product,
@@ -204,10 +205,10 @@ export async function POST(request: NextRequest) {
     // Transform single order to match expected format
     const transformedOrder = {
       ...order,
-      subtotal: order.amount.toNumber(),
+      subtotal: decimalToNumber(order.amount),
       shippingCost: 0, // Free shipping for single items
-      tax: order.amount.toNumber() * 0.08,
-      total: order.amount.toNumber() * 1.08,
+      tax: decimalToNumber(order.amount) * 0.08,
+      total: decimalToNumber(order.amount) * 1.08,
       shippingMethod: 'standard',
       shippingFirstName: user.firstName || '',
       shippingLastName: user.lastName || '',

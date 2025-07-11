@@ -63,14 +63,14 @@ export function SellerOnboardingWizard({ userId }: SellerOnboardingWizardProps) 
       const response = await fetch('/api/seller/profile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          userId,
-        }),
+        body: JSON.stringify(formData),
       });
 
+      const data = await response.json();
+      
       if (!response.ok) {
-        throw new Error('Failed to save seller profile');
+        console.error('API Error:', data);
+        throw new Error(data.error || 'Failed to save seller profile');
       }
 
       // Show completion

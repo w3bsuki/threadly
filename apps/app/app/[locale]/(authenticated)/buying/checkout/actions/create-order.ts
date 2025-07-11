@@ -219,7 +219,7 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
             orderId: primaryOrder.id,
             productTitle: primaryOrder.product.title,
             productImage: primaryOrder.product.images[0]?.imageUrl,
-            price: primaryOrder.amount.toNumber(),
+            price: decimalToNumber(primaryOrder.amount),
             sellerName: primaryOrder.seller.firstName || 'Seller',
             orderUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'}/buying/orders/${primaryOrder.id}`,
           }

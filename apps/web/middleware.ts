@@ -3,7 +3,9 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|ingest|favicon.ico).*)'],
+  matcher: [
+    '/((?!_next/static|_next/image|api|ingest|favicon.ico|.*\\..*|manifest.json).*)',
+  ],
 };
 
 const locales = ['bg', 'en', 'uk'];

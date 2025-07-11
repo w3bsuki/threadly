@@ -1,8 +1,6 @@
 'use server';
 
 import { database } from '@repo/database';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
 
 export interface CategoryOption {
   id: string;
@@ -35,7 +33,7 @@ export async function getCategories(): Promise<CategoryOption[]> {
 
     return tree;
   } catch (error) {
-    logError('Error fetching categories:', error);
+    // Return empty array on error
     return [];
   }
 }
@@ -43,22 +41,32 @@ export async function getCategories(): Promise<CategoryOption[]> {
 export async function getCategoriesFlat(): Promise<CategoryOption[]> {
   try {
     const categories = await database.category.findMany({
-      where: {
-        parentId: null, // Only top-level categories for now
-      },
       select: {
         id: true,
         name: true,
         parentId: true,
       },
-      orderBy: {
-        name: 'asc',
-      },
+      orderBy: [
+        { parentId: 'asc' },
+        { name: 'asc' },
+      ],
     });
 
-    return categories;
+    // Format categories with parent names for better UX
+    const categoriesWithParents = categories.map(cat => {
+      if (cat.parentId) {
+        const parent = categories.find(p => p.id === cat.parentId);
+        return {
+          ...cat,
+          name: parent ? `${parent.name} > ${cat.name}` : cat.name
+        };
+      }
+      return cat;
+    });
+
+    return categoriesWithParents;
   } catch (error) {
-    logError('Error fetching flat categories:', error);
+    // Return empty array on error
     return [];
   }
 }

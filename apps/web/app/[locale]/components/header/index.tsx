@@ -10,9 +10,10 @@ import Link from 'next/link';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CartDropdown } from './cart-dropdown';
-import { SignInButton, SignUpButton, UserButton, useUser } from '@repo/auth/client';
+import { SignInButton, SignUpButton, useUser } from '@repo/auth/client';
 import { useI18n } from '../providers/i18n-provider';
 import { LanguageSwitcher } from './language-switcher';
+import { SafeUserButton } from './safe-user-button';
 
 // We'll define categories inside the component to use translations
 
@@ -410,7 +411,7 @@ export const Header = () => {
               <div className="flex items-center space-x-1 md:hidden">
                 {isSignedIn ? (
                   <div className="min-w-[44px] min-h-[44px] flex items-center justify-center">
-                    <UserButton />
+                    <SafeUserButton />
                   </div>
                 ) : (
                   <SignInButton mode="modal">
@@ -470,7 +471,7 @@ export const Header = () => {
                 </Button>
                 
                 {isSignedIn ? (
-                  <UserButton />
+                  <SafeUserButton />
                 ) : (
                   <SignInButton mode="modal">
                     <Button variant="ghost" size="sm">
@@ -593,7 +594,7 @@ export const Header = () => {
               <div className="space-y-2 pb-4 border-b border-gray-100" role="group" aria-label="User account actions">
                 {isSignedIn ? (
                   <div className="flex items-center px-3 py-3 min-h-[44px]" role="button" tabIndex={0}>
-                    <UserButton />
+                    <SafeUserButton />
                     <span className="ml-3 text-gray-700" aria-label={`Signed in as ${user?.firstName} ${user?.lastName}`}>
                       {user?.firstName} {user?.lastName}
                     </span>

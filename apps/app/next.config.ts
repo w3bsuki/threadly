@@ -7,17 +7,37 @@ import type { NextConfig } from 'next';
 // Start with base configuration
 let nextConfig: NextConfig = withToolbar(config);
 
-// Add specific configuration for handling dynamic routes with client components
+// Transpile packages that might cause issues
+nextConfig.transpilePackages = [
+  '@clerk/nextjs',
+  '@repo/design-system',
+  '@repo/ui',
+  '@knocklabs/react',
+];
+
+// Add specific configuration
 nextConfig = {
   ...nextConfig,
   experimental: {
     ...nextConfig.experimental,
-    // This helps with client reference manifest generation
-    optimizeCss: false,
-    // Better handling of dynamic routes
-    workerThreads: false,
-    cpus: 1,
-  }
+    optimizePackageImports: [
+      'lucide-react',
+      '@radix-ui/react-icons',
+      '@repo/design-system',
+    ],
+  },
+  // Webpack configuration
+  webpack: (config, { isServer, webpack }) => {
+    // Suppress warnings
+    if (isServer) {
+      config.ignoreWarnings = [
+        { module: /require-in-the-middle/ },
+        { module: /@opentelemetry\/instrumentation/ },
+      ];
+    }
+
+    return config;
+  },
 };
 
 // Enable Sentry for error tracking and performance monitoring

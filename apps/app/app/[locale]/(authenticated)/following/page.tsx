@@ -19,6 +19,7 @@ import {
 import Link from 'next/link';
 import { FollowButton } from './components/follow-button';
 import { getDictionary } from '@repo/internationalization';
+import { decimalToNumber } from '@repo/utils';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -194,7 +195,7 @@ const FollowingPage = async ({ params }: { params: Promise<{ locale: string }> }
                       )}
                       <div className="absolute top-2 right-2">
                         <Badge className="bg-black/50 text-white border-0">
-                          {formatPrice(item.price.toNumber())}
+                          {formatPrice(decimalToNumber(item.price))}
                         </Badge>
                       </div>
                     </div>
@@ -343,7 +344,7 @@ const FollowingPage = async ({ params }: { params: Promise<{ locale: string }> }
                               </div>
                             )}
                             <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-1 rounded-b-md">
-                              {formatPrice(product.price.toNumber())}
+                              {formatPrice(decimalToNumber(product.price))}
                             </div>
                           </div>
                         ))}

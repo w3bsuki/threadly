@@ -370,7 +370,7 @@
       "language": "Език"
     },
     "navigation": {
-      "dashboard": "Табло",
+      "dashboard": "Начало",
       "orders": "Поръчки",
       "listings": "Обяви",
       "messages": "Съобщения",
@@ -382,7 +382,7 @@
       "notifications": "Известия"
     },
     "dashboard": {
-      "title": "Табло",
+      "title": "Начало",
       "welcome": "Добре дошъл отново, {{name}}",
       "welcomeMessage": "Добре дошъл отново, {{name}}. Ето какво се случва с твоя акаунт.",
       "loadingAccount": "Зареждане на твоя акаунт...",
@@ -421,7 +421,7 @@
         "title": "Бързи връзки",
         "description": "Общи действия и клавишни комбинации",
         "manageListings": "Управлявай моите обяви",
-        "salesHistory": "История на продажбите",
+        "salesHistory": "Продажби",
         "profileSettings": "Настройки на профила"
       },
       "gettingStarted": {
@@ -429,7 +429,7 @@
         "description": "Добре дошли! Ето как да се възползвате максимално от акаунта си.",
         "listFirstItem": "Публикувай първия си артикул",
         "listItemDescription": "Качете снимки и детайли на артикули, които искате да продадете.",
-        "exploreShop": "Разгледайте магазина",
+        "exploreShop": "Разгледай обявите",
         "exploreDescription": "Разгледайте хиляди уникални модни артикули.",
         "completeProfile": "Довършете профила си",
         "profileDescription": "Добавете вашите данни, за да изградите доверие с купувачите.",
@@ -443,10 +443,10 @@
         "viewAllOrders": "Вижте всички поръчки",
         "noOrdersTitle": "Все още няма поръчки",
         "noOrdersDescription": "Започнете да пазарувате, за да видите поръчките си тук.",
-        "browseShop": "Разгледайте магазина"
+        "browseShop": "Разгледай обявите"
       },
       "actions": {
-        "listNewItem": "Публикувай нов артикул",
+        "listNewItem": "Публикувай обява",
         "continueShopping": "Продължи пазаруването"
       }
     },

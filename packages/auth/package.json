@@ -40,6 +40,10 @@
     "./db": {
       "types": "./db.ts",
       "default": "./db.ts"
+    },
+    "./sync": {
+      "types": "./src/sync.ts",
+      "default": "./src/sync.ts"
     }
   },
   "devDependencies": {

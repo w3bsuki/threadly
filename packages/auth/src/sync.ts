@@ -39,7 +39,7 @@ export async function ensureUserExists() {
         },
       });
 
-      console.log(`Created missing user in database: ${user.id}`);
+      // User created successfully
     } else if (!dbUser.preferences) {
       // Ensure preferences exist
       await database.userPreferences.create({
@@ -55,7 +55,7 @@ export async function ensureUserExists() {
 
     return dbUser;
   } catch (error) {
-    console.error('Error ensuring user exists:', error);
+    // Don't throw - allow request to continue even if sync fails
     // Don't throw - allow request to continue even if sync fails
     return null;
   }

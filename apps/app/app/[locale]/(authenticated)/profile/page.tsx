@@ -3,6 +3,7 @@ import { database } from '@repo/database';
 import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { ProfileContent } from './components/profile-content';
+import { decimalToNumber } from '@repo/utils';
 
 const title = 'Profile Settings';
 const description = 'Manage your account and marketplace preferences';
@@ -83,9 +84,9 @@ const ProfilePage = async () => {
 
   const stats = {
     products_sold: productsSold,
-    total_earnings: totalEarnings._sum?.amount ? totalEarnings._sum.amount.toNumber() : 0,
+    total_earnings: totalEarnings._sum?.amount ? decimalToNumber(totalEarnings._sum.amount) : 0,
     products_bought: productsBought,
-    total_spent: totalSpent._sum?.amount ? totalSpent._sum.amount.toNumber() : 0,
+    total_spent: totalSpent._sum?.amount ? decimalToNumber(totalSpent._sum.amount) : 0,
     active_listings: activeListings,
     followers_count: followersCount,
     following_count: followingCount,

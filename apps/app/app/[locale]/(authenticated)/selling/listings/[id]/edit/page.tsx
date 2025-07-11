@@ -5,6 +5,7 @@ import type { Metadata } from 'next';
 import { Header } from '../../../../components/header';
 import { EditProductForm } from './components/edit-product-form';
 import { getDictionary } from '@repo/internationalization';
+import { decimalToNumber } from '@repo/utils';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; id: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -66,7 +67,7 @@ const EditProductPage = async ({ params }: EditProductPageProps) => {
           
           <EditProductForm product={{
             ...product,
-            price: product.price.toNumber()
+            price: decimalToNumber(product.price)
           }} userId={user.id} />
         </div>
       </div>

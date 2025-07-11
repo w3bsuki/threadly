@@ -67,11 +67,17 @@ export function CategorySelector({ value, onValueChange, placeholder = "Select a
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        {categories.map((category) => (
-          <SelectItem key={category.id} value={category.id}>
-            {category.name}
+        {categories && categories.length > 0 ? (
+          categories.map((category) => (
+            <SelectItem key={category.id} value={category.id}>
+              {category.name}
+            </SelectItem>
+          ))
+        ) : (
+          <SelectItem value="no-categories" disabled>
+            No categories available
           </SelectItem>
-        ))}
+        )}
       </SelectContent>
     </Select>
   );
