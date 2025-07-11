@@ -78,6 +78,10 @@
       "types": "./hooks/index.ts",
       "default": "./hooks/index.ts"
     },
+    "./lib/fonts": {
+      "types": "./lib/fonts.ts",
+      "default": "./lib/fonts.ts"
+    },
     "./postcss.config.mjs": "./postcss.config.mjs",
     "./styles/globals.css": "./styles/globals.css"
   },

@@ -14,6 +14,7 @@ import { SignInButton, SignUpButton, useUser } from '@repo/auth/client';
 import { useI18n } from '../providers/i18n-provider';
 import { LanguageSwitcher } from './language-switcher';
 import { SafeUserButton } from './safe-user-button';
+import { AlgoliaSearch } from '../algolia-search';
 
 // We'll define categories inside the component to use translations
 
@@ -314,94 +315,11 @@ export const Header = () => {
 
             {/* Center: Search Bar (Desktop) */}
             <div className="flex-1 max-w-2xl mx-8 hidden md:block">
-              <div ref={searchRef} className="relative">
-                <form onSubmit={handleSearch}>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Search className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      onKeyDown={handleKeyDown}
-                      placeholder={dictionary.web.global.navigation?.searchPlaceholder || "Search for items, brands, or members"}
-                      className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-black focus:border-black text-sm"
-                      role="combobox"
-                      aria-expanded={showSuggestions}
-                      aria-controls="search-suggestions"
-                      aria-autocomplete="list"
-                      aria-activedescendant={selectedSuggestion >= 0 ? `suggestion-${selectedSuggestion}` : undefined}
-                    />
-                    {searchQuery && (
-                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSearchQuery('');
-                            setShowSuggestions(false);
-                          }}
-                          className="text-gray-400 hover:text-gray-600"
-                          aria-label={dictionary.web.global.accessibility?.clearSearch || "Clear search"}
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </form>
-
-                {/* Search Suggestions Dropdown */}
-                {showSuggestions && suggestions.length > 0 && (
-                  <div 
-                    id="search-suggestions"
-                    role="listbox"
-                    className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-80 overflow-y-auto"
-                  >
-                    {suggestions.map((suggestion, index) => (
-                      <button
-                        key={`${suggestion.type}-${suggestion.id}`}
-                        id={`suggestion-${index}`}
-                        role="option"
-                        aria-selected={selectedSuggestion === index}
-                        onClick={() => handleSuggestionClick(suggestion)}
-                        className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center space-x-3 border-b border-gray-100 last:border-b-0 ${
-                          selectedSuggestion === index ? 'bg-blue-50' : ''
-                        }`}
-                      >
-                        <div className="flex-shrink-0">
-                          {suggestion.type === 'product' && (
-                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                          )}
-                          {suggestion.type === 'brand' && (
-                            <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                          )}
-                          {suggestion.type === 'category' && (
-                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-gray-900 truncate">
-                            {suggestion.title}
-                          </div>
-                          <div className="text-sm text-gray-500 truncate">
-                            {suggestion.type === 'product' && suggestion.brand && (
-                              <span>by {suggestion.brand}</span>
-                            )}
-                            {suggestion.type === 'product' && suggestion.category && (
-                              <span> in {suggestion.category}</span>
-                            )}
-                            {suggestion.type === 'brand' && <span>Brand</span>}
-                            {suggestion.type === 'category' && <span>Category</span>}
-                          </div>
-                        </div>
-                        <div className="flex-shrink-0">
-                          <Search className="h-4 w-4 text-gray-400" />
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
+              <div className="relative">
+                <AlgoliaSearch 
+                  placeholder={dictionary.web.global.navigation?.searchPlaceholder || "Search for items, brands, or members"}
+                  className="max-w-lg"
+                />
               </div>
             </div>
 
@@ -680,33 +598,11 @@ export const Header = () => {
         <div className="px-4 pt-3 pb-3">
           {/* Search Bar - Always Visible */}
           <div className="mb-3" ref={searchRef}>
-            <form onSubmit={handleSearch}>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Search for items, brands, or members"
-                  className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-black focus:border-black text-sm"
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSearchQuery('');
-                      setShowSuggestions(false);
-                    }}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  >
-                    <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
-                  </button>
-                )}
-              </div>
-            </form>
+            <AlgoliaSearch 
+              placeholder="Search for items, brands, or members"
+              onClose={() => setMenuOpen(false)}
+              isMobile
+            />
           </div>
 
           {/* Quick Category Pills - Most Used Filters */}
@@ -774,29 +670,11 @@ export const Header = () => {
           <div className="flex items-center gap-2">
             {/* Search Bar */}
             <div className="flex-1 relative">
-              <form onSubmit={handleSearch}>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Search className="h-4 w-4 text-gray-400" />
-                  </div>
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search for items..."
-                    className="block w-full pl-11 pr-10 py-2.5 h-11 bg-gray-50 border border-gray-200 rounded-full leading-5 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent focus:bg-white text-sm transition-all"
-                  />
-                  {searchQuery && (
-                    <button
-                      type="button"
-                      onClick={() => setSearchQuery('')}
-                      className="absolute inset-y-0 right-0 pr-4 flex items-center"
-                    >
-                      <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
-                    </button>
-                  )}
-                </div>
-              </form>
+              <AlgoliaSearch 
+                placeholder="Search for items..."
+                className="w-full"
+                isMobile
+              />
             </div>
 
             {/* Filter Button */}

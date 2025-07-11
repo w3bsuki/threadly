@@ -28,6 +28,7 @@ export default async function ProductsPage({
     condition?: string;
     sort?: string;
     page?: string;
+    q?: string;
   }>;
 }) {
   const { locale } = await params;

@@ -25,7 +25,7 @@ import {
 } from '@repo/validation/validators';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
-import { MarketplaceSearchService } from '@repo/search';
+import { MarketplaceSearchService, getAlgoliaSyncService } from '@repo/search';
 
 const updateProductSchema = z.object({
   title: z.string()
@@ -156,7 +156,35 @@ export async function updateProduct(productId: string, input: z.infer<typeof upd
       return product;
     });
 
-    // Update search index after successful product update
+    // Get updated product with relations for Algolia
+    const productForSearch = await database.product.findUnique({
+      where: { id: productId },
+      include: {
+        category: true,
+        seller: true,
+        images: {
+          orderBy: { displayOrder: 'asc' },
+        },
+        _count: {
+          select: {
+            favorites: true,
+          },
+        },
+      },
+    });
+
+    // Update product in Algolia
+    if (productForSearch) {
+      try {
+        const algoliaSync = getAlgoliaSyncService();
+        await algoliaSync.updateProduct(productForSearch);
+        log.info('Product updated in Algolia', { productId });
+      } catch (algoliaError) {
+        logError('Failed to update product in Algolia (non-critical):', algoliaError);
+      }
+    }
+
+    // Also update in legacy search if configured
     try {
       const searchService = new MarketplaceSearchService({
         appId: process.env.ALGOLIA_APP_ID!,
@@ -242,6 +270,33 @@ export async function deleteProduct(productId: string) {
           title: `[DELETED] ${existingProduct.title}`,
         },
       });
+      
+      // Update status in Algolia to reflect removal
+      try {
+        const algoliaSync = getAlgoliaSyncService();
+        const productForSearch = await database.product.findUnique({
+          where: { id: productId },
+          include: {
+            category: true,
+            seller: true,
+            images: {
+              orderBy: { displayOrder: 'asc' },
+            },
+            _count: {
+              select: {
+                favorites: true,
+              },
+            },
+          },
+        });
+        
+        if (productForSearch) {
+          await algoliaSync.updateProduct(productForSearch);
+          log.info('Product status updated in Algolia', { productId, status: 'REMOVED' });
+        }
+      } catch (algoliaError) {
+        logError('Failed to update product status in Algolia (non-critical):', algoliaError);
+      }
     } else {
       // Safe to delete if no orders exist
       await database.$transaction(async (tx) => {
@@ -259,6 +314,15 @@ export async function deleteProduct(productId: string) {
           },
         });
       });
+      
+      // Remove from Algolia
+      try {
+        const algoliaSync = getAlgoliaSyncService();
+        await algoliaSync.deleteProduct(productId);
+        log.info('Product deleted from Algolia', { productId });
+      } catch (algoliaError) {
+        logError('Failed to delete product from Algolia (non-critical):', algoliaError);
+      }
     }
 
     // Remove product from search index after deletion

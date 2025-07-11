@@ -594,6 +594,9 @@ importers:
       '@t3-oss/env-nextjs':
         specifier: ^0.13.8
         version: 0.13.8(typescript@5.8.3)(zod@4.0.2)
+      algoliasearch:
+        specifier: ^5.32.0
+        version: 5.32.0
       canvas-confetti:
         specifier: ^1.9.3
         version: 1.9.3
@@ -1668,6 +1671,9 @@ importers:
       '@repo/error-handling':
         specifier: workspace:*
         version: link:../error-handling
+      '@repo/observability':
+        specifier: workspace:*
+        version: link:../observability
       '@t3-oss/env-nextjs':
         specifier: ^0.13.8
         version: 0.13.8(typescript@5.8.3)(zod@4.0.2)

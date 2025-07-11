@@ -36,6 +36,7 @@ Threadly - Premium C2C fashion marketplace. Next-Forge turborepo monorepo.
 - pnpm typecheck
 - pnpm db:push
 - pnpm db:studio
+- pnpm tsx scripts/sync-algolia.ts (sync existing products to Algolia)
 
 ## Quality Gates
 - Zero typecheck errors

@@ -37,6 +37,7 @@
     "@repo/database": "workspace:*",
     "@repo/cache": "workspace:*",
     "@repo/error-handling": "workspace:*",
+    "@repo/observability": "workspace:*",
     "@clerk/nextjs": "^6.24.0",
     "algoliasearch": "^5.32.0",
     "@t3-oss/env-nextjs": "^0.13.8",
