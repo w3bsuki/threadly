@@ -71,7 +71,7 @@ export function createEmailService(config: EmailConfig, userRepository: UserRepo
             items: order.items,
             total: order.total,
             estimatedDelivery: order.estimatedDelivery,
-          }),
+          }) as any,
           tags: [
             { name: 'type', value: 'order-confirmation' },
             { name: 'environment', value: environment }
@@ -124,7 +124,7 @@ export function createEmailService(config: EmailConfig, userRepository: UserRepo
           senderName: `${sender?.firstName || ''} ${sender?.lastName || ''}`.trim(),
           messagePreview: message.content.substring(0, 100),
           conversationUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'https://app.threadly.com'}/messages/${conversation.id}`,
-        }),
+        }) as any,
       });
 
       if (error) {
@@ -152,7 +152,7 @@ export function createEmailService(config: EmailConfig, userRepository: UserRepo
           orderId: order.id,
           productName: order.items[0]?.product?.title || 'Product',
           payoutDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-        }),
+        }) as any,
       });
 
       if (error) {
@@ -183,7 +183,7 @@ export function createEmailService(config: EmailConfig, userRepository: UserRepo
           totalViews: reportData.totalViews,
           totalMessages: reportData.totalMessages,
           topProducts: reportData.topProducts,
-        }),
+        }) as any,
       });
 
       if (error) {
@@ -198,7 +198,7 @@ export function createEmailService(config: EmailConfig, userRepository: UserRepo
         from: fromEmail,
         to,
         subject,
-        react: content,
+        react: content as any,
       }));
 
       const { data, error } = await resend.batch.send(emails);
