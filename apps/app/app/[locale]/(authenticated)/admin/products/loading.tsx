@@ -1,8 +1,9 @@
 import { TableSkeleton } from '@repo/design-system/components';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
 import { Skeleton } from '@repo/design-system/components';
+import type { ReactElement } from 'react';
 
-export default function Loading() {
+export default function Loading(): ReactElement {
   return (
     <div className="space-y-6">
       <div>
