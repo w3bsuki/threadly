@@ -3,6 +3,7 @@ import { createMetadata } from '@repo/seo/metadata';
 import { organizationStructuredData, websiteStructuredData } from '@repo/seo/structured-data';
 import type { Metadata } from 'next';
 import { ProductGridServer } from '../../../components/product-grid-server';
+// Fix: Added ADMIN_SECRET environment variable for cache invalidation
 import { Button } from '@repo/design-system/components';
 import { ShoppingBag, Plus } from 'lucide-react';
 import Link from 'next/link';
