@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   };
 }
 
-const CartPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
+const CartPage = async ({ params }: { params: Promise<{ locale: string }> }): Promise<React.JSX.Element> => {
   const { locale } = await params;
   const dictionary = await getDictionary(locale);
   const user = await currentUser();
