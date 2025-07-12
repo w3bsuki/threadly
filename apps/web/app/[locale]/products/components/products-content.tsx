@@ -106,54 +106,41 @@ export async function ProductsContent({ searchParams, dictionary }: ProductsCont
     orderBy = { views: "desc" };
   }
 
-  // Fetch products with pagination and error handling
+  // Fetch products with pagination
   const [products, totalCount] = await Promise.all([
-    withDatabaseErrorHandling(
-      'fetchProducts',
-      () => database.product.findMany({
-        where,
-        orderBy,
-        skip,
-        take: ITEMS_PER_PAGE,
-        include: {
-          images: {
-            orderBy: { displayOrder: "asc" },
-            take: 1,
-          },
-          seller: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
-              imageUrl: true,
-            },
-          },
-          category: {
-            select: {
-              id: true,
-              name: true,
-              slug: true,
-            },
-          },
-          _count: {
-            select: {
-              favorites: true,
-            },
+    database.product.findMany({
+      where,
+      orderBy,
+      skip,
+      take: ITEMS_PER_PAGE,
+      include: {
+        images: {
+          orderBy: { displayOrder: "asc" },
+          take: 1,
+        },
+        seller: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            imageUrl: true,
           },
         },
-      }),
-      {
-        where,
-        orderBy,
-        page,
-        itemsPerPage: ITEMS_PER_PAGE,
-      }
-    ),
-    withDatabaseErrorHandling(
-      'countProducts',
-      () => database.product.count({ where }),
-      { where }
-    ),
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+        _count: {
+          select: {
+            favorites: true,
+          },
+        },
+      },
+    }),
+    database.product.count({ where }),
   ]);
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
@@ -182,19 +169,15 @@ export async function ProductsContent({ searchParams, dictionary }: ProductsCont
     createdAt: product.createdAt,
   }));
 
-  // Fetch categories for filters with error handling
-  const categories = await withDatabaseErrorHandling(
-    'fetchCategories',
-    () => database.category.findMany({
-      where: {
-        parentId: null, // Only top-level categories
-      },
-      include: {
-        children: true,
-      },
-    }),
-    { parentId: null }
-  );
+  // Fetch categories for filters
+  const categories = await database.category.findMany({
+    where: {
+      parentId: null, // Only top-level categories
+    },
+    include: {
+      children: true,
+    },
+  });
 
   return (
     <div className="min-h-screen bg-white">

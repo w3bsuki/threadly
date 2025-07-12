@@ -521,8 +521,15 @@ async function main() {
     if (!existingProduct) {
       const product = await prisma.product.create({
         data: {
-          ...productInfo,
+          title: productInfo.title,
+          description: productInfo.description,
           price: productInfo.price,
+          condition: productInfo.condition as any,
+          size: productInfo.size,
+          brand: productInfo.brand,
+          color: productInfo.color,
+          categoryId: productInfo.categoryId!,
+          sellerId: productInfo.sellerId,
           status: 'AVAILABLE'
         }
       });
