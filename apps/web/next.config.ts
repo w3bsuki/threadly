@@ -38,7 +38,7 @@ nextConfig.images = {
   ],
 };
 
-// Fix webpack issues
+// Fix webpack issues and Prisma bundling
 nextConfig.webpack = (config, { isServer }) => {
   if (isServer) {
     config.ignoreWarnings = [
@@ -48,6 +48,12 @@ nextConfig.webpack = (config, { isServer }) => {
   }
 
   return config;
+};
+
+// Fix Prisma bundling for Vercel
+nextConfig.experimental = {
+  ...nextConfig.experimental,
+  serverComponentsExternalPackages: ['@prisma/client', '@prisma/engines'],
 };
 
 if (process.env.NODE_ENV === 'production') {

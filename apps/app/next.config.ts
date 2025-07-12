@@ -25,6 +25,7 @@ nextConfig = {
       '@radix-ui/react-icons',
       '@repo/design-system',
     ],
+    serverComponentsExternalPackages: ['@prisma/client', '@prisma/engines'],
   },
   // Webpack configuration
   webpack: (config, { isServer, webpack }) => {
