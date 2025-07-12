@@ -56,6 +56,9 @@ nextConfig.experimental = {
   serverComponentsExternalPackages: ['@prisma/client', '@prisma/engines'],
 };
 
+// Additional Prisma configuration for Vercel
+nextConfig.serverExternalPackages = ['@prisma/client', '@prisma/engines'];
+
 if (process.env.NODE_ENV === 'production') {
   const redirects: NextConfig['redirects'] = async () => [
     {
