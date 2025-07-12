@@ -29,7 +29,7 @@ interface ProductActionsProps {
   };
 }
 
-export function ProductActions({ product }: ProductActionsProps) {
+export function ProductActions({ product }: ProductActionsProps): React.JSX.Element {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 

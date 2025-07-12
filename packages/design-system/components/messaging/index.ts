@@ -1,1 +1,6 @@
-export * from './skeletons';
+export {
+  MessageListSkeleton,
+  ConversationSkeleton,
+  ChatInputSkeleton,
+  MessageBubbleSkeleton
+} from './skeletons';
