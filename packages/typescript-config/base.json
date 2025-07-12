@@ -5,6 +5,7 @@
     "declaration": true,
     "declarationMap": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "incremental": false,
     "isolatedModules": true,

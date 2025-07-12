@@ -326,9 +326,9 @@ export async function ProductGridServer({
     ]);
 
     const filterOptions = {
-      categories: categories.map(c => c.name),
-      brands: brands.map(b => b.brand).filter(Boolean) as string[],
-      sizes: sizes.map(s => s.size).filter(Boolean) as string[],
+      categories: categories.map((c: any) => c.name),
+      brands: brands.map((b: any) => b.brand).filter(Boolean) as string[],
+      sizes: sizes.map((s: any) => s.size).filter(Boolean) as string[],
       totalCount: finalProducts.length // Use the actual count from products we fetched
     };
 

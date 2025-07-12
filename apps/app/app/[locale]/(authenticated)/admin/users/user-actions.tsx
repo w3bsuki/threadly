@@ -31,7 +31,7 @@ interface UserActionsProps {
   };
 }
 
-export function UserActions({ user }: UserActionsProps) {
+export function UserActions({ user }: UserActionsProps): React.JSX.Element {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 

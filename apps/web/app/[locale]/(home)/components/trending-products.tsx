@@ -100,7 +100,7 @@ export const TrendingProducts = async () => {
 
           {/* Trending Products Grid */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {transformedProducts.map((product) => (
+            {transformedProducts.map((product: any) => (
               <Link
                 key={product.id}
                 href={`/product/${product.id}`}

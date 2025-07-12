@@ -107,7 +107,7 @@ export const NewArrivals = async () => {
 
         {/* New Arrivals Grid */}
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-          {transformedArrivals.map((item) => (
+          {transformedArrivals.map((item: any) => (
             <Link
               key={item.id}
               href={`/product/${item.id}`}

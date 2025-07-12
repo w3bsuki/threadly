@@ -2,6 +2,16 @@
   "name": "@repo/cms",
   "version": "0.0.0",
   "private": true,
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "default": "./index.ts"
+    },
+    "./keys": {
+      "types": "./keys.ts",
+      "default": "./keys.ts"
+    }
+  },
   "scripts": {
     "dev": "node scripts/conditional-dev.js",
     "build": "node scripts/conditional-build.js",

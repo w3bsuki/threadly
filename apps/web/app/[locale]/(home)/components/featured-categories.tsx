@@ -98,7 +98,7 @@ export const FeaturedCategories = async (): Promise<React.ReactElement> => {
 
         {/* Categories Grid */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {transformedCategories.map((category) => (
+          {transformedCategories.map((category: any) => (
             <Link
               key={category.id}
               href={category.href}
