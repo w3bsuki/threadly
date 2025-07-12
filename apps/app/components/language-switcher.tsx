@@ -16,7 +16,7 @@ const locales = [
   { code: 'uk', name: 'Українська', flag: '🇺🇦' },
 ];
 
-export function LanguageSwitcher() {
+export function LanguageSwitcher(): React.JSX.Element {
   const params = useParams();
   const pathname = usePathname();
   const router = useRouter();

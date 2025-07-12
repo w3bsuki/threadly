@@ -42,7 +42,7 @@ const REPORT_REASONS = {
   ],
 };
 
-export function ReportDialog({ type, targetId, targetName, children }: ReportDialogProps) {
+export function ReportDialog({ type, targetId, targetName, children }: ReportDialogProps): React.JSX.Element {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState('');
   const [description, setDescription] = useState('');

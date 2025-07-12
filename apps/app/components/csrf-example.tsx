@@ -6,7 +6,7 @@ import { useState } from 'react';
 /**
  * Example component demonstrating CSRF-protected API calls
  */
-export function CSRFExample() {
+export function CSRFExample(): React.JSX.Element {
   const { fetchWithCSRF, getCSRFHeaders } = useCSRF();
   const [result, setResult] = useState<string>('');
 

@@ -9,7 +9,7 @@ import { ShoppingCart, Minus, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-export function CartDropdown() {
+export function CartDropdown(): React.JSX.Element {
   const { 
     items, 
     isOpen, 

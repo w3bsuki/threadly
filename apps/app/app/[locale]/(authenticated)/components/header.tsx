@@ -19,7 +19,7 @@ type HeaderProps = {
   dictionary: Dictionary;
 };
 
-export const Header = ({ pages, page, children, dictionary }: HeaderProps) => (
+export const Header = ({ pages, page, children, dictionary }: HeaderProps): React.JSX.Element => (
   <header className="flex h-16 shrink-0 items-center justify-between gap-2">
     <div className="flex items-center gap-2 px-4">
       <Breadcrumb>

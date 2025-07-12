@@ -22,7 +22,7 @@ interface SavedSearchDialogProps {
   onSave?: () => void;
 }
 
-export function SavedSearchDialog({ query, filters, onSave }: SavedSearchDialogProps) {
+export function SavedSearchDialog({ query, filters, onSave }: SavedSearchDialogProps): React.JSX.Element {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(query);
   const [alertEnabled, setAlertEnabled] = useState(true);
