@@ -7,7 +7,7 @@ interface PageProps {
 }
 
 // Server Component - handles data fetching
-const AdminProductsPage = async ({ searchParams }: PageProps): Promise<ReactElement> => {
+const AdminProductsPage = async ({ searchParams }: PageProps): Promise<React.JSX.Element> => {
   const params = await searchParams;
   const search = params.q || '';
   const statusFilter = params.status || 'all';

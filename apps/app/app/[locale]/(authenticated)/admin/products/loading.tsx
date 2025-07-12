@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/co
 import { Skeleton } from '@repo/design-system/components';
 import type { ReactElement } from 'react';
 
-export default function Loading(): ReactElement {
+export default function Loading(): React.JSX.Element {
   return (
     <div className="space-y-6">
       <div>

@@ -237,7 +237,7 @@ function ProductTable({ products }: { products: ProductWithDetails[] }) {
   );
 }
 
-export function AdminProductsClient({ products }: AdminProductsClientProps): React.ReactElement {
+export function AdminProductsClient({ products }: AdminProductsClientProps): React.JSX.Element {
   // Calculate stats from products
   const statusStats = {
     total: products.length,
