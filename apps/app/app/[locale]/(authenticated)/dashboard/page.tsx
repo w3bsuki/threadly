@@ -85,7 +85,7 @@ async function getDashboardMetrics(userId: string) {
   );
 }
 
-export default async function DashboardPage({ params }: { params: Promise<{ locale: string }> }): Promise<React.JSX.Element | null> {
+export default async function DashboardPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const dictionary = await getDictionary(locale);
   const user = await currentUser();

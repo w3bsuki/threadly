@@ -40,7 +40,7 @@ interface AppLayoutProps {
   dictionary: Dictionary;
 }
 
-export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps): React.JSX.Element {
+export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 

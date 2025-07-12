@@ -87,7 +87,6 @@ export function CartContent({ userId }: CartContentProps): React.JSX.Element {
               <div className="flex gap-4">
                 {/* Product Image */}
                 <div className="w-20 h-20 flex-shrink-0">
-                  {/* @ts-expect-error React type conflict with LazyImage in production builds */}
                   <LazyImage
                     src={item.imageUrl}
                     alt={item.title}

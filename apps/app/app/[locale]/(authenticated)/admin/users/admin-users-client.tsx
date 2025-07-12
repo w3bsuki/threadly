@@ -168,7 +168,6 @@ function UserTable({ users }: { users: UserWithDetails[] }) {
                 </td>
                 <td className="p-2">
                   <div className="flex items-center gap-3">
-                    {/* @ts-expect-error React type conflict with LazyAvatar in production builds */}
                     <LazyAvatar
                       src={user.imageUrl}
                       alt={`${user.firstName || ''} ${user.lastName || ''}`}
