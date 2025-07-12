@@ -7,7 +7,17 @@ export default defineConfig({
   splitting: true,
   sourcemap: true,
   clean: true,
-  external: ['react', 'react-dom', 'vitest'],
+  external: [
+    'react', 
+    'react-dom', 
+    'vitest', 
+    '@testing-library/react',
+    '@testing-library/dom',
+    '@testing-library/jest-dom',
+    '@testing-library/user-event',
+    'axe-core',
+    '@axe-core/react'
+  ],
   loader: {
     '.tsx': 'tsx',
     '.ts': 'ts',
