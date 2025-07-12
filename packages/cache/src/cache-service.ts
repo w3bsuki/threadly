@@ -10,6 +10,7 @@ export class MarketplaceCacheService {
     try {
       if (config?.url && config?.token) {
         this.cache = getRedisCache(config);
+        console.log('[Cache] ✅ Connected to Redis cache at:', config.url);
       } else {
         throw new Error('Redis config missing');
       }
@@ -17,6 +18,10 @@ export class MarketplaceCacheService {
       // Fallback to memory cache
       this.cache = getMemoryCache();
       this.useMemoryCache = true;
+      console.warn('[Cache] ⚠️  WARNING: Falling back to memory cache! Redis not configured.');
+      console.warn('[Cache] ⚠️  This means cache is NOT shared between deployments!');
+      console.warn('[Cache] ⚠️  Products created in /app will NOT appear in /web immediately.');
+      console.warn('[Cache] ⚠️  Configure UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN.');
     }
   }
 
@@ -276,6 +281,24 @@ export class MarketplaceCacheService {
   // Statistics
   async getStats() {
     return this.cache.getStats();
+  }
+
+  // Check cache backend type
+  getCacheType(): string {
+    return this.useMemoryCache ? 'memory' : 'redis';
+  }
+
+  // Health check
+  async isHealthy(): Promise<boolean> {
+    try {
+      const testKey = 'health-check';
+      await this.set(testKey, { timestamp: Date.now() }, { ttl: 60 });
+      const result = await this.get(testKey);
+      await this.cache.del(testKey);
+      return result !== null;
+    } catch (error) {
+      return false;
+    }
   }
 }
 

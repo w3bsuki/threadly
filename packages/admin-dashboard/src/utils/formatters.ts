@@ -73,10 +73,19 @@ export function formatDate(
 
 // Relative time formatting
 export function formatRelativeTime(date: Date | string, locale = 'en-US'): string {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  let dateObj: Date;
+  if (date instanceof Date) {
+    dateObj = date;
+  } else if (typeof date === 'string' || typeof date === 'number') {
+    dateObj = new Date(date);
+  } else {
+    dateObj = new Date(); // fallback
+  }
   const now = new Date();
+  if (!(dateObj instanceof Date) || isNaN(dateObj.getTime())) {
+    return 'invalid date';
+  }
   const diffInSeconds = Math.floor((now.getTime() - dateObj.getTime()) / 1000);
-  
   const intervals = [
     { label: 'year', seconds: 31536000 },
     { label: 'month', seconds: 2592000 },
@@ -86,17 +95,15 @@ export function formatRelativeTime(date: Date | string, locale = 'en-US'): strin
     { label: 'minute', seconds: 60 },
     { label: 'second', seconds: 1 },
   ];
-  
   for (const interval of intervals) {
     const count = Math.floor(diffInSeconds / interval.seconds);
     if (count >= 1) {
       return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(
-        -count, 
+        -count,
         interval.label as Intl.RelativeTimeFormatUnit
       );
     }
   }
-  
   return 'just now';
 }
 

@@ -60,6 +60,10 @@
 - [x] Complete Bulgarian and Ukrainian translations - COMPLETED ✅
 - [x] Implement region selector and multi-currency - COMPLETED ✅
 - [x] Configure regional tax rates and display - COMPLETED ✅
+- [x] **FIX PRODUCT SYNC ISSUE** - COMPLETED ✅ (2025-01-12)
+  - Root cause: URL mismatch in production environment variables
+  - Solution: Update NEXT_PUBLIC_WEB_URL in Vercel to correct URL
+  - Added retry logic and health check endpoints for robustness
 
 ### Security Fixes - ✅ ALL COMPLETED
 1. ✅ **DATABASE CREDENTIALS EXPOSED** - FIXED: Removed from start-dev.sh

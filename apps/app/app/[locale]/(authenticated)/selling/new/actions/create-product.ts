@@ -111,27 +111,69 @@ export async function createProduct(input: z.infer<typeof createProductSchema>) 
     }
 
     // Clear cache on web app so new products show immediately
-    try {
-      const webUrl = process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3001';
-      const adminSecret = process.env.ADMIN_SECRET || 'default-admin-secret';
-      
-      const response = await fetch(`${webUrl}/api/admin/clear-cache`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${adminSecret}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ type: 'products' }),
-      });
+    const webUrl = process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3001';
+    const adminSecret = process.env.ADMIN_SECRET || 'default-admin-secret';
+    
+    // Retry logic for cache clearing
+    let cacheCleared = false;
+    const maxRetries = 3;
+    const retryDelay = 1000; // 1 second
+    
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        log.info(`Attempting to clear cache on web app (attempt ${attempt}/${maxRetries})`, {
+          webUrl,
+          productId: product.id,
+        });
+        
+        const response = await fetch(`${webUrl}/api/admin/clear-cache`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${adminSecret}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ type: 'products' }),
+          // Add timeout to prevent hanging
+          signal: AbortSignal.timeout(5000), // 5 second timeout
+        });
 
-      if (!response.ok) {
-        throw new Error(`Cache clear failed: ${response.status}`);
+        if (!response.ok) {
+          const responseText = await response.text().catch(() => 'No response body');
+          throw new Error(`Cache clear failed: ${response.status} ${response.statusText} - ${responseText}`);
+        }
+
+        const result = await response.json();
+        log.info('Successfully cleared product cache on web app', {
+          productId: product.id,
+          webUrl,
+          result,
+        });
+        cacheCleared = true;
+        break;
+      } catch (cacheError) {
+        // Log detailed error information
+        logError(`Failed to clear cache on web app (attempt ${attempt}/${maxRetries})`, {
+          error: cacheError,
+          productId: product.id,
+          webUrl,
+          errorMessage: cacheError instanceof Error ? cacheError.message : String(cacheError),
+        });
+        
+        // If not the last attempt, wait before retrying
+        if (attempt < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, retryDelay));
+        }
       }
-
-      log.info('Successfully cleared product cache on web app');
-    } catch (cacheError) {
-      // Log cache clearing errors but don't fail the product creation
-      logError('Failed to clear cache on web app (non-critical):', cacheError);
+    }
+    
+    if (!cacheCleared) {
+      // Log final failure with context
+      logError('Failed to clear cache after all retry attempts', {
+        productId: product.id,
+        webUrl,
+        maxRetries,
+        note: 'Product was created successfully but may not appear immediately in web app',
+      });
     }
     
     return { success: true, productId: product.id };

@@ -29,12 +29,23 @@ export function formatDate(date: Date, locale: string, options?: Intl.DateTimeFo
   return new Intl.DateTimeFormat(config.locale, options).format(date);
 }
 
-export function formatRelativeTime(date: Date, locale: string): string {
+export function formatRelativeTime(date: Date | string | number, locale: string): string {
   const config = getLocaleConfig(locale);
   const rtf = new Intl.RelativeTimeFormat(config.locale, { numeric: 'auto' });
-  
-  const daysDiff = Math.floor((date.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-  
+
+  // Ensure date is a Date object
+  let dateObj: Date;
+  if (date instanceof Date) {
+    dateObj = date;
+  } else if (typeof date === 'string' || typeof date === 'number') {
+    dateObj = new Date(date);
+  } else {
+    // Fallback to current date if invalid
+    dateObj = new Date();
+  }
+
+  const daysDiff = Math.floor((dateObj.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+
   if (daysDiff === 0) return 'today';
   if (daysDiff === -1) return 'yesterday';
   if (daysDiff === 1) return 'tomorrow';
