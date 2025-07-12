@@ -30,7 +30,7 @@ interface ReportActionsProps {
   };
 }
 
-export function ReportActions({ report }: ReportActionsProps) {
+export function ReportActions({ report }: ReportActionsProps): React.JSX.Element {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 

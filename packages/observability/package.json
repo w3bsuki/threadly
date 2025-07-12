@@ -22,6 +22,14 @@
     "./keys": {
       "types": "./keys.ts",
       "default": "./keys.ts"
+    },
+    "./instrumentation": {
+      "types": "./instrumentation.ts",
+      "default": "./instrumentation.ts"
+    },
+    "./client": {
+      "types": "./client.ts",
+      "default": "./client.ts"
     }
   },
   "scripts": {

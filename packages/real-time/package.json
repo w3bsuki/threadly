@@ -21,6 +21,10 @@
       "import": "./dist/server/index.js",
       "require": "./dist/server/index.js",
       "default": "./dist/server/index.js"
+    },
+    "./keys": {
+      "types": "./keys.ts",
+      "default": "./keys.ts"
     }
   },
   "files": [

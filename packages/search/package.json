@@ -21,6 +21,10 @@
       "import": "./dist/search-webhook-client.js",
       "require": "./dist/search-webhook-client.js",
       "default": "./dist/search-webhook-client.js"
+    },
+    "./keys": {
+      "types": "./keys.ts",
+      "default": "./keys.ts"
     }
   },
   "files": [

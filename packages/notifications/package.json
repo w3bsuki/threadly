@@ -17,10 +17,10 @@
       "default": "./dist/templates/index.js"
     },
     "./keys": {
-      "types": "./src/keys.ts",
-      "import": "./src/keys.ts",
-      "require": "./src/keys.ts",
-      "default": "./src/keys.ts"
+      "types": "./keys.ts",
+      "import": "./keys.ts",
+      "require": "./keys.ts",
+      "default": "./keys.ts"
     },
     "./components/provider": {
       "types": "./src/components/provider.tsx",

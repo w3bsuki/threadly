@@ -6,7 +6,8 @@
   "exports": {
     ".": "./index.ts",
     "./middleware": "./middleware.ts",
-    "./middleware-exports": "./middleware-exports.ts"
+    "./middleware-exports": "./middleware-exports.ts",
+    "./keys": "./keys.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
