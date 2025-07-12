@@ -7,7 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useDebounce } from '@/lib/hooks/use-debounce';
-import { cn } from '@repo/design-system/lib';
+import { cn } from '@repo/design-system/lib/utils';
 
 interface AlgoliaProduct {
   objectID: string;
@@ -71,10 +71,8 @@ export function AlgoliaSearch({ className, placeholder = "Search for items, bran
         requests: [{
           indexName: process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME || 'products',
           query: searchQuery,
-          params: {
-            hitsPerPage: 6,
-            filters: 'status:AVAILABLE',
-          },
+          hitsPerPage: 6,
+          filters: 'status:AVAILABLE',
         }],
       });
 
