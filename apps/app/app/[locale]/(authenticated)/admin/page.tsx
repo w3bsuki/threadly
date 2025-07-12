@@ -10,10 +10,72 @@ import {
   CheckCircle,
   Clock
 } from 'lucide-react';
+import { getCacheService, CACHE_KEYS } from '@repo/cache';
 
 const AdminDashboard: React.FC = async () => {
-  // Get stats
-  const [
+  const cache = getCacheService();
+  
+  // Get cached admin statistics
+  const adminData = await cache.remember(
+    CACHE_KEYS.ADMIN_STATS,
+    async () => {
+      const [
+        totalUsers,
+        totalProducts,
+        totalOrders,
+        totalRevenue,
+        activeProducts,
+        pendingReports,
+        recentOrders,
+        topSellers
+      ] = await Promise.all([
+        database.user.count(),
+        database.product.count(),
+        database.order.count(),
+        database.order.aggregate({
+          _sum: { amount: true },
+          where: { status: 'PAID' }
+        }),
+        database.product.count({ where: { status: 'AVAILABLE' } }),
+        database.product.count({ where: { status: 'REMOVED' } }), // Assuming removed = reported
+        database.order.findMany({
+          take: 5,
+          orderBy: { createdAt: 'desc' },
+          include: {
+            buyer: { select: { firstName: true, lastName: true } },
+            product: { select: { title: true, price: true } }
+          }
+        }),
+        database.user.findMany({
+          take: 5,
+          orderBy: { totalSales: 'desc' },
+          where: { totalSales: { gt: 0 } },
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            totalSales: true,
+            imageUrl: true
+          }
+        })
+      ]);
+
+      return {
+        totalUsers,
+        totalProducts,
+        totalOrders,
+        totalRevenue,
+        activeProducts,
+        pendingReports,
+        recentOrders,
+        topSellers
+      };
+    },
+    5 * 60, // 5 minutes TTL
+    ['users', 'products', 'orders']
+  );
+
+  const {
     totalUsers,
     totalProducts,
     totalOrders,
@@ -22,37 +84,7 @@ const AdminDashboard: React.FC = async () => {
     pendingReports,
     recentOrders,
     topSellers
-  ] = await Promise.all([
-    database.user.count(),
-    database.product.count(),
-    database.order.count(),
-    database.order.aggregate({
-      _sum: { amount: true },
-      where: { status: 'PAID' }
-    }),
-    database.product.count({ where: { status: 'AVAILABLE' } }),
-    database.product.count({ where: { status: 'REMOVED' } }), // Assuming removed = reported
-    database.order.findMany({
-      take: 5,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        buyer: { select: { firstName: true, lastName: true } },
-        product: { select: { title: true, price: true } }
-      }
-    }),
-    database.user.findMany({
-      take: 5,
-      orderBy: { totalSales: 'desc' },
-      where: { totalSales: { gt: 0 } },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        totalSales: true,
-        imageUrl: true
-      }
-    })
-  ]);
+  } = adminData;
 
   const stats = [
     {

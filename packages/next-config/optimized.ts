@@ -7,6 +7,12 @@ import type { NextConfig } from 'next';
 export const performanceConfig: Partial<NextConfig> = {
   // Enable React Compiler for faster builds and smaller bundles
   experimental: {
+    // Enable Partial Prerendering for improved performance (requires Next.js canary)
+    // ppr: true,
+    
+    // Enable React Compiler for automatic memoization and optimization
+    // reactCompiler: true, // Disabled - requires additional setup and testing
+    
     // Optimize package imports for common libraries
     optimizePackageImports: [
       '@repo/design-system',
@@ -40,6 +46,18 @@ export const performanceConfig: Partial<NextConfig> = {
       '@radix-ui/react-toggle',
       '@radix-ui/react-toggle-group',
       '@radix-ui/react-tooltip',
+      // Additional heavy libraries for better tree shaking
+      '@clerk/nextjs',
+      '@clerk/shared',
+      '@sentry/nextjs',
+      '@sentry/core',
+      'zustand',
+      'react-hook-form',
+      '@hookform/resolvers',
+      'zod',
+      'es-toolkit',
+      'd3-shape',
+      'react-remove-scroll',
     ],
     
   },

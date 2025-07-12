@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { ProfileContent } from './components/profile-content';
 import { decimalToNumber } from '@repo/utils';
+import { getCacheService } from '@repo/cache';
 
 const title = 'Profile Settings';
 const description = 'Manage your account and marketplace preferences';
@@ -29,68 +30,76 @@ const ProfilePage = async () => {
     redirect('/sign-in');
   }
 
-  // Fetch user's marketplace data using Prisma queries for SQLite compatibility
-  const [productsSold, totalEarnings, productsBought, totalSpent, activeListings, followersCount, followingCount] = await Promise.all([
-    // Products sold count
-    database.order.count({
-      where: {
-        sellerId: dbUser.id,
-        status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] }
-      }
-    }),
-    // Total earnings
-    database.order.aggregate({
-      where: {
-        sellerId: dbUser.id,
-        status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] }
-      },
-      _sum: { amount: true }
-    }),
-    // Products bought count
-    database.order.count({
-      where: {
-        buyerId: dbUser.id,
-        status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] }
-      }
-    }),
-    // Total spent
-    database.order.aggregate({
-      where: {
-        buyerId: dbUser.id,
-        status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] }
-      },
-      _sum: { amount: true }
-    }),
-    // Active listings
-    database.product.count({
-      where: {
-        sellerId: dbUser.id,
-        status: 'AVAILABLE'
-      }
-    }),
-    // Followers count
-    database.follow.count({
-      where: {
-        followingId: dbUser.id
-      }
-    }),
-    // Following count
-    database.follow.count({
-      where: {
-        followerId: dbUser.id
-      }
-    })
-  ]);
+  // Fetch cached user's marketplace data
+  const cache = getCacheService();
+  const stats = await cache.remember(
+    `user-profile-stats:${dbUser.id}`,
+    async () => {
+      const [productsSold, totalEarnings, productsBought, totalSpent, activeListings, followersCount, followingCount] = await Promise.all([
+        // Products sold count
+        database.order.count({
+          where: {
+            sellerId: dbUser.id,
+            status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] }
+          }
+        }),
+        // Total earnings
+        database.order.aggregate({
+          where: {
+            sellerId: dbUser.id,
+            status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] }
+          },
+          _sum: { amount: true }
+        }),
+        // Products bought count
+        database.order.count({
+          where: {
+            buyerId: dbUser.id,
+            status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] }
+          }
+        }),
+        // Total spent
+        database.order.aggregate({
+          where: {
+            buyerId: dbUser.id,
+            status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] }
+          },
+          _sum: { amount: true }
+        }),
+        // Active listings
+        database.product.count({
+          where: {
+            sellerId: dbUser.id,
+            status: 'AVAILABLE'
+          }
+        }),
+        // Followers count
+        database.follow.count({
+          where: {
+            followingId: dbUser.id
+          }
+        }),
+        // Following count
+        database.follow.count({
+          where: {
+            followerId: dbUser.id
+          }
+        })
+      ]);
 
-  const stats = {
-    products_sold: productsSold,
-    total_earnings: totalEarnings._sum?.amount ? decimalToNumber(totalEarnings._sum.amount) : 0,
-    products_bought: productsBought,
-    total_spent: totalSpent._sum?.amount ? decimalToNumber(totalSpent._sum.amount) : 0,
-    active_listings: activeListings,
-    followers_count: followersCount,
-    following_count: followingCount,
-  };
+      return {
+        products_sold: productsSold,
+        total_earnings: totalEarnings._sum?.amount ? decimalToNumber(totalEarnings._sum.amount) : 0,
+        products_bought: productsBought,
+        total_spent: totalSpent._sum?.amount ? decimalToNumber(totalSpent._sum.amount) : 0,
+        active_listings: activeListings,
+        followers_count: followersCount,
+        following_count: followingCount,
+      };
+    },
+    30 * 60, // 30 minutes TTL
+    ['users', 'orders', 'products']
+  );
 
   return (
     <div className="space-y-6">

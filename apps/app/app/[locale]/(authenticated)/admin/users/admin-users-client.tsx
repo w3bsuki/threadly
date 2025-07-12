@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
 import { Button } from '@repo/design-system/components';
@@ -28,6 +28,8 @@ import {
 import Link from 'next/link';
 import { UserActions } from './user-actions';
 import { bulkUpdateUsers } from './actions';
+import { CursorPagination, useCursorPagination } from '@repo/design-system/components/marketplace';
+import type { CursorPaginationResult } from '@repo/design-system/lib/pagination';
 
 interface UserWithDetails {
   id: string;
@@ -55,7 +57,7 @@ interface RoleStats {
 }
 
 interface AdminUsersClientProps {
-  users: UserWithDetails[];
+  paginatedData: CursorPaginationResult<UserWithDetails>;
   search: string;
   roleFilter: string;
 }
@@ -230,10 +232,45 @@ function UserTable({ users }: { users: UserWithDetails[] }) {
   );
 }
 
-export default function AdminUsersClient({ users, search, roleFilter }: AdminUsersClientProps): React.JSX.Element {
-  // Calculate stats from the passed users data
+export default function AdminUsersClient({ paginatedData, search, roleFilter }: AdminUsersClientProps): React.JSX.Element {
+  const [users, setUsers] = useState(paginatedData.items);
+  const { state, updateState } = useCursorPagination({
+    cursor: paginatedData.nextCursor,
+    hasNextPage: paginatedData.hasNextPage,
+    totalCount: paginatedData.totalCount,
+    isLoading: false,
+  });
+
+  const loadMore = useCallback(async () => {
+    if (!state.hasNextPage || state.isLoading) return;
+
+    updateState({ isLoading: true });
+
+    try {
+      const params = new URLSearchParams();
+      if (state.cursor) params.set('cursor', state.cursor);
+      params.set('limit', '20');
+      if (search) params.set('q', search);
+      if (roleFilter !== 'all') params.set('role', roleFilter);
+
+      const response = await fetch(`/api/admin/users?${params}`);
+      const data = await response.json();
+
+      setUsers(prev => [...prev, ...data.items]);
+      updateState({
+        cursor: data.nextCursor,
+        hasNextPage: data.hasNextPage,
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error('Failed to load more users:', error);
+      updateState({ isLoading: false });
+    }
+  }, [state.cursor, state.hasNextPage, state.isLoading, search, roleFilter, updateState]);
+
+  // Calculate stats from current page users only (admin needs total stats in future)
   const roleStats: RoleStats = {
-    total: users.length,
+    total: paginatedData.totalCount || users.length,
     admins: users.filter(u => u.role === 'ADMIN').length,
     moderators: users.filter(u => u.role === 'MODERATOR').length,
     users: users.filter(u => u.role === 'USER').length
@@ -331,6 +368,14 @@ export default function AdminUsersClient({ users, search, roleFilter }: AdminUse
           <UserTable users={users} />
         </CardContent>
       </Card>
+
+      <CursorPagination
+        state={state}
+        onLoadMore={loadMore}
+        loadMoreText="Load More Users"
+        currentCount={users.length}
+        showStats={true}
+      />
     </div>
   );
 }

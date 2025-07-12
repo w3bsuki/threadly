@@ -104,6 +104,22 @@ export class MarketplaceCacheService {
     return this.cache.get(CACHE_KEYS.USER_FAVORITES(userId));
   }
 
+  // User listings caching
+  async cacheUserListings(userId: string, listings: any, cursor?: string): Promise<void> {
+    await this.cache.set(
+      CACHE_KEYS.USER_LISTINGS(userId, cursor),
+      listings,
+      {
+        ttl: CACHE_TTL.MEDIUM,
+        tags: [CACHE_TAGS.PRODUCTS, CACHE_TAGS.USERS],
+      }
+    );
+  }
+
+  async getUserListings(userId: string, cursor?: string): Promise<any | null> {
+    return this.cache.get(CACHE_KEYS.USER_LISTINGS(userId, cursor));
+  }
+
   // Homepage data caching
   async cacheHomepageData(data: any): Promise<void> {
     await this.cache.set(
@@ -215,6 +231,22 @@ export class MarketplaceCacheService {
     return this.cache.get(CACHE_KEYS.NOTIFICATIONS(userId));
   }
 
+  // Admin statistics caching
+  async cacheAdminStats(stats: any): Promise<void> {
+    await this.cache.set(
+      CACHE_KEYS.ADMIN_STATS,
+      stats,
+      {
+        ttl: CACHE_TTL.MEDIUM,
+        tags: [CACHE_TAGS.PRODUCTS, CACHE_TAGS.USERS, CACHE_TAGS.ORDERS],
+      }
+    );
+  }
+
+  async getAdminStats(): Promise<any | null> {
+    return this.cache.get(CACHE_KEYS.ADMIN_STATS);
+  }
+
   // Cache invalidation methods
   async invalidateProduct(productId: string): Promise<void> {
     await Promise.all([
@@ -231,6 +263,11 @@ export class MarketplaceCacheService {
       this.cache.del(CACHE_KEYS.NOTIFICATIONS(userId)),
       this.cache.invalidateByTag(CACHE_TAGS.USERS),
     ]);
+  }
+
+  async invalidateUserListings(userId: string): Promise<void> {
+    // Invalidate all pagination variants for this user's listings
+    await this.cache.invalidateByTag(CACHE_TAGS.USERS);
   }
 
   async invalidateAllProducts(): Promise<void> {

@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     await cache.set(testKey, null, { ttl: 1 }); // Delete by setting to null with short TTL
     
     // Check if operations succeeded
-    const isHealthy = retrieved && retrieved.timestamp === testValue.timestamp;
+    const isHealthy = retrieved && typeof retrieved === 'object' && 'timestamp' in retrieved && retrieved.timestamp === testValue.timestamp;
     
     // Get cache type and additional info
     const cacheType = cache.getCacheType();

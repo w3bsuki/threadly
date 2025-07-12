@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
 import { Button } from '@repo/design-system/components';
 import { Badge } from '@repo/design-system/components';
@@ -24,6 +24,8 @@ import { ProductActions } from './product-actions';
 import { bulkUpdateProducts } from './actions';
 import { useRouter } from 'next/navigation';
 import { decimalToNumber } from '@repo/utils';
+import { CursorPagination, useCursorPagination } from '@repo/design-system/components/marketplace';
+import type { CursorPaginationResult } from '@repo/design-system/lib/pagination';
 
 interface ProductWithDetails {
   id: string;
@@ -53,7 +55,9 @@ interface ProductWithDetails {
 }
 
 interface AdminProductsClientProps {
-  products: ProductWithDetails[];
+  paginatedData: CursorPaginationResult<ProductWithDetails>;
+  search: string;
+  statusFilter: string;
 }
 
 function ProductTable({ products }: { products: ProductWithDetails[] }) {
@@ -237,10 +241,45 @@ function ProductTable({ products }: { products: ProductWithDetails[] }) {
   );
 }
 
-export function AdminProductsClient({ products }: AdminProductsClientProps): React.JSX.Element {
-  // Calculate stats from products
+export function AdminProductsClient({ paginatedData, search, statusFilter }: AdminProductsClientProps): React.JSX.Element {
+  const [products, setProducts] = useState(paginatedData.items);
+  const { state, updateState } = useCursorPagination({
+    cursor: paginatedData.nextCursor,
+    hasNextPage: paginatedData.hasNextPage,
+    totalCount: paginatedData.totalCount,
+    isLoading: false,
+  });
+
+  const loadMore = useCallback(async () => {
+    if (!state.hasNextPage || state.isLoading) return;
+
+    updateState({ isLoading: true });
+
+    try {
+      const params = new URLSearchParams();
+      if (state.cursor) params.set('cursor', state.cursor);
+      params.set('limit', '20');
+      if (search) params.set('q', search);
+      if (statusFilter !== 'all') params.set('status', statusFilter);
+
+      const response = await fetch(`/api/admin/products?${params}`);
+      const data = await response.json();
+
+      setProducts(prev => [...prev, ...data.items]);
+      updateState({
+        cursor: data.nextCursor,
+        hasNextPage: data.hasNextPage,
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error('Failed to load more products:', error);
+      updateState({ isLoading: false });
+    }
+  }, [state.cursor, state.hasNextPage, state.isLoading, search, statusFilter, updateState]);
+
+  // Calculate stats from current page products only (admin needs total stats in future)
   const statusStats = {
-    total: products.length,
+    total: paginatedData.totalCount || products.length,
     available: products.filter(p => p.status === 'AVAILABLE').length,
     sold: products.filter(p => p.status === 'SOLD').length,
     removed: products.filter(p => p.status === 'REMOVED').length,
@@ -340,6 +379,14 @@ export function AdminProductsClient({ products }: AdminProductsClientProps): Rea
           <ProductTable products={products} />
         </CardContent>
       </Card>
+
+      <CursorPagination
+        state={state}
+        onLoadMore={loadMore}
+        loadMoreText="Load More Products"
+        currentCount={products.length}
+        showStats={true}
+      />
     </div>
   );
 }

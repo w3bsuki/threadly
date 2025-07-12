@@ -1,9 +1,10 @@
 import { database } from '@repo/database';
 import { AdminProductsClient } from './admin-products-client';
+import { validatePaginationParams, buildCursorWhere, processPaginationResult } from '@repo/design-system/lib/pagination';
 import type { ReactElement } from 'react';
 
 interface PageProps {
-  searchParams: Promise<{ q?: string; status?: string }>;
+  searchParams: Promise<{ q?: string; status?: string; cursor?: string; limit?: string }>;
 }
 
 // Server Component - handles data fetching
@@ -26,8 +27,24 @@ const AdminProductsPage = async ({ searchParams }: PageProps): Promise<React.JSX
     where.status = statusFilter.toUpperCase();
   }
 
+  // Parse pagination parameters
+  const searchParamsObj = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (typeof value === 'string') {
+      searchParamsObj.set(key, value);
+    }
+  });
+  const pagination = validatePaginationParams(searchParamsObj);
+
+  // Get total count for admin stats
+  const totalCount = await database.product.count({ where });
+
+  // Fetch products with pagination
   const products = await database.product.findMany({
-    where,
+    where: {
+      ...where,
+      ...buildCursorWhere(pagination.cursor),
+    },
     orderBy: { createdAt: 'desc' },
     include: {
       seller: {
@@ -50,10 +67,13 @@ const AdminProductsPage = async ({ searchParams }: PageProps): Promise<React.JSX
         }
       }
     },
-    take: 50
+    take: pagination.limit
   });
 
-  return <AdminProductsClient products={products} />;
+  // Process pagination result
+  const paginationResult = processPaginationResult(products, pagination.limit, totalCount);
+
+  return <AdminProductsClient paginatedData={paginationResult} search={search} statusFilter={statusFilter} />;
 };
 
 export default AdminProductsPage;

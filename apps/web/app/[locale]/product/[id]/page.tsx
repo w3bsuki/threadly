@@ -1,8 +1,30 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { database } from "@repo/database";
 import { ProductDetail } from "./components/product-detail";
 import { generateProductStructuredData, generateBreadcrumbStructuredData } from "@repo/seo/structured-data";
+
+// Static generation: Generate static params for most popular products
+export async function generateStaticParams() {
+  const products = await database.product.findMany({
+    where: {
+      status: "AVAILABLE",
+    },
+    orderBy: [
+      { views: "desc" },
+      { createdAt: "desc" }
+    ],
+    take: 100, // Generate static pages for top 100 products
+    select: {
+      id: true,
+    }
+  });
+
+  return products.map((product) => ({
+    id: product.id,
+  }));
+}
 
 interface ProductPageProps {
   params: Promise<{
@@ -197,6 +219,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <>
+      {/* Static structured data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -209,10 +232,51 @@ export default async function ProductPage({ params }: ProductPageProps) {
           __html: JSON.stringify(breadcrumbStructuredData),
         }}
       />
-      <ProductDetail
-        product={transformedProduct}
-        similarProducts={transformedSimilarProducts}
-      />
+      
+      {/* PPR: Main product detail with loading fallback */}
+      <Suspense fallback={<ProductDetailLoading />}>
+        <ProductDetail
+          product={transformedProduct}
+          similarProducts={transformedSimilarProducts}
+        />
+      </Suspense>
     </>
+  );
+}
+
+// PPR: Loading component for product detail
+function ProductDetailLoading() {
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Image loading skeleton */}
+        <div className="space-y-4">
+          <div className="aspect-square bg-muted/20 animate-pulse rounded-lg" />
+          <div className="grid grid-cols-4 gap-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="aspect-square bg-muted/20 animate-pulse rounded-lg" />
+            ))}
+          </div>
+        </div>
+        
+        {/* Product info loading skeleton */}
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <div className="h-8 bg-muted/20 animate-pulse rounded w-3/4" />
+            <div className="h-6 bg-muted/20 animate-pulse rounded w-1/2" />
+            <div className="h-4 bg-muted/20 animate-pulse rounded w-full" />
+            <div className="h-4 bg-muted/20 animate-pulse rounded w-5/6" />
+          </div>
+          
+          <div className="space-y-2">
+            <div className="h-4 bg-muted/20 animate-pulse rounded w-1/3" />
+            <div className="h-4 bg-muted/20 animate-pulse rounded w-1/4" />
+            <div className="h-4 bg-muted/20 animate-pulse rounded w-1/2" />
+          </div>
+          
+          <div className="h-12 bg-muted/20 animate-pulse rounded" />
+        </div>
+      </div>
+    </div>
   );
 }

@@ -15,6 +15,15 @@ import { database } from '@repo/database';
 import { decimalToNumber } from '@repo/utils';
 import { logError } from '@repo/observability/server';
 
+// PPR: Static header component that can be prerendered
+function StaticDashboardShell({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="space-y-4 lg:space-y-6">
+      {children}
+    </div>
+  );
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   const dictionary = await getDictionary(locale);
@@ -25,38 +34,24 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   };
 }
 
-async function getDashboardMetrics(userId: string) {
+async function getDashboardMetrics(dbUserId: string) {
   const cache = getCacheService();
-  const cacheKey = `dashboard:metrics:${userId}`;
+  const cacheKey = `dashboard:metrics:${dbUserId}`;
   
   return await cache.remember(
     cacheKey,
     async () => {
       try {
-        const dbUser = await database.user.findUnique({
-          where: { clerkId: userId },
-          select: { id: true }
-        });
-
-        if (!dbUser) {
-          return {
-            activeListings: 0,
-            totalRevenue: 0,
-            completedSales: 0,
-            unreadMessages: 0,
-          };
-        }
-
         const [activeListings, totalSales, unreadMessages] = await Promise.all([
           database.product.count({
             where: {
-              sellerId: dbUser.id,
+              sellerId: dbUserId,
               status: 'AVAILABLE'
             }
           }),
           database.order.aggregate({
             where: {
-              sellerId: dbUser.id,
+              sellerId: dbUserId,
               status: 'DELIVERED'
             },
             _sum: { amount: true },
@@ -97,10 +92,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
   // Check if user has completed onboarding
   await requireOnboarding();
 
-  // Get metrics for modern dashboard
-  const metrics = await getDashboardMetrics(user.id);
-
-  // Get database user
+  // Get database user (single query, then pass to metrics)
   const dbUser = await database.user.findUnique({
     where: { clerkId: user.id },
     select: { id: true }
@@ -110,17 +102,25 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
     return null;
   }
 
-  return (
-    <div className="space-y-4 lg:space-y-6">
-      <ModernDashboardHeader user={user} dictionary={dictionary} />
-      
-      {/* Modern Dashboard Stats */}
-      <ModernDashboardStats metrics={metrics} dictionary={dictionary} />
+  // Get metrics for modern dashboard using db user ID
+  const metrics = await getDashboardMetrics(dbUser.id);
 
-      {/* Quick Actions */}
+  return (
+    <StaticDashboardShell>
+      {/* PPR: Static header can be prerendered */}
+      <Suspense fallback={<div className="h-20 bg-muted/20 animate-pulse rounded-lg" />}>
+        <ModernDashboardHeader user={user} dictionary={dictionary} />
+      </Suspense>
+      
+      {/* PPR: Dynamic stats with loading state */}
+      <Suspense fallback={<DashboardStatsLoading />}>
+        <ModernDashboardStats metrics={metrics} dictionary={dictionary} />
+      </Suspense>
+
+      {/* PPR: Static quick actions can be prerendered */}
       <ModernQuickActions dictionary={dictionary} />
 
-      {/* Recent Orders with better design */}
+      {/* PPR: Dynamic content with proper suspense boundaries */}
       <div className="grid gap-4 lg:gap-6 lg:grid-cols-2 xl:grid-cols-3">
         <div className="lg:col-span-2">
           <Suspense fallback={<RecentOrdersLoading />}>
@@ -133,6 +133,6 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
           {/* Placeholder for additional widgets */}
         </div>
       </div>
-    </div>
+    </StaticDashboardShell>
   );
 }

@@ -20,6 +20,9 @@ export type {
   MarketplaceTrustSectionProps 
 } from './trust-badges';
 
+export { CursorPagination, useCursorPagination } from './cursor-pagination';
+export type { CursorPaginationProps, CursorPaginationState } from './cursor-pagination';
+
 // Re-export commonly used types
 export type ProductData = {
   id: string;

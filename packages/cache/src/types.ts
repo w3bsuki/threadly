@@ -34,6 +34,8 @@ export const CACHE_KEYS = {
   CATEGORY_PRODUCTS: (category: string) => `category:${category}:products`,
   USER_PROFILE: (userId: string) => `user:${userId}:profile`,
   USER_FAVORITES: (userId: string) => `user:${userId}:favorites`,
+  USER_LISTINGS: (userId: string, cursor?: string, limit?: number) => 
+    `user:${userId}:listings${cursor ? `:${cursor}` : ':first'}${limit ? `:${limit}` : ':20'}`,
   SEARCH_RESULTS: (query: string) => `search:${Buffer.from(query).toString('base64')}`,
   TRENDING_PRODUCTS: 'trending:products',
   FEATURED_CATEGORIES: 'featured:categories',
@@ -42,6 +44,9 @@ export const CACHE_KEYS = {
   NOTIFICATIONS: (userId: string) => `notifications:${userId}`,
   CONVERSATION: (id: string) => `conversation:${id}`,
   USER_CONVERSATIONS: (userId: string) => `user:${userId}:conversations`,
+  ADMIN_STATS: 'admin:stats',
+  CATEGORIES_TREE: 'categories:tree',
+  CATEGORIES_FLAT: 'categories:flat',
 } as const;
 
 export const CACHE_TTL = {
