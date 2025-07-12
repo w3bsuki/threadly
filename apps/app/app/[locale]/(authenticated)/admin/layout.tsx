@@ -14,13 +14,15 @@ import Link from 'next/link';
 import { cn } from '@repo/design-system/lib/utils';
 import { getDictionary } from '@repo/internationalization';
 
-export default async function AdminLayout({
-  children,
-  params,
-}: {
+interface AdminLayoutProps {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
-}) {
+}
+
+const AdminLayout: React.FC<AdminLayoutProps> = async ({
+  children,
+  params,
+}) => {
   const { locale } = await params;
   const dictionary = await getDictionary(locale);
 
@@ -100,4 +102,6 @@ export default async function AdminLayout({
       </div>
     </div>
   );
-}
+};
+
+export default AdminLayout;
