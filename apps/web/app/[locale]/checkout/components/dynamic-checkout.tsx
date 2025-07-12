@@ -5,7 +5,7 @@ import { Loader2 } from 'lucide-react';
 
 // Dynamically import the heavy checkout component with loading state
 const CheckoutContent = dynamic(
-  () => import('./checkout-content.tsx').then(mod => ({ default: mod.CheckoutContent })),
+  () => import('./checkout-content.js').then(mod => ({ default: mod.CheckoutContent })),
   {
     loading: () => (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
