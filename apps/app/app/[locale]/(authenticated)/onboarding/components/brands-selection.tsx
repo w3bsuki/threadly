@@ -17,7 +17,7 @@ const popularBrands = [
   'Tommy Hilfiger', 'Calvin Klein', 'Levi\'s', 'Gap'
 ];
 
-export function BrandsSelection({ selectedBrands, onSelect }: BrandsSelectionProps) {
+export function BrandsSelection({ selectedBrands, onSelect }: BrandsSelectionProps): React.JSX.Element {
   const [inputValue, setInputValue] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);

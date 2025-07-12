@@ -18,7 +18,7 @@ interface OnboardingWizardProps {
   userId: string;
 }
 
-export function OnboardingWizard({ userId }: OnboardingWizardProps) {
+export function OnboardingWizard({ userId }: OnboardingWizardProps): React.JSX.Element {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);

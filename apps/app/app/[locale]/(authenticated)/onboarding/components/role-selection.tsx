@@ -28,7 +28,7 @@ const roles = [
   },
 ];
 
-export function RoleSelection({ selectedRole, onSelect }: RoleSelectionProps) {
+export function RoleSelection({ selectedRole, onSelect }: RoleSelectionProps): React.JSX.Element {
   return (
     <div className="space-y-4">
       <div className="text-center mb-6">

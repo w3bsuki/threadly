@@ -6,7 +6,7 @@ interface StepIndicatorProps {
   totalSteps: number;
 }
 
-export function StepIndicator({ currentStep, totalSteps }: StepIndicatorProps) {
+export function StepIndicator({ currentStep, totalSteps }: StepIndicatorProps): React.JSX.Element {
   return (
     <div className="flex items-center justify-center space-x-2">
       {Array.from({ length: totalSteps }, (_, i) => i + 1).map((step) => (

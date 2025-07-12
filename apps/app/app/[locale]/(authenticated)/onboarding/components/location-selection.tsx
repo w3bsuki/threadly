@@ -7,7 +7,7 @@ interface LocationSelectionProps {
   onSelect: (location: string) => void;
 }
 
-export function LocationSelection({ location, onSelect }: LocationSelectionProps) {
+export function LocationSelection({ location, onSelect }: LocationSelectionProps): React.JSX.Element {
   return (
     <div className="space-y-4">
       <div className="text-center mb-6">

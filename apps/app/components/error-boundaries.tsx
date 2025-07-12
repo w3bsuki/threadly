@@ -321,7 +321,7 @@ export class FormErrorBoundary extends Component<ErrorBoundaryProps, ErrorBounda
 }
 
 // Generic Error Fallback Components for specific scenarios
-export function ChartErrorFallback({ onRetry }: { onRetry?: () => void }) {
+export function ChartErrorFallback({ onRetry }: { onRetry?: () => void }): React.JSX.Element {
   return (
     <div className="h-[120px] flex items-center justify-center border border-dashed border-muted-foreground/25 rounded-lg">
       <div className="text-center space-y-2">
@@ -344,7 +344,7 @@ export function ImageErrorFallback({
 }: { 
   alt: string; 
   className?: string; 
-}) {
+}): React.JSX.Element {
   return (
     <div className={`bg-muted flex items-center justify-center ${className}`}>
       <div className="text-center p-2">
@@ -355,7 +355,7 @@ export function ImageErrorFallback({
   );
 }
 
-export function LoadingErrorFallback({ onRetry }: { onRetry?: () => void }) {
+export function LoadingErrorFallback({ onRetry }: { onRetry?: () => void }): React.JSX.Element {
   return (
     <div className="text-center py-8">
       <AlertCircle className="h-8 w-8 text-muted-foreground mx-auto mb-2" />

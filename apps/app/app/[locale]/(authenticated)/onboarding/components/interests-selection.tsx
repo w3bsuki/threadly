@@ -10,7 +10,7 @@ interface InterestsSelectionProps {
   onSelect: (interests: string[]) => void;
 }
 
-export function InterestsSelection({ selectedInterests, onSelect }: InterestsSelectionProps) {
+export function InterestsSelection({ selectedInterests, onSelect }: InterestsSelectionProps): React.JSX.Element {
   const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
   const [loading, setLoading] = useState(true);
 

@@ -14,7 +14,7 @@ interface StreamlinedOnboardingProps {
   userId: string;
 }
 
-export function StreamlinedOnboarding({ userId }: StreamlinedOnboardingProps) {
+export function StreamlinedOnboarding({ userId }: StreamlinedOnboardingProps): React.JSX.Element {
   const router = useRouter();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);

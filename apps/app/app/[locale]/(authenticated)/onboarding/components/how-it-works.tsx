@@ -19,7 +19,7 @@ interface HowItWorksProps {
   selectedRole: UserPreferenceRole;
 }
 
-export function HowItWorks({ selectedRole }: HowItWorksProps) {
+export function HowItWorks({ selectedRole }: HowItWorksProps): React.JSX.Element {
   const buyerSteps = [
     {
       icon: Search,

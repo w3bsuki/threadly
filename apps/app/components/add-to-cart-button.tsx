@@ -39,7 +39,7 @@ export function AddToCartButton({
   variant = 'default',
   size = 'default',
   showText = true
-}: AddToCartButtonProps) {
+}: AddToCartButtonProps): React.JSX.Element {
   const { addItem, isInCart, toggleCart } = useCartStore();
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
