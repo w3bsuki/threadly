@@ -32,7 +32,7 @@ const aspectRatioClasses = {
   auto: '',
 };
 
-export const LazyImage: React.FC<LazyImageProps> = ({
+export const LazyImage = ({
   src,
   alt,
   width,
@@ -50,7 +50,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
   sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
   placeholder = 'empty',
   blurDataURL,
-}) => {
+}: LazyImageProps) => {
   const [imageError, setImageError] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isInView, setIsInView] = React.useState(priority);
@@ -193,14 +193,14 @@ const sizeClasses = {
   xl: 'w-24 h-24',
 };
 
-export const LazyAvatar: React.FC<LazyAvatarProps> = ({
+export const LazyAvatar = ({
   src,
   alt,
   size = 'md',
   fallbackInitials,
   className,
   priority = false,
-}) => {
+}: LazyAvatarProps) => {
   const [imageError, setImageError] = React.useState(false);
 
   const initials = React.useMemo(() => {
