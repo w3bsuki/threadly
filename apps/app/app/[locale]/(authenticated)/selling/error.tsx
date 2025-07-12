@@ -10,7 +10,7 @@ export default function SellingError({
 }: {
   error: Error & { digest?: string };
   reset: () => void;
-}) {
+}): React.JSX.Element {
   useEffect(() => {
     // Log the error to console in development
     if (process.env.NODE_ENV === 'development') {

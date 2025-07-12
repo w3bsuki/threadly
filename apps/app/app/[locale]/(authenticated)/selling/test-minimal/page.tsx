@@ -1,7 +1,7 @@
 // Minimal test page to isolate the server component error
 import { currentUser } from '@repo/auth/server';
 
-export default async function TestMinimalPage() {
+export default async function TestMinimalPage(): Promise<React.JSX.Element> {
   try {
     // Test 1: Basic auth
     const user = await currentUser();

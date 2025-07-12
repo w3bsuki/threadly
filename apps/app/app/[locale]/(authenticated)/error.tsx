@@ -10,7 +10,7 @@ export default function Error({
 }: {
   error: Error & { digest?: string };
   reset: () => void;
-}) {
+}): React.JSX.Element {
   useEffect(() => {
     // Log the error to Sentry
     Sentry.captureException(error);

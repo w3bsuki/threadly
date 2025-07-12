@@ -1,4 +1,4 @@
-export default function PublicTestPage() {
+export default function PublicTestPage(): React.JSX.Element {
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-4">Public Test Page</h1>

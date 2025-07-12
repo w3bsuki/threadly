@@ -27,7 +27,7 @@ interface StripeConnectStatusProps {
   compact?: boolean;
 }
 
-export const StripeConnectStatus = ({ status, compact = false }: StripeConnectStatusProps) => {
+export const StripeConnectStatus = ({ status, compact = false }: StripeConnectStatusProps): React.JSX.Element => {
   const getStatusConfig = () => {
     switch (status.status) {
       case 'connected':

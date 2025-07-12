@@ -1,5 +1,5 @@
 // Ultra-simple selling page without any complex logic
-export default function SimpleSellPage() {
+export default function SimpleSellPage(): React.JSX.Element {
   return (
     <div className="p-8">
       <h1>Simple Sell Page</h1>

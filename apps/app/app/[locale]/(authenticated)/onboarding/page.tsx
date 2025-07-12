@@ -3,7 +3,7 @@ import { currentUser } from '@repo/auth/server';
 import { getUserPreferences } from './actions';
 import { StreamlinedOnboarding } from './components/streamlined-onboarding';
 
-export default async function OnboardingPage() {
+export default async function OnboardingPage(): Promise<React.JSX.Element> {
   const user = await currentUser();
   
   if (!user) {

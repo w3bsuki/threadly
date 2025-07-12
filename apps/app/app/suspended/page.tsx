@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo
 import { Button } from '@repo/design-system/components';
 import { SignOutButton } from '@repo/auth/client';
 
-export default function SuspendedPage() {
+export default function SuspendedPage(): React.JSX.Element {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="max-w-md w-full">

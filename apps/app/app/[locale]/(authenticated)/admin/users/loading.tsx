@@ -2,7 +2,7 @@ import { TableSkeleton } from '@repo/design-system/components';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
 import { Skeleton } from '@repo/design-system/components';
 
-export default function Loading() {
+export default function Loading(): React.JSX.Element {
   return (
     <div className="space-y-6">
       <div>

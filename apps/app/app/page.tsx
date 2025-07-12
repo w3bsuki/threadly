@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-export default function RootPage() {
+export default function RootPage(): React.JSX.Element {
   // The internationalization middleware will handle locale detection
   // and redirect to the appropriate locale
   redirect('/en');

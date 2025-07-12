@@ -32,7 +32,7 @@ const PresenceAvatar = ({ info }: PresenceAvatarProps) => (
   </Tooltip>
 );
 
-export const AvatarStack = () => {
+export const AvatarStack = (): React.JSX.Element => {
   const others = useOthers();
   const self = useSelf();
   const hasMoreUsers = others.length > 3;

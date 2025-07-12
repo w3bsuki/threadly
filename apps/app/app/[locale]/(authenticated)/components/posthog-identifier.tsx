@@ -5,7 +5,7 @@ import { useUser } from '@repo/auth/client';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
-export const PostHogIdentifier = () => {
+export const PostHogIdentifier = (): React.JSX.Element | null => {
   const { user } = useUser();
   const identified = useRef(false);
   const pathname = usePathname();

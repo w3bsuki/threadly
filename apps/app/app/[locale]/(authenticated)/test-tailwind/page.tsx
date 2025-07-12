@@ -1,4 +1,4 @@
-export default function TestTailwindPage() {
+export default function TestTailwindPage(): React.JSX.Element {
   return (
     <div className="p-8 space-y-4">
       <h1 className="text-4xl font-bold text-red-500">Tailwind CSS Test Page</h1>

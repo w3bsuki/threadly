@@ -1,5 +1,5 @@
 // Test page OUTSIDE the (authenticated) layout to bypass all the layout logic
-export default function TestBypassPage() {
+export default function TestBypassPage(): React.JSX.Element {
   return (
     <div style={{ padding: '2rem' }}>
       <h1>🧪 Bypass Test</h1>

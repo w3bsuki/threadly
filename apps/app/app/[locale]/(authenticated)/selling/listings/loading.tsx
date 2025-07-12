@@ -1,6 +1,6 @@
 import { ProductGridSkeleton } from '@repo/design-system/components';
 
-export default function Loading() {
+export default function Loading(): React.JSX.Element {
   return (
     <div className="p-4">
       <div className="mb-6 space-y-2">

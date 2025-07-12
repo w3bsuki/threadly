@@ -230,7 +230,7 @@ function UserTable({ users }: { users: UserWithDetails[] }) {
   );
 }
 
-export default function AdminUsersClient({ users, search, roleFilter }: AdminUsersClientProps) {
+export default function AdminUsersClient({ users, search, roleFilter }: AdminUsersClientProps): React.JSX.Element {
   // Calculate stats from the passed users data
   const roleStats: RoleStats = {
     total: users.length,

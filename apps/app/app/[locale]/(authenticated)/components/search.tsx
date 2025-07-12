@@ -8,7 +8,7 @@ import { Badge } from '@repo/design-system/components';
 import { useAutocomplete, useSearchHistory } from '@repo/search/client';
 import { ArrowRightIcon, SearchIcon, Clock, X } from 'lucide-react';
 
-export const Search = () => {
+export const Search = (): React.JSX.Element => {
   const [query, setQuery] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);

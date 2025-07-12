@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { SellerOnboardingWizard } from './components/seller-onboarding-wizard';
 import { database } from '@repo/database';
 
-export default async function SellerOnboardingPage() {
+export default async function SellerOnboardingPage(): Promise<React.JSX.Element> {
   const user = await currentUser();
   
   if (!user) {

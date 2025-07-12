@@ -10,7 +10,7 @@ export default function Error({
 }: {
   error: Error & { digest?: string };
   reset: () => void;
-}) {
+}): React.JSX.Element {
 
   return (
     <div className="mx-auto w-full max-w-2xl p-8">
