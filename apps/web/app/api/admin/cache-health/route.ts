@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     const testValue = { timestamp: Date.now(), status: 'healthy' };
     
     // Test write
-    await cache.set(testKey, testValue, 60); // 1 minute TTL
+    await cache.set(testKey, testValue, { ttl: 60 }); // 1 minute TTL
     
     // Test read
     const retrieved = await cache.get(testKey);
