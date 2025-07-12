@@ -15,7 +15,7 @@ interface CartContentProps {
   userId: string;
 }
 
-export function CartContent({ userId }: CartContentProps) {
+export function CartContent({ userId }: CartContentProps): React.JSX.Element {
   const { 
     items, 
     removeItem, 
