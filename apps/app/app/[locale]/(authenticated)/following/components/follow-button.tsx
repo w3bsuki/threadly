@@ -11,7 +11,7 @@ interface FollowButtonProps {
   size?: 'sm' | 'default' | 'lg';
 }
 
-export function FollowButton({ userId, className, size = 'sm' }: FollowButtonProps): React.JSX.Element {
+export function FollowButton({ userId, className, size = 'sm' }: FollowButtonProps): React.JSX.Element | null {
   const { user } = useUser();
   const [isFollowing, setIsFollowing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
