@@ -23,7 +23,7 @@ interface CheckoutPageProps {
   }>;
 }
 
-const CheckoutPage = async ({ params }: CheckoutPageProps) => {
+const CheckoutPage = async ({ params }: CheckoutPageProps): Promise<React.JSX.Element> => {
   const { locale, productId } = await params;
   const dictionary = await getDictionary(locale);
   const user = await currentUser();
