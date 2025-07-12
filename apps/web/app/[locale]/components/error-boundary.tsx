@@ -47,7 +47,6 @@ export class ErrorBoundary extends Component<Props, State> {
 
     // Log to console in development
     if (process.env.NODE_ENV === 'development') {
-      console.error('Web App Error Boundary caught an error:', error, errorInfo);
     }
   }
 

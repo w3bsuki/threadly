@@ -159,7 +159,7 @@ function ProductTable({ products }: { products: ProductWithDetails[] }) {
             </tr>
           </thead>
           <tbody>
-            {products.map((product) => (
+            {products.map((product, index) => (
               <tr key={product.id} className="border-b hover:bg-muted/50">
                 <td className="p-2">
                   <Checkbox
@@ -176,6 +176,8 @@ function ProductTable({ products }: { products: ProductWithDetails[] }) {
                         width={64}
                         height={64}
                         className="h-16 w-16 rounded-lg object-cover"
+                        sizes="64px"
+                        priority={index < 5}
                       />
                     ) : (
                       <div className="h-16 w-16 rounded-lg bg-muted flex items-center justify-center">
@@ -272,7 +274,6 @@ export function AdminProductsClient({ paginatedData, search, statusFilter }: Adm
         isLoading: false,
       });
     } catch (error) {
-      console.error('Failed to load more products:', error);
       updateState({ isLoading: false });
     }
   }, [state.cursor, state.hasNextPage, state.isLoading, search, statusFilter, updateState]);

@@ -51,7 +51,6 @@ export function StreamlinedOnboarding({ userId }: StreamlinedOnboardingProps): R
         router.push('/dashboard');
       }
     } catch (error) {
-      console.error('Failed to complete onboarding:', error);
       setIsSubmitting(false);
     }
   };

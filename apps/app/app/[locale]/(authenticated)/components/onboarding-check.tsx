@@ -23,7 +23,6 @@ export async function checkOnboarding() {
 
     return dbUser?.preferences?.onboardingCompleted ?? false;
   } catch (error) {
-    console.error('Failed to check onboarding status:', error);
     return true; // Default to true to avoid blocking users on error
   }
 }

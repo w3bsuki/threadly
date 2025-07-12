@@ -20,7 +20,6 @@ export function InterestsSelection({ selectedInterests, onSelect }: InterestsSel
         const data = await getCategories();
         setCategories(data);
       } catch (error) {
-        console.error('Failed to load categories:', error);
       } finally {
         setLoading(false);
       }

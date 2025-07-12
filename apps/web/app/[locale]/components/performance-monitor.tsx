@@ -11,7 +11,6 @@ export function PerformanceMonitor({ debug = false }: PerformanceMonitorProps) {
   useEffect(() => {
     const handleMetric = (metric: Metric) => {
       if (debug) {
-        console.log(`[Web Vitals] ${metric.name}: ${metric.value}`);
       }
 
       // Send to analytics in production
@@ -58,7 +57,6 @@ export function usePerformance() {
     const finish = () => {
       const duration = performance.now() - start;
       if (process.env.NODE_ENV === 'development') {
-        console.log(`[Performance] ${name}: ${duration.toFixed(2)}ms`);
       }
     };
 
@@ -100,7 +98,6 @@ export function PageLoadPerformance({ pageName }: { pageName: string }) {
       const loadTime = performance.now() - startTime;
       
       if (process.env.NODE_ENV === 'development') {
-        console.log(`[Page Load] ${pageName}: ${loadTime.toFixed(2)}ms`);
       }
       
       // Track in analytics

@@ -23,7 +23,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }),
     });
   } catch (error) {
-    console.error('[RealTime Auth] Error:', error);
     return NextResponse.json(
       { error: 'Authentication failed' },
       { status: 500 }

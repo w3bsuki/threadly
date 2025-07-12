@@ -26,10 +26,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     const body = await request.json();
-    console.log('Received body:', JSON.stringify(body, null, 2));
     
     const validated = sellerProfileSchema.parse(body);
-    console.log('Validated data:', JSON.stringify(validated, null, 2));
 
     // Get or create database user
     let dbUser = await database.user.findUnique({
@@ -89,18 +87,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       sellerProfile: sellerProfile,
     });
   } catch (error: any) {
-    console.error('=====================');
-    console.error('Failed to create seller profile:');
-    console.error('Error type:', error?.constructor?.name);
-    console.error('Error message:', error?.message);
-    console.error('Error code:', error?.code);
-    console.error('Full error:', error);
-    console.error('=====================');
     
     // logError('Failed to create seller profile', error);
     
     if (error instanceof z.ZodError) {
-      console.error('Validation error details:', JSON.stringify(error.issues, null, 2));
       return NextResponse.json(
         { error: 'Invalid data', details: error.issues },
         { status: 400 }

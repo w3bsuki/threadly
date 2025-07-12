@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache';
 export async function GET(request: NextRequest) {
   try {
     const cache = getCacheService({
-      url: process.env.UPSTASH_REDIS_REST_URL || process.env.REDIS_URL,
+      url: process.env.UPSTASH_REDIS_REST_URL || process.env.REDIS_URL || '',
       token: process.env.UPSTASH_REDIS_REST_TOKEN,
     });
     

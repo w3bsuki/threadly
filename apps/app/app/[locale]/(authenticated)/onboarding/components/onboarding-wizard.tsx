@@ -58,7 +58,6 @@ export function OnboardingWizard({ userId }: OnboardingWizardProps): React.JSX.E
         router.push('/dashboard');
       }
     } catch (error) {
-      console.error('Failed to save preferences:', error);
       setIsSubmitting(false);
     }
   };
@@ -75,7 +74,6 @@ export function OnboardingWizard({ userId }: OnboardingWizardProps): React.JSX.E
       });
       router.push('/dashboard');
     } catch (error) {
-      console.error('Failed to skip onboarding:', error);
       setIsSubmitting(false);
     }
   };

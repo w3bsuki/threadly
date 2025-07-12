@@ -67,7 +67,6 @@ export async function GET(request: NextRequest) {
       }
     });
   } catch (error) {
-    console.error('Cache health check failed:', error);
     return NextResponse.json(
       { 
         status: 'unhealthy',

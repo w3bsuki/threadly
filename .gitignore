@@ -287,4 +287,11 @@ packages/database/generated
 **/SESSION_STATE.md
 **/WORKTREE_ASSIGNMENTS.md
 **/HANDOFF_*.md
-**/TERMINATION_*.md.env.local
+**/TERMINATION_*.md
+
+# Production environment files - NEVER COMMIT
+.env.production
+**/.env.production
+
+# Security audit files
+SECURITY_AUDIT.md

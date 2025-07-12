@@ -313,7 +313,6 @@ export function MessagesContent({ conversations, currentUserId }: MessagesConten
                     onKeyPress={(e) => {
                       if (e.key === 'Enter' && newMessage.trim()) {
                         // TODO: Implement send message functionality
-                        console.log('Send message:', newMessage);
                         setNewMessage('');
                       }
                     }}
@@ -325,7 +324,6 @@ export function MessagesContent({ conversations, currentUserId }: MessagesConten
                     onClick={() => {
                       if (newMessage.trim()) {
                         // TODO: Implement send message functionality
-                        console.log('Send message:', newMessage);
                         setNewMessage('');
                       }
                     }}

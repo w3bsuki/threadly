@@ -54,7 +54,6 @@ export function SellerProfileForm({ data, onUpdate, onNext, onBack }: SellerProf
                 className="absolute bottom-0 right-0 rounded-full"
                 onClick={() => {
                   // TODO: Implement photo upload
-                  console.log('Upload photo');
                 }}
               >
                 <Camera className="w-4 h-4" />

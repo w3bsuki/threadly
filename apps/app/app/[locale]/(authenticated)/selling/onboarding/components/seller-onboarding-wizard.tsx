@@ -69,7 +69,6 @@ export function SellerOnboardingWizard({ userId }: SellerOnboardingWizardProps) 
       const data = await response.json();
       
       if (!response.ok) {
-        console.error('API Error:', data);
         throw new Error(data.error || 'Failed to save seller profile');
       }
 
@@ -77,7 +76,6 @@ export function SellerOnboardingWizard({ userId }: SellerOnboardingWizardProps) 
       setCurrentStep(totalSteps + 1);
       toast.success('Seller profile created successfully!');
     } catch (error) {
-      console.error('Failed to save seller profile:', error);
       toast.error('Failed to create seller profile');
       setIsSubmitting(false);
     }

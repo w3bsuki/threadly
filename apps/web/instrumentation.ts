@@ -15,5 +15,4 @@ export async function onRequestError(
     routeType: string;
   }
 ) {
-  console.error('Request error:', error);
 }

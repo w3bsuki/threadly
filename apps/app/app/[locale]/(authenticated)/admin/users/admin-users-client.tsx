@@ -263,7 +263,6 @@ export default function AdminUsersClient({ paginatedData, search, roleFilter }: 
         isLoading: false,
       });
     } catch (error) {
-      console.error('Failed to load more users:', error);
       updateState({ isLoading: false });
     }
   }, [state.cursor, state.hasNextPage, state.isLoading, search, roleFilter, updateState]);

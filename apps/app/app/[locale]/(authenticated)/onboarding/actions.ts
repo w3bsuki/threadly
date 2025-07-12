@@ -13,7 +13,6 @@ export async function getUserPreferences(clerkId: string) {
     
     return user?.preferences || null;
   } catch (error) {
-    console.error('Failed to get user preferences:', error);
     return null;
   }
 }
@@ -59,7 +58,6 @@ export async function saveUserPreferences(
     revalidatePath('/onboarding');
     revalidatePath('/dashboard');
   } catch (error) {
-    console.error('Failed to save user preferences:', error);
     throw new Error('Failed to save preferences');
   }
 }
@@ -75,7 +73,6 @@ export async function getCategories() {
       name: cat.name,
     }));
   } catch (error) {
-    console.error('Failed to get categories:', error);
     return [];
   }
 }
@@ -109,7 +106,6 @@ export async function completeOnboarding(clerkId: string) {
     revalidatePath('/onboarding');
     revalidatePath('/dashboard');
   } catch (error) {
-    console.error('Failed to complete onboarding:', error);
     throw new Error('Failed to complete onboarding');
   }
 }

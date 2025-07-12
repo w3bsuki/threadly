@@ -14,7 +14,6 @@ export default function SellingError({
   useEffect(() => {
     // Log the error to console in development
     if (process.env.NODE_ENV === 'development') {
-      console.error('Selling page error:', error);
     }
   }, [error]);
 

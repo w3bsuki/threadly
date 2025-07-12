@@ -20,7 +20,6 @@ export async function POST() {
       }),
     });
   } catch (error) {
-    console.error('Error authenticating real-time:', error);
     return NextResponse.json(
       { error: 'Failed to authenticate' },
       { status: 500 }

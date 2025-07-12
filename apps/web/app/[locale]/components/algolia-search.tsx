@@ -80,7 +80,6 @@ export function AlgoliaSearch({ className, placeholder = "Search for items, bran
         setResults(results[0].hits as AlgoliaProduct[]);
       }
     } catch (error) {
-      console.error('Search error:', error);
       setResults([]);
     } finally {
       setIsLoading(false);

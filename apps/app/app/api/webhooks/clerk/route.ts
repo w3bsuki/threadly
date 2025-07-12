@@ -25,7 +25,6 @@ export async function POST(req: Request) {
 
   // Create a new Svix instance with your secret.
   if (!env.CLERK_WEBHOOK_SECRET) {
-    console.error('CLERK_WEBHOOK_SECRET is not set');
     return new Response('Server configuration error', {
       status: 500,
     });
@@ -42,7 +41,6 @@ export async function POST(req: Request) {
       'svix-signature': svix_signature,
     }) as WebhookEvent;
   } catch (err) {
-    console.error('Error verifying webhook:', err);
     return new Response('Error occured', {
       status: 400,
     });
@@ -97,7 +95,6 @@ export async function POST(req: Request) {
         }
       }
     } catch (error) {
-      console.error('Error handling user webhook:', error);
       return new Response('Error creating/updating user', { status: 500 });
     }
   }
@@ -110,7 +107,6 @@ export async function POST(req: Request) {
         where: { clerkId: id },
       });
     } catch (error) {
-      console.error('Error deleting user:', error);
       return new Response('Error deleting user', { status: 500 });
     }
   }

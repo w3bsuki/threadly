@@ -21,7 +21,6 @@ export const middleware: NextMiddleware = async (req: NextRequest) => {
     
     return response;
   } catch (error) {
-    console.error('Middleware error:', error);
     return new NextResponse('Internal Server Error', { status: 500 });
   }
 };

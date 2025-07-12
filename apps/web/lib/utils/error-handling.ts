@@ -15,13 +15,6 @@ export async function handleDatabaseError(
   operation: string,
   context?: Record<string, unknown>
 ): Promise<ErrorResponse> {
-  // Log the error with context
-  console.error(`Database operation failed: ${operation}`, {
-    error,
-    context,
-    timestamp: new Date().toISOString(),
-  });
-
   // Log error with context
   logError(parseError(error), {
     operation,
@@ -89,10 +82,7 @@ export function logDatabaseOperation(
 
   // Always log in development
   if (process.env.NODE_ENV === 'development') {
-    console.log(`Database operation: ${operation}`, {
-      duration: `${duration}ms`,
-      metadata,
-    });
+    // Development logging removed per CLAUDE.md rules
   }
 }
 

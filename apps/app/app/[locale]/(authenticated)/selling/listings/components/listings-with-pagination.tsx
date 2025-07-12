@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@repo/design-system/components';
 import { Card, CardContent } from '@repo/design-system/components';
 import { Badge } from '@repo/design-system/components';
@@ -64,7 +65,6 @@ export function ListingsWithPagination({
         isLoading: false,
       });
     } catch (error) {
-      console.error('Failed to load more products:', error);
       updateState({ isLoading: false });
     }
   }, [state.cursor, state.hasNextPage, state.isLoading, userId, updateState]);
@@ -125,14 +125,17 @@ export function ListingsWithPagination({
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {products.map((product) => (
+        {products.map((product, index) => (
           <Card key={product.id} className="overflow-hidden">
             <div className="aspect-square relative">
               {product.images[0] ? (
-                <img
+                <Image
                   src={product.images[0].imageUrl}
                   alt={product.title}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  priority={index < 6}
                 />
               ) : (
                 <div className="w-full h-full bg-muted flex items-center justify-center">

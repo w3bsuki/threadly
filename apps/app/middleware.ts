@@ -14,8 +14,13 @@ const isPublicRoute = createRouteMatcher([
 const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
   const pathname = request.nextUrl.pathname;
   
-  // Skip i18n for API routes and static assets
-  if (pathname.startsWith('/api/') || pathname.startsWith('/_next/') || pathname.startsWith('/ingest')) {
+  // Early return for static assets and API routes - performance optimization
+  if (
+    pathname.startsWith('/api/') || 
+    pathname.startsWith('/_next/') || 
+    pathname.startsWith('/ingest') ||
+    pathname.includes('.') // Any file with extension
+  ) {
     return NextResponse.next();
   }
   
@@ -25,10 +30,6 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
     return i18nResponse;
   }
 
-  // SECURITY: Only log in development mode, avoid exposing sensitive URL parameters
-  if (process.env.NODE_ENV === 'development') {
-    const urlPath = request.nextUrl.pathname;
-  }
   
   // Redirect authenticated route to dashboard
   const urlPath = request.nextUrl.pathname;
@@ -59,7 +60,7 @@ export default middleware as any;
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|ingest|favicon.ico|.*\\..*|manifest.json).*)',
-    '/api/(.*)',
+    '/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|manifest.json|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico|woff|woff2|ttf|otf|css|js)).*)',
+    '/(api|trpc)(.*)',
   ],
 };
