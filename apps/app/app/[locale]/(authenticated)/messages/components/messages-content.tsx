@@ -98,7 +98,7 @@ export function MessagesContent({
   targetUser,
   targetProduct,
   existingConversation 
-}: MessagesContentProps) {
+}: MessagesContentProps): React.JSX.Element {
   const router = useRouter();
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [conversationsList, setConversationsList] = useState<Conversation[]>(conversations);

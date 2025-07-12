@@ -30,7 +30,7 @@ interface SimpleDashboardProps {
   }>;
 }
 
-export function SimpleDashboard({ user, dictionary, metrics, recentOrders }: SimpleDashboardProps) {
+export function SimpleDashboard({ user, dictionary, metrics, recentOrders }: SimpleDashboardProps): React.JSX.Element {
   const { activeListings, totalRevenue, completedSales, unreadMessages } = metrics;
 
   return (

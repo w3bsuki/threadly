@@ -8,7 +8,7 @@ interface RealTimeWrapperProps {
   userId: string;
 }
 
-export function RealTimeWrapper({ children, userId }: RealTimeWrapperProps) {
+export function RealTimeWrapper({ children, userId }: RealTimeWrapperProps): React.JSX.Element {
   // Only enable real-time if environment variables are available
   const pusherKey = process.env.NEXT_PUBLIC_PUSHER_KEY;
   const pusherCluster = process.env.NEXT_PUBLIC_PUSHER_CLUSTER;

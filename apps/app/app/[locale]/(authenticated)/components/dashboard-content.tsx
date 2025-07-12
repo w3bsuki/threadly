@@ -46,7 +46,7 @@ interface DashboardContentProps {
   }>;
 }
 
-export function DashboardContent({ user, dictionary, metrics, recentOrders }: DashboardContentProps) {
+export function DashboardContent({ user, dictionary, metrics, recentOrders }: DashboardContentProps): React.JSX.Element {
   const { activeListings, totalRevenue, completedSales, unreadMessages } = metrics;
 
   return (

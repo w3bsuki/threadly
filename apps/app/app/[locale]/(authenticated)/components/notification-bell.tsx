@@ -14,7 +14,7 @@ import { Bell, Check, CheckCheck } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { NotificationSkeleton } from '@repo/design-system/components';
 
-export function NotificationBell() {
+export function NotificationBell(): React.JSX.Element {
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const isLoading = false; // TODO: Add back once real-time package types are updated
 

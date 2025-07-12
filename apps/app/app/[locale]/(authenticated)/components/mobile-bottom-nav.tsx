@@ -22,7 +22,7 @@ interface MobileBottomNavProps {
   unreadMessages?: number;
 }
 
-export function MobileBottomNav({ className, unreadMessages = 0 }: MobileBottomNavProps) {
+export function MobileBottomNav({ className, unreadMessages = 0 }: MobileBottomNavProps): React.JSX.Element {
   const pathname = usePathname();
   const { getTotalItems } = useCartStore();
   const [cartItems, setCartItems] = useState(0);
@@ -171,7 +171,7 @@ export function MobileBottomNav({ className, unreadMessages = 0 }: MobileBottomN
 }
 
 // Secondary actions bottom sheet trigger (for less common actions)
-export function SecondaryActionsNav() {
+export function SecondaryActionsNav(): React.JSX.Element {
   const { getTotalItems } = useCartStore();
   const [cartItems, setCartItems] = useState(0);
 

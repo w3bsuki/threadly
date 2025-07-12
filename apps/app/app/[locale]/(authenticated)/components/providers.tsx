@@ -15,7 +15,7 @@ interface ProvidersProps {
   locale: string;
 }
 
-export function Providers({ children, userId, dictionary, locale }: ProvidersProps) {
+export function Providers({ children, userId, dictionary, locale }: ProvidersProps): React.JSX.Element {
   return (
     <I18nProvider dictionary={dictionary} locale={locale}>
       <RealTimeWrapper userId={userId}>

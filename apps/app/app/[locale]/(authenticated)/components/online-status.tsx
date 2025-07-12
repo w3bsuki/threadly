@@ -10,7 +10,7 @@ interface OnlineStatusProps {
   showText?: boolean;
 }
 
-export function OnlineStatus({ userId, className, showText = false }: OnlineStatusProps) {
+export function OnlineStatus({ userId, className, showText = false }: OnlineStatusProps): React.JSX.Element {
   const { members } = usePresence(`presence-users`);
   const isOnline = members.has(userId);
 
