@@ -27,8 +27,8 @@ export async function GET(request: NextRequest) {
     // Test read
     const retrieved = await cache.get(testKey);
     
-    // Test delete
-    await cache.delete(testKey);
+    // Clean up test key
+    await cache.set(testKey, null, { ttl: 1 }); // Delete by setting to null with short TTL
     
     // Check if operations succeeded
     const isHealthy = retrieved && retrieved.timestamp === testValue.timestamp;
