@@ -5,7 +5,7 @@ type StatsProps = {
   dictionary: Dictionary;
 };
 
-export const Stats = ({ dictionary }: StatsProps): React.ReactElement => (
+export const Stats = ({ dictionary }: StatsProps) => (
   <div className="w-full py-20 lg:py-40">
     <div className="container mx-auto">
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
