@@ -5,6 +5,7 @@
   ],
   "compilerOptions": {
     "baseUrl": ".",
+    "moduleResolution": "Bundler",
     "paths": {
       "@/*": ["./*"],
       "@repo/*": ["../../packages/*"]
