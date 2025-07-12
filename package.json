@@ -55,5 +55,11 @@
     "cross-env": "^7.0.3",
     "next": "15.3.5"
   },
-  "type": "module"
+  "type": "module",
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.1.8",
+      "@types/react-dom": "19.1.6"
+    }
+  }
 }
