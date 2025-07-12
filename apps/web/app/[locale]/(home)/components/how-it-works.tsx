@@ -1,3 +1,4 @@
+import React from 'react';
 import { Button } from '@repo/design-system/components';
 import { Search, Camera, MessageCircle, ShoppingBag, Heart, Zap } from 'lucide-react';
 import Link from 'next/link';
@@ -66,7 +67,7 @@ const sellingSteps = [
   }
 ];
 
-export const HowItWorks = async ({ dictionary }: HowItWorksProps) => {
+export const HowItWorks = async ({ dictionary }: HowItWorksProps): Promise<React.ReactElement> => {
   return (
     <section className="w-full bg-gradient-to-br from-gray-50 to-white py-16 lg:py-24">
       <div className="container mx-auto px-4">
