@@ -1,12 +1,13 @@
 import { database } from '@repo/database';
 import { AdminProductsClient } from './admin-products-client';
+import type { ReactElement } from 'react';
 
 interface PageProps {
   searchParams: Promise<{ q?: string; status?: string }>;
 }
 
 // Server Component - handles data fetching
-const AdminProductsPage: React.FC<PageProps> = async ({ searchParams }) => {
+const AdminProductsPage = async ({ searchParams }: PageProps): Promise<ReactElement> => {
   const params = await searchParams;
   const search = params.q || '';
   const statusFilter = params.status || 'all';
