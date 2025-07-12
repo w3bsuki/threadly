@@ -487,7 +487,7 @@ function CheckoutForm({ user, product, savedAddress }: SingleProductCheckoutProp
   );
 }
 
-export function SingleProductCheckout(props: SingleProductCheckoutProps) {
+export function SingleProductCheckout(props: SingleProductCheckoutProps): React.JSX.Element {
   const { product } = props;
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
