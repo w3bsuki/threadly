@@ -39,7 +39,7 @@ interface CheckoutContentProps {
   };
 }
 
-export function CheckoutContent({ user }: CheckoutContentProps) {
+export function CheckoutContent({ user }: CheckoutContentProps): React.JSX.Element {
   const router = useRouter();
   const { items, getTotalPrice, clearCart } = useCartStore();
   const [isProcessing, setIsProcessing] = useState(false);
