@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
 import { Button } from '@repo/design-system/components';
 import { Badge } from '@repo/design-system/components';
@@ -237,7 +237,7 @@ function ProductTable({ products }: { products: ProductWithDetails[] }) {
   );
 }
 
-export function AdminProductsClient({ products }: AdminProductsClientProps) {
+export function AdminProductsClient({ products }: AdminProductsClientProps): React.ReactElement {
   // Calculate stats from products
   const statusStats = {
     total: products.length,
