@@ -15,7 +15,7 @@ import {
 import { ReportActions } from './report-actions';
 import Link from 'next/link';
 
-export default async function AdminReportsPage() {
+const AdminReportsPage: React.FC = async () => {
   // Get reports from database
   const reports = await database.report.findMany({
     where: {
@@ -229,4 +229,6 @@ export default async function AdminReportsPage() {
       </Card>
     </div>
   );
-}
+};
+
+export default AdminReportsPage;

@@ -11,7 +11,7 @@ import {
   Clock
 } from 'lucide-react';
 
-export default async function AdminDashboard() {
+const AdminDashboard: React.FC = async () => {
   // Get stats
   const [
     totalUsers,
@@ -227,4 +227,6 @@ export default async function AdminDashboard() {
       </Card>
     </div>
   );
-}
+};
+
+export default AdminDashboard;

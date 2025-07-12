@@ -6,7 +6,7 @@ interface PageProps {
 }
 
 // Server Component - handles data fetching
-export default async function AdminProductsPage({ searchParams }: PageProps) {
+const AdminProductsPage: React.FC<PageProps> = async ({ searchParams }) => {
   const params = await searchParams;
   const search = params.q || '';
   const statusFilter = params.status || 'all';
@@ -53,4 +53,6 @@ export default async function AdminProductsPage({ searchParams }: PageProps) {
   });
 
   return <AdminProductsClient products={products} />;
-}
+};
+
+export default AdminProductsPage;

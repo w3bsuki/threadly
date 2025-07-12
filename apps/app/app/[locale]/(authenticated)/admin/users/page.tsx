@@ -5,7 +5,7 @@ interface PageProps {
   searchParams: Promise<{ q?: string; role?: string }>;
 }
 
-export default async function AdminUsersPage({ searchParams }: PageProps) {
+const AdminUsersPage: React.FC<PageProps> = async ({ searchParams }) => {
   const params = await searchParams;
   const search = params.q || '';
   const roleFilter = params.role || 'all';
@@ -57,4 +57,6 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
       roleFilter={roleFilter}
     />
   );
-}
+};
+
+export default AdminUsersPage;
