@@ -103,6 +103,7 @@ export async function restoreProduct(productId: string) {
   // Notify seller that product was restored
   await database.notification.create({
     data: {
+      id: crypto.randomUUID(),
       userId: product.seller.id,
       title: 'Product Restored',
       message: `Your product "${product.title}" has been restored and is now available for sale again.`,
