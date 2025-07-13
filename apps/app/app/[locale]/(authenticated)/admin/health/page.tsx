@@ -84,16 +84,16 @@ const PlatformHealthPage: React.FC = async () => {
     database.user.count({ 
       where: { 
         OR: [
-          { sales: { some: { createdAt: { gte: startOfDay } } } },
-          { purchases: { some: { createdAt: { gte: startOfDay } } } }
+          { Order_Order_sellerIdToUser: { some: { createdAt: { gte: startOfDay } } } },
+          { Order_Order_buyerIdToUser: { some: { createdAt: { gte: startOfDay } } } }
         ]
       } 
     }),
     database.user.count({ 
       where: { 
         OR: [
-          { sales: { some: { createdAt: { gte: startOfWeek } } } },
-          { purchases: { some: { createdAt: { gte: startOfWeek } } } }
+          { Order_Order_sellerIdToUser: { some: { createdAt: { gte: startOfWeek } } } },
+          { Order_Order_buyerIdToUser: { some: { createdAt: { gte: startOfWeek } } } }
         ]
       } 
     }),
