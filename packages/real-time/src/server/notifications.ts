@@ -17,6 +17,7 @@ export class NotificationService {
     // Save to database
     const savedNotification = await database.notification.create({
       data: {
+        id: crypto.randomUUID(),
         userId,
         title: notification.title,
         message: notification.message,
@@ -187,7 +188,7 @@ export class NotificationService {
     const order = await database.order.findUnique({
       where: { id: payment.orderId },
       include: {
-        product: true,
+        Product: true,
       },
     });
 
