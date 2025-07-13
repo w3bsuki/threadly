@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "next dev --port 3001",
     "build": "next build",
+    "postinstall": "prisma generate --schema=../../packages/database/prisma/schema.prisma",
     "start": "next start",
     "analyze": "ANALYZE=true npm run build",
     "clean": "git clean -xdf .next .turbo dist node_modules",
