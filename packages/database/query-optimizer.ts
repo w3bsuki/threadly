@@ -153,7 +153,7 @@ export class DatabaseOptimizer {
     return database.conversation.findMany({
       where,
       include: {
-        buyer: {
+        User_Conversation_buyerIdToUser: {
           select: {
             id: true,
             firstName: true,
@@ -161,7 +161,7 @@ export class DatabaseOptimizer {
             imageUrl: true,
           },
         },
-        seller: {
+        User_Conversation_sellerIdToUser: {
           select: {
             id: true,
             firstName: true,
@@ -169,7 +169,7 @@ export class DatabaseOptimizer {
             imageUrl: true,
           },
         },
-        product: {
+        Product: {
           include: {
             images: {
               orderBy: { displayOrder: 'asc' },
@@ -177,13 +177,13 @@ export class DatabaseOptimizer {
             },
           },
         },
-        messages: {
+        Message: {
           orderBy: { createdAt: 'desc' },
           take: 1,
         },
         _count: {
           select: {
-            messages: {
+            Message: {
               where: {
                 senderId: { not: userId },
                 read: false,
@@ -205,7 +205,7 @@ export class DatabaseOptimizer {
     return database.order.findMany({
       where,
       include: {
-        buyer: {
+        User_Order_buyerIdToUser: {
           select: {
             id: true,
             firstName: true,
@@ -213,7 +213,7 @@ export class DatabaseOptimizer {
             imageUrl: true,
           },
         },
-        seller: {
+        User_Order_sellerIdToUser: {
           select: {
             id: true,
             firstName: true,
@@ -221,7 +221,7 @@ export class DatabaseOptimizer {
             imageUrl: true,
           },
         },
-        product: {
+        Product: {
           include: {
             images: {
               orderBy: { displayOrder: 'asc' },
@@ -229,8 +229,8 @@ export class DatabaseOptimizer {
             },
           },
         },
-        payment: true,
-        review: true,
+        Payment: true,
+        Review: true,
       },
       orderBy: { createdAt: 'desc' },
     });

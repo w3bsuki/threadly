@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Address {
-  id          String      @id
+  id          String      @id @default(cuid())
   userId      String
   firstName   String
   lastName    String
@@ -26,7 +26,7 @@ model Address {
   isDefault   Boolean     @default(false)
   type        AddressType @default(SHIPPING)
   createdAt   DateTime    @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime    @updatedAt
   User        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   Order       Order[]
 
@@ -36,12 +36,12 @@ model Address {
 }
 
 model CartItem {
-  id        String   @id
+  id        String   @id @default(cuid())
   userId    String
   productId String
   createdAt DateTime @default(now())
   quantity  Int      @default(1)
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
   product   Product  @relation("cartItems", fields: [productId], references: [id], onDelete: Cascade)
   User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -52,7 +52,7 @@ model CartItem {
 }
 
 model Category {
-  id             String     @id
+  id             String     @id @default(cuid())
   name           String     @unique
   slug           String     @unique
   parentId       String?
@@ -66,13 +66,13 @@ model Category {
 }
 
 model Conversation {
-  id                               String             @id
+  id                               String             @id @default(cuid())
   buyerId                          String
   sellerId                         String
   productId                        String
   status                           ConversationStatus @default(ACTIVE)
   createdAt                        DateTime           @default(now())
-  updatedAt                        DateTime
+  updatedAt                        DateTime           @updatedAt
   User_Conversation_buyerIdToUser  User               @relation("Conversation_buyerIdToUser", fields: [buyerId], references: [id])
   Product                          Product            @relation(fields: [productId], references: [id], onDelete: Cascade)
   User_Conversation_sellerIdToUser User               @relation("Conversation_sellerIdToUser", fields: [sellerId], references: [id])
@@ -89,7 +89,7 @@ model Conversation {
 }
 
 model Favorite {
-  id        String   @id
+  id        String   @id @default(cuid())
   userId    String
   productId String
   createdAt DateTime @default(now())
@@ -102,7 +102,7 @@ model Favorite {
 }
 
 model Follow {
-  id                            String   @id
+  id                            String   @id @default(cuid())
   followerId                    String
   followingId                   String
   createdAt                     DateTime @default(now())
@@ -115,7 +115,7 @@ model Follow {
 }
 
 model Message {
-  id             String       @id
+  id             String       @id @default(cuid())
   senderId       String
   content        String
   imageUrl       String?
@@ -137,7 +137,7 @@ model Message {
 }
 
 model Notification {
-  id        String           @id
+  id        String           @id @default(cuid())
   userId    String
   title     String
   message   String
@@ -154,7 +154,7 @@ model Notification {
 }
 
 model Order {
-  id                        String      @id
+  id                        String      @id @default(cuid())
   buyerId                   String
   sellerId                  String
   productId                 String
@@ -190,7 +190,7 @@ model Order {
 }
 
 model Payment {
-  id              String   @id
+  id              String   @id @default(cuid())
   orderId         String   @unique
   stripePaymentId String   @unique
   amount          Decimal  @db.Decimal(10, 2)
@@ -203,7 +203,7 @@ model Payment {
 }
 
 model Payout {
-  id          String       @id
+  id          String       @id @default(cuid())
   sellerId    String
   amount      Decimal      @db.Decimal(10, 2)
   status      PayoutStatus @default(PENDING)
@@ -222,7 +222,7 @@ model Payout {
 
 /// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model Product {
-  id           String         @id
+  id           String         @id @default(cuid())
   title        String
   description  String
   price        Decimal        @db.Decimal(10, 2)
@@ -234,7 +234,7 @@ model Product {
   sellerId     String
   status       ProductStatus  @default(AVAILABLE)
   createdAt    DateTime       @default(now())
-  updatedAt    DateTime
+  updatedAt    DateTime       @updatedAt
   views        Int            @default(0)
   cartItems     CartItem[] @relation("cartItems")
   conversations Conversation[]
@@ -264,7 +264,7 @@ model Product {
 }
 
 model ProductImage {
-  id           String  @id
+  id           String  @id @default(cuid())
   productId    String
   imageUrl     String
   alt          String?
@@ -275,7 +275,7 @@ model ProductImage {
 }
 
 model Report {
-  id                               String       @id
+  id                               String       @id @default(cuid())
   reporterId                       String
   type                             ReportType
   status                           ReportStatus @default(PENDING)
@@ -285,7 +285,7 @@ model Report {
   reportedUserId                   String?
   messageId                        String?
   createdAt                        DateTime     @default(now())
-  updatedAt                        DateTime
+  updatedAt                        DateTime     @updatedAt
   resolvedAt                       DateTime?
   resolvedBy                       String?
   resolution                       String?
@@ -302,7 +302,7 @@ model Report {
 }
 
 model Review {
-  id                           String   @id
+  id                           String   @id @default(cuid())
   orderId                      String   @unique
   reviewerId                   String
   reviewedId                   String
@@ -319,7 +319,7 @@ model Review {
 }
 
 model SavedSearch {
-  id            String    @id
+  id            String    @id @default(cuid())
   userId        String
   name          String
   query         String
@@ -327,7 +327,7 @@ model SavedSearch {
   alertEnabled  Boolean   @default(true)
   lastAlertSent DateTime?
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime
+  updatedAt     DateTime  @updatedAt
   User          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([alertEnabled])
@@ -336,7 +336,7 @@ model SavedSearch {
 }
 
 model SearchHistory {
-  id          String   @id
+  id          String   @id @default(cuid())
   userId      String
   query       String
   filters     Json?
@@ -350,7 +350,7 @@ model SearchHistory {
 }
 
 model SellerProfile {
-  id                  String   @id
+  id                  String   @id @default(cuid())
   userId              String   @unique
   displayName         String
   bio                 String?
@@ -359,14 +359,14 @@ model SellerProfile {
   defaultShippingCost Decimal  @default(5) @db.Decimal(10, 2)
   shippingNotes       String?
   createdAt           DateTime @default(now())
-  updatedAt           DateTime
+  updatedAt           DateTime @updatedAt
   User                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
 model User {
-  id                                       String           @id
+  id                                       String           @id @default(cuid())
   clerkId                                  String           @unique
   email                                    String           @unique
   firstName                                String?
@@ -418,7 +418,7 @@ model User {
 }
 
 model UserPreferences {
-  id                  String             @id
+  id                  String             @id @default(cuid())
   userId              String             @unique
   preferredRole       UserPreferenceRole @default(BUYER)
   interests           String[]
@@ -426,7 +426,7 @@ model UserPreferences {
   location            String?
   onboardingCompleted Boolean            @default(false)
   createdAt           DateTime           @default(now())
-  updatedAt           DateTime
+  updatedAt           DateTime           @updatedAt
   User                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
