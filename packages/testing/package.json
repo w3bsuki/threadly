@@ -18,7 +18,8 @@
     }
   },
   "scripts": {
-    "build": "tsup",
+    "build": "echo 'Skipping testing package build in production' && exit 0",
+    "build:dev": "tsup",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
