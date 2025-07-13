@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "buildCommand": "cd ../.. && rm -rf node_modules apps/web/node_modules && pnpm install && turbo build --filter=web --no-deps --force",
+  "buildCommand": "cd ../.. && rm -rf node_modules apps/web/node_modules && pnpm install && turbo build --filter=web --force",
   "devCommand": "next dev"
 }
