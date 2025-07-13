@@ -49,6 +49,7 @@ export async function removeProduct(productId: string, reason: string) {
   // Send notification to seller
   await database.notification.create({
     data: {
+      id: crypto.randomUUID(),
       userId: product.seller.id,
       title: 'Product Removed',
       message: `Your product "${product.title}" has been removed from the marketplace. Reason: ${reason}`,
