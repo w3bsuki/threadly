@@ -42,8 +42,8 @@ const AdminDashboard: React.FC = async () => {
           take: 5,
           orderBy: { createdAt: 'desc' },
           include: {
-            buyer: { select: { firstName: true, lastName: true } },
-            product: { select: { title: true, price: true } }
+            User_Order_buyerIdToUser: { select: { firstName: true, lastName: true } },
+            Product: { select: { title: true, price: true } }
           }
         }),
         database.user.findMany({
@@ -200,13 +200,13 @@ const AdminDashboard: React.FC = async () => {
               {recentOrders.map((order) => (
                 <div key={order.id} className="flex items-center justify-between text-sm">
                   <div>
-                    <p className="font-medium">{order.product.title}</p>
+                    <p className="font-medium">{order.Product.title}</p>
                     <p className="text-muted-foreground">
-                      {order.buyer.firstName} {order.buyer.lastName}
+                      {order.User_Order_buyerIdToUser.firstName} {order.User_Order_buyerIdToUser.lastName}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium">${order.product.price.toFixed(2)}</p>
+                    <p className="font-medium">${order.Product.price.toFixed(2)}</p>
                     <p className="text-xs text-muted-foreground">
                       {new Date(order.createdAt).toLocaleDateString()}
                     </p>
