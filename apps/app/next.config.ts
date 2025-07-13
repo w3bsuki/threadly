@@ -26,7 +26,7 @@ nextConfig = {
       '@repo/design-system',
     ],
   },
-  serverExternalPackages: ['@prisma/client', '@prisma/engines', '@neondatabase/serverless'],
+  serverExternalPackages: ['@prisma/client', '@prisma/engines', '@neondatabase/serverless', 'ws'],
   // Webpack configuration
   webpack: (config, { isServer, webpack }) => {
     // Suppress warnings

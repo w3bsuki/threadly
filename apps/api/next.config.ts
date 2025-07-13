@@ -5,7 +5,7 @@ import type { NextConfig } from 'next';
 
 let nextConfig: NextConfig = {
   ...withLogging(config),
-  serverExternalPackages: ['@prisma/client', '@prisma/engines', '@neondatabase/serverless'],
+  serverExternalPackages: ['@prisma/client', '@prisma/engines', '@neondatabase/serverless', 'ws'],
 };
 
 // Enable Sentry for all environments where DSN is provided
