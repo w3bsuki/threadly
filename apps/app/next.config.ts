@@ -25,8 +25,8 @@ nextConfig = {
       '@radix-ui/react-icons',
       '@repo/design-system',
     ],
-    serverComponentsExternalPackages: ['@prisma/client', '@prisma/engines'],
   },
+  serverExternalPackages: ['@prisma/client', '@prisma/engines', '@neondatabase/serverless'],
   // Webpack configuration
   webpack: (config, { isServer, webpack }) => {
     // Suppress warnings

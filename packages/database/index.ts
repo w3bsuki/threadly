@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { neon } from '@neondatabase/serverless';
+import { Pool } from '@neondatabase/serverless';
 import { PrismaClient } from './generated/client';
 import { PrismaNeon } from '@prisma/adapter-neon';
 
@@ -8,10 +8,10 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 let database: PrismaClient;
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production' && process.env.DATABASE_URL) {
   // Use Neon serverless adapter in production to avoid engine bundling issues
-  const neonClient = neon(process.env.DATABASE_URL!);
-  const adapter = new PrismaNeon(neonClient);
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  const adapter = new PrismaNeon(pool);
   database = new PrismaClient({ 
     adapter,
     log: ['error'],
