@@ -131,7 +131,7 @@ export async function GET(request: NextRequest) {
     id: product.id,
     title: product.title,
     brand: product.brand || 'Unknown',
-    price: product.price,
+    price: product.price.toNumber(),
     originalPrice: null, // We don't have this in our schema
     size: product.size || 'One Size',
     condition: product.condition,
@@ -143,7 +143,7 @@ export async function GET(request: NextRequest) {
       id: product.seller.id,
       name: `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() || 'Anonymous',
       location: product.seller.location || 'Unknown',
-      rating: product.seller.averageRating || 0,
+      rating: product.seller.averageRating?.toNumber() || 0,
     } : {
       id: 'unknown',
       name: 'Anonymous',
@@ -151,7 +151,7 @@ export async function GET(request: NextRequest) {
       rating: 0,
     },
     favoritesCount: product._count.favorites,
-    createdAt: product.createdAt,
+    createdAt: product.createdAt.toISOString(),
   }));
 
   // Return standardized success response
