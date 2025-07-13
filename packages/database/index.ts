@@ -15,13 +15,11 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient };
 let database: PrismaClient;
 
 if (process.env.NODE_ENV === 'production' && process.env.DATABASE_URL) {
-  // Use Neon serverless adapter in production
+  // Use Neon serverless adapter in production  
   const connectionString = process.env.DATABASE_URL;
   
-  // Create pool using neon function
-  const sql = neon(connectionString);
-  const pool = new Pool({ connectionString });
-  const adapter = new PrismaNeon(pool, sql);
+  // PrismaNeon adapter expects a connection object, not a Pool instance
+  const adapter = new PrismaNeon({ connectionString });
   
   database = new PrismaClient({ 
     adapter,
