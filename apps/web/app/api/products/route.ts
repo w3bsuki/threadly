@@ -44,20 +44,9 @@ export async function GET(request: NextRequest) {
 
   // Add category filter if specified
   if (validatedParams.category && validatedParams.category !== 'All') {
-    where.OR = [
-      {
-        category: {
-          name: { equals: validatedParams.category, mode: 'insensitive' }
-        }
-      },
-      {
-        category: {
-          parent: {
-            name: { equals: validatedParams.category, mode: 'insensitive' }
-          }
-        }
-      }
-    ];
+    where.Category = {
+      name: { equals: validatedParams.category, mode: 'insensitive' }
+    };
   }
 
   // Add search filter if specified
@@ -68,7 +57,7 @@ export async function GET(request: NextRequest) {
         { title: { contains: searchTerm, mode: 'insensitive' } },
         { brand: { contains: searchTerm, mode: 'insensitive' } },
         { description: { contains: searchTerm, mode: 'insensitive' } },
-        { category: { name: { contains: searchTerm, mode: 'insensitive' } } }
+        { Category: { name: { contains: searchTerm, mode: 'insensitive' } } }
       ]
     };
     
@@ -90,7 +79,7 @@ export async function GET(request: NextRequest) {
       break;
     case 'popular':
       orderBy = [
-        { favorites: { _count: 'desc' } },
+        { Favorite: { _count: 'desc' } },
         { views: 'desc' },
         { createdAt: 'desc' }
       ];
@@ -109,16 +98,12 @@ export async function GET(request: NextRequest) {
     database.product.findMany({
       where,
       include: {
-        images: {
+        ProductImage: {
           orderBy: { displayOrder: 'asc' },
           take: 1,
         },
-        category: {
-          include: {
-            parent: true,
-          },
-        },
-        seller: {
+        Category: true,
+        User: {
           select: {
             id: true,
             firstName: true,
@@ -130,7 +115,7 @@ export async function GET(request: NextRequest) {
         },
         _count: {
           select: {
-            favorites: true,
+            Favorite: true,
           },
         },
       },
@@ -151,21 +136,21 @@ export async function GET(request: NextRequest) {
     size: product.size || 'One Size',
     condition: product.condition,
     categoryId: product.categoryId,
-    categoryName: product.category?.name || 'Unknown',
-    parentCategoryName: product.category?.parent?.name || 'Unisex',
-    images: product.images.map(img => img.imageUrl),
-    seller: product.seller ? {
-      id: product.seller.id,
-      name: `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() || 'Anonymous',
-      location: product.seller.location || 'Unknown',
-      rating: product.seller.averageRating || 0,
+    categoryName: product.Category?.name || 'Unknown',
+    parentCategoryName: 'Unisex',
+    images: product.ProductImage.map(img => img.imageUrl),
+    seller: product.User ? {
+      id: product.User.id,
+      name: `${product.User.firstName || ''} ${product.User.lastName || ''}`.trim() || 'Anonymous',
+      location: product.User.location || 'Unknown',
+      rating: product.User.averageRating || 0,
     } : {
       id: 'unknown',
       name: 'Anonymous',
       location: 'Unknown',
       rating: 0,
     },
-    favoritesCount: product._count.favorites,
+    favoritesCount: product._count.Favorite,
     createdAt: product.createdAt,
   }));
 
