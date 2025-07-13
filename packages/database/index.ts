@@ -5,10 +5,9 @@ import { PrismaClient } from './generated/client';
 import { PrismaNeon } from '@prisma/adapter-neon';
 import ws from 'ws';
 
-// Setup for Node.js environment
-if (typeof WebSocket === 'undefined') {
-  neonConfig.webSocketConstructor = ws;
-}
+// Configure Neon for edge environments (Vercel)
+neonConfig.webSocketConstructor = ws;
+neonConfig.poolQueryViaFetch = true;
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
