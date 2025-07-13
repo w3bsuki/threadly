@@ -166,6 +166,7 @@ export async function bulkUpdateProducts({
 
     // Send notifications to sellers
     const notifications = products.map(product => ({
+      id: crypto.randomUUID(),
       userId: product.seller.id,
       title: `Product ${action === 'remove' ? 'Removed' : action === 'restore' ? 'Restored' : 'Archived'}`,
       message: `Your product "${product.title}" has been ${action === 'remove' ? 'removed from' : action === 'restore' ? 'restored to' : 'archived from'} the marketplace.`,

@@ -34,14 +34,14 @@ export const FeaturedCategories = async () => {
       include: {
         _count: {
           select: {
-            products: {
+            Product: {
               where: {
                 status: 'AVAILABLE',
               },
             },
           },
         },
-        products: {
+        Product: {
           where: {
             status: 'AVAILABLE',
           },
