@@ -147,11 +147,11 @@ export class SearchHistoryService {
         // Create new search history item
         const created = await database.searchHistory.create({
           data: {
+            id: crypto.randomUUID(),
             userId,
             query: query.trim(),
             filters: filters as any,
             resultCount,
-            createdAt: new Date(),
           },
         });
 
@@ -228,11 +228,13 @@ export class SavedSearchService {
     try {
       const saved = await database.savedSearch.create({
         data: {
+          id: crypto.randomUUID(),
           userId,
           name: name.trim(),
           query: query.trim(),
           filters: filters as any,
           alertEnabled,
+          updatedAt: new Date(),
         },
       });
 
