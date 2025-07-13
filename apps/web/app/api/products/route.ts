@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
 
   // Add category filter if specified
   if (validatedParams.category && validatedParams.category !== 'All') {
-    where.Category = {
+    where.category = {
       name: { equals: validatedParams.category, mode: 'insensitive' }
     };
   }
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
         { title: { contains: searchTerm, mode: 'insensitive' } },
         { brand: { contains: searchTerm, mode: 'insensitive' } },
         { description: { contains: searchTerm, mode: 'insensitive' } },
-        { Category: { name: { contains: searchTerm, mode: 'insensitive' } } }
+        { category: { name: { contains: searchTerm, mode: 'insensitive' } } }
       ]
     };
     
@@ -79,7 +79,7 @@ export async function GET(request: NextRequest) {
       break;
     case 'popular':
       orderBy = [
-        { Favorite: { _count: 'desc' } },
+        { favorites: { _count: 'desc' } },
         { views: 'desc' },
         { createdAt: 'desc' }
       ];
@@ -98,12 +98,12 @@ export async function GET(request: NextRequest) {
     database.product.findMany({
       where,
       include: {
-        ProductImage: {
+        images: {
           orderBy: { displayOrder: 'asc' },
           take: 1,
         },
-        Category: true,
-        User: {
+        category: true,
+        seller: {
           select: {
             id: true,
             firstName: true,
@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
         },
         _count: {
           select: {
-            Favorite: true,
+            favorites: true,
           },
         },
       },
@@ -136,21 +136,21 @@ export async function GET(request: NextRequest) {
     size: product.size || 'One Size',
     condition: product.condition,
     categoryId: product.categoryId,
-    categoryName: product.Category?.name || 'Unknown',
+    categoryName: product.category?.name || 'Unknown',
     parentCategoryName: 'Unisex',
-    images: product.ProductImage.map(img => img.imageUrl),
-    seller: product.User ? {
-      id: product.User.id,
-      name: `${product.User.firstName || ''} ${product.User.lastName || ''}`.trim() || 'Anonymous',
-      location: product.User.location || 'Unknown',
-      rating: product.User.averageRating || 0,
+    images: product.images.map(img => img.imageUrl),
+    seller: product.seller ? {
+      id: product.seller.id,
+      name: `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() || 'Anonymous',
+      location: product.seller.location || 'Unknown',
+      rating: product.seller.averageRating || 0,
     } : {
       id: 'unknown',
       name: 'Anonymous',
       location: 'Unknown',
       rating: 0,
     },
-    favoritesCount: product._count.Favorite,
+    favoritesCount: product._count.favorites,
     createdAt: product.createdAt,
   }));
 

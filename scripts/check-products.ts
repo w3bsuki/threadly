@@ -1,4 +1,4 @@
-import { PrismaClient } from '../packages/database/generated/client';
+import { database } from '@repo/database';
 
 if (!process.env.DATABASE_URL) {
   console.error('❌ DATABASE_URL environment variable is not set');
@@ -7,14 +7,9 @@ if (!process.env.DATABASE_URL) {
 }
 
 async function checkProducts() {
-  
-  const prisma = new PrismaClient({
-    datasourceUrl: process.env.DATABASE_URL,
-  });
-
   try {
     // Get all products
-    const products = await prisma.product.findMany({
+    const products = await database.product.findMany({
       include: {
         category: {
           select: {
@@ -43,7 +38,7 @@ Product ${index + 1}:
     });
 
     // Test specific searches
-    const leatherProducts = await prisma.product.findMany({
+    const leatherProducts = await database.product.findMany({
       where: {
         status: 'AVAILABLE',
         OR: [
@@ -70,7 +65,7 @@ Product ${index + 1}:
       console.log(`- ${product.title} (${product.brand || 'No brand'})`);
     });
 
-    const jacketProducts = await prisma.product.findMany({
+    const jacketProducts = await database.product.findMany({
       where: {
         status: 'AVAILABLE',
         OR: [
@@ -94,8 +89,6 @@ Product ${index + 1}:
 
   } catch (error) {
     console.error('❌ Error checking products:', error);
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
