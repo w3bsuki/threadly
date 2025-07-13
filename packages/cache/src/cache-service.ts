@@ -344,8 +344,14 @@ let marketplaceCacheService: MarketplaceCacheService | null = null;
 
 export function getCacheService(config?: CacheConfig): MarketplaceCacheService {
   if (!marketplaceCacheService) {
+    // If no config provided, try to use environment variables
+    const defaultConfig = config || {
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    };
+    
     // Always create a cache service, even without config (will use memory cache)
-    marketplaceCacheService = new MarketplaceCacheService(config);
+    marketplaceCacheService = new MarketplaceCacheService(defaultConfig);
   }
   
   return marketplaceCacheService;
