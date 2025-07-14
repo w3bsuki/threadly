@@ -50,8 +50,8 @@ nextConfig.webpack = (config, { isServer }) => {
   return config;
 };
 
-// Fix Prisma bundling for Vercel with Neon adapter
-nextConfig.serverExternalPackages = ['@neondatabase/serverless', 'ws'];
+// Fix Prisma bundling for Vercel with binary engine
+nextConfig.serverExternalPackages = ['@prisma/engines'];
 
 if (process.env.NODE_ENV === 'production') {
   const redirects: NextConfig['redirects'] = async () => [
