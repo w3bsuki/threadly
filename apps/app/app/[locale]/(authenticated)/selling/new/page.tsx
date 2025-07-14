@@ -32,7 +32,7 @@ const SellNewItemPage = async () => {
       select: { 
         id: true,
         stripeAccountId: true,
-        sellerProfile: true,
+        SellerProfile: true,
       },
     });
 
@@ -49,14 +49,14 @@ const SellNewItemPage = async () => {
         select: {
           id: true,
           stripeAccountId: true,
-          sellerProfile: true,
+          SellerProfile: true,
         }
       });
     }
 
     // Seller profile is required to list items
     // This ensures we have shipping and payout information
-    if (!dbUser.sellerProfile) {
+    if (!dbUser.SellerProfile) {
       return (
         <div className="space-y-6">
           <div className="flex items-center gap-4">

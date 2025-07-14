@@ -52,8 +52,8 @@ const SalesHistoryPage = async () => {
         sellerId: dbUser.id,
       },
       include: {
-        buyer: true,
-        product: {
+        User_Order_buyerIdToUser: true,
+        Product: {
           include: {
             images: {
               take: 1,
@@ -167,7 +167,9 @@ const SalesHistoryPage = async () => {
         }}
         recentOrders={recentOrders.map(order => ({
           ...order,
-          amount: decimalToNumber(order.amount)
+          amount: decimalToNumber(order.amount),
+          buyer: order.User_Order_buyerIdToUser,
+          product: order.Product
         }))}
         monthlyStats={monthlyStatsArray}
         topProducts={enrichedTopProducts.map(product => ({

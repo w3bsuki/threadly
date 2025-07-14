@@ -15,11 +15,11 @@ export default async function SellerOnboardingPage(): Promise<React.JSX.Element>
     where: { clerkId: user.id },
     select: { 
       id: true,
-      sellerProfile: true 
+      SellerProfile: true 
     }
   });
 
-  if (dbUser?.sellerProfile) {
+  if (dbUser?.SellerProfile) {
     // Already has a seller profile, redirect to dashboard
     redirect('/selling/dashboard');
   }

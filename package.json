@@ -26,6 +26,7 @@
     "migrate:prod": "tsx scripts/migrate-production.ts",
     "migrate:postgres": "tsx scripts/migrate-sqlite-to-postgres.ts",
     "db:push": "cd packages/database && npx prisma db push",
+    "db:generate": "cd packages/database && npx prisma generate --no-hints",
     "db:migrate:deploy": "cd packages/database && npx prisma migrate deploy",
     "db:studio": "cd packages/database && npx prisma studio",
     "seed": "tsx scripts/seed-all.ts",

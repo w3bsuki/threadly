@@ -1,5 +1,5 @@
-import { describe, it } from 'vitest';
-import { renderFormWithA11y, a11yTestHelpers } from '@repo/testing/a11y';
+import { describe, it, expect } from '@repo/testing';
+import { renderFormWithA11y, a11yTestHelpers } from '@repo/testing';
 import '@repo/testing/a11y/axe-matchers';
 
 // Mock auth forms since we need to test structure
@@ -84,8 +84,7 @@ const MockSignUpForm = () => (
           type="password"
           name="password"
           required
-          aria-describedby="signupPassword-help"
-          aria-describedby="password-requirements"
+          aria-describedby="signupPassword-help password-requirements"
         />
         <div id="password-requirements">
           Password must be at least 8 characters long

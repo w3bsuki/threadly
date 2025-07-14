@@ -32,7 +32,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Get or create database user
     let dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      select: { id: true, sellerProfile: true }
+      select: { id: true, SellerProfile: true }
     });
 
     if (!dbUser) {
@@ -44,12 +44,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           lastName: user.lastName,
           imageUrl: user.imageUrl,
         },
-        select: { id: true, sellerProfile: true }
+        select: { id: true, SellerProfile: true }
       });
     }
 
     // Check if seller profile already exists
-    if (dbUser.sellerProfile) {
+    if (dbUser.SellerProfile) {
       return NextResponse.json(
         { error: 'Seller profile already exists' },
         { status: 409 }

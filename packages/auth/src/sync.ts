@@ -12,7 +12,7 @@ export async function ensureUserExists() {
     // Check if user exists in database
     let dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      include: { preferences: true }
+      include: { UserPreferences: true }
     });
 
     // If user doesn't exist, create them
@@ -25,7 +25,7 @@ export async function ensureUserExists() {
           lastName: user.lastName || null,
           imageUrl: user.imageUrl || null,
         },
-        include: { preferences: true }
+        include: { UserPreferences: true }
       });
 
       // Create default preferences
@@ -40,7 +40,7 @@ export async function ensureUserExists() {
       });
 
       // User created successfully
-    } else if (!dbUser.preferences) {
+    } else if (!dbUser.UserPreferences) {
       // Ensure preferences exist
       await database.userPreferences.create({
         data: {
@@ -64,7 +64,7 @@ export async function ensureUserExists() {
 export async function getUserWithSync(clerkId: string) {
   let user = await database.user.findUnique({
     where: { clerkId },
-    include: { preferences: true, sellerProfile: true }
+    include: { UserPreferences: true, SellerProfile: true }
   });
 
   if (!user) {
@@ -74,7 +74,7 @@ export async function getUserWithSync(clerkId: string) {
       // Fetch again with all includes
       user = await database.user.findUnique({
         where: { clerkId },
-        include: { preferences: true, sellerProfile: true }
+        include: { UserPreferences: true, SellerProfile: true }
       });
     }
   }

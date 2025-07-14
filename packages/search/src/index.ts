@@ -28,3 +28,6 @@ export type { Product, ProductRepository } from './repositories';
 
 // Algolia sync service
 export { AlgoliaSyncService, getAlgoliaSyncService } from './sync';
+
+// Search webhook client
+export { SearchWebhookClient, getSearchWebhookClient, searchIndexing } from './search-webhook-client';

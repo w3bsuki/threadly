@@ -50,9 +50,9 @@ const MessagesPage = async ({ searchParams }: MessagesPageProps) => {
       ...(type === 'selling' ? { sellerId: dbUser.id } : {}),
     },
     include: {
-      buyer: true,
-      seller: true,
-      product: {
+      User_Conversation_buyerIdToUser: true,
+      User_Conversation_sellerIdToUser: true,
+      Product: {
         include: {
           images: {
             take: 1,
