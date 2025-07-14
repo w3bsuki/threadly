@@ -146,7 +146,7 @@ export async function GET(
                 id: true,
                 name: true,
                 slug: true,
-                parent: {
+                Category: {
                   select: {
                     id: true,
                     name: true,

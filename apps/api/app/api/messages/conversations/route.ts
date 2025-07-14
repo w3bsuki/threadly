@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
         skip,
         take: limit,
         include: {
-          buyer: {
+          User_Conversation_buyerIdToUser: {
             select: {
               id: true,
               firstName: true,
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
               imageUrl: true,
             },
           },
-          seller: {
+          User_Conversation_sellerIdToUser: {
             select: {
               id: true,
               firstName: true,
@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
               imageUrl: true,
             },
           },
-          product: {
+          Product: {
             select: {
               id: true,
               title: true,
@@ -108,13 +108,13 @@ export async function GET(request: NextRequest) {
               },
             },
           },
-          messages: {
+          Message: {
             orderBy: {
               createdAt: 'desc',
             },
             take: 1,
             include: {
-              sender: {
+              User: {
                 select: {
                   id: true,
                   firstName: true,
@@ -125,7 +125,7 @@ export async function GET(request: NextRequest) {
           },
           _count: {
             select: {
-              messages: {
+              Message: {
                 where: {
                   read: false,
                   senderId: {
@@ -149,11 +149,11 @@ export async function GET(request: NextRequest) {
       createdAt: conv.createdAt,
       updatedAt: conv.updatedAt,
       isUserBuyer: conv.buyerId === user.id,
-      buyer: conv.buyer,
-      seller: conv.seller,
-      product: conv.product,
-      lastMessage: conv.messages[0] || null,
-      unreadCount: conv._count.messages,
+      buyer: conv.User_Conversation_buyerIdToUser,
+      seller: conv.User_Conversation_sellerIdToUser,
+      product: conv.Product,
+      lastMessage: conv.Message[0] || null,
+      unreadCount: conv._count.Message,
     }));
 
     return NextResponse.json({
@@ -312,7 +312,7 @@ export async function POST(request: NextRequest) {
         buyerId: user.id,
         sellerId: product.sellerId,
         productId: product.id,
-        messages: {
+        Message: {
           create: {
             senderId: user.id,
             content: validatedData.message,
@@ -320,7 +320,7 @@ export async function POST(request: NextRequest) {
         },
       },
       include: {
-        buyer: {
+        User_Conversation_buyerIdToUser: {
           select: {
             id: true,
             firstName: true,
@@ -328,7 +328,7 @@ export async function POST(request: NextRequest) {
             imageUrl: true,
           },
         },
-        seller: {
+        User_Conversation_sellerIdToUser: {
           select: {
             id: true,
             firstName: true,
@@ -336,7 +336,7 @@ export async function POST(request: NextRequest) {
             imageUrl: true,
           },
         },
-        product: {
+        Product: {
           select: {
             id: true,
             title: true,
@@ -352,9 +352,9 @@ export async function POST(request: NextRequest) {
             },
           },
         },
-        messages: {
+        Message: {
           include: {
-            sender: {
+            User: {
               select: {
                 id: true,
                 firstName: true,

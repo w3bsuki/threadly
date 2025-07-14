@@ -38,12 +38,12 @@ export async function GET(request: NextRequest) {
             { name: 'asc' },
           ],
           include: {
-            children: {
+            other_Category: {
               orderBy: { name: 'asc' },
               include: {
                 _count: {
                   select: {
-                    products: {
+                    Product: {
                       where: {
                         status: 'AVAILABLE',
                       },
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
             },
             _count: {
               select: {
-                products: {
+                Product: {
                   where: {
                     status: 'AVAILABLE',
                   },

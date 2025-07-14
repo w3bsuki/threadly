@@ -61,14 +61,14 @@ export async function GET(
             averageRating: true,
             _count: {
               select: {
-                listings: {
+                Product: {
                   where: {
                     status: 'AVAILABLE',
                   },
                 },
-                followers: true,
-                following: true,
-                receivedReviews: true,
+                Follow_Follow_followerIdToUser: true,
+                Follow_Follow_followingIdToUser: true,
+                Review_Review_reviewedIdToUser: true,
               },
             },
           },

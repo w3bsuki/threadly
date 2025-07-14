@@ -69,7 +69,7 @@ export async function GET(
               followerId: userId,
             },
             include: {
-              following: {
+              User_Follow_followingIdToUser: {
                 select: {
                   id: true,
                   firstName: true,
@@ -79,13 +79,13 @@ export async function GET(
                   verified: true,
                   _count: {
                     select: {
-                      listings: {
+                      Product: {
                         where: {
                           status: 'AVAILABLE',
                         },
                       },
-                      followers: true,
-                      following: true,
+                      Follow_Follow_followingIdToUser: true,
+                      Follow_Follow_followerIdToUser: true,
                     },
                   },
                 },
@@ -106,7 +106,7 @@ export async function GET(
 
         return {
           following: following.map(f => ({
-            ...f.following,
+            ...f.User_Follow_followingIdToUser,
             followedAt: f.createdAt,
           })),
           pagination: {

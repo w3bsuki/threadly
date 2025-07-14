@@ -117,7 +117,7 @@ export async function GET(request: NextRequest) {
         skip,
         take: limit,
         include: {
-          sender: {
+          User: {
             select: {
               id: true,
               firstName: true,
@@ -252,7 +252,7 @@ export async function POST(request: NextRequest) {
         imageUrl: validatedData.imageUrl,
       },
       include: {
-        sender: {
+        User: {
           select: {
             id: true,
             firstName: true,

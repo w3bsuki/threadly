@@ -43,7 +43,7 @@ export async function GET(
     const order = await database.order.findUnique({
       where: { id: resolvedParams.id },
       include: {
-        product: {
+        Product: {
           include: {
             images: true,
             category: true,
@@ -60,7 +60,7 @@ export async function GET(
             },
           },
         },
-        buyer: {
+        User_Order_buyerIdToUser: {
           select: {
             id: true,
             firstName: true,
@@ -69,7 +69,7 @@ export async function GET(
             email: true,
           },
         },
-        seller: {
+        User_Order_sellerIdToUser: {
           select: {
             id: true,
             firstName: true,
@@ -78,8 +78,8 @@ export async function GET(
             email: true,
           },
         },
-        payment: true,
-        review: true,
+        Payment: true,
+        Review: true,
       },
     });
 
@@ -183,16 +183,16 @@ export async function PUT(
       where: { id: resolvedParams.id },
       data: updateData,
       include: {
-        product: {
+        Product: {
           include: {
             images: true,
             category: true,
           },
         },
-        buyer: true,
-        seller: true,
-        payment: true,
-        review: true,
+        User_Order_buyerIdToUser: true,
+        User_Order_sellerIdToUser: true,
+        Payment: true,
+        Review: true,
       },
     });
 

@@ -117,7 +117,7 @@ export async function POST(
         followingId: userToFollowId,
       },
       include: {
-        following: {
+        User_Follow_followingIdToUser: {
           select: {
             id: true,
             firstName: true,

@@ -108,18 +108,18 @@ export async function GET(request: NextRequest) {
             averageRating: true,
             _count: {
               select: {
-                listings: {
+                Product: {
                   where: {
                     status: 'AVAILABLE',
                   },
                 },
-                followers: true,
-                receivedReviews: true,
+                Follow_Follow_followerIdToUser: true,
+                Review_Review_reviewedIdToUser: true,
               },
             },
           },
           orderBy: [
-            { followers: { _count: 'desc' } }, // Popular users first
+            { Follow_Follow_followerIdToUser: { _count: 'desc' } }, // Popular users first
             { averageRating: 'desc' },
             { totalSales: 'desc' },
           ],

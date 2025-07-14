@@ -69,13 +69,13 @@ export async function GET(request: NextRequest) {
       database.order.findMany({
         where,
         include: {
-          product: {
+          Product: {
             include: {
               images: true,
               category: true,
             },
           },
-          buyer: {
+          User_Order_buyerIdToUser: {
             select: {
               id: true,
               firstName: true,
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
               imageUrl: true,
             },
           },
-          seller: {
+          User_Order_sellerIdToUser: {
             select: {
               id: true,
               firstName: true,
@@ -91,8 +91,8 @@ export async function GET(request: NextRequest) {
               imageUrl: true,
             },
           },
-          payment: true,
-          review: true,
+          Payment: true,
+          Review: true,
         },
         orderBy: { createdAt: 'desc' },
         skip,
@@ -177,14 +177,14 @@ export async function POST(request: NextRequest) {
           status: 'PENDING', // Will be updated to PAID by payment webhook
         },
         include: {
-          product: {
+          Product: {
             include: {
               images: true,
               category: true,
             },
           },
-          buyer: true,
-          seller: true,
+          User_Order_buyerIdToUser: true,
+          User_Order_sellerIdToUser: true,
         },
       });
 

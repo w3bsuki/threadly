@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
     }
     
     if (productId) {
-      where.order = {
+      where.Order = {
         productId,
       };
     }
@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
       database.review.findMany({
         where,
         include: {
-          reviewer: {
+          User_Review_reviewerIdToUser: {
             select: {
               id: true,
               firstName: true,
@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
               imageUrl: true,
             },
           },
-          reviewed: {
+          User_Review_reviewedIdToUser: {
             select: {
               id: true,
               firstName: true,
@@ -79,9 +79,9 @@ export async function GET(request: NextRequest) {
               imageUrl: true,
             },
           },
-          order: {
+          Order: {
             include: {
-              product: {
+              Product: {
                 select: {
                   id: true,
                   title: true,
@@ -161,7 +161,7 @@ export async function POST(request: NextRequest) {
     const order = await database.order.findUnique({
       where: { id: orderId },
       include: {
-        review: true,
+        Review: true,
       },
     });
 
@@ -186,7 +186,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if already reviewed
-    if (order.review) {
+    if (order.Review) {
       return NextResponse.json(
         { error: 'Order already reviewed' },
         { status: 400 }
@@ -205,7 +205,7 @@ export async function POST(request: NextRequest) {
           comment,
         },
         include: {
-          reviewer: {
+          User_Review_reviewerIdToUser: {
             select: {
               id: true,
               firstName: true,
@@ -213,7 +213,7 @@ export async function POST(request: NextRequest) {
               imageUrl: true,
             },
           },
-          reviewed: {
+          User_Review_reviewedIdToUser: {
             select: {
               id: true,
               firstName: true,
@@ -221,7 +221,7 @@ export async function POST(request: NextRequest) {
               imageUrl: true,
             },
           },
-          order: {
+          Order: {
             include: {
               Product: true,
             },

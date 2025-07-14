@@ -22,7 +22,7 @@ async function checkMessageAccess(messageId: string, userId: string) {
   const message = await database.message.findUnique({
     where: { id: messageId },
     include: {
-      conversation: {
+      Conversation: {
         select: {
           buyerId: true,
           sellerId: true,
@@ -38,8 +38,8 @@ async function checkMessageAccess(messageId: string, userId: string) {
 
   // Check if user is participant in the conversation
   const isParticipant = 
-    message.conversation.buyerId === user.id || 
-    message.conversation.sellerId === user.id;
+    message.Conversation.buyerId === user.id || 
+    message.Conversation.sellerId === user.id;
 
   if (!isParticipant) {
     return { hasAccess: false, error: 'Access denied', message: null, user: null };
@@ -100,7 +100,7 @@ export async function PATCH(
         read: validatedData.read,
       },
       include: {
-        sender: {
+        User: {
           select: {
             id: true,
             firstName: true,

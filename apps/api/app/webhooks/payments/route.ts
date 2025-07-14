@@ -122,7 +122,7 @@ const handlePaymentIntentSucceeded = async (
             status: 'PENDING',
           },
           include: {
-            product: {
+            Product: {
               select: {
                 id: true,
                 sellerId: true
@@ -173,7 +173,7 @@ const handlePaymentIntentSucceeded = async (
         const sellerUpdates = new Map<string, number>();
         
         for (const order of orders) {
-          const sellerId = order.product.sellerId;
+          const sellerId = order.Product.sellerId;
           const platformFee = order.amount.toNumber() * 0.05; // 5% fee
           const sellerAmount = order.amount.toNumber() - platformFee;
           
