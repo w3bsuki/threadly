@@ -223,7 +223,7 @@ export async function POST(request: NextRequest) {
           },
           order: {
             include: {
-              product: true,
+              Product: true,
             },
           },
         },

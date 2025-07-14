@@ -39,7 +39,7 @@ const AuthenticatedLayout = async ({ children, params }: AppLayoutProperties) =>
       where: { clerkId: user.id },
       select: { 
         role: true,
-        preferences: {
+        UserPreferences: {
           select: {
             onboardingCompleted: true
           }
@@ -47,7 +47,7 @@ const AuthenticatedLayout = async ({ children, params }: AppLayoutProperties) =>
       }
     });
     isAdmin = dbUser?.role === 'ADMIN';
-    hasCompletedOnboarding = dbUser?.preferences?.onboardingCompleted ?? false;
+    hasCompletedOnboarding = dbUser?.UserPreferences?.onboardingCompleted ?? false;
   } catch (error) {
     logError('Database user check failed:', error);
   }

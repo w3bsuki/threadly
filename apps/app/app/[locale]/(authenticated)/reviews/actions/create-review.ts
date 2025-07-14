@@ -42,12 +42,12 @@ export async function createReview(input: z.infer<typeof createReviewSchema>) {
         id: validatedInput.orderId,
       },
       include: {
-        product: {
+        Product: {
           include: {
             seller: true,
           },
         },
-        review: true, // Check if review already exists
+        Review: true, // Check if review already exists
       },
     });
 
@@ -72,7 +72,7 @@ export async function createReview(input: z.infer<typeof createReviewSchema>) {
       };
     }
 
-    if (order.review) {
+    if (order.Review) {
       return {
         success: false,
         error: 'You have already reviewed this order',
@@ -89,7 +89,7 @@ export async function createReview(input: z.infer<typeof createReviewSchema>) {
         comment: validatedInput.comment,
       },
       include: {
-        reviewer: {
+        User_Review_reviewerIdToUser: {
           select: {
             id: true,
             firstName: true,
@@ -97,9 +97,9 @@ export async function createReview(input: z.infer<typeof createReviewSchema>) {
             imageUrl: true,
           },
         },
-        order: {
+        Order: {
           include: {
-            product: {
+            Product: {
               select: {
                 id: true,
                 title: true,

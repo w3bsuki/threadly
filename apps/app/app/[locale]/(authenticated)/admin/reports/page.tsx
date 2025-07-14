@@ -22,7 +22,7 @@ const AdminReportsPage: React.FC = async () => {
       status: { in: ['PENDING', 'UNDER_REVIEW'] }
     },
     include: {
-      reporter: {
+      User_Report_reporterIdToUser: {
         select: {
           id: true,
           firstName: true,
@@ -30,7 +30,7 @@ const AdminReportsPage: React.FC = async () => {
           email: true,
         }
       },
-      product: {
+      Product: {
         select: {
           id: true,
           title: true,
@@ -44,7 +44,7 @@ const AdminReportsPage: React.FC = async () => {
           }
         }
       },
-      reportedUser: {
+      User_Report_reportedUserIdToUser: {
         select: {
           id: true,
           firstName: true,
@@ -155,12 +155,12 @@ const AdminReportsPage: React.FC = async () => {
                         </span>
                         <span>
                           Target: {report.type === 'PRODUCT' ? 
-                            report.product?.title || 'Deleted Product' : 
-                            `${report.reportedUser?.firstName || ''} ${report.reportedUser?.lastName || ''}`.trim() || 'Unknown User'
+                            report.Product?.title || 'Deleted Product' : 
+                            `${report.User_Report_reportedUserIdToUser?.firstName || ''} ${report.User_Report_reportedUserIdToUser?.lastName || ''}`.trim() || 'Unknown User'
                           }
                         </span>
                         <span>
-                          Reported by: {`${report.reporter.firstName || ''} ${report.reporter.lastName || ''}`.trim() || report.reporter.email}
+                          Reported by: {`${report.User_Report_reporterIdToUser.firstName || ''} ${report.User_Report_reporterIdToUser.lastName || ''}`.trim() || report.User_Report_reporterIdToUser.email}
                         </span>
                         <span className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />
@@ -171,9 +171,9 @@ const AdminReportsPage: React.FC = async () => {
                   </div>
                   
                   <div className="flex items-center gap-2">
-                    {report.type === 'PRODUCT' && report.product && (
+                    {report.type === 'PRODUCT' && report.Product && (
                       <Button variant="outline" size="sm" asChild>
-                        <Link href={`/product/${report.product.id}`} target="_blank">
+                        <Link href={`/product/${report.Product.id}`} target="_blank">
                           <Eye className="h-3 w-3 mr-1" />
                           View
                         </Link>

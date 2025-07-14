@@ -4,6 +4,7 @@ import { database } from '@repo/database';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
 import { reportSchema, queryParamsSchema, sanitizeForDisplay } from '@repo/validation';
+import { randomUUID } from 'crypto';
 
 export async function POST(request: NextRequest) {
   try {
@@ -91,6 +92,7 @@ export async function POST(request: NextRequest) {
     });
 
     const notifications = adminsAndMods.map(admin => ({
+      id: randomUUID(),
       userId: admin.id,
       title: `New ${type.toLowerCase()} report`,
       message: `A ${type.toLowerCase()} has been reported for: ${sanitizedData.reason}`,
@@ -167,7 +169,7 @@ export async function GET(request: NextRequest) {
     const reports = await database.report.findMany({
       where,
       include: {
-        reporter: {
+        User_Report_reporterIdToUser: {
           select: {
             id: true,
             firstName: true,
@@ -175,7 +177,7 @@ export async function GET(request: NextRequest) {
             email: true,
           }
         },
-        product: {
+        Product: {
           select: {
             id: true,
             title: true,
@@ -189,7 +191,7 @@ export async function GET(request: NextRequest) {
             }
           }
         },
-        reportedUser: {
+        User_Report_reportedUserIdToUser: {
           select: {
             id: true,
             firstName: true,

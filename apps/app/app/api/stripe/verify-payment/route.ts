@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
           },
         },
         include: {
-          product: {
+          Product: {
             include: {
               images: {
                 take: 1,
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
               seller: true,
             },
           },
-          seller: true,
+          User_Order_sellerIdToUser: true,
         },
       });
 
@@ -144,12 +144,12 @@ export async function POST(request: NextRequest) {
           orderItems: orders.map(o => ({
             id: o.id,
             productId: o.productId,
-            title: o.product.title,
-            description: o.product.description || '',
-            price: decimalToNumber(o.product.price),
+            title: o.Product.title,
+            description: o.Product.description || '',
+            price: decimalToNumber(o.Product.price),
             quantity: 1,
-            condition: o.product.condition,
-            product: o.product,
+            condition: o.Product.condition,
+            product: o.Product,
           })),
         },
       });
@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
         buyerId: dbUser.id,
       },
       include: {
-        product: {
+        Product: {
           include: {
             images: {
               take: 1,
@@ -173,7 +173,7 @@ export async function POST(request: NextRequest) {
             seller: true,
           },
         },
-        seller: true,
+        User_Order_sellerIdToUser: true,
       },
     });
 
@@ -188,7 +188,7 @@ export async function POST(request: NextRequest) {
         data: { 
           status: 'PAID',
           // Store the payment confirmation
-          payment: {
+          Payment: {
             create: {
               stripePaymentId: paymentIntent.id,
               amount: paymentIntent.amount / 100, // Convert from cents
@@ -220,12 +220,12 @@ export async function POST(request: NextRequest) {
       orderItems: [{
         id: order.id,
         productId: order.productId,
-        title: order.product.title,
-        description: order.product.description || '',
-        price: order.product.price,
+        title: order.Product.title,
+        description: order.Product.description || '',
+        price: order.Product.price,
         quantity: 1,
-        condition: order.product.condition,
-        product: order.product,
+        condition: order.Product.condition,
+        product: order.Product,
       }],
     };
 

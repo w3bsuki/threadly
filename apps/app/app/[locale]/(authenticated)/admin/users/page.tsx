@@ -73,9 +73,9 @@ const AdminUsersPage: React.FC<PageProps> = async ({ searchParams }) => {
       joinedAt: true,
       _count: {
         select: {
-          listings: true,
-          purchases: true,
-          sales: true
+          Product: true,
+          Order_Order_buyerIdToUser: true,
+          Order_Order_sellerIdToUser: true
         }
       }
     },

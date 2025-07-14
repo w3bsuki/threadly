@@ -43,10 +43,10 @@ const ReviewsPage = async ({ params }: { params: Promise<{ locale: string }> }) 
     where: {
       buyerId: dbUser.id,
       status: 'DELIVERED',
-      review: null, // No review exists yet
+      Review: null, // No review exists yet
     },
     include: {
-      product: {
+      Product: {
         include: {
           seller: {
             select: {
@@ -70,9 +70,9 @@ const ReviewsPage = async ({ params }: { params: Promise<{ locale: string }> }) 
       reviewerId: dbUser.id,
     },
     include: {
-      order: {
+      Order: {
         include: {
-          product: {
+          Product: {
             select: {
               id: true,
               title: true,
@@ -80,7 +80,7 @@ const ReviewsPage = async ({ params }: { params: Promise<{ locale: string }> }) 
           },
         },
       },
-      reviewed: {
+      User_Review_reviewedIdToUser: {
         select: {
           id: true,
           firstName: true,
@@ -100,7 +100,7 @@ const ReviewsPage = async ({ params }: { params: Promise<{ locale: string }> }) 
       reviewedId: dbUser.id,
     },
     include: {
-      reviewer: {
+      User_Review_reviewerIdToUser: {
         select: {
           id: true,
           firstName: true,
@@ -108,9 +108,9 @@ const ReviewsPage = async ({ params }: { params: Promise<{ locale: string }> }) 
           email: true,
         },
       },
-      order: {
+      Order: {
         include: {
-          product: {
+          Product: {
             select: {
               id: true,
               title: true,
@@ -169,8 +169,8 @@ const ReviewsPage = async ({ params }: { params: Promise<{ locale: string }> }) 
                 <ReviewForm
                   key={order.id}
                   orderId={order.id}
-                  productTitle={order.product.title}
-                  sellerName={getSellerName(order.product.seller)}
+                  productTitle={order.Product.title}
+                  sellerName={getSellerName(order.Product.seller)}
                 />
               ))}
             </div>
@@ -200,10 +200,10 @@ const ReviewsPage = async ({ params }: { params: Promise<{ locale: string }> }) 
                     <div className="flex justify-between items-start">
                       <div>
                         <CardTitle className="text-lg">
-                          {review.order.product.title}
+                          {review.Order.Product.title}
                         </CardTitle>
                         <p className="text-sm text-muted-foreground">
-                          Seller: {getSellerName(review.reviewed)}
+                          Seller: {getSellerName(review.User_Review_reviewedIdToUser)}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -250,10 +250,10 @@ const ReviewsPage = async ({ params }: { params: Promise<{ locale: string }> }) 
                     <div className="flex justify-between items-start">
                       <div>
                         <CardTitle className="text-lg">
-                          {review.order.product.title}
+                          {review.Order.Product.title}
                         </CardTitle>
                         <p className="text-sm text-muted-foreground">
-                          From: {getBuyerName(review.reviewer)}
+                          From: {getBuyerName(review.User_Review_reviewerIdToUser)}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">

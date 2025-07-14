@@ -56,7 +56,7 @@ export async function OrdersList({ userId }: OrdersListProps) {
       buyerId: userId,
     },
     include: {
-      product: {
+      Product: {
         select: {
           id: true,
           title: true,
@@ -72,7 +72,7 @@ export async function OrdersList({ userId }: OrdersListProps) {
           },
         },
       },
-      seller: {
+      User_Order_sellerIdToUser: {
         select: {
           id: true,
           firstName: true,
@@ -80,13 +80,13 @@ export async function OrdersList({ userId }: OrdersListProps) {
           email: true
         }
       },
-      payment: {
+      Payment: {
         select: {
           id: true,
           status: true
         }
       },
-      review: {
+      Review: {
         select: {
           id: true
         }
@@ -150,10 +150,10 @@ export async function OrdersList({ userId }: OrdersListProps) {
             {/* Product Info */}
             <div className="flex gap-3 mb-4">
               <div className="relative w-16 h-16 flex-shrink-0">
-                {order.product?.images[0] ? (
+                {order.Product?.images[0] ? (
                   <Image
-                    src={order.product.images[0].imageUrl}
-                    alt={order.product.title}
+                    src={order.Product.images[0].imageUrl}
+                    alt={order.Product.title}
                     fill
                     className="object-cover rounded-md"
                   />
@@ -165,15 +165,15 @@ export async function OrdersList({ userId }: OrdersListProps) {
               </div>
 
               <div className="flex-1 min-w-0">
-                <h4 className="font-medium line-clamp-1">{order.product.title}</h4>
+                <h4 className="font-medium line-clamp-1">{order.Product.title}</h4>
                 <p className="text-sm text-muted-foreground">
-                  Condition: {order.product.condition}
+                  Condition: {order.Product.condition}
                 </p>
                 <div className="flex items-center justify-between mt-1">
                   <span className="text-sm text-muted-foreground">
-                    Sold by: {order.seller.firstName && order.seller.lastName 
-                      ? `${order.seller.firstName} ${order.seller.lastName}` 
-                      : order.seller.email}
+                    Sold by: {order.User_Order_sellerIdToUser.firstName && order.User_Order_sellerIdToUser.lastName 
+                      ? `${order.User_Order_sellerIdToUser.firstName} ${order.User_Order_sellerIdToUser.lastName}` 
+                      : order.User_Order_sellerIdToUser.email}
                   </span>
                   <span className="font-medium">
                     ${(decimalToNumber(order.amount) / 100).toFixed(2)}
@@ -188,7 +188,7 @@ export async function OrdersList({ userId }: OrdersListProps) {
                 <div>
                   <h4 className="font-medium text-sm mb-1">Payment Status</h4>
                   <p className="text-sm text-muted-foreground">
-                    {order.payment ? 'Paid' : 'Pending'}
+                    {order.Payment ? 'Paid' : 'Pending'}
                   </p>
                 </div>
                 
@@ -212,7 +212,7 @@ export async function OrdersList({ userId }: OrdersListProps) {
                 </Link>
               </Button>
               
-              {order.status === 'DELIVERED' && !order.review && (
+              {order.status === 'DELIVERED' && !order.Review && (
                 <Button variant="outline" size="sm" asChild>
                   <Link href="/reviews">
                     <Star className="h-3 w-3 mr-1" />
@@ -221,7 +221,7 @@ export async function OrdersList({ userId }: OrdersListProps) {
                 </Button>
               )}
               
-              {order.status === 'DELIVERED' && order.review && (
+              {order.status === 'DELIVERED' && order.Review && (
                 <Button variant="ghost" size="sm" disabled>
                   <Star className="h-3 w-3 mr-1 fill-yellow-400 text-yellow-400" />
                   Reviewed

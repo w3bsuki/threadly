@@ -49,7 +49,7 @@ export async function sendMessage(input: z.infer<typeof sendMessageSchema>) {
         id: validatedInput.conversationId,
       },
       include: {
-        product: true,
+        Product: true,
       },
     });
 
@@ -70,7 +70,7 @@ export async function sendMessage(input: z.infer<typeof sendMessageSchema>) {
         read: false,
       },
       include: {
-        sender: {
+        User: {
           select: {
             id: true,
             firstName: true,
@@ -239,7 +239,7 @@ export async function createConversation(input: z.infer<typeof createConversatio
         buyerId: dbUser.id,
         sellerId: product.sellerId,
         status: 'ACTIVE',
-        messages: {
+        Message: {
           create: {
             senderId: dbUser.id,
             content: validatedInput.initialMessage,
@@ -248,9 +248,9 @@ export async function createConversation(input: z.infer<typeof createConversatio
         },
       },
       include: {
-        buyer: true,
-        seller: true,
-        product: true,
+        User_Conversation_buyerIdToUser: true,
+        User_Conversation_sellerIdToUser: true,
+        Product: true,
       },
     });
 

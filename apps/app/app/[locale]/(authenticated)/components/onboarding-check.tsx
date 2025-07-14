@@ -13,7 +13,7 @@ export async function checkOnboarding() {
     const dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
       select: {
-        preferences: {
+        UserPreferences: {
           select: {
             onboardingCompleted: true
           }
@@ -21,7 +21,7 @@ export async function checkOnboarding() {
       }
     });
 
-    return dbUser?.preferences?.onboardingCompleted ?? false;
+    return dbUser?.UserPreferences?.onboardingCompleted ?? false;
   } catch (error) {
     return true; // Default to true to avoid blocking users on error
   }

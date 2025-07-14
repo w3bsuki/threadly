@@ -16,7 +16,7 @@ interface OrderWithProduct {
   amount: number;
   status: string;
   createdAt: string;
-  product: {
+  Product: {
     id: string;
     title: string;
     images: Array<{
@@ -53,7 +53,7 @@ async function getRecentOrders(userId: string): Promise<OrderWithProduct[]> {
             amount: true,
             status: true,
             createdAt: true,
-            product: {
+            Product: {
               select: {
                 id: true,
                 title: true,
@@ -120,10 +120,10 @@ export async function RecentOrders({ userId, dictionary }: RecentOrdersProps) {
         {orders.map((order) => (
           <div key={order.id} className="flex items-center space-x-4">
             <div className="relative h-12 w-12 rounded-lg overflow-hidden">
-              {order.product.images[0]?.imageUrl ? (
+              {order.Product.images[0]?.imageUrl ? (
                 <Image
-                  src={order.product.images[0].imageUrl}
-                  alt={order.product.title}
+                  src={order.Product.images[0].imageUrl}
+                  alt={order.Product.title}
                   fill
                   className="object-cover"
                   sizes="48px"
@@ -137,10 +137,10 @@ export async function RecentOrders({ userId, dictionary }: RecentOrdersProps) {
             
             <div className="flex-1 min-w-0">
               <Link
-                href={`/product/${order.product.id}`}
+                href={`/product/${order.Product.id}`}
                 className="font-medium text-foreground hover:underline truncate block"
               >
-                {order.product.title}
+                {order.Product.title}
               </Link>
               <p className="text-sm text-muted-foreground">
                 {new Date(order.createdAt).toLocaleDateString()}

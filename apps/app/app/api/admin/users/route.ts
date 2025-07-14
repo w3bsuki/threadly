@@ -80,9 +80,9 @@ export async function GET(request: NextRequest) {
         joinedAt: true,
         _count: {
           select: {
-            listings: true,
-            purchases: true,
-            sales: true
+            Product: true,
+            Order_Order_buyerIdToUser: true,
+            Order_Order_sellerIdToUser: true
           }
         }
       },

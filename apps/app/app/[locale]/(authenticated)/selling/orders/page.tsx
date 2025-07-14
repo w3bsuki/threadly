@@ -55,7 +55,7 @@ const OrdersPage = async ({
       sellerId: dbUser.id,
     },
     include: {
-      product: {
+      Product: {
         include: {
           images: {
             orderBy: {
@@ -65,7 +65,7 @@ const OrdersPage = async ({
           },
         },
       },
-      buyer: {
+      User_Order_buyerIdToUser: {
         select: {
           id: true,
           firstName: true,
@@ -73,7 +73,7 @@ const OrdersPage = async ({
           imageUrl: true,
         },
       },
-      payment: true,
+      Payment: true,
     },
     orderBy: {
       createdAt: 'desc',
@@ -218,10 +218,10 @@ const OrdersPage = async ({
                   <div className="flex items-start gap-4">
                     {/* Product Image */}
                     <div className="w-16 h-16 flex-shrink-0">
-                      {order.product.images[0] ? (
+                      {order.Product.images[0] ? (
                         <img
-                          src={order.product.images[0].imageUrl}
-                          alt={order.product.title}
+                          src={order.Product.images[0].imageUrl}
+                          alt={order.Product.title}
                           className="w-full h-full object-cover rounded-md"
                         />
                       ) : (
@@ -235,12 +235,12 @@ const OrdersPage = async ({
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between">
                         <div>
-                          <h3 className="font-semibold text-lg">{order.product.title}</h3>
+                          <h3 className="font-semibold text-lg">{order.Product.title}</h3>
                           <p className="text-sm text-muted-foreground">
                             Order #{order.id.slice(-8)}
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            Buyer: {order.buyer.firstName} {order.buyer.lastName}
+                            Buyer: {order.User_Order_buyerIdToUser.firstName} {order.User_Order_buyerIdToUser.lastName}
                           </p>
                         </div>
                         
@@ -257,8 +257,8 @@ const OrdersPage = async ({
 
                       <div className="mt-4 text-sm text-muted-foreground">
                         <p>Ordered: {new Date(order.createdAt).toLocaleDateString()}</p>
-                        {order.payment && (
-                          <p>Payment: ${decimalToNumber(order.payment.amount).toFixed(2)} ({order.payment.status})</p>
+                        {order.Payment && (
+                          <p>Payment: ${decimalToNumber(order.Payment.amount).toFixed(2)} ({order.Payment.status})</p>
                         )}
                       </div>
 
@@ -267,8 +267,8 @@ const OrdersPage = async ({
                         <OrderActions
                           orderId={order.id}
                           status={order.status}
-                          productTitle={order.product.title}
-                          buyerName={`${order.buyer.firstName} ${order.buyer.lastName}`}
+                          productTitle={order.Product.title}
+                          buyerName={`${order.User_Order_buyerIdToUser.firstName} ${order.User_Order_buyerIdToUser.lastName}`}
                         />
                       </div>
                     </div>

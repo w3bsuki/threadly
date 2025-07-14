@@ -250,7 +250,7 @@ export async function DELETE(
     const resolvedParams = await params;
     const order = await database.order.findUnique({
       where: { id: resolvedParams.id },
-      include: { product: true },
+      include: { Product: true },
     });
 
     if (!order) {

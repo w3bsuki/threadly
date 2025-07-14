@@ -62,7 +62,7 @@ const MessagesPage = async ({ searchParams }: MessagesPageProps) => {
           },
         },
       },
-      messages: {
+      Message: {
         take: 1,
         orderBy: {
           createdAt: 'desc',
@@ -70,7 +70,7 @@ const MessagesPage = async ({ searchParams }: MessagesPageProps) => {
       },
       _count: {
         select: {
-          messages: {
+          Message: {
             where: {
               senderId: { not: dbUser.id },
               read: false,
@@ -136,9 +136,16 @@ const MessagesPage = async ({ searchParams }: MessagesPageProps) => {
       <MessagesContent 
         conversations={conversations.map(conv => ({
           ...conv,
+          buyer: conv.User_Conversation_buyerIdToUser,
+          seller: conv.User_Conversation_sellerIdToUser,
+          messages: conv.Message,
+          _count: {
+            ...conv._count,
+            messages: conv._count.Message
+          },
           product: {
-            ...conv.product,
-            price: decimalToNumber(conv.product.price)
+            ...conv.Product,
+            price: decimalToNumber(conv.Product.price)
           }
         }))}
         currentUserId={dbUser.id}

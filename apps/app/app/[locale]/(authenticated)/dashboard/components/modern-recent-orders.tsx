@@ -49,7 +49,7 @@ export async function ModernRecentOrders({ userId, dictionary }: ModernRecentOrd
     database.order.findMany({
       where: { buyerId: userId },
       include: {
-        product: {
+        Product: {
           include: {
             images: {
               take: 1,
@@ -57,7 +57,7 @@ export async function ModernRecentOrders({ userId, dictionary }: ModernRecentOrd
             }
           }
         },
-        seller: {
+        User_Order_sellerIdToUser: {
           select: {
             firstName: true,
             lastName: true,
@@ -71,7 +71,7 @@ export async function ModernRecentOrders({ userId, dictionary }: ModernRecentOrd
     database.order.findMany({
       where: { sellerId: userId },
       include: {
-        product: {
+        Product: {
           include: {
             images: {
               take: 1,
@@ -79,7 +79,7 @@ export async function ModernRecentOrders({ userId, dictionary }: ModernRecentOrd
             }
           }
         },
-        buyer: {
+        User_Order_buyerIdToUser: {
           select: {
             firstName: true,
             lastName: true,
@@ -139,8 +139,8 @@ export async function ModernRecentOrders({ userId, dictionary }: ModernRecentOrd
           {allOrders.map((order) => {
             const isBuying = order.buyerId === userId;
             const otherUser = isBuying 
-              ? 'seller' in order ? order.seller : null
-              : 'buyer' in order ? order.buyer : null;
+              ? 'User_Order_sellerIdToUser' in order ? order.User_Order_sellerIdToUser : null
+              : 'User_Order_buyerIdToUser' in order ? order.User_Order_buyerIdToUser : null;
             const amount = order.amount ? decimalToNumber(order.amount) : 0;
             
             return (
@@ -152,10 +152,10 @@ export async function ModernRecentOrders({ userId, dictionary }: ModernRecentOrd
               >
                 {/* Product Image */}
                 <div className="relative flex-shrink-0">
-                  {order.product.images[0] ? (
+                  {order.Product.images[0] ? (
                     <img
-                      src={order.product.images[0].imageUrl}
-                      alt={order.product.title}
+                      src={order.Product.images[0].imageUrl}
+                      alt={order.Product.title}
                       className="w-12 h-12 rounded-lg object-cover"
                     />
                   ) : (
@@ -177,7 +177,7 @@ export async function ModernRecentOrders({ userId, dictionary }: ModernRecentOrd
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
                       <p className="text-sm font-medium truncate">
-                        {order.product.title}
+                        {order.Product.title}
                       </p>
                       <div className="flex items-center gap-2 mt-0.5">
                         <Avatar className="h-4 w-4">

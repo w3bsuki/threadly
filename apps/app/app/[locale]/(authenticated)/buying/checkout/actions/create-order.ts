@@ -186,7 +186,7 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
           shippingAddressId: shippingAddress.id,
         },
         include: {
-          product: {
+          Product: {
             include: {
               images: {
                 take: 1,
@@ -197,7 +197,7 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
               seller: true,
             },
           },
-          seller: true,
+          User_Order_sellerIdToUser: true,
         },
       });
       
@@ -217,10 +217,10 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
           {
             firstName: dbUser.firstName || 'Customer',
             orderId: primaryOrder.id,
-            productTitle: primaryOrder.product.title,
-            productImage: primaryOrder.product.images[0]?.imageUrl,
+            productTitle: primaryOrder.Product.title,
+            productImage: primaryOrder.Product.images[0]?.imageUrl,
             price: decimalToNumber(primaryOrder.amount),
-            sellerName: primaryOrder.seller.firstName || 'Seller',
+            sellerName: primaryOrder.User_Order_sellerIdToUser.firstName || 'Seller',
             orderUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'}/buying/orders/${primaryOrder.id}`,
           }
         );
@@ -270,11 +270,11 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
           productId: o.productId,
           sellerId: o.sellerId,
           quantity: 1, // Current schema only supports quantity 1 per order
-          price: o.product.price,
-          title: o.product.title,
-          description: o.product.description || '',
-          condition: o.product.condition,
-          product: o.product,
+          price: o.Product.price,
+          title: o.Product.title,
+          description: o.Product.description || '',
+          condition: o.Product.condition,
+          product: o.Product,
         })),
       },
     };

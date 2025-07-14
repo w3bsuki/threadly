@@ -4,6 +4,7 @@ import { canModerate } from '@repo/auth/admin';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { revalidatePath } from 'next/cache';
+import { randomUUID } from 'crypto';
 
 export async function resolveReport(reportId: string, resolution: string) {
   const isModerator = await canModerate();
@@ -21,8 +22,8 @@ export async function resolveReport(reportId: string, resolution: string) {
   const report = await database.report.findUnique({
     where: { id: reportId },
     include: {
-      product: true,
-      reportedUser: true,
+      Product: true,
+      User_Report_reportedUserIdToUser: true,
     }
   });
 
@@ -43,31 +44,32 @@ export async function resolveReport(reportId: string, resolution: string) {
 
   // Take action based on the report type and resolution
   if (resolution === 'APPROVED') {
-    if (report.type === 'PRODUCT' && report.product) {
+    if (report.type === 'PRODUCT' && report.Product) {
       // Remove the product
       await database.product.update({
-        where: { id: report.product.id },
+        where: { id: report.Product.id },
         data: { status: 'REMOVED' }
       });
 
       // Notify the seller
       await database.notification.create({
         data: {
-          userId: report.product.sellerId,
+          id: randomUUID(),
+          userId: report.Product.sellerId,
           title: 'Product Removed',
-          message: `Your product "${report.product.title}" has been removed due to policy violations.`,
+          message: `Your product "${report.Product.title}" has been removed due to policy violations.`,
           type: 'SYSTEM',
           metadata: JSON.stringify({
-            productId: report.product.id,
+            productId: report.Product.id,
             reportId: report.id,
             reason: report.reason,
           }),
         },
       });
-    } else if (report.type === 'USER' && report.reportedUser) {
+    } else if (report.type === 'USER' && report.User_Report_reportedUserIdToUser) {
       // Suspend the user
       await database.user.update({
-        where: { id: report.reportedUser.id },
+        where: { id: report.User_Report_reportedUserIdToUser.id },
         data: {
           suspended: true,
           suspendedAt: new Date(),
@@ -78,7 +80,8 @@ export async function resolveReport(reportId: string, resolution: string) {
       // Notify the user
       await database.notification.create({
         data: {
-          userId: report.reportedUser.id,
+          id: randomUUID(),
+          userId: report.User_Report_reportedUserIdToUser.id,
           title: 'Account Suspended',
           message: 'Your account has been suspended due to policy violations.',
           type: 'SYSTEM',
@@ -143,6 +146,7 @@ export async function escalateReport(reportId: string) {
   });
 
   const notifications = admins.map(admin => ({
+    id: randomUUID(),
     userId: admin.id,
     title: 'Report Escalated',
     message: `A report requires admin review. Report ID: ${reportId}`,

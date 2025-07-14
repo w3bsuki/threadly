@@ -92,7 +92,7 @@ const ProductPage = async ({ params }: ProductPageProps) => {
           joinedAt: true,
           _count: {
             select: {
-              listings: {
+              Product: {
                 where: {
                   status: 'SOLD',
                 },
@@ -105,7 +105,7 @@ const ProductPage = async ({ params }: ProductPageProps) => {
         select: {
           id: true,
           name: true,
-          parent: {
+          Category: {
             select: {
               name: true,
             },

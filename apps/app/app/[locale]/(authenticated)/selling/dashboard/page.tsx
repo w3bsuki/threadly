@@ -58,7 +58,7 @@ const SellerDashboardPage = async ({
   const dbUser = await database.user.findUnique({
     where: { clerkId: user.id },
     include: {
-      listings: {
+      Product: {
         include: {
           orders: {
             where: {
@@ -73,12 +73,12 @@ const SellerDashboardPage = async ({
           }
         }
       },
-      sales: {
+      Order_Order_sellerIdToUser: {
         where: {
           status: 'DELIVERED'
         },
         include: {
-          product: {
+          Product: {
             select: {
               title: true,
               price: true
@@ -86,8 +86,8 @@ const SellerDashboardPage = async ({
           }
         }
       },
-      followers: true,
-      receivedReviews: {
+      Follow_Follow_followingIdToUser: true,
+      Review_Review_reviewedIdToUser: {
         select: {
           rating: true,
           createdAt: true
@@ -101,16 +101,16 @@ const SellerDashboardPage = async ({
   }
 
   // Calculate analytics with safe Decimal conversion
-  const totalRevenue = dbUser.sales.reduce((sum, sale) => sum + toNumber(sale.product.price), 0);
-  const totalSales = dbUser.sales.length;
-  const totalListings = dbUser.listings.length;
-  const activeLis = dbUser.listings.filter(listing => listing.status === 'AVAILABLE').length;
-  const soldListings = dbUser.listings.filter(listing => listing.status === 'SOLD').length;
-  const totalViews = dbUser.listings.reduce((sum, listing) => sum + listing.views, 0);
-  const totalFavorites = dbUser.listings.reduce((sum, listing) => sum + listing.favorites.length, 0);
-  const totalFollowers = dbUser.followers.length;
+  const totalRevenue = dbUser.Order_Order_sellerIdToUser.reduce((sum, sale) => sum + toNumber(sale.Product.price), 0);
+  const totalSales = dbUser.Order_Order_sellerIdToUser.length;
+  const totalListings = dbUser.Product.length;
+  const activeLis = dbUser.Product.filter(listing => listing.status === 'AVAILABLE').length;
+  const soldListings = dbUser.Product.filter(listing => listing.status === 'SOLD').length;
+  const totalViews = dbUser.Product.reduce((sum, listing) => sum + listing.views, 0);
+  const totalFavorites = dbUser.Product.reduce((sum, listing) => sum + listing.favorites.length, 0);
+  const totalFollowers = dbUser.Follow_Follow_followingIdToUser.length;
   const averageRating = dbUser.averageRating || 0;
-  const totalReviews = dbUser.receivedReviews.length;
+  const totalReviews = dbUser.Review_Review_reviewedIdToUser.length;
 
   // Calculate conversion rate
   const conversionRate = totalViews > 0 ? (totalSales / totalViews * 100) : 0;
@@ -119,8 +119,8 @@ const SellerDashboardPage = async ({
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
   
-  const recentSales = dbUser.sales.filter(sale => sale.createdAt >= thirtyDaysAgo);
-  const recentRevenue = recentSales.reduce((sum, sale) => sum + toNumber(sale.product.price), 0);
+  const recentSales = dbUser.Order_Order_sellerIdToUser.filter(sale => sale.createdAt >= thirtyDaysAgo);
+  const recentRevenue = recentSales.reduce((sum, sale) => sum + toNumber(sale.Product.price), 0);
 
   // Get daily analytics for the last 7 days
   const last7Days = Array.from({ length: 7 }, (_, i) => {
@@ -148,7 +148,7 @@ const SellerDashboardPage = async ({
             }
           },
           include: {
-            product: {
+            Product: {
               select: {
                 price: true
               }
@@ -168,7 +168,7 @@ const SellerDashboardPage = async ({
         })
       ]);
 
-      const dailyRevenue = dailySales.reduce((sum, sale) => sum + decimalToNumber(sale.product.price), 0);
+      const dailyRevenue = dailySales.reduce((sum, sale) => sum + decimalToNumber(sale.Product.price), 0);
       
       return {
         day: date.toLocaleDateString('en-US', { weekday: 'short' }),
@@ -197,7 +197,7 @@ const SellerDashboardPage = async ({
       }
     },
     include: {
-      product: {
+      Product: {
         select: {
           price: true
         }
@@ -205,7 +205,7 @@ const SellerDashboardPage = async ({
     }
   });
 
-  const previousWeekRevenue = previousWeekSales.reduce((sum, sale) => sum + decimalToNumber(sale.product.price), 0);
+  const previousWeekRevenue = previousWeekSales.reduce((sum, sale) => sum + decimalToNumber(sale.Product.price), 0);
   
   // Calculate real trend percentages
   const revenueTrend = previousWeekRevenue > 0 
@@ -216,7 +216,7 @@ const SellerDashboardPage = async ({
     ? `${currentWeekSales >= previousWeekSales.length ? '+' : ''}${(((currentWeekSales - previousWeekSales.length) / previousWeekSales.length) * 100).toFixed(1)}%`
     : currentWeekSales > 0 ? '+100%' : '0%';
     
-  const viewsTrend = totalViews > 0 ? '+' + Math.round((totalViews / Math.max(dbUser.listings.length, 1)) * 10) / 10 + '%' : '0%';
+  const viewsTrend = totalViews > 0 ? '+' + Math.round((totalViews / Math.max(dbUser.Product.length, 1)) * 10) / 10 + '%' : '0%';
   const followersTrend = totalFollowers > 0 ? '+' + Math.round(totalFollowers * 0.1) + '%' : '0%';
 
   const stats = [
@@ -361,7 +361,7 @@ const SellerDashboardPage = async ({
           revenueTrend={revenueTrend}
           salesTrend={salesTrend}
           viewsTrend={viewsTrend}
-          listings={dbUser.listings}
+          listings={dbUser.Product}
           locale={locale}
         />
       </div>

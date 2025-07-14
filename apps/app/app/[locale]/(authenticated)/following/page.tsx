@@ -53,12 +53,12 @@ const FollowingPage = async ({ params }: { params: Promise<{ locale: string }> }
   const followingUsers = await database.follow.findMany({
     where: { followerId: dbUser.id },
     include: {
-      following: {
+      User_Follow_followingIdToUser: {
         include: {
           _count: {
             select: {
-              listings: { where: { status: 'AVAILABLE' } },
-              receivedReviews: true,
+              Product: { where: { status: 'AVAILABLE' } },
+              Review_Review_reviewedIdToUser: true,
             },
           }
         }
@@ -110,11 +110,11 @@ const FollowingPage = async ({ params }: { params: Promise<{ locale: string }> }
     include: {
       _count: {
         select: {
-          listings: { where: { status: 'AVAILABLE' } },
-          receivedReviews: true,
+          Product: { where: { status: 'AVAILABLE' } },
+          Review_Review_reviewedIdToUser: true,
         },
       },
-      listings: {
+      Product: {
         where: { status: 'AVAILABLE' },
         take: 3,
         orderBy: { createdAt: 'desc' },
@@ -257,29 +257,29 @@ const FollowingPage = async ({ params }: { params: Promise<{ locale: string }> }
                 {followingUsers.map((follow) => (
                   <div key={follow.id} className="flex items-center gap-3 p-3 rounded-lg border">
                     <Avatar className="w-12 h-12">
-                      <AvatarImage src={follow.following.imageUrl || undefined} />
+                      <AvatarImage src={follow.User_Follow_followingIdToUser.imageUrl || undefined} />
                       <AvatarFallback>
-                        {getInitials(follow.following)}
+                        {getInitials(follow.User_Follow_followingIdToUser)}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-medium truncate">
-                        {getUserName(follow.following)}
+                        {getUserName(follow.User_Follow_followingIdToUser)}
                       </h3>
                       <p className="text-sm text-muted-foreground">
-                        {follow.following._count.listings} items • 
-                        {follow.following.averageRating && follow.following.averageRating > 0 
-                          ? ` ${follow.following.averageRating.toFixed(1)} ⭐` 
+                        {follow.User_Follow_followingIdToUser._count.Product} items • 
+                        {follow.User_Follow_followingIdToUser.averageRating && follow.User_Follow_followingIdToUser.averageRating > 0 
+                          ? ` ${follow.User_Follow_followingIdToUser.averageRating.toFixed(1)} ⭐` 
                           : ' New seller'}
                       </p>
                     </div>
                     <div className="flex gap-1">
                       <Button size="sm" variant="outline" asChild>
-                        <Link href={`/messages?user=${follow.following.id}`}>
+                        <Link href={`/messages?user=${follow.User_Follow_followingIdToUser.id}`}>
                           <MessageCircle className="h-4 w-4" />
                         </Link>
                       </Button>
-                      <FollowButton userId={follow.following.id} size="sm" />
+                      <FollowButton userId={follow.User_Follow_followingIdToUser.id} size="sm" />
                     </div>
                   </div>
                 ))}
@@ -313,7 +313,7 @@ const FollowingPage = async ({ params }: { params: Promise<{ locale: string }> }
                   <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Package className="h-4 w-4" />
-                      {seller._count.listings} items
+                      {seller._count.Product} items
                     </div>
                     {seller.averageRating && seller.averageRating > 0 && (
                       <div className="flex items-center gap-1">
@@ -326,11 +326,11 @@ const FollowingPage = async ({ params }: { params: Promise<{ locale: string }> }
 
                 <CardContent>
                   {/* Recent Items Preview */}
-                  {seller.listings.length > 0 && (
+                  {seller.Product.length > 0 && (
                     <div className="space-y-3 mb-4">
                       <h4 className="text-sm font-medium">Recent Items</h4>
                       <div className="grid grid-cols-3 gap-2">
-                        {seller.listings.map((product) => (
+                        {seller.Product.map((product) => (
                           <div key={product.id} className="aspect-square relative">
                             {product.images[0] ? (
                               <img

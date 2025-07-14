@@ -8,10 +8,10 @@ export async function getUserPreferences(clerkId: string) {
   try {
     const user = await database.user.findUnique({
       where: { clerkId },
-      include: { preferences: true },
+      include: { UserPreferences: true },
     });
     
-    return user?.preferences || null;
+    return user?.UserPreferences || null;
   } catch (error) {
     return null;
   }

@@ -68,7 +68,7 @@ const CheckoutPage = async ({ params }: CheckoutPageProps): Promise<React.JSX.El
   // Get user's default shipping address
   const defaultAddress = await database.address.findFirst({
     where: {
-      user: { clerkId: user.id },
+      User: { clerkId: user.id },
       type: 'SHIPPING',
       isDefault: true,
     },

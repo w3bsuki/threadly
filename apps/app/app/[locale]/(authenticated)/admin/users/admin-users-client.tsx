@@ -43,9 +43,9 @@ interface UserWithDetails {
   suspended: boolean;
   joinedAt: Date;
   _count: {
-    listings: number;
-    purchases: number;
-    sales: number;
+    Product: number;
+    Order_Order_buyerIdToUser: number;
+    Order_Order_sellerIdToUser: number;
   };
 }
 
@@ -197,9 +197,9 @@ function UserTable({ users }: { users: UserWithDetails[] }) {
                 </td>
                 <td className="p-2">
                   <div className="text-sm">
-                    <p>{user._count.listings} listings</p>
+                    <p>{user._count.Product} listings</p>
                     <p className="text-muted-foreground">
-                      {user._count.sales} sales • {user._count.purchases} purchases
+                      {user._count.Order_Order_sellerIdToUser} sales • {user._count.Order_Order_buyerIdToUser} purchases
                     </p>
                   </div>
                 </td>

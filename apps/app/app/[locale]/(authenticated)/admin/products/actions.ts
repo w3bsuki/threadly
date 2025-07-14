@@ -4,6 +4,7 @@ import { canModerate } from '@repo/auth/admin';
 import { database } from '@repo/database';
 import { revalidatePath } from 'next/cache';
 import { log } from '@repo/observability/server';
+import { randomUUID } from 'crypto';
 
 export async function approveProduct(productId: string) {
   const isModerator = await canModerate();
@@ -49,7 +50,7 @@ export async function removeProduct(productId: string, reason: string) {
   // Send notification to seller
   await database.notification.create({
     data: {
-      id: crypto.randomUUID(),
+      id: randomUUID(),
       userId: product.seller.id,
       title: 'Product Removed',
       message: `Your product "${product.title}" has been removed from the marketplace. Reason: ${reason}`,
@@ -103,7 +104,7 @@ export async function restoreProduct(productId: string) {
   // Notify seller that product was restored
   await database.notification.create({
     data: {
-      id: crypto.randomUUID(),
+      id: randomUUID(),
       userId: product.seller.id,
       title: 'Product Restored',
       message: `Your product "${product.title}" has been restored and is now available for sale again.`,
@@ -166,7 +167,7 @@ export async function bulkUpdateProducts({
 
     // Send notifications to sellers
     const notifications = products.map(product => ({
-      id: crypto.randomUUID(),
+      id: randomUUID(),
       userId: product.seller.id,
       title: `Product ${action === 'remove' ? 'Removed' : action === 'restore' ? 'Restored' : 'Archived'}`,
       message: `Your product "${product.title}" has been ${action === 'remove' ? 'removed from' : action === 'restore' ? 'restored to' : 'archived from'} the marketplace.`,
