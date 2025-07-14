@@ -15,20 +15,48 @@ export async function GET() {
     });
     console.log(`[TestDB] Available products: ${availableProducts}`);
     
-    // Test 3: Get first 5 products with details
-    const products = await database.product.findMany({
-      take: 5,
-      include: {
-        seller: { select: { id: true, firstName: true, lastName: true } },
-        category: { select: { name: true } }
+    // Test 3: Get ALL products with minimal details to debug
+    const allProducts = await database.product.findMany({
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        sellerId: true,
+        categoryId: true,
+        createdAt: true,
+        _count: {
+          select: {
+            images: true
+          }
+        }
       }
     });
     
-    // Test 4: Check categories
+    // Test 4: Run the EXACT same query as ProductGridServer
+    const productsWithFullQuery = await database.product.findMany({
+      where: { status: ProductStatus.AVAILABLE },
+      include: {
+        images: { orderBy: { displayOrder: 'asc' }, take: 1 },
+        seller: { 
+          select: { 
+            id: true,
+            firstName: true, 
+            lastName: true,
+            location: true,
+            averageRating: true
+          } 
+        },
+        category: { select: { name: true, slug: true } }
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 24,
+    });
+    
+    // Test 5: Check categories
     const categories = await database.category.count();
     console.log(`[TestDB] Total categories: ${categories}`);
     
-    // Test 5: Check users
+    // Test 6: Check users
     const users = await database.user.count();
     console.log(`[TestDB] Total users: ${users}`);
     
@@ -39,13 +67,22 @@ export async function GET() {
         availableProducts,
         totalCategories: categories,
         totalUsers: users,
-        sampleProducts: products.map(p => ({
+        allProducts: allProducts.map(p => ({
           id: p.id,
           title: p.title,
           status: p.status,
-          price: p.price.toString(),
-          seller: `${p.seller.firstName} ${p.seller.lastName || ''}`.trim(),
-          category: p.category?.name || 'None'
+          sellerId: p.sellerId,
+          categoryId: p.categoryId,
+          imageCount: p._count.images,
+          createdAt: p.createdAt
+        })),
+        productsFromExactQuery: productsWithFullQuery.length,
+        sampleFromExactQuery: productsWithFullQuery.slice(0, 3).map(p => ({
+          id: p.id,
+          title: p.title,
+          hasImages: p.images.length > 0,
+          hasSeller: !!p.seller,
+          hasCategory: !!p.category
         }))
       }
     });

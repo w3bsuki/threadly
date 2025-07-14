@@ -198,11 +198,9 @@ export async function ProductGridServer({
         <p className="text-gray-600 mb-8">
           We're having trouble loading products right now. Please try again later.
         </p>
-        {process.env.NODE_ENV === 'development' && (
-          <p className="text-sm text-red-600 mb-4">
-            Error: {errorMessage}
-          </p>
-        )}
+        <p className="text-sm text-red-600 mb-4">
+          Error: {errorMessage}
+        </p>
         <a 
           href="/" 
           className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-black hover:bg-gray-800"
