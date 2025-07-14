@@ -1,27 +1,14 @@
 import 'server-only';
 
-import { neonConfig } from '@neondatabase/serverless';
 import { PrismaClient } from './generated/client';
-import { PrismaNeon } from '@prisma/adapter-neon';
-import ws from 'ws';
-
-// Configure Neon for edge environments (Vercel)
-neonConfig.webSocketConstructor = ws;
-neonConfig.poolQueryViaFetch = true;
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 let database: PrismaClient;
 
-if (process.env.NODE_ENV === 'production' && process.env.DATABASE_URL) {
-  // Use Neon serverless adapter in production  
-  const connectionString = process.env.DATABASE_URL;
-  
-  // PrismaNeon adapter expects a connection object, not a Pool instance
-  const adapter = new PrismaNeon({ connectionString });
-  
-  database = new PrismaClient({ 
-    adapter,
+if (process.env.NODE_ENV === 'production') {
+  // Use standard Prisma client in production
+  database = new PrismaClient({
     log: ['error'],
   });
 } else {
