@@ -50,12 +50,8 @@ nextConfig.webpack = (config, { isServer }) => {
   return config;
 };
 
-// Experimental bundler configuration for Prisma
-nextConfig.experimental = {
-  ...nextConfig.experimental,
-  serverComponentsExternalPackages: ['@neondatabase/serverless', 'ws'],
-  bundlePagesRouterDependencies: true,
-};
+// Fix Prisma bundling for Vercel with Neon adapter
+nextConfig.serverExternalPackages = ['@neondatabase/serverless', 'ws'];
 
 if (process.env.NODE_ENV === 'production') {
   const redirects: NextConfig['redirects'] = async () => [
