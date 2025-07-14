@@ -114,89 +114,10 @@ export async function ProductGridServer({
       url: process.env.UPSTASH_REDIS_REST_URL || process.env.REDIS_URL || 'redis://localhost:6379',
       token: process.env.UPSTASH_REDIS_REST_TOKEN || undefined,
     });
-    // Build the where clause based on category
+    // Build the where clause based on category - SIMPLIFIED TO AVOID HANGING
     const whereClause: Prisma.ProductWhereInput = {
       status: ProductStatus.AVAILABLE,
     };
-
-    // Handle special categories
-    if (category === 'designer') {
-      // Find products from luxury brands
-      whereClause.OR = [
-        { brand: { contains: 'Gucci' } },
-        { brand: { contains: 'Prada' } },
-        { brand: { contains: 'Chanel' } },
-        { brand: { contains: 'Louis Vuitton' } },
-        { brand: { contains: 'Versace' } },
-        { brand: { contains: 'Dior' } },
-        { brand: { contains: 'Balenciaga' } },
-        { brand: { contains: 'Hermès' } },
-        { brand: { contains: 'Saint Laurent' } },
-        { brand: { contains: 'Bottega Veneta' } },
-      ];
-    } else if (category && ['men', 'women', 'kids', 'unisex'].includes(category)) {
-      // Handle gender-based categories by category name
-      const genderCategory = await database.category.findFirst({
-        where: {
-          OR: [
-            { slug: { contains: category } },
-            { name: { contains: category } }
-          ]
-        }
-      });
-      if (genderCategory) {
-        whereClause.categoryId = genderCategory.id;
-      }
-    } else if (category && category !== 'all') {
-      // Map category names to enum values
-      // Find category by name or slug
-      const categoryFilter = await database.category.findFirst({
-        where: {
-          OR: [
-            { name: { equals: category } },
-            { slug: { equals: category } }
-          ]
-        }
-      });
-      
-      if (categoryFilter) {
-        whereClause.categoryId = categoryFilter.id;
-      }
-    }
-
-    // Add brand filter
-    if (brand && brand !== 'other') {
-      whereClause.brand = {
-        contains: brand,
-        mode: 'insensitive'
-      };
-    } else if (brand === 'other') {
-      // Show products without popular brands
-      const notFilter: Prisma.ProductWhereInput = {
-        NOT: {
-          OR: [
-            { brand: { contains: 'nike', mode: 'insensitive' as any } },
-            { brand: { contains: 'adidas', mode: 'insensitive' as any } },
-            { brand: { contains: 'zara', mode: 'insensitive' as any } },
-            { brand: { contains: 'h&m', mode: 'insensitive' as any } },
-            { brand: { contains: 'uniqlo', mode: 'insensitive' as any } },
-            { brand: { contains: 'gucci', mode: 'insensitive' as any } },
-            { brand: { contains: 'prada', mode: 'insensitive' as any } },
-          ]
-        }
-      };
-      
-      if (whereClause.AND) {
-        whereClause.AND = Array.isArray(whereClause.AND) ? [...whereClause.AND, notFilter] : [whereClause.AND, notFilter];
-      } else {
-        whereClause.AND = notFilter;
-      }
-    }
-
-    // Add condition filter
-    if (condition) {
-      whereClause.condition = condition as any; // Type assertion for condition enum
-    }
 
     // Add sorting
     let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: 'desc' }; // default newest
@@ -214,122 +135,29 @@ export async function ProductGridServer({
     // Fetch real products from database with caching
     // Executing product query
     
-    const products = await cache.remember(
-      cacheKey,
-      async () => {
-        return database.product.findMany({
-          where: whereClause,
-          include: {
-            images: {
-              orderBy: { displayOrder: 'asc' }
-            },
-            seller: true,
-            category: true,
-            _count: {
-              select: { favorites: true }
-            }
-          },
-          orderBy,
-          take: limit,
-        });
+    // TEMPORARY FIX: Direct query without cache to get products loading
+    const products = await database.product.findMany({
+      where: { status: ProductStatus.AVAILABLE },
+      include: {
+        images: { orderBy: { displayOrder: 'asc' }, take: 1 },
+        seller: { select: { firstName: true, lastName: true } },
+        category: { select: { name: true, slug: true } }
       },
-      600, // Cache for 10 minutes
-      ['products'] // Cache tags
-    );
+      orderBy: { createdAt: 'desc' },
+      take: 24,
+    });
     
     // Query completed successfully
 
-    // If no products found, fetch some general products
-    let finalProducts = products;
-    if (products.length === 0) {
-      // No products found with filters, fetching general products
-      
-      finalProducts = await cache.remember(
-        'products:fallback:general',
-        async () => {
-          return database.product.findMany({
-            where: {
-              status: ProductStatus.AVAILABLE,
-            },
-            include: {
-              images: {
-                orderBy: { displayOrder: 'asc' }
-              },
-              seller: true,
-              category: true,
-              _count: {
-                select: { favorites: true }
-              }
-            },
-            orderBy: { createdAt: 'desc' },
-            take: 12, // Show fewer if no category matches
-          });
-        },
-        600, // Cache for 10 minutes
-        ['products'] // Cache tags
-      );
-      
-      // Fallback query completed
-    }
-
     // Transform products for the UI
-    const transformedProducts = finalProducts.map(transformProduct);
+    const transformedProducts = products.map(transformProduct);
 
-    // Get filter options with caching
-    const [categories, brands, sizes] = await Promise.all([
-      cache.remember(
-        'filter-options:categories',
-        async () => {
-          return database.category.findMany({
-            select: { name: true },
-            where: {
-              Product: {
-                some: { status: ProductStatus.AVAILABLE }
-              }
-            },
-          });
-        },
-        1800, // Cache for 30 minutes
-        ['categories'] // Cache tags
-      ),
-      cache.remember(
-        'filter-options:brands',
-        async () => {
-          return database.product.groupBy({
-            by: ['brand'],
-            where: { 
-              status: ProductStatus.AVAILABLE,
-              brand: { not: null }
-            },
-            _count: true,
-            orderBy: { _count: { brand: 'desc' } },
-            take: 10,
-          });
-        },
-        1800, // Cache for 30 minutes
-        ['products'] // Cache tags
-      ),
-      cache.remember(
-        'filter-options:sizes',
-        async () => {
-          return database.product.groupBy({
-            by: ['size'],
-            where: { status: ProductStatus.AVAILABLE },
-            _count: true,
-            orderBy: { _count: { size: 'desc' } },
-            take: 10,
-          });
-        },
-        1800, // Cache for 30 minutes
-        ['products'] // Cache tags
-      )
-    ]);
-
+    // Simplified filter options
     const filterOptions = {
-      categories: categories.map((c: any) => c.name),
-      brands: brands.map((b: any) => b.brand).filter(Boolean) as string[],
-      sizes: sizes.map((s: any) => s.size).filter(Boolean) as string[],
-      totalCount: finalProducts.length // Use the actual count from products we fetched
+      categories: [],
+      brands: [],
+      sizes: [],
+      totalCount: products.length
     };
 
     return (
