@@ -105,12 +105,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
           joinedAt: true,
           _count: {
             select: {
-              listings: {
+              Product: {
                 where: {
                   status: "SOLD",
                 },
               },
-              followers: true,
+              Follow_Follow_followingIdToUser: true,
             },
           },
         },
@@ -120,7 +120,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           id: true,
           name: true,
           slug: true,
-          parent: {
+          Category: {
             select: {
               name: true,
               slug: true,
@@ -209,6 +209,17 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const transformedProduct = {
     ...product,
     price: Number(product.price),
+    seller: {
+      ...product.seller,
+      _count: {
+        listings: product.seller._count.Product,
+        followers: product.seller._count.Follow_Follow_followingIdToUser
+      }
+    },
+    category: {
+      ...product.category,
+      parent: product.category.Category
+    }
   };
 
   // Transform similar products for component

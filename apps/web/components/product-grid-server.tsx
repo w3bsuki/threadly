@@ -283,7 +283,7 @@ export async function ProductGridServer({
           return database.category.findMany({
             select: { name: true },
             where: {
-              products: {
+              Product: {
                 some: { status: ProductStatus.AVAILABLE }
               }
             },

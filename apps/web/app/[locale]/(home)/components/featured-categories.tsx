@@ -64,10 +64,10 @@ export const FeaturedCategories = async () => {
           id: category.id,
           name: category.name,
           description: `Discover ${category.name.toLowerCase()}`,
-          image: category.products[0]?.images[0]?.imageUrl || null,
+          image: category.Product[0]?.images[0]?.imageUrl || null,
           href: `/${category.slug}`,
           color: colorSchemes[index % colorSchemes.length],
-          count: `${category._count.products.toLocaleString()} items`
+          count: `${category._count.Product.toLocaleString()} items`
         }));
       },
       600, // Cache for 10 minutes

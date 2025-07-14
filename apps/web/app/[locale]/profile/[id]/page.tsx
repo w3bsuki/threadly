@@ -33,7 +33,7 @@ export default async function UserProfilePage({ params }: Props) {
   const user = await database.user.findUnique({
     where: { id },
     include: {
-      listings: {
+      Product: {
         where: { status: 'AVAILABLE' },
         include: {
           images: { take: 1 },
@@ -42,19 +42,19 @@ export default async function UserProfilePage({ params }: Props) {
         orderBy: { createdAt: 'desc' },
         take: 12
       },
-      reviews: {
+      Review_Review_reviewedIdToUser: {
         include: {
-          reviewer: { select: { firstName: true, lastName: true } }
+          User_Review_reviewerIdToUser: { select: { firstName: true, lastName: true } }
         },
         orderBy: { createdAt: 'desc' },
         take: 5
       },
       _count: {
         select: {
-          listings: true,
-          reviews: true,
-          followers: true,
-          following: true
+          Product: true,
+          Review_Review_reviewedIdToUser: true,
+          Follow_Follow_followingIdToUser: true,
+          Follow_Follow_followerIdToUser: true
         }
       }
     }
@@ -111,7 +111,7 @@ export default async function UserProfilePage({ params }: Props) {
                     <div className="flex items-center gap-1">
                       <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                       <span>{user.averageRating.toFixed(1)}</span>
-                      <span>({user._count.reviews} reviews)</span>
+                      <span>({user._count.Review_Review_reviewedIdToUser} reviews)</span>
                     </div>
                   )}
                 </div>
@@ -135,28 +135,28 @@ export default async function UserProfilePage({ params }: Props) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-gray-900">{user._count.listings}</div>
+              <div className="text-2xl font-bold text-gray-900">{user._count.Product}</div>
               <div className="text-sm text-gray-600">Items Listed</div>
             </CardContent>
           </Card>
           
           <Card>
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-gray-900">{user._count.reviews}</div>
+              <div className="text-2xl font-bold text-gray-900">{user._count.Review_Review_reviewedIdToUser}</div>
               <div className="text-sm text-gray-600">Reviews</div>
             </CardContent>
           </Card>
           
           <Card>
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-gray-900">{user._count.followers}</div>
+              <div className="text-2xl font-bold text-gray-900">{user._count.Follow_Follow_followingIdToUser}</div>
               <div className="text-sm text-gray-600">Followers</div>
             </CardContent>
           </Card>
           
           <Card>
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-gray-900">{user._count.following}</div>
+              <div className="text-2xl font-bold text-gray-900">{user._count.Follow_Follow_followerIdToUser}</div>
               <div className="text-sm text-gray-600">Following</div>
             </CardContent>
           </Card>
@@ -166,7 +166,7 @@ export default async function UserProfilePage({ params }: Props) {
         <section className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-semibold">Listed Items</h2>
-            {user.listings.length > 12 && (
+            {user.Product.length > 12 && (
               <Button variant="outline" size="sm" asChild>
                 <Link href={`/products?seller=${user.id}`}>
                   View All
@@ -175,7 +175,7 @@ export default async function UserProfilePage({ params }: Props) {
             )}
           </div>
           
-          {user.listings.length === 0 ? (
+          {user.Product.length === 0 ? (
             <Card>
               <CardContent className="p-8 text-center">
                 <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -185,7 +185,7 @@ export default async function UserProfilePage({ params }: Props) {
             </Card>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {user.listings.map((product) => (
+              {user.Product.map((product) => (
                 <Link key={product.id} href={`/product/${product.id}`}>
                   <Card className="hover:shadow-lg transition-shadow">
                     <div className="aspect-square relative bg-gray-100">
@@ -225,11 +225,11 @@ export default async function UserProfilePage({ params }: Props) {
         </section>
 
         {/* Reviews */}
-        {user.reviews.length > 0 && (
+        {user.Review_Review_reviewedIdToUser.length > 0 && (
           <section>
             <h2 className="text-xl font-semibold mb-6">Recent Reviews</h2>
             <div className="space-y-4">
-              {user.reviews.map((review) => (
+              {user.Review_Review_reviewedIdToUser.map((review) => (
                 <Card key={review.id}>
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-2">
@@ -247,7 +247,7 @@ export default async function UserProfilePage({ params }: Props) {
                           ))}
                         </div>
                         <span className="text-sm text-gray-600">
-                          by {review.reviewer.firstName} {review.reviewer.lastName}
+                          by {review.User_Review_reviewerIdToUser.firstName} {review.User_Review_reviewerIdToUser.lastName}
                         </span>
                       </div>
                       <span className="text-sm text-gray-500">

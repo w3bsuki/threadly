@@ -90,7 +90,7 @@ const getCategoryUrls = async (): Promise<Array<{ slug: string; name: string; la
         name: true,
         _count: {
           select: {
-            products: {
+            Product: {
               where: {
                 status: 'AVAILABLE'
               }
@@ -99,7 +99,7 @@ const getCategoryUrls = async (): Promise<Array<{ slug: string; name: string; la
         }
       },
       where: {
-        products: {
+        Product: {
           some: {
             status: 'AVAILABLE'
           }
@@ -108,7 +108,7 @@ const getCategoryUrls = async (): Promise<Array<{ slug: string; name: string; la
     });
 
     return categories
-      .filter(category => category._count.products > 0) // Only include categories with products
+      .filter(category => category._count.Product > 0) // Only include categories with products
       .map(category => ({
         slug: category.slug,
         name: category.name,
@@ -125,7 +125,7 @@ const getUserProfileUrls = async (): Promise<Array<{ id: string; lastModified: D
   try {
     const users = await database.user.findMany({
       where: {
-        listings: {
+        Product: {
           some: {
             status: 'AVAILABLE' // Only users with available listings
           }

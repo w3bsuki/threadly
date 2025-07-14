@@ -175,7 +175,7 @@ export async function ProductsContent({ searchParams, dictionary }: ProductsCont
       parentId: null, // Only top-level categories
     },
     include: {
-      children: true,
+      other_Category: true,
     },
   });
 

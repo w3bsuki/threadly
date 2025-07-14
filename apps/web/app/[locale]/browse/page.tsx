@@ -34,10 +34,10 @@ export default async function BrowsePage({ params }: { params: Promise<{ locale:
   // Fetch popular categories
   const popularCategories = await database.category.findMany({
     include: {
-      _count: { select: { products: true } }
+      _count: { select: { Product: true } }
     },
     orderBy: {
-      products: { _count: 'desc' }
+      Product: { _count: 'desc' }
     },
     take: 8
   });
@@ -45,18 +45,18 @@ export default async function BrowsePage({ params }: { params: Promise<{ locale:
   // Fetch top sellers
   const topSellers = await database.user.findMany({
     where: {
-      listings: { some: { status: 'AVAILABLE' } }
+      Product: { some: { status: 'AVAILABLE' } }
     },
     include: {
       _count: { 
         select: { 
-          listings: { where: { status: 'AVAILABLE' } },
-          receivedReviews: true 
+          Product: { where: { status: 'AVAILABLE' } },
+          Review_Review_reviewedIdToUser: true 
         } 
       }
     },
     orderBy: {
-      listings: { _count: 'desc' }
+      Product: { _count: 'desc' }
     },
     take: 6
   });
@@ -124,7 +124,7 @@ export default async function BrowsePage({ params }: { params: Promise<{ locale:
                   <CardContent className="p-3 lg:p-4 text-center">
                     <h3 className="font-medium text-gray-900 text-sm lg:text-base">{category.name}</h3>
                     <p className="text-xs lg:text-sm text-gray-600 mt-1">
-                      {category._count.products} items
+                      {category._count.Product} items
                     </p>
                   </CardContent>
                 </Card>
@@ -193,7 +193,7 @@ export default async function BrowsePage({ params }: { params: Promise<{ locale:
                           {seller.firstName} {seller.lastName}
                         </h3>
                         <div className="flex items-center gap-3 lg:gap-4 mt-1 text-xs lg:text-sm text-gray-600">
-                          <span>{seller._count.listings} items</span>
+                          <span>{seller._count.Product} items</span>
                           {seller.averageRating && (
                             <div className="flex items-center gap-1">
                               <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
@@ -206,7 +206,7 @@ export default async function BrowsePage({ params }: { params: Promise<{ locale:
                     
                     <div className="text-center">
                       <Badge variant="secondary" className="text-xs">
-                        {seller._count.receivedReviews} reviews
+                        {seller._count.Review_Review_reviewedIdToUser} reviews
                       </Badge>
                     </div>
                   </CardContent>

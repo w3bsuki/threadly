@@ -34,9 +34,9 @@ export default async function MessagesPage() {
       ],
     },
     include: {
-      buyer: true,
-      seller: true,
-      product: {
+      User_Conversation_buyerIdToUser: true,
+      User_Conversation_sellerIdToUser: true,
+      Product: {
         include: {
           images: {
             take: 1,
@@ -46,14 +46,14 @@ export default async function MessagesPage() {
           },
         },
       },
-      messages: {
+      Message: {
         orderBy: {
           createdAt: 'desc',
         },
       },
       _count: {
         select: {
-          messages: {
+          Message: {
             where: {
               senderId: { not: dbUser.id },
               read: false,
@@ -79,7 +79,16 @@ export default async function MessagesPage() {
           </div>
           
           <MessagesContent 
-            conversations={conversations}
+            conversations={conversations.map(conv => ({
+              ...conv,
+              buyer: conv.User_Conversation_buyerIdToUser,
+              seller: conv.User_Conversation_sellerIdToUser,
+              product: conv.Product,
+              messages: conv.Message,
+              _count: {
+                messages: conv._count.Message
+              }
+            }))}
             currentUserId={dbUser.id}
           />
         </div>

@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
       include: {
         _count: {
           select: {
-            products: {
+            Product: {
               where: {
                 status: 'AVAILABLE',
               },

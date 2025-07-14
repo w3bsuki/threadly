@@ -27,10 +27,10 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
     where: orderId 
       ? { id: orderId }
       : session_id 
-      ? { payment: { stripePaymentId: session_id } }
+      ? { Payment: { stripePaymentId: session_id } }
       : undefined,
     include: {
-      product: {
+      Product: {
         include: {
           images: {
             take: 1,
@@ -38,8 +38,8 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
           }
         }
       },
-      buyer: true,
-      seller: true,
+      User_Order_buyerIdToUser: true,
+      User_Order_sellerIdToUser: true,
     }
   });
 
@@ -51,7 +51,10 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   const orderData = {
     ...order,
     orderNumber: `ORD-${order.id.slice(-8).toUpperCase()}`,
-    totalAmount: order.amount
+    totalAmount: order.amount,
+    product: order.Product,
+    buyer: order.User_Order_buyerIdToUser,
+    seller: order.User_Order_sellerIdToUser
   };
 
   return (

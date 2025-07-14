@@ -143,7 +143,7 @@ export async function GET(request: NextRequest) {
       id: product.seller.id,
       name: `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() || 'Anonymous',
       location: product.seller.location || 'Unknown',
-      rating: product.seller.averageRating?.toNumber() || 0,
+      rating: Number(product.seller.averageRating) || 0,
     } : {
       id: 'unknown',
       name: 'Anonymous',
