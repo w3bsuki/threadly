@@ -145,7 +145,6 @@ export async function ProductGridServer({
     // Executing product query
     
     // TEMPORARY FIX: Direct query without cache to get products loading
-    console.log('[ProductGrid] Attempting to query products...');
     const products = await database.product.findMany({
       where: { status: ProductStatus.AVAILABLE },
       include: {
@@ -165,7 +164,6 @@ export async function ProductGridServer({
       take: 24,
     });
     
-    console.log(`[ProductGrid] Query completed. Found ${products.length} products`);
     // Query completed successfully
 
     // Transform products for the UI
@@ -189,7 +187,6 @@ export async function ProductGridServer({
 
   } catch (error) {
     const errorMessage = parseError(error);
-    console.error('[ProductGrid] Error fetching products:', error);
     logError('Failed to fetch products', error);
     
     // Return empty state on error with more details in development
