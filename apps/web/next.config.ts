@@ -45,16 +45,23 @@ nextConfig.webpack = (config, { isServer }) => {
       { module: /require-in-the-middle/ },
       { module: /@opentelemetry\/instrumentation/ },
     ];
+    
+    // Don't externalize Prisma
+    config.externals = config.externals || [];
+    config.externals.push({
+      '@neondatabase/serverless': 'commonjs @neondatabase/serverless',
+      'ws': 'commonjs ws',
+    });
   }
-
-  // Fix Prisma Query Engine on Vercel
-  config.externals.push('@prisma/client');
   
   return config;
 };
 
-// Fix Prisma bundling for Vercel
-nextConfig.serverExternalPackages = ['@prisma/client', '@prisma/engines', '@neondatabase/serverless', 'ws'];
+// Add experimental configuration for bundling
+nextConfig.experimental = {
+  ...nextConfig.experimental,
+  serverComponentsExternalPackages: ['@neondatabase/serverless', 'ws'],
+};
 
 if (process.env.NODE_ENV === 'production') {
   const redirects: NextConfig['redirects'] = async () => [
