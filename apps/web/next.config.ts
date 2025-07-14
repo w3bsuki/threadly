@@ -47,6 +47,9 @@ nextConfig.webpack = (config, { isServer }) => {
     ];
   }
 
+  // Fix Prisma Query Engine on Vercel
+  config.externals.push('@prisma/client');
+  
   return config;
 };
 
