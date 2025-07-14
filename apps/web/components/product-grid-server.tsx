@@ -55,8 +55,17 @@ function getTimeAgo(date: Date): string {
 function transformProduct(
   product: Product & {
     images: ProductImage[];
-    seller: User;
-    category: Category | null;
+    seller: {
+      id: string;
+      firstName: string | null;
+      lastName: string | null;
+      location: string | null;
+      averageRating: number | null;
+    };
+    category: {
+      name: string;
+      slug: string;
+    } | null;
     _count?: {
       favorites: number;
     };
@@ -140,7 +149,15 @@ export async function ProductGridServer({
       where: { status: ProductStatus.AVAILABLE },
       include: {
         images: { orderBy: { displayOrder: 'asc' }, take: 1 },
-        seller: { select: { firstName: true, lastName: true } },
+        seller: { 
+          select: { 
+            id: true,
+            firstName: true, 
+            lastName: true,
+            location: true,
+            averageRating: true
+          } 
+        },
         category: { select: { name: true, slug: true } }
       },
       orderBy: { createdAt: 'desc' },
