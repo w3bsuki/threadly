@@ -35,6 +35,10 @@ nextConfig = {
         { module: /require-in-the-middle/ },
         { module: /@opentelemetry\/instrumentation/ },
       ];
+      
+      // Add Prisma monorepo workaround plugin
+      const { PrismaPlugin } = require('@prisma/nextjs-monorepo-workaround-plugin');
+      config.plugins = [...config.plugins, new PrismaPlugin()];
     }
 
     return config;

@@ -41,6 +41,7 @@
     "@axe-core/react": "^4.10.2",
     "@biomejs/biome": "2.1.1",
     "@playwright/test": "^1.54.1",
+    "@prisma/nextjs-monorepo-workaround-plugin": "^6.11.1",
     "@repo/typescript-config": "workspace:*",
     "@turbo/gen": "^2.5.4",
     "@types/node": "^24.0.12",
