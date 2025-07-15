@@ -4,8 +4,7 @@ import { database } from '@repo/database';
 import { redirect } from 'next/navigation';
 import { FinancialDashboard } from './components/financial-dashboard';
 import { FinancialSkeleton } from './components/financial-skeleton';
-import { getDictionary } from '@repo/internationalization/get-dictionary';
-import type { Locale } from '@repo/internationalization/locales';
+import { getDictionary, type Locale } from '@repo/internationalization';
 
 interface FinancialsPageProps {
   params: Promise<{

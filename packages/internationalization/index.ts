@@ -2,6 +2,7 @@ import 'server-only';
 import type en from './dictionaries/en.json';
 
 export const locales = ['bg', 'en', 'uk'] as const;
+export type Locale = typeof locales[number];
 
 export type Dictionary = typeof en;
 

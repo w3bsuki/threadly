@@ -4,8 +4,7 @@ import { database } from '@repo/database';
 import { redirect } from 'next/navigation';
 import { MarketingDashboard } from './components/marketing-dashboard';
 import { MarketingSkeleton } from './components/marketing-skeleton';
-import { getDictionary } from '@repo/internationalization/get-dictionary';
-import type { Locale } from '@repo/internationalization/locales';
+import { getDictionary, type Locale } from '@repo/internationalization';
 
 interface MarketingPageProps {
   params: Promise<{
