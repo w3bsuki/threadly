@@ -1,6 +1,25 @@
 import type { Metadata } from "next";
 import { getDictionary } from "@repo/internationalization";
-import { ProductsContent } from "./components/products-content";
+import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
+
+// Dynamic import for products content to reduce initial bundle size
+const ProductsContent = dynamic(() => import('./components/products-content').then(mod => ({ default: mod.ProductsContent })), {
+  loading: () => (
+    <div className="space-y-6">
+      <div className="h-12 bg-gray-200 rounded animate-pulse" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <div key={i} className="space-y-2">
+            <div className="aspect-square bg-gray-200 rounded animate-pulse" />
+            <div className="h-4 bg-gray-200 rounded animate-pulse" />
+            <div className="h-4 bg-gray-200 rounded animate-pulse w-2/3" />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+});
 
 export async function generateMetadata({
   params,

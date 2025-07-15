@@ -23,6 +23,21 @@ const createProductSchema = z.object({
   color: z.string().max(30).optional(),
   images: z.array(z.string().url()).min(1).max(10),
   sellerId: z.string(),
+  draftId: z.string().optional(),
+});
+
+const saveDraftSchema = z.object({
+  title: z.string().trim().max(100).optional(),
+  description: z.string().trim().max(2000).optional(),
+  price: z.number().min(0).max(99999999).optional(),
+  categoryId: z.string().optional(),
+  condition: z.enum(['NEW_WITH_TAGS', 'NEW_WITHOUT_TAGS', 'VERY_GOOD', 'GOOD', 'SATISFACTORY']).optional(),
+  brand: z.string().trim().max(50).optional(),
+  size: z.string().max(20).optional(),
+  color: z.string().max(30).optional(),
+  images: z.array(z.string().url()).max(10).optional(),
+  sellerId: z.string(),
+  id: z.string().optional(),
 });
 
 // SECURITY: Basic input sanitization without external dependencies
@@ -48,7 +63,7 @@ function sanitizeUserInput(input: z.infer<typeof createProductSchema>) {
   };
 }
 
-export async function createProduct(input: z.infer<typeof createProductSchema>) {
+export async function createProduct(input: z.infer<typeof createProductSchema> & { draftId?: string }) {
   try {
     // Verify user authentication
     const user = await currentUser();
@@ -66,39 +81,80 @@ export async function createProduct(input: z.infer<typeof createProductSchema>) 
     const validatedInput = createProductSchema.parse(input);
     const sanitizedData = sanitizeUserInput(validatedInput);
 
-    // Create the product in the database
-    const product = await database.product.create({
-      data: {
-        title: sanitizedData.title,
-        description: sanitizedData.description,
-        price: sanitizedData.price / 100, // Convert cents to dollars for Decimal field
-        categoryId: sanitizedData.categoryId,
-        condition: sanitizedData.condition,
-        brand: sanitizedData.brand,
-        size: sanitizedData.size || null,
-        color: sanitizedData.color || null,
-        sellerId: dbUser.id, // Use the database user ID, not Clerk ID
-        status: 'AVAILABLE',
-        // Remove manual date setting - let Prisma handle it
-        images: {
-          create: sanitizedData.images.map((url, index) => ({
-            imageUrl: url,
-            alt: `${sanitizedData.title} - Image ${index + 1}`,
-            displayOrder: index,
-          })),
+    let product;
+
+    if (input.draftId) {
+      // Update existing draft to published status
+      product = await database.product.update({
+        where: {
+          id: input.draftId,
+          sellerId: dbUser.id,
+          status: 'AVAILABLE'
         },
-      },
-      include: {
-        images: true,
-        category: true,
-        seller: true,
-        _count: {
-          select: {
-            favorites: true,
+        data: {
+          title: sanitizedData.title,
+          description: sanitizedData.description,
+          price: sanitizedData.price / 100,
+          categoryId: sanitizedData.categoryId,
+          condition: sanitizedData.condition,
+          brand: sanitizedData.brand,
+          size: sanitizedData.size || null,
+          color: sanitizedData.color || null,
+          status: 'AVAILABLE',
+          images: {
+            deleteMany: {},
+            create: sanitizedData.images.map((url, index) => ({
+              imageUrl: url,
+              alt: `${sanitizedData.title} - Image ${index + 1}`,
+              displayOrder: index,
+            })),
           },
         },
-      },
-    });
+        include: {
+          images: true,
+          category: true,
+          seller: true,
+          _count: {
+            select: {
+              favorites: true,
+            },
+          },
+        },
+      });
+    } else {
+      // Create new product
+      product = await database.product.create({
+        data: {
+          title: sanitizedData.title,
+          description: sanitizedData.description,
+          price: sanitizedData.price / 100,
+          categoryId: sanitizedData.categoryId,
+          condition: sanitizedData.condition,
+          brand: sanitizedData.brand,
+          size: sanitizedData.size || null,
+          color: sanitizedData.color || null,
+          sellerId: dbUser.id,
+          status: 'AVAILABLE',
+          images: {
+            create: sanitizedData.images.map((url, index) => ({
+              imageUrl: url,
+              alt: `${sanitizedData.title} - Image ${index + 1}`,
+              displayOrder: index,
+            })),
+          },
+        },
+        include: {
+          images: true,
+          category: true,
+          seller: true,
+          _count: {
+            select: {
+              favorites: true,
+            },
+          },
+        },
+      });
+    }
 
     // Index product to Algolia for search
     try {
@@ -191,6 +247,91 @@ export async function createProduct(input: z.infer<typeof createProductSchema>) 
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Failed to create product' 
+    };
+  }
+}
+
+export async function saveDraftProduct(input: z.infer<typeof saveDraftSchema>) {
+  try {
+    const user = await currentUser();
+    if (!user) {
+      redirect('/sign-in');
+    }
+
+    const dbUser = await ensureUserExists();
+    if (!dbUser) {
+      throw new Error('Failed to sync user to database');
+    }
+
+    const validatedInput = saveDraftSchema.parse(input);
+
+    // Update existing draft or create new one
+    const draftData = {
+      title: validatedInput.title || '',
+      description: validatedInput.description || '',
+      price: validatedInput.price ? validatedInput.price / 100 : 0,
+      categoryId: validatedInput.categoryId || '',
+      condition: validatedInput.condition || 'GOOD',
+      brand: validatedInput.brand || null,
+      size: validatedInput.size || null,
+      color: validatedInput.color || null,
+      sellerId: dbUser.id,
+      status: 'AVAILABLE' as const,
+    };
+
+    let product;
+
+    if (validatedInput.id) {
+      // Update existing draft
+      product = await database.product.update({
+        where: {
+          id: validatedInput.id,
+          sellerId: dbUser.id,
+          status: 'AVAILABLE'
+        },
+        data: {
+          ...draftData,
+          images: validatedInput.images ? {
+            deleteMany: {},
+            create: validatedInput.images.map((url, index) => ({
+              imageUrl: url,
+              alt: `${draftData.title} - Image ${index + 1}`,
+              displayOrder: index,
+            })),
+          } : undefined,
+        }
+      });
+    } else {
+      // Create new draft
+      product = await database.product.create({
+        data: {
+          ...draftData,
+          images: validatedInput.images ? {
+            create: validatedInput.images.map((url, index) => ({
+              imageUrl: url,
+              alt: `${draftData.title} - Image ${index + 1}`,
+              displayOrder: index,
+            })),
+          } : undefined,
+        }
+      });
+    }
+
+    return { success: true, draftId: product.id };
+  } catch (error) {
+    logError('Error saving draft product:', error);
+    
+    if (error instanceof z.ZodError) {
+      return { 
+        success: false, 
+        error: 'Validation failed',
+        details: error.issues 
+      };
+    }
+    
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to save draft' 
     };
   }
 }

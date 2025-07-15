@@ -25,6 +25,9 @@ import {
   BarChart3,
   Sparkles,
   Crown,
+  Star,
+  DollarSign,
+  Megaphone,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -48,7 +51,10 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
     { name: dictionary.dashboard.navigation.dashboard, href: '/dashboard', icon: LayoutDashboard },
     { name: dictionary.dashboard.navigation.listings, href: '/selling/listings', icon: Package },
     { name: dictionary.dashboard.dashboard.quickLinks.salesHistory, href: '/selling/history', icon: TrendingUp },
+    { name: dictionary.dashboard.navigation.financials || 'Financials', href: '/financials', icon: DollarSign },
+    { name: dictionary.dashboard.navigation.marketing || 'Marketing', href: '/marketing', icon: Megaphone },
     { name: dictionary.dashboard.navigation.orders, href: '/buying/orders', icon: ShoppingBag },
+    { name: dictionary.dashboard.navigation.reviews || 'Reviews', href: '/reviews/mobile', icon: Star },
     { name: dictionary.dashboard.navigation.messages, href: '/messages', icon: MessageCircle },
     { name: dictionary.dashboard.navigation.profile, href: '/profile', icon: User },
   ];
@@ -278,59 +284,6 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
         </div>
       </main>
 
-      {/* Enhanced Mobile Bottom Navigation */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border shadow-lg">
-        <div className="relative">
-          {/* Navigation Items */}
-          <div className="grid grid-cols-5 gap-1 px-2 py-2">
-            {mobileNavigation.map((item) => {
-              const isActive = pathname === item.href || 
-                (item.href !== '/' && pathname.startsWith(item.href));
-              
-              // Special handling for FAB (selling/new)
-              if (item.href === '/selling/new') {
-                return (
-                  <div key={item.name} className="flex justify-center items-center">
-                    <Link
-                      href={item.href}
-                      className="relative bg-primary text-primary-foreground rounded-full p-3 min-h-[56px] min-w-[56px] flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95 touch-manipulation"
-                      style={{ WebkitTapHighlightColor: 'transparent' }}
-                    >
-                      <item.icon className="h-6 w-6" />
-                      <span className="sr-only">{item.name}</span>
-                    </Link>
-                  </div>
-                );
-              }
-              
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={cn(
-                    'flex flex-col items-center justify-center py-2 px-1 text-xs min-h-[48px] rounded-lg transition-all duration-200 active:scale-95 touch-manipulation',
-                    isActive
-                      ? 'text-primary bg-primary/10'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-                  )}
-                  style={{ WebkitTapHighlightColor: 'transparent' }}
-                >
-                  <item.icon className={cn(
-                    'h-5 w-5 mb-1 transition-transform duration-200',
-                    isActive && 'scale-110'
-                  )} />
-                  <span className={cn(
-                    'text-[10px] font-medium',
-                    isActive && 'font-semibold'
-                  )}>
-                    {item.name}
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </nav>
     </div>
   );
 }

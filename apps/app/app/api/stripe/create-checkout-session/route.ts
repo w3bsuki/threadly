@@ -132,16 +132,37 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Create order with PENDING status
-    const order = await database.order.create({
-      data: {
-        buyerId: user.id,
-        sellerId: product.sellerId,
-        productId: product.id,
-        amount: product.price,
-        status: 'PENDING',
-        shippingAddressId: defaultAddress.id,
-      },
+    // Create order and reserve product atomically to prevent race conditions
+    const order = await database.$transaction(async (tx) => {
+      // First, verify product is still available and reserve it
+      const availableProduct = await tx.product.findFirst({
+        where: {
+          id: productId,
+          status: 'AVAILABLE',
+        },
+      });
+
+      if (!availableProduct) {
+        throw new Error('Product is no longer available');
+      }
+
+      // Update product status to RESERVED
+      await tx.product.update({
+        where: { id: productId },
+        data: { status: 'RESERVED' },
+      });
+
+      // Create order
+      return tx.order.create({
+        data: {
+          buyerId: user.id,
+          sellerId: product.sellerId,
+          productId: product.id,
+          amount: product.price,
+          status: 'PENDING',
+          shippingAddressId: defaultAddress.id,
+        },
+      });
     });
 
     // Calculate fees
@@ -174,12 +195,6 @@ export async function POST(request: NextRequest) {
 
     // Create payment intent
     const paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
-
-    // Mark product as RESERVED to prevent double purchases
-    await database.product.update({
-      where: { id: productId },
-      data: { status: 'RESERVED' },
-    });
 
     return createSuccessResponse({
       clientSecret: paymentIntent.client_secret,

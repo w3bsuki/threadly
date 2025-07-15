@@ -41,11 +41,19 @@ async function getDashboardMetrics(userId: string): Promise<Partial<DashboardSta
     // Get optimized stats
     const stats = await getSellerDashboardStats(dbUser.id);
     
-    // Get unread messages count
+    // Get unread messages count (messages in conversations where user is not the sender)
     const unreadMessages = await database.message.count({
       where: {
-        recipientId: dbUser.id,
-        read: false
+        read: false,
+        NOT: {
+          senderId: dbUser.id
+        },
+        Conversation: {
+          OR: [
+            { buyerId: dbUser.id },
+            { sellerId: dbUser.id }
+          ]
+        }
       }
     });
 

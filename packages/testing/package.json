@@ -5,16 +5,20 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
+      "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
     "./helpers": {
-      "types": "./src/helpers/index.ts",
+      "types": "./dist/helpers/index.d.ts",
       "default": "./dist/helpers/index.js"
     },
     "./mocks": {
-      "types": "./src/mocks/index.ts",
+      "types": "./dist/mocks/index.d.ts",
       "default": "./dist/mocks/index.js"
+    },
+    "./a11y/axe-matchers": {
+      "types": "./src/a11y/axe-matchers.ts",
+      "default": "./dist/index.js"
     }
   },
   "scripts": {
@@ -25,12 +29,13 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@repo/database": "workspace:*",
     "@repo/cache": "workspace:*",
+    "@repo/database": "workspace:*",
     "@repo/error-handling": "workspace:*",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "axe-core": "^4.10.3",
     "jsdom": "^26.1.0",
     "msw": "^2.10.3",
     "supertest": "^7.1.3"

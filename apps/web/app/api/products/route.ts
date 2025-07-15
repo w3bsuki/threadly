@@ -8,6 +8,7 @@ import {
   createPaginationMeta,
   createErrorResponse
 } from '@repo/api-utils';
+import { getCacheService } from '@repo/cache';
 
 // Input validation schema
 const GetProductsSchema = z.object({
@@ -37,127 +38,145 @@ export async function GET(request: NextRequest) {
     const params = Object.fromEntries(searchParams.entries());
     const validatedParams = GetProductsSchema.parse(params);
 
-  // Build where clause
-  const where: Prisma.ProductWhereInput = {
-    status: 'AVAILABLE',
-  };
+    // Create cache key from parameters
+    const cacheKey = `products:${JSON.stringify(validatedParams)}`;
+    const cache = getCacheService();
 
-  // Add category filter if specified
-  if (validatedParams.category && validatedParams.category !== 'All') {
-    where.category = {
-      name: { equals: validatedParams.category, mode: 'insensitive' }
-    };
-  }
+    // Try to get from cache first
+    const cachedResult = await cache.remember(
+      cacheKey,
+      async () => {
+        // Build where clause
+        const where: Prisma.ProductWhereInput = {
+          status: 'AVAILABLE',
+        };
 
-  // Add search filter if specified
-  if (validatedParams.search) {
-    const searchTerm = validatedParams.search.toLowerCase();
-    const searchFilter: Prisma.ProductWhereInput = {
-      OR: [
-        { title: { contains: searchTerm, mode: 'insensitive' } },
-        { brand: { contains: searchTerm, mode: 'insensitive' } },
-        { description: { contains: searchTerm, mode: 'insensitive' } },
-        { category: { name: { contains: searchTerm, mode: 'insensitive' } } }
-      ]
-    };
-    
-    if (where.AND) {
-      where.AND = Array.isArray(where.AND) ? [...where.AND, searchFilter] : [where.AND, searchFilter];
-    } else {
-      where.AND = searchFilter;
-    }
-  }
+        // Add category filter if specified
+        if (validatedParams.category && validatedParams.category !== 'All') {
+          where.category = {
+            name: { equals: validatedParams.category, mode: 'insensitive' }
+          };
+        }
 
-  // Build orderBy clause
-  let orderBy: Prisma.ProductOrderByWithRelationInput | Prisma.ProductOrderByWithRelationInput[];
-  switch (validatedParams.sortBy) {
-    case 'price-low':
-      orderBy = { price: 'asc' };
-      break;
-    case 'price-high':
-      orderBy = { price: 'desc' };
-      break;
-    case 'popular':
-      orderBy = [
-        { favorites: { _count: 'desc' } },
-        { views: 'desc' },
-        { createdAt: 'desc' }
-      ];
-      break;
-    case 'newest':
-    default:
-      orderBy = { createdAt: 'desc' };
-      break;
-  }
+        // Add search filter if specified
+        if (validatedParams.search) {
+          const searchTerm = validatedParams.search.toLowerCase();
+          const searchFilter: Prisma.ProductWhereInput = {
+            OR: [
+              { title: { contains: searchTerm, mode: 'insensitive' } },
+              { brand: { contains: searchTerm, mode: 'insensitive' } },
+              { description: { contains: searchTerm, mode: 'insensitive' } },
+              { category: { name: { contains: searchTerm, mode: 'insensitive' } } }
+            ]
+          };
+          
+          if (where.AND) {
+            where.AND = Array.isArray(where.AND) ? [...where.AND, searchFilter] : [where.AND, searchFilter];
+          } else {
+            where.AND = searchFilter;
+          }
+        }
 
-  // Calculate pagination
-  const skip = (validatedParams.page - 1) * validatedParams.limit;
+        // Build orderBy clause
+        let orderBy: Prisma.ProductOrderByWithRelationInput | Prisma.ProductOrderByWithRelationInput[];
+        switch (validatedParams.sortBy) {
+          case 'price-low':
+            orderBy = { price: 'asc' };
+            break;
+          case 'price-high':
+            orderBy = { price: 'desc' };
+            break;
+          case 'popular':
+            orderBy = [
+              { favorites: { _count: 'desc' } },
+              { views: 'desc' },
+              { createdAt: 'desc' }
+            ];
+            break;
+          case 'newest':
+          default:
+            orderBy = { createdAt: 'desc' };
+            break;
+        }
 
-  // Fetch products and total count in parallel
-  const [products, totalCount] = await Promise.all([
-    database.product.findMany({
-      where,
-      include: {
-        images: {
-          orderBy: { displayOrder: 'asc' },
-          take: 1,
-        },
-        category: true,
-        seller: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            imageUrl: true,
-            location: true,
-            averageRating: true,
+        // Calculate pagination
+        const skip = (validatedParams.page - 1) * validatedParams.limit;
+
+        // Fetch products and total count in parallel
+        const [products, totalCount] = await Promise.all([
+          database.product.findMany({
+            where,
+            include: {
+              images: {
+                orderBy: { displayOrder: 'asc' },
+                take: 1,
+              },
+              category: true,
+              seller: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  imageUrl: true,
+                  location: true,
+                  averageRating: true,
+                },
+              },
+              _count: {
+                select: {
+                  favorites: true,
+                },
+              },
+            },
+            orderBy,
+            skip,
+            take: validatedParams.limit,
+          }),
+          database.product.count({ where })
+        ]);
+
+        // Transform products to match the expected format
+        const transformedProducts = products.map((product) => ({
+          id: product.id,
+          title: product.title,
+          brand: product.brand || 'Unknown',
+          price: product.price.toNumber(),
+          originalPrice: null, // We don't have this in our schema
+          size: product.size || 'One Size',
+          condition: product.condition,
+          categoryId: product.categoryId,
+          categoryName: product.category?.name || 'Unknown',
+          parentCategoryName: 'Unisex',
+          images: product.images.map(img => img.imageUrl),
+          seller: product.seller ? {
+            id: product.seller.id,
+            name: `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() || 'Anonymous',
+            location: product.seller.location || 'Unknown',
+            rating: Number(product.seller.averageRating) || 0,
+          } : {
+            id: 'unknown',
+            name: 'Anonymous',
+            location: 'Unknown',
+            rating: 0,
           },
-        },
-        _count: {
-          select: {
-            favorites: true,
-          },
-        },
+          favoritesCount: product._count.favorites,
+          createdAt: product.createdAt.toISOString(),
+        }));
+
+        return {
+          products: transformedProducts,
+          totalCount,
+          pagination: createPaginationMeta(validatedParams.page, validatedParams.limit, totalCount)
+        };
       },
-      orderBy,
-      skip,
-      take: validatedParams.limit,
-    }),
-    database.product.count({ where })
-  ]);
+      300, // 5 minutes cache
+      ['products', 'categories']
+    );
 
-  // Transform products to match the expected format
-  const transformedProducts = products.map((product) => ({
-    id: product.id,
-    title: product.title,
-    brand: product.brand || 'Unknown',
-    price: product.price.toNumber(),
-    originalPrice: null, // We don't have this in our schema
-    size: product.size || 'One Size',
-    condition: product.condition,
-    categoryId: product.categoryId,
-    categoryName: product.category?.name || 'Unknown',
-    parentCategoryName: 'Unisex',
-    images: product.images.map(img => img.imageUrl),
-    seller: product.seller ? {
-      id: product.seller.id,
-      name: `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() || 'Anonymous',
-      location: product.seller.location || 'Unknown',
-      rating: Number(product.seller.averageRating) || 0,
-    } : {
-      id: 'unknown',
-      name: 'Anonymous',
-      location: 'Unknown',
-      rating: 0,
-    },
-    favoritesCount: product._count.favorites,
-    createdAt: product.createdAt.toISOString(),
-  }));
-
-  // Return standardized success response
-  return createSuccessResponse(transformedProducts, {
-    pagination: createPaginationMeta(validatedParams.page, validatedParams.limit, totalCount)
-  });
+    // Return standardized success response
+    return createSuccessResponse(cachedResult.products, {
+      pagination: cachedResult.pagination
+    });
 
   } catch (error) {
     return createErrorResponse(error);

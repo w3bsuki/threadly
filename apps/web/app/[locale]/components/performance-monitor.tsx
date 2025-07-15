@@ -10,8 +10,51 @@ interface PerformanceMonitorProps {
 export function PerformanceMonitor({ debug = false }: PerformanceMonitorProps) {
   useEffect(() => {
     const handleMetric = (metric: Metric) => {
+      // Get rating based on thresholds
+      const getMetricRating = (name: string, value: number): 'good' | 'needs-improvement' | 'poor' => {
+        const thresholds = {
+          LCP: { good: 2500, poor: 4000 },
+          FCP: { good: 1800, poor: 3000 },
+          CLS: { good: 0.1, poor: 0.25 },
+          INP: { good: 200, poor: 500 },
+          TTFB: { good: 800, poor: 1800 }
+        };
+        
+        const threshold = thresholds[name as keyof typeof thresholds];
+        if (!threshold) return 'good';
+        
+        if (value <= threshold.good) return 'good';
+        if (value <= threshold.poor) return 'needs-improvement';
+        return 'poor';
+      };
+
+      const rating = getMetricRating(metric.name, metric.value);
+
       if (debug) {
+        const color = rating === 'good' ? 'green' : rating === 'needs-improvement' ? 'orange' : 'red';
+        console.log(
+          `%c${metric.name}: ${metric.value.toFixed(2)}${metric.name === 'CLS' ? '' : 'ms'} (${rating})`,
+          `color: ${color}; font-weight: bold;`
+        );
       }
+
+      // Send to our custom analytics endpoint
+      fetch('/api/analytics/web-vitals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          metric: {
+            name: metric.name,
+            value: metric.value,
+            id: metric.id,
+            delta: metric.delta
+          },
+          pathname: window.location.pathname,
+          userAgent: navigator.userAgent,
+          timestamp: Date.now(),
+          rating
+        })
+      }).catch(() => {}); // Silent fail for analytics
 
       // Send to analytics in production
       if (typeof window !== 'undefined' && 'gtag' in window) {
@@ -31,7 +74,7 @@ export function PerformanceMonitor({ debug = false }: PerformanceMonitorProps) {
           data: {
             value: metric.value,
             id: metric.id,
-            rating: metric.rating,
+            rating: rating,
           },
         });
       }

@@ -2,9 +2,22 @@ import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { validatePaginationParams } from '@repo/design-system/lib/pagination';
+import { generalApiLimit, checkRateLimit } from '@repo/security';
 
 export async function GET(request: NextRequest) {
   try {
+    // Check rate limit for admin operations
+    const rateLimitResult = await checkRateLimit(generalApiLimit, request);
+    if (!rateLimitResult.allowed) {
+      return NextResponse.json(
+        { error: rateLimitResult.error?.message || 'Rate limit exceeded' },
+        { 
+          status: 429,
+          headers: rateLimitResult.headers
+        }
+      );
+    }
+
     const user = await currentUser();
 
     // Verify user is authenticated and is admin

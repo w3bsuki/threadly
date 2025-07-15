@@ -3,6 +3,8 @@ import { database } from '@repo/database';
 import { showBetaFeature } from '@repo/feature-flags';
 import type { ReactNode } from 'react';
 import { AppLayout } from './components/app-layout';
+import { MobileBottomNav } from './components/mobile-bottom-nav';
+import { MobileInteractions } from './components/mobile-interactions';
 import { redirect } from 'next/navigation';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
@@ -55,14 +57,17 @@ const AuthenticatedLayout = async ({ children, params }: AppLayoutProperties) =>
 
   return (
     <Providers userId={user.id} dictionary={dictionary} locale={locale}>
-      <AppLayout isAdmin={isAdmin} dictionary={dictionary}>
-        {betaFeature && (
-          <div className="mb-4 rounded-lg bg-blue-500 p-3 text-center text-sm text-white">
-            Beta feature now available
-          </div>
-        )}
-        {children}
-      </AppLayout>
+      <MobileInteractions enableHaptic={true}>
+        <AppLayout isAdmin={isAdmin} dictionary={dictionary}>
+          {betaFeature && (
+            <div className="mb-4 rounded-lg bg-blue-500 p-3 text-center text-sm text-white">
+              Beta feature now available
+            </div>
+          )}
+          {children}
+        </AppLayout>
+        <MobileBottomNav dictionary={dictionary} />
+      </MobileInteractions>
     </Providers>
   );
 };

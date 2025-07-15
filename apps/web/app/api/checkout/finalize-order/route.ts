@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     // Retrieve the payment intent from Stripe
     const paymentIntent = await stripe.paymentIntents.retrieve(validatedData.paymentIntentId);
 
-    if (!paymentIntent || paymentIntent.metadata.userId !== dbUser.id) {
+    if (!paymentIntent || paymentIntent.metadata.buyerId !== dbUser.id) {
       return NextResponse.json({ error: 'Invalid payment intent' }, { status: 400 });
     }
 

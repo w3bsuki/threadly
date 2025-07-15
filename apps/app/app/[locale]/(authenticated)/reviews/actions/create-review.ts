@@ -11,6 +11,7 @@ const createReviewSchema = z.object({
   orderId: z.string().min(1, 'Order ID is required'),
   rating: z.number().min(1, 'Rating must be at least 1').max(5, 'Rating must be at most 5'),
   comment: z.string().min(1, 'Comment is required').max(1000, 'Comment must be less than 1000 characters'),
+  photoUrls: z.array(z.string().url()).max(5).optional(),
 });
 
 export async function createReview(input: z.infer<typeof createReviewSchema>) {
@@ -87,6 +88,7 @@ export async function createReview(input: z.infer<typeof createReviewSchema>) {
         reviewedId: order.sellerId, // Review is for the seller
         rating: validatedInput.rating,
         comment: validatedInput.comment,
+        photoUrls: validatedInput.photoUrls || [],
       },
       include: {
         User_Review_reviewerIdToUser: {

@@ -2,7 +2,7 @@ import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
-import { ProductForm } from './components/product-form';
+import { MultiStepWizard } from './components/multi-step-wizard';
 import { Alert, AlertDescription, AlertTitle } from '@repo/design-system/components';
 import { Button } from '@repo/design-system/components';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
@@ -18,13 +18,22 @@ export const metadata: Metadata = {
   description,
 };
 
-const SellNewItemPage = async () => {
+const SellNewItemPage = async ({ 
+  searchParams 
+}: { 
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) => {
   try {
     const user = await currentUser();
 
     if (!user) {
       redirect('/sign-in');
     }
+
+    // Get template and draft parameters
+    const awaitedSearchParams = await searchParams;
+    const templateId = typeof awaitedSearchParams.template === 'string' ? awaitedSearchParams.template : undefined;
+    const draftId = typeof awaitedSearchParams.draft === 'string' ? awaitedSearchParams.draft : undefined;
 
     // Check if user exists in database, create if not
     let dbUser = await database.user.findUnique({
@@ -93,6 +102,38 @@ const SellNewItemPage = async () => {
       );
     }
 
+    // Fetch template data, draft, and categories
+    const [selectedTemplate, draftProduct, templates, categories] = await Promise.all([
+      templateId ? database.productTemplate.findFirst({
+        where: { 
+          id: templateId,
+          userId: dbUser.id 
+        }
+      }) : null,
+      draftId ? database.product.findFirst({
+        where: {
+          id: draftId,
+          sellerId: dbUser.id,
+          status: 'DRAFT'
+        },
+        include: {
+          images: true
+        }
+      }) : null,
+      database.productTemplate.findMany({
+        where: { userId: dbUser.id },
+        orderBy: [
+          { isDefault: 'desc' },
+          { usageCount: 'desc' },
+          { createdAt: 'desc' }
+        ],
+        take: 10
+      }),
+      database.category.findMany({
+        orderBy: { name: 'asc' }
+      })
+    ]);
+
     // User has seller profile, show product form
     return (
       <div className="space-y-6">
@@ -108,8 +149,14 @@ const SellNewItemPage = async () => {
           </div>
         </div>
         
-        <div className="mx-auto w-full max-w-2xl">
-          <ProductForm userId={dbUser.id} />
+        <div className="mx-auto w-full max-w-4xl">
+          <MultiStepWizard 
+            userId={dbUser.id} 
+            selectedTemplate={selectedTemplate}
+            templates={templates}
+            categories={categories}
+            draftProduct={draftProduct}
+          />
         </div>
       </div>
     );

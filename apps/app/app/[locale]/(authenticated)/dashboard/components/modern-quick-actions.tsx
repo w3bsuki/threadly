@@ -38,7 +38,7 @@ function QuickAction({ href, icon: Icon, label, bgColor, iconColor, badge, isPri
   const content = (
     <div className={cn(
       "relative flex flex-col items-center justify-center p-4 rounded-lg border transition-all cursor-pointer touch-manipulation active:scale-95 duration-200",
-      "h-[88px] sm:h-[80px] md:h-[72px] lg:h-[64px]",
+      "min-h-[88px] sm:min-h-[80px] md:min-h-[72px] lg:min-h-[64px]",
       isPrimary
         ? "border-primary/20 bg-primary/5 hover:bg-primary/10 hover:border-primary/40"
         : "border-border bg-card hover:bg-accent hover:border-accent-foreground/20"

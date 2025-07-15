@@ -5,7 +5,6 @@ import { Badge } from '@repo/design-system/components';
 import { cn } from '@repo/design-system/lib/utils';
 import { 
   Home, 
-  Search, 
   MessageCircle, 
   ShoppingBag,
   User,
@@ -16,13 +15,15 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useCartStore } from '@repo/commerce';
 import { useState, useEffect } from 'react';
+import type { Dictionary } from '@repo/internationalization';
 
 interface MobileBottomNavProps {
   className?: string;
   unreadMessages?: number;
+  dictionary: Dictionary;
 }
 
-export function MobileBottomNav({ className, unreadMessages = 0 }: MobileBottomNavProps): React.JSX.Element {
+export function MobileBottomNav({ className, unreadMessages = 0, dictionary }: MobileBottomNavProps): React.JSX.Element {
   const pathname = usePathname();
   const { getTotalItems } = useCartStore();
   const [cartItems, setCartItems] = useState(0);
@@ -34,34 +35,34 @@ export function MobileBottomNav({ className, unreadMessages = 0 }: MobileBottomN
 
   const navItems = [
     {
-      href: '/',
+      href: '/dashboard',
       icon: Home,
-      label: 'Home',
-      badge: null,
-    },
-    {
-      href: '/browse',
-      icon: Search,
-      label: 'Browse',
+      label: dictionary.web.global.navigation.browse,
       badge: null,
     },
     {
       href: '/selling/new',
       icon: Plus,
-      label: 'Sell',
+      label: dictionary.web.global.navigation.sell,
       badge: null,
-      isSpecial: true, // Different styling for primary action
+      isSpecial: true,
+    },
+    {
+      href: '/buying/orders',
+      icon: ShoppingBag,
+      label: dictionary.dashboard.navigation.orders,
+      badge: null,
     },
     {
       href: '/messages',
       icon: MessageCircle,
-      label: 'Messages',
+      label: dictionary.dashboard.navigation.messages,
       badge: unreadMessages > 0 ? unreadMessages : null,
     },
     {
       href: '/profile',
       icon: User,
-      label: 'Profile',
+      label: dictionary.dashboard.navigation.profile,
       badge: null,
     },
   ];
@@ -171,7 +172,7 @@ export function MobileBottomNav({ className, unreadMessages = 0 }: MobileBottomN
 }
 
 // Secondary actions bottom sheet trigger (for less common actions)
-export function SecondaryActionsNav(): React.JSX.Element {
+export function SecondaryActionsNav({ dictionary }: { dictionary: Dictionary }): React.JSX.Element {
   const { getTotalItems } = useCartStore();
   const [cartItems, setCartItems] = useState(0);
 
@@ -183,13 +184,13 @@ export function SecondaryActionsNav(): React.JSX.Element {
     {
       href: '/buying/cart',
       icon: ShoppingBag, 
-      label: 'Cart',
+      label: dictionary.web.global.navigation.cart || 'Cart',
       badge: cartItems > 0 ? cartItems : null,
     },
     {
       href: '/favorites',
       icon: Heart,
-      label: 'Favorites',
+      label: dictionary.web.global.navigation.favorites || 'Favorites',
       badge: null,
     },
   ];

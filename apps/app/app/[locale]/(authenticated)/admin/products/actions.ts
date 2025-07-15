@@ -5,6 +5,8 @@ import { database } from '@repo/database';
 import { revalidatePath } from 'next/cache';
 import { log } from '@repo/observability/server';
 import { randomUUID } from 'crypto';
+import { currentUser } from '@repo/auth/server';
+import { BulkOperationType, BulkOperationStatus } from '@repo/database';
 
 export async function approveProduct(productId: string) {
   const isModerator = await canModerate();
@@ -201,4 +203,188 @@ export async function bulkUpdateProducts({
   } catch (error) {
     throw new Error('Failed to update products');
   }
+}
+
+export async function bulkUpdateSellerProducts({
+  productIds,
+  operation,
+  data,
+}: {
+  productIds: string[];
+  operation: BulkOperationType;
+  data: any;
+}) {
+  const user = await currentUser();
+  if (!user) {
+    throw new Error('Unauthorized');
+  }
+
+  const dbUser = await database.user.findUnique({
+    where: { clerkId: user.id },
+    select: { id: true }
+  });
+
+  if (!dbUser) {
+    throw new Error('User not found');
+  }
+
+  // Verify all products belong to the seller
+  const products = await database.product.findMany({
+    where: { 
+      id: { in: productIds },
+      sellerId: dbUser.id
+    },
+    select: { id: true, title: true }
+  });
+
+  if (products.length !== productIds.length) {
+    throw new Error('Some products do not belong to you');
+  }
+
+  // Create bulk operation record
+  const bulkOperation = await database.bulkOperation.create({
+    data: {
+      userId: dbUser.id,
+      type: operation,
+      status: 'PENDING',
+      totalItems: productIds.length,
+      parameters: {
+        productIds,
+        operation,
+        data
+      }
+    }
+  });
+
+  try {
+    let updateData: any = {};
+    let results = { success: 0, errors: 0, skipped: 0 };
+
+    switch (operation) {
+      case 'PRICE_UPDATE':
+        updateData = { price: data.price };
+        break;
+      case 'STATUS_CHANGE':
+        updateData = { status: data.status };
+        break;
+      case 'CATEGORY_UPDATE':
+        updateData = { categoryId: data.categoryId };
+        break;
+      case 'CONDITION_UPDATE':
+        updateData = { condition: data.condition };
+        break;
+      case 'BRAND_UPDATE':
+        updateData = { brand: data.brand };
+        break;
+      case 'SIZE_UPDATE':
+        updateData = { size: data.size };
+        break;
+      case 'COLOR_UPDATE':
+        updateData = { color: data.color };
+        break;
+      default:
+        throw new Error('Invalid operation type');
+    }
+
+    // Process each product individually for better error tracking
+    for (const product of products) {
+      try {
+        await database.product.update({
+          where: { id: product.id },
+          data: updateData
+        });
+        results.success++;
+      } catch (error) {
+        log.error(`Failed to update product ${product.id}:`, error);
+        results.errors++;
+      }
+    }
+
+    // Update bulk operation status
+    await database.bulkOperation.update({
+      where: { id: bulkOperation.id },
+      data: {
+        status: results.errors > 0 ? 'COMPLETED' : 'COMPLETED',
+        processedItems: results.success + results.errors,
+        successCount: results.success,
+        errorCount: results.errors,
+        completedAt: new Date(),
+        errors: results.errors > 0 ? { details: 'Some items failed to update' } : null
+      }
+    });
+
+    revalidatePath('/selling/listings');
+    return { 
+      success: true, 
+      results,
+      operationId: bulkOperation.id,
+      message: `Bulk update: ${results.success} successful, ${results.errors} errors`
+    };
+
+  } catch (error) {
+    // Mark operation as failed
+    await database.bulkOperation.update({
+      where: { id: bulkOperation.id },
+      data: {
+        status: 'FAILED',
+        errors: { error: error instanceof Error ? error.message : 'Unknown error' }
+      }
+    });
+    
+    log.error('Bulk operation failed:', error);
+    throw new Error('Failed to perform bulk update');
+  }
+}
+
+export async function getBulkOperationStatus(operationId: string) {
+  const user = await currentUser();
+  if (!user) {
+    throw new Error('Unauthorized');
+  }
+
+  const dbUser = await database.user.findUnique({
+    where: { clerkId: user.id },
+    select: { id: true }
+  });
+
+  if (!dbUser) {
+    throw new Error('User not found');
+  }
+
+  const operation = await database.bulkOperation.findFirst({
+    where: {
+      id: operationId,
+      userId: dbUser.id
+    }
+  });
+
+  if (!operation) {
+    throw new Error('Operation not found');
+  }
+
+  return operation;
+}
+
+export async function getUserBulkOperations(limit = 10) {
+  const user = await currentUser();
+  if (!user) {
+    throw new Error('Unauthorized');
+  }
+
+  const dbUser = await database.user.findUnique({
+    where: { clerkId: user.id },
+    select: { id: true }
+  });
+
+  if (!dbUser) {
+    throw new Error('User not found');
+  }
+
+  const operations = await database.bulkOperation.findMany({
+    where: { userId: dbUser.id },
+    orderBy: { createdAt: 'desc' },
+    take: limit
+  });
+
+  return operations;
 }

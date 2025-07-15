@@ -13,7 +13,7 @@ interface MetricCardProps {
 
 function MetricCard({ title, value, icon: Icon, iconColor, iconBg }: MetricCardProps) {
   return (
-    <Card className="relative overflow-hidden transition-all hover:shadow-md min-h-[80px] max-h-[80px] sm:min-h-[100px] sm:max-h-[100px] lg:min-h-[120px] lg:max-h-none">
+    <Card className="relative overflow-hidden transition-all hover:shadow-md min-h-[80px] sm:min-h-[100px] lg:min-h-[120px] touch-manipulation">
       <CardContent className="p-3 sm:p-4 lg:p-6 h-full flex flex-col justify-between">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
@@ -75,7 +75,7 @@ export function ModernDashboardStats({ metrics, dictionary }: ModernDashboardSta
   ];
 
   return (
-    <div className="grid gap-2 grid-cols-2 lg:gap-4 lg:grid-cols-4">
+    <div className="grid gap-3 grid-cols-2 lg:gap-4 lg:grid-cols-4">
       {stats.map((stat, index) => (
         <MetricCard 
           key={index} 

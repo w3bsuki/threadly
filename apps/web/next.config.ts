@@ -10,7 +10,6 @@ let nextConfig: NextConfig = withToolbar(config);
 // Performance optimizations
 nextConfig.experimental = {
   ...nextConfig.experimental,
-  optimizeCss: true,
   optimizePackageImports: [
     '@repo/design-system',
     '@repo/database',

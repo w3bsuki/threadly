@@ -4,6 +4,7 @@ import { generalApiLimit, checkRateLimit } from '@repo/security';
 import { NextRequest, NextResponse } from 'next/server';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
+import { getCacheService } from '@repo/cache';
 
 export async function GET(request: NextRequest) {
   try {
@@ -66,59 +67,71 @@ export async function GET(request: NextRequest) {
     }
 
     const searchTerm = query.toLowerCase().trim();
+    const cache = getCacheService();
     
-    // Search products by title, brand, description, and category
-    const products = await database.product.findMany({
-      where: {
-        status: 'AVAILABLE',
-        OR: [
-          {
-            title: {
-              contains: searchTerm,
-            },
+    // Create cache key for search results
+    const cacheKey = `search:${searchTerm}`;
+    
+    // Use cache-aside pattern for search results
+    const products = await cache.remember(
+      cacheKey,
+      async () => {
+        // Search products by title, brand, description, and category
+        return await database.product.findMany({
+          where: {
+            status: 'AVAILABLE',
+            OR: [
+              {
+                title: {
+                  contains: searchTerm,
+                },
+              },
+              {
+                brand: {
+                  contains: searchTerm,
+                },
+              },
+              {
+                description: {
+                  contains: searchTerm,
+                },
+              },
+              {
+                category: {
+                  name: {
+                    contains: searchTerm,
+                  },
+                },
+              },
+            ],
           },
-          {
-            brand: {
-              contains: searchTerm,
+          include: {
+            images: {
+              orderBy: { displayOrder: 'asc' },
+              take: 1,
             },
-          },
-          {
-            description: {
-              contains: searchTerm,
+            seller: {
+              select: {
+                firstName: true,
+                lastName: true,
+              },
             },
-          },
-          {
             category: {
-              name: {
-                contains: searchTerm,
+              select: {
+                name: true,
               },
             },
           },
-        ],
+          orderBy: [
+            { views: 'desc' },
+            { createdAt: 'desc' },
+          ],
+          take: 50, // Limit results
+        });
       },
-      include: {
-        images: {
-          orderBy: { displayOrder: 'asc' },
-          take: 1,
-        },
-        seller: {
-          select: {
-            firstName: true,
-            lastName: true,
-          },
-        },
-        category: {
-          select: {
-            name: true,
-          },
-        },
-      },
-      orderBy: [
-        { views: 'desc' },
-        { createdAt: 'desc' },
-      ],
-      take: 50, // Limit results
-    });
+      60, // 1 minute cache for search results
+      ['products', 'search']
+    );
 
     return NextResponse.json(products);
   } catch (error) {

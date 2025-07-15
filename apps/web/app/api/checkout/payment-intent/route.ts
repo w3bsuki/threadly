@@ -4,6 +4,7 @@ import { database } from '@repo/database';
 import { z } from 'zod';
 import { log, logError } from '@repo/observability/server';
 import { stripe, calculatePlatformFee, isStripeConfigured } from '@repo/payments';
+import { paymentRateLimit, checkRateLimit } from '@repo/security';
 
 const createPaymentIntentSchema = z.object({
   items: z.array(z.object({
@@ -21,6 +22,18 @@ const createPaymentIntentSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    // Check rate limit for payment processing
+    const rateLimitResult = await checkRateLimit(paymentRateLimit, request);
+    if (!rateLimitResult.allowed) {
+      return NextResponse.json(
+        { error: rateLimitResult.error?.message || 'Rate limit exceeded' },
+        { 
+          status: 429,
+          headers: rateLimitResult.headers
+        }
+      );
+    }
+
     // Check if Stripe is configured
     if (!isStripeConfigured()) {
       return NextResponse.json(

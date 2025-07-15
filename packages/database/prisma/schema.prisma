@@ -170,6 +170,7 @@ model Order {
   Address                   Address     @relation(fields: [shippingAddressId], references: [id])
   Payment                   Payment?
   Review                    Review?
+  FinancialTransaction      FinancialTransaction[]
 
   @@index([amount])
   @@index([buyerId])
@@ -213,6 +214,7 @@ model Payout {
   processedAt DateTime?
   processedBy String?
   User        User         @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  FinancialTransaction FinancialTransaction[]
 
   @@index([requestedAt])
   @@index([sellerId])
@@ -238,11 +240,18 @@ model Product {
   cartItems     CartItem[] @relation("cartItems")
   conversations Conversation[]
   favorites     Favorite[] @relation("favorites")
+  priceAlerts   PriceAlert[] @relation("priceAlerts")
   orders        Order[]
   category      Category       @relation(fields: [categoryId], references: [id])
   seller        User           @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   images        ProductImage[] @relation("images")
   reports       Report[]
+  analytics     ProductAnalytics? @relation("analytics")
+  featuredProduct FeaturedProduct?
+  discountCodes   DiscountCode[] @relation("DiscountProducts")
+  userInteractions UserInteraction[]
+  similarityFrom   ProductSimilarity[] @relation("ProductSimilarityFrom")
+  similarityTo     ProductSimilarity[] @relation("ProductSimilarityTo")
 
   @@index([brand])
   @@index([categoryId])
@@ -307,14 +316,20 @@ model Review {
   reviewedId                   String
   rating                       Int
   comment                      String?
+  photoUrls                    String[] @default([])
+  helpfulCount                 Int      @default(0)
   createdAt                    DateTime @default(now())
+  updatedAt                    DateTime @updatedAt
   Order                        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   User_Review_reviewedIdToUser User     @relation("Review_reviewedIdToUser", fields: [reviewedId], references: [id])
   User_Review_reviewerIdToUser User     @relation("Review_reviewerIdToUser", fields: [reviewerId], references: [id])
+  ReviewVote                   ReviewVote[]
 
   @@index([rating])
   @@index([reviewedId])
   @@index([reviewerId])
+  @@index([helpfulCount])
+  @@index([createdAt])
 }
 
 model SavedSearch {
@@ -395,6 +410,7 @@ model User {
   Conversation_Conversation_buyerIdToUser  Conversation[]   @relation("Conversation_buyerIdToUser")
   Conversation_Conversation_sellerIdToUser Conversation[]   @relation("Conversation_sellerIdToUser")
   Favorite                                 Favorite[]
+  PriceAlert                               PriceAlert[]
   Follow_Follow_followerIdToUser           Follow[]         @relation("Follow_followerIdToUser")
   Follow_Follow_followingIdToUser          Follow[]         @relation("Follow_followingIdToUser")
   Message                                  Message[]
@@ -411,6 +427,18 @@ model User {
   SearchHistory                            SearchHistory[]
   SellerProfile                            SellerProfile?
   UserPreferences                          UserPreferences?
+  BulkOperation                            BulkOperation[]
+  ProductTemplate                          ProductTemplate[]
+  InventoryAlert                           InventoryAlert[]
+  ReviewVote                               ReviewVote[]
+  FinancialTransaction                     FinancialTransaction[]
+  FinancialSummary                         FinancialSummary[]
+  TaxReport                                TaxReport[]
+  DiscountCode                             DiscountCode[]
+  UsedDiscountCode                         UsedDiscountCode[]
+  UserInteraction                          UserInteraction[]
+  UserPreference                           UserPreference[]
+  RecommendationCache                      RecommendationCache[]
 
   @@index([clerkId])
   @@index([email])
@@ -478,7 +506,28 @@ enum PayoutStatus {
   CANCELLED
 }
 
+model PriceAlert {
+  id            String    @id @default(cuid())
+  userId        String
+  productId     String
+  targetPrice   Decimal   @db.Decimal(10, 2)
+  alertEnabled  Boolean   @default(true)
+  lastAlertSent DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation("priceAlerts", fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([productId])
+  @@index([alertEnabled])
+  @@index([targetPrice])
+}
+
 enum ProductStatus {
+  DRAFT
   AVAILABLE
   SOLD
   RESERVED
@@ -508,4 +557,395 @@ enum UserRole {
   USER
   ADMIN
   MODERATOR
+}
+
+model BulkOperation {
+  id           String              @id @default(cuid())
+  userId       String
+  type         BulkOperationType
+  status       BulkOperationStatus @default(PENDING)
+  totalItems   Int
+  processedItems Int               @default(0)
+  successCount Int                 @default(0)
+  errorCount   Int                 @default(0)
+  errors       Json?
+  parameters   Json
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  completedAt  DateTime?
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model ProductTemplate {
+  id           String   @id @default(cuid())
+  userId       String
+  name         String
+  description  String?
+  category     String?
+  condition    Condition?
+  brand        String?
+  size         String?
+  color        String?
+  basePrice    Decimal? @db.Decimal(10, 2)
+  tags         String[]
+  metadata     Json?
+  isDefault    Boolean  @default(false)
+  usageCount   Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isDefault])
+  @@index([usageCount])
+}
+
+model InventoryAlert {
+  id              String               @id @default(cuid())
+  userId          String
+  type            InventoryAlertType
+  threshold       Decimal?             @db.Decimal(10, 2)
+  condition       Json?
+  enabled         Boolean              @default(true)
+  lastTriggered   DateTime?
+  triggerCount    Int                  @default(0)
+  metadata        Json?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  user            User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, enabled])
+  @@index([type])
+  @@index([enabled])
+}
+
+model ProductAnalytics {
+  id                    String   @id @default(cuid())
+  productId             String   @unique
+  viewsToday            Int      @default(0)
+  viewsWeek             Int      @default(0)
+  viewsMonth            Int      @default(0)
+  favoritesToday        Int      @default(0)
+  favoritesWeek         Int      @default(0)
+  favoritesMonth        Int      @default(0)
+  messagesReceived      Int      @default(0)
+  priceViews            Int      @default(0)
+  categoryRank          Int?
+  lastViewedAt          DateTime?
+  peakViews             Int      @default(0)
+  peakViewsDate         DateTime?
+  conversionRate        Float?
+  averageTimeOnListing  Int?
+  bounceRate            Float?
+  updatedAt             DateTime @updatedAt
+  product               Product  @relation("analytics", fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([categoryRank])
+  @@index([peakViews])
+  @@index([conversionRate])
+  @@index([lastViewedAt])
+}
+
+enum BulkOperationType {
+  PRICE_UPDATE
+  STATUS_CHANGE
+  CATEGORY_UPDATE
+  BULK_DELETE
+  BULK_ARCHIVE
+  CONDITION_UPDATE
+  BRAND_UPDATE
+  SIZE_UPDATE
+  COLOR_UPDATE
+  BULK_FEATURE
+}
+
+enum BulkOperationStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum InventoryAlertType {
+  LOW_VIEWS
+  PRICE_DROP_OPPORTUNITY
+  UNDERPRICED_ITEM
+  LONG_UNSOLD
+  COMPETITOR_PRICE
+  SEASONAL_DEMAND
+  CATEGORY_TRENDING
+}
+
+model ReviewVote {
+  id        String   @id @default(cuid())
+  reviewId  String
+  userId    String
+  isHelpful Boolean
+  createdAt DateTime @default(now())
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([reviewId, userId])
+  @@index([reviewId])
+  @@index([userId])
+}
+
+model FinancialTransaction {
+  id              String                  @id @default(cuid())
+  userId          String
+  type            TransactionType
+  category        TransactionCategory
+  amount          Decimal                 @db.Decimal(10, 2)
+  currency        String                  @default("USD")
+  description     String?
+  orderId         String?
+  payoutId        String?
+  referenceId     String?
+  tax             Decimal?                @db.Decimal(10, 2)
+  fees            Decimal?                @db.Decimal(10, 2)
+  netAmount       Decimal                 @db.Decimal(10, 2)
+  createdAt       DateTime                @default(now())
+  processedAt     DateTime?
+  metadata        Json?
+  user            User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  order           Order?                  @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  payout          Payout?                 @relation(fields: [payoutId], references: [id], onDelete: SetNull)
+
+  @@index([userId, type])
+  @@index([userId, createdAt])
+  @@index([category])
+  @@index([orderId])
+  @@index([payoutId])
+}
+
+model FinancialSummary {
+  id                String   @id @default(cuid())
+  userId            String
+  period            String   // e.g., "2024-01", "2024-Q1", "2024"
+  periodType        PeriodType
+  totalRevenue      Decimal  @db.Decimal(10, 2)
+  totalExpenses     Decimal  @db.Decimal(10, 2)
+  totalFees         Decimal  @db.Decimal(10, 2)
+  totalTax          Decimal  @db.Decimal(10, 2)
+  netProfit         Decimal  @db.Decimal(10, 2)
+  totalTransactions Int
+  currency          String   @default("USD")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, period, periodType])
+  @@index([userId, periodType])
+  @@index([period])
+}
+
+model TaxReport {
+  id               String      @id @default(cuid())
+  userId           String
+  year             Int
+  quarter          Int?
+  totalIncome      Decimal     @db.Decimal(10, 2)
+  totalExpenses    Decimal     @db.Decimal(10, 2)
+  totalTax         Decimal     @db.Decimal(10, 2)
+  platformFees     Decimal     @db.Decimal(10, 2)
+  shippingCosts    Decimal     @db.Decimal(10, 2)
+  otherDeductions  Decimal     @db.Decimal(10, 2)
+  netIncome        Decimal     @db.Decimal(10, 2)
+  generatedAt      DateTime    @default(now())
+  reportUrl        String?
+  status           TaxReportStatus @default(DRAFT)
+  metadata         Json?
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, year, quarter])
+  @@index([userId, year])
+  @@index([status])
+}
+
+enum TransactionType {
+  SALE
+  REFUND
+  PAYOUT
+  FEE
+  ADJUSTMENT
+  EXPENSE
+}
+
+enum TransactionCategory {
+  PRODUCT_SALE
+  SHIPPING_INCOME
+  PLATFORM_FEE
+  PAYMENT_FEE
+  SHIPPING_EXPENSE
+  PACKAGING_EXPENSE
+  MARKETING_EXPENSE
+  OTHER_EXPENSE
+  REFUND_ISSUED
+  REFUND_RECEIVED
+  PAYOUT_RECEIVED
+  TAX_COLLECTED
+  TAX_PAID
+}
+
+enum PeriodType {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
+}
+
+enum TaxReportStatus {
+  DRAFT
+  FINAL
+  SUBMITTED
+  AMENDED
+}
+
+model DiscountCode {
+  id               String           @id @default(cuid())
+  code             String           @unique
+  description      String?
+  type             DiscountType
+  value            Decimal          @db.Decimal(10, 2)
+  minimumPurchase  Decimal?         @db.Decimal(10, 2)
+  maxUses          Int?
+  currentUses      Int              @default(0)
+  startDate        DateTime         @default(now())
+  endDate          DateTime?
+  isActive         Boolean          @default(true)
+  applicableToAll  Boolean          @default(true)
+  sellerId         String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  seller           User?            @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  usedCodes        UsedDiscountCode[]
+  products         Product[]        @relation("DiscountProducts")
+
+  @@index([code])
+  @@index([sellerId])
+  @@index([isActive])
+  @@index([startDate, endDate])
+}
+
+model UsedDiscountCode {
+  id             String       @id @default(cuid())
+  discountCodeId String
+  userId         String
+  orderId        String?
+  usedAt         DateTime     @default(now())
+  savedAmount    Decimal      @db.Decimal(10, 2)
+  discountCode   DiscountCode @relation(fields: [discountCodeId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([discountCodeId, userId, orderId])
+  @@index([userId])
+  @@index([discountCodeId])
+}
+
+model FeaturedProduct {
+  id          String   @id @default(cuid())
+  productId   String
+  featuredAt  DateTime @default(now())
+  featuredUntil DateTime
+  position    Int      @default(0)
+  impressions Int      @default(0)
+  clicks      Int      @default(0)
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId])
+  @@index([featuredUntil])
+  @@index([position])
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+  FREE_SHIPPING
+}
+
+model UserInteraction {
+  id          String          @id @default(cuid())
+  userId      String
+  productId   String
+  type        InteractionType
+  score       Float           @default(1.0)
+  duration    Int?            // Time spent in seconds
+  metadata    Json?
+  createdAt   DateTime        @default(now())
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product     Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId, type])
+  @@index([userId])
+  @@index([productId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+model ProductSimilarity {
+  id              String   @id @default(cuid())
+  productId       String
+  similarProductId String
+  similarity      Float    // 0.0 to 1.0
+  reason          String[] // ["same_category", "similar_price", "same_brand"]
+  updatedAt       DateTime @updatedAt
+  product         Product  @relation("ProductSimilarityFrom", fields: [productId], references: [id], onDelete: Cascade)
+  similarProduct  Product  @relation("ProductSimilarityTo", fields: [similarProductId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, similarProductId])
+  @@index([productId])
+  @@index([similarProductId])
+  @@index([similarity])
+}
+
+model UserPreference {
+  id            String   @id @default(cuid())
+  userId        String
+  preferenceKey String   // "preferred_brands", "size_preference", "color_preference"
+  value         Json
+  weight        Float    @default(1.0)
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, preferenceKey])
+  @@index([userId])
+}
+
+model RecommendationCache {
+  id                String   @id @default(cuid())
+  userId            String
+  recommendationType RecommendationType
+  recommendations   Json     // Array of product IDs with scores
+  expiresAt         DateTime
+  createdAt         DateTime @default(now())
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, recommendationType])
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+enum InteractionType {
+  VIEW
+  FAVORITE
+  CART_ADD
+  PURCHASE
+  SHARE
+  REVIEW
+  SEARCH_CLICK
+}
+
+enum RecommendationType {
+  PERSONALIZED
+  TRENDING
+  SIMILAR_ITEMS
+  FREQUENTLY_BOUGHT_TOGETHER
+  BASED_ON_HISTORY
+  NEW_FOR_YOU
 }

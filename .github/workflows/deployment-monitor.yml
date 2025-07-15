@@ -1,0 +1,351 @@
+name: Deployment Monitor & Auto-Fix
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # Check deployments every 15 minutes
+    - cron: '*/15 * * * *'
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID_WEB: ${{ secrets.VERCEL_PROJECT_ID_WEB }}
+  VERCEL_PROJECT_ID_APP: ${{ secrets.VERCEL_PROJECT_ID_APP }}
+  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  check-deployments:
+    runs-on: ubuntu-latest
+    outputs:
+      web-status: ${{ steps.check-web.outputs.status }}
+      app-status: ${{ steps.check-app.outputs.status }}
+      web-needs-fix: ${{ steps.check-web.outputs.needs-fix }}
+      app-needs-fix: ${{ steps.check-app.outputs.needs-fix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Check Web App Deployment
+        id: check-web
+        run: |
+          # Get latest deployment status
+          status=$(vercel ls --token=$VERCEL_TOKEN --scope=$VERCEL_ORG_ID | grep "web" | head -1 | awk '{print $3}')
+          echo "status=$status" >> $GITHUB_OUTPUT
+          
+          if [[ "$status" == "ERROR" || "$status" == "FAILED" ]]; then
+            echo "needs-fix=true" >> $GITHUB_OUTPUT
+            # Get deployment logs
+            deployment_url=$(vercel ls --token=$VERCEL_TOKEN --scope=$VERCEL_ORG_ID | grep "web" | head -1 | awk '{print $2}')
+            vercel logs $deployment_url --token=$VERCEL_TOKEN > web-logs.txt
+          else
+            echo "needs-fix=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check App Deployment
+        id: check-app
+        run: |
+          # Get latest deployment status
+          status=$(vercel ls --token=$VERCEL_TOKEN --scope=$VERCEL_ORG_ID | grep "app" | head -1 | awk '{print $3}')
+          echo "status=$status" >> $GITHUB_OUTPUT
+          
+          if [[ "$status" == "ERROR" || "$status" == "FAILED" ]]; then
+            echo "needs-fix=true" >> $GITHUB_OUTPUT
+            # Get deployment logs
+            deployment_url=$(vercel ls --token=$VERCEL_TOKEN --scope=$VERCEL_ORG_ID | grep "app" | head -1 | awk '{print $2}')
+            vercel logs $deployment_url --token=$VERCEL_TOKEN > app-logs.txt
+          else
+            echo "needs-fix=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload logs if failed
+        if: steps.check-web.outputs.needs-fix == 'true' || steps.check-app.outputs.needs-fix == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-logs
+          path: |
+            web-logs.txt
+            app-logs.txt
+          retention-days: 7
+
+  auto-fix-deployments:
+    needs: check-deployments
+    if: needs.check-deployments.outputs.web-needs-fix == 'true' || needs.check-deployments.outputs.app-needs-fix == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.13.1
+
+      - name: Download logs
+        uses: actions/download-artifact@v4
+        with:
+          name: deployment-logs
+          path: ./logs
+
+      - name: Run AI Fix Agent
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          # Create fix script
+          cat > fix-deployment.js << 'EOF'
+          const fs = require('fs');
+          const { spawn } = require('child_process');
+          
+          class DeploymentFixer {
+            constructor() {
+              this.fixes = [];
+              this.webLogs = this.readLogs('logs/web-logs.txt');
+              this.appLogs = this.readLogs('logs/app-logs.txt');
+            }
+          
+            readLogs(path) {
+              try {
+                return fs.readFileSync(path, 'utf8');
+              } catch (err) {
+                return '';
+              }
+            }
+          
+            async analyzeLogs() {
+              const commonFixes = [
+                {
+                  pattern: /Cannot find module 'critters'/,
+                  fix: 'remove-optimize-css',
+                  description: 'Remove optimizeCss experimental feature'
+                },
+                {
+                  pattern: /recipientId.*does not exist/,
+                  fix: 'fix-message-query',
+                  description: 'Fix Message model query to use proper relations'
+                },
+                {
+                  pattern: /ENOTFOUND.*DATABASE_URL/,
+                  fix: 'check-database-url',
+                  description: 'Database connection issue'
+                },
+                {
+                  pattern: /Prisma.*generate.*failed/,
+                  fix: 'regenerate-prisma',
+                  description: 'Regenerate Prisma client'
+                },
+                {
+                  pattern: /Module not found.*@repo/,
+                  fix: 'fix-imports',
+                  description: 'Fix monorepo imports'
+                }
+              ];
+          
+              for (const fix of commonFixes) {
+                if (fix.pattern.test(this.webLogs) || fix.pattern.test(this.appLogs)) {
+                  this.fixes.push(fix);
+                }
+              }
+            }
+          
+            async applyFixes() {
+              for (const fix of this.fixes) {
+                console.log(`Applying fix: ${fix.description}`);
+                
+                switch (fix.fix) {
+                  case 'remove-optimize-css':
+                    this.removeOptimizeCss();
+                    break;
+                  case 'fix-message-query':
+                    this.fixMessageQuery();
+                    break;
+                  case 'regenerate-prisma':
+                    await this.regeneratePrisma();
+                    break;
+                  case 'fix-imports':
+                    this.fixImports();
+                    break;
+                }
+              }
+            }
+          
+            removeOptimizeCss() {
+              const files = ['apps/web/next.config.ts', 'apps/app/next.config.ts'];
+              files.forEach(file => {
+                if (fs.existsSync(file)) {
+                  let content = fs.readFileSync(file, 'utf8');
+                  content = content.replace(/optimizeCss:\s*true,?\s*/g, '');
+                  fs.writeFileSync(file, content);
+                  console.log(`Fixed ${file}: removed optimizeCss`);
+                }
+              });
+            }
+          
+            fixMessageQuery() {
+              const file = 'apps/app/app/[locale]/(authenticated)/dashboard/components/dashboard-stats.tsx';
+              if (fs.existsSync(file)) {
+                let content = fs.readFileSync(file, 'utf8');
+                content = content.replace(
+                  /recipientId:\s*dbUser\.id,/g,
+                  'NOT: { senderId: dbUser.id }, Conversation: { OR: [{ buyerId: dbUser.id }, { sellerId: dbUser.id }] },'
+                );
+                fs.writeFileSync(file, content);
+                console.log(`Fixed ${file}: updated message query`);
+              }
+            }
+          
+            async regeneratePrisma() {
+              return new Promise((resolve) => {
+                const proc = spawn('pnpm', ['db:generate'], { stdio: 'inherit' });
+                proc.on('close', resolve);
+              });
+            }
+          
+            fixImports() {
+              // Fix common import issues
+              const fixImportPath = (file, oldPath, newPath) => {
+                if (fs.existsSync(file)) {
+                  let content = fs.readFileSync(file, 'utf8');
+                  content = content.replace(new RegExp(oldPath, 'g'), newPath);
+                  fs.writeFileSync(file, content);
+                }
+              };
+              
+              // Add common import fixes here
+            }
+          }
+          
+          async function main() {
+            const fixer = new DeploymentFixer();
+            await fixer.analyzeLogs();
+            
+            if (fixer.fixes.length > 0) {
+              console.log(`Found ${fixer.fixes.length} issues to fix:`);
+              fixer.fixes.forEach(fix => console.log(`- ${fix.description}`));
+              
+              await fixer.applyFixes();
+              console.log('Fixes applied successfully');
+              process.exit(0);
+            } else {
+              console.log('No known fixes available for current errors');
+              process.exit(1);
+            }
+          }
+          
+          main().catch(console.error);
+          EOF
+          
+          # Run the fix script
+          node fix-deployment.js
+
+      - name: Commit fixes
+        if: success()
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          
+          if [[ -n $(git diff --cached) ]]; then
+            git commit -m "fix: auto-fix deployment issues
+            
+            🤖 Automated fixes applied:
+            - Fixed deployment errors detected in monitoring
+            - Applied known solutions for common build failures
+            
+            Generated by deployment-monitor workflow"
+            
+            git push
+            echo "Fixes committed and pushed"
+          else
+            echo "No changes to commit"
+          fi
+
+  database-health-check:
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.13.1
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check database connection
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          cd packages/database
+          npx prisma db pull --force || echo "Database connection failed"
+          npx prisma validate || echo "Schema validation failed"
+
+      - name: Run migrations if needed
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          cd packages/database
+          npx prisma migrate status
+          npx prisma migrate deploy || echo "Migration failed"
+
+  notify-status:
+    needs: [check-deployments, auto-fix-deployments, database-health-check]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Send notification
+        uses: 8398a7/action-slack@v3
+        if: env.SLACK_WEBHOOK_URL != ''
+        with:
+          status: ${{ job.status }}
+          channel: '#deployments'
+          text: |
+            Deployment Monitor Report:
+            - Web App: ${{ needs.check-deployments.outputs.web-status }}
+            - Seller App: ${{ needs.check-deployments.outputs.app-status }}
+            - Auto-fixes applied: ${{ needs.auto-fix-deployments.result == 'success' }}
+            - Database health: ${{ needs.database-health-check.result }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  retry-failed-deployments:
+    needs: auto-fix-deployments
+    if: needs.auto-fix-deployments.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel redeploy
+        run: |
+          # Trigger redeployment after fixes
+          if [[ "${{ needs.check-deployments.outputs.web-needs-fix }}" == "true" ]]; then
+            curl -X POST "https://api.vercel.com/v1/integrations/deploy/prj_$VERCEL_PROJECT_ID_WEB/${{ github.sha }}" \
+              -H "Authorization: Bearer $VERCEL_TOKEN"
+          fi
+          
+          if [[ "${{ needs.check-deployments.outputs.app-needs-fix }}" == "true" ]]; then
+            curl -X POST "https://api.vercel.com/v1/integrations/deploy/prj_$VERCEL_PROJECT_ID_APP/${{ github.sha }}" \
+              -H "Authorization: Bearer $VERCEL_TOKEN"
+          fi

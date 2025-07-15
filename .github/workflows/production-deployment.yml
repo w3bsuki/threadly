@@ -1,0 +1,334 @@
+name: Production Deployment with Health Checks
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID_WEB: ${{ secrets.VERCEL_PROJECT_ID_WEB }}
+  VERCEL_PROJECT_ID_APP: ${{ secrets.VERCEL_PROJECT_ID_APP }}
+  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+jobs:
+  pre-deployment-checks:
+    runs-on: ubuntu-latest
+    outputs:
+      should-deploy: ${{ steps.check.outputs.should-deploy }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.13.1
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run pre-deployment checks
+        id: check
+        run: |
+          # Check if build validation passed
+          echo "Checking build validation status..."
+          
+          # Run critical checks
+          pnpm db:generate
+          pnpm typecheck
+          
+          # Check database connectivity
+          cd packages/database
+          npx prisma validate
+          
+          echo "should-deploy=true" >> $GITHUB_OUTPUT
+
+  deploy-web:
+    needs: pre-deployment-checks
+    if: needs.pre-deployment-checks.outputs.should-deploy == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      deployment-url: ${{ steps.deploy.outputs.deployment-url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Deploy to Vercel
+        id: deploy
+        run: |
+          cd apps/web
+          vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+          vercel build --prod --token=$VERCEL_TOKEN
+          deployment_url=$(vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN)
+          echo "deployment-url=$deployment_url" >> $GITHUB_OUTPUT
+          echo "Web app deployed to: $deployment_url"
+
+  deploy-app:
+    needs: pre-deployment-checks
+    if: needs.pre-deployment-checks.outputs.should-deploy == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      deployment-url: ${{ steps.deploy.outputs.deployment-url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Deploy to Vercel
+        id: deploy
+        run: |
+          cd apps/app
+          vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+          vercel build --prod --token=$VERCEL_TOKEN
+          deployment_url=$(vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN)
+          echo "deployment-url=$deployment_url" >> $GITHUB_OUTPUT
+          echo "Seller app deployed to: $deployment_url"
+
+  run-migrations:
+    needs: [deploy-web, deploy-app]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.13.1
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run database migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          cd packages/database
+          npx prisma migrate deploy
+          npx prisma generate
+
+  health-checks:
+    needs: [deploy-web, deploy-app, run-migrations]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Web app health check
+        run: |
+          web_url="${{ needs.deploy-web.outputs.deployment-url }}"
+          echo "Checking web app health at: $web_url"
+          
+          max_attempts=10
+          attempt=1
+          
+          while [ $attempt -le $max_attempts ]; do
+            if curl -f -s "$web_url/api/health" > /dev/null; then
+              echo "✅ Web app is healthy"
+              break
+            else
+              echo "⏳ Attempt $attempt/$max_attempts failed, retrying in 30s..."
+              sleep 30
+              attempt=$((attempt + 1))
+            fi
+          done
+          
+          if [ $attempt -gt $max_attempts ]; then
+            echo "❌ Web app health check failed after $max_attempts attempts"
+            exit 1
+          fi
+
+      - name: Seller app health check
+        run: |
+          app_url="${{ needs.deploy-app.outputs.deployment-url }}"
+          echo "Checking seller app health at: $app_url"
+          
+          max_attempts=10
+          attempt=1
+          
+          while [ $attempt -le $max_attempts ]; do
+            if curl -f -s "$app_url/api/health" > /dev/null; then
+              echo "✅ Seller app is healthy"
+              break
+            else
+              echo "⏳ Attempt $attempt/$max_attempts failed, retrying in 30s..."
+              sleep 30
+              attempt=$((attempt + 1))
+            fi
+          done
+          
+          if [ $attempt -gt $max_attempts ]; then
+            echo "❌ Seller app health check failed after $max_attempts attempts"
+            exit 1
+          fi
+
+  smoke-tests:
+    needs: health-checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.13.1
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run smoke tests
+        env:
+          WEB_URL: ${{ needs.deploy-web.outputs.deployment-url }}
+          APP_URL: ${{ needs.deploy-app.outputs.deployment-url }}
+        run: |
+          # Create smoke test script
+          cat > smoke-test.js << 'EOF'
+          const https = require('https');
+          
+          const webUrl = process.env.WEB_URL;
+          const appUrl = process.env.APP_URL;
+          
+          const tests = [
+            { name: 'Web Homepage', url: webUrl },
+            { name: 'Web Search', url: `${webUrl}/search` },
+            { name: 'Web Products', url: `${webUrl}/products` },
+            { name: 'App Login', url: `${appUrl}/sign-in` },
+            { name: 'App Dashboard', url: `${appUrl}/dashboard` },
+          ];
+          
+          async function runTest(test) {
+            return new Promise((resolve) => {
+              const req = https.get(test.url, (res) => {
+                const success = res.statusCode >= 200 && res.statusCode < 400;
+                console.log(`${success ? '✅' : '❌'} ${test.name}: ${res.statusCode}`);
+                resolve(success);
+              });
+              
+              req.on('error', (err) => {
+                console.log(`❌ ${test.name}: ${err.message}`);
+                resolve(false);
+              });
+              
+              req.setTimeout(30000, () => {
+                console.log(`❌ ${test.name}: Timeout`);
+                resolve(false);
+              });
+            });
+          }
+          
+          async function runAllTests() {
+            const results = await Promise.all(tests.map(runTest));
+            const passed = results.filter(r => r).length;
+            console.log(`\n${passed}/${tests.length} tests passed`);
+            process.exit(passed === tests.length ? 0 : 1);
+          }
+          
+          runAllTests();
+          EOF
+          
+          node smoke-test.js
+
+  performance-monitoring:
+    needs: health-checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Lighthouse CI
+        run: npm install -g @lhci/cli@0.12.x
+
+      - name: Run Lighthouse on web app
+        env:
+          WEB_URL: ${{ needs.deploy-web.outputs.deployment-url }}
+        run: |
+          # Run Lighthouse performance audit
+          lighthouse --output json --output html --chrome-flags="--headless" "$WEB_URL" || true
+          
+          # Extract performance score
+          if [ -f "*.report.json" ]; then
+            performance_score=$(jq '.categories.performance.score * 100' *.report.json)
+            echo "Performance score: $performance_score"
+            
+            if [ "${performance_score%.*}" -lt 70 ]; then
+              echo "⚠️ Performance score is below 70"
+            else
+              echo "✅ Performance score is acceptable"
+            fi
+          fi
+
+  rollback-on-failure:
+    needs: [health-checks, smoke-tests]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Rollback deployment
+        run: |
+          echo "🔄 Deployment failed, initiating rollback..."
+          
+          # Get previous successful deployment
+          web_prev=$(vercel ls --token=$VERCEL_TOKEN --scope=$VERCEL_ORG_ID | grep "web" | grep "READY" | head -2 | tail -1 | awk '{print $1}')
+          app_prev=$(vercel ls --token=$VERCEL_TOKEN --scope=$VERCEL_ORG_ID | grep "app" | grep "READY" | head -2 | tail -1 | awk '{print $1}')
+          
+          if [[ -n "$web_prev" ]]; then
+            echo "Rolling back web app to: $web_prev"
+            vercel alias $web_prev --token=$VERCEL_TOKEN
+          fi
+          
+          if [[ -n "$app_prev" ]]; then
+            echo "Rolling back seller app to: $app_prev"
+            vercel alias $app_prev --token=$VERCEL_TOKEN
+          fi
+
+  notify-deployment:
+    needs: [deploy-web, deploy-app, health-checks, smoke-tests]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send deployment notification
+        uses: 8398a7/action-slack@v3
+        if: env.SLACK_WEBHOOK_URL != ''
+        with:
+          status: ${{ job.status }}
+          channel: '#deployments'
+          text: |
+            🚀 Production Deployment Complete!
+            
+            **Status**: ${{ job.status }}
+            **Commit**: ${{ github.sha }}
+            **Web App**: ${{ needs.deploy-web.outputs.deployment-url }}
+            **Seller App**: ${{ needs.deploy-app.outputs.deployment-url }}
+            
+            **Health Checks**: ${{ needs.health-checks.result }}
+            **Smoke Tests**: ${{ needs.smoke-tests.result }}
+            
+            View details: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Create deployment tag
+        if: success()
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          tag="deployment-$(date +%Y%m%d-%H%M%S)"
+          git tag -a "$tag" -m "Production deployment: ${{ github.sha }}"
+          git push origin "$tag"
