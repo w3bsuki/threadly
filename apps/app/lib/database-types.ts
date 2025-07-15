@@ -2,9 +2,13 @@
 // These should eventually be moved to the Prisma schema
 
 export type BulkOperationType = 
-  | 'UPDATE_STATUS'
-  | 'UPDATE_PRICE'
-  | 'UPDATE_INVENTORY'
+  | 'PRICE_UPDATE'
+  | 'STATUS_CHANGE'
+  | 'CATEGORY_UPDATE'
+  | 'CONDITION_UPDATE'
+  | 'BRAND_UPDATE'
+  | 'SIZE_UPDATE'
+  | 'COLOR_UPDATE'
   | 'DELETE'
   | 'ARCHIVE'
   | 'UNARCHIVE';
