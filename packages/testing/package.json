@@ -8,6 +8,10 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./setup": {
+      "types": "./dist/setup.d.ts",
+      "default": "./dist/setup.js"
+    },
     "./helpers": {
       "types": "./dist/helpers/index.d.ts",
       "default": "./dist/helpers/index.js"
