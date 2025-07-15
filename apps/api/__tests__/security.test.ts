@@ -1,12 +1,17 @@
 /**
  * Security Tests for API Routes
- * 
+ *
  * This test suite verifies that all critical security measures are in place
  * and functioning correctly.
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
-import { validateAndSanitizeInput, containsSQLInjection, containsXSS, validateFileUpload } from '../lib/security-utils';
+import { describe, expect, it } from 'vitest';
+import {
+  containsSQLInjection,
+  containsXSS,
+  validateAndSanitizeInput,
+  validateFileUpload,
+} from '../lib/security-utils';
 
 describe('Security Utils', () => {
   describe('Input Validation and Sanitization', () => {
@@ -14,13 +19,13 @@ describe('Security Utils', () => {
       const maliciousInputs = [
         "'; DROP TABLE users; --",
         "1' OR '1'='1",
-        "UNION SELECT * FROM passwords",
-        "; DELETE FROM products WHERE 1=1",
+        'UNION SELECT * FROM passwords',
+        '; DELETE FROM products WHERE 1=1',
       ];
 
-      maliciousInputs.forEach(input => {
+      for (const input of maliciousInputs) {
         expect(containsSQLInjection(input)).toBe(true);
-      });
+      }
     });
 
     it('should reject XSS patterns', () => {
@@ -32,9 +37,9 @@ describe('Security Utils', () => {
         'eval(document.cookie)',
       ];
 
-      xssInputs.forEach(input => {
+      for (const input of xssInputs) {
         expect(containsXSS(input)).toBe(true);
-      });
+      }
     });
 
     it('should sanitize valid input', () => {
@@ -74,24 +79,36 @@ describe('Security Utils', () => {
         { filename: 'avatar.webp', size: 500 * 1024, mimeType: 'image/webp' },
       ];
 
-      validFiles.forEach(file => {
-        const result = validateFileUpload(file.filename, file.size, file.mimeType);
+      for (const file of validFiles) {
+        const result = validateFileUpload(
+          file.filename,
+          file.size,
+          file.mimeType
+        );
         expect(result.isValid).toBe(true);
-      });
+      }
     });
 
     it('should reject dangerous file types', () => {
       const dangerousFiles = [
-        { filename: 'virus.exe', size: 1024, mimeType: 'application/x-executable' },
+        {
+          filename: 'virus.exe',
+          size: 1024,
+          mimeType: 'application/x-executable',
+        },
         { filename: 'script.php', size: 1024, mimeType: 'text/php' },
         { filename: 'payload.js', size: 1024, mimeType: 'text/javascript' },
         { filename: 'malware.bat', size: 1024, mimeType: 'application/bat' },
       ];
 
-      dangerousFiles.forEach(file => {
-        const result = validateFileUpload(file.filename, file.size, file.mimeType);
+      for (const file of dangerousFiles) {
+        const result = validateFileUpload(
+          file.filename,
+          file.size,
+          file.mimeType
+        );
         expect(result.isValid).toBe(false);
-      });
+      }
     });
 
     it('should reject oversized files', () => {
@@ -101,12 +118,18 @@ describe('Security Utils', () => {
         mimeType: 'image/jpeg',
       };
 
-      const result = validateFileUpload(oversizedFile.filename, oversizedFile.size, oversizedFile.mimeType);
+      const result = validateFileUpload(
+        oversizedFile.filename,
+        oversizedFile.size,
+        oversizedFile.mimeType
+      );
       expect(result.isValid).toBe(false);
       expect(result.error).toContain('too large');
     });
   });
 });
+
+const ARCJET_KEY_PATTERN = /^ajkey_/;
 
 describe('Security Configuration Tests', () => {
   it('should verify environment variables are properly configured', () => {
@@ -114,7 +137,7 @@ describe('Security Configuration Tests', () => {
     expect(process.env.DATABASE_URL).toBeDefined();
     expect(process.env.CLERK_SECRET_KEY).toBeDefined();
     expect(process.env.STRIPE_SECRET_KEY).toBeDefined();
-    
+
     // Test that webhook secret is not a placeholder
     if (process.env.STRIPE_WEBHOOK_SECRET) {
       expect(process.env.STRIPE_WEBHOOK_SECRET).not.toContain('placeholder');
@@ -124,11 +147,6 @@ describe('Security Configuration Tests', () => {
   it('should verify rate limiting is configured', () => {
     // Test that Arcjet key is available
     expect(process.env.ARCJET_KEY).toBeDefined();
-    expect(process.env.ARCJET_KEY).toMatch(/^ajkey_/);
+    expect(process.env.ARCJET_KEY).toMatch(ARCJET_KEY_PATTERN);
   });
 });
-
-// Integration tests would go here to test actual API endpoints
-// These would require a test database and proper setup
-
-export {};
