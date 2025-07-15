@@ -52,7 +52,7 @@ import {
 import { decimalToNumber } from '@repo/utils';
 import { CursorPagination, useCursorPagination } from '@repo/design-system/components/marketplace';
 import type { CursorPaginationResult } from '@repo/design-system/lib/pagination';
-import { BulkOperationType } from '@repo/database';
+import { BulkOperationType } from '@/lib/database-types';
 
 interface Product {
   id: string;

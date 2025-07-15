@@ -1,6 +1,6 @@
 import { ShoppingBag, Store, Repeat, CheckCircle } from 'lucide-react';
 import { cn } from '@repo/design-system/lib/utils';
-import type { UserPreferenceRole } from '@repo/database';
+import type { UserPreferenceRole } from '@/lib/database-types';
 
 interface RoleSelectionProps {
   selectedRole: UserPreferenceRole;

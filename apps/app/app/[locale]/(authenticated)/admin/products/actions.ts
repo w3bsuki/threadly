@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { log } from '@repo/observability/server';
 import { randomUUID } from 'crypto';
 import { currentUser } from '@repo/auth/server';
-import { BulkOperationType, BulkOperationStatus } from '@repo/database';
+import { BulkOperationType, BulkOperationStatus } from '@/lib/database-types';
 
 export async function approveProduct(productId: string) {
   const isModerator = await canModerate();

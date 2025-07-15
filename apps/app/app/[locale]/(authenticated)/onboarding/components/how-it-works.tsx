@@ -13,7 +13,7 @@ import {
   Shield,
   TrendingUp
 } from 'lucide-react';
-import type { UserPreferenceRole } from '@repo/database';
+import type { UserPreferenceRole } from '@/lib/database-types';
 
 interface HowItWorksProps {
   selectedRole: UserPreferenceRole;

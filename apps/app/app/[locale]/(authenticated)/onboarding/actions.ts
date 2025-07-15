@@ -1,7 +1,7 @@
 'use server';
 
 import { database } from '@repo/database';
-import type { UserPreferenceRole } from '@repo/database';
+import type { UserPreferenceRole } from '@/lib/database-types';
 import { revalidatePath } from 'next/cache';
 
 export async function getUserPreferences(clerkId: string) {

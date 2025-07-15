@@ -1,5 +1,5 @@
 import { database } from '@repo/database';
-import type { RecommendationType } from '@repo/database';
+import type { RecommendationType } from '@/lib/database-types';
 
 interface RecommendationRequest {
   userId: string;

@@ -12,7 +12,7 @@ import { BrandsSelection } from './brands-selection';
 import { LocationSelection } from './location-selection';
 import { HowItWorks } from './how-it-works';
 import { saveUserPreferences } from '../actions';
-import type { UserPreferenceRole } from '@repo/database';
+import type { UserPreferenceRole } from '@/lib/database-types';
 
 interface OnboardingWizardProps {
   userId: string;
