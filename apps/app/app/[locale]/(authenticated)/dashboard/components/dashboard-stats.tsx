@@ -1,110 +1,67 @@
 import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
-import { decimalToNumber } from '@repo/utils';
 import { getCacheService } from '@repo/cache';
 import type { Dictionary } from '@repo/internationalization';
-import type { Prisma } from '@repo/database';
+import { getSellerDashboardStats, type DashboardStats } from '../../../../../lib/queries/dashboard-stats';
 
 interface DashboardStatsProps {
   userId: string;
   dictionary: Dictionary;
 }
 
-interface DashboardMetrics {
-  activeListings: number;
-  totalRevenue: number;
-  completedSales: number;
-  unreadMessages: number;
-}
+async function getDashboardMetrics(userId: string): Promise<Partial<DashboardStats> & { unreadMessages: number }> {
+  try {
+    // Get database user
+    const dbUser = await database.user.findUnique({
+      where: { clerkId: userId },
+      select: { id: true }
+    });
 
-async function getDashboardMetrics(userId: string): Promise<DashboardMetrics> {
-  const cache = getCacheService();
-  const cacheKey = `dashboard:metrics:${userId}`;
-  
-  return await cache.remember(
-    cacheKey,
-    async () => {
-      // Get or create database user
-      let dbUser;
-      try {
-        dbUser = await database.user.findUnique({
-          where: { clerkId: userId },
-          select: { id: true }
-        });
-
-        if (!dbUser) {
-          // Create user if doesn't exist
-          dbUser = await database.user.create({
-            data: {
-              clerkId: userId,
-              email: '', // Will be updated by webhook
-              firstName: null,
-              lastName: null,
-            },
-            select: { id: true }
-          });
-        }
-      } catch (error) {
-        logError('Database error during user creation/lookup', error);
-        // Return default values on error
-        return {
-          activeListings: 0,
-          totalRevenue: 0,
-          completedSales: 0,
-          unreadMessages: 0,
-        };
-      }
-
-      // Define types for the query results
-      type OrderAggregateResult = Prisma.GetOrderAggregateType<{
-        _sum: { amount: true };
-        _count: true;
-      }>;
-
-      let activeListings = 0;
-      let totalSales: OrderAggregateResult = { _sum: { amount: null }, _count: 0 };
-      let unreadMessages = 0;
-
-      try {
-        // Optimized parallel queries
-        [activeListings, totalSales, unreadMessages] = await Promise.all([
-          database.product.count({
-            where: {
-              sellerId: dbUser.id,
-              status: 'AVAILABLE'
-            }
-          }),
-          database.order.aggregate({
-            where: {
-              sellerId: dbUser.id,
-              status: 'DELIVERED'
-            },
-            _sum: { amount: true },
-            _count: true
-          }),
-          // TODO: Implement unread messages count
-          Promise.resolve(0)
-        ]);
-      } catch (error) {
-        logError('Error fetching dashboard metrics', error);
-        // Return defaults on error
-        return {
-          activeListings: 0,
-          totalRevenue: 0,
-          completedSales: 0,
-          unreadMessages: 0,
-        };
-      }
-
+    if (!dbUser) {
+      // Create user if doesn't exist
+      const newUser = await database.user.create({
+        data: {
+          clerkId: userId,
+          email: '', // Will be updated by webhook
+          firstName: null,
+          lastName: null,
+        },
+        select: { id: true }
+      });
+      
+      // Return defaults for new user
       return {
-        activeListings,
-        totalRevenue: decimalToNumber(totalSales?._sum?.amount),
-        completedSales: totalSales?._count || 0,
-        unreadMessages,
+        totalRevenue: 0,
+        completedOrders: 0,
+        totalOrders: 0,
+        unreadMessages: 0,
       };
-    },
-    300 // Cache for 5 minutes
-  );
+    }
+
+    // Get optimized stats
+    const stats = await getSellerDashboardStats(dbUser.id);
+    
+    // Get unread messages count
+    const unreadMessages = await database.message.count({
+      where: {
+        recipientId: dbUser.id,
+        read: false
+      }
+    });
+
+    return {
+      ...stats,
+      unreadMessages,
+    };
+  } catch (error) {
+    logError('Error fetching dashboard metrics', error);
+    return {
+      totalRevenue: 0,
+      completedOrders: 0,
+      totalOrders: 0,
+      unreadMessages: 0,
+    };
+  }
 }
 
 export async function DashboardStats({ userId, dictionary }: DashboardStatsProps) {
@@ -133,7 +90,7 @@ export async function DashboardStats({ userId, dictionary }: DashboardStatsProps
         </div>
         <div className="mt-2">
           <p className="text-2xl font-bold text-foreground">
-            {metrics.completedSales}
+            {metrics.completedOrders || 0}
           </p>
         </div>
       </div>
@@ -146,7 +103,7 @@ export async function DashboardStats({ userId, dictionary }: DashboardStatsProps
         </div>
         <div className="mt-2">
           <p className="text-2xl font-bold text-foreground">
-            {metrics.activeListings}
+            {metrics.totalOrders || 0}
           </p>
         </div>
       </div>

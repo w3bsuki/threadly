@@ -59,6 +59,8 @@ export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './comp
 
 // Custom components
 export { ModeToggle } from './components/mode-toggle';
+export { OptimizedImage } from './components/optimized-image';
+export type { OptimizedImageProps } from './components/optimized-image';
 export { ServiceWorkerRegistration, useServiceWorker } from './components/ui/service-worker-registration';
 
 // Micro-interactions for enhanced UX

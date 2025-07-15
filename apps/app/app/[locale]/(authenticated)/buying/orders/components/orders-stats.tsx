@@ -1,41 +1,25 @@
-import { database } from '@repo/database';
 import { Card, CardContent } from '@repo/design-system/components';
-import { decimalToNumber } from '@repo/utils';
+import { getBuyerOrderStats } from '../../../../../../lib/queries/order-stats';
 
 interface OrdersStatsProps {
   userId: string;
 }
 
 export async function OrdersStats({ userId }: OrdersStatsProps) {
-  // Fetch orders for stats calculation
-  const orders = await database.order.findMany({
-    where: {
-      buyerId: userId,
-    },
-    select: {
-      id: true,
-      status: true,
-      amount: true,
-    },
-  });
+  const stats = await getBuyerOrderStats(userId);
 
-  if (orders.length === 0) {
+  if (stats.totalOrders === 0) {
     return null;
   }
 
-  const totalOrders = orders.length;
-  const deliveredOrders = orders.filter(o => o.status === 'DELIVERED').length;
-  const inProgressOrders = orders.filter(o => 
-    o.status === 'PENDING' || o.status === 'PAID' || o.status === 'SHIPPED'
-  ).length;
-  const totalSpent = orders.reduce((sum, o) => sum + decimalToNumber(o.amount), 0) / 100;
+  const inProgressOrders = stats.pendingOrders + stats.shippedOrders;
 
   return (
     <div className="grid gap-4 md:grid-cols-4 mt-6">
       <Card>
         <CardContent className="p-4">
           <div className="text-center">
-            <p className="text-2xl font-bold">{totalOrders}</p>
+            <p className="text-2xl font-bold">{stats.totalOrders}</p>
             <p className="text-sm text-muted-foreground">Total Orders</p>
           </div>
         </CardContent>
@@ -44,7 +28,7 @@ export async function OrdersStats({ userId }: OrdersStatsProps) {
       <Card>
         <CardContent className="p-4">
           <div className="text-center">
-            <p className="text-2xl font-bold">{deliveredOrders}</p>
+            <p className="text-2xl font-bold">{stats.deliveredOrders}</p>
             <p className="text-sm text-muted-foreground">Delivered</p>
           </div>
         </CardContent>
@@ -62,7 +46,7 @@ export async function OrdersStats({ userId }: OrdersStatsProps) {
       <Card>
         <CardContent className="p-4">
           <div className="text-center">
-            <p className="text-2xl font-bold">${totalSpent.toFixed(2)}</p>
+            <p className="text-2xl font-bold">${stats.totalSpent.toFixed(2)}</p>
             <p className="text-sm text-muted-foreground">Total Spent</p>
           </div>
         </CardContent>

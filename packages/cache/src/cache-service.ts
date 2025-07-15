@@ -2,15 +2,29 @@ import { getRedisCache } from './redis-cache';
 import { getMemoryCache } from './memory-cache';
 import { CACHE_KEYS, CACHE_TTL, CACHE_TAGS, type CacheConfig } from './types';
 
+interface CacheInterface {
+  get(key: string): Promise<unknown>;
+  set(key: string, value: unknown, options?: { ttl?: number; tags?: string[] }): Promise<void>;
+  del(key: string | string[]): Promise<void>;
+  mget?(keys: string[]): Promise<unknown[]>;
+  mset?(entries: Array<{ key: string; value: unknown; options?: { ttl?: number; tags?: string[] } }>): Promise<void>;
+  clear?(): Promise<void>;
+  invalidateByTag?(tag: string): Promise<void>;
+  invalidateByTags?(tags: string[]): Promise<void>;
+  isHealthy?(): Promise<boolean>;
+  remember<T>(key: string, fetcher: () => Promise<T>, options?: { ttl?: number; tags?: string[] }): Promise<T>;
+  getStats?(): Promise<unknown>;
+}
+
 export class MarketplaceCacheService {
-  private cache: any;
+  private cache: CacheInterface;
   private useMemoryCache: boolean = false;
+  public readonly TTL = CACHE_TTL;
 
   constructor(config?: CacheConfig) {
     try {
       if (config?.url && config?.token) {
         this.cache = getRedisCache(config);
-        console.log('[Cache] ✅ Connected to Redis cache at:', config.url);
       } else {
         throw new Error('Redis config missing');
       }
@@ -18,10 +32,6 @@ export class MarketplaceCacheService {
       // Fallback to memory cache
       this.cache = getMemoryCache();
       this.useMemoryCache = true;
-      console.warn('[Cache] ⚠️  WARNING: Falling back to memory cache! Redis not configured.');
-      console.warn('[Cache] ⚠️  This means cache is NOT shared between deployments!');
-      console.warn('[Cache] ⚠️  Products created in /app will NOT appear in /web immediately.');
-      console.warn('[Cache] ⚠️  Configure UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN.');
     }
   }
 
@@ -37,11 +47,11 @@ export class MarketplaceCacheService {
     );
   }
 
-  async getProduct(productId: string): Promise<any | null> {
+  async getProduct(productId: string): Promise<unknown | null> {
     return this.cache.get(CACHE_KEYS.PRODUCT(productId));
   }
 
-  async cacheProductsByCategory(category: string, products: any[]): Promise<void> {
+  async cacheProductsByCategory(category: string, products: unknown[]): Promise<void> {
     await this.cache.set(
       CACHE_KEYS.CATEGORY_PRODUCTS(category),
       products,
@@ -53,7 +63,8 @@ export class MarketplaceCacheService {
   }
 
   async getProductsByCategory(category: string): Promise<any[] | null> {
-    return this.cache.get(CACHE_KEYS.CATEGORY_PRODUCTS(category));
+    const result = await this.cache.get(CACHE_KEYS.CATEGORY_PRODUCTS(category));
+    return result as any[] | null;
   }
 
   // Search results caching
@@ -101,7 +112,8 @@ export class MarketplaceCacheService {
   }
 
   async getUserFavorites(userId: string): Promise<any[] | null> {
-    return this.cache.get(CACHE_KEYS.USER_FAVORITES(userId));
+    const result = await this.cache.get(CACHE_KEYS.USER_FAVORITES(userId));
+    return result as any[] | null;
   }
 
   // User listings caching
@@ -149,7 +161,8 @@ export class MarketplaceCacheService {
   }
 
   async getTrendingProducts(): Promise<any[] | null> {
-    return this.cache.get(CACHE_KEYS.TRENDING_PRODUCTS);
+    const result = await this.cache.get(CACHE_KEYS.TRENDING_PRODUCTS);
+    return result as any[] | null;
   }
 
   // Featured categories
@@ -165,7 +178,8 @@ export class MarketplaceCacheService {
   }
 
   async getFeaturedCategories(): Promise<any[] | null> {
-    return this.cache.get(CACHE_KEYS.FEATURED_CATEGORIES);
+    const result = await this.cache.get(CACHE_KEYS.FEATURED_CATEGORIES);
+    return result as any[] | null;
   }
 
   // New arrivals
@@ -181,7 +195,8 @@ export class MarketplaceCacheService {
   }
 
   async getNewArrivals(): Promise<any[] | null> {
-    return this.cache.get(CACHE_KEYS.NEW_ARRIVALS);
+    const result = await this.cache.get(CACHE_KEYS.NEW_ARRIVALS);
+    return result as any[] | null;
   }
 
   // Conversations caching
@@ -212,7 +227,8 @@ export class MarketplaceCacheService {
   }
 
   async getUserConversations(userId: string): Promise<any[] | null> {
-    return this.cache.get(CACHE_KEYS.USER_CONVERSATIONS(userId));
+    const result = await this.cache.get(CACHE_KEYS.USER_CONVERSATIONS(userId));
+    return result as any[] | null;
   }
 
   // Notifications caching
@@ -228,7 +244,8 @@ export class MarketplaceCacheService {
   }
 
   async getUserNotifications(userId: string): Promise<any[] | null> {
-    return this.cache.get(CACHE_KEYS.NOTIFICATIONS(userId));
+    const result = await this.cache.get(CACHE_KEYS.NOTIFICATIONS(userId));
+    return result as any[] | null;
   }
 
   // Admin statistics caching
@@ -249,37 +266,56 @@ export class MarketplaceCacheService {
 
   // Cache invalidation methods
   async invalidateProduct(productId: string): Promise<void> {
-    await Promise.all([
-      this.cache.del(CACHE_KEYS.PRODUCT(productId)),
-      this.cache.invalidateByTag(CACHE_TAGS.PRODUCTS),
-    ]);
+    const promises = [this.cache.del(CACHE_KEYS.PRODUCT(productId))];
+    if (this.cache.invalidateByTag) {
+      promises.push(this.cache.invalidateByTag(CACHE_TAGS.PRODUCTS));
+    }
+    await Promise.all(promises);
   }
 
   async invalidateUser(userId: string): Promise<void> {
-    await Promise.all([
+    const promises = [
       this.cache.del(CACHE_KEYS.USER_PROFILE(userId)),
       this.cache.del(CACHE_KEYS.USER_FAVORITES(userId)),
       this.cache.del(CACHE_KEYS.USER_CONVERSATIONS(userId)),
       this.cache.del(CACHE_KEYS.NOTIFICATIONS(userId)),
-      this.cache.invalidateByTag(CACHE_TAGS.USERS),
-    ]);
+    ];
+    if (this.cache.invalidateByTag) {
+      promises.push(this.cache.invalidateByTag(CACHE_TAGS.USERS));
+    }
+    await Promise.all(promises);
   }
 
   async invalidateUserListings(userId: string): Promise<void> {
     // Invalidate all pagination variants for this user's listings
-    await this.cache.invalidateByTag(CACHE_TAGS.USERS);
+    if (this.cache.invalidateByTag) {
+      await this.cache.invalidateByTag(CACHE_TAGS.USERS);
+    }
   }
 
   async invalidateAllProducts(): Promise<void> {
-    await this.cache.invalidateByTag(CACHE_TAGS.PRODUCTS);
+    if (this.cache.invalidateByTag) {
+      await this.cache.invalidateByTag(CACHE_TAGS.PRODUCTS);
+    }
   }
 
   async invalidateSearchResults(): Promise<void> {
-    await this.cache.invalidateByTag(CACHE_TAGS.SEARCH);
+    if (this.cache.invalidateByTag) {
+      await this.cache.invalidateByTag(CACHE_TAGS.SEARCH);
+    }
   }
 
   async invalidateConversations(): Promise<void> {
-    await this.cache.invalidateByTag(CACHE_TAGS.CONVERSATIONS);
+    if (this.cache.invalidateByTag) {
+      await this.cache.invalidateByTag(CACHE_TAGS.CONVERSATIONS);
+    }
+  }
+
+  // Generic tag invalidation
+  async invalidateByTag(tag: string): Promise<void> {
+    if (this.cache.invalidateByTag) {
+      await this.cache.invalidateByTag(tag);
+    }
   }
 
   // Warm cache methods for critical data
@@ -293,12 +329,20 @@ export class MarketplaceCacheService {
       },
     }));
 
-    await this.cache.mset(cacheOperations);
+    if (this.cache.mset) {
+      await this.cache.mset(cacheOperations);
+    } else {
+      // Fallback to individual sets
+      await Promise.all(
+        cacheOperations.map(op => this.cache.set(op.key, op.value, op.options))
+      );
+    }
   }
 
   // Generic cache methods
   async get<T>(key: string): Promise<T | null> {
-    return this.cache.get(key);
+    const result = await this.cache.get(key);
+    return result as T | null;
   }
 
   async set<T>(key: string, value: T, options?: { ttl?: number; tags?: string[] }): Promise<void> {
@@ -317,7 +361,10 @@ export class MarketplaceCacheService {
 
   // Statistics
   async getStats() {
-    return this.cache.getStats();
+    if (this.cache.getStats) {
+      return this.cache.getStats();
+    }
+    return null;
   }
 
   // Check cache backend type
