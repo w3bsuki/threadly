@@ -1,7 +1,7 @@
-import { database } from '@repo/database';
 import { currentUser } from '@repo/auth/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 // GET /api/favorites/check - Check if products are favorited
 export async function GET(request: NextRequest) {
@@ -22,7 +22,10 @@ export async function GET(request: NextRequest) {
     }
 
     const searchParams = request.nextUrl.searchParams;
-    const productIds = searchParams.get('productIds')?.split(',').filter(Boolean);
+    const productIds = searchParams
+      .get('productIds')
+      ?.split(',')
+      .filter(Boolean);
 
     if (!productIds || productIds.length === 0) {
       return NextResponse.json(
@@ -51,11 +54,11 @@ export async function GET(request: NextRequest) {
     });
 
     // Create a map of favorited products
-    const favoritedIds = new Set(favorites.map(f => f.productId));
-    
+    const favoritedIds = new Set(favorites.map((f) => f.productId));
+
     // Build response object
     const favoriteStatus: Record<string, boolean> = {};
-    productIds.forEach(id => {
+    productIds.forEach((id) => {
       favoriteStatus[id] = favoritedIds.has(id);
     });
 

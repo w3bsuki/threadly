@@ -1,10 +1,10 @@
-import { database } from '@repo/database';
-import type { Prisma } from '@repo/database';
 import { currentUser } from '@repo/auth/server';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import type { Prisma } from '@repo/database';
+import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 // Schema for creating a review
 const createReviewSchema = z.object({
@@ -19,11 +19,11 @@ export async function GET(request: NextRequest) {
   const rateLimitResult = await checkRateLimit(generalApiLimit, request);
   if (!rateLimitResult.allowed) {
     return NextResponse.json(
-      { 
+      {
         error: rateLimitResult.error?.message || 'Rate limit exceeded',
-        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED',
       },
-      { 
+      {
         status: 429,
         headers: rateLimitResult.headers,
       }
@@ -34,11 +34,11 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const userId = searchParams.get('userId');
     const productId = searchParams.get('productId');
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
+    const page = Number.parseInt(searchParams.get('page') || '1', 10);
+    const limit = Number.parseInt(searchParams.get('limit') || '20', 10);
     const skip = (page - 1) * limit;
 
-    if (!userId && !productId) {
+    if (!(userId || productId)) {
       return NextResponse.json(
         { error: 'Either userId or productId is required' },
         { status: 400 }
@@ -47,11 +47,11 @@ export async function GET(request: NextRequest) {
 
     // Build where clause
     const where: Prisma.ReviewWhereInput = {};
-    
+
     if (userId) {
       where.reviewedId = userId;
     }
-    
+
     if (productId) {
       where.Order = {
         productId,
@@ -137,11 +137,11 @@ export async function POST(request: NextRequest) {
   const rateLimitResult = await checkRateLimit(generalApiLimit, request);
   if (!rateLimitResult.allowed) {
     return NextResponse.json(
-      { 
+      {
         error: rateLimitResult.error?.message || 'Rate limit exceeded',
-        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED',
       },
-      { 
+      {
         status: 429,
         headers: rateLimitResult.headers,
       }

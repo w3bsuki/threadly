@@ -1,13 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { database } from '@repo/database';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
-import { getCacheService } from '@repo/cache';
 import { currentUser } from '@repo/auth/server';
+import { getCacheService } from '@repo/cache';
+import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
 
 // Initialize cache service
 const cache = getCacheService({
-  url: process.env.UPSTASH_REDIS_REST_URL || process.env.REDIS_URL || 'redis://localhost:6379',
+  url:
+    process.env.UPSTASH_REDIS_REST_URL ||
+    process.env.REDIS_URL ||
+    'redis://localhost:6379',
   token: process.env.UPSTASH_REDIS_REST_TOKEN || undefined,
 });
 
@@ -25,7 +28,7 @@ export async function GET(
           success: false,
           error: rateLimitResult.error?.message || 'Rate limit exceeded',
         },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }
@@ -115,9 +118,9 @@ export async function GET(
 
     if (!userProfile) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'User not found' 
+        {
+          success: false,
+          error: 'User not found',
         },
         { status: 404 }
       );
@@ -146,22 +149,28 @@ export async function GET(
 
     // Add cache headers
     const headers = new Headers();
-    headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+    headers.set(
+      'Cache-Control',
+      'public, s-maxage=60, stale-while-revalidate=300'
+    );
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        ...userProfile,
-        isFollowing,
-        isOwnProfile: currentUserId === userProfile.clerkId,
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          ...userProfile,
+          isFollowing,
+          isOwnProfile: currentUserId === userProfile.clerkId,
+        },
       },
-    }, { headers });
+      { headers }
+    );
   } catch (error) {
     logError('Get user profile error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to get user profile' 
+      {
+        success: false,
+        error: 'Failed to get user profile',
       },
       { status: 500 }
     );

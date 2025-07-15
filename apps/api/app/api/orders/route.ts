@@ -1,9 +1,9 @@
-import { database, type Prisma } from '@repo/database';
 import { currentUser } from '@repo/auth/server';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import { database, type Prisma } from '@repo/database';
 import { logError } from '@repo/observability/server';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 // Schema for creating an order
 const createOrderSchema = z.object({
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
         {
           error: rateLimitResult.error?.message || 'Rate limit exceeded',
         },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }
@@ -37,14 +37,14 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const role = searchParams.get('role') || 'buyer'; // 'buyer' or 'seller'
     const status = searchParams.get('status');
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
+    const page = Number.parseInt(searchParams.get('page') || '1', 10);
+    const limit = Number.parseInt(searchParams.get('limit') || '20', 10);
     const skip = (page - 1) * limit;
 
     // Get database user
     const dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!dbUser) {
@@ -53,15 +53,23 @@ export async function GET(request: NextRequest) {
 
     // Build where clause
     const where: Prisma.OrderWhereInput = {};
-    
+
     if (role === 'buyer') {
       where.buyerId = dbUser.id;
     } else if (role === 'seller') {
       where.sellerId = dbUser.id;
     }
 
-    if (status && ['PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED'].includes(status)) {
-      where.status = status as 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+    if (
+      status &&
+      ['PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED'].includes(status)
+    ) {
+      where.status = status as
+        | 'PENDING'
+        | 'PAID'
+        | 'SHIPPED'
+        | 'DELIVERED'
+        | 'CANCELLED';
     }
 
     // Get orders with related data
@@ -133,7 +141,7 @@ export async function POST(request: NextRequest) {
     // Get database user
     const dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!dbUser) {

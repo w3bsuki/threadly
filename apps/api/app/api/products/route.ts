@@ -1,39 +1,28 @@
 import { auth } from '@repo/auth/server';
 import { database, type Prisma } from '@repo/database';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { logError } from '@repo/observability/server';
-import { 
-  createProductSchema,
-  productConditionSchema,
-} from '@repo/validation/schemas/product';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { validateQuery, withValidation } from '@repo/validation/middleware';
 import {
-  priceSchema,
-  safeTextSchema,
-  paginationSchema,
-} from '@repo/validation/schemas/common';
-import { 
-  withValidation, 
-  validateQuery, 
-  formatZodErrors,
-  createSizeLimitMiddleware,
-} from '@repo/validation/middleware';
-import { 
-  sanitizeForDisplay, 
-  sanitizeHtml,
-  filterProfanity,
   containsProfanity,
+  filterProfanity,
+  sanitizeForDisplay,
+  sanitizeHtml,
 } from '@repo/validation/sanitize';
-import { 
-  isValidProductTitle,
+import { paginationSchema, priceSchema } from '@repo/validation/schemas/common';
+import { productConditionSchema } from '@repo/validation/schemas/product';
+import {
   isAllowedImageUrl,
   isPriceInRange,
+  isValidProductTitle,
 } from '@repo/validation/validators';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 // Enhanced schema for creating a product with validation
 const createProductInput = z.object({
-  title: z.string()
+  title: z
+    .string()
     .trim()
     .min(3, 'Title must be at least 3 characters')
     .max(100, 'Title must be at most 100 characters')
@@ -46,7 +35,8 @@ const createProductInput = z.object({
     .refine((title) => !containsProfanity(title), {
       message: 'Product title contains inappropriate content',
     }),
-  description: z.string()
+  description: z
+    .string()
     .trim()
     .min(10, 'Description must be at least 10 characters')
     .max(2000, 'Description must be at most 2000 characters')
@@ -61,13 +51,21 @@ const createProductInput = z.object({
   brand: z.string().trim().max(50).optional(),
   size: z.string().max(20).optional(),
   color: z.string().max(30).optional(),
-  images: z.array(
-    z.string()
-      .url('Invalid image URL')
-      .refine((url) => isAllowedImageUrl(url, ['uploadthing.com', 'utfs.io']), {
-        message: 'Image must be from an allowed source',
-      })
-  ).min(1, 'At least one image is required').max(10, 'Maximum 10 images allowed').optional(),
+  images: z
+    .array(
+      z
+        .string()
+        .url('Invalid image URL')
+        .refine(
+          (url) => isAllowedImageUrl(url, ['uploadthing.com', 'utfs.io']),
+          {
+            message: 'Image must be from an allowed source',
+          }
+        )
+    )
+    .min(1, 'At least one image is required')
+    .max(10, 'Maximum 10 images allowed')
+    .optional(),
 });
 
 // Enhanced schema for listing products with better filtering
@@ -92,7 +90,7 @@ export async function GET(request: NextRequest) {
           success: false,
           error: rateLimitResult.error?.message || 'Rate limit exceeded',
         },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }
@@ -111,7 +109,7 @@ export async function GET(request: NextRequest) {
         { status: 400 }
       );
     }
-    
+
     const {
       page = 1,
       limit = 20,
@@ -149,8 +147,12 @@ export async function GET(request: NextRequest) {
 
     if (minPrice || maxPrice) {
       where.price = {};
-      if (minPrice) where.price.gte = minPrice;
-      if (maxPrice) where.price.lte = maxPrice;
+      if (minPrice) {
+        where.price.gte = minPrice;
+      }
+      if (maxPrice) {
+        where.price.lte = maxPrice;
+      }
     }
 
     if (search) {
@@ -247,12 +249,15 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     logError('Error fetching products:', error);
-    
+
     return NextResponse.json(
       {
         success: false,
         error: 'Failed to fetch products',
-        message: error instanceof Error ? error.message : 'An unexpected error occurred',
+        message:
+          error instanceof Error
+            ? error.message
+            : 'An unexpected error occurred',
       },
       { status: 500 }
     );
@@ -261,7 +266,10 @@ export async function GET(request: NextRequest) {
 
 // POST /api/products - Create a new product
 export const POST = withValidation(
-  async (request: NextRequest, validatedData: z.infer<typeof createProductInput>) => {
+  async (
+    request: NextRequest,
+    validatedData: z.infer<typeof createProductInput>
+  ) => {
     try {
       // Check rate limit
       const rateLimitResult = await checkRateLimit(generalApiLimit, request);
@@ -271,7 +279,7 @@ export const POST = withValidation(
             success: false,
             error: rateLimitResult.error?.message || 'Rate limit exceeded',
           },
-          { 
+          {
             status: 429,
             headers: rateLimitResult.headers,
           }
@@ -280,7 +288,10 @@ export const POST = withValidation(
 
       // Check request size (5MB limit for product creation with images)
       const contentLength = request.headers.get('content-length');
-      if (contentLength && parseInt(contentLength) > 5 * 1024 * 1024) {
+      if (
+        contentLength &&
+        Number.parseInt(contentLength, 10) > 5 * 1024 * 1024
+      ) {
         return NextResponse.json(
           {
             success: false,
@@ -310,7 +321,9 @@ export const POST = withValidation(
           ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'p', 'br', 'ul', 'ol', 'li'],
           ALLOWED_ATTR: [],
         }),
-        brand: validatedData.brand ? sanitizeForDisplay(validatedData.brand) : undefined,
+        brand: validatedData.brand
+          ? sanitizeForDisplay(validatedData.brand)
+          : undefined,
       };
 
       // Verify user exists in our database
@@ -400,12 +413,15 @@ export const POST = withValidation(
       );
     } catch (error) {
       logError('Error creating product:', error);
-      
+
       return NextResponse.json(
         {
           success: false,
           error: 'Failed to create product',
-          message: error instanceof Error ? error.message : 'An unexpected error occurred',
+          message:
+            error instanceof Error
+              ? error.message
+              : 'An unexpected error occurred',
         },
         { status: 500 }
       );

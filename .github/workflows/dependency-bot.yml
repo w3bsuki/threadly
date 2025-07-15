@@ -1,0 +1,243 @@
+name: Dependency Management Bot
+
+on:
+  schedule:
+    - cron: '0 2 * * 1' # Every Monday at 2 AM
+  workflow_dispatch:
+  push:
+    paths:
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'apps/*/package.json'
+      - 'packages/*/package.json'
+
+jobs:
+  dependency-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: '8'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Security audit
+        id: audit
+        run: |
+          echo "Running security audit..."
+          pnpm audit --audit-level moderate --json > audit-results.json || true
+          
+          # Check if there are any vulnerabilities
+          if [ -s audit-results.json ]; then
+            echo "vulnerabilities-found=true" >> $GITHUB_OUTPUT
+            echo "Vulnerabilities found!"
+            cat audit-results.json
+          else
+            echo "vulnerabilities-found=false" >> $GITHUB_OUTPUT
+            echo "No vulnerabilities found"
+          fi
+
+      - name: Check for outdated packages
+        id: outdated
+        run: |
+          echo "Checking for outdated packages..."
+          pnpm outdated --format json > outdated-packages.json || true
+          
+          if [ -s outdated-packages.json ]; then
+            echo "outdated-found=true" >> $GITHUB_OUTPUT
+            echo "Outdated packages found!"
+            cat outdated-packages.json
+          else
+            echo "outdated-found=false" >> $GITHUB_OUTPUT
+            echo "All packages are up to date"
+          fi
+
+      - name: Create issue for vulnerabilities
+        if: steps.audit.outputs.vulnerabilities-found == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const auditResults = JSON.parse(fs.readFileSync('audit-results.json', 'utf8'));
+            
+            const issueBody = `## 🔒 Security Vulnerabilities Detected
+            
+            Our automated security audit has detected vulnerabilities in the project dependencies.
+            
+            **Audit Results:**
+            \`\`\`json
+            ${JSON.stringify(auditResults, null, 2)}
+            \`\`\`
+            
+            **Recommended Actions:**
+            - Review each vulnerability carefully
+            - Update affected packages to secure versions
+            - Run \`pnpm audit fix\` to automatically fix issues where possible
+            - Consider using \`pnpm update\` for major version updates
+            
+            **To fix these issues:**
+            1. Run \`pnpm audit fix\` to automatically fix fixable issues
+            2. For manual fixes, update the affected packages in package.json
+            3. Test thoroughly after applying fixes
+            4. Run \`pnpm audit\` again to verify fixes
+            
+            This issue was automatically created by our dependency management bot.`;
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🔒 Security Vulnerabilities Found - ${new Date().toISOString().split('T')[0]}`,
+              body: issueBody,
+              labels: ['security', 'dependencies', 'priority:high']
+            });
+
+      - name: Create weekly dependency update PR
+        if: github.event_name == 'schedule' && steps.outdated.outputs.outdated-found == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            
+            // Create a new branch for dependency updates
+            const branchName = `dependency-updates-${new Date().toISOString().split('T')[0]}`;
+            
+            try {
+              // Get current commit SHA
+              const { data: ref } = await github.rest.git.getRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: 'heads/main'
+              });
+              
+              // Create new branch
+              await github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `refs/heads/${branchName}`,
+                sha: ref.object.sha
+              });
+              
+              console.log(`Created branch: ${branchName}`);
+              
+              // Create PR
+              const outdatedData = fs.readFileSync('outdated-packages.json', 'utf8');
+              
+              const prBody = `## 📦 Weekly Dependency Updates
+              
+              This PR contains automated dependency updates for the week.
+              
+              **Outdated Packages:**
+              \`\`\`json
+              ${outdatedData}
+              \`\`\`
+              
+              **What's included:**
+              - Minor version updates for dependencies
+              - Patch updates for security fixes
+              - DevDependency updates
+              
+              **Before merging:**
+              - [ ] Review the changes carefully
+              - [ ] Ensure all tests pass
+              - [ ] Verify no breaking changes
+              - [ ] Test in staging environment
+              
+              **To apply these updates:**
+              1. Checkout this branch
+              2. Run \`pnpm update\` to update packages
+              3. Test thoroughly
+              4. Commit changes
+              
+              This PR was automatically created by our dependency management bot.`;
+              
+              await github.rest.pulls.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `📦 Weekly Dependency Updates - ${new Date().toISOString().split('T')[0]}`,
+                head: branchName,
+                base: 'main',
+                body: prBody,
+                labels: ['dependencies', 'automated']
+              });
+              
+            } catch (error) {
+              console.error('Error creating dependency update PR:', error);
+            }
+
+  check-license-compliance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: '8'
+
+      - name: Install license checker
+        run: npm install -g license-checker
+
+      - name: Check licenses
+        run: |
+          echo "Checking licenses..."
+          license-checker --json > licenses.json
+          
+          # Check for problematic licenses
+          if grep -E "(GPL|AGPL|LGPL)" licenses.json; then
+            echo "⚠️ Copyleft licenses found - review required"
+            echo "problematic-licenses=true" >> $GITHUB_OUTPUT
+          else
+            echo "✅ No problematic licenses found"
+            echo "problematic-licenses=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create license compliance issue
+        if: env.problematic-licenses == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const licenses = JSON.parse(fs.readFileSync('licenses.json', 'utf8'));
+            
+            const problematicLicenses = Object.entries(licenses)
+              .filter(([pkg, info]) => /GPL|AGPL|LGPL/.test(info.licenses))
+              .map(([pkg, info]) => `- ${pkg}: ${info.licenses}`);
+            
+            if (problematicLicenses.length > 0) {
+              const issueBody = `## ⚖️ License Compliance Review Required
+              
+              The following packages have licenses that may require legal review:
+              
+              ${problematicLicenses.join('\n')}
+              
+              **Action Required:**
+              - Review these licenses for compliance with your project's licensing requirements
+              - Consider replacing packages with more permissive alternatives if necessary
+              - Consult with legal team if required
+              
+              This issue was automatically created by our dependency management bot.`;
+              
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `⚖️ License Compliance Review - ${new Date().toISOString().split('T')[0]}`,
+                body: issueBody,
+                labels: ['legal', 'dependencies', 'needs-review']
+              });
+            }

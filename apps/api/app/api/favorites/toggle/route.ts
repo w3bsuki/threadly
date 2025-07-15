@@ -1,8 +1,8 @@
-import { database } from '@repo/database';
 import { currentUser } from '@repo/auth/server';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 const toggleFavoriteSchema = z.object({
   productId: z.string().min(1),

@@ -1,11 +1,14 @@
-import { database } from '@repo/database';
 import { getCacheService } from '@repo/cache';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
-import { NextRequest, NextResponse } from 'next/server';
+import { database } from '@repo/database';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
 
 // Initialize cache service
 const cache = getCacheService({
-  url: process.env.UPSTASH_REDIS_REST_URL || process.env.REDIS_URL || 'redis://localhost:6379',
+  url:
+    process.env.UPSTASH_REDIS_REST_URL ||
+    process.env.REDIS_URL ||
+    'redis://localhost:6379',
   token: process.env.UPSTASH_REDIS_REST_TOKEN || undefined,
 });
 
@@ -20,13 +23,13 @@ export async function GET(request: NextRequest) {
           success: false,
           error: rateLimitResult.error?.message || 'Rate limit exceeded',
         },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }
       );
     }
-    
+
     // Use cache for categories as they change infrequently
     const categoriesData = await cache.remember(
       'categories:all',
@@ -65,8 +68,8 @@ export async function GET(request: NextRequest) {
         });
 
         // Organize into parent/child structure
-        const rootCategories = categories.filter(cat => !cat.parentId);
-        
+        const rootCategories = categories.filter((cat) => !cat.parentId);
+
         return {
           categories: rootCategories,
           allCategories: categories, // Flat list for easy lookup
@@ -74,16 +77,22 @@ export async function GET(request: NextRequest) {
       },
       3600 // Cache for 1 hour
     );
-    
+
     // Add cache headers for browser caching
     const headers = new Headers();
-    headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=3600');
-    
-    return NextResponse.json({
-      success: true,
-      data: categoriesData,
-    }, { headers });
-  } catch (error) {
+    headers.set(
+      'Cache-Control',
+      'public, s-maxage=300, stale-while-revalidate=3600'
+    );
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: categoriesData,
+      },
+      { headers }
+    );
+  } catch (_error) {
     // Log error without exposing sensitive details
     return NextResponse.json(
       {

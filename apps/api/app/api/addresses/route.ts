@@ -1,8 +1,8 @@
-import { database } from '@repo/database';
 import { currentUser } from '@repo/auth/server';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 const createAddressSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
@@ -20,7 +20,7 @@ const createAddressSchema = z.object({
 });
 
 // GET /api/addresses - Get user's addresses
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const user = await currentUser();
     if (!user) {

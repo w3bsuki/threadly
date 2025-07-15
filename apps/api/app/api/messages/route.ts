@@ -1,10 +1,10 @@
 import { auth } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { messageRateLimit, checkRateLimit } from '@repo/security';
-import { sanitizeForDisplay } from '@repo/validation/sanitize';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { logError } from '@repo/observability/server';
+import { checkRateLimit, messageRateLimit } from '@repo/security';
+import { sanitizeForDisplay } from '@repo/validation/sanitize';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 // Schema for listing messages
 const listMessagesSchema = z.object({
@@ -21,7 +21,10 @@ const sendMessageSchema = z.object({
 });
 
 // Helper function to check if user has access to conversation
-async function checkUserAccessToConversation(conversationId: string, userId: string) {
+async function checkUserAccessToConversation(
+  conversationId: string,
+  userId: string
+) {
   const user = await database.user.findUnique({
     where: { clerkId: userId },
   });
@@ -43,7 +46,8 @@ async function checkUserAccessToConversation(conversationId: string, userId: str
     return { hasAccess: false, error: 'Conversation not found', user: null };
   }
 
-  const isParticipant = conversation.buyerId === user.id || conversation.sellerId === user.id;
+  const isParticipant =
+    conversation.buyerId === user.id || conversation.sellerId === user.id;
 
   if (!isParticipant) {
     return { hasAccess: false, error: 'Access denied', user: null };
@@ -67,7 +71,7 @@ export async function GET(request: NextRequest) {
           success: false,
           error: rateLimitResult.error?.message || 'Rate limit exceeded',
         },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }
@@ -88,11 +92,14 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const params = Object.fromEntries(searchParams);
-    
+
     const { conversationId, page, limit } = listMessagesSchema.parse(params);
 
     // Check access to conversation
-    const accessCheck = await checkUserAccessToConversation(conversationId, userId);
+    const accessCheck = await checkUserAccessToConversation(
+      conversationId,
+      userId
+    );
     if (!accessCheck.hasAccess) {
       return NextResponse.json(
         {
@@ -138,7 +145,7 @@ export async function GET(request: NextRequest) {
 
     // Mark messages as read if user is the recipient
     const messagesToMarkAsRead = messages.filter(
-      (msg) => msg.senderId !== accessCheck.user!.id && !msg.read
+      (msg) => msg.senderId !== accessCheck.user?.id && !msg.read
     );
 
     if (messagesToMarkAsRead.length > 0) {
@@ -162,7 +169,7 @@ export async function GET(request: NextRequest) {
       data: {
         messages: reversedMessages.map((msg) => ({
           ...msg,
-          isOwnMessage: msg.senderId === accessCheck.user!.id,
+          isOwnMessage: msg.senderId === accessCheck.user?.id,
         })),
         pagination: {
           page,
@@ -176,7 +183,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     logError('Error fetching messages:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -209,7 +216,7 @@ export async function POST(request: NextRequest) {
           success: false,
           error: rateLimitResult.error?.message || 'Rate limit exceeded',
         },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }
@@ -232,7 +239,10 @@ export async function POST(request: NextRequest) {
     const validatedData = sendMessageSchema.parse(body);
 
     // Check access to conversation
-    const accessCheck = await checkUserAccessToConversation(validatedData.conversationId, userId);
+    const accessCheck = await checkUserAccessToConversation(
+      validatedData.conversationId,
+      userId
+    );
     if (!accessCheck.hasAccess) {
       return NextResponse.json(
         {
@@ -247,7 +257,7 @@ export async function POST(request: NextRequest) {
     const message = await database.message.create({
       data: {
         conversationId: validatedData.conversationId,
-        senderId: accessCheck.user!.id,
+        senderId: accessCheck.user?.id,
         content: sanitizeForDisplay(validatedData.content),
         imageUrl: validatedData.imageUrl,
       },
@@ -286,7 +296,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     logError('Error sending message:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

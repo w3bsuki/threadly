@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
+import { logError } from '@repo/observability/server';
+import { checkRateLimit, paymentRateLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { env } from '@/env';
-import { logError } from '@repo/observability/server';
-import { paymentRateLimit, checkRateLimit } from '@repo/security';
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-06-30.basil',
@@ -16,11 +16,11 @@ export async function POST(request: NextRequest) {
   const rateLimitResult = await checkRateLimit(paymentRateLimit, request);
   if (!rateLimitResult.allowed) {
     return NextResponse.json(
-      { 
+      {
         error: rateLimitResult.error?.message || 'Rate limit exceeded',
-        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED',
       },
-      { 
+      {
         status: 429,
         headers: rateLimitResult.headers,
       }
@@ -93,11 +93,11 @@ export async function GET(request: NextRequest) {
   const rateLimitResult = await checkRateLimit(paymentRateLimit, request);
   if (!rateLimitResult.allowed) {
     return NextResponse.json(
-      { 
+      {
         error: rateLimitResult.error?.message || 'Rate limit exceeded',
-        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED',
       },
-      { 
+      {
         status: 429,
         headers: rateLimitResult.headers,
       }
@@ -116,7 +116,7 @@ export async function GET(request: NextRequest) {
     });
 
     if (!dbUser?.stripeAccountId) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         connected: false,
         onboardingRequired: true,
       });

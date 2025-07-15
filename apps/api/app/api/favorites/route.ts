@@ -1,9 +1,9 @@
-import { database } from '@repo/database';
 import { currentUser } from '@repo/auth/server';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 // Schema for toggling favorites
 const toggleFavoriteSchema = z.object({
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
         {
           error: rateLimitResult.error?.message || 'Rate limit exceeded',
         },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }
@@ -32,8 +32,8 @@ export async function GET(request: NextRequest) {
     }
 
     const searchParams = request.nextUrl.searchParams;
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
+    const page = Number.parseInt(searchParams.get('page') || '1', 10);
+    const limit = Number.parseInt(searchParams.get('limit') || '20', 10);
     const skip = (page - 1) * limit;
 
     // Get favorites with product details
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
     ]);
 
     // Transform to return just products with favorite info
-    const products = favorites.map(fav => ({
+    const products = favorites.map((fav) => ({
       ...fav.product,
       isFavorited: true,
       favoritedAt: fav.createdAt,
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
         {
           error: rateLimitResult.error?.message || 'Rate limit exceeded',
         },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }
@@ -167,10 +167,13 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({
-      message: 'Product added to favorites',
-      favorite,
-    }, { status: 201 });
+    return NextResponse.json(
+      {
+        message: 'Product added to favorites',
+        favorite,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -197,7 +200,7 @@ export async function DELETE(request: NextRequest) {
         {
           error: rateLimitResult.error?.message || 'Rate limit exceeded',
         },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }

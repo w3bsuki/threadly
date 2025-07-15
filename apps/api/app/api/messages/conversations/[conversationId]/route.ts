@@ -1,8 +1,8 @@
 import { auth } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { logError } from '@repo/observability/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 // Schema for updating conversation
 const updateConversationSchema = z.object({
@@ -20,7 +20,11 @@ async function checkConversationAccess(conversationId: string, userId: string) {
   });
 
   if (!conversation) {
-    return { hasAccess: false, conversation: null, error: 'Conversation not found' };
+    return {
+      hasAccess: false,
+      conversation: null,
+      error: 'Conversation not found',
+    };
   }
 
   const user = await database.user.findUnique({
@@ -31,7 +35,8 @@ async function checkConversationAccess(conversationId: string, userId: string) {
     return { hasAccess: false, conversation: null, error: 'User not found' };
   }
 
-  const isParticipant = conversation.buyerId === user.id || conversation.sellerId === user.id;
+  const isParticipant =
+    conversation.buyerId === user.id || conversation.sellerId === user.id;
 
   if (!isParticipant) {
     return { hasAccess: false, conversation: null, error: 'Access denied' };
@@ -42,7 +47,7 @@ async function checkConversationAccess(conversationId: string, userId: string) {
 
 // GET /api/messages/conversations/[conversationId] - Get conversation details
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ conversationId: string }> }
 ) {
   try {
@@ -59,9 +64,12 @@ export async function GET(
     }
 
     const resolvedParams = await params;
-    
+
     // Check access to conversation
-    const accessCheck = await checkConversationAccess(resolvedParams.conversationId, userId);
+    const accessCheck = await checkConversationAccess(
+      resolvedParams.conversationId,
+      userId
+    );
     if (!accessCheck.hasAccess) {
       return NextResponse.json(
         {
@@ -123,9 +131,10 @@ export async function GET(
     });
 
     // Mark messages as read if user is the recipient
-    const otherUserId = conversation!.buyerId === accessCheck.user!.id 
-      ? conversation!.sellerId 
-      : conversation!.buyerId;
+    const otherUserId =
+      conversation?.buyerId === accessCheck.user?.id
+        ? conversation?.sellerId
+        : conversation?.buyerId;
 
     await database.message.updateMany({
       where: {
@@ -143,13 +152,13 @@ export async function GET(
       data: {
         conversation: {
           ...conversation,
-          isUserBuyer: conversation!.buyerId === accessCheck.user!.id,
+          isUserBuyer: conversation?.buyerId === accessCheck.user?.id,
         },
       },
     });
   } catch (error) {
     logError('Error fetching conversation:', error);
-    
+
     return NextResponse.json(
       {
         success: false,
@@ -183,7 +192,10 @@ export async function PATCH(
     const resolvedParams = await params;
 
     // Check access to conversation
-    const accessCheck = await checkConversationAccess(resolvedParams.conversationId, userId);
+    const accessCheck = await checkConversationAccess(
+      resolvedParams.conversationId,
+      userId
+    );
     if (!accessCheck.hasAccess) {
       return NextResponse.json(
         {
@@ -244,7 +256,7 @@ export async function PATCH(
     });
   } catch (error) {
     logError('Error updating conversation:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -268,7 +280,7 @@ export async function PATCH(
 
 // DELETE /api/messages/conversations/[conversationId] - Soft delete conversation
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ conversationId: string }> }
 ) {
   try {
@@ -285,9 +297,12 @@ export async function DELETE(
     }
 
     const resolvedParams = await params;
-    
+
     // Check access to conversation
-    const accessCheck = await checkConversationAccess(resolvedParams.conversationId, userId);
+    const accessCheck = await checkConversationAccess(
+      resolvedParams.conversationId,
+      userId
+    );
     if (!accessCheck.hasAccess) {
       return NextResponse.json(
         {
@@ -312,7 +327,7 @@ export async function DELETE(
     });
   } catch (error) {
     logError('Error deleting conversation:', error);
-    
+
     return NextResponse.json(
       {
         success: false,

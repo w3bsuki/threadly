@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { database } from '@repo/database';
 import { auth } from '@repo/auth/server';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
-import { z } from 'zod';
+import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 const deliverOrderSchema = z.object({
   deliveryNotes: z.string().optional(),
@@ -24,7 +24,7 @@ export async function POST(
           success: false,
           error: rateLimitResult.error?.message || 'Rate limit exceeded',
         },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }
@@ -35,9 +35,9 @@ export async function POST(
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Authentication required' 
+        {
+          success: false,
+          error: 'Authentication required',
         },
         { status: 401 }
       );
@@ -51,9 +51,9 @@ export async function POST(
 
     if (!user) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'User not found' 
+        {
+          success: false,
+          error: 'User not found',
         },
         { status: 404 }
       );
@@ -94,9 +94,9 @@ export async function POST(
 
     if (!order) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Order not found' 
+        {
+          success: false,
+          error: 'Order not found',
         },
         { status: 404 }
       );
@@ -105,9 +105,9 @@ export async function POST(
     // Verify user is the seller
     if (order.sellerId !== user.id) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Not authorized to update this order' 
+        {
+          success: false,
+          error: 'Not authorized to update this order',
         },
         { status: 403 }
       );
@@ -116,9 +116,9 @@ export async function POST(
     // Verify order can be delivered (must be SHIPPED)
     if (order.status !== 'SHIPPED') {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: `Cannot mark as delivered. Order status: ${order.status}. Order must be shipped first.` 
+        {
+          success: false,
+          error: `Cannot mark as delivered. Order status: ${order.status}. Order must be shipped first.`,
         },
         { status: 400 }
       );
@@ -171,11 +171,11 @@ export async function POST(
     });
   } catch (error) {
     logError('Deliver order error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
-          success: false, 
+        {
+          success: false,
           error: 'Invalid input data',
           details: error.issues,
         },
@@ -184,9 +184,9 @@ export async function POST(
     }
 
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to mark order as delivered' 
+      {
+        success: false,
+        error: 'Failed to mark order as delivered',
       },
       { status: 500 }
     );

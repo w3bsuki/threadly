@@ -1,0 +1,205 @@
+name: PR Review Assistant
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  pr-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: '8'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Analyze PR changes
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const pr = context.payload.pull_request;
+            
+            if (!pr) return;
+            
+            // Get PR files
+            const files = await github.rest.pulls.listFiles({
+              owner,
+              repo,
+              pull_number: pr.number
+            });
+            
+            const changedFiles = files.data;
+            const analysis = {
+              riskLevel: 'low',
+              checks: [],
+              suggestions: []
+            };
+            
+            // Analyze file changes
+            let hasDbChanges = false;
+            let hasAuthChanges = false;
+            let hasApiChanges = false;
+            let hasFrontendChanges = false;
+            let hasConfigChanges = false;
+            let hasLargeChanges = false;
+            
+            for (const file of changedFiles) {
+              // Database changes
+              if (file.filename.includes('prisma') || file.filename.includes('database') || file.filename.includes('migration')) {
+                hasDbChanges = true;
+                analysis.riskLevel = 'high';
+              }
+              
+              // Auth changes
+              if (file.filename.includes('auth') || file.filename.includes('clerk') || file.filename.includes('middleware')) {
+                hasAuthChanges = true;
+                analysis.riskLevel = 'high';
+              }
+              
+              // API changes
+              if (file.filename.includes('api/') || file.filename.includes('route.ts')) {
+                hasApiChanges = true;
+                if (analysis.riskLevel === 'low') analysis.riskLevel = 'medium';
+              }
+              
+              // Frontend changes
+              if (file.filename.includes('.tsx') || file.filename.includes('.jsx') || file.filename.includes('components/')) {
+                hasFrontendChanges = true;
+              }
+              
+              // Config changes
+              if (file.filename.includes('config') || file.filename.includes('.json') || file.filename.includes('.yml') || file.filename.includes('.yaml')) {
+                hasConfigChanges = true;
+                if (analysis.riskLevel === 'low') analysis.riskLevel = 'medium';
+              }
+              
+              // Large changes
+              if (file.changes > 100) {
+                hasLargeChanges = true;
+                if (analysis.riskLevel === 'low') analysis.riskLevel = 'medium';
+              }
+            }
+            
+            // Generate checks and suggestions
+            if (hasDbChanges) {
+              analysis.checks.push('⚠️ **Database Changes Detected** - Ensure migrations are backward compatible');
+              analysis.suggestions.push('Run database tests and verify migration rollback procedures');
+            }
+            
+            if (hasAuthChanges) {
+              analysis.checks.push('🔐 **Authentication Changes Detected** - Security review required');
+              analysis.suggestions.push('Verify authentication flows and ensure no security vulnerabilities');
+            }
+            
+            if (hasApiChanges) {
+              analysis.checks.push('🔌 **API Changes Detected** - Check backward compatibility');
+              analysis.suggestions.push('Verify API contracts and update documentation if needed');
+            }
+            
+            if (hasLargeChanges) {
+              analysis.checks.push('📊 **Large Changes Detected** - Consider breaking into smaller PRs');
+              analysis.suggestions.push('Review if this PR can be split into smaller, focused changes');
+            }
+            
+            if (hasConfigChanges) {
+              analysis.checks.push('⚙️ **Configuration Changes Detected** - Verify deployment settings');
+              analysis.suggestions.push('Ensure configuration changes are tested in staging environment');
+            }
+            
+            // Create review comment
+            const riskEmoji = { low: '🟢', medium: '🟡', high: '🔴' };
+            const reviewComment = `## 🤖 Automated PR Analysis
+            
+            **Risk Level: ${riskEmoji[analysis.riskLevel]} ${analysis.riskLevel.toUpperCase()}**
+            
+            ### Changes Detected:
+            ${analysis.checks.length > 0 ? analysis.checks.map(check => `- ${check}`).join('\n') : '- No high-risk changes detected'}
+            
+            ### Suggestions:
+            ${analysis.suggestions.length > 0 ? analysis.suggestions.map(suggestion => `- ${suggestion}`).join('\n') : '- No specific suggestions'}
+            
+            ### Files Changed: ${changedFiles.length}
+            - Database: ${hasDbChanges ? '✅' : '❌'}
+            - Authentication: ${hasAuthChanges ? '✅' : '❌'}
+            - API: ${hasApiChanges ? '✅' : '❌'}
+            - Frontend: ${hasFrontendChanges ? '✅' : '❌'}
+            - Configuration: ${hasConfigChanges ? '✅' : '❌'}
+            
+            ---
+            *This analysis was generated automatically. Please review the suggestions and ensure proper testing.*`;
+            
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: pr.number,
+              body: reviewComment
+            });
+            
+            // Add labels based on analysis
+            const labels = [];
+            if (analysis.riskLevel === 'high') labels.push('needs-review');
+            if (hasDbChanges) labels.push('database');
+            if (hasAuthChanges) labels.push('security');
+            if (hasApiChanges) labels.push('api');
+            if (hasFrontendChanges) labels.push('frontend');
+            
+            if (labels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner,
+                repo,
+                issue_number: pr.number,
+                labels
+              });
+            }
+
+      - name: Run code quality checks
+        run: |
+          echo "Running additional code quality checks..."
+          
+          # Check for common issues
+          if grep -r "console.log" apps/ --include="*.ts" --include="*.tsx" --exclude-dir=node_modules; then
+            echo "⚠️ console.log statements found - consider removing for production"
+          fi
+          
+          if grep -r "TODO" apps/ --include="*.ts" --include="*.tsx" --exclude-dir=node_modules; then
+            echo "📝 TODO comments found - consider addressing before merge"
+          fi
+          
+          if grep -r "FIXME" apps/ --include="*.ts" --include="*.tsx" --exclude-dir=node_modules; then
+            echo "🔧 FIXME comments found - should be addressed before merge"
+          fi
+
+  auto-approve-dependabot:
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v1
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Auto-approve minor updates
+        if: steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor'
+        run: |
+          gh pr review --approve "$PR_URL"
+          gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

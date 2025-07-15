@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { database } from '@repo/database';
 import { auth } from '@repo/auth/server';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
+import { database } from '@repo/database';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
 
 // DELETE /api/cart/:productId - Remove specific item from cart
 export async function DELETE(
@@ -12,11 +12,11 @@ export async function DELETE(
   const rateLimitResult = await checkRateLimit(generalApiLimit, request);
   if (!rateLimitResult.allowed) {
     return NextResponse.json(
-      { 
+      {
         error: rateLimitResult.error?.message || 'Rate limit exceeded',
-        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED',
       },
-      { 
+      {
         status: 429,
         headers: rateLimitResult.headers,
       }
@@ -25,7 +25,7 @@ export async function DELETE(
 
   let userId: string | null = null;
   let productId: string | undefined;
-  
+
   try {
     const authResult = await auth();
     userId = authResult.userId;
@@ -39,18 +39,24 @@ export async function DELETE(
     const deleted = await database.cartItem.deleteMany({
       where: {
         userId,
-        productId
-      }
+        productId,
+      },
     });
 
     if (deleted.count === 0) {
-      return NextResponse.json({ error: 'Item not found in cart' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Item not found in cart' },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     const { log } = await import('@repo/observability/server');
     log.error('Error removing from cart', { error, userId, productId });
-    return NextResponse.json({ error: 'Failed to remove from cart' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to remove from cart' },
+      { status: 500 }
+    );
   }
 }

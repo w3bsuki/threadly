@@ -1,12 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { database } from '@repo/database';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
 import { getCacheService } from '@repo/cache';
+import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
 
 // Initialize cache service
 const cache = getCacheService({
-  url: process.env.UPSTASH_REDIS_REST_URL || process.env.REDIS_URL || 'redis://localhost:6379',
+  url:
+    process.env.UPSTASH_REDIS_REST_URL ||
+    process.env.REDIS_URL ||
+    'redis://localhost:6379',
   token: process.env.UPSTASH_REDIS_REST_TOKEN || undefined,
 });
 
@@ -24,7 +27,7 @@ export async function GET(
           success: false,
           error: rateLimitResult.error?.message || 'Rate limit exceeded',
         },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }
@@ -36,8 +39,8 @@ export async function GET(
 
     // Get query parameters for pagination
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1', 10);
-    const limit = parseInt(searchParams.get('limit') || '20', 10);
+    const page = Number.parseInt(searchParams.get('page') || '1', 10);
+    const limit = Number.parseInt(searchParams.get('limit') || '20', 10);
     const skip = (page - 1) * limit;
 
     // Check if user exists
@@ -48,9 +51,9 @@ export async function GET(
 
     if (!user) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'User not found' 
+        {
+          success: false,
+          error: 'User not found',
         },
         { status: 404 }
       );
@@ -105,7 +108,7 @@ export async function GET(
         ]);
 
         return {
-          followers: followers.map(f => ({
+          followers: followers.map((f) => ({
             ...f.User_Follow_followerIdToUser,
             followedAt: f.createdAt,
           })),
@@ -123,18 +126,24 @@ export async function GET(
 
     // Add cache headers
     const headers = new Headers();
-    headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+    headers.set(
+      'Cache-Control',
+      'public, s-maxage=60, stale-while-revalidate=300'
+    );
 
-    return NextResponse.json({
-      success: true,
-      data: result,
-    }, { headers });
+    return NextResponse.json(
+      {
+        success: true,
+        data: result,
+      },
+      { headers }
+    );
   } catch (error) {
     logError('Get followers error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to get followers' 
+      {
+        success: false,
+        error: 'Failed to get followers',
       },
       { status: 500 }
     );

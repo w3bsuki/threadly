@@ -1,0 +1,159 @@
+name: Issue Triage Bot
+
+on:
+  issues:
+    types: [opened, edited, labeled, unlabeled]
+  issue_comment:
+    types: [created]
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Auto-label based on content
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const issue = context.payload.issue;
+            
+            if (!issue) return;
+            
+            const title = issue.title.toLowerCase();
+            const body = issue.body?.toLowerCase() || '';
+            const content = title + ' ' + body;
+            
+            const labels = [];
+            
+            // Bug detection
+            if (content.includes('bug') || content.includes('error') || content.includes('fail') || content.includes('broken')) {
+              labels.push('bug');
+            }
+            
+            // Feature request detection
+            if (content.includes('feature') || content.includes('enhancement') || content.includes('add') || content.includes('implement')) {
+              labels.push('enhancement');
+            }
+            
+            // Documentation
+            if (content.includes('doc') || content.includes('readme') || content.includes('guide')) {
+              labels.push('documentation');
+            }
+            
+            // Priority detection
+            if (content.includes('urgent') || content.includes('critical') || content.includes('production') || content.includes('down')) {
+              labels.push('priority:high');
+            }
+            
+            // Component detection
+            if (content.includes('database') || content.includes('prisma') || content.includes('sql')) {
+              labels.push('area:database');
+            }
+            if (content.includes('auth') || content.includes('login') || content.includes('clerk')) {
+              labels.push('area:auth');
+            }
+            if (content.includes('ui') || content.includes('frontend') || content.includes('react')) {
+              labels.push('area:frontend');
+            }
+            if (content.includes('api') || content.includes('backend') || content.includes('server')) {
+              labels.push('area:backend');
+            }
+            if (content.includes('deploy') || content.includes('vercel') || content.includes('build')) {
+              labels.push('area:deployment');
+            }
+            
+            // Apply labels
+            if (labels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner,
+                repo,
+                issue_number: issue.number,
+                labels
+              });
+            }
+            
+            // Auto-assign based on area
+            const maintainers = {
+              'area:database': ['w3bsuki'],
+              'area:auth': ['w3bsuki'],
+              'area:frontend': ['w3bsuki'],
+              'area:backend': ['w3bsuki'],
+              'area:deployment': ['w3bsuki']
+            };
+            
+            for (const label of labels) {
+              if (maintainers[label]) {
+                await github.rest.issues.addAssignees({
+                  owner,
+                  repo,
+                  issue_number: issue.number,
+                  assignees: maintainers[label]
+                });
+                break;
+              }
+            }
+
+      - name: Add helpful comment for bugs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const issue = context.payload.issue;
+            
+            if (!issue || context.payload.action !== 'opened') return;
+            
+            const labels = issue.labels.map(l => l.name);
+            
+            if (labels.includes('bug')) {
+              const comment = `👋 Thanks for reporting this bug! 
+              
+              To help us fix this faster, please make sure you've included:
+              - [ ] Steps to reproduce the issue
+              - [ ] Expected behavior
+              - [ ] Actual behavior
+              - [ ] Browser/environment details
+              - [ ] Screenshots (if applicable)
+              
+              This issue has been automatically labeled and assigned. A maintainer will review it shortly.`;
+              
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issue.number,
+                body: comment
+              });
+            }
+            
+            if (labels.includes('enhancement')) {
+              const comment = `🚀 Thanks for the feature request!
+              
+              This issue has been labeled as an enhancement. Please make sure you've included:
+              - [ ] Clear description of the feature
+              - [ ] Use case/justification
+              - [ ] Proposed implementation (if any)
+              
+              We'll review this and add it to our roadmap if it aligns with the project goals.`;
+              
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issue.number,
+                body: comment
+              });
+            }
+
+  auto-close-stale:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close stale issues
+        uses: actions/stale@v9
+        with:
+          stale-issue-message: 'This issue has been automatically marked as stale because it has not had recent activity. It will be closed if no further activity occurs. Thank you for your contributions.'
+          close-issue-message: 'This issue has been automatically closed due to inactivity. If you believe this is still relevant, please reopen it.'
+          days-before-stale: 30
+          days-before-close: 7
+          stale-issue-label: 'stale'
+          exempt-issue-labels: 'priority:high,bug,enhancement'

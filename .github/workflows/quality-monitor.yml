@@ -1,0 +1,263 @@
+name: Code Quality Monitor
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    - cron: '0 6 * * *' # Daily at 6 AM
+
+jobs:
+  code-quality-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: '8'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate database types
+        run: pnpm db:generate
+
+      - name: Run ESLint analysis
+        run: |
+          echo "Running ESLint analysis..."
+          pnpm lint --format json > eslint-results.json || true
+          
+          # Count errors and warnings
+          if [ -f eslint-results.json ]; then
+            errors=$(jq '[.[] | select(.errorCount > 0)] | length' eslint-results.json)
+            warnings=$(jq '[.[] | select(.warningCount > 0)] | length' eslint-results.json)
+            echo "ESLint errors: $errors"
+            echo "ESLint warnings: $warnings"
+            echo "eslint-errors=$errors" >> $GITHUB_OUTPUT
+            echo "eslint-warnings=$warnings" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run TypeScript analysis
+        run: |
+          echo "Running TypeScript analysis..."
+          pnpm typecheck > typescript-results.txt 2>&1 || true
+          
+          # Count TypeScript errors
+          if [ -f typescript-results.txt ]; then
+            ts_errors=$(grep -c "error TS" typescript-results.txt || echo "0")
+            echo "TypeScript errors: $ts_errors"
+            echo "typescript-errors=$ts_errors" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Analyze bundle size
+        run: |
+          echo "Analyzing bundle size..."
+          pnpm --filter=web build > build-output.txt 2>&1 || true
+          pnpm --filter=app build >> build-output.txt 2>&1 || true
+          
+          # Extract bundle size information
+          if grep -q "First Load JS" build-output.txt; then
+            echo "Bundle size analysis completed"
+            echo "bundle-analysis=true" >> $GITHUB_OUTPUT
+          else
+            echo "bundle-analysis=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check for code smells
+        run: |
+          echo "Checking for code smells..."
+          
+          # Check for large files
+          large_files=$(find apps/ -name "*.ts" -o -name "*.tsx" | xargs wc -l | awk '$1 > 500 { print $2 ": " $1 " lines" }' || echo "")
+          
+          # Check for complex functions (basic heuristic)
+          complex_functions=$(grep -r "function\|const.*=.*=>" apps/ --include="*.ts" --include="*.tsx" | wc -l)
+          
+          # Check for TODO/FIXME comments
+          todo_count=$(grep -r "TODO\|FIXME" apps/ --include="*.ts" --include="*.tsx" | wc -l)
+          
+          echo "Large files (>500 lines): $large_files"
+          echo "Function count: $complex_functions"
+          echo "TODO/FIXME count: $todo_count"
+          
+          echo "large-files=$large_files" >> $GITHUB_OUTPUT
+          echo "todo-count=$todo_count" >> $GITHUB_OUTPUT
+
+      - name: Create quality report
+        if: github.event_name == 'schedule' || github.event_name == 'push'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const { execSync } = require('child_process');
+            
+            // Read analysis results
+            const eslintErrors = process.env.eslint_errors || '0';
+            const eslintWarnings = process.env.eslint_warnings || '0';
+            const typescriptErrors = process.env.typescript_errors || '0';
+            const todoCount = process.env.todo_count || '0';
+            const largeFiles = process.env.large_files || 'None';
+            
+            // Calculate quality score (basic implementation)
+            let qualityScore = 100;
+            qualityScore -= parseInt(eslintErrors) * 5;
+            qualityScore -= parseInt(eslintWarnings) * 1;
+            qualityScore -= parseInt(typescriptErrors) * 3;
+            qualityScore -= parseInt(todoCount) * 0.5;
+            qualityScore = Math.max(0, Math.min(100, qualityScore));
+            
+            const reportDate = new Date().toISOString().split('T')[0];
+            const reportBody = `## 📊 Code Quality Report - ${reportDate}
+            
+            **Overall Quality Score: ${qualityScore.toFixed(1)}/100**
+            
+            ### Analysis Results
+            - 🔍 **ESLint Issues**: ${eslintErrors} errors, ${eslintWarnings} warnings
+            - 📝 **TypeScript Issues**: ${typescriptErrors} errors
+            - 📋 **TODO/FIXME Items**: ${todoCount}
+            - 📄 **Large Files**: ${largeFiles !== 'None' ? largeFiles : 'None detected'}
+            
+            ### Quality Metrics
+            ${qualityScore >= 90 ? '🟢 **Excellent** - Code quality is very high' : ''}
+            ${qualityScore >= 70 && qualityScore < 90 ? '🟡 **Good** - Some areas for improvement' : ''}
+            ${qualityScore >= 50 && qualityScore < 70 ? '🟠 **Fair** - Multiple issues need attention' : ''}
+            ${qualityScore < 50 ? '🔴 **Poor** - Significant quality issues detected' : ''}
+            
+            ### Recommendations
+            ${parseInt(eslintErrors) > 0 ? '- Fix ESLint errors to improve code consistency' : ''}
+            ${parseInt(typescriptErrors) > 0 ? '- Resolve TypeScript errors for better type safety' : ''}
+            ${parseInt(todoCount) > 10 ? '- Consider addressing TODO/FIXME items' : ''}
+            ${largeFiles !== 'None' ? '- Consider refactoring large files for better maintainability' : ''}
+            
+            ---
+            *This report was automatically generated by our code quality monitor.*`;
+            
+            // Create or update quality report issue
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'quality-report',
+              state: 'open'
+            });
+            
+            if (issues.data.length > 0) {
+              // Update existing issue
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issues.data[0].number,
+                title: `📊 Code Quality Report - ${reportDate}`,
+                body: reportBody
+              });
+            } else {
+              // Create new issue
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `📊 Code Quality Report - ${reportDate}`,
+                body: reportBody,
+                labels: ['quality-report', 'automated']
+              });
+            }
+
+  performance-monitoring:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: '8'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build for performance analysis
+        run: |
+          echo "Building applications for performance analysis..."
+          pnpm db:generate
+          pnpm --filter=web build
+          pnpm --filter=app build
+
+      - name: Analyze bundle size
+        run: |
+          echo "Analyzing bundle sizes..."
+          
+          # Web app analysis
+          if [ -d "apps/web/.next" ]; then
+            echo "=== Web App Bundle Analysis ===" > bundle-analysis.txt
+            ls -la apps/web/.next/static/chunks/ >> bundle-analysis.txt
+            du -sh apps/web/.next/static/chunks/* >> bundle-analysis.txt
+          fi
+          
+          # Seller app analysis
+          if [ -d "apps/app/.next" ]; then
+            echo "=== Seller App Bundle Analysis ===" >> bundle-analysis.txt
+            ls -la apps/app/.next/static/chunks/ >> bundle-analysis.txt
+            du -sh apps/app/.next/static/chunks/* >> bundle-analysis.txt
+          fi
+
+      - name: Create performance report
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const { execSync } = require('child_process');
+            
+            let reportBody = `## 🚀 Performance Report - ${new Date().toISOString().split('T')[0]}
+            
+            ### Bundle Size Analysis
+            `;
+            
+            try {
+              const bundleAnalysis = fs.readFileSync('bundle-analysis.txt', 'utf8');
+              reportBody += `\`\`\`
+            ${bundleAnalysis}
+            \`\`\`
+            
+            ### Performance Recommendations
+            - Monitor bundle sizes to prevent performance degradation
+            - Consider code splitting for large chunks
+            - Optimize images and assets
+            - Use dynamic imports for non-critical components
+            
+            ---
+            *This report was automatically generated by our performance monitoring system.*`;
+            } catch (error) {
+              reportBody += `Error generating bundle analysis: ${error.message}`;
+            }
+            
+            // Create performance report comment on the latest commit
+            const commits = await github.rest.repos.listCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 1
+            });
+            
+            if (commits.data.length > 0) {
+              await github.rest.repos.createCommitComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                commit_sha: commits.data[0].sha,
+                body: reportBody
+              });
+            }

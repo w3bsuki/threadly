@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
 
 // Simple stub implementation - search functionality will be implemented later
 export async function GET(request: NextRequest) {
@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
       {
         error: rateLimitResult.error?.message || 'Rate limit exceeded',
       },
-      { 
+      {
         status: 429,
         headers: rateLimitResult.headers,
       }

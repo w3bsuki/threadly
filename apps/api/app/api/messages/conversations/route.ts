@@ -1,8 +1,8 @@
 import { auth } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { logError } from '@repo/observability/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 // Schema for listing conversations
 const listConversationsSchema = z.object({
@@ -49,16 +49,13 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const params = Object.fromEntries(searchParams);
-    
+
     const { page, limit, status } = listConversationsSchema.parse(params);
     const skip = (page - 1) * limit;
 
     // Build where clause
     const where: any = {
-      OR: [
-        { buyerId: user.id },
-        { sellerId: user.id },
-      ],
+      OR: [{ buyerId: user.id }, { sellerId: user.id }],
     };
 
     if (status) {
@@ -172,7 +169,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     logError('Error fetching conversations:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -376,7 +373,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     logError('Error creating conversation:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {

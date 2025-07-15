@@ -1,8 +1,8 @@
-import { database } from '@repo/database';
 import { currentUser } from '@repo/auth/server';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 const updateAddressSchema = z.object({
   firstName: z.string().min(1).optional(),
@@ -21,7 +21,7 @@ const updateAddressSchema = z.object({
 
 // GET /api/addresses/[id] - Get a specific address
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -120,7 +120,7 @@ export async function PUT(
 
 // DELETE /api/addresses/[id] - Delete an address
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {

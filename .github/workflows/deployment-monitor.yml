@@ -298,19 +298,25 @@ jobs:
 
       - name: Check database connection
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://mock:mock@localhost:5432/mock' }}
         run: |
           cd packages/database
-          npx prisma db pull --force || echo "Database connection failed"
+          if [[ "$DATABASE_URL" != *"mock"* ]]; then
+            npx prisma db pull --force || echo "Database connection failed"
+          fi
           npx prisma validate || echo "Schema validation failed"
 
       - name: Run migrations if needed
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://mock:mock@localhost:5432/mock' }}
         run: |
           cd packages/database
-          npx prisma migrate status
-          npx prisma migrate deploy || echo "Migration failed"
+          if [[ "$DATABASE_URL" != *"mock"* ]]; then
+            npx prisma migrate status
+            npx prisma migrate deploy || echo "Migration failed"
+          else
+            echo "Mock database - skipping migrations"
+          fi
 
   notify-status:
     needs: [check-deployments, auto-fix-deployments, database-health-check]

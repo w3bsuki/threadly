@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   // Check rate limit for public endpoint
@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
       {
         error: rateLimitResult.error?.message || 'Rate limit exceeded',
       },
-      { 
+      {
         status: 429,
         headers: rateLimitResult.headers,
       }
@@ -26,8 +26,8 @@ export async function GET(request: NextRequest) {
       orders: '/api/v1/orders',
       users: '/api/v1/users',
       categories: '/api/v1/categories',
-      search: '/api/v1/search'
+      search: '/api/v1/search',
     },
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 }

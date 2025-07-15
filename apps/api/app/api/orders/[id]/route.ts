@@ -1,9 +1,9 @@
-import { database, type Prisma } from '@repo/database';
 import { currentUser } from '@repo/auth/server';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import { database, type Prisma } from '@repo/database';
 import { logError } from '@repo/observability/server';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 // Schema for updating an order
 const updateOrderSchema = z.object({
@@ -22,11 +22,11 @@ export async function GET(
   const rateLimitResult = await checkRateLimit(generalApiLimit, request);
   if (!rateLimitResult.allowed) {
     return NextResponse.json(
-      { 
+      {
         error: rateLimitResult.error?.message || 'Rate limit exceeded',
-        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED',
       },
-      { 
+      {
         status: 429,
         headers: rateLimitResult.headers,
       }
@@ -111,11 +111,11 @@ export async function PUT(
   const rateLimitResult = await checkRateLimit(generalApiLimit, request);
   if (!rateLimitResult.allowed) {
     return NextResponse.json(
-      { 
+      {
         error: rateLimitResult.error?.message || 'Rate limit exceeded',
-        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED',
       },
-      { 
+      {
         status: 429,
         headers: rateLimitResult.headers,
       }
@@ -157,7 +157,10 @@ export async function PUT(
         if (validatedData.trackingNumber) {
           updateData.trackingNumber = validatedData.trackingNumber;
         }
-      } else if (validatedData.status === 'CANCELLED' && order.status === 'PENDING') {
+      } else if (
+        validatedData.status === 'CANCELLED' &&
+        order.status === 'PENDING'
+      ) {
         updateData.status = 'CANCELLED';
       }
     }
@@ -167,7 +170,10 @@ export async function PUT(
       if (validatedData.status === 'DELIVERED' && order.status === 'SHIPPED') {
         updateData.status = 'DELIVERED';
         updateData.deliveredAt = validatedData.deliveredAt || new Date();
-      } else if (validatedData.status === 'CANCELLED' && order.status === 'PENDING') {
+      } else if (
+        validatedData.status === 'CANCELLED' &&
+        order.status === 'PENDING'
+      ) {
         updateData.status = 'CANCELLED';
       }
     }
@@ -230,11 +236,11 @@ export async function DELETE(
   const rateLimitResult = await checkRateLimit(generalApiLimit, request);
   if (!rateLimitResult.allowed) {
     return NextResponse.json(
-      { 
+      {
         error: rateLimitResult.error?.message || 'Rate limit exceeded',
-        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED' 
+        code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED',
       },
-      { 
+      {
         status: 429,
         headers: rateLimitResult.headers,
       }

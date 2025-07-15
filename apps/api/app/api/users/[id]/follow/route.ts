@@ -1,13 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { database } from '@repo/database';
 import { auth } from '@repo/auth/server';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
 import { getCacheService } from '@repo/cache';
+import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
 
 // Initialize cache service
 const cache = getCacheService({
-  url: process.env.UPSTASH_REDIS_REST_URL || process.env.REDIS_URL || 'redis://localhost:6379',
+  url:
+    process.env.UPSTASH_REDIS_REST_URL ||
+    process.env.REDIS_URL ||
+    'redis://localhost:6379',
   token: process.env.UPSTASH_REDIS_REST_TOKEN || undefined,
 });
 
@@ -25,7 +28,7 @@ export async function POST(
           success: false,
           error: rateLimitResult.error?.message || 'Rate limit exceeded',
         },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }
@@ -36,9 +39,9 @@ export async function POST(
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Authentication required' 
+        {
+          success: false,
+          error: 'Authentication required',
         },
         { status: 401 }
       );
@@ -52,9 +55,9 @@ export async function POST(
 
     if (!user) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'User not found' 
+        {
+          success: false,
+          error: 'User not found',
         },
         { status: 404 }
       );
@@ -66,9 +69,9 @@ export async function POST(
     // Prevent self-following
     if (user.id === userToFollowId) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Cannot follow yourself' 
+        {
+          success: false,
+          error: 'Cannot follow yourself',
         },
         { status: 400 }
       );
@@ -82,9 +85,9 @@ export async function POST(
 
     if (!userToFollow) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'User not found' 
+        {
+          success: false,
+          error: 'User not found',
         },
         { status: 404 }
       );
@@ -102,9 +105,9 @@ export async function POST(
 
     if (existingFollow) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Already following this user' 
+        {
+          success: false,
+          error: 'Already following this user',
         },
         { status: 400 }
       );
@@ -156,9 +159,9 @@ export async function POST(
   } catch (error) {
     logError('Follow error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to follow user' 
+      {
+        success: false,
+        error: 'Failed to follow user',
       },
       { status: 500 }
     );
@@ -179,7 +182,7 @@ export async function DELETE(
           success: false,
           error: rateLimitResult.error?.message || 'Rate limit exceeded',
         },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }
@@ -190,9 +193,9 @@ export async function DELETE(
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Authentication required' 
+        {
+          success: false,
+          error: 'Authentication required',
         },
         { status: 401 }
       );
@@ -206,9 +209,9 @@ export async function DELETE(
 
     if (!user) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'User not found' 
+        {
+          success: false,
+          error: 'User not found',
         },
         { status: 404 }
       );
@@ -229,9 +232,9 @@ export async function DELETE(
 
     if (!follow) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Not following this user' 
+        {
+          success: false,
+          error: 'Not following this user',
         },
         { status: 400 }
       );
@@ -256,9 +259,9 @@ export async function DELETE(
   } catch (error) {
     logError('Unfollow error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to unfollow user' 
+      {
+        success: false,
+        error: 'Failed to unfollow user',
       },
       { status: 500 }
     );
@@ -279,7 +282,7 @@ export async function GET(
           success: false,
           error: rateLimitResult.error?.message || 'Rate limit exceeded',
         },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }
@@ -290,9 +293,9 @@ export async function GET(
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Authentication required' 
+        {
+          success: false,
+          error: 'Authentication required',
         },
         { status: 401 }
       );
@@ -306,9 +309,9 @@ export async function GET(
 
     if (!user) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'User not found' 
+        {
+          success: false,
+          error: 'User not found',
         },
         { status: 404 }
       );
@@ -337,9 +340,9 @@ export async function GET(
   } catch (error) {
     logError('Check follow error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to check follow status' 
+      {
+        success: false,
+        error: 'Failed to check follow status',
       },
       { status: 500 }
     );

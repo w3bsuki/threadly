@@ -1,8 +1,8 @@
 import { auth } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { logError } from '@repo/observability/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 // Schema for updating a message
 const updateMessageSchema = z.object({
@@ -16,7 +16,12 @@ async function checkMessageAccess(messageId: string, userId: string) {
   });
 
   if (!user) {
-    return { hasAccess: false, error: 'User not found', message: null, user: null };
+    return {
+      hasAccess: false,
+      error: 'User not found',
+      message: null,
+      user: null,
+    };
   }
 
   const message = await database.message.findUnique({
@@ -33,16 +38,26 @@ async function checkMessageAccess(messageId: string, userId: string) {
   });
 
   if (!message) {
-    return { hasAccess: false, error: 'Message not found', message: null, user: null };
+    return {
+      hasAccess: false,
+      error: 'Message not found',
+      message: null,
+      user: null,
+    };
   }
 
   // Check if user is participant in the conversation
-  const isParticipant = 
-    message.Conversation.buyerId === user.id || 
+  const isParticipant =
+    message.Conversation.buyerId === user.id ||
     message.Conversation.sellerId === user.id;
 
   if (!isParticipant) {
-    return { hasAccess: false, error: 'Access denied', message: null, user: null };
+    return {
+      hasAccess: false,
+      error: 'Access denied',
+      message: null,
+      user: null,
+    };
   }
 
   return { hasAccess: true, message, user };
@@ -71,7 +86,10 @@ export async function PATCH(
     const resolvedParams = await params;
 
     // Check access to message
-    const accessCheck = await checkMessageAccess(resolvedParams.messageId, userId);
+    const accessCheck = await checkMessageAccess(
+      resolvedParams.messageId,
+      userId
+    );
     if (!accessCheck.hasAccess) {
       return NextResponse.json(
         {
@@ -83,7 +101,7 @@ export async function PATCH(
     }
 
     // Only the recipient can mark a message as read
-    if (accessCheck.message!.senderId === accessCheck.user!.id) {
+    if (accessCheck.message?.senderId === accessCheck.user?.id) {
       return NextResponse.json(
         {
           success: false,
@@ -116,14 +134,14 @@ export async function PATCH(
       data: {
         message: {
           ...updatedMessage,
-          isOwnMessage: updatedMessage.senderId === accessCheck.user!.id,
+          isOwnMessage: updatedMessage.senderId === accessCheck.user?.id,
         },
       },
       message: `Message marked as ${validatedData.read ? 'read' : 'unread'}`,
     });
   } catch (error) {
     logError('Error updating message:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
@@ -147,7 +165,7 @@ export async function PATCH(
 
 // DELETE /api/messages/[messageId] - Delete a message (soft delete)
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ messageId: string }> }
 ) {
   try {
@@ -164,9 +182,12 @@ export async function DELETE(
     }
 
     const resolvedParams = await params;
-    
+
     // Check access to message
-    const accessCheck = await checkMessageAccess(resolvedParams.messageId, userId);
+    const accessCheck = await checkMessageAccess(
+      resolvedParams.messageId,
+      userId
+    );
     if (!accessCheck.hasAccess) {
       return NextResponse.json(
         {
@@ -178,7 +199,7 @@ export async function DELETE(
     }
 
     // Only the sender can delete their own message
-    if (accessCheck.message!.senderId !== accessCheck.user!.id) {
+    if (accessCheck.message?.senderId !== accessCheck.user?.id) {
       return NextResponse.json(
         {
           success: false,
@@ -189,9 +210,9 @@ export async function DELETE(
     }
 
     // Check if message was sent recently (within 5 minutes)
-    const messageAge = Date.now() - accessCheck.message!.createdAt.getTime();
+    const messageAge = Date.now() - accessCheck.message?.createdAt.getTime();
     const fiveMinutes = 5 * 60 * 1000;
-    
+
     if (messageAge > fiveMinutes) {
       return NextResponse.json(
         {
@@ -203,7 +224,7 @@ export async function DELETE(
     }
 
     // Soft delete by updating content
-    const deletedMessage = await database.message.update({
+    const _deletedMessage = await database.message.update({
       where: { id: resolvedParams.messageId },
       data: {
         content: '[Message deleted]',
@@ -217,7 +238,7 @@ export async function DELETE(
     });
   } catch (error) {
     logError('Error deleting message:', error);
-    
+
     return NextResponse.json(
       {
         success: false,

@@ -1,40 +1,29 @@
 import { auth } from '@repo/auth/server';
-import { database, type Prisma } from '@repo/database';
 import { getCacheService } from '@repo/cache';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import { database, type Prisma } from '@repo/database';
 import { logError } from '@repo/observability/server';
-import { 
-  updateProductSchema,
-  productConditionSchema,
-} from '@repo/validation/schemas/product';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { validateBody, validateParams } from '@repo/validation/middleware';
 import {
-  priceSchema,
-  safeTextSchema,
-  cuidSchema,
-} from '@repo/validation/schemas/common';
-import { 
-  withValidation, 
-  validateBody,
-  validateParams,
-  formatZodErrors,
-} from '@repo/validation/middleware';
-import { 
-  sanitizeForDisplay, 
-  sanitizeHtml,
-  filterProfanity,
   containsProfanity,
+  filterProfanity,
+  sanitizeForDisplay,
+  sanitizeHtml,
 } from '@repo/validation/sanitize';
-import { 
-  isValidProductTitle,
+import { cuidSchema, priceSchema } from '@repo/validation/schemas/common';
+import { productConditionSchema } from '@repo/validation/schemas/product';
+import {
   isAllowedImageUrl,
   isPriceInRange,
+  isValidProductTitle,
 } from '@repo/validation/validators';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 // Enhanced schema for updating a product
 const updateProductInput = z.object({
-  title: z.string()
+  title: z
+    .string()
     .trim()
     .min(3, 'Title must be at least 3 characters')
     .max(100, 'Title must be at most 100 characters')
@@ -48,7 +37,8 @@ const updateProductInput = z.object({
       message: 'Product title contains inappropriate content',
     })
     .optional(),
-  description: z.string()
+  description: z
+    .string()
     .trim()
     .min(10, 'Description must be at least 10 characters')
     .max(2000, 'Description must be at most 2000 characters')
@@ -66,13 +56,21 @@ const updateProductInput = z.object({
   size: z.string().max(20).optional().nullable(),
   color: z.string().max(30).optional().nullable(),
   status: z.enum(['AVAILABLE', 'SOLD', 'RESERVED', 'REMOVED']).optional(),
-  images: z.array(
-    z.string()
-      .url('Invalid image URL')
-      .refine((url) => isAllowedImageUrl(url, ['uploadthing.com', 'utfs.io']), {
-        message: 'Image must be from an allowed source',
-      })
-  ).min(1, 'At least one image is required').max(10, 'Maximum 10 images allowed').optional(),
+  images: z
+    .array(
+      z
+        .string()
+        .url('Invalid image URL')
+        .refine(
+          (url) => isAllowedImageUrl(url, ['uploadthing.com', 'utfs.io']),
+          {
+            message: 'Image must be from an allowed source',
+          }
+        )
+    )
+    .min(1, 'At least one image is required')
+    .max(10, 'Maximum 10 images allowed')
+    .optional(),
 });
 
 // Schema for product ID parameter
@@ -82,7 +80,10 @@ const productIdSchema = z.object({
 
 // Initialize cache service
 const cache = getCacheService({
-  url: process.env.UPSTASH_REDIS_REST_URL || process.env.REDIS_URL || 'redis://localhost:6379',
+  url:
+    process.env.UPSTASH_REDIS_REST_URL ||
+    process.env.REDIS_URL ||
+    'redis://localhost:6379',
   token: process.env.UPSTASH_REDIS_REST_TOKEN || undefined,
 });
 
@@ -100,7 +101,7 @@ export async function GET(
           success: false,
           error: rateLimitResult.error?.message || 'Rate limit exceeded',
         },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }
@@ -167,7 +168,7 @@ export async function GET(
             },
           },
         });
-        
+
         return dbProduct;
       },
       300 // Cache for 5 minutes
@@ -184,21 +185,29 @@ export async function GET(
     }
 
     // Increment view count (fire and forget)
-    database.product.update({
-      where: { id },
-      data: { views: { increment: 1 } },
-    }).catch(() => {
-      // Ignore errors for view counting
-    });
+    database.product
+      .update({
+        where: { id },
+        data: { views: { increment: 1 } },
+      })
+      .catch(() => {
+        // Ignore errors for view counting
+      });
 
     // Add cache headers for browser caching
     const headers = new Headers();
-    headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+    headers.set(
+      'Cache-Control',
+      'public, s-maxage=60, stale-while-revalidate=300'
+    );
 
-    return NextResponse.json({
-      success: true,
-      data: { product },
-    }, { headers });
+    return NextResponse.json(
+      {
+        success: true,
+        data: { product },
+      },
+      { headers }
+    );
   } catch (error) {
     logError('Error fetching product:', error);
     return NextResponse.json(
@@ -225,7 +234,7 @@ export async function PUT(
           success: false,
           error: rateLimitResult.error?.message || 'Rate limit exceeded',
         },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }
@@ -318,10 +327,12 @@ export async function PUT(
 
     // Sanitize and prepare update data
     const updateData: Prisma.ProductUpdateInput = {};
-    
+
     // Only include fields that were provided and sanitize them
     if (validatedData.title !== undefined) {
-      updateData.title = filterProfanity(sanitizeForDisplay(validatedData.title));
+      updateData.title = filterProfanity(
+        sanitizeForDisplay(validatedData.title)
+      );
     }
     if (validatedData.description !== undefined) {
       updateData.description = sanitizeHtml(validatedData.description, {
@@ -329,14 +340,26 @@ export async function PUT(
         ALLOWED_ATTR: [],
       });
     }
-    if (validatedData.price !== undefined) updateData.price = validatedData.price;
-    if (validatedData.condition !== undefined) updateData.condition = validatedData.condition;
-    if (validatedData.brand !== undefined) {
-      updateData.brand = validatedData.brand ? sanitizeForDisplay(validatedData.brand) : null;
+    if (validatedData.price !== undefined) {
+      updateData.price = validatedData.price;
     }
-    if (validatedData.size !== undefined) updateData.size = validatedData.size;
-    if (validatedData.color !== undefined) updateData.color = validatedData.color;
-    if (validatedData.status !== undefined) updateData.status = validatedData.status;
+    if (validatedData.condition !== undefined) {
+      updateData.condition = validatedData.condition;
+    }
+    if (validatedData.brand !== undefined) {
+      updateData.brand = validatedData.brand
+        ? sanitizeForDisplay(validatedData.brand)
+        : null;
+    }
+    if (validatedData.size !== undefined) {
+      updateData.size = validatedData.size;
+    }
+    if (validatedData.color !== undefined) {
+      updateData.color = validatedData.color;
+    }
+    if (validatedData.status !== undefined) {
+      updateData.status = validatedData.status;
+    }
 
     // Handle images update if provided
     if (validatedData.images) {
@@ -390,12 +413,15 @@ export async function PUT(
     });
   } catch (error) {
     logError('Error updating product:', error);
-    
+
     return NextResponse.json(
       {
         success: false,
         error: 'Failed to update product',
-        message: error instanceof Error ? error.message : 'An unexpected error occurred',
+        message:
+          error instanceof Error
+            ? error.message
+            : 'An unexpected error occurred',
       },
       { status: 500 }
     );
@@ -416,7 +442,7 @@ export async function DELETE(
           success: false,
           error: rateLimitResult.error?.message || 'Rate limit exceeded',
         },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }
@@ -469,7 +495,7 @@ export async function DELETE(
     // Check if product exists and user owns it
     const existingProduct = await database.product.findUnique({
       where: { id },
-      select: { 
+      select: {
         sellerId: true,
         status: true,
         orders: {

@@ -1,33 +1,24 @@
 import { auth } from '@repo/auth/server';
 import { database, type Prisma } from '@repo/database';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
-import { APIResponseBuilder } from '@/lib/api-response';
-import { NextRequest } from 'next/server';
-import { z } from 'zod';
 import { logError } from '@repo/observability/server';
-import { 
-  createProductSchema,
-  productConditionSchema,
-} from '@repo/validation/schemas/product';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { validateBody, validateQuery } from '@repo/validation/middleware';
 import {
-  priceSchema,
-  paginationSchema,
-} from '@repo/validation/schemas/common';
-import { 
-  validateQuery, 
-  validateBody,
-} from '@repo/validation/middleware';
-import { 
-  sanitizeForDisplay, 
-  sanitizeHtml,
-  filterProfanity,
   containsProfanity,
+  filterProfanity,
+  sanitizeForDisplay,
+  sanitizeHtml,
 } from '@repo/validation/sanitize';
-import { 
-  isValidProductTitle,
+import { paginationSchema, priceSchema } from '@repo/validation/schemas/common';
+import { productConditionSchema } from '@repo/validation/schemas/product';
+import {
   isAllowedImageUrl,
   isPriceInRange,
+  isValidProductTitle,
 } from '@repo/validation/validators';
+import type { NextRequest } from 'next/server';
+import { z } from 'zod';
+import { APIResponseBuilder } from '@/lib/api-response';
 
 // Enhanced schema for listing products with better filtering
 const listProductsInput = paginationSchema.extend({
@@ -42,7 +33,8 @@ const listProductsInput = paginationSchema.extend({
 
 // Enhanced schema for creating a product with validation
 const createProductInput = z.object({
-  title: z.string()
+  title: z
+    .string()
     .trim()
     .min(3, 'Title must be at least 3 characters')
     .max(100, 'Title must be at most 100 characters')
@@ -55,7 +47,8 @@ const createProductInput = z.object({
     .refine((title) => !containsProfanity(title), {
       message: 'Product title contains inappropriate content',
     }),
-  description: z.string()
+  description: z
+    .string()
     .trim()
     .min(10, 'Description must be at least 10 characters')
     .max(2000, 'Description must be at most 2000 characters')
@@ -70,13 +63,21 @@ const createProductInput = z.object({
   brand: z.string().trim().max(50).optional(),
   size: z.string().max(20).optional(),
   color: z.string().max(30).optional(),
-  images: z.array(
-    z.string()
-      .url('Invalid image URL')
-      .refine((url) => isAllowedImageUrl(url, ['uploadthing.com', 'utfs.io']), {
-        message: 'Image must be from an allowed source',
-      })
-  ).min(1, 'At least one image is required').max(10, 'Maximum 10 images allowed').optional(),
+  images: z
+    .array(
+      z
+        .string()
+        .url('Invalid image URL')
+        .refine(
+          (url) => isAllowedImageUrl(url, ['uploadthing.com', 'utfs.io']),
+          {
+            message: 'Image must be from an allowed source',
+          }
+        )
+    )
+    .min(1, 'At least one image is required')
+    .max(10, 'Maximum 10 images allowed')
+    .optional(),
 });
 
 // GET /api/v1/products - List products with filtering
@@ -95,7 +96,7 @@ export async function GET(request: NextRequest) {
     if (!validation.success) {
       return APIResponseBuilder.validationError(validation.errors);
     }
-    
+
     const {
       page = 1,
       limit = 20,
@@ -133,8 +134,12 @@ export async function GET(request: NextRequest) {
 
     if (minPrice || maxPrice) {
       where.price = {};
-      if (minPrice) where.price.gte = minPrice;
-      if (maxPrice) where.price.lte = maxPrice;
+      if (minPrice) {
+        where.price.gte = minPrice;
+      }
+      if (maxPrice) {
+        where.price.lte = maxPrice;
+      }
     }
 
     if (search) {
@@ -247,8 +252,10 @@ export async function POST(request: NextRequest) {
 
     // Check request size (5MB limit for product creation with images)
     const contentLength = request.headers.get('content-length');
-    if (contentLength && parseInt(contentLength) > 5 * 1024 * 1024) {
-      return APIResponseBuilder.badRequest('Request too large. Maximum size: 5MB');
+    if (contentLength && Number.parseInt(contentLength, 10) > 5 * 1024 * 1024) {
+      return APIResponseBuilder.badRequest(
+        'Request too large. Maximum size: 5MB'
+      );
     }
 
     // Check authentication
@@ -273,7 +280,9 @@ export async function POST(request: NextRequest) {
         ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'p', 'br', 'ul', 'ol', 'li'],
         ALLOWED_ATTR: [],
       }),
-      brand: validatedData.brand ? sanitizeForDisplay(validatedData.brand) : undefined,
+      brand: validatedData.brand
+        ? sanitizeForDisplay(validatedData.brand)
+        : undefined,
     };
 
     // Verify user exists in our database

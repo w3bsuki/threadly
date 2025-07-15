@@ -1,13 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { database } from '@repo/database';
 import { auth } from '@repo/auth/server';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
 import { getCacheService } from '@repo/cache';
+import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
 
 // Initialize cache service
 const cache = getCacheService({
-  url: process.env.UPSTASH_REDIS_REST_URL || process.env.REDIS_URL || 'redis://localhost:6379',
+  url:
+    process.env.UPSTASH_REDIS_REST_URL ||
+    process.env.REDIS_URL ||
+    'redis://localhost:6379',
   token: process.env.UPSTASH_REDIS_REST_TOKEN || undefined,
 });
 
@@ -22,7 +25,7 @@ export async function GET(request: NextRequest) {
           success: false,
           error: rateLimitResult.error?.message || 'Rate limit exceeded',
         },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }
@@ -33,9 +36,9 @@ export async function GET(request: NextRequest) {
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Authentication required' 
+        {
+          success: false,
+          error: 'Authentication required',
         },
         { status: 401 }
       );
@@ -49,9 +52,9 @@ export async function GET(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'User not found' 
+        {
+          success: false,
+          error: 'User not found',
         },
         { status: 404 }
       );
@@ -59,7 +62,7 @@ export async function GET(request: NextRequest) {
 
     // Get query parameters
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit') || '10', 10);
+    const limit = Number.parseInt(searchParams.get('limit') || '10', 10);
 
     // Cache suggestions per user
     const suggestions = await cache.remember(
@@ -75,7 +78,7 @@ export async function GET(request: NextRequest) {
           },
         });
 
-        const followingIds = following.map(f => f.followingId);
+        const followingIds = following.map((f) => f.followingId);
 
         // Get suggested users based on various criteria
         const suggestedUsers = await database.user.findMany({
@@ -140,9 +143,9 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     logError('Get suggestions error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to get suggestions' 
+      {
+        success: false,
+        error: 'Failed to get suggestions',
       },
       { status: 500 }
     );
