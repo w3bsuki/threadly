@@ -28,7 +28,7 @@ export async function POST(
     }
 
     const { reviewId } = await params;
-    const { isHelpful } = await request.json();
+    const { helpful } = await request.json();
 
     // Check if review exists
     const review = await database.review.findUnique({
@@ -63,7 +63,7 @@ export async function POST(
     let action = '';
     
     if (existingVote) {
-      if (existingVote.isHelpful === isHelpful) {
+      if (existingVote.helpful === helpful) {
         // Remove vote
         await database.reviewVote.delete({
           where: { id: existingVote.id },
@@ -72,7 +72,7 @@ export async function POST(
         await database.review.update({
           where: { id: reviewId },
           data: {
-            helpfulCount: Math.max(0, review.helpfulCount + (existingVote.isHelpful ? -1 : 1)),
+            helpfulCount: Math.max(0, review.helpfulCount + (existingVote.helpful ? -1 : 1)),
           },
         });
         
@@ -81,13 +81,13 @@ export async function POST(
         // Update vote
         await database.reviewVote.update({
           where: { id: existingVote.id },
-          data: { isHelpful },
+          data: { helpful },
         });
         
         await database.review.update({
           where: { id: reviewId },
           data: {
-            helpfulCount: Math.max(0, review.helpfulCount + (isHelpful ? 2 : -2)),
+            helpfulCount: Math.max(0, review.helpfulCount + (helpful ? 2 : -2)),
           },
         });
         
@@ -99,14 +99,14 @@ export async function POST(
         data: {
           reviewId,
           userId: dbUser.id,
-          isHelpful,
+          helpful,
         },
       });
       
       await database.review.update({
         where: { id: reviewId },
         data: {
-          helpfulCount: Math.max(0, review.helpfulCount + (isHelpful ? 1 : -1)),
+          helpfulCount: Math.max(0, review.helpfulCount + (helpful ? 1 : -1)),
         },
       });
       

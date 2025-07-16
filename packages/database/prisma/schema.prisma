@@ -500,6 +500,7 @@ enum ProductStatus {
   SOLD
   RESERVED
   REMOVED
+  DRAFT
 }
 
 enum ReportStatus {

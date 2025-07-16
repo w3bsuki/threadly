@@ -147,10 +147,10 @@ export async function MarketingOverview({ userId }: MarketingOverviewProps) {
               <div className="space-y-2">
                 <div className="font-mono text-lg">{activeDiscounts[0].code}</div>
                 <p className="text-sm text-muted-foreground">
-                  {activeDiscounts[0].currentUses} uses • 
-                  {activeDiscounts[0].type === 'PERCENTAGE' 
-                    ? `${activeDiscounts[0].value}% off`
-                    : `$${activeDiscounts[0].value} off`}
+                  {activeDiscounts[0].usedCount} uses • 
+                  {activeDiscounts[0].discountType === 'PERCENTAGE' 
+                    ? `${activeDiscounts[0].discountValue}% off`
+                    : `$${activeDiscounts[0].discountValue} off`}
                 </p>
               </div>
             ) : (

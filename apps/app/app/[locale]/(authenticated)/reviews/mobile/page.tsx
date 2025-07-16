@@ -143,7 +143,7 @@ export default async function MobileReviewsPage({ searchParams }: ReviewsPagePro
       },
       ReviewVote: {
         where: { userId: dbUser.id },
-        select: { isHelpful: true }
+        select: { helpful: true }
       }
     },
     orderBy: { createdAt: 'desc' }
@@ -275,7 +275,7 @@ export default async function MobileReviewsPage({ searchParams }: ReviewsPagePro
                   reviewer: review.User_Review_reviewerIdToUser,
                   photos: review.photoUrls,
                   helpfulCount: review.helpfulCount,
-                  isHelpful: review.ReviewVote[0]?.isHelpful
+                  helpful: review.ReviewVote[0]?.helpful
                 }))}
               />
             </div>

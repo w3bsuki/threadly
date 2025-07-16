@@ -8,7 +8,7 @@ import { logError } from '@repo/observability/server';
 
 const voteReviewSchema = z.object({
   reviewId: z.string().min(1, 'Review ID is required'),
-  isHelpful: z.boolean(),
+  helpful: z.boolean(),
 });
 
 export async function voteReview(input: z.infer<typeof voteReviewSchema>) {
@@ -67,7 +67,7 @@ export async function voteReview(input: z.infer<typeof voteReviewSchema>) {
     });
 
     if (existingVote) {
-      if (existingVote.isHelpful === validatedInput.isHelpful) {
+      if (existingVote.helpful === validatedInput.helpful) {
         // Remove vote if clicking the same button
         await database.reviewVote.delete({
           where: {
@@ -76,7 +76,7 @@ export async function voteReview(input: z.infer<typeof voteReviewSchema>) {
         });
 
         // Update helpful count
-        const newCount = review.helpfulCount + (existingVote.isHelpful ? -1 : 1);
+        const newCount = review.helpfulCount + (existingVote.helpful ? -1 : 1);
         await database.review.update({
           where: {
             id: validatedInput.reviewId,
@@ -97,12 +97,12 @@ export async function voteReview(input: z.infer<typeof voteReviewSchema>) {
             id: existingVote.id,
           },
           data: {
-            isHelpful: validatedInput.isHelpful,
+            helpful: validatedInput.helpful,
           },
         });
 
         // Update helpful count
-        const newCount = review.helpfulCount + (validatedInput.isHelpful ? 2 : -2);
+        const newCount = review.helpfulCount + (validatedInput.helpful ? 2 : -2);
         await database.review.update({
           where: {
             id: validatedInput.reviewId,
@@ -123,12 +123,12 @@ export async function voteReview(input: z.infer<typeof voteReviewSchema>) {
         data: {
           reviewId: validatedInput.reviewId,
           userId: dbUser.id,
-          isHelpful: validatedInput.isHelpful,
+          helpful: validatedInput.helpful,
         },
       });
 
       // Update helpful count
-      const newCount = review.helpfulCount + (validatedInput.isHelpful ? 1 : -1);
+      const newCount = review.helpfulCount + (validatedInput.helpful ? 1 : -1);
       await database.review.update({
         where: {
           id: validatedInput.reviewId,
