@@ -23,12 +23,12 @@ export async function TransactionsList({ userId, period }: TransactionsListProps
     orderBy: { createdAt: 'desc' },
     take: 50,
     include: {
-      order: {
+      Order: {
         include: {
           Product: true
         }
       },
-      payout: true
+      Payout: true
     }
   });
 
@@ -100,8 +100,8 @@ export async function TransactionsList({ userId, period }: TransactionsListProps
                     </TableCell>
                     <TableCell>
                       {transaction.description || 
-                        (transaction.order?.Product?.title && `Sale: ${transaction.order.Product.title}`) ||
-                        transaction.category.replace(/_/g, ' ').toLowerCase()}
+                        (transaction.Order?.Product?.title && `Sale: ${transaction.Order.Product.title}`) ||
+                        transaction.type.replace(/_/g, ' ').toLowerCase()}
                     </TableCell>
                     <TableCell>
                       <span className={transaction.type === 'SALE' || transaction.type === 'PAYOUT' ? 'text-green-600' : 'text-red-600'}>
@@ -110,7 +110,7 @@ export async function TransactionsList({ userId, period }: TransactionsListProps
                       </span>
                     </TableCell>
                     <TableCell>
-                      ${Number(transaction.netAmount).toFixed(2)}
+                      ${Number(transaction.amount).toFixed(2)}
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {formatDistanceToNow(transaction.createdAt, { addSuffix: true })}

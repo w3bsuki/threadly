@@ -17,24 +17,22 @@ interface MarketingOverviewProps {
 export async function MarketingOverview({ userId }: MarketingOverviewProps) {
   // Get discount code statistics
   const discountCodes = await database.discountCode.findMany({
-    where: { sellerId: userId },
+    where: { userId: userId },
     include: {
-      usedCodes: true
+      UsedCodes: true
     }
   });
 
-  const activeDiscounts = discountCodes.filter(code => code.isActive);
-  const totalDiscountUses = discountCodes.reduce((sum, code) => sum + code.currentUses, 0);
+  const activeDiscounts = discountCodes.filter(code => code.active);
+  const totalDiscountUses = discountCodes.reduce((sum, code) => sum + code.usedCount, 0);
   const totalSaved = discountCodes.reduce((sum, code) => 
-    sum + code.usedCodes.reduce((codeSum, used) => codeSum + Number(used.savedAmount), 0), 0
+    sum + code.UsedCodes.reduce((codeSum, used) => codeSum + Number(code.discountValue), 0), 0
   );
 
   // Get featured product statistics
   const featuredProducts = await database.featuredProduct.findMany({
     where: {
-      product: {
-        sellerId: userId
-      }
+      userId: userId
     }
   });
 
