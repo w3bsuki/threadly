@@ -283,7 +283,7 @@ export async function bulkUpdateSellerProducts({
         });
         results.success++;
       } catch (error) {
-        log.error(`Failed to update product ${product.id}:`, error);
+        log.error(`Failed to update product ${product.id}:`, error instanceof Error ? { message: error.message } : { error: String(error) });
         results.errors++;
       }
     }
