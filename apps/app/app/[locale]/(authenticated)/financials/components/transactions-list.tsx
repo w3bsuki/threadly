@@ -18,19 +18,8 @@ interface TransactionsListProps {
 }
 
 export async function TransactionsList({ userId, period }: TransactionsListProps) {
-  const transactions = await database.financialTransaction.findMany({
-    where: { userId },
-    orderBy: { createdAt: 'desc' },
-    take: 50,
-    include: {
-      Order: {
-        include: {
-          Product: true
-        }
-      },
-      Payout: true
-    }
-  });
+  // TODO: Add FinancialTransaction model to database schema
+  const transactions: any[] = [];
 
   const getIcon = (type: string) => {
     switch (type) {

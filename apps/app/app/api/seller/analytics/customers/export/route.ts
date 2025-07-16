@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
         createdAt: { gte: startDate }
       },
       include: {
-        buyer: {
+        User_Order_buyerIdToUser: {
           select: {
             id: true,
             firstName: true,
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
             email: true,
           }
         },
-        product: {
+        Product: {
           select: {
             title: true,
             category: {
@@ -74,22 +74,8 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' }
     });
 
-    // Get interactions for additional insights
-    const interactions = await database.userInteraction.findMany({
-      where: {
-        productId: { in: productIds },
-        createdAt: { gte: startDate }
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-          }
-        }
-      }
-    });
+    // TODO: Add UserInteraction model to database schema
+    const interactions: any[] = [];
 
     // Create CSV content
     const csvHeaders = [
@@ -110,7 +96,7 @@ export async function GET(request: NextRequest) {
     
     orders.forEach(order => {
       const customerId = order.buyerId;
-      const customer = order.buyer;
+      const customer = order.User_Order_buyerIdToUser;
       
       if (!customerData.has(customerId)) {
         customerData.set(customerId, {
@@ -125,7 +111,7 @@ export async function GET(request: NextRequest) {
       
       const data = customerData.get(customerId);
       data.orders.push(order);
-      data.totalSpent += Number(order.total);
+      data.totalSpent += Number(order.amount);
     });
 
     // Calculate averages for customer segmentation

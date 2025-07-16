@@ -87,7 +87,9 @@ export function TemplateForm({
       name: initialData?.name || '',
       description: initialData?.description || '',
       category: initialData?.category || '',
-      condition: initialData?.condition || undefined,
+      condition: initialData?.condition && ['NEW_WITH_TAGS', 'NEW_WITHOUT_TAGS', 'VERY_GOOD', 'GOOD', 'SATISFACTORY'].includes(initialData.condition) 
+        ? initialData.condition as "NEW_WITH_TAGS" | "NEW_WITHOUT_TAGS" | "VERY_GOOD" | "GOOD" | "SATISFACTORY" 
+        : undefined,
       brand: initialData?.brand || '',
       size: initialData?.size || '',
       color: initialData?.color || '',

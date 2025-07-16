@@ -56,93 +56,14 @@ export async function voteReview(input: z.infer<typeof voteReviewSchema>) {
       };
     }
 
-    // Check for existing vote
-    const existingVote = await database.reviewVote.findUnique({
-      where: {
-        reviewId_userId: {
-          reviewId: validatedInput.reviewId,
-          userId: dbUser.id,
-        },
-      },
-    });
+    // TODO: Add ReviewVote model to database schema
+    const existingVote = null;
 
-    if (existingVote) {
-      if (existingVote.helpful === validatedInput.helpful) {
-        // Remove vote if clicking the same button
-        await database.reviewVote.delete({
-          where: {
-            id: existingVote.id,
-          },
-        });
-
-        // Update helpful count
-        const newCount = review.helpfulCount + (existingVote.helpful ? -1 : 1);
-        await database.review.update({
-          where: {
-            id: validatedInput.reviewId,
-          },
-          data: {
-            helpfulCount: Math.max(0, newCount),
-          },
-        });
-
-        return {
-          success: true,
-          action: 'removed',
-        };
-      } else {
-        // Update existing vote
-        await database.reviewVote.update({
-          where: {
-            id: existingVote.id,
-          },
-          data: {
-            helpful: validatedInput.helpful,
-          },
-        });
-
-        // Update helpful count
-        const newCount = review.helpfulCount + (validatedInput.helpful ? 2 : -2);
-        await database.review.update({
-          where: {
-            id: validatedInput.reviewId,
-          },
-          data: {
-            helpfulCount: Math.max(0, newCount),
-          },
-        });
-
-        return {
-          success: true,
-          action: 'updated',
-        };
-      }
-    } else {
-      // Create new vote
-      await database.reviewVote.create({
-        data: {
-          reviewId: validatedInput.reviewId,
-          userId: dbUser.id,
-          helpful: validatedInput.helpful,
-        },
-      });
-
-      // Update helpful count
-      const newCount = review.helpfulCount + (validatedInput.helpful ? 1 : -1);
-      await database.review.update({
-        where: {
-          id: validatedInput.reviewId,
-        },
-        data: {
-          helpfulCount: Math.max(0, newCount),
-        },
-      });
-
-      return {
-        success: true,
-        action: 'created',
-      };
-    }
+    // TODO: Implement review voting when ReviewVote model is added
+    return {
+      success: false,
+      error: 'Review voting not implemented',
+    };
 
   } catch (error) {
     logError('Failed to vote on review:', error);

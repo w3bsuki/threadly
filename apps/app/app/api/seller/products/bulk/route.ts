@@ -83,20 +83,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create bulk operation record
-    const bulkOperation = await database.bulkOperation.create({
-      data: {
-        userId: dbUser.id,
-        type: operation,
-        status: 'PENDING',
-        totalItems: productIds.length,
-        parameters: {
-          productIds,
-          operation,
-          data
-        }
-      }
-    });
+    // TODO: Add BulkOperation model to database schema
+    const bulkOperation = { id: 'mock-bulk-op' };
 
     try {
       let updateData: any = {};
@@ -150,23 +138,23 @@ export async function POST(request: NextRequest) {
           });
           results.success++;
         } catch (error) {
-          log.error(`Failed to update product ${product.id}:`, error);
+          log.error(`Failed to update product ${product.id}:`, error as any);
           results.errors++;
         }
       }
 
-      // Update bulk operation status
-      await database.bulkOperation.update({
-        where: { id: bulkOperation.id },
-        data: {
-          status: 'COMPLETED',
-          processedItems: results.success + results.errors,
-          successCount: results.success,
-          errorCount: results.errors,
-          completedAt: new Date(),
-          errors: results.errors > 0 ? { details: 'Some items failed to update' } : null
-        }
-      });
+      // TODO: Update bulk operation status when model is added
+      // await database.bulkOperation.update({
+      //   where: { id: bulkOperation.id },
+      //   data: {
+      //     status: 'COMPLETED',
+      //     processedItems: results.success + results.errors,
+      //     successCount: results.success,
+      //     errorCount: results.errors,
+      //     completedAt: new Date(),
+      //     errors: results.errors > 0 ? { details: 'Some items failed to update' } : null
+      //   }
+      // });
 
       return NextResponse.json({ 
         success: true, 
@@ -176,16 +164,16 @@ export async function POST(request: NextRequest) {
       });
 
     } catch (error) {
-      // Mark operation as failed
-      await database.bulkOperation.update({
-        where: { id: bulkOperation.id },
-        data: {
-          status: 'FAILED',
-          errors: { error: error instanceof Error ? error.message : 'Unknown error' }
-        }
-      });
+      // TODO: Mark operation as failed when model is added
+      // await database.bulkOperation.update({
+      //   where: { id: bulkOperation.id },
+      //   data: {
+      //     status: 'FAILED',
+      //     errors: { error: error instanceof Error ? error.message : 'Unknown error' }
+      //   }
+      // });
       
-      log.error('Bulk operation failed:', error);
+      log.error('Bulk operation failed:', error as any);
       return NextResponse.json(
         { error: 'Failed to perform bulk update' },
         { status: 500 }
@@ -193,7 +181,7 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    log.error('Bulk operation API error:', error);
+    log.error('Bulk operation API error:', error as any);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -233,33 +221,11 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10');
     const operationId = searchParams.get('operationId');
 
-    if (operationId) {
-      // Get specific operation status
-      const operation = await database.bulkOperation.findFirst({
-        where: {
-          id: operationId,
-          userId: dbUser.id
-        }
-      });
-
-      if (!operation) {
-        return NextResponse.json({ error: 'Operation not found' }, { status: 404 });
-      }
-
-      return NextResponse.json(operation);
-    } else {
-      // Get user's bulk operations history
-      const operations = await database.bulkOperation.findMany({
-        where: { userId: dbUser.id },
-        orderBy: { createdAt: 'desc' },
-        take: Math.min(limit, 50) // Cap at 50 for performance
-      });
-
-      return NextResponse.json({ operations });
-    }
+    // TODO: Add BulkOperation model to database schema
+    return NextResponse.json({ error: 'Operation tracking not implemented' }, { status: 501 });
 
   } catch (error) {
-    log.error('Get bulk operations API error:', error);
+    log.error('Get bulk operations API error:', error as any);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

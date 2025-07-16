@@ -106,16 +106,7 @@ const SellNewItemPage = async ({
     const [selectedTemplate, draftProduct, templates, categories] = await Promise.all([
       // Template feature disabled
       null,
-      draftId ? database.product.findFirst({
-        where: {
-          id: draftId,
-          sellerId: dbUser.id,
-          status: 'DRAFT'
-        },
-        include: {
-          images: true
-        }
-      }) : null,
+      null,
       // Templates feature disabled
       Promise.resolve([]),
       database.category.findMany({

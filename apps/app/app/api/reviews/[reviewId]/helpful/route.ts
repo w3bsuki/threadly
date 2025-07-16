@@ -50,71 +50,9 @@ export async function POST(
       );
     }
 
-    // Check for existing vote
-    const existingVote = await database.reviewVote.findUnique({
-      where: {
-        reviewId_userId: {
-          reviewId,
-          userId: dbUser.id,
-        },
-      },
-    });
+    // TODO: Add ReviewVote model to database schema
+    return NextResponse.json({ error: 'Review voting not implemented' }, { status: 501 });
 
-    let action = '';
-    
-    if (existingVote) {
-      if (existingVote.helpful === helpful) {
-        // Remove vote
-        await database.reviewVote.delete({
-          where: { id: existingVote.id },
-        });
-        
-        await database.review.update({
-          where: { id: reviewId },
-          data: {
-            helpfulCount: Math.max(0, review.helpfulCount + (existingVote.helpful ? -1 : 1)),
-          },
-        });
-        
-        action = 'removed';
-      } else {
-        // Update vote
-        await database.reviewVote.update({
-          where: { id: existingVote.id },
-          data: { helpful },
-        });
-        
-        await database.review.update({
-          where: { id: reviewId },
-          data: {
-            helpfulCount: Math.max(0, review.helpfulCount + (helpful ? 2 : -2)),
-          },
-        });
-        
-        action = 'updated';
-      }
-    } else {
-      // Create new vote
-      await database.reviewVote.create({
-        data: {
-          reviewId,
-          userId: dbUser.id,
-          helpful,
-        },
-      });
-      
-      await database.review.update({
-        where: { id: reviewId },
-        data: {
-          helpfulCount: Math.max(0, review.helpfulCount + (helpful ? 1 : -1)),
-        },
-      });
-      
-      action = 'created';
-    }
-
-    return NextResponse.json({ success: true, action });
-    
   } catch (error) {
     logError('Failed to vote on review:', error);
     return NextResponse.json(

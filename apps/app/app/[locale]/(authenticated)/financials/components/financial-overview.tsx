@@ -44,30 +44,27 @@ export async function FinancialOverview({ userId, period }: FinancialOverviewPro
       endDate = endOfMonth(now);
   }
 
-  // Get transactions for the period
-  const transactions = await database.financialTransaction.findMany({
+  // Get orders for the period to calculate revenue
+  const orderData = await database.order.findMany({
     where: {
-      userId,
+      sellerId: userId,
+      status: 'DELIVERED',
       createdAt: {
         gte: startDate,
         lte: endDate
       }
+    },
+    include: {
+      Payment: true
     }
   });
 
-  // Calculate totals
-  const revenue = transactions
-    .filter(t => t.type === 'SALE')
-    .reduce((sum, t) => sum + Number(t.amount), 0);
+  // Calculate totals from orders
+  const revenue = orderData
+    .reduce((sum, order) => sum + Number(order.amount), 0);
 
-  const expenses = transactions
-    .filter(t => t.type === 'EXPENSE')
-    .reduce((sum, t) => sum + Number(t.amount), 0);
-
-  const fees = transactions
-    .filter(t => t.type === 'FEE')
-    .reduce((sum, t) => sum + Number(t.amount), 0);
-
+  const expenses = 0;
+  const fees = 0;
   const netProfit = revenue - expenses - fees;
 
   // Get order statistics

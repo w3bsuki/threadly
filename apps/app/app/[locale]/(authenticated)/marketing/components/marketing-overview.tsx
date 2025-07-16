@@ -15,26 +15,17 @@ interface MarketingOverviewProps {
 }
 
 export async function MarketingOverview({ userId }: MarketingOverviewProps) {
-  // Get discount code statistics
-  const discountCodes = await database.discountCode.findMany({
-    where: { userId: userId },
-    include: {
-      UsedCodes: true
-    }
-  });
+  // TODO: Add DiscountCode model to database schema
+  const discountCodes: any[] = [];
 
   const activeDiscounts = discountCodes.filter(code => code.active);
   const totalDiscountUses = discountCodes.reduce((sum, code) => sum + code.usedCount, 0);
   const totalSaved = discountCodes.reduce((sum, code) => 
-    sum + code.UsedCodes.reduce((codeSum, used) => codeSum + Number(code.discountValue), 0), 0
+    sum + code.UsedCodes.reduce((codeSum: number, used: any) => codeSum + Number(code.discountValue), 0), 0
   );
 
-  // Get featured product statistics
-  const featuredProducts = await database.featuredProduct.findMany({
-    where: {
-      userId: userId
-    }
-  });
+  // TODO: Add FeaturedProduct model to database schema
+  const featuredProducts: any[] = [];
 
   const totalImpressions = featuredProducts.reduce((sum, fp) => sum + fp.impressions, 0);
   const totalClicks = featuredProducts.reduce((sum, fp) => sum + fp.clicks, 0);

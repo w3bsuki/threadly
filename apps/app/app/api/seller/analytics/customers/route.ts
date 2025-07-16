@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
         createdAt: { gte: startDate }
       },
       include: {
-        buyer: {
+        User_Order_buyerIdToUser: {
           select: {
             id: true,
             firstName: true,
@@ -87,27 +87,8 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    // Get interactions data
-    const interactions = await database.userInteraction.findMany({
-      where: {
-        productId: { in: productIds },
-        createdAt: { gte: startDate }
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-          }
-        },
-        product: {
-          include: {
-            category: true
-          }
-        }
-      }
-    });
+    // TODO: Add UserInteraction model to database schema
+    const interactions: any[] = [];
 
     // Get favorites
     const favorites = await database.favorite.findMany({
@@ -129,7 +110,7 @@ export async function GET(request: NextRequest) {
     
     const returningCustomers = Array.from(customerOrderCounts.values()).filter(count => count > 1).length;
     
-    const totalRevenue = orders.reduce((sum, order) => sum + Number(order.total), 0);
+    const totalRevenue = orders.reduce((sum, order) => sum + Number(order.amount), 0);
     const averageOrderValue = totalCustomers > 0 ? totalRevenue / orders.length : 0;
     const customerLifetimeValue = totalCustomers > 0 ? totalRevenue / totalCustomers : 0;
 
@@ -137,7 +118,7 @@ export async function GET(request: NextRequest) {
     const customerSpending = new Map<string, number>();
     orders.forEach(order => {
       const current = customerSpending.get(order.buyerId) || 0;
-      customerSpending.set(order.buyerId, current + Number(order.total));
+      customerSpending.set(order.buyerId, current + Number(order.amount));
     });
 
     const spendingAmounts = Array.from(customerSpending.values());
@@ -193,7 +174,7 @@ export async function GET(request: NextRequest) {
       }).length;
       
       const returningCustomersWeek = weekCustomers.size - newCustomers;
-      const weekRevenue = weekOrders.reduce((sum, order) => sum + Number(order.total), 0);
+      const weekRevenue = weekOrders.reduce((sum, order) => sum + Number(order.amount), 0);
       
       purchasePatterns.unshift({
         period: `Week ${i + 1}`,
@@ -206,7 +187,7 @@ export async function GET(request: NextRequest) {
     // Top customers by lifetime value
     const topCustomers = Array.from(customerSpending.entries())
       .map(([buyerId, totalSpent]) => {
-        const customer = orders.find(o => o.buyerId === buyerId)?.buyer;
+        const customer = orders.find(o => o.buyerId === buyerId)?.User_Order_buyerIdToUser;
         const customerOrders = orders.filter(o => o.buyerId === buyerId);
         const lastPurchase = Math.max(...customerOrders.map(o => o.createdAt.getTime()));
         

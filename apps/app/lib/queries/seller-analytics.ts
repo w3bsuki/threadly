@@ -191,24 +191,18 @@ export async function getProductAnalytics(productId: string) {
   return cache.remember(
     cacheKey,
     async () => {
-      // Use existing ProductAnalytics model if available
-      const analytics = await database.productAnalytics.findUnique({
-        where: { productId }
-      });
+      // TODO: Add ProductAnalytics model to database schema
+      const analytics = null;
 
-      if (analytics && 
-          analytics.updatedAt.getTime() > Date.now() - cache.TTL.MEDIUM) {
+      // Skip cache check since analytics is null
+      if (false) {
         return analytics;
       }
 
       // Calculate fresh analytics
       const [interactions, orderStats, favoriteCount] = await Promise.all([
-        // Get interaction breakdown
-        database.userInteraction.groupBy({
-          by: ['type'],
-          where: { productId },
-          _count: true
-        }),
+        // TODO: Add UserInteraction model to database schema
+        Promise.resolve([]),
         
         // Get order stats
         database.order.aggregate({
@@ -223,10 +217,7 @@ export async function getProductAnalytics(productId: string) {
         })
       ]);
 
-      const interactionCounts = interactions.reduce((acc, item) => {
-        acc[item.type] = item._count;
-        return acc;
-      }, {} as Record<string, number>);
+      const interactionCounts = {} as Record<string, number>;
 
       const analyticsData = {
         productId,
@@ -242,12 +233,12 @@ export async function getProductAnalytics(productId: string) {
         updatedAt: new Date()
       };
 
-      // Update or create analytics record
-      await database.productAnalytics.upsert({
-        where: { productId },
-        create: analyticsData,
-        update: analyticsData
-      });
+      // TODO: Update or create analytics record when model is added
+      // await database.productAnalytics.upsert({
+      //   where: { productId },
+      //   create: analyticsData,
+      //   update: analyticsData
+      // });
 
       return analyticsData;
     },

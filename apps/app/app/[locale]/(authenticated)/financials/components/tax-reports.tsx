@@ -12,13 +12,8 @@ interface TaxReportsProps {
 export async function TaxReports({ userId }: TaxReportsProps) {
   const currentYear = new Date().getFullYear();
   
-  const reports = await database.taxReport.findMany({
-    where: { userId },
-    orderBy: [
-      { year: 'desc' },
-      { quarter: 'desc' }
-    ]
-  });
+  // TODO: Add TaxReport model to database schema
+  const reports: any[] = [];
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {

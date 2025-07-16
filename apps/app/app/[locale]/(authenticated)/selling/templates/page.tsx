@@ -21,14 +21,8 @@ export async function generateMetadata({
 
 async function getTemplatesData(userId: string) {
   const [templates, categories] = await Promise.all([
-    database.productTemplate.findMany({
-      where: { userId },
-      orderBy: [
-        { isDefault: 'desc' },
-        { usageCount: 'desc' },
-        { createdAt: 'desc' }
-      ]
-    }),
+    // TODO: Add ProductTemplate model to database schema
+    Promise.resolve([]),
     database.category.findMany({
       orderBy: { name: 'asc' }
     })

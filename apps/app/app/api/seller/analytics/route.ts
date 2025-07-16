@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
     }
 
   } catch (error) {
-    log.error('Analytics API error:', error);
+    log.error('Analytics API error:', error as any);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -115,15 +115,15 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { productId, event } = body;
 
-    // Track user interaction
-    await database.userInteraction.create({
-      data: {
-        userId: dbUser.id,
-        productId,
-        type: event.toUpperCase(),
-        metadata: body.metadata || {}
-      }
-    });
+    // TODO: Add UserInteraction model to database schema
+    // await database.userInteraction.create({
+    //   data: {
+    //     userId: dbUser.id,
+    //     productId,
+    //     type: event.toUpperCase(),
+    //     metadata: body.metadata || {}
+    //   }
+    // });
 
     // Increment view count for VIEW events
     if (event === 'view') {
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    log.error('Analytics tracking error:', error);
+    log.error('Analytics tracking error:', error as any);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

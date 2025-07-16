@@ -88,7 +88,6 @@ export async function createReview(input: z.infer<typeof createReviewSchema>) {
         reviewedId: order.sellerId, // Review is for the seller
         rating: validatedInput.rating,
         comment: validatedInput.comment,
-        photoUrls: validatedInput.photoUrls || [],
       },
       include: {
         User_Review_reviewerIdToUser: {

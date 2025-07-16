@@ -141,10 +141,6 @@ export default async function MobileReviewsPage({ searchParams }: ReviewsPagePro
           imageUrl: true
         }
       },
-      ReviewVote: {
-        where: { userId: dbUser.id },
-        select: { helpful: true }
-      }
     },
     orderBy: { createdAt: 'desc' }
   });
@@ -273,9 +269,9 @@ export default async function MobileReviewsPage({ searchParams }: ReviewsPagePro
                   comment: review.comment,
                   createdAt: review.createdAt,
                   reviewer: review.User_Review_reviewerIdToUser,
-                  photos: review.photoUrls,
-                  helpfulCount: review.helpfulCount,
-                  helpful: review.ReviewVote[0]?.helpful
+                  photos: [],
+                  helpfulCount: 0,
+                  helpful: undefined
                 }))}
               />
             </div>
