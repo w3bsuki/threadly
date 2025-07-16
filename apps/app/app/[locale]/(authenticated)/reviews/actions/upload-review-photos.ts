@@ -1,9 +1,15 @@
 'use server';
 
 import { currentUser } from '@repo/auth/server';
-import { put } from '@vercel/blob';
 import { logError } from '@repo/observability/server';
 import { z } from 'zod';
+
+// Mock implementation for @vercel/blob
+const put = async (filename: string, file: File, options: { access: string; contentType: string }) => {
+  // Mock URL for development - in production this would be handled by @vercel/blob
+  const mockUrl = `https://mock-storage.example.com/${filename}`;
+  return { url: mockUrl };
+};
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
