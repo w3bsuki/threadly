@@ -104,12 +104,8 @@ const SellNewItemPage = async ({
 
     // Fetch template data, draft, and categories
     const [selectedTemplate, draftProduct, templates, categories] = await Promise.all([
-      templateId ? database.productTemplate.findFirst({
-        where: { 
-          id: templateId,
-          userId: dbUser.id 
-        }
-      }) : null,
+      // Template feature disabled
+      null,
       draftId ? database.product.findFirst({
         where: {
           id: draftId,
@@ -120,15 +116,8 @@ const SellNewItemPage = async ({
           images: true
         }
       }) : null,
-      database.productTemplate.findMany({
-        where: { userId: dbUser.id },
-        orderBy: [
-          { isDefault: 'desc' },
-          { usageCount: 'desc' },
-          { createdAt: 'desc' }
-        ],
-        take: 10
-      }),
+      // Templates feature disabled
+      Promise.resolve([]),
       database.category.findMany({
         orderBy: { name: 'asc' }
       })

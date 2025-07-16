@@ -51,10 +51,10 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
     { name: dictionary.dashboard.navigation.dashboard, href: '/dashboard', icon: LayoutDashboard },
     { name: dictionary.dashboard.navigation.listings, href: '/selling/listings', icon: Package },
     { name: dictionary.dashboard.dashboard.quickLinks.salesHistory, href: '/selling/history', icon: TrendingUp },
-    { name: dictionary.dashboard.navigation.financials || 'Financials', href: '/financials', icon: DollarSign },
-    { name: dictionary.dashboard.navigation.marketing || 'Marketing', href: '/marketing', icon: Megaphone },
+    { name: 'Financials', href: '/financials', icon: DollarSign },
+    { name: 'Marketing', href: '/marketing', icon: Megaphone },
     { name: dictionary.dashboard.navigation.orders, href: '/buying/orders', icon: ShoppingBag },
-    { name: dictionary.dashboard.navigation.reviews || 'Reviews', href: '/reviews/mobile', icon: Star },
+    { name: 'Reviews', href: '/reviews/mobile', icon: Star },
     { name: dictionary.dashboard.navigation.messages, href: '/messages', icon: MessageCircle },
     { name: dictionary.dashboard.navigation.profile, href: '/profile', icon: User },
   ];

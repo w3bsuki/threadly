@@ -85,7 +85,7 @@ export async function DashboardStats({ userId, dictionary }: DashboardStatsProps
         </div>
         <div className="mt-2">
           <p className="text-2xl font-bold text-foreground">
-            ${metrics.totalRevenue.toLocaleString()}
+            ${(metrics.totalRevenue ?? 0).toLocaleString()}
           </p>
         </div>
       </div>
