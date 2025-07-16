@@ -311,7 +311,7 @@ export async function bulkUpdateSellerProducts({
       error: error instanceof Error ? error.message : 'Unknown error'
     });
     
-    log.error('Bulk operation failed:', error);
+    log.error('Bulk operation failed:', error instanceof Error ? { message: error.message } : { error: String(error) });
     throw new Error('Failed to perform bulk update');
   }
 }
