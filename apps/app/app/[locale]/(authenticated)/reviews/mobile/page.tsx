@@ -170,11 +170,11 @@ export default async function MobileReviewsPage({ searchParams }: ReviewsPagePro
       <div className="sticky top-0 z-10 bg-background border-b">
         <div className="flex items-center gap-3 p-4">
           <Link href="/dashboard">
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="h-5 w-5" />
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
-          <h1 className="text-xl font-semibold">Reviews</h1>
+          <h1 className="text-2xl font-bold">Reviews</h1>
         </div>
       </div>
 

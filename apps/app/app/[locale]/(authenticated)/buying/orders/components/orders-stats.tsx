@@ -15,39 +15,39 @@ export async function OrdersStats({ userId }: OrdersStatsProps) {
   const inProgressOrders = stats.pendingOrders + stats.shippedOrders;
 
   return (
-    <div className="grid gap-4 md:grid-cols-4 mt-6">
+    <div className="grid gap-3 grid-cols-2 md:grid-cols-4 mt-4">
       <Card>
-        <CardContent className="p-4">
+        <CardContent className="p-3">
           <div className="text-center">
-            <p className="text-2xl font-bold">{stats.totalOrders}</p>
-            <p className="text-sm text-muted-foreground">Total Orders</p>
+            <p className="text-lg font-bold">{stats.totalOrders}</p>
+            <p className="text-xs text-muted-foreground">Total Orders</p>
           </div>
         </CardContent>
       </Card>
       
       <Card>
-        <CardContent className="p-4">
+        <CardContent className="p-3">
           <div className="text-center">
-            <p className="text-2xl font-bold">{stats.deliveredOrders}</p>
-            <p className="text-sm text-muted-foreground">Delivered</p>
+            <p className="text-lg font-bold">{stats.deliveredOrders}</p>
+            <p className="text-xs text-muted-foreground">Delivered</p>
           </div>
         </CardContent>
       </Card>
       
       <Card>
-        <CardContent className="p-4">
+        <CardContent className="p-3">
           <div className="text-center">
-            <p className="text-2xl font-bold">{inProgressOrders}</p>
-            <p className="text-sm text-muted-foreground">In Progress</p>
+            <p className="text-lg font-bold">{inProgressOrders}</p>
+            <p className="text-xs text-muted-foreground">In Progress</p>
           </div>
         </CardContent>
       </Card>
       
       <Card>
-        <CardContent className="p-4">
+        <CardContent className="p-3">
           <div className="text-center">
-            <p className="text-2xl font-bold">${stats.totalSpent.toFixed(2)}</p>
-            <p className="text-sm text-muted-foreground">Total Spent</p>
+            <p className="text-lg font-bold">${stats.totalSpent.toFixed(0)}</p>
+            <p className="text-xs text-muted-foreground">Total Spent</p>
           </div>
         </CardContent>
       </Card>

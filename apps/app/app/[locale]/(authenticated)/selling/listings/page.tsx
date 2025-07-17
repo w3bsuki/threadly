@@ -146,18 +146,18 @@ const MyListingsPage = async ({
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">My Listings</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl font-bold">My Listings</h1>
+          <p className="text-sm text-muted-foreground">
             Manage your products and track their performance
           </p>
         </div>
-        <Button asChild>
+        <Button size="sm" asChild>
           <Link href="/selling/new">
-            <Plus className="h-4 w-4 mr-2" />
-            Add New Item
+            <Plus className="h-4 w-4 mr-1.5" />
+            Add New
           </Link>
         </Button>
       </div>
@@ -171,45 +171,45 @@ const MyListingsPage = async ({
 
       {/* Summary Stats */}
       {totalCount > 0 && (
-        <div className="grid gap-4 md:grid-cols-4 mt-6">
+        <div className="grid gap-3 grid-cols-2 md:grid-cols-4 mt-4">
           <Card>
-            <CardContent className="p-4">
+            <CardContent className="p-3">
               <div className="text-center">
-                <p className="text-2xl font-bold">{totalCount}</p>
-                <p className="text-sm text-muted-foreground">Total Listings</p>
+                <p className="text-lg font-bold">{totalCount}</p>
+                <p className="text-xs text-muted-foreground">Total Listings</p>
               </div>
             </CardContent>
           </Card>
           
           <Card>
-            <CardContent className="p-4">
+            <CardContent className="p-3">
               <div className="text-center">
-                <p className="text-2xl font-bold">
+                <p className="text-lg font-bold">
                   {products.filter(p => p.status === 'AVAILABLE').length}
                 </p>
-                <p className="text-sm text-muted-foreground">Active (this page)</p>
+                <p className="text-xs text-muted-foreground">Active</p>
               </div>
             </CardContent>
           </Card>
           
           <Card>
-            <CardContent className="p-4">
+            <CardContent className="p-3">
               <div className="text-center">
-                <p className="text-2xl font-bold">
+                <p className="text-lg font-bold">
                   {products.filter(p => p.status === 'SOLD').length}
                 </p>
-                <p className="text-sm text-muted-foreground">Sold (this page)</p>
+                <p className="text-xs text-muted-foreground">Sold</p>
               </div>
             </CardContent>
           </Card>
           
           <Card>
-            <CardContent className="p-4">
+            <CardContent className="p-3">
               <div className="text-center">
-                <p className="text-2xl font-bold">
-                  ${(products.reduce((sum, p) => sum + decimalToNumber(p.price), 0) / 100).toFixed(2)}
+                <p className="text-lg font-bold">
+                  ${(products.reduce((sum, p) => sum + decimalToNumber(p.price), 0) / 100).toFixed(0)}
                 </p>
-                <p className="text-sm text-muted-foreground">Page Value</p>
+                <p className="text-xs text-muted-foreground">Page Value</p>
               </div>
             </CardContent>
           </Card>
