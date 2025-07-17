@@ -231,14 +231,14 @@ const ProductCard = ({ product }: {
             {/* Cart Button - Bottom Right Corner */}
             <button 
               onClick={handleAddToCart}
-              className={`absolute bottom-3 right-3 w-10 h-10 rounded-full transition-all shadow-md ${
+              className={`absolute bottom-2 right-2 w-8 h-8 rounded-full transition-colors shadow-sm ${
                 isProductInCart 
-                  ? 'bg-green-500 text-white scale-110' 
-                  : 'bg-[var(--brand-primary)] text-white hover:scale-105'
+                  ? 'bg-green-500 text-white' 
+                  : 'bg-black text-white hover:bg-gray-800'
               } flex items-center justify-center`}
               aria-label={isProductInCart ? 'In cart' : 'Add to cart'}
             >
-              <ShoppingCart className={`h-5 w-5 ${isProductInCart ? 'fill-current' : ''}`} />
+              <ShoppingCart className={`h-4 w-4 ${isProductInCart ? 'fill-current' : ''}`} />
             </button>
           </div>
         </div>
@@ -571,7 +571,7 @@ export function ProductGridClient({
       )}
 
       {/* Product Grid - Mobile optimized */}
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
         {filteredProducts.map((product) => (
           <ProductCard 
             key={product.id} 

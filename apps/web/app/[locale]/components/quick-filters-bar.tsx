@@ -51,8 +51,8 @@ export const QuickFiltersBar = ({
 
   return (
     <div className="sticky top-[104px] md:top-16 z-30 bg-white border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center gap-2 py-2 overflow-x-auto scrollbar-hide">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4">
+        <div className="flex items-start gap-2 py-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory">
           {/* Category Pills */}
           {categories.map((category) => (
             <button
@@ -61,23 +61,23 @@ export const QuickFiltersBar = ({
                 const value = category.toLowerCase();
                 updateFilter('gender', currentGender === value ? null : value);
               }}
-              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+              className={`flex-shrink-0 px-8 py-4 rounded-full text-lg font-bold transition-all touch-manipulation min-h-[56px] whitespace-nowrap snap-start ${
                 currentGender === category.toLowerCase()
                   ? 'bg-black text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 active:bg-gray-300'
               }`}
             >
               {category}
             </button>
           ))}
           
-          <div className="w-px h-6 bg-gray-200 mx-1" />
+          <div className="w-px h-8 bg-gray-200 mx-2 flex-shrink-0" />
           
           {/* Sort Options */}
           <select
             value={currentSort}
             onChange={(e) => updateFilter('sort', e.target.value === 'newest' ? null : e.target.value)}
-            className="flex-shrink-0 px-3 py-1.5 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all appearance-none pr-8 cursor-pointer"
+            className="flex-shrink-0 px-8 py-4 rounded-full text-lg font-bold bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all appearance-none pr-12 cursor-pointer touch-manipulation min-h-[56px] whitespace-nowrap snap-start"
             style={{
               backgroundImage: 'url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 12 12\'%3E%3Cpath fill=\'%23666\' d=\'M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z\'/%3E%3C/svg%3E")',
               backgroundPosition: 'right 0.5rem center',
@@ -96,7 +96,7 @@ export const QuickFiltersBar = ({
               <Button
                 variant="outline"
                 size="sm"
-                className="flex-shrink-0 h-8 px-3 rounded-full relative"
+                className="flex-shrink-0 h-14 px-8 rounded-full relative touch-manipulation text-lg font-bold whitespace-nowrap snap-start"
               >
                 <SlidersHorizontal className="h-3.5 w-3.5 mr-1.5" />
                 Filters
@@ -186,9 +186,9 @@ export const QuickFiltersBar = ({
           {activeFiltersCount > 0 && (
             <button
               onClick={clearAllFilters}
-              className="flex-shrink-0 p-2 text-gray-500 hover:text-gray-700"
+              className="flex-shrink-0 p-4 text-gray-500 hover:text-gray-700 active:text-gray-800 touch-manipulation snap-start"
             >
-              <X className="h-4 w-4" />
+              <X className="h-5 w-5 sm:h-4 sm:w-4" />
             </button>
           )}
         </div>

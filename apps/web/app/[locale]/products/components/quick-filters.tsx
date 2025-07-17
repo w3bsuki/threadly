@@ -139,7 +139,7 @@ export function QuickFilters({ currentFilters }: QuickFiltersProps) {
   };
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex overflow-x-auto gap-3 snap-x snap-mandatory scrollbar-hide">
         {quickFilters.map((filter) => {
           const Icon = filter.icon;
           const active = isFilterActive(filter);
@@ -151,7 +151,7 @@ export function QuickFilters({ currentFilters }: QuickFiltersProps) {
               size="sm"
               onClick={() => toggleFilter(filter)}
               className={cn(
-                'h-9 px-3 transition-all',
+                'h-12 px-6 py-3 text-base font-semibold transition-all touch-manipulation whitespace-nowrap snap-start flex-shrink-0',
                 active ? 'bg-gray-900 text-white hover:bg-gray-800' : 'hover:border-gray-400',
                 !active && filter.color === 'pink' && 'hover:border-pink-300 hover:text-pink-700 hover:bg-pink-50',
                 !active && filter.color === 'blue' && 'hover:border-blue-300 hover:text-blue-700 hover:bg-blue-50',
@@ -161,7 +161,7 @@ export function QuickFilters({ currentFilters }: QuickFiltersProps) {
                 !active && filter.color === 'purple' && 'hover:border-purple-300 hover:text-purple-700 hover:bg-purple-50'
               )}
             >
-              <Icon className="h-4 w-4 mr-1.5" />
+              <Icon className="h-5 w-5 mr-2" />
               {filter.label}
               {active && (
                 <Badge variant="secondary" className="ml-2 h-5 px-1.5 bg-white/20 text-white">

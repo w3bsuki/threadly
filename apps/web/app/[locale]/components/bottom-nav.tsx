@@ -66,7 +66,7 @@ export const BottomNav = () => {
               <span className="text-[10px] font-medium">Filters</span>
             </button>
           </SheetTrigger>
-          <SheetContent side="bottom" className="h-[80vh] rounded-t-2xl">
+          <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl">
             <div className="p-6">
               <h2 className="text-lg font-semibold mb-6">Filters</h2>
               

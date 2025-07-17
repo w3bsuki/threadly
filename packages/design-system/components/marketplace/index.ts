@@ -14,6 +14,8 @@ export {
   MarketplaceTrustSection,
   threadlyTrustFeatures 
 } from './trust-badges';
+
+export { ConditionBadge } from './condition-badge';
 export type { 
   TrustBadgeProps, 
   TrustBadgeCollectionProps, 

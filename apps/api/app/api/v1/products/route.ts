@@ -18,7 +18,7 @@ import {
 } from '@repo/validation/validators';
 import type { NextRequest } from 'next/server';
 import { z } from 'zod';
-import { APIResponseBuilder } from '@/lib/api-response';
+import { APIResponseBuilder } from '../../../../lib/api-response';
 
 // Enhanced schema for listing products with better filtering
 const listProductsInput = paginationSchema.extend({

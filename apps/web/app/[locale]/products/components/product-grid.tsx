@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Badge } from '@repo/design-system/components';
+import { Badge, ConditionBadge } from '@repo/design-system/components';
 import { Heart, Crown, Eye } from "lucide-react";
 import { cn } from "@repo/design-system/lib/utils";
 import { formatCurrency } from "@/lib/utils/currency";
@@ -200,9 +200,7 @@ const ProductCard = ({ product, dictionary }: { product: Product; dictionary: Di
 
               {/* Condition badge */}
               <div className="absolute top-2 left-2">
-                <Badge variant="secondary" className="text-xs bg-white/90 text-gray-900">
-                  {conditionLabels[product.condition as keyof typeof conditionLabels] || product.condition.replace('_', ' ')}
-                </Badge>
+                <ConditionBadge condition={product.condition as any} className="bg-white/95 shadow-sm" />
               </div>
 
               {/* Designer badge */}

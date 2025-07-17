@@ -12,7 +12,7 @@ import { LayoutSwitcher, ViewMode } from "./layout-switcher";
 import { ProductListView } from "./product-list-view";
 import { EnhancedHeader } from "./enhanced-header";
 import { ProductsClientWrapper } from "./products-client-wrapper";
-import { QuickFiltersBar } from "../../components/quick-filters-bar";
+import { UnifiedSearchFilters } from "../../components/unified-search-filters";
 import { Separator } from '@repo/design-system/components';
 import { SlidersHorizontal } from 'lucide-react';
 import { withDatabaseErrorHandling } from '@/lib/utils/error-handling';
@@ -181,9 +181,9 @@ export async function ProductsContent({ searchParams, dictionary }: ProductsCont
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Quick Filters Bar - Mobile Only */}
+      {/* Unified Search Filters - Mobile Only */}
       <div className="lg:hidden border-0">
-        <QuickFiltersBar totalCount={totalCount} />
+        <UnifiedSearchFilters totalCount={totalCount} />
       </div>
 
       {/* Products Grid - Same container as main page */}

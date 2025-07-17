@@ -1,4 +1,4 @@
-import { env } from '@/env';
+import { env } from '../../../env';
 import { analytics } from '@repo/analytics/posthog/server';
 import { database } from '@repo/database';
 import type {

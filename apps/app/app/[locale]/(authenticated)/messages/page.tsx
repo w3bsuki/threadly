@@ -125,10 +125,10 @@ const MessagesPage = async ({ searchParams }: MessagesPageProps) => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Messages</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl font-bold">Messages</h1>
+        <p className="text-sm text-muted-foreground">
           Chat with buyers and sellers about your transactions
         </p>
       </div>

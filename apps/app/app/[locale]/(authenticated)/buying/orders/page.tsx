@@ -40,19 +40,19 @@ const MyOrdersPage = async ({ params }: { params: Promise<{ locale: string }> })
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header - renders immediately */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{dictionary.dashboard.orders.myOrders}</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl font-bold">{dictionary.dashboard.orders.myOrders}</h1>
+          <p className="text-sm text-muted-foreground">
             {dictionary.dashboard.orders.trackOrders}
           </p>
         </div>
-        <Button asChild>
+        <Button size="sm" asChild>
           <a href={process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3001'} target="_blank" rel="noopener noreferrer">
-            <ShoppingCart className="h-4 w-4 mr-2" />
-            {dictionary.dashboard.dashboard.actions.continueShopping}
+            <ShoppingCart className="h-4 w-4 mr-1.5" />
+            Shop
             <ExternalLink className="h-3 w-3 ml-1" />
           </a>
         </Button>

@@ -2,13 +2,6 @@
 
 import { UserButton } from '@repo/auth/client';
 import { Button } from '@repo/design-system/components';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@repo/design-system/components';
 import { cn } from '@repo/design-system/lib/utils';
 import {
   LayoutDashboard,
@@ -28,6 +21,7 @@ import {
   Star,
   DollarSign,
   Megaphone,
+  X,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -50,9 +44,7 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
   const navigation = [
     { name: dictionary.dashboard.navigation.dashboard, href: '/dashboard', icon: LayoutDashboard },
     { name: dictionary.dashboard.navigation.listings, href: '/selling/listings', icon: Package },
-    { name: dictionary.dashboard.dashboard.quickLinks.salesHistory, href: '/selling/history', icon: TrendingUp },
-    { name: 'Financials', href: '/financials', icon: DollarSign },
-    { name: 'Marketing', href: '/marketing', icon: Megaphone },
+    { name: 'Business', href: '/business', icon: BarChart3 },
     { name: dictionary.dashboard.navigation.orders, href: '/buying/orders', icon: ShoppingBag },
     { name: 'Reviews', href: '/reviews/mobile', icon: Star },
     { name: dictionary.dashboard.navigation.messages, href: '/messages', icon: MessageCircle },
@@ -167,97 +159,15 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
 
       {/* Mobile Header */}
       <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-border bg-background px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8 lg:hidden">
-        <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-          <SheetTrigger asChild>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="min-h-[44px] min-w-[44px] touch-manipulation transition-all duration-200 active:scale-95"
-              style={{ WebkitTapHighlightColor: 'transparent' }}
-            >
-              <Menu className="h-6 w-6" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-72">
-            <SheetHeader>
-              <SheetTitle>{dictionary.web.global.accessibility.openMenu}</SheetTitle>
-            </SheetHeader>
-            <nav className="mt-6">
-              <ul role="list" className="space-y-1">
-                {navigation.map((item) => (
-                  <li key={item.name}>
-                    <Link
-                      href={item.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={cn(
-                        'group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-medium min-h-[48px] items-center transition-all duration-200 active:scale-95 touch-manipulation',
-                        pathname === item.href
-                          ? 'bg-secondary text-secondary-foreground'
-                          : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
-                      )}
-                      style={{ WebkitTapHighlightColor: 'transparent' }}
-                    >
-                      <item.icon className="h-5 w-5 shrink-0" />
-                      {item.name}
-                    </Link>
-                  </li>
-                ))}
-                {isAdmin && (
-                  <li>
-                    <Link
-                      href="/admin"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={cn(
-                        'group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-medium min-h-[48px] items-center transition-all duration-200 active:scale-95 touch-manipulation',
-                        pathname.startsWith('/admin')
-                          ? 'bg-secondary text-secondary-foreground'
-                          : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
-                      )}
-                      style={{ WebkitTapHighlightColor: 'transparent' }}
-                    >
-                      <BarChart3 className="h-5 w-5 shrink-0" />
-                      {dictionary.dashboard.admin.title}
-                    </Link>
-                  </li>
-                )}
-              </ul>
-
-              <div className="mt-6 border-t border-border pt-6">
-                <a
-                  href={process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3001'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex gap-x-3 rounded-md p-3 text-sm leading-6 font-medium min-h-[48px] items-center transition-all duration-200 active:scale-95 touch-manipulation text-muted-foreground hover:text-foreground hover:bg-secondary/50"
-                  style={{ WebkitTapHighlightColor: 'transparent' }}
-                >
-                  <Crown className="h-5 w-5 shrink-0" />
-                  {dictionary.dashboard.dashboard.recentOrders.browseShop}
-                </a>
-              </div>
-
-              <div className="absolute bottom-4 left-4 right-4">
-                <div className="flex items-center gap-2">
-                  <div suppressHydrationWarning className="min-h-[44px] min-w-[44px] flex items-center justify-center">
-                    <UserButton />
-                  </div>
-                  <div className="min-h-[44px] min-w-[44px] flex items-center justify-center">
-                    <ModeToggle />
-                  </div>
-                  <SignOutButton>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="min-h-[44px] min-w-[44px] touch-manipulation transition-all duration-200 active:scale-95"
-                      style={{ WebkitTapHighlightColor: 'transparent' }}
-                    >
-                      <LogOut className="h-5 w-5" />
-                    </Button>
-                  </SignOutButton>
-                </div>
-              </div>
-            </nav>
-          </SheetContent>
-        </Sheet>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={() => setMobileMenuOpen(true)}
+          className="min-h-[44px] min-w-[44px] touch-manipulation transition-all duration-200 active:scale-95"
+          style={{ WebkitTapHighlightColor: 'transparent' }}
+        >
+          <Menu className="h-6 w-6" />
+        </Button>
 
         {/* Logo */}
         <div className="flex flex-1 items-center justify-center">
@@ -283,6 +193,141 @@ export function AppLayout({ children, isAdmin, dictionary }: AppLayoutProps) {
           {children}
         </div>
       </main>
+
+      {/* Full-Screen Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-in fade-in-0 duration-200"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          
+          {/* Menu Content */}
+          <div className="relative h-full flex flex-col bg-background animate-in slide-in-from-left duration-300">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 group">
+                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg">
+                  <span className="text-primary-foreground font-bold text-lg">T</span>
+                </div>
+                <span className="text-xl font-bold">Threadly</span>
+              </Link>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => setMobileMenuOpen(false)}
+                className="h-10 w-10"
+              >
+                <X className="h-6 w-6" />
+              </Button>
+            </div>
+            
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-4">
+              {/* User Section */}
+              <div className="mb-4 p-3 bg-card rounded-lg border border-border">
+                <div className="flex items-center gap-3">
+                  <UserButton />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">Your Account</p>
+                    <p className="text-xs text-muted-foreground">Manage profile & settings</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Navigation */}
+              <div className="space-y-1.5">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={cn(
+                      'flex items-center gap-3 p-3 rounded-lg font-medium transition-all active:scale-95',
+                      pathname === item.href
+                        ? 'bg-primary text-primary-foreground shadow-md'
+                        : 'hover:bg-card border border-border'
+                    )}
+                  >
+                    <div className={cn(
+                      'w-8 h-8 rounded-md flex items-center justify-center',
+                      pathname === item.href
+                        ? 'bg-primary-foreground/20'
+                        : 'bg-muted'
+                    )}>
+                      <item.icon className="h-4 w-4" />
+                    </div>
+                    <span className="text-sm">{item.name}</span>
+                  </Link>
+                ))}
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={cn(
+                      'flex items-center gap-3 p-4 rounded-xl font-medium transition-all active:scale-95',
+                      pathname.startsWith('/admin')
+                        ? 'bg-primary text-primary-foreground shadow-md'
+                        : 'hover:bg-card border border-border'
+                    )}
+                  >
+                    <div className={cn(
+                      'w-10 h-10 rounded-lg flex items-center justify-center',
+                      pathname.startsWith('/admin')
+                        ? 'bg-primary-foreground/20'
+                        : 'bg-muted'
+                    )}>
+                      <BarChart3 className="h-5 w-5" />
+                    </div>
+                    <span>{dictionary.dashboard.admin.title}</span>
+                  </Link>
+                )}
+              </div>
+
+              {/* Quick Actions */}
+              <div className="mt-6 space-y-2">
+                <Link
+                  href="/selling/new"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 p-3 bg-primary text-primary-foreground rounded-lg font-medium shadow-md transition-all active:scale-95"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  <span className="text-sm">{dictionary.dashboard.dashboard.actions.listNewItem}</span>
+                </Link>
+                
+                <a
+                  href={process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3001'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 p-3 bg-card border border-border rounded-lg font-medium transition-all active:scale-95"
+                >
+                  <Crown className="h-4 w-4" />
+                  <span className="text-sm">{dictionary.dashboard.dashboard.recentOrders.browseShop}</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Bottom Actions */}
+            <div className="p-4 border-t border-border bg-card/50">
+              <div className="flex items-center justify-between">
+                <ModeToggle />
+                <SignOutButton>
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    className="transition-all active:scale-95"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sign Out
+                  </Button>
+                </SignOutButton>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

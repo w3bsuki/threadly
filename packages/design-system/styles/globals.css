@@ -407,6 +407,12 @@
       align-items: center;
     }
     
+    /* Override for grid item links to prevent layout breaking */
+    .grid a.no-touch-target {
+      min-height: auto;
+      display: block;
+    }
+    
     /* Add more padding to form inputs on mobile */
     input:not([type="range"]):not([type="checkbox"]):not([type="radio"]),
     textarea,

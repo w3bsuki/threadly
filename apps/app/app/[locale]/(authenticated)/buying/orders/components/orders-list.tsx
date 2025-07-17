@@ -50,11 +50,12 @@ const getStatusText = (status: string) => {
 };
 
 export async function OrdersList({ userId }: OrdersListProps) {
-  // Fetch user's orders
+  // Fetch user's orders with pagination
   const orders = await database.order.findMany({
     where: {
       buyerId: userId,
     },
+    take: 20, // Limit to 20 orders for performance
     include: {
       Product: {
         select: {
@@ -100,16 +101,18 @@ export async function OrdersList({ userId }: OrdersListProps) {
   if (orders.length === 0) {
     return (
       <Card>
-        <CardContent className="flex flex-col items-center justify-center py-12">
-          <Package className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
-          <h3 className="text-lg font-semibold mb-2">No orders yet</h3>
-          <p className="text-muted-foreground mb-4 text-center">
+        <CardContent className="flex flex-col items-center justify-center py-8">
+          <div className="rounded-full bg-gray-100 dark:bg-gray-800 p-3 mb-4">
+            <Package className="h-8 w-8 text-gray-500 dark:text-gray-400" />
+          </div>
+          <h3 className="text-base font-medium mb-1">No orders yet</h3>
+          <p className="text-sm text-muted-foreground mb-4 text-center max-w-sm">
             Start shopping to see your orders here
           </p>
-          <Button asChild>
+          <Button size="sm" asChild>
             <a href={process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3001'} target="_blank" rel="noopener noreferrer">
               Start Shopping
-              <ExternalLink className="h-3 w-3 ml-1" />
+              <ExternalLink className="h-3 w-3 ml-1.5" />
             </a>
           </Button>
         </CardContent>
@@ -118,123 +121,104 @@ export async function OrdersList({ userId }: OrdersListProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {orders.map((order) => (
-        <Card key={order.id}>
-          <CardHeader>
-            <div className="flex items-center justify-between">
+        <Card key={order.id} className="overflow-hidden">
+          <div className="p-4">
+            <div className="flex items-start justify-between mb-3">
               <div>
-                <CardTitle className="text-lg">
+                <h3 className="text-sm font-semibold">
                   Order #{order.id.slice(-8).toUpperCase()}
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Placed on {new Date(order.createdAt).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  {new Date(order.createdAt).toLocaleDateString('en-US', {
+                    month: 'short',
                     day: 'numeric',
+                    year: 'numeric',
                   })}
                 </p>
               </div>
               <div className="text-right">
-                <Badge className={getStatusColor(order.status)}>
+                <Badge className={`${getStatusColor(order.status)} text-[10px] px-1.5 py-0.5`}>
                   {getStatusText(order.status)}
                 </Badge>
-                <p className="text-lg font-semibold mt-1">
+                <p className="text-sm font-semibold mt-1">
                   ${(decimalToNumber(order.amount) / 100).toFixed(2)}
                 </p>
               </div>
             </div>
-          </CardHeader>
           
-          <CardContent>
             {/* Product Info */}
-            <div className="flex gap-3 mb-4">
-              <div className="relative w-16 h-16 flex-shrink-0">
+            <div className="flex gap-3">
+              <div className="relative w-14 h-14 flex-shrink-0">
                 {order.Product?.images[0] ? (
                   <Image
                     src={order.Product.images[0].imageUrl}
                     alt={order.Product.title}
                     fill
-                    className="object-cover rounded-md"
+                    className="object-cover rounded-lg"
                   />
                 ) : (
-                  <div className="w-full h-full bg-muted rounded-md flex items-center justify-center">
-                    <Package className="h-6 w-6 text-muted-foreground" />
+                  <div className="w-full h-full bg-muted rounded-lg flex items-center justify-center">
+                    <Package className="h-5 w-5 text-muted-foreground" />
                   </div>
                 )}
               </div>
 
               <div className="flex-1 min-w-0">
-                <h4 className="font-medium line-clamp-1">{order.Product.title}</h4>
-                <p className="text-sm text-muted-foreground">
-                  Condition: {order.Product.condition}
+                <h4 className="text-sm font-medium line-clamp-1">{order.Product.title}</h4>
+                <p className="text-xs text-muted-foreground">
+                  {order.Product.condition.replace(/_/g, ' ').toLowerCase()}
                 </p>
-                <div className="flex items-center justify-between mt-1">
-                  <span className="text-sm text-muted-foreground">
-                    Sold by: {order.User_Order_sellerIdToUser.firstName && order.User_Order_sellerIdToUser.lastName 
-                      ? `${order.User_Order_sellerIdToUser.firstName} ${order.User_Order_sellerIdToUser.lastName}` 
-                      : order.User_Order_sellerIdToUser.email}
-                  </span>
-                  <span className="font-medium">
-                    ${(decimalToNumber(order.amount) / 100).toFixed(2)}
-                  </span>
-                </div>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Seller: {order.User_Order_sellerIdToUser.firstName || 'Anonymous'}
+                </p>
               </div>
             </div>
 
             {/* Order Information */}
-            <div className="border-t pt-3">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="font-medium text-sm mb-1">Payment Status</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {order.Payment ? 'Paid' : 'Pending'}
-                  </p>
-                </div>
-                
-                {order.trackingNumber && (
-                  <div>
-                    <h4 className="font-medium text-sm mb-1">Tracking Number</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {order.trackingNumber}
-                    </p>
-                  </div>
-                )}
+            {order.trackingNumber && (
+              <div className="mt-2 pt-2 border-t">
+                <p className="text-xs text-muted-foreground">
+                  Tracking: <span className="font-medium">{order.trackingNumber}</span>
+                </p>
               </div>
-            </div>
+            )}
 
             {/* Actions */}
-            <div className="flex justify-end gap-2 mt-4 pt-3 border-t">
-              <Button variant="outline" size="sm" asChild>
+            <div className="flex items-center justify-between gap-2 mt-3 pt-3 border-t">
+              <Button variant="ghost" size="sm" className="h-7 text-xs" asChild>
                 <Link href={`/buying/orders/${order.id}`}>
                   <Eye className="h-3 w-3 mr-1" />
-                  View Details
+                  Details
                 </Link>
               </Button>
               
-              {order.status === 'DELIVERED' && !order.Review && (
-                <Button variant="outline" size="sm" asChild>
-                  <Link href="/reviews">
-                    <Star className="h-3 w-3 mr-1" />
-                    Leave Review
-                  </Link>
-                </Button>
-              )}
-              
-              {order.status === 'DELIVERED' && order.Review && (
-                <Button variant="ghost" size="sm" disabled>
-                  <Star className="h-3 w-3 mr-1 fill-yellow-400 text-yellow-400" />
-                  Reviewed
-                </Button>
-              )}
-              
-              {order.status === 'PENDING' && (
-                <Button variant="destructive" size="sm">
-                  Cancel Order
-                </Button>
-              )}
+              <div className="flex gap-1.5">
+                {order.status === 'DELIVERED' && !order.Review && (
+                  <Button variant="outline" size="sm" className="h-7 text-xs" asChild>
+                    <Link href="/reviews/mobile?tab=write&orderId={order.id}">
+                      <Star className="h-3 w-3 mr-1" />
+                      Review
+                    </Link>
+                  </Button>
+                )}
+                
+                {order.status === 'DELIVERED' && order.Review && (
+                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5">
+                    <Star className="h-2.5 w-2.5 mr-0.5 fill-yellow-400 text-yellow-400" />
+                    Reviewed
+                  </Badge>
+                )}
+                
+                {order.status === 'PENDING' && (
+                  <Button variant="destructive" size="sm" className="h-7 text-xs">
+                    Cancel
+                  </Button>
+                )}
+              </div>
             </div>
-          </CardContent>
+          </div>
         </Card>
       ))}
     </div>

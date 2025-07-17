@@ -6,16 +6,22 @@ import type { Metadata } from 'next';
 import { ProductGridServer } from '../../../components/product-grid-server';
 // Fix: Added ADMIN_SECRET environment variable for cache invalidation
 import { Button } from '@repo/design-system/components';
-import { ShoppingBag, Plus } from 'lucide-react';
+import { ShoppingBag, Plus, Search, Recycle } from 'lucide-react';
 import Link from 'next/link';
 import { env } from '@/env';
+import { UnifiedSearchFilters } from '../components/unified-search-filters';
 
 // PPR: Static shell that can be prerendered
-function HomePageShell({ children }: { children: React.ReactNode }) {
+function HomePageShell({ children, locale }: { children: React.ReactNode; locale: string }) {
   return (
     <main className="min-h-screen bg-white">
-      {/* Products Grid - Removed extra padding to bring products up */}
-      <div className="max-w-7xl mx-auto px-4 pb-6">
+      {/* Unified Search Filters - Mobile Only */}
+      <div className="md:hidden">
+        <UnifiedSearchFilters />
+      </div>
+
+      {/* Products Grid */}
+      <div className="px-4 pt-4 pb-24 md:max-w-7xl md:mx-auto md:pt-6 md:pb-6">
         {children}
       </div>
     </main>
@@ -25,9 +31,9 @@ function HomePageShell({ children }: { children: React.ReactNode }) {
 // PPR: Loading component for product grid
 function ProductGridLoading() {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+    <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
       {Array.from({ length: 24 }).map((_, i) => (
-        <div key={i} className="aspect-[3/4] bg-muted/20 animate-pulse rounded-lg" />
+        <div key={i} className="aspect-[3/4] bg-gray-100 animate-pulse rounded-lg" />
       ))}
     </div>
   );
@@ -77,7 +83,7 @@ const Home = async ({ params, searchParams }: HomeProps) => {
         }}
       />
       
-      <HomePageShell>
+      <HomePageShell locale={locale}>
         {/* PPR: Dynamic product grid with loading state */}
         <Suspense fallback={<ProductGridLoading />}>
           <ProductGridServer 

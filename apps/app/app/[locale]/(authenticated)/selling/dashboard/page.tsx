@@ -54,63 +54,90 @@ const SellerDashboardPage = async ({
     redirect(`/${locale}/sign-in`);
   }
 
-  // Get database user
+  // Get database user - optimized query
   const dbUser = await database.user.findUnique({
     where: { clerkId: user.id },
-    include: {
-      Product: {
-        include: {
-          orders: {
-            where: {
-              status: 'DELIVERED'
-            }
-          },
-          favorites: true,
-          _count: {
-            select: {
-              orders: true
-            }
-          }
-        }
-      },
-      Order_Order_sellerIdToUser: {
-        where: {
-          status: 'DELIVERED'
-        },
-        include: {
-          Product: {
-            select: {
-              title: true,
-              price: true
-            }
-          }
-        }
-      },
-      Follow_Follow_followingIdToUser: true,
-      Review_Review_reviewedIdToUser: {
-        select: {
-          rating: true,
-          createdAt: true
-        }
-      }
-    }
+    select: { id: true }
   });
 
   if (!dbUser) {
     redirect(`/${locale}/sign-in`);
   }
 
-  // Calculate analytics with safe Decimal conversion
-  const totalRevenue = dbUser.Order_Order_sellerIdToUser.reduce((sum, sale) => sum + toNumber(sale.Product.price), 0);
-  const totalSales = dbUser.Order_Order_sellerIdToUser.length;
-  const totalListings = dbUser.Product.length;
-  const activeLis = dbUser.Product.filter(listing => listing.status === 'AVAILABLE').length;
-  const soldListings = dbUser.Product.filter(listing => listing.status === 'SOLD').length;
-  const totalViews = dbUser.Product.reduce((sum, listing) => sum + listing.views, 0);
-  const totalFavorites = dbUser.Product.reduce((sum, listing) => sum + listing.favorites.length, 0);
-  const totalFollowers = dbUser.Follow_Follow_followingIdToUser.length;
-  const averageRating = dbUser.averageRating || 0;
-  const totalReviews = dbUser.Review_Review_reviewedIdToUser.length;
+  // Fetch data with optimized queries
+  const [
+    productStats,
+    orderStats,
+    recentProducts,
+    followerCount,
+    reviewStats
+  ] = await Promise.all([
+    // Product statistics
+    database.product.aggregate({
+      where: { sellerId: dbUser.id },
+      _count: true,
+      _sum: { views: true }
+    }),
+    // Order statistics
+    database.order.aggregate({
+      where: { 
+        sellerId: dbUser.id,
+        status: 'DELIVERED'
+      },
+      _count: true,
+      _sum: { amount: true }
+    }),
+    // Recent products for tabs (limited)
+    database.product.findMany({
+      where: { sellerId: dbUser.id },
+      take: 20,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        favorites: true,
+        _count: {
+          select: { orders: true }
+        }
+      }
+    }),
+    // Follower count
+    database.follow.count({
+      where: { followingId: dbUser.id }
+    }),
+    // Review statistics
+    database.review.aggregate({
+      where: { reviewedId: dbUser.id },
+      _count: true,
+      _avg: { rating: true }
+    })
+  ]);
+
+  // Status counts
+  const [availableCount, soldCount] = await Promise.all([
+    database.product.count({
+      where: { 
+        sellerId: dbUser.id,
+        status: 'AVAILABLE'
+      }
+    }),
+    database.product.count({
+      where: { 
+        sellerId: dbUser.id,
+        status: 'SOLD'
+      }
+    })
+  ]);
+
+  // Calculate analytics with optimized data
+  const totalRevenue = decimalToNumber(orderStats._sum?.amount) || 0;
+  const totalSales = orderStats._count || 0;
+  const totalListings = productStats._count || 0;
+  const activeLis = availableCount;
+  const soldListings = soldCount;
+  const totalViews = productStats._sum?.views || 0;
+  const totalFavorites = recentProducts.reduce((sum, product) => sum + product.favorites.length, 0);
+  const totalFollowers = followerCount;
+  const averageRating = reviewStats._avg?.rating || 0;
+  const totalReviews = reviewStats._count || 0;
 
   // Calculate conversion rate
   const conversionRate = totalViews > 0 ? (totalSales / totalViews * 100) : 0;
@@ -119,8 +146,18 @@ const SellerDashboardPage = async ({
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
   
-  const recentSales = dbUser.Order_Order_sellerIdToUser.filter(sale => sale.createdAt >= thirtyDaysAgo);
-  const recentRevenue = recentSales.reduce((sum, sale) => sum + toNumber(sale.Product.price), 0);
+  // Get recent sales data
+  const recentSalesData = await database.order.aggregate({
+    where: {
+      sellerId: dbUser.id,
+      status: 'DELIVERED',
+      createdAt: { gte: thirtyDaysAgo }
+    },
+    _count: true,
+    _sum: { amount: true }
+  });
+  
+  const recentRevenue = decimalToNumber(recentSalesData._sum?.amount) || 0;
 
   // Get daily analytics for the last 7 days
   const last7Days = Array.from({ length: 7 }, (_, i) => {
@@ -138,7 +175,7 @@ const SellerDashboardPage = async ({
       endOfDay.setHours(23, 59, 59, 999);
 
       const [dailySales, dailyViews] = await Promise.all([
-        database.order.findMany({
+        database.order.aggregate({
           where: {
             sellerId: dbUser.id,
             status: 'DELIVERED',
@@ -147,13 +184,8 @@ const SellerDashboardPage = async ({
               lte: endOfDay
             }
           },
-          include: {
-            Product: {
-              select: {
-                price: true
-              }
-            }
-          }
+          _count: true,
+          _sum: { amount: true }
         }),
         // Get actual daily views by summing all products' views for the day
         database.product.aggregate({
@@ -168,12 +200,12 @@ const SellerDashboardPage = async ({
         })
       ]);
 
-      const dailyRevenue = dailySales.reduce((sum, sale) => sum + decimalToNumber(sale.Product.price), 0);
+      const dailyRevenue = decimalToNumber(dailySales._sum?.amount) || 0;
       
       return {
         day: date.toLocaleDateString('en-US', { weekday: 'short' }),
         revenue: dailyRevenue,
-        sales: dailySales.length,
+        sales: dailySales._count || 0,
         views: dailyViews._sum.views || 0
       };
     })
@@ -187,36 +219,35 @@ const SellerDashboardPage = async ({
   // Get previous week data for comparison
   const last14Days = new Date();
   last14Days.setDate(last14Days.getDate() - 14);
-  const previousWeekSales = await database.order.findMany({
+  const last7Days = new Date();
+  last7Days.setDate(last7Days.getDate() - 7);
+  
+  const previousWeekData = await database.order.aggregate({
     where: {
       sellerId: dbUser.id,
       status: 'DELIVERED',
       createdAt: {
         gte: last14Days,
-        lt: thirtyDaysAgo
+        lt: last7Days
       }
     },
-    include: {
-      Product: {
-        select: {
-          price: true
-        }
-      }
-    }
+    _count: true,
+    _sum: { amount: true }
   });
 
-  const previousWeekRevenue = previousWeekSales.reduce((sum, sale) => sum + decimalToNumber(sale.Product.price), 0);
+  const previousWeekRevenue = decimalToNumber(previousWeekData._sum?.amount) || 0;
+  const previousWeekSalesCount = previousWeekData._count || 0;
   
   // Calculate real trend percentages
   const revenueTrend = previousWeekRevenue > 0 
     ? `${currentWeekRevenue >= previousWeekRevenue ? '+' : ''}${(((currentWeekRevenue - previousWeekRevenue) / previousWeekRevenue) * 100).toFixed(1)}%`
     : currentWeekRevenue > 0 ? '+100%' : '0%';
     
-  const salesTrend = previousWeekSales.length > 0
-    ? `${currentWeekSales >= previousWeekSales.length ? '+' : ''}${(((currentWeekSales - previousWeekSales.length) / previousWeekSales.length) * 100).toFixed(1)}%`
+  const salesTrend = previousWeekSalesCount > 0
+    ? `${currentWeekSales >= previousWeekSalesCount ? '+' : ''}${(((currentWeekSales - previousWeekSalesCount) / previousWeekSalesCount) * 100).toFixed(1)}%`
     : currentWeekSales > 0 ? '+100%' : '0%';
     
-  const viewsTrend = totalViews > 0 ? '+' + Math.round((totalViews / Math.max(dbUser.Product.length, 1)) * 10) / 10 + '%' : '0%';
+  const viewsTrend = totalViews > 0 ? '+' + Math.round((totalViews / Math.max(totalListings, 1)) * 10) / 10 + '%' : '0%';
   const followersTrend = totalFollowers > 0 ? '+' + Math.round(totalFollowers * 0.1) + '%' : '0%';
 
   const stats = [
@@ -361,7 +392,7 @@ const SellerDashboardPage = async ({
           revenueTrend={revenueTrend}
           salesTrend={salesTrend}
           viewsTrend={viewsTrend}
-          listings={dbUser.Product}
+          listings={recentProducts}
           locale={locale}
         />
       </div>

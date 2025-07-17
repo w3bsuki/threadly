@@ -123,77 +123,68 @@ export function ListingsWithPagination({
   }
 
   return (
-    <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         {products.map((product, index) => (
-          <Card key={product.id} className="overflow-hidden">
-            <div className="aspect-square relative">
-              {product.images[0] ? (
-                <Image
-                  src={product.images[0].imageUrl}
-                  alt={product.title}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  priority={index < 6}
-                />
-              ) : (
-                <div className="w-full h-full bg-muted flex items-center justify-center">
-                  <span className="text-muted-foreground">No image</span>
-                </div>
-              )}
-              
-              <div className="absolute top-2 left-2">
-                <Badge className={getStatusColor(product.status)}>
-                  {product.status}
-                </Badge>
-              </div>
-              
-              <div className="absolute top-2 right-2">
-                <Button variant="ghost" size="icon" className="h-8 w-8 bg-white/80 hover:bg-white/90">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-            
-            <CardContent className="p-4">
-              <div className="space-y-2">
-                <h3 className="font-semibold line-clamp-1">{product.title}</h3>
-                <p className="text-2xl font-bold">${(decimalToNumber(product.price) / 100).toFixed(2)}</p>
-                
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
-                  <span>{getConditionText(product.condition)}</span>
-                  <span>{product.category.name}</span>
-                </div>
-                
-                {product.brand && (
-                  <p className="text-sm text-muted-foreground">
-                    Brand: {product.brand}
-                  </p>
+          <Link key={product.id} href={`/selling/listings/${product.id}`} className="block no-touch-target group">
+            <div className="space-y-1.5">
+              <div className="aspect-[3/4] relative rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-900">
+                {product.images[0] ? (
+                  <Image
+                    src={product.images[0].imageUrl}
+                    alt={product.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-200"
+                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                    priority={index < 10}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <span className="text-gray-400 dark:text-gray-600 text-xs">No image</span>
+                  </div>
                 )}
                 
-                <div className="flex items-center justify-between text-xs text-muted-foreground border-t pt-2">
-                  <span>{product._count.favorites} saves</span>
-                  <span>Listed {new Date(product.createdAt).toLocaleDateString()}</span>
+                <div className="absolute top-1.5 left-1.5">
+                  <div className={`px-1 py-0.5 rounded text-[10px] font-semibold ${getStatusColor(product.status)}`}>
+                    {product.status === 'AVAILABLE' ? 'Live' : product.status}
+                  </div>
                 </div>
                 
-                <div className="flex gap-2 pt-2">
-                  <Button variant="outline" size="sm" className="flex-1" asChild>
-                    <Link href={`/selling/listings/${product.id}/edit`}>
-                      <Edit className="h-3 w-3 mr-1" />
-                      Edit
-                    </Link>
-                  </Button>
-                  <Button variant="outline" size="sm" className="flex-1" asChild>
-                    <Link href={`/product/${product.id}`}>
-                      <Eye className="h-3 w-3 mr-1" />
-                      View
-                    </Link>
+                <div className="absolute top-1.5 right-1.5">
+                  <div className="bg-black/80 dark:bg-white/90 text-white dark:text-black rounded px-1 py-0.5 text-[11px] font-semibold">
+                    ${decimalToNumber(product.price)}
+                  </div>
+                </div>
+
+                <div className="absolute bottom-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-6 w-6 bg-white/90 hover:bg-white text-gray-700 hover:text-gray-900"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                  >
+                    <MoreHorizontal className="h-3 w-3" />
                   </Button>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+              
+              <div className="min-w-0 px-0.5">
+                <p className="text-[11px] font-medium text-gray-900 dark:text-white truncate">
+                  {product.title}
+                </p>
+                <div className="flex items-center justify-between text-[10px] text-gray-600 dark:text-gray-400">
+                  <span className="truncate">{getConditionText(product.condition)}</span>
+                  <span className="flex items-center gap-0.5 flex-shrink-0 ml-1">
+                    <Eye className="h-2 w-2" />
+                    {product._count.favorites}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Link>
         ))}
       </div>
 

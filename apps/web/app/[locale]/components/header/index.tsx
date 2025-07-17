@@ -2,7 +2,6 @@
 
 import { env } from '@/env';
 import { Button } from '@repo/design-system/components';
-import { Sheet, SheetContent, SheetTrigger } from '@repo/design-system/components';
 import { Badge } from '@repo/design-system/components';
 import { Search, Heart, Menu, X, User, ShoppingBag, Filter, Plus, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
@@ -23,7 +22,6 @@ export const Header = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const router = useRouter();
   const searchRef = useRef<HTMLDivElement>(null);
-  const mobileSearchRef = useRef<HTMLDivElement>(null);
 
   const categoriesWithSubcategories = [
     { 
@@ -89,9 +87,8 @@ export const Header = () => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
       const isOutsideDesktop = searchRef.current && !searchRef.current.contains(target);
-      const isOutsideMobile = mobileSearchRef.current && !mobileSearchRef.current.contains(target);
       
-      if ((isOutsideDesktop && isOutsideMobile) || (!searchRef.current && isOutsideMobile) || (!mobileSearchRef.current && isOutsideDesktop)) {
+      if (isOutsideDesktop) {
         setShowCategories(false);
         setExpandedCategory(null);
       }
@@ -104,115 +101,21 @@ export const Header = () => {
   return (
     <>
       {/* Main Header - Black mobile navbar */}
-      <header className="sticky top-0 z-50 bg-black md:bg-white border-b border-gray-200 md:border-gray-200">
+      <header className="sticky top-0 z-50 bg-black md:bg-white">
         <div className="max-w-7xl mx-auto px-4">
           {/* Main Navigation Bar */}
           <div className="flex items-center justify-between h-16 md:h-16">
             {/* Mobile Layout */}
             <div className="flex md:hidden items-center justify-between w-full">
               {/* Left: Hamburger */}
-              <Sheet open={isMenuOpen} onOpenChange={setMenuOpen}>
-                <SheetTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="icon"
-                    className="h-9 w-9 -ml-2 text-white hover:bg-white/10"
-                  >
-                    <Menu className="h-5 w-5" />
-                  </Button>
-                </SheetTrigger>
-                
-                <SheetContent side="left" className="w-[280px] p-0">
-                  <div className="flex flex-col h-full">
-                    {/* Header */}
-                    <div className="flex items-center justify-between p-4 border-b">
-                      <h2 className="text-lg font-semibold">Menu</h2>
-                      <Button 
-                        variant="ghost" 
-                        size="icon"
-                        onClick={() => setMenuOpen(false)}
-                      >
-                        <X className="h-5 w-5" />
-                      </Button>
-                    </div>
-                    
-                    {/* Content */}
-                    <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                      {/* User Section */}
-                      {isSignedIn ? (
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                            <SafeUserButton />
-                            <div>
-                              <p className="font-medium">{user?.firstName} {user?.lastName}</p>
-                              <p className="text-sm text-gray-500">View profile</p>
-                            </div>
-                          </div>
-                        </div>
-                      ) : (
-                        <SignInButton mode="modal">
-                          <Button className="w-full" variant="outline">
-                            <User className="h-5 w-5 mr-2" />
-                            Sign In / Join
-                          </Button>
-                        </SignInButton>
-                      )}
-
-                      {/* Quick Links */}
-                      <div className="space-y-2">
-                        <Link
-                          href="/favorites"
-                          onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg"
-                        >
-                          <Heart className="h-5 w-5" />
-                          <span>Saved Items</span>
-                        </Link>
-                        
-                        <Link
-                          href="/products"
-                          onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg"
-                        >
-                          <ShoppingBag className="h-5 w-5" />
-                          <span>Browse All</span>
-                        </Link>
-                      </div>
-
-                      {/* Categories */}
-                      <div>
-                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">Categories</h3>
-                        <div className="space-y-1">
-                          {categories.map((category) => (
-                            <Link
-                              key={category.name}
-                              href={category.href}
-                              onClick={() => setMenuOpen(false)}
-                              className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-lg"
-                            >
-                              <span>{category.icon}</span>
-                              <span>{category.name}</span>
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Sell Button */}
-                      <div className="pt-4">
-                        <Button 
-                          className="w-full bg-black text-white hover:bg-gray-800" 
-                          asChild
-                        >
-                          <Link href={`${env.NEXT_PUBLIC_APP_URL}/selling/new`} onClick={() => setMenuOpen(false)}>
-                            <Plus className="h-5 w-5 mr-2" />
-                            Start Selling
-                          </Link>
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </SheetContent>
-              </Sheet>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => setMenuOpen(true)}
+                className="h-9 w-9 -ml-2 text-white hover:bg-white/10"
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
 
               {/* Center: Logo */}
               <Link href="/" className="absolute left-1/2 -translate-x-1/2">
@@ -255,7 +158,7 @@ export const Header = () => {
                     <input
                       type="text"
                       placeholder={dictionary.web.global.navigation?.searchPlaceholder || "Search for items, brands, or members"}
-                      className="w-full bg-transparent py-3 outline-none text-gray-900 placeholder-gray-500"
+                      className="w-full bg-transparent py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all"
                       onFocus={() => setIsSearchFocused(true)}
                       onBlur={() => setIsSearchFocused(false)}
                     />
@@ -408,84 +311,120 @@ export const Header = () => {
         </div>
       </header>
 
-      {/* Mobile Search Bar - Below main nav on mobile */}
-      <div className="md:hidden bg-white border-b border-gray-100 sticky top-16 z-40" ref={mobileSearchRef}>
-        <div className="max-w-7xl mx-auto px-4 pt-3 pb-3">
-        <div className="relative">
-          <div className="flex items-center bg-white rounded-lg overflow-hidden border border-gray-200 shadow-sm focus-within:border-gray-300 focus-within:shadow-md transition-all">
-              {/* Filter Button on Left */}
-              <button
-                className={`flex items-center justify-center px-3 py-2.5 border-r border-gray-200 transition-all ${
-                  showCategories ? 'bg-gray-200' : 'hover:bg-gray-100'
-                }`}
-                onClick={() => setShowCategories(!showCategories)}
+      
+      {/* Full-Screen Mobile Menu Overlay */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-in fade-in-0 duration-200"
+            onClick={() => setMenuOpen(false)}
+          />
+          
+          {/* Menu Content */}
+          <div className="relative h-full flex flex-col bg-white animate-in slide-in-from-top duration-300">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b">
+              <Link href="/" onClick={() => setMenuOpen(false)}>
+                <span className="font-bold text-xl">Threadly</span>
+              </Link>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => setMenuOpen(false)}
+                className="h-10 w-10"
               >
-                <Filter className="h-4 w-4 text-gray-600" />
-              </button>
-              
-              {/* Search Field */}
-              <div className="flex-1 flex items-center px-4 bg-gray-50/50">
-                <Search className="h-4 w-4 text-gray-400 mr-2 flex-shrink-0" />
-                <input
-                  type="text"
-                  placeholder="Search items..."
-                  className="w-full bg-transparent outline-none text-sm placeholder-gray-500 py-2.5 focus:placeholder-gray-400"
-                />
+                <X className="h-6 w-6" />
+              </Button>
+            </div>
+            
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto">
+              {/* User Section */}
+              <div className="p-4 border-b">
+                {isSignedIn ? (
+                  <div className="flex items-center gap-4">
+                    <SafeUserButton />
+                    <div className="flex-1">
+                      <p className="font-semibold text-lg">{user?.firstName} {user?.lastName}</p>
+                      <p className="text-sm text-gray-600">View your profile</p>
+                    </div>
+                  </div>
+                ) : (
+                  <SignInButton mode="modal">
+                    <Button className="w-full h-14 text-base" variant="outline">
+                      <User className="h-5 w-5 mr-3" />
+                      Sign In / Join
+                    </Button>
+                  </SignInButton>
+                )}
+              </div>
+
+              {/* Categories Grid */}
+              <div className="p-4">
+                <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-4">Shop by Category</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {categories.map((category) => (
+                    <Link
+                      key={category.name}
+                      href={category.href}
+                      onClick={() => setMenuOpen(false)}
+                      className="flex flex-col items-center gap-3 p-6 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all active:scale-95"
+                    >
+                      <span className="text-4xl">{category.icon}</span>
+                      <span className="font-medium text-gray-900">{category.name}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quick Actions */}
+              <div className="p-4 space-y-3">
+                <Link
+                  href="/favorites"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-4 p-4 bg-pink-50 hover:bg-pink-100 rounded-xl transition-all active:scale-95"
+                >
+                  <div className="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center">
+                    <Heart className="h-6 w-6 text-pink-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Saved Items</p>
+                    <p className="text-sm text-gray-600">Your wishlist & favorites</p>
+                  </div>
+                </Link>
+                
+                <Link
+                  href="/products"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-4 p-4 bg-blue-50 hover:bg-blue-100 rounded-xl transition-all active:scale-95"
+                >
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    <ShoppingBag className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Browse All</p>
+                    <p className="text-sm text-gray-600">Explore everything</p>
+                  </div>
+                </Link>
               </div>
             </div>
 
-            {/* Mobile Categories Dropdown - Clean Modern Style */}
-            {showCategories && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 z-50 max-h-[70vh] overflow-y-auto">
-                <div className="p-4">
-                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Categories</h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    {categories.map((category) => (
-                      <Link
-                        key={category.name}
-                        href={category.href}
-                        onClick={() => setShowCategories(false)}
-                        className="flex items-center gap-3 p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-all active:scale-95"
-                      >
-                        <span className="text-2xl">{category.icon}</span>
-                        <span className="text-sm font-medium text-gray-900">{category.name}</span>
-                      </Link>
-                    ))}
-                  </div>
-                  
-                  {/* Quick Actions */}
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Quick Filters</h3>
-                    <div className="flex gap-2">
-                      <Link
-                        href="/products?condition=NEW_WITH_TAGS"
-                        onClick={() => setShowCategories(false)}
-                        className="flex-1 px-4 py-2.5 bg-black text-white text-center text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
-                      >
-                        New
-                      </Link>
-                      <Link
-                        href="/products?sort=popular"
-                        onClick={() => setShowCategories(false)}
-                        className="flex-1 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 text-center text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-                      >
-                        Trending
-                      </Link>
-                      <Link
-                        href="/products?sale=true"
-                        onClick={() => setShowCategories(false)}
-                        className="flex-1 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 text-center text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-                      >
-                        Sale
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Bottom CTA */}
+            <div className="p-4 border-t bg-gray-50">
+              <Button 
+                className="w-full h-14 bg-black text-white hover:bg-gray-800 text-base font-medium" 
+                asChild
+              >
+                <Link href={`${env.NEXT_PUBLIC_APP_URL}/selling/new`} onClick={() => setMenuOpen(false)}>
+                  <Plus className="h-5 w-5 mr-2" />
+                  Start Selling
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
-        </div>
+      )}
     </>
   );
 };
