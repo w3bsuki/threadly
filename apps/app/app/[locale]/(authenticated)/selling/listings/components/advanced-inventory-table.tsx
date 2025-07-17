@@ -57,7 +57,7 @@ import { BulkOperationType } from '@/lib/database-types';
 interface Product {
   id: string;
   title: string;
-  price: any;
+  price: number;
   condition: string;
   status: string;
   brand: string | null;
@@ -75,7 +75,7 @@ interface AdvancedInventoryTableProps {
   initialData: CursorPaginationResult<Product>;
   userId: string;
   locale: string;
-  dictionary: any;
+  dictionary: { [key: string]: string };
   categories: Array<{ id: string; name: string }>;
 }
 
@@ -218,7 +218,7 @@ export function AdvancedInventoryTable({
     }
   };
 
-  const handleBulkAction = async (operation: BulkOperationType, data: any) => {
+  const handleBulkAction = async (operation: BulkOperationType, data: Record<string, unknown>) => {
     if (selectedProducts.size === 0) return;
 
     setIsLoading(true);

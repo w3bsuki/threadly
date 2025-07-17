@@ -7,6 +7,7 @@ import type { Dictionary } from '@repo/internationalization';
 import { getCacheService } from '@repo/cache';
 import { database } from '@repo/database';
 import { decimalToNumber } from '@repo/utils';
+import { ErrorBoundary } from '@/components/error-boundary';
 
 interface ActiveListingsProps {
   userId: string;
@@ -77,7 +78,8 @@ export async function ActiveListings({ userId, dictionary }: ActiveListingsProps
 
   if (listings.length === 0) {
     return (
-      <Card className="overflow-hidden bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800">
+      <ErrorBoundary>
+        <Card className="overflow-hidden bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800">
         <CardHeader className="pb-3 px-4 border-b border-gray-200 dark:border-gray-800">
           <CardTitle className="text-base font-medium text-gray-900 dark:text-white">
             Your Active Listings
@@ -105,11 +107,13 @@ export async function ActiveListings({ userId, dictionary }: ActiveListingsProps
           </div>
         </CardContent>
       </Card>
+      </ErrorBoundary>
     );
   }
 
   return (
-    <Card className="overflow-hidden bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800">
+    <ErrorBoundary>
+      <Card className="overflow-hidden bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800">
       <CardHeader className="flex flex-row items-center justify-between pb-3 px-4 border-b border-gray-200 dark:border-gray-800">
         <CardTitle className="text-base font-medium text-gray-900 dark:text-white">
           Your Active Listings
@@ -177,5 +181,6 @@ export async function ActiveListings({ userId, dictionary }: ActiveListingsProps
         </div>
       </CardContent>
     </Card>
+    </ErrorBoundary>
   );
 }

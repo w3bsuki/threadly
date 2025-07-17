@@ -159,57 +159,58 @@ const SellerDashboardPage = async ({
   
   const recentRevenue = decimalToNumber(recentSalesData._sum?.amount) || 0;
 
-  // Get daily analytics for the last 7 days
-  const last7Days = Array.from({ length: 7 }, (_, i) => {
-    const date = new Date();
-    date.setDate(date.getDate() - (6 - i));
-    return date;
+  // Get daily analytics for the last 7 days with optimized queries
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  
+  // Get all sales for the last 7 days in a single query
+  const weeklyOrders = await database.order.findMany({
+    where: {
+      sellerId: dbUser.id,
+      status: 'DELIVERED',
+      createdAt: { gte: sevenDaysAgo }
+    },
+    select: {
+      amount: true,
+      createdAt: true
+    }
   });
 
-  // Calculate daily revenue, sales, and views
-  const dailyAnalytics = await Promise.all(
-    last7Days.map(async (date) => {
-      const startOfDay = new Date(date);
-      startOfDay.setHours(0, 0, 0, 0);
-      const endOfDay = new Date(date);
-      endOfDay.setHours(23, 59, 59, 999);
+  // Get all product views for the last 7 days in a single query
+  const weeklyProductViews = await database.product.findMany({
+    where: {
+      sellerId: dbUser.id,
+      updatedAt: { gte: sevenDaysAgo }
+    },
+    select: {
+      views: true,
+      updatedAt: true
+    }
+  });
 
-      const [dailySales, dailyViews] = await Promise.all([
-        database.order.aggregate({
-          where: {
-            sellerId: dbUser.id,
-            status: 'DELIVERED',
-            createdAt: {
-              gte: startOfDay,
-              lte: endOfDay
-            }
-          },
-          _count: true,
-          _sum: { amount: true }
-        }),
-        // Get actual daily views by summing all products' views for the day
-        database.product.aggregate({
-          where: {
-            sellerId: dbUser.id,
-            updatedAt: {
-              gte: startOfDay,
-              lte: endOfDay
-            }
-          },
-          _sum: { views: true }
-        })
-      ]);
+  // Process the data to create daily analytics
+  const dailyAnalytics = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (6 - i));
+    const dateStr = date.toISOString().split('T')[0];
+    
+    // Filter orders for this specific day
+    const dayOrders = weeklyOrders.filter(order => 
+      order.createdAt.toISOString().split('T')[0] === dateStr
+    );
+    
+    // Filter views for this specific day
+    const dayViews = weeklyProductViews.filter(product => 
+      product.updatedAt.toISOString().split('T')[0] === dateStr
+    );
 
-      const dailyRevenue = decimalToNumber(dailySales._sum?.amount) || 0;
-      
-      return {
-        day: date.toLocaleDateString('en-US', { weekday: 'short' }),
-        revenue: dailyRevenue,
-        sales: dailySales._count || 0,
-        views: dailyViews._sum.views || 0
-      };
-    })
-  );
+    return {
+      day: date.toLocaleDateString('en-US', { weekday: 'short' }),
+      revenue: dayOrders.reduce((sum, order) => sum + decimalToNumber(order.amount), 0),
+      sales: dayOrders.length,
+      views: dayViews.reduce((sum, product) => sum + product.views, 0)
+    };
+  });
 
   // Calculate real trends
   const currentWeekRevenue = dailyAnalytics.reduce((sum, day) => sum + day.revenue, 0);
@@ -219,8 +220,8 @@ const SellerDashboardPage = async ({
   // Get previous week data for comparison
   const last14Days = new Date();
   last14Days.setDate(last14Days.getDate() - 14);
-  const last7Days = new Date();
-  last7Days.setDate(last7Days.getDate() - 7);
+  const previousWeekEnd = new Date();
+  previousWeekEnd.setDate(previousWeekEnd.getDate() - 7);
   
   const previousWeekData = await database.order.aggregate({
     where: {
@@ -228,7 +229,7 @@ const SellerDashboardPage = async ({
       status: 'DELIVERED',
       createdAt: {
         gte: last14Days,
-        lt: last7Days
+        lt: previousWeekEnd
       }
     },
     _count: true,

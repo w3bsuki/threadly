@@ -1,9 +1,11 @@
 'use client';
 
-import { Search, Grid3x3 } from 'lucide-react';
+import { Search, Grid3x3, ChevronDown, ChevronUp } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useRef, useEffect } from 'react';
 import { useI18n } from './providers/i18n-provider';
+import { Button } from '@repo/design-system/components';
+import { CATEGORIES } from './navigation/categories';
 
 interface UnifiedSearchFiltersProps {
   totalCount?: number;
@@ -13,46 +15,26 @@ export const UnifiedSearchFilters = ({ totalCount }: UnifiedSearchFiltersProps) 
   const { dictionary, locale } = useI18n();
   const [showCategories, setShowCategories] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const categories = [
-    { 
-      name: dictionary.web.global.categories?.women || "Women", 
-      href: `/${locale}/women`, 
-      icon: "👗",
-      subcategories: [
-        { name: "Dresses", href: `/${locale}/women/dresses` },
-        { name: "Tops", href: `/${locale}/women/tops` },
-        { name: "Bottoms", href: `/${locale}/women/bottoms` },
-        { name: "Shoes", href: `/${locale}/women/shoes` },
-        { name: "Bags", href: `/${locale}/women/bags` },
-      ]
-    },
-    { 
-      name: dictionary.web.global.categories?.men || "Men", 
-      href: `/${locale}/men`, 
-      icon: "👔",
-      subcategories: [
-        { name: "Shirts", href: `/${locale}/men/shirts` },
-        { name: "T-shirts", href: `/${locale}/men/tshirts` },
-        { name: "Pants", href: `/${locale}/men/pants` },
-        { name: "Shoes", href: `/${locale}/men/shoes` },
-        { name: "Accessories", href: `/${locale}/men/accessories` },
-      ]
-    },
-    { 
-      name: dictionary.web.global.categories?.kids || "Kids", 
-      href: `/${locale}/kids`, 
-      icon: "👶",
-      subcategories: [
-        { name: "Boys", href: `/${locale}/kids/boys` },
-        { name: "Girls", href: `/${locale}/kids/girls` },
-        { name: "Baby", href: `/${locale}/kids/baby` },
-      ]
-    },
-    { name: dictionary.web.global.categories?.designer || "Designer", href: `/${locale}/designer`, icon: "👑" },
-    { name: "Vintage", href: `/${locale}/vintage`, icon: "📿" },
-  ];
+  const categories = CATEGORIES.map(category => ({
+    ...category,
+    name: dictionary.web.global.categories?.[category.name.toLowerCase() as keyof typeof dictionary.web.global.categories] || category.name,
+    href: `/${locale}${category.href}`,
+    subcategories: category.subcategories.map(sub => ({
+      ...sub,
+      href: `/${locale}${sub.href}`
+    }))
+  }));
+
+  const toggleCategoryExpansion = (categoryName: string) => {
+    setExpandedCategories(prev => 
+      prev.includes(categoryName) 
+        ? prev.filter(name => name !== categoryName)
+        : [...prev, categoryName]
+    );
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -99,44 +81,92 @@ export const UnifiedSearchFilters = ({ totalCount }: UnifiedSearchFiltersProps) 
 
             {/* Categories Dropdown */}
             {showCategories && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-200 z-50 max-h-[50vh] overflow-y-auto">
-                <div className="p-4">
-                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Categories</h3>
-                  <div className="grid grid-cols-2 gap-2">
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-200 z-50 max-h-[70vh] overflow-y-auto">
+                <div className="p-3">
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-1">Categories</h3>
+                  <div className="space-y-1">
                     {categories.map((category) => (
-                      <Link
-                        key={category.name}
-                        href={category.href}
-                        onClick={() => setShowCategories(false)}
-                        className="flex items-center gap-2 p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-all active:scale-95"
-                      >
-                        <span className="text-xl">{category.icon}</span>
-                        <span className="text-sm font-medium text-gray-900">{category.name}</span>
-                      </Link>
+                      <div key={category.name} className="border border-gray-200 rounded-lg overflow-hidden">
+                        <div className="flex items-center">
+                          <Link
+                            href={category.href}
+                            onClick={() => setShowCategories(false)}
+                            className="flex-1 flex items-center gap-2 px-3 py-2.5 hover:bg-gray-50 transition-colors active:scale-95"
+                            aria-label={`Browse ${category.name} category`}
+                          >
+                            <span className="text-lg" aria-hidden="true">{category.icon}</span>
+                            <span className="text-sm font-medium text-gray-900">{category.name}</span>
+                          </Link>
+                          
+                          {category.subcategories && category.subcategories.length > 0 && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => toggleCategoryExpansion(category.name)}
+                              className="m-1 h-8 px-2 text-xs font-medium text-gray-600 hover:text-gray-900"
+                              aria-expanded={expandedCategories.includes(category.name)}
+                              aria-label={`${expandedCategories.includes(category.name) ? 'Hide' : 'Show'} ${category.name} subcategories`}
+                            >
+                              {expandedCategories.includes(category.name) ? 'Less' : 'More'}
+                            </Button>
+                          )}
+                        </div>
+                        
+                        {expandedCategories.includes(category.name) && category.subcategories && (
+                          <div className="bg-gray-50 border-t border-gray-200">
+                            <div className="grid grid-cols-2 gap-px bg-gray-200 p-1">
+                              {category.subcategories.slice(0, 4).map((sub) => (
+                                <Link
+                                  key={sub.name}
+                                  href={sub.href}
+                                  onClick={() => setShowCategories(false)}
+                                  className={`flex items-center gap-1.5 px-2 py-2 bg-white hover:bg-gray-50 rounded transition-colors active:scale-95 ${
+                                    (sub as any).popular ? 'ring-1 ring-blue-200' : ''
+                                  }`}
+                                  aria-label={`Browse ${sub.name} in ${category.name}${(sub as any).popular ? ' - Popular' : ''}`}
+                                >
+                                  <span className="text-sm" aria-hidden="true">{sub.icon}</span>
+                                  <span className="text-xs font-medium text-gray-700">{sub.name}</span>
+                                  {(sub as any).popular && <span className="text-xs text-blue-600" aria-label="Popular">•</span>}
+                                </Link>
+                              ))}
+                              {category.subcategories.length > 4 && (
+                                <Link
+                                  href={category.href}
+                                  onClick={() => setShowCategories(false)}
+                                  className="col-span-2 flex items-center justify-center gap-1 px-2 py-2 bg-blue-50 hover:bg-blue-100 rounded transition-colors active:scale-95"
+                                >
+                                  <span className="text-xs font-medium text-blue-600">View all {category.subcategories.length} items</span>
+                                </Link>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
                   
                   {/* Quick Actions */}
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    <div className="flex gap-2">
+                  <div className="mt-3 pt-3 border-t border-gray-100">
+                    <div className="flex gap-1">
                       <Link
                         href="/products?condition=NEW_WITH_TAGS"
                         onClick={() => setShowCategories(false)}
-                        className="flex-1 px-4 py-2.5 bg-black text-white text-center text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
+                        className="flex-1 px-3 py-2 bg-black text-white text-center text-xs font-medium rounded-md hover:bg-gray-800 transition-colors"
                       >
                         NEW
                       </Link>
                       <Link
                         href="/products?sort=popular"
                         onClick={() => setShowCategories(false)}
-                        className="flex-1 px-4 py-2.5 bg-orange-500 text-white text-center text-sm font-medium rounded-lg hover:bg-orange-600 transition-colors"
+                        className="flex-1 px-3 py-2 bg-orange-500 text-white text-center text-xs font-medium rounded-md hover:bg-orange-600 transition-colors"
                       >
                         TRENDING
                       </Link>
                       <Link
                         href="/products?sale=true"
                         onClick={() => setShowCategories(false)}
-                        className="flex-1 px-4 py-2.5 bg-red-500 text-white text-center text-sm font-medium rounded-lg hover:bg-red-600 transition-colors"
+                        className="flex-1 px-3 py-2 bg-red-500 text-white text-center text-xs font-medium rounded-md hover:bg-red-600 transition-colors"
                       >
                         ON SALE
                       </Link>

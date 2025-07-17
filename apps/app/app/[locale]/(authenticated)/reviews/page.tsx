@@ -9,6 +9,19 @@ import { Badge } from '@repo/design-system/components';
 import { Star, Package, Calendar } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { getDictionary } from '@repo/internationalization';
+import { z } from 'zod';
+import { cache } from '@repo/cache';
+
+type UserInfo = {
+  id: string;
+  firstName: string | null;
+  lastName: string | null;
+  email: string;
+};
+
+const paramsSchema = z.object({
+  locale: z.string()
+});
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -21,7 +34,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 const ReviewsPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
-  const { locale } = await params;
+  const rawParams = await params;
+  const { locale } = paramsSchema.parse(rawParams);
   const dictionary = await getDictionary(locale);
   const user = await currentUser();
   
@@ -30,25 +44,72 @@ const ReviewsPage = async ({ params }: { params: Promise<{ locale: string }> }) 
   }
 
   // Get database user
-  const dbUser = await database.user.findUnique({
-    where: { clerkId: user.id }
-  });
+  const dbUser = await cache.remember(
+    `user:${user.id}:reviews`,
+    async () => {
+      return database.user.findUnique({
+        where: { clerkId: user.id }
+      });
+    },
+    300
+  );
 
   if (!dbUser) {
     redirect('/sign-in');
   }
 
   // Get orders that can be reviewed (delivered orders without reviews)
-  const ordersToReview = await database.order.findMany({
-    where: {
-      buyerId: dbUser.id,
-      status: 'DELIVERED',
-      Review: null, // No review exists yet
-    },
-    include: {
-      Product: {
+  const ordersToReview = await cache.remember(
+    `user:${dbUser.id}:orders-to-review`,
+    async () => {
+      return database.order.findMany({
+        where: {
+          buyerId: dbUser.id,
+          status: 'DELIVERED',
+          Review: null, // No review exists yet
+        },
         include: {
-          seller: {
+          Product: {
+            include: {
+              seller: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  email: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+    },
+    60
+  );
+
+  // Get reviews I've written
+  const myReviews = await cache.remember(
+    `user:${dbUser.id}:my-reviews`,
+    async () => {
+      return database.review.findMany({
+        where: {
+          reviewerId: dbUser.id,
+        },
+        include: {
+          Order: {
+            include: {
+              Product: {
+                select: {
+                  id: true,
+                  title: true,
+                },
+              },
+            },
+          },
+          User_Review_reviewedIdToUser: {
             select: {
               id: true,
               firstName: true,
@@ -57,72 +118,49 @@ const ReviewsPage = async ({ params }: { params: Promise<{ locale: string }> }) 
             },
           },
         },
-      },
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-  });
-
-  // Get reviews I've written
-  const myReviews = await database.review.findMany({
-    where: {
-      reviewerId: dbUser.id,
-    },
-    include: {
-      Order: {
-        include: {
-          Product: {
-            select: {
-              id: true,
-              title: true,
-            },
-          },
+        orderBy: {
+          createdAt: 'desc',
         },
-      },
-      User_Review_reviewedIdToUser: {
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          email: true,
-        },
-      },
+      });
     },
-    orderBy: {
-      createdAt: 'desc',
-    },
-  });
+    300
+  );
 
   // Get reviews I've received (as a seller)
-  const receivedReviews = await database.review.findMany({
-    where: {
-      reviewedId: dbUser.id,
-    },
-    include: {
-      User_Review_reviewerIdToUser: {
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          email: true,
+  const receivedReviews = await cache.remember(
+    `user:${dbUser.id}:received-reviews`,
+    async () => {
+      return database.review.findMany({
+        where: {
+          reviewedId: dbUser.id,
         },
-      },
-      Order: {
         include: {
-          Product: {
+          User_Review_reviewerIdToUser: {
             select: {
               id: true,
-              title: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+          Order: {
+            include: {
+              Product: {
+                select: {
+                  id: true,
+                  title: true,
+                },
+              },
             },
           },
         },
-      },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
     },
-    orderBy: {
-      createdAt: 'desc',
-    },
-  });
+    300
+  );
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -135,14 +173,14 @@ const ReviewsPage = async ({ params }: { params: Promise<{ locale: string }> }) 
     ));
   };
 
-  const getSellerName = (seller: any) => {
+  const getSellerName = (seller: UserInfo) => {
     if (seller.firstName && seller.lastName) {
       return `${seller.firstName} ${seller.lastName}`;
     }
     return seller.email;
   };
 
-  const getBuyerName = (buyer: any) => {
+  const getBuyerName = (buyer: UserInfo) => {
     if (buyer.firstName && buyer.lastName) {
       return `${buyer.firstName} ${buyer.lastName}`;
     }

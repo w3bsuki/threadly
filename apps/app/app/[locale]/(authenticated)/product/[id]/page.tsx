@@ -5,6 +5,13 @@ import type { Metadata } from 'next';
 import { Header } from '../../components/header';
 import { ProductDetailContent } from './components/product-detail-content';
 import { getDictionary } from '@repo/internationalization';
+import { z } from 'zod';
+import { cache } from '@repo/cache';
+
+const paramsSchema = z.object({
+  locale: z.string(),
+  id: z.string().uuid()
+});
 
 interface ProductPageProps {
   params: Promise<{
@@ -16,7 +23,8 @@ interface ProductPageProps {
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
-  const { locale, id } = await params;
+  const rawParams = await params;
+  const { locale, id } = paramsSchema.parse(rawParams);
   const dictionary = await getDictionary(locale);
   const product = await database.product.findFirst({
     where: {
@@ -55,7 +63,8 @@ export async function generateMetadata({
 }
 
 const ProductPage = async ({ params }: ProductPageProps) => {
-  const { locale, id } = await params;
+  const rawParams = await params;
+  const { locale, id } = paramsSchema.parse(rawParams);
   const dictionary = await getDictionary(locale);
   const user = await currentUser();
   
@@ -64,61 +73,73 @@ const ProductPage = async ({ params }: ProductPageProps) => {
   }
 
   // Get database user
-  const dbUser = await database.user.findUnique({
-    where: { clerkId: user.id }
-  });
+  const dbUser = await cache.remember(
+    `user:${user.id}:product-view`,
+    async () => {
+      return database.user.findUnique({
+        where: { clerkId: user.id }
+      });
+    },
+    300
+  );
 
   if (!dbUser) {
     redirect('/sign-in');
   }
   
   // Fetch product with all necessary details
-  const product = await database.product.findFirst({
-    where: {
-      id,
-      status: 'AVAILABLE',
-    },
-    include: {
-      images: {
-        orderBy: { displayOrder: 'asc' },
-      },
-      seller: {
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          imageUrl: true,
-          averageRating: true,
-          joinedAt: true,
-          _count: {
+  const product = await cache.remember(
+    `product:${id}:details`,
+    async () => {
+      return database.product.findFirst({
+        where: {
+          id,
+          status: 'AVAILABLE',
+        },
+        include: {
+          images: {
+            orderBy: { displayOrder: 'asc' },
+          },
+          seller: {
             select: {
-              Product: {
-                where: {
-                  status: 'SOLD',
+              id: true,
+              firstName: true,
+              lastName: true,
+              imageUrl: true,
+              averageRating: true,
+              joinedAt: true,
+              _count: {
+                select: {
+                  Product: {
+                    where: {
+                      status: 'SOLD',
+                    },
+                  },
                 },
               },
             },
           },
-        },
-      },
-      category: {
-        select: {
-          id: true,
-          name: true,
-          Category: {
+          category: {
             select: {
+              id: true,
               name: true,
+              Category: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+          _count: {
+            select: {
+              favorites: true,
             },
           },
         },
-      },
-      _count: {
-        select: {
-          favorites: true,
-        },
-      },
+      });
     },
-  });
+    300
+  );
 
   if (!product) {
     notFound();
@@ -145,52 +166,64 @@ const ProductPage = async ({ params }: ProductPageProps) => {
   });
 
   // Fetch similar products
-  const similarProducts = await database.product.findMany({
-    where: {
-      categoryId: product.category.id,
-      status: 'AVAILABLE',
-      NOT: {
-        id: product.id,
-      },
-    },
-    include: {
-      images: {
-        orderBy: { displayOrder: 'asc' },
-        take: 1,
-      },
-      seller: {
-        select: {
-          firstName: true,
-          lastName: true,
+  const similarProducts = await cache.remember(
+    `product:${id}:similar`,
+    async () => {
+      return database.product.findMany({
+        where: {
+          categoryId: product.category.id,
+          status: 'AVAILABLE',
+          NOT: {
+            id: product.id,
+          },
         },
-      },
+        include: {
+          images: {
+            orderBy: { displayOrder: 'asc' },
+            take: 1,
+          },
+          seller: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+        take: 6,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
     },
-    take: 6,
-    orderBy: {
-      createdAt: 'desc',
-    },
-  });
+    600
+  );
 
   // Get seller's other products
-  const sellerProducts = await database.product.findMany({
-    where: {
-      sellerId: product.seller.id,
-      status: 'AVAILABLE',
-      NOT: {
-        id: product.id,
-      },
+  const sellerProducts = await cache.remember(
+    `seller:${product.seller.id}:products`,
+    async () => {
+      return database.product.findMany({
+        where: {
+          sellerId: product.seller.id,
+          status: 'AVAILABLE',
+          NOT: {
+            id: product.id,
+          },
+        },
+        include: {
+          images: {
+            orderBy: { displayOrder: 'asc' },
+            take: 1,
+          },
+        },
+        take: 4,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
     },
-    include: {
-      images: {
-        orderBy: { displayOrder: 'asc' },
-        take: 1,
-      },
-    },
-    take: 4,
-    orderBy: {
-      createdAt: 'desc',
-    },
-  });
+    600
+  );
 
   return (
     <>

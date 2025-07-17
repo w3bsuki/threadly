@@ -26,6 +26,7 @@ import { format, formatDistanceToNow } from 'date-fns';
 import Image from 'next/image';
 import Link from 'next/link';
 import { sendMessage, markMessagesAsRead } from '../actions/message-actions';
+import { ErrorBoundary } from '@/components/error-boundary';
 
 interface User {
   id: string;
@@ -70,6 +71,19 @@ interface Conversation {
   _count: {
     messages: number;
   };
+}
+
+interface NewMessageData {
+  id: string;
+  content: string;
+  senderId: string;
+  conversationId: string;
+  createdAt: string;
+}
+
+interface MessageNotificationData {
+  conversationId: string;
+  createdAt: string;
 }
 
 interface MessagesContentProps {
@@ -156,7 +170,7 @@ export function MessagesContent({
   useEffect(() => {
     if (!selectedConversation || !bindMessages) return;
 
-    const unsubscribe = bindMessages('new-message', (data: any) => {
+    const unsubscribe = bindMessages('new-message', (data: NewMessageData) => {
       // Update the selected conversation with the new message
       if (data.conversationId === selectedConversation.id) {
         const newMessage: Message = {
@@ -205,7 +219,7 @@ export function MessagesContent({
   useEffect(() => {
     if (!bindUserChannel) return;
 
-    const unsubscribe = bindUserChannel('new-message-notification', (data: any) => {
+    const unsubscribe = bindUserChannel('new-message-notification', (data: MessageNotificationData) => {
       // Update the conversation list with new message notification
       setConversationsList(prevList => {
         const updatedList = prevList.map(conv => {
@@ -382,7 +396,8 @@ export function MessagesContent({
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-12rem)]">
+    <ErrorBoundary>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-12rem)]">
       {/* Conversations List */}
       <div className="lg:col-span-1">
         <Card className="h-full flex flex-col">
@@ -666,6 +681,7 @@ export function MessagesContent({
         )}
       </div>
     </div>
+    </ErrorBoundary>
   );
 }
 

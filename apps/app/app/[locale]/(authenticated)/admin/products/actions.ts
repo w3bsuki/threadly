@@ -7,6 +7,7 @@ import { log } from '@repo/observability/server';
 import { randomUUID } from 'crypto';
 import { currentUser } from '@repo/auth/server';
 import { BulkOperationType, BulkOperationStatus } from '@/lib/database-types';
+import { ProductStatus } from '@repo/database/generated/client';
 
 export async function approveProduct(productId: string) {
   const isModerator = await canModerate();
@@ -134,7 +135,7 @@ export async function bulkUpdateProducts({
     throw new Error('Unauthorized: Admin access required');
   }
 
-  let updateData: any;
+  let updateData: { status: ProductStatus };
   
   switch (action) {
     case 'remove':
@@ -144,7 +145,7 @@ export async function bulkUpdateProducts({
       updateData = { status: 'AVAILABLE' };
       break;
     case 'archive':
-      updateData = { status: 'ARCHIVED' };
+      updateData = { status: 'REMOVED' };
       break;
     default:
       throw new Error('Invalid action');
@@ -205,6 +206,16 @@ export async function bulkUpdateProducts({
   }
 }
 
+interface BulkUpdateData {
+  price?: number;
+  status?: string;
+  categoryId?: string;
+  condition?: string;
+  brand?: string;
+  size?: string;
+  color?: string;
+}
+
 export async function bulkUpdateSellerProducts({
   productIds,
   operation,
@@ -212,7 +223,7 @@ export async function bulkUpdateSellerProducts({
 }: {
   productIds: string[];
   operation: BulkOperationType;
-  data: any;
+  data: BulkUpdateData;
 }) {
   const user = await currentUser();
   if (!user) {
@@ -245,7 +256,7 @@ export async function bulkUpdateSellerProducts({
   const operationId = randomUUID();
 
   try {
-    let updateData: any = {};
+    let updateData: Record<string, unknown> = {};
     let results = { success: 0, errors: 0, skipped: 0 };
 
     switch (operation) {

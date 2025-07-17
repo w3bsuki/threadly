@@ -8,14 +8,17 @@ import { Textarea } from '@repo/design-system/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@repo/design-system/components/ui/avatar';
 import { Camera, User } from 'lucide-react';
+import { ErrorBoundary } from '@/components/error-boundary';
+
+interface SellerProfileData {
+  displayName: string;
+  bio: string;
+  profilePhoto: string;
+}
 
 interface SellerProfileFormProps {
-  data: {
-    displayName: string;
-    bio: string;
-    profilePhoto: string;
-  };
-  onUpdate: (data: any) => void;
+  data: SellerProfileData;
+  onUpdate: (data: SellerProfileData) => void;
   onNext: () => void;
   onBack: () => void;
 }
@@ -30,7 +33,8 @@ export function SellerProfileForm({ data, onUpdate, onNext, onBack }: SellerProf
   };
 
   return (
-    <Card>
+    <ErrorBoundary>
+      <Card>
       <CardHeader>
         <CardTitle>Create Your Seller Profile</CardTitle>
         <CardDescription>
@@ -99,5 +103,6 @@ export function SellerProfileForm({ data, onUpdate, onNext, onBack }: SellerProf
         </form>
       </CardContent>
     </Card>
+    </ErrorBoundary>
   );
 }

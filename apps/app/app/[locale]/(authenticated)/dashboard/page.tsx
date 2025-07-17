@@ -10,9 +10,15 @@ import { getCacheService } from '@repo/cache';
 import { database } from '@repo/database';
 import { decimalToNumber } from '@repo/utils';
 import { logError } from '@repo/observability/server';
+import { z } from 'zod';
+
+const paramsSchema = z.object({
+  locale: z.string()
+});
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-  const { locale } = await params;
+  const rawParams = await params;
+  const { locale } = paramsSchema.parse(rawParams);
   const dictionary = await getDictionary(locale);
   
   return {
@@ -81,7 +87,8 @@ async function getDashboardMetrics(dbUserId: string) {
 }
 
 export default async function DashboardPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
+  const rawParams = await params;
+  const { locale } = paramsSchema.parse(rawParams);
   const dictionary = await getDictionary(locale);
   const user = await currentUser();
 

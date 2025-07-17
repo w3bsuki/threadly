@@ -257,7 +257,7 @@ export async function POST(request: NextRequest) {
     const message = await database.message.create({
       data: {
         conversationId: validatedData.conversationId,
-        senderId: accessCheck.user?.id,
+        senderId: accessCheck.user.id,
         content: sanitizeForDisplay(validatedData.content),
         imageUrl: validatedData.imageUrl,
       },

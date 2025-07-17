@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@repo/design-system/component
 import { X, SlidersHorizontal } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useState } from 'react';
+import { ExpandableCategoryButton } from './expandable-category-button';
 
 interface QuickFiltersBarProps {
   totalCount?: number;
@@ -53,22 +54,17 @@ export const QuickFiltersBar = ({
     <div className="sticky top-[104px] md:top-16 z-30 bg-white border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-3 sm:px-4">
         <div className="flex items-start gap-2 py-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory">
-          {/* Category Pills */}
+          {/* Category Pills with Expandable Subcategories */}
           {categories.map((category) => (
-            <button
+            <ExpandableCategoryButton
               key={category}
+              categoryName={category}
+              isActive={currentGender === category.toLowerCase()}
               onClick={() => {
                 const value = category.toLowerCase();
                 updateFilter('gender', currentGender === value ? null : value);
               }}
-              className={`flex-shrink-0 px-8 py-4 rounded-full text-lg font-bold transition-all touch-manipulation min-h-[56px] whitespace-nowrap snap-start ${
-                currentGender === category.toLowerCase()
-                  ? 'bg-black text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 active:bg-gray-300'
-              }`}
-            >
-              {category}
-            </button>
+            />
           ))}
           
           <div className="w-px h-8 bg-gray-200 mx-2 flex-shrink-0" />

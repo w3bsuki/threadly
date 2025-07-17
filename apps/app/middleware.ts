@@ -1,6 +1,7 @@
 import { clerkMiddleware, createRouteMatcher } from '@repo/auth/server';
 import { internationalizationMiddleware } from '@repo/internationalization/middleware';
 import { NextResponse, type NextRequest } from 'next/server';
+import { createRateLimiter, slidingWindow } from '@repo/rate-limit';
 
 const isPublicRoute = createRouteMatcher([
   '/:locale/sign-in(.*)',
@@ -22,6 +23,19 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
     pathname.includes('.') // Any file with extension
   ) {
     return NextResponse.next();
+  }
+  
+  // Apply rate limiting for all pages
+  const rateLimiter = createRateLimiter({
+    limiter: slidingWindow(100, '1 m'),
+    prefix: 'page-requests',
+  });
+  
+  const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'anonymous';
+  const rateLimitResult = await rateLimiter.limit(ip);
+  
+  if (!rateLimitResult.success) {
+    return new NextResponse('Rate limit exceeded', { status: 429 });
   }
   
   // Handle internationalization for non-API routes
@@ -56,7 +70,7 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
   return NextResponse.next();
 });
 
-export default middleware as any;
+export default middleware;
 
 export const config = {
   matcher: [

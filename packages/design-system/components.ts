@@ -11,6 +11,7 @@ export { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 export { AspectRatio } from './components/ui/aspect-ratio';
 export { Avatar, AvatarFallback, AvatarImage } from './components/ui/avatar';
 export { Badge, badgeVariants } from './components/ui/badge';
+export { Banner } from './components/ui/banner';
 export { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from './components/ui/breadcrumb';
 export { Button, buttonVariants } from './components/ui/button';
 export { Calendar } from './components/ui/calendar';
@@ -118,7 +119,8 @@ export {
   TrustBadge, 
   TrustBadgeCollection, 
   MarketplaceTrustSection,
-  threadlyTrustFeatures 
+  threadlyTrustFeatures,
+  ConditionBadge
 } from './components/marketplace';
 export type { 
   ProductCardProps, 

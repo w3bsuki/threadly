@@ -46,7 +46,7 @@ interface Template {
   brand: string | null;
   size: string | null;
   color: string | null;
-  basePrice: any | null;
+  basePrice: number | null;
   tags: string[];
   isDefault: boolean;
   usageCount: number;
@@ -60,7 +60,7 @@ interface Category {
 interface TemplateFormProps {
   categories: Category[];
   initialData?: Template | null;
-  onSubmit: (data: any) => void;
+  onSubmit: (data: TemplateFormData & { basePrice?: string; tags: string[] }) => void;
   onCancel: () => void;
   isLoading: boolean;
 }
@@ -113,7 +113,7 @@ export function TemplateForm({
   const handleFormSubmit = (data: TemplateFormData) => {
     const submitData = {
       ...data,
-      basePrice: data.basePrice ? Math.round(parseFloat(data.basePrice) * 100) : undefined,
+      basePrice: data.basePrice,
       tags,
     };
     onSubmit(submitData);
@@ -174,7 +174,7 @@ export function TemplateForm({
           <Label htmlFor="condition">Condition</Label>
           <Select
             value={watch('condition') || ''}
-            onValueChange={(value) => setValue('condition', value as any)}
+            onValueChange={(value) => setValue('condition', value as 'NEW_WITH_TAGS' | 'NEW_WITHOUT_TAGS' | 'VERY_GOOD' | 'GOOD' | 'SATISFACTORY')}
           >
             <SelectTrigger className="mt-1">
               <SelectValue placeholder="Select condition" />

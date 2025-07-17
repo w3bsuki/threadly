@@ -9,14 +9,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@repo/design-system/components/ui/textarea';
 import { Package, Truck } from 'lucide-react';
 
+interface ShippingSettingsData {
+  shippingFrom: string;
+  processingTime: string;
+  defaultShippingCost: string;
+  shippingNotes: string;
+}
+
 interface ShippingSettingsFormProps {
-  data: {
-    shippingFrom: string;
-    processingTime: string;
-    defaultShippingCost: string;
-    shippingNotes: string;
-  };
-  onUpdate: (data: any) => void;
+  data: ShippingSettingsData;
+  onUpdate: (data: ShippingSettingsData) => void;
   onNext: () => void;
   onBack: () => void;
 }

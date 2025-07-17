@@ -9,14 +9,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Alert, AlertDescription } from '@repo/design-system/components/ui/alert';
 import { Info, Shield } from 'lucide-react';
 
+interface PaymentInfoData {
+  bankAccountNumber: string;
+  bankRoutingNumber: string;
+  accountHolderName: string;
+  payoutMethod: string;
+}
+
 interface PaymentInfoFormProps {
-  data: {
-    bankAccountNumber: string;
-    bankRoutingNumber: string;
-    accountHolderName: string;
-    payoutMethod: string;
-  };
-  onUpdate: (data: any) => void;
+  data: PaymentInfoData;
+  onUpdate: (data: PaymentInfoData) => void;
   onNext: () => void;
   onBack: () => void;
 }

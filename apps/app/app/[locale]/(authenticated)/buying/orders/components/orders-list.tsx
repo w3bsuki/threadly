@@ -1,4 +1,5 @@
 import { database } from '@repo/database';
+import { cache } from '@repo/cache';
 import Link from 'next/link';
 import { Button } from '@repo/design-system/components';
 import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
@@ -50,53 +51,58 @@ const getStatusText = (status: string) => {
 };
 
 export async function OrdersList({ userId }: OrdersListProps) {
-  // Fetch user's orders with pagination
-  const orders = await database.order.findMany({
-    where: {
-      buyerId: userId,
-    },
-    take: 20, // Limit to 20 orders for performance
-    include: {
-      Product: {
-        select: {
-          id: true,
-          title: true,
-          condition: true,
-          images: {
-            take: 1,
-            orderBy: {
-              displayOrder: 'asc',
-            },
+  const orders = await cache.remember(
+    `buyer_orders:${userId}`,
+    async () => {
+      return database.order.findMany({
+        where: {
+          buyerId: userId,
+        },
+        take: 20,
+        include: {
+          Product: {
             select: {
-              imageUrl: true
+              id: true,
+              title: true,
+              condition: true,
+              images: {
+                take: 1,
+                orderBy: {
+                  displayOrder: 'asc',
+                },
+                select: {
+                  imageUrl: true
+                }
+              },
+            },
+          },
+          User_Order_sellerIdToUser: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true
             }
           },
+          Payment: {
+            select: {
+              id: true,
+              status: true
+            }
+          },
+          Review: {
+            select: {
+              id: true
+            }
+          }
         },
-      },
-      User_Order_sellerIdToUser: {
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          email: true
-        }
-      },
-      Payment: {
-        select: {
-          id: true,
-          status: true
-        }
-      },
-      Review: {
-        select: {
-          id: true
-        }
-      }
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
     },
-    orderBy: {
-      createdAt: 'desc',
-    },
-  });
+    cache.TTL.SHORT
+  );
 
   if (orders.length === 0) {
     return (

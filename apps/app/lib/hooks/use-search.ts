@@ -13,6 +13,7 @@ export interface SearchFilters {
   priceMin?: number;
   priceMax?: number;
   sortBy?: 'relevance' | 'price_asc' | 'price_desc' | 'newest' | 'most_viewed' | 'most_favorited';
+  [key: string]: string | number | boolean | string[] | undefined;
 }
 
 export interface SearchProduct {

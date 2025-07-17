@@ -1,5 +1,6 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
+import { cache } from '@repo/cache';
 import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
@@ -9,10 +10,15 @@ import { OrdersList } from './components/orders-list';
 import { OrdersStats } from './components/orders-stats';
 import { OrdersListSkeleton, OrdersStatsSkeleton } from './components/orders-loading';
 import { getDictionary } from '@repo/internationalization';
+import { z } from 'zod';
+
+const paramsSchema = z.object({
+  locale: z.string().min(1)
+});
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-  const { locale } = await params;
-  const dictionary = await getDictionary(locale);
+  const validatedParams = paramsSchema.parse(await params);
+  const dictionary = await getDictionary(validatedParams.locale);
   
   return {
     title: dictionary.dashboard.metadata.orders.title,
@@ -21,19 +27,24 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 const MyOrdersPage = async ({ params }: { params: Promise<{ locale: string }> }) => {
-  const { locale } = await params;
-  const dictionary = await getDictionary(locale);
+  const validatedParams = paramsSchema.parse(await params);
+  const dictionary = await getDictionary(validatedParams.locale);
   const user = await currentUser();
 
   if (!user) {
     redirect('/sign-in');
   }
 
-  // Get database user with just ID for performance  
-  const dbUser = await database.user.findUnique({
-    where: { clerkId: user.id },
-    select: { id: true }
-  });
+  const dbUser = await cache.remember(
+    `user_profile:${user.id}`,
+    async () => {
+      return database.user.findUnique({
+        where: { clerkId: user.id },
+        select: { id: true }
+      });
+    },
+    cache.TTL.MEDIUM
+  );
 
   if (!dbUser) {
     redirect('/sign-in');

@@ -1,5 +1,5 @@
 import './styles.css';
-import { DesignSystemProvider, ServiceWorkerRegistration } from '@repo/design-system';
+import { DesignSystemProvider, ServiceWorkerRegistration, Banner } from '@repo/design-system';
 import { fonts } from '@repo/design-system/lib/fonts';
 import { cn } from '@repo/design-system/lib/utils';
 import { Toolbar } from '@repo/feature-flags/components/toolbar';
@@ -10,7 +10,7 @@ import type { ReactNode } from 'react';
 import { Footer } from './components/footer';
 import { Header } from './components/header';
 import { BottomNav } from './components/bottom-nav';
-import { Recycle, ArrowRight } from 'lucide-react';
+import { Recycle } from 'lucide-react';
 import { PerformanceMonitor } from './components/performance-monitor';
 import { CurrencyProvider } from './components/providers/currency-provider';
 import { I18nProvider } from './components/providers/i18n-provider';
@@ -48,21 +48,12 @@ const RootLayout = async ({ children, params }: RootLayoutProperties) => {
                   <ServiceWorkerRegistration />
                   <PerformanceMonitor debug={process.env.NODE_ENV === 'development'} />
                   
-                  {/* Promotional Banner */}
-                  <div className="bg-green-50 border-b border-green-100">
-                    <div className="max-w-7xl mx-auto px-4 py-1">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-xs font-medium text-green-800">Donate, don't recycle</span>
-                          <Recycle className="h-3 w-3 text-green-600" />
-                        </div>
-                        <button className="flex items-center gap-0.5 text-xs text-green-700 hover:text-green-800 underline underline-offset-2">
-                          Learn more
-                          <ArrowRight className="h-2.5 w-2.5" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                  <Banner
+                    variant="success"
+                    icon={<Recycle className="h-4 w-4" />}
+                  >
+                    🌱 New platform launch! Join Threadly's sustainable fashion marketplace
+                  </Banner>
                   
                   <Header />
                   <main id="main-content" className="min-h-screen pb-16 md:pb-0">

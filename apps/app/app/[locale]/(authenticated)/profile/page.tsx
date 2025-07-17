@@ -5,33 +5,53 @@ import type { Metadata } from 'next';
 import { ProfileContent } from './components/profile-content';
 import { decimalToNumber } from '@repo/utils';
 import { getCacheService } from '@repo/cache';
+import { z } from 'zod';
+
+const paramsSchema = z.object({
+  locale: z.string()
+});
 
 const title = 'Profile Settings';
 const description = 'Manage your account and marketplace preferences';
 
-export const metadata: Metadata = {
-  title,
-  description,
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const rawParams = await params;
+  paramsSchema.parse(rawParams);
+  
+  return {
+    title,
+    description,
+  };
+}
 
-const ProfilePage = async () => {
+const ProfilePage = async ({ params }: { params: Promise<{ locale: string }> }) => {
+  const rawParams = await params;
+  paramsSchema.parse(rawParams);
+  
   const user = await currentUser();
 
   if (!user) {
     redirect('/sign-in');
   }
 
-  // Get database user
-  const dbUser = await database.user.findUnique({
-    where: { clerkId: user.id },
-  });
+  // Get cached database user
+  const cache = getCacheService();
+  const dbUser = await cache.remember(
+    `user-by-clerk-id:${user.id}`,
+    async () => {
+      return await database.user.findUnique({
+        where: { clerkId: user.id },
+      });
+    },
+    15 * 60,
+    ['users']
+  );
 
   if (!dbUser) {
     redirect('/sign-in');
   }
 
   // Fetch cached user's marketplace data
-  const cache = getCacheService();
   const stats = await cache.remember(
     `user-profile-stats:${dbUser.id}`,
     async () => {

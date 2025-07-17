@@ -4,16 +4,28 @@ import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { MessagesContent } from './components/messages-content';
 import { decimalToNumber } from '@repo/utils';
+import { getCacheService } from '@repo/cache';
+import { z } from 'zod';
+
+const paramsSchema = z.object({
+  locale: z.string()
+});
 
 const title = 'Messages';
 const description = 'Chat with buyers and sellers';
 
-export const metadata: Metadata = {
-  title,
-  description,
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const rawParams = await params;
+  paramsSchema.parse(rawParams);
+  
+  return {
+    title,
+    description,
+  };
+}
 
 interface MessagesPageProps {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{
     type?: 'buying' | 'selling';
     user?: string; // User ID to start conversation with
@@ -21,7 +33,9 @@ interface MessagesPageProps {
   }>;
 }
 
-const MessagesPage = async ({ searchParams }: MessagesPageProps) => {
+const MessagesPage = async ({ params, searchParams }: MessagesPageProps) => {
+  const rawParams = await params;
+  paramsSchema.parse(rawParams);
   const { type, user: targetUserId, product: productId } = await searchParams;
   const user = await currentUser();
 
@@ -29,60 +43,72 @@ const MessagesPage = async ({ searchParams }: MessagesPageProps) => {
     redirect('/sign-in');
   }
 
+  const cache = getCacheService();
+
   // Get database user with just ID for performance
-  const dbUser = await database.user.findUnique({
-    where: { clerkId: user.id },
-    select: { id: true }
-  });
+  const dbUser = await cache.remember(
+    `user:${user.id}`,
+    async () => database.user.findUnique({
+      where: { clerkId: user.id },
+      select: { id: true }
+    }),
+    cache.TTL.MEDIUM,
+    ['users']
+  );
 
   if (!dbUser) {
     redirect('/sign-in');
   }
 
   // Fetch user's conversations with optimized queries
-  const conversations = await database.conversation.findMany({
-    where: {
-      OR: [
-        { buyerId: dbUser.id },
-        { sellerId: dbUser.id },
-      ],
-      ...(type === 'buying' ? { buyerId: dbUser.id } : {}),
-      ...(type === 'selling' ? { sellerId: dbUser.id } : {}),
-    },
-    include: {
-      User_Conversation_buyerIdToUser: true,
-      User_Conversation_sellerIdToUser: true,
-      Product: {
-        include: {
-          images: {
-            take: 1,
-            orderBy: {
-              displayOrder: 'asc',
+  const conversations = await cache.remember(
+    `conversations:${dbUser.id}:${type || 'all'}`,
+    async () => database.conversation.findMany({
+      where: {
+        OR: [
+          { buyerId: dbUser.id },
+          { sellerId: dbUser.id },
+        ],
+        ...(type === 'buying' ? { buyerId: dbUser.id } : {}),
+        ...(type === 'selling' ? { sellerId: dbUser.id } : {}),
+      },
+      include: {
+        User_Conversation_buyerIdToUser: true,
+        User_Conversation_sellerIdToUser: true,
+        Product: {
+          include: {
+            images: {
+              take: 1,
+              orderBy: {
+                displayOrder: 'asc',
+              },
+            },
+          },
+        },
+        Message: {
+          take: 1,
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+        _count: {
+          select: {
+            Message: {
+              where: {
+                senderId: { not: dbUser.id },
+                read: false,
+              },
             },
           },
         },
       },
-      Message: {
-        take: 1,
-        orderBy: {
-          createdAt: 'desc',
-        },
+      orderBy: {
+        updatedAt: 'desc',
       },
-      _count: {
-        select: {
-          Message: {
-            where: {
-              senderId: { not: dbUser.id },
-              read: false,
-            },
-          },
-        },
-      },
-    },
-    orderBy: {
-      updatedAt: 'desc',
-    },
-  });
+    }),
+    cache.TTL.SHORT,
+    ['conversations']
+  );
 
   // Handle starting new conversation
   let targetUser = null;
@@ -91,36 +117,51 @@ const MessagesPage = async ({ searchParams }: MessagesPageProps) => {
 
   if (targetUserId) {
     // Get target user details
-    targetUser = await database.user.findUnique({
-      where: { id: targetUserId },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        imageUrl: true,
-      },
-    });
+    targetUser = await cache.remember(
+      `user:profile:${targetUserId}`,
+      async () => database.user.findUnique({
+        where: { id: targetUserId },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          imageUrl: true,
+        },
+      }),
+      cache.TTL.MEDIUM,
+      ['users']
+    );
 
     // Get product details if provided
     if (productId) {
-      targetProduct = await database.product.findUnique({
-        where: { id: productId },
-        include: {
-          images: {
-            take: 1,
-            orderBy: { displayOrder: 'asc' },
+      targetProduct = await cache.remember(
+        `product:${productId}`,
+        async () => database.product.findUnique({
+          where: { id: productId },
+          include: {
+            images: {
+              take: 1,
+              orderBy: { displayOrder: 'asc' },
+            },
           },
-        },
-      });
+        }),
+        cache.TTL.LONG,
+        ['products']
+      );
 
       // Check if conversation already exists for this product
-      existingConversation = await database.conversation.findFirst({
-        where: {
-          productId: productId,
-          buyerId: dbUser.id,
-          sellerId: targetUserId,
-        },
-      });
+      existingConversation = await cache.remember(
+        `conversation:${productId}:${dbUser.id}:${targetUserId}`,
+        async () => database.conversation.findFirst({
+          where: {
+            productId: productId,
+            buyerId: dbUser.id,
+            sellerId: targetUserId,
+          },
+        }),
+        cache.TTL.SHORT,
+        ['conversations']
+      );
     }
   }
 

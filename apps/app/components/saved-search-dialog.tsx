@@ -16,9 +16,22 @@ import { Label } from '@repo/design-system/components';
 import { Switch } from '@repo/design-system/components';
 import { toast } from '@repo/design-system/components';
 
+interface SearchFilters {
+  query?: string;
+  categories?: string[];
+  brands?: string[];
+  conditions?: ('NEW' | 'LIKE_NEW' | 'GOOD' | 'FAIR')[];
+  sizes?: string[];
+  colors?: string[];
+  priceMin?: number;
+  priceMax?: number;
+  sortBy?: 'relevance' | 'price_asc' | 'price_desc' | 'newest' | 'most_viewed' | 'most_favorited';
+  [key: string]: string | number | boolean | string[] | undefined;
+}
+
 interface SavedSearchDialogProps {
   query: string;
-  filters?: any;
+  filters?: SearchFilters;
   onSave?: () => void;
 }
 
@@ -111,8 +124,8 @@ export function SavedSearchDialog({ query, filters, onSave }: SavedSearchDialogP
             {filters && Object.keys(filters).length > 0 && (
               <p className="text-xs text-muted-foreground">
                 Filters: {Object.entries(filters)
-                  .filter(([_, value]) => value)
-                  .map(([key, value]) => `${key}: ${value}`)
+                  .filter(([_, value]) => value && (Array.isArray(value) ? value.length > 0 : true))
+                  .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
                   .join(', ')}
               </p>
             )}

@@ -20,6 +20,7 @@ export const DesignSystemProvider = ({
 
 // Export additional components
 export { ServiceWorkerRegistration, useServiceWorker } from './components/ui/service-worker-registration';
+export { Banner } from './components/ui/banner';
 
 // Export toast functionality
 export { toast } from 'sonner';
