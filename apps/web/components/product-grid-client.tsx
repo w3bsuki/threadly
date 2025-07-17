@@ -4,7 +4,7 @@ import { Button } from '@repo/design-system/components';
 import { Badge } from '@repo/design-system/components';
 import { usePullToRefresh } from '@repo/design-system/hooks/use-pull-to-refresh';
 import { PullToRefreshIndicator } from '@repo/design-system/components';
-import { Heart, Filter, Grid, List, ChevronDown, Crown, X, Eye } from 'lucide-react';
+import { Heart, Filter, Grid, List, ChevronDown, Crown, X, Eye, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
@@ -41,6 +41,8 @@ const ProductPlaceholder = ({ className = "w-full h-full" }: { className?: strin
 import { useFavorites } from '../lib/hooks/use-favorites';
 import { ProductQuickView } from '../app/[locale]/components/product-quick-view';
 import { formatCurrency } from '../lib/utils/currency';
+import { useCartStore } from '../lib/stores/cart-store';
+import { toast } from '@repo/design-system';
 
 // TypeScript interfaces - REAL data structures
 export interface Product {
@@ -89,12 +91,39 @@ const ProductCard = ({ product }: {
   product: Product; 
 }) => {
   const { toggleFavorite, isFavorited, isPending } = useFavorites();
+  const { addItem, isInCart } = useCartStore();
+  const isProductInCart = isInCart(product.id);
+  
 
   const handleToggleFavorite = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     const result = await toggleFavorite(product.id);
     if (!result.success) {
+    }
+  };
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      addItem({
+        productId: product.id,
+        title: product.title,
+        price: product.price,
+        imageUrl: product.images[0] || '',
+        sellerId: product.seller.id,
+        sellerName: product.seller.name,
+        condition: product.condition,
+        size: product.size,
+      });
+      toast.success("Added to cart", {
+        description: `${product.title} has been added to your cart.`,
+      });
+    } catch (error) {
+      toast.error("Error", {
+        description: "Failed to add item to cart. Please try again.",
+      });
     }
   };
 
@@ -120,93 +149,97 @@ const ProductCard = ({ product }: {
   };
 
   return (
-  <article className="group relative bg-white" aria-label={`Product: ${product.title}`}>
-    {/* Main card content - opens quick view dialog */}
+  <article className="group relative bg-white rounded-lg overflow-hidden hover:shadow-lg transition-all duration-200 border border-gray-100" aria-label={`Product: ${product.title}`}>
     <ProductQuickView 
       product={transformedProduct}
       trigger={
-        <div className="cursor-pointer">
-          <div className="aspect-[3/4] overflow-hidden rounded-lg bg-gray-100 relative">
+        <div className="cursor-pointer h-full flex flex-col">
+          {/* Image Container with Wishlist Button */}
+          <div className="relative aspect-[3/4] bg-gray-50 overflow-hidden">
             {product.images.length > 0 ? (
               <Image
                 src={product.images[0]}
                 alt={product.title}
                 fill
-                className="object-cover object-center group-hover:opacity-75 transition-opacity"
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                quality={85}
+                priority={false}
               />
             ) : (
-              <ProductPlaceholder 
-                className="h-full w-full object-cover object-center group-hover:opacity-75 transition-opacity" 
-              />
+              <ProductPlaceholder className="h-full w-full" />
             )}
             
-            {/* Heart button */}
+            {/* Wishlist Button - Top Right */}
             <button 
               onClick={handleToggleFavorite}
               disabled={isPending}
-              className={`absolute top-2 right-2 p-2 rounded-full transition-all z-10 ${
-                isFavorited(product.id) ? 'bg-red-500 text-white' : 'bg-white/80 text-gray-600 hover:bg-white'
-              } backdrop-blur-sm`}
-              aria-label={isFavorited(product.id) ? `Remove ${product.title} from favorites` : `Add ${product.title} to favorites`}
-              aria-pressed={isFavorited(product.id)}
+              className={`absolute top-2 right-2 w-9 h-9 rounded-full transition-all shadow-sm ${
+                isFavorited(product.id) 
+                  ? 'bg-red-500 text-white' 
+                  : 'bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white'
+              } flex items-center justify-center`}
+              aria-label={isFavorited(product.id) ? 'Remove from favorites' : 'Add to favorites'}
             >
               <Heart className={`h-4 w-4 ${isFavorited(product.id) ? 'fill-current' : ''}`} />
             </button>
-
-            {/* Quick View indicator - Shows on hover */}
-            <div className="absolute bottom-2 left-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-              <div className="w-full bg-black/80 text-white backdrop-blur-sm text-xs py-2 px-3 rounded flex items-center justify-center">
-                <Eye className="h-3 w-3 mr-1" />
-                Quick View
-              </div>
-            </div>
-
-            {/* Condition badge */}
-            <div className="absolute top-2 left-2">
-              <Badge variant="secondary" className="text-xs bg-white/90 text-gray-900">
-                {product.condition.replace('_', ' ')}
-              </Badge>
-            </div>
-
-            {/* Designer badge */}
-            {product.isDesigner && (
-              <div className="absolute top-2 left-2 mt-7">
-                <Badge className="text-xs bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 border-0">
-                  <Crown className="h-3 w-3 mr-1" />
-                  Designer
-                </Badge>
+            
+            {/* Status Badge - Top Left */}
+            {(product.isDesigner || product.condition === 'NEW_WITH_TAGS') && (
+              <div className="absolute top-2 left-2">
+                {product.isDesigner ? (
+                  <Badge className="text-[10px] bg-[var(--brand-primary)] text-white border-0 font-semibold px-2 py-0.5">
+                    DESIGNER
+                  </Badge>
+                ) : product.condition === 'NEW_WITH_TAGS' && (
+                  <Badge className="text-[10px] bg-green-500 text-white border-0 font-semibold px-2 py-0.5">
+                    NEW
+                  </Badge>
+                )}
               </div>
             )}
-
-            {/* Favorites count */}
-            {product._count?.favorites ? (
-              <div className="absolute bottom-2 left-2 mb-8">
-                <Badge variant="secondary" className="text-xs bg-white/90 text-gray-900">
-                  <Heart className="h-3 w-3 mr-1" />
-                  {product._count.favorites}
-                </Badge>
-              </div>
-            ) : null}
           </div>
 
-          <div className="mt-3 space-y-1">
-            <p className="text-xs text-gray-500 uppercase tracking-wide">{product.brand}</p>
-            <h3 className="text-sm font-medium text-gray-900 line-clamp-2">{product.title}</h3>
+          {/* Content Section */}
+          <div className="p-3 flex-1 flex flex-col relative">
+            {/* Brand & Title */}
+            <p className="text-[11px] text-gray-500 font-semibold uppercase tracking-wide">{product.brand}</p>
+            <h3 className="text-sm font-medium text-gray-900 line-clamp-2 mt-0.5 leading-tight">{product.title}</h3>
             
-            <div className="flex items-center space-x-2">
-              <span className="text-lg font-semibold text-gray-900">
-                {formatCurrency(product.price)}
-              </span>
-              {product.originalPrice && (
-                <span className="text-sm text-gray-500 line-through">
-                  {formatCurrency(product.originalPrice)}
-                </span>
-              )}
+            {/* Seller Info */}
+            <p className="text-xs text-gray-400 mt-1">
+              by {product.seller.name} • {product.seller.location}
+            </p>
+            
+            {/* Price & Size */}
+            <div className="mt-auto pt-2">
+              <div className="flex items-end justify-between">
+                <div>
+                  <span className="text-lg font-bold text-gray-900">
+                    {formatCurrency(product.price)}
+                  </span>
+                  {product.originalPrice && (
+                    <span className="text-xs text-gray-400 line-through ml-1.5">
+                      {formatCurrency(product.originalPrice)}
+                    </span>
+                  )}
+                  <p className="text-xs text-gray-500 mt-0.5">Size {product.size}</p>
+                </div>
+              </div>
             </div>
             
-            <p className="text-xs text-gray-500">Size {product.size}</p>
-            <p className="text-xs text-gray-400">{product.seller.location} • {product.uploadedAgo}</p>
+            {/* Cart Button - Bottom Right Corner */}
+            <button 
+              onClick={handleAddToCart}
+              className={`absolute bottom-3 right-3 w-10 h-10 rounded-full transition-all shadow-md ${
+                isProductInCart 
+                  ? 'bg-green-500 text-white scale-110' 
+                  : 'bg-[var(--brand-primary)] text-white hover:scale-105'
+              } flex items-center justify-center`}
+              aria-label={isProductInCart ? 'In cart' : 'Add to cart'}
+            >
+              <ShoppingCart className={`h-5 w-5 ${isProductInCart ? 'fill-current' : ''}`} />
+            </button>
           </div>
         </div>
       }
@@ -402,9 +435,9 @@ export function ProductGridClient({
         threshold={80}
       />
       
-      <div ref={containerRef} className="max-w-7xl mx-auto px-4 py-6">
+      <div ref={containerRef} className="py-1 pb-4">
       {/* Filter Bar */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-2">
         <div className="flex items-center space-x-4">
           {/* Filter Button */}
           <Button 
@@ -481,7 +514,7 @@ export function ProductGridClient({
 
       {/* Mobile filter panel */}
       {showFilters && (
-        <div className="mb-6 p-4 border border-gray-200 rounded-lg bg-white space-y-4 md:hidden">
+        <div className="mb-2 p-2 border border-gray-200 rounded-lg bg-white space-y-2 md:hidden">
           <div className="flex items-center justify-between">
             <h3 className="font-medium">Filters</h3>
             {activeFilterCount > 0 && (
@@ -537,8 +570,8 @@ export function ProductGridClient({
         </div>
       )}
 
-      {/* Product Grid - REAL PRODUCTS */}
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      {/* Product Grid - Mobile optimized */}
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {filteredProducts.map((product) => (
           <ProductCard 
             key={product.id} 

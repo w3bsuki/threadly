@@ -1,163 +1,87 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { database } from '@repo/database';
-import { logError } from '@repo/observability/server';
-import { decimalToNumber } from '@repo/utils';
-import { getCacheService } from '@repo/cache';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Badge } from '@repo/design-system/components';
+import { Package } from 'lucide-react';
 import type { Dictionary } from '@repo/internationalization';
 
 interface RecentOrdersProps {
-  userId: string;
+  orders: Array<{
+    id: string;
+    amount: any;
+    status: string;
+    createdAt: Date;
+    buyerId: string;
+    productId: string;
+  }>;
   dictionary: Dictionary;
 }
 
-interface OrderWithProduct {
-  id: string;
-  amount: number;
-  status: string;
-  createdAt: string;
-  Product: {
-    id: string;
-    title: string;
-    images: Array<{
-      imageUrl: string;
-    }>;
-  };
-}
-
-async function getRecentOrders(userId: string): Promise<OrderWithProduct[]> {
-  const cache = getCacheService();
-  const cacheKey = `dashboard:recent-orders:${userId}`;
-  
-  return await cache.remember(
-    cacheKey,
-    async () => {
-      try {
-        // Get database user
-        const dbUser = await database.user.findUnique({
-          where: { clerkId: userId },
-          select: { id: true }
-        });
-
-        if (!dbUser) {
-          return [];
-        }
-
-        // Optimized query for recent orders
-        const orders = await database.order.findMany({
-          where: {
-            buyerId: dbUser.id
-          },
-          select: {
-            id: true,
-            amount: true,
-            status: true,
-            createdAt: true,
-            Product: {
-              select: {
-                id: true,
-                title: true,
-                images: {
-                  take: 1,
-                  orderBy: { displayOrder: 'asc' },
-                  select: {
-                    imageUrl: true
-                  }
-                }
-              }
-            }
-          },
-          orderBy: { createdAt: 'desc' },
-          take: 3
-        });
-
-        // Serialize data for client
-        return orders.map(order => ({
-          ...order,
-          amount: order.amount ? decimalToNumber(order.amount) : 0,
-          createdAt: order.createdAt.toISOString(),
-        }));
-      } catch (error) {
-        logError('Error fetching recent orders', error);
-        return [];
-      }
-    },
-    180 // Cache for 3 minutes
-  );
-}
-
-export async function RecentOrders({ userId, dictionary }: RecentOrdersProps) {
-  const orders = await getRecentOrders(userId);
-
+export function RecentOrders({ orders, dictionary }: RecentOrdersProps) {
   if (orders.length === 0) {
     return (
-      <div className="border border-border rounded-lg p-6">
-        <h2 className="text-lg font-semibold text-foreground mb-4">
-          {dictionary.dashboard.dashboard.recentOrders.title}
-        </h2>
-        <p className="text-muted-foreground text-center py-8">
-          {dictionary.dashboard.dashboard.recentOrders.noOrdersDescription || 'No recent orders found'}
-        </p>
-      </div>
+      <Card className="overflow-hidden bg-gray-950 border-gray-800">
+        <CardHeader className="pb-3 px-4 border-b border-gray-800">
+          <CardTitle className="text-base font-medium text-white">{dictionary.dashboard.dashboard.recentOrders.title}</CardTitle>
+        </CardHeader>
+        <CardContent className="px-4 pb-4 pt-4">
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <Package className="h-10 w-10 text-gray-600 mb-3" />
+            <p className="text-sm text-gray-500">
+              No recent orders yet
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="border border-border rounded-lg p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-foreground">
-          {dictionary.dashboard.dashboard.recentOrders.title}
-        </h2>
+    <Card className="overflow-hidden bg-gray-950 border-gray-800">
+      <CardHeader className="flex flex-row items-center justify-between pb-3 px-4 border-b border-gray-800">
+        <CardTitle className="text-base font-medium text-white">{dictionary.dashboard.dashboard.recentOrders.title}</CardTitle>
         <Link
-          href="/buying/orders"
-          className="text-sm text-primary hover:underline"
+          href="/selling/orders"
+          className="text-xs text-gray-400 hover:text-white transition-colors"
         >
-          {dictionary.dashboard.dashboard.recentOrders.viewAllOrders || 'View all'}
+          View all
         </Link>
-      </div>
-
-      <div className="space-y-4">
-        {orders.map((order) => (
-          <div key={order.id} className="flex items-center space-x-4">
-            <div className="relative h-12 w-12 rounded-lg overflow-hidden">
-              {order.Product.images[0]?.imageUrl ? (
-                <Image
-                  src={order.Product.images[0].imageUrl}
-                  alt={order.Product.title}
-                  fill
-                  className="object-cover"
-                  sizes="48px"
-                />
-              ) : (
-                <div className="w-full h-full bg-muted flex items-center justify-center">
-                  <span className="text-muted-foreground text-xs">No Image</span>
+      </CardHeader>
+      <CardContent className="px-4 pb-4 pt-4">
+        <div className="space-y-2">
+          {orders.map((order) => (
+            <div key={order.id} className="flex items-center gap-3 p-2 rounded-lg bg-black/30 hover:bg-black/50 transition-colors border border-gray-800">
+              <div className="relative h-10 w-10 rounded-lg overflow-hidden bg-gray-900 shrink-0">
+                <div className="w-full h-full flex items-center justify-center">
+                  <Package className="h-5 w-5 text-gray-600" />
                 </div>
-              )}
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate text-white">
+                  #{order.id.slice(-8)}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {new Date(order.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+
+              <div className="text-right">
+                <p className="text-sm font-medium text-white">
+                  ${Number(order.amount).toFixed(2)}
+                </p>
+                <Badge variant={
+                  order.status === 'DELIVERED' ? 'default' :
+                  order.status === 'SHIPPED' ? 'secondary' :
+                  order.status === 'PENDING' ? 'outline' : 'destructive'
+                } className="text-xs">
+                  {order.status}
+                </Badge>
+              </div>
             </div>
-            
-            <div className="flex-1 min-w-0">
-              <Link
-                href={`/product/${order.Product.id}`}
-                className="font-medium text-foreground hover:underline truncate block"
-              >
-                {order.Product.title}
-              </Link>
-              <p className="text-sm text-muted-foreground">
-                {new Date(order.createdAt).toLocaleDateString()}
-              </p>
-            </div>
-            
-            <div className="text-right">
-              <p className="font-medium text-foreground">
-                ${order.amount.toLocaleString()}
-              </p>
-              <p className="text-sm text-muted-foreground capitalize">
-                {order.status.toLowerCase()}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }

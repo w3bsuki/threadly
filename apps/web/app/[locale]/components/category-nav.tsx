@@ -116,7 +116,7 @@ export const CategoryNav = ({ category, title, description }: CategoryNavProps) 
   const categoryData = subcategories[category];
 
   return (
-    <div className="bg-white border-b border-gray-200">
+    <div className="bg-white">
       {/* Header */}
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="flex items-center space-x-2 text-sm text-gray-500 mb-4">

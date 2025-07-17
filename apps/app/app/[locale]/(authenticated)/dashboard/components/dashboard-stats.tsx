@@ -1,133 +1,85 @@
-import { database } from '@repo/database';
-import { logError } from '@repo/observability/server';
-import { getCacheService } from '@repo/cache';
+import { Card, CardContent } from '@repo/design-system/components';
+import { DollarSign, ShoppingBag, Package, MessageSquare } from 'lucide-react';
+import { cn } from '@repo/design-system/lib/utils';
 import type { Dictionary } from '@repo/internationalization';
-import { getSellerDashboardStats, type DashboardStats } from '../../../../../lib/queries/dashboard-stats';
 
 interface DashboardStatsProps {
-  userId: string;
+  metrics: {
+    totalRevenue: number;
+    completedSales: number;
+    activeListings: number;
+    unreadMessages: number;
+  };
   dictionary: Dictionary;
 }
 
-async function getDashboardMetrics(userId: string): Promise<Partial<DashboardStats> & { unreadMessages: number }> {
-  try {
-    // Get database user
-    const dbUser = await database.user.findUnique({
-      where: { clerkId: userId },
-      select: { id: true }
-    });
-
-    if (!dbUser) {
-      // Create user if doesn't exist
-      const newUser = await database.user.create({
-        data: {
-          clerkId: userId,
-          email: '', // Will be updated by webhook
-          firstName: null,
-          lastName: null,
-        },
-        select: { id: true }
-      });
-      
-      // Return defaults for new user
-      return {
-        totalRevenue: 0,
-        completedOrders: 0,
-        totalOrders: 0,
-        unreadMessages: 0,
-      };
-    }
-
-    // Get optimized stats
-    const stats = await getSellerDashboardStats(dbUser.id);
-    
-    // Get unread messages count (messages in conversations where user is not the sender)
-    const unreadMessages = await database.message.count({
-      where: {
-        read: false,
-        NOT: {
-          senderId: dbUser.id
-        },
-        Conversation: {
-          OR: [
-            { buyerId: dbUser.id },
-            { sellerId: dbUser.id }
-          ]
-        }
-      }
-    });
-
-    return {
-      ...stats,
-      unreadMessages,
-    };
-  } catch (error) {
-    logError('Error fetching dashboard metrics', error);
-    return {
-      totalRevenue: 0,
-      completedOrders: 0,
-      totalOrders: 0,
-      unreadMessages: 0,
-    };
-  }
+interface StatCardProps {
+  title: string;
+  value: string | number;
+  icon: React.ElementType;
+  trend?: {
+    value: number;
+    isPositive: boolean;
+  };
 }
 
-export async function DashboardStats({ userId, dictionary }: DashboardStatsProps) {
-  const metrics = await getDashboardMetrics(userId);
-  
+function StatCard({ title, value, icon: Icon, trend }: StatCardProps) {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <div className="border border-border rounded-lg p-6">
+    <Card className="overflow-hidden">
+      <CardContent className="p-4 sm:p-6">
         <div className="flex items-center justify-between">
-          <p className="text-sm font-medium text-muted-foreground">
-            {dictionary.dashboard.dashboard.metrics.totalRevenue}
-          </p>
+          <div className="space-y-1">
+            <p className="text-xs text-muted-foreground sm:text-sm">{title}</p>
+            <p className="text-xl font-bold tracking-tight sm:text-2xl">{value}</p>
+            {trend && (
+              <p className={cn(
+                "text-xs font-medium",
+                trend.isPositive ? "text-green-600" : "text-red-600"
+              )}>
+                {trend.isPositive ? '+' : ''}{trend.value}%
+              </p>
+            )}
+          </div>
+          <div className="rounded-full bg-muted p-3">
+            <Icon className="h-5 w-5 text-muted-foreground sm:h-6 sm:w-6" />
+          </div>
         </div>
-        <div className="mt-2">
-          <p className="text-2xl font-bold text-foreground">
-            ${(metrics.totalRevenue ?? 0).toLocaleString()}
-          </p>
-        </div>
-      </div>
+      </CardContent>
+    </Card>
+  );
+}
 
-      <div className="border border-border rounded-lg p-6">
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-medium text-muted-foreground">
-            {dictionary.dashboard.dashboard.metrics.completedSales}
-          </p>
-        </div>
-        <div className="mt-2">
-          <p className="text-2xl font-bold text-foreground">
-            {metrics.completedOrders || 0}
-          </p>
-        </div>
-      </div>
+export function DashboardStats({ metrics, dictionary }: DashboardStatsProps) {
+  const stats = [
+    {
+      title: dictionary.dashboard.dashboard.metrics.totalRevenue,
+      value: `$${metrics.totalRevenue.toLocaleString()}`,
+      icon: DollarSign,
+      trend: { value: 12.5, isPositive: true }
+    },
+    {
+      title: dictionary.dashboard.dashboard.metrics.completedSales,
+      value: metrics.completedSales,
+      icon: ShoppingBag,
+      trend: { value: 8.2, isPositive: true }
+    },
+    {
+      title: dictionary.dashboard.dashboard.metrics.activeListings,
+      value: metrics.activeListings,
+      icon: Package,
+    },
+    {
+      title: dictionary.dashboard.dashboard.metrics.unreadMessages,
+      value: metrics.unreadMessages,
+      icon: MessageSquare,
+    },
+  ];
 
-      <div className="border border-border rounded-lg p-6">
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-medium text-muted-foreground">
-            {dictionary.dashboard.dashboard.metrics.activeListings}
-          </p>
-        </div>
-        <div className="mt-2">
-          <p className="text-2xl font-bold text-foreground">
-            {metrics.totalOrders || 0}
-          </p>
-        </div>
-      </div>
-
-      <div className="border border-border rounded-lg p-6">
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-medium text-muted-foreground">
-            {dictionary.dashboard.dashboard.metrics.unreadMessages}
-          </p>
-        </div>
-        <div className="mt-2">
-          <p className="text-2xl font-bold text-foreground">
-            {metrics.unreadMessages}
-          </p>
-        </div>
-      </div>
+  return (
+    <div className="grid gap-3 grid-cols-2 sm:gap-4 lg:grid-cols-4">
+      {stats.map((stat, index) => (
+        <StatCard key={index} {...stat} />
+      ))}
     </div>
   );
 }

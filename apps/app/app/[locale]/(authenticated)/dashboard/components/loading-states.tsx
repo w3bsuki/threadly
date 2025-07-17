@@ -1,7 +1,8 @@
-import { DashboardStatsSkeleton, RecentOrdersSkeleton } from './dashboard-skeletons';
+import { ActiveListingsSkeleton } from './active-listings-skeleton';
+import { RecentOrdersSkeleton } from './dashboard-skeletons';
 
 export function DashboardStatsLoading() {
-  return <DashboardStatsSkeleton />;
+  return <ActiveListingsSkeleton />;
 }
 
 export function RecentOrdersLoading() {

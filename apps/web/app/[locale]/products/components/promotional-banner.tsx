@@ -74,7 +74,7 @@ export function PromotionalBanner({ className }: PromotionalBannerProps) {
   if (!isVisible) return null;
 
   return (
-    <div className={cn('relative bg-gray-50 border-b border-gray-200', className)}>
+    <div className={cn('relative bg-gray-50', className)}>
       <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Offer content */}

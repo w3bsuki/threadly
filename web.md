@@ -77,92 +77,179 @@ The current web implementation has solid foundations but needs significant impro
 
 **Impact**: Slow initial load, janky scrolling, high data usage
 
-## Production-Ready Requirements - Minimalist Design
+## Production-Ready Requirements - Modern Mobile-First Design
 
-### Core Layout Principle
+### Core Layout Principle (Vercel-Inspired)
 ```typescript
-// Super minimalistic mobile layout
-interface MinimalistLayout {
+// Modern mobile-first layout inspired by vercel.com
+interface ModernMobileLayout {
   components: [
-    'PromotionalBanner',  // Swipeable, dismissible
-    'TopNavbar',          // Buy/Sell toggle or brand only
-    'SearchField',        // Sticky on scroll with filter button
-    'ProductGrid'         // Infinite scroll, optimized loading
+    'PromotionalBanner',  // Swipeable, dismissible with subtle animations
+    'CompactNavbar',      // Hamburger menu + logo + cart badge
+    'SearchField',        // Compact with smooth expand animation
+    'ProductGrid'         // Responsive grid with hover states
   ];
   principles: {
-    whiteSpace: 'generous';
-    hierarchy: 'clear';
-    distractions: 'none';
-    focusOn: 'products';
+    touchTargets: 'optimized-not-huge';  // 44px minimum, not oversized
+    spacing: 'balanced';                  // Mobile-first with responsive scaling
+    interactions: 'minimal-essential';    // Only necessary interactions
+    hierarchy: 'content-first';          // Product discovery focus
+    navigation: 'progressive-disclosure'; // Reveal on demand
+    aesthetic: 'black-white-clean';      // Vercel-style minimal colors
+  };
+  designTokens: {
+    colors: {
+      primary: '#000000',   // Black text
+      background: '#ffffff', // White background
+      muted: '#6b7280',     // Gray-500 for secondary text
+      border: '#e5e7eb',    // Gray-200 for borders
+      accent: '#f9fafb',    // Gray-50 for subtle backgrounds
+    };
+    spacing: {
+      xs: '4px',   // 0.25rem
+      sm: '8px',   // 0.5rem
+      md: '12px',  // 0.75rem
+      lg: '16px',  // 1rem
+      xl: '20px',  // 1.25rem
+      xxl: '24px', // 1.5rem
+    };
+    breakpoints: {
+      mobile: 'max-md:',    // Up to 768px
+      tablet: 'md:',        // 768px - 1024px
+      desktop: 'lg:',       // 1024px+
+    };
   };
 }
 ```
 
-### Mobile-First Navigation Strategy
+### Modern Navigation Strategy (Vercel-Inspired)
 
-#### Option 1: Bottom Nav for Commerce Actions
+#### Compact Top Navigation
 ```typescript
-// Bottom nav focused on buying/selling
-interface BottomNavCommerce {
-  tabs: [
-    { id: 'buy', label: 'Buy', icon: 'shopping-bag', default: true },
-    { id: 'sell', label: 'Sell', icon: 'camera', action: 'capture' },
-    { id: 'categories', label: 'Shop', icon: 'grid', modal: true },
-    { id: 'filters', label: 'Filter', icon: 'sliders', sheet: true },
-    { id: 'profile', label: 'You', icon: 'user', badge: true }
-  ];
-  behavior: {
-    sellTab: 'Opens camera for quick listing';
-    categoriesTab: 'Full-screen category picker';
-    filtersTab: 'Bottom sheet with smart filters';
+// Minimal top nav with progressive disclosure
+interface CompactTopNav {
+  layout: 'hamburger + logo + actions';
+  height: '48px'; // Compact, not oversized
+  components: {
+    left: {
+      hamburger: {
+        size: '32px',
+        animation: 'smooth-morphing',
+        reveals: 'slide-down-menu'
+      }
+    },
+    center: {
+      logo: {
+        size: 'responsive',
+        clickable: true,
+        destination: 'home'
+      }
+    },
+    right: {
+      actions: [
+        {
+          type: 'cart',
+          icon: 'shopping-bag',
+          badge: 'count',
+          size: '32px'
+        },
+        {
+          type: 'profile',
+          icon: 'user',
+          size: '32px',
+          showOnDesktop: true
+        }
+      ]
+    }
+  };
+  slideDownMenu: {
+    sections: [
+      { 
+        title: 'Shop',
+        items: ['Women', 'Men', 'Kids', 'Home', 'Vintage'],
+        style: 'horizontal-pills'
+      },
+      {
+        title: 'Account',
+        items: ['Profile', 'Orders', 'Favorites', 'Settings'],
+        style: 'vertical-list'
+      },
+      {
+        title: 'Sell',
+        cta: 'List an Item',
+        style: 'prominent-button'
+      }
+    ];
+    animation: 'simple-slide';
+    backdrop: 'white-overlay';
   };
 }
 ```
 
-#### Option 2: Bottom Nav for Navigation (Recommended)
+#### Modern Bottom Navigation (Alternative)
 ```typescript
-// Bottom nav focused on navigation and discovery
-interface BottomNavNavigation {
+// Compact bottom nav with modern styling
+interface ModernBottomNav {
+  design: {
+    height: '56px'; // Reduced from 64px
+    background: 'bg-white/95 backdrop-blur-sm';
+    border: 'border-t border-gray-100';
+    animation: 'slide-up-on-scroll';
+  };
   tabs: [
-    { id: 'home', label: 'Home', icon: 'home' },
-    { id: 'categories', label: 'Shop', icon: 'grid', modal: true },
-    { id: 'sell', label: 'Sell', icon: 'plus-circle', primary: true },
-    { id: 'favorites', label: 'Saved', icon: 'heart', badge: true },
-    { id: 'profile', label: 'You', icon: 'user' }
+    { id: 'home', label: 'Home', icon: 'home-outline', activeIcon: 'home' },
+    { id: 'search', label: 'Search', icon: 'search-outline', activeIcon: 'search' },
+    { id: 'sell', label: 'Sell', icon: 'plus-circle', style: 'accent-button' },
+    { id: 'favorites', label: 'Saved', icon: 'heart-outline', activeIcon: 'heart', badge: true },
+    { id: 'profile', label: 'You', icon: 'user-outline', activeIcon: 'user' }
   ];
-  topNav: {
-    buyMode: { label: 'Buy', active: true },
-    sellMode: { label: 'Sell', active: false },
-    toggle: 'Switches entire app context';
+  interaction: {
+    activeState: 'color-change-only';
+    tapEffect: 'none';
+    iconSwitch: 'outline-to-filled';
   };
 }
 
-// Recommended implementation
-const MinimalistBottomNav = () => {
+// Modern implementation with Vercel-inspired design
+const ModernBottomNav = () => {
+  const [activeTab, setActiveTab] = useState('home');
+  
   return (
-    <nav className="fixed bottom-0 w-full bg-white border-t border-gray-100">
-      <div className="flex items-center justify-around h-16 px-4">
+    <nav className="fixed bottom-0 w-full bg-white/95 backdrop-blur-sm border-t border-gray-100 safe-area-pb">
+      <div className="flex items-center justify-around h-14 px-2">
         {tabs.map(tab => (
-          <TouchTarget
+          <button
             key={tab.id}
             className={cn(
-              "flex flex-col items-center justify-center flex-1 h-full",
-              tab.primary && "relative"
+              "flex flex-col items-center justify-center flex-1 h-full relative",
+              "rounded-lg mx-1",
+              activeTab === tab.id && "text-black",
+              activeTab !== tab.id && "text-gray-500"
             )}
-            onPress={() => handleTabPress(tab)}
+            onPress={() => {
+              setActiveTab(tab.id);
+              handleTabPress(tab);
+            }}
           >
-            {tab.primary ? (
-              <div className="absolute -top-6 bg-black rounded-full p-3">
-                <Icon name={tab.icon} className="w-6 h-6 text-white" />
+            {tab.style === 'accent-button' ? (
+              <div className="bg-black rounded-full p-2 mb-1">
+                <Icon name={tab.icon} className="w-4 h-4 text-white" />
               </div>
             ) : (
               <>
-                <Icon name={tab.icon} className="w-5 h-5 mb-1" />
-                <span className="text-xs">{tab.label}</span>
+                <Icon 
+                  name={activeTab === tab.id ? tab.activeIcon : tab.icon} 
+                  className="w-5 h-5 mb-0.5" 
+                />
+                <span className="text-xs font-medium">{tab.label}</span>
               </>
             )}
-            {tab.badge && <Badge />}
-          </TouchTarget>
+            {tab.badge && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                2
+              </span>
+            )}
+          </button>
         ))}
       </div>
     </nav>
@@ -170,70 +257,115 @@ const MinimalistBottomNav = () => {
 };
 ```
 
-### Minimalist Search Experience
+### Modern Search Experience (Vercel-Inspired)
 ```typescript
-// Clean, focused search that appears on scroll
-interface MinimalistSearch {
+// Compact search with progressive disclosure
+interface ModernSearch {
   design: {
-    appearance: 'Sticky header on scroll down';
-    background: 'Subtle blur with white bg';
-    height: '56px';
-    padding: '8px 16px';
+    appearance: 'Integrated into page flow';
+    background: 'bg-gray-50 rounded-xl';
+    height: '40px'; // Compact, not oversized
+    padding: '12px 16px';
+    transition: 'smooth-expand-on-focus';
   };
   components: {
     searchField: {
-      placeholder: 'Search Threadly';
+      placeholder: 'Search items...';
       icon: 'search';
-      clearButton: true;
+      iconSize: '16px';
+      clearButton: 'slide-in-on-typing';
+      expandBehavior: 'modal-on-mobile';
     };
-    filterButton: {
-      icon: 'sliders';
-      badge: 'Active filter count';
-      position: 'right';
+    quickActions: {
+      position: 'inline-horizontal';
+      items: [
+        { label: 'Women', pill: true },
+        { label: 'Men', pill: true },
+        { label: 'Vintage', pill: true },
+        { label: 'Filters', icon: 'sliders', badge: 'count' }
+      ];
+      style: 'horizontal-scroll-fade';
     };
   };
   behavior: {
-    onTap: 'Expand to full-screen search modal';
-    onScroll: 'Fade in when scrolling down';
-    onResults: 'Replace product grid in-place';
+    onFocus: 'Expand with recent searches';
+    onType: 'Instant results overlay';
+    onScroll: 'Sticky with blur backdrop';
+    pills: 'Horizontal scroll with fade edges';
   };
 }
 
-// Sticky search implementation
-const StickySearch = () => {
-  const [isVisible, setIsVisible] = useState(false);
+// Modern search with horizontal actions
+const ModernSearch = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
   const [activeFilters, setActiveFilters] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
   
-  useScrollDirection({
-    onScrollDown: () => setIsVisible(true),
-    onScrollUp: () => setIsVisible(false),
-    threshold: 100,
-  });
+  const quickActions = [
+    { label: 'Women', count: 1240 },
+    { label: 'Men', count: 890 },
+    { label: 'Vintage', count: 340 },
+    { label: 'Designer', count: 560 }
+  ];
   
   return (
-    <div 
-      className={cn(
-        "fixed top-0 left-0 right-0 z-40 transition-transform duration-200",
-        "bg-white/95 backdrop-blur-sm border-b border-gray-100",
-        isVisible ? "translate-y-0" : "-translate-y-full"
-      )}
-    >
-      <div className="flex items-center gap-3 px-4 py-2">
-        <button 
-          onClick={openSearchModal}
-          className="flex-1 flex items-center gap-3 h-10 px-4 bg-gray-50 rounded-full"
-        >
-          <Icon name="search" className="w-4 h-4 text-gray-400" />
-          <span className="text-gray-400">Search Threadly</span>
-        </button>
+    <div className="space-y-3">
+      {/* Main search field */}
+      <div className="relative">
+        <div className={cn(
+          "flex items-center gap-2 bg-gray-50 rounded-xl transition-all duration-200",
+          isExpanded ? "h-12 px-4" : "h-10 px-3"
+        )}>
+          <Icon name="search" className="w-4 h-4 text-gray-400 flex-shrink-0" />
+          <input
+            type="text"
+            placeholder="Search items..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => setIsExpanded(true)}
+            onBlur={() => setIsExpanded(false)}
+            className="flex-1 bg-transparent text-sm placeholder-gray-400 outline-none"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="p-1 hover:bg-gray-200 rounded-full transition-colors"
+            >
+              <Icon name="x" className="w-3 h-3 text-gray-400" />
+            </button>
+          )}
+        </div>
+      </div>
+      
+      {/* Horizontal quick actions */}
+      <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+        {quickActions.map((action, idx) => (
+          <button
+            key={action.label}
+            className={cn(
+              "flex-shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200",
+              "border border-gray-200 hover:border-gray-300",
+              "bg-white hover:bg-gray-50"
+            )}
+          >
+            {action.label}
+            <span className="ml-1 text-xs text-gray-500">({action.count})</span>
+          </button>
+        ))}
         
-        <button 
+        {/* Filters button */}
+        <button
           onClick={openFilters}
-          className="relative p-2"
+          className={cn(
+            "flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200",
+            "border border-gray-200 hover:border-gray-300",
+            activeFilters > 0 ? "bg-black text-white border-black" : "bg-white hover:bg-gray-50"
+          )}
         >
-          <Icon name="sliders" className="w-5 h-5" />
+          <Icon name="sliders" className="w-3 h-3" />
+          Filters
           {activeFilters > 0 && (
-            <span className="absolute -top-1 -right-1 bg-black text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+            <span className="bg-white text-black text-xs rounded-full w-4 h-4 flex items-center justify-center">
               {activeFilters}
             </span>
           )}
@@ -1538,23 +1670,25 @@ interface RiskMatrix {
 }
 ```
 
-## Visual Design Mockup
+## Modern Mobile Layout Blueprint (Vercel-Inspired)
 
-### Mobile Layout Blueprint
+### Compact Mobile Design
 ```
 ┌─────────────────────────────────┐
-│  🎯 Free shipping over $50  ✕  │ ← Promotional Banner (48px)
+│  🎯 Free shipping over $50  ✕  │ ← Promotional Banner (40px)
 ├─────────────────────────────────┤
-│  Threadly              🛒(2)    │ ← Top Nav (56px)
+│  ☰  Threadly           🛒(2) 👤 │ ← Compact Top Nav (48px)
 ├─────────────────────────────────┤
 │                                 │
-│  🔍 Search Threadly...          │ ← Search Field
+│  🔍 Search items...             │ ← Compact Search (40px)
+│                                 │
+│  Women(1.2k) Men(890) Vintage ⚙️│ ← Horizontal Pills
 │                                 │
 ├─────────────────────────────────┤
 │  ┌─────────┐  ┌─────────┐      │
 │  │         │  │         │      │
 │  │ Product │  │ Product │      │ ← Product Grid
-│  │  Image  │  │  Image  │      │   (2 columns)
+│  │  Image  │  │  Image  │      │   (2 columns, 4:5 ratio)
 │  │         │  │         │      │
 │  └─────────┘  └─────────┘      │
 │  Brand Name   Brand Name        │
@@ -1569,67 +1703,88 @@ interface RiskMatrix {
 │  └─────────┘  └─────────┘      │
 │                                 │
 ├─────────────────────────────────┤
-│  🏠    📱    ➕    ❤️    👤     │ ← Bottom Nav (64px)
-│ Home  Shop  Sell  Saved  You   │
+│  🏠    🔍    ⚫    ❤️    👤     │ ← Modern Bottom Nav (56px)
+│ Home  Search  Sell  Saved  You │
 └─────────────────────────────────┘
 
-When scrolling down:
+Hamburger Menu (Slide Down):
 ┌─────────────────────────────────┐
-│  🔍 Search...          ⚙️(2)    │ ← Sticky Search
+│  ☰  Threadly           🛒(2) 👤 │
+├─────────────────────────────────┤
+│                                 │
+│  Shop                          │
+│  Women  Men  Kids  Home  Vintage│ ← Horizontal Pills
+│                                 │
+│  Account                        │
+│  Profile                        │
+│  Orders                         │
+│  Favorites                      │
+│  Settings                       │
+│                                 │
+│  ┌─────────────────────────────┐ │
+│  │      📸 List an Item        │ │ ← Prominent CTA
+│  └─────────────────────────────┘ │
+│                                 │
 └─────────────────────────────────┘
 ```
 
-### Key Design Principles
-1. **Generous White Space**: 16px padding, 16px grid gap
-2. **Clear Hierarchy**: Product images dominate (aspect ratio 4:5)
-3. **Minimal Text**: Brand, title, price only
-4. **Touch Targets**: All interactive elements ≥ 48px
-5. **Visual Balance**: 2-column grid on mobile, 3-4 on tablet
+### Clean Design Principles (Vercel-Inspired)
+1. **Minimal Color Palette**: Black text, white backgrounds, gray accents
+2. **Clean Typography**: Inter/system fonts, proper contrast, readable sizes
+3. **Balanced Spacing**: 12px base padding, generous whitespace
+4. **Compact Hierarchy**: Product images dominate (4:5 ratio), minimal text
+5. **Optimized Touch**: 44px minimum, not oversized like traditional mobile
+6. **Progressive Disclosure**: Hamburger menu reveals content on demand
+7. **Horizontal Layouts**: Pills, badges, and buttons flow horizontally
+8. **Minimal Interactions**: Essential transitions only, no unnecessary animations
+9. **Responsive Grid**: 2-column mobile, 3-4 tablet/desktop
+10. **Functional Design**: Every element serves a purpose, no decorative bloat
 
 ## Final Recommendations
 
-### Immediate Actions (This Week)
-1. **Simplify Navigation**
-   - Remove category pills completely
+### Immediate Actions (This Week) - Modern Mobile-First
+1. **Implement Compact Navigation**
+   - Replace large navigation with compact hamburger menu
+   - Implement slide-down menu with horizontal pills
+   - Remove category pills from main layout
    - Delete duplicate search implementations
-   - Consolidate to single bottom nav
-   - Remove all spacer divs
 
-2. **Implement Minimalist Layout**
-   - Top nav: Logo + Cart only
-   - Homepage: Static search + products
-   - Sticky search on scroll
-   - Bottom nav with 5 tabs
+2. **Modern Layout Foundation**
+   - Compact top navbar (☰ + logo + cart + profile)
+   - Horizontal search with quick action pills
+   - Responsive product grid with balanced spacing
+   - Remove all unnecessary spacer divs
 
-3. **Category Navigation**
-   - Full-screen modal from "Shop" tab
-   - Direct links to /women, /men, etc.
-   - Each category page uses same layout
-   - No subcategory navigation (keep it simple)
+3. **Progressive Disclosure**
+   - Hamburger menu reveals categories and account options
+   - Search expands with recent searches on focus
+   - Horizontal pill navigation for categories
+   - Smooth animations and micro-interactions
 
-### Buy/Sell Strategy (Recommended)
+### Modern Buy/Sell Strategy (Vercel-Inspired)
 ```typescript
-// Option 1: Bottom Nav Focus (RECOMMENDED)
+// Option 1: Hamburger Menu Integration (RECOMMENDED)
 {
-  bottomNav: {
-    center: 'Prominent Sell button',
-    reasoning: 'Always visible, encourages listings'
+  hamburgerMenu: {
+    sellCTA: 'Prominent "List an Item" button at bottom',
+    reasoning: 'Progressive disclosure, always accessible'
   },
   topNav: {
-    content: 'Just logo and cart',
-    reasoning: 'Minimal distraction, clean aesthetic'
+    content: 'Hamburger + logo + cart + profile',
+    reasoning: 'Compact, modern, efficient use of space'
   }
 }
 
-// Option 2: Top Nav Toggle (Alternative)
+// Option 2: Bottom Nav with Modern Styling (Alternative)
 {
-  topNav: {
-    center: 'Buy/Sell mode toggle',
-    reasoning: 'Clear context switching'
-  },
   bottomNav: {
-    standard: '5 equal tabs',
-    reasoning: 'Consistent navigation'
+    sellButton: 'Compact black circle with plus icon',
+    reasoning: 'Modern aesthetic, not oversized'
+  },
+  design: {
+    height: '56px', // Reduced from traditional 64px
+    background: 'blur backdrop',
+    animations: 'smooth state transitions'
   }
 }
 ```

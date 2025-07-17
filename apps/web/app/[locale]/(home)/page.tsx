@@ -14,11 +14,8 @@ import { env } from '@/env';
 function HomePageShell({ children }: { children: React.ReactNode }) {
   return (
     <main className="min-h-screen bg-white">
-      {/* Spacer for mobile navigation */}
-      <div className="h-32 md:hidden" />
-      
-      {/* Products Grid - More space for browsing */}
-      <div className="max-w-7xl mx-auto px-4 pt-6 pb-6">
+      {/* Products Grid - Removed extra padding to bring products up */}
+      <div className="max-w-7xl mx-auto px-4 pb-6">
         {children}
       </div>
     </main>

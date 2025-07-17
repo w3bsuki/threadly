@@ -8,11 +8,11 @@ import { ProductFiltersMobile } from "./product-filters-mobile";
 import { ProductSort } from "./product-sort";
 import { QuickFilters } from "./quick-filters";
 import { Pagination } from "./pagination";
-import { PromotionalBanner } from "./promotional-banner";
 import { LayoutSwitcher, ViewMode } from "./layout-switcher";
 import { ProductListView } from "./product-list-view";
 import { EnhancedHeader } from "./enhanced-header";
 import { ProductsClientWrapper } from "./products-client-wrapper";
+import { QuickFiltersBar } from "../../components/quick-filters-bar";
 import { Separator } from '@repo/design-system/components';
 import { SlidersHorizontal } from 'lucide-react';
 import { withDatabaseErrorHandling } from '@/lib/utils/error-handling';
@@ -181,32 +181,19 @@ export async function ProductsContent({ searchParams, dictionary }: ProductsCont
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Promotional Banner */}
-      <PromotionalBanner />
-      
-      {/* Spacer for mobile navigation */}
-      <div className="h-32 md:hidden" />
-      
+      {/* Quick Filters Bar - Mobile Only */}
+      <div className="lg:hidden border-0">
+        <QuickFiltersBar totalCount={totalCount} />
+      </div>
+
       {/* Products Grid - Same container as main page */}
-      <div className="max-w-7xl mx-auto px-4 pt-6 pb-6">
-        {/* Header Section */}
-        <div className="mb-6">
+      <div className="max-w-7xl mx-auto px-4 pt-3 pb-6">
+        {/* Header Section - Desktop Only */}
+        <div className="hidden lg:block mb-6">
           <EnhancedHeader 
             totalCount={totalCount}
             currentFilters={searchParams}
           />
-
-          {/* Mobile Filter and Sort Bar */}
-          <div className="lg:hidden flex items-center gap-3 mb-6">
-            <ProductFiltersMobile 
-              categories={categories}
-              currentFilters={searchParams}
-              dictionary={dictionary}
-            />
-            <div className="flex-1">
-              <ProductSort currentSort={searchParams.sort} />
-            </div>
-          </div>
         </div>
 
         {/* Main Layout - Sidebar + Grid */}

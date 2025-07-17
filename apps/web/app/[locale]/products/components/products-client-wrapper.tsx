@@ -52,7 +52,7 @@ export function ProductsClientWrapper({ products, searchParams, dictionary }: Pr
   return (
     <>
       {/* Desktop Filter Bar */}
-      <div className="hidden lg:flex items-center justify-between gap-4 pb-6 border-b">
+      <div className="hidden lg:flex items-center justify-between gap-4 pb-6">
         <QuickFilters currentFilters={searchParams} />
         <div className="flex items-center space-x-4">
           <LayoutSwitcher 

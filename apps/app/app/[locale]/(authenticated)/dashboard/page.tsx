@@ -2,27 +2,14 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { getDictionary } from '@repo/internationalization';
 import { currentUser } from '@repo/auth/server';
-import { ModernDashboardHeader } from './components/modern-dashboard-header';
-import { DashboardStats } from './components/dashboard-stats';
-import { ModernDashboardStats } from './components/modern-dashboard-stats';
-import { ModernRecentOrders } from './components/modern-recent-orders';
-import { ModernQuickActions } from './components/modern-quick-actions';
+import { DashboardBanner } from './components/dashboard-banner';
+import { ActiveListings } from './components/active-listings';
 import { DashboardStatsLoading } from './components/loading-states';
-import { RecentOrdersLoading } from './components/loading-states';
 import { requireOnboarding } from '../components/onboarding-check';
 import { getCacheService } from '@repo/cache';
 import { database } from '@repo/database';
 import { decimalToNumber } from '@repo/utils';
 import { logError } from '@repo/observability/server';
-
-// PPR: Static header component that can be prerendered
-function StaticDashboardShell({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="space-y-4 lg:space-y-6">
-      {children}
-    </div>
-  );
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -57,7 +44,20 @@ async function getDashboardMetrics(dbUserId: string) {
             _sum: { amount: true },
             _count: true
           }),
-          Promise.resolve(0) // TODO: Implement unread messages
+          database.message.count({
+            where: {
+              read: false,
+              senderId: {
+                not: dbUserId
+              },
+              Conversation: {
+                OR: [
+                  { buyerId: dbUserId },
+                  { sellerId: dbUserId }
+                ]
+              }
+            }
+          })
         ]);
 
         return {
@@ -86,13 +86,11 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
   const user = await currentUser();
 
   if (!user) {
-    return null; // This should be handled by the layout auth check
+    return null;
   }
 
-  // Check if user has completed onboarding
   await requireOnboarding();
 
-  // Get database user (single query, then pass to metrics)
   const dbUser = await database.user.findUnique({
     where: { clerkId: user.id },
     select: { id: true }
@@ -102,37 +100,17 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
     return null;
   }
 
-  // Get metrics for modern dashboard using db user ID
   const metrics = await getDashboardMetrics(dbUser.id);
 
   return (
-    <StaticDashboardShell>
-      {/* PPR: Static header can be prerendered */}
-      <Suspense fallback={<div className="h-20 bg-muted/20 animate-pulse rounded-lg" />}>
-        <ModernDashboardHeader user={user} dictionary={dictionary} />
-      </Suspense>
-      
-      {/* PPR: Dynamic stats with loading state */}
+    <div className="space-y-3 pb-20 lg:pb-6 min-h-screen">
+      {/* Combined Header & Stats Banner */}
+      <DashboardBanner user={user} dictionary={dictionary} metrics={metrics} />
+
+      {/* Active Listings */}
       <Suspense fallback={<DashboardStatsLoading />}>
-        <ModernDashboardStats metrics={metrics} dictionary={dictionary} />
+        <ActiveListings userId={dbUser.id} dictionary={dictionary} />
       </Suspense>
-
-      {/* PPR: Static quick actions can be prerendered */}
-      <ModernQuickActions dictionary={dictionary} />
-
-      {/* PPR: Dynamic content with proper suspense boundaries */}
-      <div className="grid gap-4 lg:gap-6 lg:grid-cols-2 xl:grid-cols-3">
-        <div className="lg:col-span-2">
-          <Suspense fallback={<RecentOrdersLoading />}>
-            <ModernRecentOrders userId={dbUser.id} dictionary={dictionary} />
-          </Suspense>
-        </div>
-
-        {/* Additional dashboard content can go here */}
-        <div className="space-y-4 lg:space-y-6">
-          {/* Placeholder for additional widgets */}
-        </div>
-      </div>
-    </StaticDashboardShell>
+    </div>
   );
 }

@@ -9,6 +9,7 @@ import { getDictionary } from '@repo/internationalization';
 import type { ReactNode } from 'react';
 import { Footer } from './components/footer';
 import { Header } from './components/header';
+import { BottomNav } from './components/bottom-nav';
 import { PerformanceMonitor } from './components/performance-monitor';
 import { CurrencyProvider } from './components/providers/currency-provider';
 import { I18nProvider } from './components/providers/i18n-provider';
@@ -46,10 +47,11 @@ const RootLayout = async ({ children, params }: RootLayoutProperties) => {
                   <ServiceWorkerRegistration />
                   <PerformanceMonitor debug={process.env.NODE_ENV === 'development'} />
                   <Header />
-                  <main id="main-content" className="min-h-screen">
+                  <main id="main-content" className="min-h-screen pb-16 md:pb-0">
                     {children}
                   </main>
                   <Footer dictionary={dictionary} />
+                  <BottomNav />
                 </CurrencyProvider>
               </I18nProvider>
             </DesignSystemProvider>

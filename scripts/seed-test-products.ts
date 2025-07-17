@@ -1,4 +1,4 @@
-import { database, ProductStatus, Condition } from '../packages/database/index';
+import { database } from '../packages/database/index.js';
 
 async function seedTestProducts() {
   console.log('🌱 Starting seed process...');
@@ -55,10 +55,10 @@ async function seedTestProducts() {
         brand: 'Levi\'s',
         size: 'M',
         color: 'Blue',
-        condition: Condition.EXCELLENT,
+        condition: 'EXCELLENT',
         categoryId: clothingCategory?.id,
         sellerId: seller.id,
-        status: ProductStatus.AVAILABLE,
+        status: 'AVAILABLE',
       },
       {
         title: 'Designer Leather Handbag',
@@ -67,10 +67,10 @@ async function seedTestProducts() {
         brand: 'Coach',
         size: 'One Size',
         color: 'Black',
-        condition: Condition.LIKE_NEW,
+        condition: 'LIKE_NEW',
         categoryId: clothingCategory?.id,
         sellerId: seller.id,
-        status: ProductStatus.AVAILABLE,
+        status: 'AVAILABLE',
       },
       {
         title: 'Retro Sneakers',
@@ -79,10 +79,10 @@ async function seedTestProducts() {
         brand: 'Nike',
         size: '10',
         color: 'White/Red',
-        condition: Condition.GOOD,
+        condition: 'GOOD',
         categoryId: clothingCategory?.id,
         sellerId: seller.id,
-        status: ProductStatus.AVAILABLE,
+        status: 'AVAILABLE',
       },
     ];
     
@@ -109,7 +109,7 @@ async function seedTestProducts() {
     // Get final counts
     const finalProductCount = await database.product.count();
     const availableCount = await database.product.count({
-      where: { status: ProductStatus.AVAILABLE }
+      where: { status: 'AVAILABLE' }
     });
     
     console.log(`\n🎉 Seed completed!`);

@@ -1,55 +1,122 @@
 'use client';
 
 import Link from 'next/link';
-import { Button } from '@repo/design-system/components';
-import { PlusIcon, HeartIcon } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
+import { cn } from '@repo/design-system/lib/utils';
+import { 
+  Plus, 
+  Package, 
+  TrendingUp, 
+  MessageSquare,
+  ShoppingBag,
+  Settings,
+  Crown,
+  Eye,
+} from 'lucide-react';
 import type { Dictionary } from '@repo/internationalization';
 
 interface QuickActionsProps {
   dictionary: Dictionary;
 }
 
-export function QuickActions({ dictionary }: QuickActionsProps) {
-  return (
-    <div className="border border-border rounded-lg p-6">
-      <h2 className="text-lg font-semibold text-foreground mb-4">
-        {dictionary.dashboard.dashboard.quickActions}
-      </h2>
-      
-      <div className="grid gap-4 md:grid-cols-2">
-        <Button asChild className="h-auto p-4 justify-start">
-          <Link href="/selling/new" className="flex items-center space-x-3">
-            <PlusIcon className="h-5 w-5" />
-            <div className="text-left">
-              <p className="font-medium">
-                {dictionary.dashboard.dashboard.actions.listNewItem}
-              </p>
-              <p className="text-sm opacity-80">
-                Start selling your items
-              </p>
-            </div>
-          </Link>
-        </Button>
+interface ActionButtonProps {
+  href: string;
+  icon: React.ElementType;
+  label: string;
+  description?: string;
+  external?: boolean;
+  variant?: 'default' | 'primary';
+}
 
-        <Button variant="outline" asChild className="h-auto p-4 justify-start">
-          <a
-            href={process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3001'}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center space-x-3"
-          >
-            <HeartIcon className="h-5 w-5" />
-            <div className="text-left">
-              <p className="font-medium">
-                {dictionary.dashboard.dashboard.recentOrders.browseShop}
-              </p>
-              <p className="text-sm opacity-80">
-                Discover new items
-              </p>
-            </div>
-          </a>
-        </Button>
+function ActionButton({ href, icon: Icon, label, description, external, variant = 'default' }: ActionButtonProps) {
+  const className = cn(
+    "flex items-center gap-3 p-3 rounded-lg border transition-all active:scale-95",
+    "touch-manipulation",
+    variant === 'primary' 
+      ? "bg-white text-black border-white hover:bg-gray-100"
+      : "bg-black/50 text-white border-gray-800 hover:bg-black/70 hover:border-gray-700"
+  );
+
+  const content = (
+    <>
+      <div className={cn(
+        "rounded-full p-2",
+        variant === 'primary' ? "bg-black/10" : "bg-white/10"
+      )}>
+        <Icon className="h-4 w-4" />
       </div>
-    </div>
+      <span className="text-sm font-medium">{label}</span>
+    </>
+  );
+
+  if (external) {
+    return (
+      <a 
+        href={href} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className={className}
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={href} className={className}>
+      {content}
+    </Link>
+  );
+}
+
+export function QuickActions({ dictionary }: QuickActionsProps) {
+  const actions = [
+    {
+      href: '/selling/new',
+      icon: Plus,
+      label: 'New Listing',
+      variant: 'primary' as const,
+    },
+    {
+      href: '/selling/orders',
+      icon: ShoppingBag,
+      label: 'Orders',
+    },
+    {
+      href: '/selling/listings',
+      icon: Package,
+      label: 'My Listings',
+    },
+    {
+      href: '/messages',
+      icon: MessageSquare,
+      label: 'Messages',
+    },
+    {
+      href: '/selling/analytics',
+      icon: TrendingUp,
+      label: 'Analytics',
+    },
+    {
+      href: process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3001',
+      icon: Crown,
+      label: 'Browse Shop',
+      external: true,
+    },
+  ];
+
+  return (
+    <Card className="overflow-hidden bg-gray-950 border-gray-800">
+      <CardHeader className="pb-3 px-4 border-b border-gray-800">
+        <CardTitle className="text-base font-medium text-white">{dictionary.dashboard.dashboard.quickActions}</CardTitle>
+      </CardHeader>
+      <CardContent className="px-4 pb-4 pt-4">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {actions.map((action, index) => (
+            <ActionButton key={index} {...action} />
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }

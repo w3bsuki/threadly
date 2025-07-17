@@ -7,17 +7,24 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ user, dictionary }: DashboardHeaderProps) {
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  };
+
+  const firstName = user.firstName || 'there';
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-foreground">
-        {dictionary.dashboard.dashboard.title}
+    <div className="space-y-1">
+      <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+        {getGreeting()}, {firstName}
       </h1>
-      <p className="text-muted-foreground mt-1">
-        {dictionary.dashboard.dashboard.welcomeMessage.replace('{{name}}', user.firstName || '')}
+      <p className="text-sm text-muted-foreground sm:text-base">
+        {dictionary.dashboard.dashboard.welcomeMessage.replace('{{name}}', firstName)}
       </p>
     </div>
   );
