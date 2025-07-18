@@ -15,6 +15,8 @@ nextConfig.experimental = {
     '@repo/database',
     'lucide-react',
   ],
+  webpackBuildWorker: true,
+  optimizeCss: true,
 };
 
 // Override images config to include all needed domains
@@ -98,6 +100,14 @@ nextConfig.headers = async () => {
           key: 'Referrer-Policy',
           value: 'origin-when-cross-origin',
         },
+        {
+          key: 'Strict-Transport-Security',
+          value: 'max-age=31536000; includeSubDomains',
+        },
+        {
+          key: 'Content-Security-Policy',
+          value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://maps.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https:; frame-src https://js.stripe.com https://hooks.stripe.com;",
+        },
       ],
     },
     {
@@ -118,9 +128,37 @@ nextConfig.headers = async () => {
         },
       ],
     },
+    {
+      source: '/api/products/:path*',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'public, max-age=300, s-maxage=600, stale-while-revalidate=86400',
+        },
+      ],
+    },
+    {
+      source: '/api/categories/:path*',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'public, max-age=3600, s-maxage=7200, stale-while-revalidate=86400',
+        },
+      ],
+    },
+    {
+      source: '/api/search/:path*',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'public, max-age=60, s-maxage=120, stale-while-revalidate=3600',
+        },
+      ],
+    },
   ];
 };
 
+// Only enable redirects in production
 if (process.env.NODE_ENV === 'production') {
   const redirects: NextConfig['redirects'] = async () => [
     {

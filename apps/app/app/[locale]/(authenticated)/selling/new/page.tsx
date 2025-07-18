@@ -23,12 +23,13 @@ const SellNewItemPage = async ({
 }: { 
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
-  try {
-    const user = await currentUser();
+  const user = await currentUser();
 
-    if (!user) {
-      redirect('/sign-in');
-    }
+  if (!user) {
+    redirect('/sign-in');
+  }
+
+  try {
 
     // Get template and draft parameters
     const awaitedSearchParams = await searchParams;

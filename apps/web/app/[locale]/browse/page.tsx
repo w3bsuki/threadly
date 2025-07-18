@@ -5,22 +5,13 @@ import { Package, Star, TrendingUp, Users } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ProductGrid } from '../products/components/product-grid';
+import { AvatarImage } from '../components/optimized-image';
+import { cache } from 'react';
 
-export const metadata: Metadata = {
-  title: 'Browse Products - Threadly',
-  description:
-    'Discover trending fashion items and popular sellers on Threadly marketplace.',
-};
+export const revalidate = 300; // 5 minutes
 
-export default async function BrowsePage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
-  const dictionary = await getDictionary(locale);
-  // Fetch trending products
-  const trendingProducts = await database.product.findMany({
+const getTrendingProducts = cache(async () => {
+  return await database.product.findMany({
     where: { status: 'AVAILABLE' },
     include: {
       images: { take: 1, orderBy: { displayOrder: 'asc' } },
@@ -31,9 +22,10 @@ export default async function BrowsePage({
     orderBy: [{ views: 'desc' }, { createdAt: 'desc' }],
     take: 12,
   });
+});
 
-  // Fetch popular categories
-  const popularCategories = await database.category.findMany({
+const getPopularCategories = cache(async () => {
+  return await database.category.findMany({
     include: {
       _count: { select: { Product: true } },
     },
@@ -42,9 +34,10 @@ export default async function BrowsePage({
     },
     take: 8,
   });
+});
 
-  // Fetch top sellers
-  const topSellers = await database.user.findMany({
+const getTopSellers = cache(async () => {
+  return await database.user.findMany({
     where: {
       Product: { some: { status: 'AVAILABLE' } },
     },
@@ -61,6 +54,28 @@ export default async function BrowsePage({
     },
     take: 6,
   });
+});
+
+export const metadata: Metadata = {
+  title: 'Browse Products - Threadly',
+  description:
+    'Discover trending fashion items and popular sellers on Threadly marketplace.',
+};
+
+export default async function BrowsePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const dictionary = await getDictionary(locale);
+  
+  // Fetch data using cached functions for better performance
+  const [trendingProducts, popularCategories, topSellers] = await Promise.all([
+    getTrendingProducts(),
+    getPopularCategories(),
+    getTopSellers(),
+  ]);
 
   // Recent activity stats
   const stats = await database.$transaction([
@@ -152,6 +167,15 @@ export default async function BrowsePage({
               </Link>
             ))}
           </div>
+          
+          <div className="mt-6 text-center">
+            <Link
+              href="/categories"
+              className="inline-flex items-center justify-center font-medium text-blue-600 text-sm transition-colors hover:text-blue-700"
+            >
+              Browse All Categories →
+            </Link>
+          </div>
         </section>
 
         {/* Trending Products */}
@@ -201,10 +225,11 @@ export default async function BrowsePage({
                     <div className="mb-3 flex items-center gap-3 lg:mb-4 lg:gap-4">
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 lg:h-12 lg:w-12">
                         {seller.imageUrl ? (
-                          <img
+                          <AvatarImage
                             alt={`${seller.firstName} ${seller.lastName}`}
-                            className="h-10 w-10 rounded-full object-cover lg:h-12 lg:w-12"
+                            className="h-10 w-10 lg:h-12 lg:w-12"
                             src={seller.imageUrl}
+                            size={40}
                           />
                         ) : (
                           <span className="font-semibold text-gray-600 text-sm lg:text-lg">

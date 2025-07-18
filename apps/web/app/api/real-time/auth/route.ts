@@ -1,25 +1,38 @@
 import { currentUser } from '@repo/auth/server';
-import { NextResponse } from 'next/server';
+import { getPusherServer } from '@repo/real-time/src/server/pusher-server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
     const user = await currentUser();
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // For now, return a mock auth response
-    // In production, this would authenticate with Pusher
-    return NextResponse.json({
-      auth: 'mock-auth-token',
-      channel_data: JSON.stringify({
-        user_id: user.id,
-        user_info: {
-          name: `${user.firstName} ${user.lastName}`,
-        },
-      }),
+    const body = await request.text();
+    const params = new URLSearchParams(body);
+    const socketId = params.get('socket_id');
+    const channel = params.get('channel_name');
+
+    if (!socketId || !channel) {
+      return NextResponse.json(
+        { error: 'Missing socket_id or channel_name' },
+        { status: 400 }
+      );
+    }
+
+    const pusherServer = getPusherServer({
+      pusherAppId: process.env.PUSHER_APP_ID || '',
+      pusherKey: process.env.PUSHER_KEY || '',
+      pusherSecret: process.env.PUSHER_SECRET || '',
+      pusherCluster: process.env.PUSHER_CLUSTER || '',
     });
-  } catch (_error) {
+
+    const auth = await pusherServer.authenticateUser(socketId, channel, user.id);
+    
+    return NextResponse.json(auth);
+  } catch (error) {
+    console.error('Pusher auth error:', error);
     return NextResponse.json(
       { error: 'Failed to authenticate' },
       { status: 500 }

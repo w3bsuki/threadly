@@ -38,28 +38,40 @@ function getLocale(request: NextRequest): string {
 export default clerkMiddleware(async (auth, request: NextRequest) => {
   const pathname = request.nextUrl.pathname;
 
+  // Skip middleware for static files and API routes
+  if (
+    pathname.startsWith('/_next/') || 
+    pathname.startsWith('/api/') || 
+    pathname.includes('.') ||
+    pathname === '/favicon.ico' ||
+    pathname === '/manifest.json'
+  ) {
+    return NextResponse.next();
+  }
+
   // Check if the pathname already includes a locale
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
 
-  if (!pathnameHasLocale) {
-    // Redirect if no locale in pathname
-    const locale = getLocale(request);
-    const newUrl = new URL(`/${locale}${pathname}`, request.url);
-
-    // For the root path, we can use rewrite instead of redirect for better UX
-    if (pathname === '/' && locale === defaultLocale) {
-      return NextResponse.rewrite(newUrl);
+  // If we have a locale, proceed without redirects
+  if (pathnameHasLocale) {
+    // Check if current route requires authentication
+    if (isProtectedRoute(request)) {
+      await auth.protect();
     }
-
-    return NextResponse.redirect(newUrl);
+    return NextResponse.next();
   }
 
-  // Check if current route requires authentication
-  if (isProtectedRoute(request)) {
-    await auth.protect();
+  // Only redirect if no locale in pathname and not already redirecting
+  if (pathname === '/') {
+    const locale = defaultLocale;
+    const newUrl = new URL(`/${locale}`, request.url);
+    return NextResponse.redirect(newUrl, 302);
   }
 
-  return NextResponse.next();
+  // For other paths without locale, add default locale
+  const locale = defaultLocale;
+  const newUrl = new URL(`/${locale}${pathname}`, request.url);
+  return NextResponse.redirect(newUrl, 302);
 });

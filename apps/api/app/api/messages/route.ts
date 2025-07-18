@@ -3,6 +3,7 @@ import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
 import { checkRateLimit, messageRateLimit } from '@repo/security';
 import { sanitizeForDisplay } from '@repo/validation/sanitize';
+import { getPusherServer } from '@repo/real-time/server';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -280,6 +281,28 @@ export async function POST(request: NextRequest) {
         updatedAt: new Date(),
       },
     });
+
+    // Send real-time notification
+    try {
+      const pusherServer = getPusherServer({
+        pusherAppId: process.env.PUSHER_APP_ID || '',
+        pusherKey: process.env.PUSHER_KEY || '',
+        pusherSecret: process.env.PUSHER_SECRET || '',
+        pusherCluster: process.env.PUSHER_CLUSTER || '',
+      });
+
+      await pusherServer.sendMessage({
+        message: {
+          ...message,
+          isOwnMessage: false,
+        },
+        conversationId: validatedData.conversationId,
+        senderId: accessCheck.user!.id,
+        createdAt: message.createdAt,
+      });
+    } catch (error) {
+      logError('Failed to send real-time message:', error);
+    }
 
     return NextResponse.json(
       {

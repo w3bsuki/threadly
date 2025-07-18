@@ -1,6 +1,52 @@
 import { Button } from '@repo/design-system/components';
 import { Heart, HelpCircle, Shield, Zap } from 'lucide-react';
 import Link from 'next/link';
+import { createMetadata } from '@repo/seo/metadata';
+import { getDictionary } from '@repo/internationalization';
+import type { Metadata } from 'next';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const dictionary = await getDictionary(locale);
+
+  return createMetadata({
+    title: 'Pricing - Sell on Threadly | Free to List, Only Pay When You Sell',
+    description: 'Learn about Threadly\'s transparent pricing. Free to list your items, only pay a small commission when you sell. No hidden fees, no monthly charges.',
+    keywords: [
+      'threadly pricing',
+      'sell clothes online',
+      'commission fees',
+      'free to list',
+      'selling fees',
+      'marketplace pricing',
+      'sustainable fashion',
+      'consignment fees',
+    ],
+    openGraph: {
+      title: 'Pricing - Sell on Threadly',
+      description: 'Turn your unworn clothes into cash. Free to list, only pay when you sell.',
+      type: 'website',
+      images: [
+        {
+          url: '/images/pricing-hero.jpg',
+          width: 1200,
+          height: 630,
+          alt: 'Threadly Pricing Information',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Pricing - Sell on Threadly',
+      description: 'Free to list your items, only pay a small commission when you sell.',
+      images: ['/images/pricing-hero.jpg'],
+    },
+  });
+}
 
 const SellingInfo = () => (
   <div className="w-full py-20 lg:py-40">

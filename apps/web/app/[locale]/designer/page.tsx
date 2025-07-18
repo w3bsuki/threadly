@@ -2,6 +2,58 @@ import { Badge, Button } from '@repo/design-system/components';
 import { Award, ChevronRight, Crown, Shield, Star } from 'lucide-react';
 import Link from 'next/link';
 import { ProductGrid } from '../(home)/components/product-grid';
+import { createMetadata } from '@repo/seo/metadata';
+import { getDictionary } from '@repo/internationalization';
+import type { Metadata } from 'next';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const dictionary = await getDictionary(locale);
+
+  return createMetadata({
+    title: 'Designer Marketplace - Authenticated Luxury Fashion | Threadly',
+    description: 'Shop authenticated luxury designer fashion from Gucci, Chanel, Prada, Louis Vuitton, and more. Every piece is verified by our authentication experts.',
+    keywords: [
+      'designer fashion',
+      'luxury fashion',
+      'authenticated designer',
+      'Gucci',
+      'Chanel',
+      'Prada',
+      'Louis Vuitton',
+      'Hermès',
+      'Dior',
+      'Balenciaga',
+      'Saint Laurent',
+      'designer consignment',
+      'luxury marketplace',
+      'authenticated luxury',
+    ],
+    openGraph: {
+      title: 'Designer Marketplace - Authenticated Luxury Fashion',
+      description: 'Discover authenticated luxury fashion from the world\'s most coveted designers. Every piece is verified, every transaction is protected.',
+      type: 'website',
+      images: [
+        {
+          url: '/images/designer-hero.jpg',
+          width: 1200,
+          height: 630,
+          alt: 'Luxury Designer Fashion Collection',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Designer Marketplace - Threadly',
+      description: 'Shop authenticated luxury designer fashion from the world\'s most prestigious brands.',
+      images: ['/images/designer-hero.jpg'],
+    },
+  });
+}
 
 // Inline ProductPlaceholder component
 const ProductPlaceholder = ({

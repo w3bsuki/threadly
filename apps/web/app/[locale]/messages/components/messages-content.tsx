@@ -17,7 +17,9 @@ import {
   Send,
   User,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useChannel, useTypingIndicator } from '@repo/real-time/client';
+import { AvatarImage } from '../../components/optimized-image';
 
 interface User {
   id: string;
@@ -79,11 +81,23 @@ export function MessagesContent({
   >(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [newMessage, setNewMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [optimisticMessages, setOptimisticMessages] = useState<Message[]>([]);
+  const [realTimeMessages, setRealTimeMessages] = useState<Message[]>([]);
+  const [failedMessages, setFailedMessages] = useState<Message[]>([]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+
+  const { bind: bindConversationChannel } = useChannel(
+    selectedConversation ? `private-conversation-${selectedConversation}` : ''
+  );
+  
+  const { typingUsers, sendTyping } = useTypingIndicator(selectedConversation || '');
 
   // Transform conversations to match the component's expected format
   const transformedConversations = conversations.map((conv) => {
     const otherUser = conv.buyerId === currentUserId ? conv.seller : conv.buyer;
-    const lastMessage = conv.messages.at(-1);
+    const lastMessage = conv.messages[conv.messages.length - 1];
     const unreadCount = conv._count.messages;
 
     return {
@@ -143,9 +157,176 @@ export function MessagesContent({
     return `${days}d ago`;
   };
 
+  const formatDateGroup = (date: Date) => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    const messageDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    
+    if (messageDate.getTime() === today.getTime()) {
+      return 'Today';
+    } else if (messageDate.getTime() === yesterday.getTime()) {
+      return 'Yesterday';
+    } else {
+      return messageDate.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+    }
+  };
+
+  const groupMessagesByDate = (messages: Message[]) => {
+    const groups: { [key: string]: Message[] } = {};
+    
+    messages.forEach(message => {
+      const dateKey = formatDateGroup(new Date(message.createdAt));
+      if (!groups[dateKey]) {
+        groups[dateKey] = [];
+      }
+      groups[dateKey].push(message);
+    });
+    
+    return groups;
+  };
+
   const selectedConv = transformedConversations.find(
     (c) => c.id === selectedConversation
   );
+
+  useEffect(() => {
+    if (!selectedConversation) return;
+
+    const unsubscribe = bindConversationChannel('new-message', (data: any) => {
+      if (data.message.senderId !== currentUserId) {
+        setRealTimeMessages(prev => [...prev, data.message]);
+      }
+    });
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [selectedConversation, bindConversationChannel, currentUserId]);
+
+  useEffect(() => {
+    if (!selectedConversation) {
+      setRealTimeMessages([]);
+      setOptimisticMessages([]);
+      setFailedMessages([]);
+    }
+  }, [selectedConversation]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [realTimeMessages, optimisticMessages]);
+
+  const handleTyping = (value: string) => {
+    setNewMessage(value);
+    
+    if (selectedConversation) {
+      sendTyping(true);
+      
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+      
+      typingTimeoutRef.current = setTimeout(() => {
+        sendTyping(false);
+      }, 1000);
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!newMessage.trim() || !selectedConversation || isSubmitting) return;
+
+    const tempId = `temp-${Date.now()}`;
+    const optimisticMessage: Message = {
+      id: tempId,
+      content: newMessage.trim(),
+      senderId: currentUserId,
+      createdAt: new Date(),
+      read: false,
+    };
+
+    setOptimisticMessages(prev => [...prev, optimisticMessage]);
+    const messageText = newMessage.trim();
+    setNewMessage('');
+    setIsSubmitting(true);
+    
+    try {
+      const response = await fetch('/api/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          conversationId: selectedConversation,
+          content: messageText,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setOptimisticMessages(prev => prev.filter(msg => msg.id !== tempId));
+        window.location.reload();
+      } else {
+        throw new Error(data.error || 'Failed to send message');
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setOptimisticMessages(prev => prev.filter(msg => msg.id !== tempId));
+      setFailedMessages(prev => [...prev, { ...optimisticMessage, id: tempId }]);
+      setNewMessage(messageText);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const retryMessage = async (failedMessage: Message) => {
+    setFailedMessages(prev => prev.filter(msg => msg.id !== failedMessage.id));
+    
+    const tempId = `temp-${Date.now()}`;
+    const retryMessage: Message = {
+      ...failedMessage,
+      id: tempId,
+      createdAt: new Date(),
+    };
+
+    setOptimisticMessages(prev => [...prev, retryMessage]);
+    setIsSubmitting(true);
+    
+    try {
+      const response = await fetch('/api/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          conversationId: selectedConversation,
+          content: failedMessage.content,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setOptimisticMessages(prev => prev.filter(msg => msg.id !== tempId));
+        window.location.reload();
+      } else {
+        throw new Error(data.error || 'Failed to send message');
+      }
+    } catch (error) {
+      console.error('Error retrying message:', error);
+      setOptimisticMessages(prev => prev.filter(msg => msg.id !== tempId));
+      setFailedMessages(prev => [...prev, failedMessage]);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="grid gap-6 md:grid-cols-3">
@@ -184,10 +365,11 @@ export function MessagesContent({
                     <div className="flex items-start gap-3">
                       <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gray-200">
                         {conversation.otherUser.imageUrl ? (
-                          <img
+                          <AvatarImage
                             alt={conversation.otherUser.name}
-                            className="h-10 w-10 rounded-full object-cover"
+                            className="h-10 w-10"
                             src={conversation.otherUser.imageUrl}
+                            size={40}
                           />
                         ) : (
                           <User className="h-5 w-5 text-gray-600" />
@@ -257,10 +439,11 @@ export function MessagesContent({
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200">
                     {selectedConv.otherUser.imageUrl ? (
-                      <img
+                      <AvatarImage
                         alt={selectedConv.otherUser.name}
-                        className="h-10 w-10 rounded-full object-cover"
+                        className="h-10 w-10"
                         src={selectedConv.otherUser.imageUrl}
+                        size={40}
                       />
                     ) : (
                       <span className="font-medium text-gray-600 text-sm">
@@ -292,18 +475,31 @@ export function MessagesContent({
               {/* Messages */}
               <CardContent className="flex-1 overflow-y-auto p-4">
                 <div className="space-y-4">
-                  {selectedConv.rawConversation.messages.length === 0 ? (
+                  {selectedConv.rawConversation.messages.length === 0 && optimisticMessages.length === 0 && realTimeMessages.length === 0 && failedMessages.length === 0 ? (
                     <div className="py-8 text-center text-gray-500">
                       No messages yet. Start the conversation!
                     </div>
                   ) : (
-                    selectedConv.rawConversation.messages.map((message) => {
-                      const isSender = message.senderId === currentUserId;
-                      return (
-                        <div
-                          className={`flex items-start gap-3 ${isSender ? 'justify-end' : ''}`}
-                          key={message.id}
-                        >
+                    (() => {
+                      const allMessages = [...selectedConv.rawConversation.messages, ...realTimeMessages, ...optimisticMessages, ...failedMessages];
+                      const groupedMessages = groupMessagesByDate(allMessages);
+                      
+                      return Object.entries(groupedMessages).map(([dateGroup, messages]) => (
+                        <div key={dateGroup}>
+                          <div className="my-4 text-center">
+                            <span className="rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-600">
+                              {dateGroup}
+                            </span>
+                          </div>
+                          {messages.map((message) => {
+                            const isSender = message.senderId === currentUserId;
+                            const isOptimistic = message.id.startsWith('temp-');
+                            const isFailed = failedMessages.some(msg => msg.id === message.id);
+                            return (
+                              <div
+                                className={`flex items-start gap-3 ${isSender ? 'justify-end' : ''}`}
+                                key={message.id}
+                              >
                           {!isSender && (
                             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
                               <span className="font-medium text-gray-600 text-xs">
@@ -319,29 +515,76 @@ export function MessagesContent({
                             <div
                               className={`max-w-xs rounded-lg p-3 ${
                                 isSender
-                                  ? 'ml-auto bg-blue-600 text-white'
+                                  ? `ml-auto ${
+                                      isFailed
+                                        ? 'bg-red-600 text-white'
+                                        : isOptimistic
+                                        ? 'bg-blue-600 text-white opacity-70'
+                                        : 'bg-blue-600 text-white'
+                                    }`
                                   : 'bg-gray-100'
                               }`}
                             >
                               <p className="text-sm">{message.content}</p>
+                              {isFailed && (
+                                <button
+                                  onClick={() => retryMessage(message)}
+                                  className="mt-2 text-xs text-white underline hover:no-underline"
+                                >
+                                  Retry
+                                </button>
+                              )}
                             </div>
                             <div
                               className={`mt-1 flex items-center gap-1 ${
                                 isSender ? 'justify-end' : ''
                               }`}
                             >
-                              {isSender && message.read && (
+                              {isSender && !isOptimistic && !isFailed && message.read && (
                                 <CheckCheck className="h-3 w-3 text-gray-400" />
                               )}
-                              <span className="text-gray-500 text-xs">
-                                {formatTime(new Date(message.createdAt))}
-                              </span>
+                              {isOptimistic && (
+                                <span className="text-gray-400 text-xs">Sending...</span>
+                              )}
+                              {isFailed && (
+                                <span className="text-red-500 text-xs">Failed</span>
+                              )}
+                              {!isOptimistic && !isFailed && (
+                                <span className="text-gray-500 text-xs">
+                                  {formatTime(new Date(message.createdAt))}
+                                </span>
+                              )}
                             </div>
                           </div>
                         </div>
-                      );
-                    })
+                              );
+                            })}
+                        </div>
+                      ));
+                    })()
                   )}
+                  
+                  {/* Typing indicator */}
+                  {typingUsers.length > 0 && (
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
+                        <span className="font-medium text-gray-600 text-xs">
+                          {selectedConv?.otherUser.name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <div className="max-w-xs rounded-lg bg-gray-100 p-3">
+                          <div className="flex space-x-1">
+                            <div className="animate-pulse h-2 w-2 rounded-full bg-gray-400"></div>
+                            <div className="animate-pulse h-2 w-2 rounded-full bg-gray-400 delay-75"></div>
+                            <div className="animate-pulse h-2 w-2 rounded-full bg-gray-400 delay-150"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div ref={messagesEndRef} />
                 </div>
               </CardContent>
 
@@ -350,24 +593,18 @@ export function MessagesContent({
                 <div className="flex items-center gap-2">
                   <Input
                     className="flex-1"
-                    onChange={(e) => setNewMessage(e.target.value)}
+                    onChange={(e) => handleTyping(e.target.value)}
                     onKeyPress={(e) => {
                       if (e.key === 'Enter' && newMessage.trim()) {
-                        // TODO: Implement send message functionality
-                        setNewMessage('');
+                        sendMessage();
                       }
                     }}
                     placeholder="Type a message..."
                     value={newMessage}
                   />
                   <Button
-                    disabled={!newMessage.trim()}
-                    onClick={() => {
-                      if (newMessage.trim()) {
-                        // TODO: Implement send message functionality
-                        setNewMessage('');
-                      }
-                    }}
+                    disabled={!newMessage.trim() || isSubmitting}
+                    onClick={sendMessage}
                     size="sm"
                   >
                     <Send className="h-4 w-4" />

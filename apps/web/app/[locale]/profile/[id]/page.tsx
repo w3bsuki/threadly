@@ -9,6 +9,7 @@ import { Calendar, Heart, MapPin, Package, Star } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { AvatarImage, ProductImage } from '../../components/optimized-image';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -85,10 +86,11 @@ export default async function UserProfilePage({ params }: Props) {
             <div className="flex items-start gap-4">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-200">
                 {user.imageUrl ? (
-                  <img
+                  <AvatarImage
                     alt={fullName}
-                    className="h-16 w-16 rounded-full object-cover"
+                    className="h-16 w-16"
                     src={user.imageUrl}
+                    size={64}
                   />
                 ) : (
                   <span className="font-semibold text-gray-600 text-xl">
@@ -204,9 +206,9 @@ export default async function UserProfilePage({ params }: Props) {
                   <Card className="transition-shadow hover:shadow-lg">
                     <div className="relative aspect-square bg-gray-100">
                       {product.images[0] ? (
-                        <img
+                        <ProductImage
                           alt={product.title}
-                          className="h-full w-full rounded-t-lg object-cover"
+                          className="rounded-t-lg"
                           src={product.images[0].imageUrl}
                         />
                       ) : (

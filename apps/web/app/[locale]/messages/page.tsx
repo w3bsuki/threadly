@@ -2,7 +2,8 @@ import { auth } from '@clerk/nextjs/server';
 import { database } from '@repo/database';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { MessagesContent } from './components/messages-content';
+import { MessagesContentLazy } from './components/messages-content-lazy';
+import { RealTimeWrapper } from '../../../components/real-time-wrapper';
 
 export const metadata: Metadata = {
   title: 'Messages - Threadly',
@@ -65,31 +66,33 @@ export default async function MessagesPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container py-8">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-8">
-            <h1 className="font-bold text-3xl text-gray-900">Messages</h1>
-            <p className="mt-2 text-gray-600">
-              Chat with sellers and buyers about your items
-            </p>
-          </div>
+    <RealTimeWrapper>
+      <div className="min-h-screen bg-background">
+        <div className="container py-8">
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-8">
+              <h1 className="font-bold text-3xl text-gray-900">Messages</h1>
+              <p className="mt-2 text-gray-600">
+                Chat with sellers and buyers about your items
+              </p>
+            </div>
 
-          <MessagesContent
-            conversations={conversations.map((conv) => ({
-              ...conv,
-              buyer: conv.User_Conversation_buyerIdToUser,
-              seller: conv.User_Conversation_sellerIdToUser,
-              product: conv.Product,
-              messages: conv.Message,
-              _count: {
-                messages: conv._count.Message,
-              },
-            }))}
-            currentUserId={dbUser.id}
-          />
+            <MessagesContentLazy
+              conversations={conversations.map((conv) => ({
+                ...conv,
+                buyer: conv.User_Conversation_buyerIdToUser,
+                seller: conv.User_Conversation_sellerIdToUser,
+                product: conv.Product,
+                messages: conv.Message,
+                _count: {
+                  messages: conv._count.Message,
+                },
+              }))}
+              currentUserId={dbUser.id}
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </RealTimeWrapper>
   );
 }

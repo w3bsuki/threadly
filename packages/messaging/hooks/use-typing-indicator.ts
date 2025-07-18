@@ -20,7 +20,7 @@ export function useTypingIndicator({
   const { user } = useUser();
   const [isTyping, setIsTyping] = useState(false);
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set());
-  const timeoutRef = useRef<NodeJS.Timeout | undefined>();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const isUserTypingRef = useRef(false);
 
   // Send typing status to server

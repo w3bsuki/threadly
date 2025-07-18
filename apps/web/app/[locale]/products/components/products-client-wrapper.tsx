@@ -73,6 +73,8 @@ export function ProductsClientWrapper({
             dictionary={dictionary}
             isCompact={viewMode === 'compact'}
             products={products}
+            enableVirtualization={products.length > 50}
+            containerHeight={800}
           />
         )}
       </div>

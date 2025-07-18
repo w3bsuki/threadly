@@ -7,11 +7,13 @@ import { EnhancedHeader } from './enhanced-header';
 import { Pagination } from './pagination';
 import { ProductFiltersMobile } from './product-filters-mobile';
 import { ProductsClientWrapper } from './products-client-wrapper';
+import { SearchHeader } from './search-header';
 
 const ITEMS_PER_PAGE = 12;
 
 interface ProductsContentProps {
   searchParams: {
+    q?: string;
     category?: string;
     gender?: string;
     minPrice?: string;
@@ -34,6 +36,16 @@ export async function ProductsContent({
   const where: Prisma.ProductWhereInput = {
     status: 'AVAILABLE',
   };
+
+  // Handle search query
+  if (searchParams.q) {
+    where.OR = [
+      { title: { contains: searchParams.q, mode: 'insensitive' } },
+      { description: { contains: searchParams.q, mode: 'insensitive' } },
+      { brand: { contains: searchParams.q, mode: 'insensitive' } },
+      { category: { name: { contains: searchParams.q, mode: 'insensitive' } } },
+    ];
+  }
 
   // Handle gender filtering by category name
   if (searchParams.gender) {
@@ -70,10 +82,18 @@ export async function ProductsContent({
         ],
       };
     } else {
+      // Handle exact category match and hierarchical filtering
       where.category = {
         OR: [
+          { slug: searchParams.category },
           { name: { contains: searchParams.category, mode: 'insensitive' } },
           { slug: { contains: searchParams.category, mode: 'insensitive' } },
+          // Also match parent categories
+          { 
+            Category: { 
+              slug: searchParams.category 
+            } 
+          },
         ],
       };
     }
@@ -96,12 +116,16 @@ export async function ProductsContent({
   // Build orderBy for sorting
   let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: 'desc' }; // default to newest
 
-  if (searchParams.sort === 'price-asc') {
+  if (searchParams.sort === 'oldest') {
+    orderBy = { createdAt: 'asc' };
+  } else if (searchParams.sort === 'price-asc') {
     orderBy = { price: 'asc' };
   } else if (searchParams.sort === 'price-desc') {
     orderBy = { price: 'desc' };
   } else if (searchParams.sort === 'popular') {
     orderBy = { views: 'desc' };
+  } else if (searchParams.sort === 'alphabetical') {
+    orderBy = { title: 'asc' };
   }
 
   // Fetch products with pagination
@@ -179,6 +203,12 @@ export async function ProductsContent({
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Search Header */}
+      <SearchHeader 
+        totalCount={totalCount} 
+        searchQuery={searchParams.q}
+      />
+      
       {/* Unified Search Filters - Mobile Only */}
       <div className="border-0 lg:hidden">
         <UnifiedSearchFilters totalCount={totalCount} />

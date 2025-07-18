@@ -112,6 +112,9 @@ importers:
       '@repo/payments':
         specifier: workspace:*
         version: link:../../packages/payments
+      '@repo/real-time':
+        specifier: workspace:*
+        version: link:../../packages/real-time
       '@repo/search':
         specifier: workspace:*
         version: link:../../packages/search
@@ -590,6 +593,9 @@ importers:
       '@repo/rate-limit':
         specifier: workspace:*
         version: link:../../packages/rate-limit
+      '@repo/real-time':
+        specifier: workspace:*
+        version: link:../../packages/real-time
       '@repo/search':
         specifier: workspace:*
         version: link:../../packages/search
@@ -617,6 +623,9 @@ importers:
       '@tanstack/react-virtual':
         specifier: ^3.13.12
         version: 3.13.12(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@uploadthing/react':
+        specifier: ^7.3.2
+        version: 7.3.2(next@15.3.5(@opentelemetry/api@1.9.0)(@playwright/test@1.54.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(uploadthing@7.7.3(express@5.1.0)(next@15.3.5(@opentelemetry/api@1.9.0)(@playwright/test@1.54.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(tailwindcss@4.1.11))
       algoliasearch:
         specifier: ^5.32.0
         version: 5.32.0
@@ -653,6 +662,9 @@ importers:
       shiki:
         specifier: ^3.7.0
         version: 3.7.0
+      uploadthing:
+        specifier: ^7.7.3
+        version: 7.7.3(express@5.1.0)(next@15.3.5(@opentelemetry/api@1.9.0)(@playwright/test@1.54.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(tailwindcss@4.1.11)
       web-vitals:
         specifier: ^5.0.3
         version: 5.0.3

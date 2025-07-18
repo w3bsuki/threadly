@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import { formatCurrency } from '@/lib/utils/currency';
 import { ProductImage } from '../../components/optimized-image';
 import { ProductQuickView } from '../../components/product-quick-view';
+import { ProductGridSkeleton } from '../../../../components/skeleton-loader';
 
 // Inline ProductPlaceholder for loading states
 const ProductPlaceholder = ({
@@ -98,6 +99,7 @@ interface ProductGridProps {
   dictionary: Dictionary;
   enableVirtualization?: boolean;
   containerHeight?: number;
+  isLoading?: boolean;
 }
 
 // Hook to calculate columns based on screen size and compact mode
@@ -341,6 +343,7 @@ export function ProductGrid({
   dictionary,
   enableVirtualization = false,
   containerHeight = 600,
+  isLoading = false,
 }: ProductGridProps) {
   const columns = useGridColumns(isCompact);
   const parentRef = useRef<HTMLDivElement>(null);
@@ -359,6 +362,11 @@ export function ProductGrid({
   const gridClass = isCompact
     ? 'grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7'
     : 'grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5';
+
+  // Show loading skeleton
+  if (isLoading) {
+    return <ProductGridSkeleton count={12} isCompact={isCompact} />;
+  }
 
   // Non-virtualized version for small lists or when disabled
   if (!enableVirtualization || products.length < 50) {

@@ -23,6 +23,7 @@
     "@repo/next-config": "workspace:*",
     "@repo/observability": "workspace:*",
     "@repo/payments": "workspace:*",
+    "@repo/real-time": "workspace:*",
     "@repo/search": "workspace:*",
     "@repo/security": "workspace:*",
     "@repo/testing": "workspace:*",

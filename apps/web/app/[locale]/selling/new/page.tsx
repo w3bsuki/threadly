@@ -11,7 +11,7 @@ import { AlertCircle, ArrowLeft } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { MultiStepWizard } from './components/multi-step-wizard';
+import { MultiStepWizardLazy } from './components/multi-step-wizard-lazy';
 
 const title = 'Sell New Item';
 const description = 'List your fashion item for sale on Threadly';
@@ -28,13 +28,14 @@ const SellNewItemPage = async ({
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
-  try {
-    const user = await currentUser();
-    const { locale } = await params;
+  const user = await currentUser();
+  const { locale } = await params;
 
-    if (!user) {
-      redirect(`/${locale}/sign-in`);
-    }
+  if (!user) {
+    redirect(`${process.env.NEXT_PUBLIC_APP_URL}/sign-in?redirect_url=${encodeURIComponent(`${process.env.NEXT_PUBLIC_WEB_URL}/${locale}/selling/new`)}`);
+  }
+
+  try {
 
     // Get template and draft parameters
     const awaitedSearchParams = await searchParams;
@@ -143,7 +144,7 @@ const SellNewItemPage = async ({
           </div>
 
           <div className="mx-auto w-full max-w-4xl">
-            <MultiStepWizard
+            <MultiStepWizardLazy
               categories={categories}
               locale={locale}
               userId={dbUser.id}

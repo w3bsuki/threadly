@@ -5,6 +5,7 @@ import { cn } from '@repo/design-system/lib/utils';
 import { Heart, Home, MessageSquare, Plus, Search } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useI18n } from '../../app/[locale]/components/providers/i18n-provider';
 
 interface UnifiedBottomNavProps {
   unreadMessages?: number;
@@ -18,39 +19,40 @@ export function UnifiedBottomNav({
   className,
 }: UnifiedBottomNavProps) {
   const pathname = usePathname();
+  const { locale } = useI18n();
 
   const navItems = [
     {
-      href: '/',
+      href: `/${locale}`,
       label: 'Home',
       icon: Home,
-      active: pathname === '/',
+      active: pathname === `/${locale}` || pathname === `/${locale}/`,
     },
     {
-      href: '/browse',
+      href: `/${locale}/browse`,
       label: 'Browse',
       icon: Search,
-      active: pathname.startsWith('/browse') || pathname.startsWith('/search'),
+      active: pathname.startsWith(`/${locale}/browse`) || pathname.startsWith(`/${locale}/search`) || pathname.startsWith(`/${locale}/categories`) || pathname.startsWith(`/${locale}/products`),
     },
     {
-      href: '/selling/new',
+      href: `/${locale}/selling/new`,
       label: 'Sell',
       icon: Plus,
-      active: pathname.startsWith('/selling/new'),
+      active: pathname.startsWith(`/${locale}/selling/new`),
       isAction: true,
     },
     {
-      href: '/favorites',
+      href: `/${locale}/favorites`,
       label: 'Favorites',
       icon: Heart,
-      active: pathname.startsWith('/favorites'),
+      active: pathname.startsWith(`/${locale}/favorites`),
       badge: favoriteCount > 0 ? favoriteCount : undefined,
     },
     {
-      href: '/messages',
+      href: `/${locale}/messages`,
       label: 'Messages',
       icon: MessageSquare,
-      active: pathname.startsWith('/messages'),
+      active: pathname.startsWith(`/${locale}/messages`),
       badge: unreadMessages > 0 ? unreadMessages : undefined,
     },
   ];
