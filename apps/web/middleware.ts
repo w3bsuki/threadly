@@ -14,11 +14,9 @@ const defaultLocale = 'bg';
 // Protected routes that require authentication
 const isProtectedRoute = createRouteMatcher([
   '/profile(.*)',
-  '/favorites(.*)',
-  '/cart(.*)',
-  '/checkout(.*)',
-  '/messages(.*)',
   '/orders(.*)',
+  '/selling/new(.*)',
+  '/selling/onboarding(.*)',
 ]);
 
 function getLocale(request: NextRequest): string {

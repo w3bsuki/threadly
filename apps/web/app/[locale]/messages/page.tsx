@@ -4,17 +4,31 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { MessagesContentLazy } from './components/messages-content-lazy';
 import { RealTimeWrapper } from '../../../components/real-time-wrapper';
+import { AuthPrompt } from '../../../components/auth-prompt';
 
 export const metadata: Metadata = {
   title: 'Messages - Threadly',
   description: 'Chat with sellers and buyers on Threadly marketplace',
 };
 
-export default async function MessagesPage() {
+interface MessagesPageProps {
+  params: Promise<{
+    locale: string;
+  }>;
+}
+
+export default async function MessagesPage({ params }: MessagesPageProps) {
+  const { locale } = await params;
   const { userId } = await auth();
 
   if (!userId) {
-    redirect('/sign-in');
+    return (
+      <AuthPrompt
+        title="Sign in to access messages"
+        description="You need to be signed in to send and receive messages from other users on Threadly."
+        locale={locale}
+      />
+    );
   }
 
   // Ensure user exists in database
@@ -23,7 +37,7 @@ export default async function MessagesPage() {
   });
 
   if (!dbUser) {
-    redirect('/onboarding');
+    redirect(`/${locale}/onboarding`);
   }
 
   // Fetch user's conversations
