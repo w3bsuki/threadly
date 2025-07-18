@@ -1,6 +1,6 @@
 'use client';
 
-import { UnifiedSearch } from '@repo/search';
+import { UnifiedSearch } from '@repo/search/client';
 import { forwardRef, memo } from 'react';
 import { useI18n } from '../providers/i18n-provider';
 

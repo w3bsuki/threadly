@@ -32,6 +32,5 @@ export { AlgoliaSyncService, getAlgoliaSyncService } from './sync';
 // Search webhook client
 export { SearchWebhookClient, getSearchWebhookClient, searchIndexing } from './search-webhook-client';
 
-// UI Components
-export { UnifiedSearch, MobileSearch } from './components/unified-search';
-export type { UnifiedSearchProps, MobileSearchProps } from './components/unified-search';
+// UI Components - moved to client export to avoid server-side import issues
+// Use @repo/search/client for client components

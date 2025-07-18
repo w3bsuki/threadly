@@ -16,3 +16,7 @@ export {
   type SavedSearchesProps,
   type SaveSearchFormProps
 } from './unified-search-components';
+
+// UI Components for client-side use
+export { UnifiedSearch, MobileSearch } from '../components/unified-search';
+export type { UnifiedSearchProps, MobileSearchProps } from '../components/unified-search';
