@@ -679,7 +679,7 @@ export function CheckoutContent() {
         <h1 className="font-bold text-3xl text-gray-900">Checkout</h1>
       </div>
 
-      {clientSecret && paymentIntentId && (
+      {clientSecret && paymentIntentId && orderData && (
         <Elements
           options={{
             clientSecret,
