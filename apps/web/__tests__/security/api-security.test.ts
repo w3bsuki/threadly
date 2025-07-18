@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 // Mock fetch for testing
 global.fetch = vi.fn();
@@ -31,10 +31,10 @@ describe('API Security Tests', () => {
 
       const response = await fetch('/api/admin/products', {
         headers: {
-          'Authorization': 'Bearer invalid-token'
-        }
+          Authorization: 'Bearer invalid-token',
+        },
       });
-      
+
       expect(response.status).toBe(401);
     });
 
@@ -48,10 +48,10 @@ describe('API Security Tests', () => {
 
       const response = await fetch('/api/admin/products', {
         headers: {
-          'Authorization': 'Bearer expired-token'
-        }
+          Authorization: 'Bearer expired-token',
+        },
       });
-      
+
       expect(response.status).toBe(401);
     });
   });
@@ -67,10 +67,10 @@ describe('API Security Tests', () => {
 
       const response = await fetch('/api/admin/users', {
         headers: {
-          'Authorization': 'Bearer user-token'
-        }
+          Authorization: 'Bearer user-token',
+        },
       });
-      
+
       expect(response.status).toBe(403);
     });
 
@@ -84,10 +84,10 @@ describe('API Security Tests', () => {
 
       const response = await fetch('/api/users/other-user-id/orders', {
         headers: {
-          'Authorization': 'Bearer user-token'
-        }
+          Authorization: 'Bearer user-token',
+        },
       });
-      
+
       expect(response.status).toBe(403);
     });
   });
@@ -98,9 +98,9 @@ describe('API Security Tests', () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 400,
-        json: async () => ({ 
+        json: async () => ({
           error: 'Validation failed',
-          details: ['Title is required', 'Price is required']
+          details: ['Title is required', 'Price is required'],
         }),
       } as Response);
 
@@ -108,14 +108,14 @@ describe('API Security Tests', () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer valid-token'
+          Authorization: 'Bearer valid-token',
         },
         body: JSON.stringify({
           // Missing required fields
-          description: 'A product without title or price'
-        })
+          description: 'A product without title or price',
+        }),
       });
-      
+
       expect(response.status).toBe(400);
     });
 
@@ -124,8 +124,8 @@ describe('API Security Tests', () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 400,
-        json: async () => ({ 
-          error: 'Invalid input: HTML not allowed'
+        json: async () => ({
+          error: 'Invalid input: HTML not allowed',
         }),
       } as Response);
 
@@ -133,15 +133,15 @@ describe('API Security Tests', () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer valid-token'
+          Authorization: 'Bearer valid-token',
         },
         body: JSON.stringify({
           title: '<script>alert("xss")</script>Product',
           price: 1000,
-          description: 'Normal description'
-        })
+          description: 'Normal description',
+        }),
       });
-      
+
       expect(response.status).toBe(400);
     });
 
@@ -150,8 +150,8 @@ describe('API Security Tests', () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 400,
-        json: async () => ({ 
-          error: 'Invalid data type: price must be a number'
+        json: async () => ({
+          error: 'Invalid data type: price must be a number',
         }),
       } as Response);
 
@@ -159,15 +159,15 @@ describe('API Security Tests', () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer valid-token'
+          Authorization: 'Bearer valid-token',
         },
         body: JSON.stringify({
           title: 'Valid Product',
           price: 'not-a-number',
-          description: 'Valid description'
-        })
+          description: 'Valid description',
+        }),
       });
-      
+
       expect(response.status).toBe(400);
     });
   });
@@ -178,9 +178,9 @@ describe('API Security Tests', () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 429,
-        json: async () => ({ 
+        json: async () => ({
           error: 'Too many requests',
-          retryAfter: 60
+          retryAfter: 60,
         }),
       } as Response);
 
@@ -191,7 +191,7 @@ describe('API Security Tests', () => {
 
     it('should have different limits for authenticated vs anonymous users', async () => {
       const mockFetch = vi.mocked(fetch);
-      
+
       // Anonymous user hits limit faster
       mockFetch.mockResolvedValueOnce({
         ok: false,
@@ -210,12 +210,15 @@ describe('API Security Tests', () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 400,
-        json: async () => ({ 
-          error: 'Invalid search query'
+        json: async () => ({
+          error: 'Invalid search query',
         }),
       } as Response);
 
-      const response = await fetch('/api/products/search?q=' + encodeURIComponent("'; DROP TABLE products; --"));
+      const response = await fetch(
+        '/api/products/search?q=' +
+          encodeURIComponent("'; DROP TABLE products; --")
+      );
       expect(response.status).toBe(400);
     });
 
@@ -224,12 +227,14 @@ describe('API Security Tests', () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 400,
-        json: async () => ({ 
-          error: 'Invalid filter parameter'
+        json: async () => ({
+          error: 'Invalid filter parameter',
         }),
       } as Response);
 
-      const response = await fetch('/api/products?category=' + encodeURIComponent("1 OR 1=1"));
+      const response = await fetch(
+        `/api/products?category=${encodeURIComponent('1 OR 1=1')}`
+      );
       expect(response.status).toBe(400);
     });
   });
@@ -243,13 +248,15 @@ describe('API Security Tests', () => {
         headers: new Headers({
           'Access-Control-Allow-Origin': 'https://threadly.com',
           'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         }),
         json: async () => ({ data: 'success' }),
       } as Response);
 
       const response = await fetch('/api/products');
-      expect(response.headers.get('Access-Control-Allow-Origin')).toBe('https://threadly.com');
+      expect(response.headers.get('Access-Control-Allow-Origin')).toBe(
+        'https://threadly.com'
+      );
     });
 
     it('should reject requests from unauthorized origins', async () => {
@@ -262,10 +269,10 @@ describe('API Security Tests', () => {
 
       const response = await fetch('/api/products', {
         headers: {
-          'Origin': 'https://malicious-site.com'
-        }
+          Origin: 'https://malicious-site.com',
+        },
       });
-      
+
       expect(response.status).toBe(403);
     });
   });
@@ -273,16 +280,27 @@ describe('API Security Tests', () => {
   describe('Environment Variable Security', () => {
     it('should not expose sensitive environment variables in client', () => {
       // Check that sensitive vars are not in window object
-      expect(typeof window !== 'undefined' ? (window as any).DATABASE_URL : undefined).toBeUndefined();
-      expect(typeof window !== 'undefined' ? (window as any).CLERK_SECRET_KEY : undefined).toBeUndefined();
-      expect(typeof window !== 'undefined' ? (window as any).ADMIN_SECRET : undefined).toBeUndefined();
+      expect(
+        typeof window !== 'undefined' ? (window as any).DATABASE_URL : undefined
+      ).toBeUndefined();
+      expect(
+        typeof window !== 'undefined'
+          ? (window as any).CLERK_SECRET_KEY
+          : undefined
+      ).toBeUndefined();
+      expect(
+        typeof window !== 'undefined' ? (window as any).ADMIN_SECRET : undefined
+      ).toBeUndefined();
     });
 
     it('should only expose NEXT_PUBLIC_ variables to client', () => {
       // Only public variables should be accessible
-      const publicVars = ['NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY', 'NEXT_PUBLIC_APP_URL'];
-      
-      publicVars.forEach(varName => {
+      const publicVars = [
+        'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY',
+        'NEXT_PUBLIC_APP_URL',
+      ];
+
+      publicVars.forEach((varName) => {
         // These would be available in a real environment
         expect(typeof process.env[varName]).toBeDefined();
       });

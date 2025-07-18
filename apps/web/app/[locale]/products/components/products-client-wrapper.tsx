@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { ProductGrid } from "./product-grid";
-import { ProductListView } from "./product-list-view";
-import { LayoutSwitcher, ViewMode } from "./layout-switcher";
-import { ProductSort } from "./product-sort";
-import { QuickFilters } from "./quick-filters";
 import type { Dictionary } from '@repo/internationalization';
+import { useState } from 'react';
+import { LayoutSwitcher, type ViewMode } from './layout-switcher';
+import { ProductGrid } from './product-grid';
+import { ProductListView } from './product-list-view';
+import { ProductSort } from './product-sort';
+import { QuickFilters } from './quick-filters';
 
 interface Product {
   id: string;
@@ -46,19 +46,20 @@ interface ProductsClientWrapperProps {
   dictionary: Dictionary;
 }
 
-export function ProductsClientWrapper({ products, searchParams, dictionary }: ProductsClientWrapperProps) {
+export function ProductsClientWrapper({
+  products,
+  searchParams,
+  dictionary,
+}: ProductsClientWrapperProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
 
   return (
     <>
       {/* Desktop Filter Bar */}
-      <div className="hidden lg:flex items-center justify-between gap-4 pb-6">
+      <div className="hidden items-center justify-between gap-4 pb-6 lg:flex">
         <QuickFilters currentFilters={searchParams} />
         <div className="flex items-center space-x-4">
-          <LayoutSwitcher 
-            currentView={viewMode} 
-            onViewChange={setViewMode} 
-          />
+          <LayoutSwitcher currentView={viewMode} onViewChange={setViewMode} />
           <ProductSort currentSort={searchParams.sort} />
         </div>
       </div>
@@ -68,7 +69,11 @@ export function ProductsClientWrapper({ products, searchParams, dictionary }: Pr
         {viewMode === 'list' ? (
           <ProductListView products={products} />
         ) : (
-          <ProductGrid products={products} isCompact={viewMode === 'compact'} dictionary={dictionary} />
+          <ProductGrid
+            dictionary={dictionary}
+            isCompact={viewMode === 'compact'}
+            products={products}
+          />
         )}
       </div>
     </>

@@ -1,21 +1,19 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Dialog, DialogContent, DialogTrigger } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { ConditionBadge } from '@repo/design-system/components';
-import { 
-  Eye,
-  X,
-  Star,
-  ArrowRight
-} from 'lucide-react';
+import { toast } from '@repo/design-system';
+import {
+  Badge,
+  Button,
+  ConditionBadge,
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from '@repo/design-system/components';
+import { ArrowRight, Eye, Star, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { cn } from '@repo/design-system/lib/utils';
-import { toast } from '@repo/design-system';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useCartStore } from '../../../../lib/stores/cart-store';
 import { formatCurrency } from '../../../../lib/utils/currency';
 
@@ -44,12 +42,11 @@ interface ProductQuickViewMobileProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-
-export function ProductQuickViewMobile({ 
-  product, 
+export function ProductQuickViewMobile({
+  product,
   trigger,
   open,
-  onOpenChange 
+  onOpenChange,
 }: ProductQuickViewMobileProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { addItem } = useCartStore();
@@ -70,7 +67,7 @@ export function ProductQuickViewMobile({
       });
       onOpenChange?.(false);
       router.push('/cart');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to add to cart');
     } finally {
       setIsLoading(false);
@@ -78,21 +75,21 @@ export function ProductQuickViewMobile({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogTrigger asChild>
         {trigger || (
-          <Button variant="ghost" size="sm" className="p-2">
+          <Button className="p-2" size="sm" variant="ghost">
             <Eye className="h-4 w-4" />
           </Button>
         )}
       </DialogTrigger>
-      
-      <DialogContent className="max-w-sm w-[90dvw] max-h-[85dvh] p-0 gap-0 rounded-xl overflow-hidden shadow-2xl border-0 bg-card">
-        <div className="relative bg-card flex flex-col h-full">
+
+      <DialogContent className="max-h-[85dvh] w-[90dvw] max-w-sm gap-0 overflow-hidden rounded-xl border-0 bg-card p-0 shadow-2xl">
+        <div className="relative flex h-full flex-col bg-card">
           {/* Close Button */}
           <button
+            className="absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-background/95 shadow-sm backdrop-blur-sm transition-all hover:scale-105 hover:shadow-md"
             onClick={() => onOpenChange?.(false)}
-            className="absolute top-3 right-3 z-10 w-8 h-8 bg-background/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-all hover:scale-105"
           >
             <X className="h-4 w-4 text-foreground" />
           </button>
@@ -100,40 +97,49 @@ export function ProductQuickViewMobile({
           {/* Product Image */}
           <div className="relative aspect-square flex-shrink-0">
             <Image
-              src={product.images[0] || '/placeholder.png'}
               alt={product.title}
-              fill
               className="object-cover"
+              fill
               priority
+              src={product.images[0] || '/placeholder.png'}
             />
-            
+
             {/* Condition Badge */}
             <div className="absolute top-3 left-3">
-              <ConditionBadge condition={product.condition as any} className="shadow-sm" />
+              <ConditionBadge
+                className="shadow-sm"
+                condition={product.condition as any}
+              />
             </div>
 
             {/* Discount Badge */}
             {product.originalPrice && (
               <div className="absolute top-3 right-12">
-                <Badge className="bg-destructive text-destructive-foreground text-xs font-medium px-2 py-1 rounded-md shadow-sm">
-                  -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
+                <Badge className="rounded-md bg-destructive px-2 py-1 font-medium text-destructive-foreground text-xs shadow-sm">
+                  -
+                  {Math.round(
+                    ((product.originalPrice - product.price) /
+                      product.originalPrice) *
+                      100
+                  )}
+                  %
                 </Badge>
               </div>
             )}
           </div>
 
           {/* Content */}
-          <div className="p-4 space-y-4 flex-1 flex flex-col">
+          <div className="flex flex-1 flex-col space-y-4 p-4">
             {/* Product Info */}
             <div>
-              <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
+              <p className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
                 {product.brand}
               </p>
-              <h2 className="font-bold text-foreground text-lg leading-tight mt-1">
+              <h2 className="mt-1 font-bold text-foreground text-lg leading-tight">
                 {product.title}
               </h2>
-              <div className="flex items-center gap-3 mt-2">
-                <span className="text-2xl font-bold text-foreground">
+              <div className="mt-2 flex items-center gap-3">
+                <span className="font-bold text-2xl text-foreground">
                   {formatCurrency(product.price)}
                 </span>
                 {product.originalPrice && (
@@ -142,15 +148,15 @@ export function ProductQuickViewMobile({
                   </span>
                 )}
               </div>
-              <p className="text-sm text-muted-foreground mt-2 font-medium">
+              <p className="mt-2 font-medium text-muted-foreground text-sm">
                 Size {product.size}
               </p>
             </div>
 
             {/* Seller */}
-            <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
-              <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center shadow-sm">
-                <span className="text-primary-foreground font-bold text-sm">
+            <div className="flex items-center gap-3 rounded-lg bg-muted p-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary shadow-sm">
+                <span className="font-bold text-primary-foreground text-sm">
                   {product.seller.name.charAt(0).toUpperCase()}
                 </span>
               </div>
@@ -158,10 +164,12 @@ export function ProductQuickViewMobile({
                 <p className="font-semibold text-foreground text-sm">
                   {product.seller.name}
                 </p>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                <div className="mt-1 flex items-center gap-2 text-muted-foreground text-xs">
                   <div className="flex items-center gap-1">
                     <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                    <span className="font-medium">{product.seller.rating.toFixed(1)}</span>
+                    <span className="font-medium">
+                      {product.seller.rating.toFixed(1)}
+                    </span>
                   </div>
                   <span>•</span>
                   <span>{product.seller.location}</span>
@@ -170,24 +178,24 @@ export function ProductQuickViewMobile({
             </div>
 
             {/* Actions */}
-            <div className="grid grid-cols-2 gap-3 pt-2 mt-auto">
-              <Button 
-                className="h-12 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold rounded-lg text-sm transition-all"
-                onClick={handleBuyNow}
+            <div className="mt-auto grid grid-cols-2 gap-3 pt-2">
+              <Button
+                className="h-12 rounded-lg bg-primary font-semibold text-primary-foreground text-sm transition-all hover:bg-primary/90"
                 disabled={isLoading}
+                onClick={handleBuyNow}
               >
                 {isLoading ? 'Adding...' : 'Buy Now'}
               </Button>
-              
-              <Button 
-                variant="outline" 
-                className="h-12 font-semibold rounded-lg text-sm border hover:bg-muted transition-all"
-                onClick={() => onOpenChange?.(false)}
+
+              <Button
                 asChild
+                className="h-12 rounded-lg border font-semibold text-sm transition-all hover:bg-muted"
+                onClick={() => onOpenChange?.(false)}
+                variant="outline"
               >
                 <Link href={`/product/${product.id}`}>
                   View More
-                  <ArrowRight className="h-4 w-4 ml-1" />
+                  <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
               </Button>
             </div>

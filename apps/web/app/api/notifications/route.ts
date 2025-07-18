@@ -1,5 +1,4 @@
 import { currentUser } from '@repo/auth/server';
-import { database } from '@repo/database';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
@@ -10,8 +9,8 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '50');
+    const page = Number.parseInt(searchParams.get('page') || '1', 10);
+    const limit = Number.parseInt(searchParams.get('limit') || '50', 10);
 
     // For now, return empty notifications until we implement the full system
     return NextResponse.json({
@@ -23,7 +22,7 @@ export async function GET(request: Request) {
         unreadCount: 0,
       },
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to fetch notifications' },
       { status: 500 }

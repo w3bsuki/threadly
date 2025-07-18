@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, ReactNode } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 
 interface LazyLoadWrapperProps {
   children: ReactNode;
@@ -21,7 +21,9 @@ export function LazyLoadWrapper({
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!ref.current) return;
+    if (!ref.current) {
+      return;
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -42,9 +44,5 @@ export function LazyLoadWrapper({
     return () => observer.disconnect();
   }, [threshold, rootMargin, onVisible]);
 
-  return (
-    <div ref={ref}>
-      {isVisible ? children : fallback}
-    </div>
-  );
+  return <div ref={ref}>{isVisible ? children : fallback}</div>;
 }

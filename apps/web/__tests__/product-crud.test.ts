@@ -1,16 +1,22 @@
 /**
  * Product CRUD Tests - 85% Coverage Required
- * 
+ *
  * This test suite covers all critical product functionality
  * including create, read, update, delete operations with validation.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { NextRequest, NextResponse } from 'next/server';
-import { GET as getProducts, POST as createProduct } from '../../api/app/api/products/route';
-import { GET as getProduct, PUT as updateProduct, DELETE as deleteProduct } from '../../api/app/api/products/[id]/route';
-import { mockUsers, mockProducts, mockCategories } from '@repo/testing/mocks';
 import { cleanup } from '@repo/testing';
+import { NextRequest } from 'next/server';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  DELETE as deleteProduct,
+  GET as getProduct,
+  PUT as updateProduct,
+} from '../../api/app/api/products/[id]/route';
+import {
+  POST as createProduct,
+  GET as getProducts,
+} from '../../api/app/api/products/route';
 
 // Mock dependencies
 vi.mock('@repo/auth/server', () => ({
@@ -56,7 +62,7 @@ vi.mock('@repo/observability/server', () => ({
 }));
 
 vi.mock('@repo/validation/middleware', () => ({
-  withValidation: vi.fn((handler, schema, type) => handler),
+  withValidation: vi.fn((handler, _schema, _type) => handler),
   validateQuery: vi.fn(),
   validateBody: vi.fn(),
   validateParams: vi.fn(),
@@ -108,7 +114,7 @@ describe('Product CRUD Tests', () => {
         id: 'prod_new_1',
         title: 'New iPhone 14',
         description: 'Brand new iPhone 14 in excellent condition',
-        price: 89999,
+        price: 89_999,
         condition: 'NEW_WITH_TAGS',
         categoryId: 'cat_1',
         sellerId: 'user_1',
@@ -138,7 +144,7 @@ describe('Product CRUD Tests', () => {
         data: {
           title: 'New iPhone 14',
           description: 'Brand new iPhone 14 in excellent condition',
-          price: 89999,
+          price: 89_999,
           condition: 'NEW_WITH_TAGS',
           categoryId: 'cat_1',
           brand: 'Apple',
@@ -155,7 +161,7 @@ describe('Product CRUD Tests', () => {
         body: JSON.stringify({
           title: 'New iPhone 14',
           description: 'Brand new iPhone 14 in excellent condition',
-          price: 89999,
+          price: 89_999,
           condition: 'NEW_WITH_TAGS',
           categoryId: 'cat_1',
           brand: 'Apple',
@@ -172,14 +178,14 @@ describe('Product CRUD Tests', () => {
       expect(data.success).toBe(true);
       expect(data.data.product.id).toBe('prod_new_1');
       expect(data.data.product.title).toBe('New iPhone 14');
-      expect(data.data.product.price).toBe(89999);
+      expect(data.data.product.price).toBe(89_999);
       expect(data.message).toBe('Product created successfully');
 
       // Verify product creation with images
       expect(database.product.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
           title: 'New iPhone 14',
-          price: 89999,
+          price: 89_999,
           sellerId: 'user_1',
           images: {
             create: [
@@ -309,7 +315,7 @@ describe('Product CRUD Tests', () => {
           id: 'prod_1',
           title: 'iPhone 13 Pro',
           description: 'Excellent condition iPhone',
-          price: { toNumber: () => 79999 },
+          price: { toNumber: () => 79_999 },
           condition: 'VERY_GOOD',
           status: 'AVAILABLE',
           seller: {
@@ -342,7 +348,9 @@ describe('Product CRUD Tests', () => {
       vi.mocked(database.product.findMany).mockResolvedValue(mockProducts);
       vi.mocked(database.product.count).mockResolvedValue(1);
 
-      const request = new NextRequest('http://localhost:3002/api/products?page=1&limit=20');
+      const request = new NextRequest(
+        'http://localhost:3002/api/products?page=1&limit=20'
+      );
 
       const response = await getProducts(request);
       const data = await response.json();
@@ -372,10 +380,12 @@ describe('Product CRUD Tests', () => {
       vi.mocked(database.product.findMany).mockResolvedValue([]);
       vi.mocked(database.product.count).mockResolvedValue(0);
 
-      const request = new NextRequest('http://localhost:3002/api/products?category=electronics');
+      const request = new NextRequest(
+        'http://localhost:3002/api/products?category=electronics'
+      );
 
       const response = await getProducts(request);
-      const data = await response.json();
+      const _data = await response.json();
 
       expect(response.status).toBe(200);
       expect(database.product.findMany).toHaveBeenCalledWith({
@@ -399,8 +409,8 @@ describe('Product CRUD Tests', () => {
         data: {
           page: 1,
           limit: 20,
-          minPrice: 10000,
-          maxPrice: 50000,
+          minPrice: 10_000,
+          maxPrice: 50_000,
           sortBy: 'price_asc',
         },
       });
@@ -408,14 +418,16 @@ describe('Product CRUD Tests', () => {
       vi.mocked(database.product.findMany).mockResolvedValue([]);
       vi.mocked(database.product.count).mockResolvedValue(0);
 
-      const request = new NextRequest('http://localhost:3002/api/products?minPrice=10000&maxPrice=50000&sortBy=price_asc');
+      const request = new NextRequest(
+        'http://localhost:3002/api/products?minPrice=10000&maxPrice=50000&sortBy=price_asc'
+      );
 
-      const response = await getProducts(request);
+      const _response = await getProducts(request);
 
       expect(database.product.findMany).toHaveBeenCalledWith({
         where: expect.objectContaining({
           status: 'AVAILABLE',
-          price: { gte: 10000, lte: 50000 },
+          price: { gte: 10_000, lte: 50_000 },
         }),
         orderBy: { price: 'asc' },
         skip: 0,
@@ -441,9 +453,11 @@ describe('Product CRUD Tests', () => {
       vi.mocked(database.product.findMany).mockResolvedValue([]);
       vi.mocked(database.product.count).mockResolvedValue(0);
 
-      const request = new NextRequest('http://localhost:3002/api/products?search=iPhone');
+      const request = new NextRequest(
+        'http://localhost:3002/api/products?search=iPhone'
+      );
 
-      const response = await getProducts(request);
+      const _response = await getProducts(request);
 
       expect(database.product.findMany).toHaveBeenCalledWith({
         where: expect.objectContaining({
@@ -471,7 +485,7 @@ describe('Product CRUD Tests', () => {
         id: 'prod_1',
         title: 'iPhone 13 Pro',
         description: 'Excellent condition iPhone',
-        price: { toNumber: () => 79999 },
+        price: { toNumber: () => 79_999 },
         condition: 'VERY_GOOD',
         status: 'AVAILABLE',
         seller: {
@@ -505,9 +519,13 @@ describe('Product CRUD Tests', () => {
 
       vi.mocked(getCacheService).mockReturnValue(mockCache);
 
-      const request = new NextRequest('http://localhost:3002/api/products/prod_1');
+      const request = new NextRequest(
+        'http://localhost:3002/api/products/prod_1'
+      );
 
-      const response = await getProduct(request, { params: Promise.resolve({ id: 'prod_1' }) });
+      const response = await getProduct(request, {
+        params: Promise.resolve({ id: 'prod_1' }),
+      });
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -538,9 +556,13 @@ describe('Product CRUD Tests', () => {
 
       vi.mocked(getCacheService).mockReturnValue(mockCache);
 
-      const request = new NextRequest('http://localhost:3002/api/products/prod_nonexistent');
+      const request = new NextRequest(
+        'http://localhost:3002/api/products/prod_nonexistent'
+      );
 
-      const response = await getProduct(request, { params: Promise.resolve({ id: 'prod_nonexistent' }) });
+      const response = await getProduct(request, {
+        params: Promise.resolve({ id: 'prod_nonexistent' }),
+      });
       const data = await response.json();
 
       expect(response.status).toBe(404);
@@ -553,12 +575,22 @@ describe('Product CRUD Tests', () => {
 
       vi.mocked(validateParams).mockReturnValue({
         success: false,
-        errors: [{ path: ['id'], message: 'Invalid product ID', code: 'invalid_string' }],
+        errors: [
+          {
+            path: ['id'],
+            message: 'Invalid product ID',
+            code: 'invalid_string',
+          },
+        ],
       });
 
-      const request = new NextRequest('http://localhost:3002/api/products/invalid-id');
+      const request = new NextRequest(
+        'http://localhost:3002/api/products/invalid-id'
+      );
 
-      const response = await getProduct(request, { params: Promise.resolve({ id: 'invalid-id' }) });
+      const response = await getProduct(request, {
+        params: Promise.resolve({ id: 'invalid-id' }),
+      });
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -571,7 +603,9 @@ describe('Product CRUD Tests', () => {
     it('should update product successfully', async () => {
       const { auth } = await import('@repo/auth/server');
       const { database, getCacheService } = await import('@repo/database');
-      const { validateParams, validateBody } = await import('@repo/validation/middleware');
+      const { validateParams, validateBody } = await import(
+        '@repo/validation/middleware'
+      );
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_user_1' });
       vi.mocked(database.user.findUnique).mockResolvedValue({
@@ -591,7 +625,7 @@ describe('Product CRUD Tests', () => {
         success: true,
         data: {
           title: 'Updated iPhone 13 Pro',
-          price: 75000,
+          price: 75_000,
           description: 'Updated description',
         },
       });
@@ -600,7 +634,7 @@ describe('Product CRUD Tests', () => {
         id: 'prod_1',
         title: 'Updated iPhone 13 Pro',
         description: 'Updated description',
-        price: 75000,
+        price: 75_000,
         condition: 'VERY_GOOD',
         seller: {
           id: 'user_1',
@@ -624,22 +658,27 @@ describe('Product CRUD Tests', () => {
 
       vi.mocked(getCacheService).mockReturnValue(mockCache);
 
-      const request = new NextRequest('http://localhost:3002/api/products/prod_1', {
-        method: 'PUT',
-        body: JSON.stringify({
-          title: 'Updated iPhone 13 Pro',
-          price: 75000,
-          description: 'Updated description',
-        }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3002/api/products/prod_1',
+        {
+          method: 'PUT',
+          body: JSON.stringify({
+            title: 'Updated iPhone 13 Pro',
+            price: 75_000,
+            description: 'Updated description',
+          }),
+        }
+      );
 
-      const response = await updateProduct(request, { params: Promise.resolve({ id: 'prod_1' }) });
+      const response = await updateProduct(request, {
+        params: Promise.resolve({ id: 'prod_1' }),
+      });
       const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
       expect(data.data.product.title).toBe('Updated iPhone 13 Pro');
-      expect(data.data.product.price).toBe(75000);
+      expect(data.data.product.price).toBe(75_000);
       expect(data.message).toBe('Product updated successfully');
 
       // Verify cache invalidation
@@ -649,7 +688,9 @@ describe('Product CRUD Tests', () => {
     it('should reject update by non-owner', async () => {
       const { auth } = await import('@repo/auth/server');
       const { database } = await import('@repo/database');
-      const { validateParams, validateBody } = await import('@repo/validation/middleware');
+      const { validateParams, validateBody } = await import(
+        '@repo/validation/middleware'
+      );
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_user_2' });
       vi.mocked(database.user.findUnique).mockResolvedValue({
@@ -670,23 +711,32 @@ describe('Product CRUD Tests', () => {
         data: { title: 'Updated Title' },
       });
 
-      const request = new NextRequest('http://localhost:3002/api/products/prod_1', {
-        method: 'PUT',
-        body: JSON.stringify({ title: 'Updated Title' }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3002/api/products/prod_1',
+        {
+          method: 'PUT',
+          body: JSON.stringify({ title: 'Updated Title' }),
+        }
+      );
 
-      const response = await updateProduct(request, { params: Promise.resolve({ id: 'prod_1' }) });
+      const response = await updateProduct(request, {
+        params: Promise.resolve({ id: 'prod_1' }),
+      });
       const data = await response.json();
 
       expect(response.status).toBe(403);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Unauthorized: You can only edit your own products');
+      expect(data.error).toBe(
+        'Unauthorized: You can only edit your own products'
+      );
     });
 
     it('should update product images', async () => {
       const { auth } = await import('@repo/auth/server');
       const { database } = await import('@repo/database');
-      const { validateParams, validateBody } = await import('@repo/validation/middleware');
+      const { validateParams, validateBody } = await import(
+        '@repo/validation/middleware'
+      );
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_user_1' });
       vi.mocked(database.user.findUnique).mockResolvedValue({
@@ -718,14 +768,19 @@ describe('Product CRUD Tests', () => {
         ],
       });
 
-      const request = new NextRequest('http://localhost:3002/api/products/prod_1', {
-        method: 'PUT',
-        body: JSON.stringify({
-          images: ['https://utfs.io/new1.jpg', 'https://utfs.io/new2.jpg'],
-        }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3002/api/products/prod_1',
+        {
+          method: 'PUT',
+          body: JSON.stringify({
+            images: ['https://utfs.io/new1.jpg', 'https://utfs.io/new2.jpg'],
+          }),
+        }
+      );
 
-      const response = await updateProduct(request, { params: Promise.resolve({ id: 'prod_1' }) });
+      const _response = await updateProduct(request, {
+        params: Promise.resolve({ id: 'prod_1' }),
+      });
 
       expect(database.product.update).toHaveBeenCalledWith({
         where: { id: 'prod_1' },
@@ -773,11 +828,16 @@ describe('Product CRUD Tests', () => {
 
       vi.mocked(getCacheService).mockReturnValue(mockCache);
 
-      const request = new NextRequest('http://localhost:3002/api/products/prod_1', {
-        method: 'DELETE',
-      });
+      const request = new NextRequest(
+        'http://localhost:3002/api/products/prod_1',
+        {
+          method: 'DELETE',
+        }
+      );
 
-      const response = await deleteProduct(request, { params: Promise.resolve({ id: 'prod_1' }) });
+      const response = await deleteProduct(request, {
+        params: Promise.resolve({ id: 'prod_1' }),
+      });
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -785,7 +845,9 @@ describe('Product CRUD Tests', () => {
       expect(data.message).toBe('Product deleted successfully');
 
       // Verify deletion and cache invalidation
-      expect(database.product.delete).toHaveBeenCalledWith({ where: { id: 'prod_1' } });
+      expect(database.product.delete).toHaveBeenCalledWith({
+        where: { id: 'prod_1' },
+      });
       expect(mockCache.invalidateProduct).toHaveBeenCalledWith('prod_1');
     });
 
@@ -810,16 +872,23 @@ describe('Product CRUD Tests', () => {
         data: { id: 'prod_1' },
       });
 
-      const request = new NextRequest('http://localhost:3002/api/products/prod_1', {
-        method: 'DELETE',
-      });
+      const request = new NextRequest(
+        'http://localhost:3002/api/products/prod_1',
+        {
+          method: 'DELETE',
+        }
+      );
 
-      const response = await deleteProduct(request, { params: Promise.resolve({ id: 'prod_1' }) });
+      const response = await deleteProduct(request, {
+        params: Promise.resolve({ id: 'prod_1' }),
+      });
       const data = await response.json();
 
       expect(response.status).toBe(403);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Unauthorized: You can only delete your own products');
+      expect(data.error).toBe(
+        'Unauthorized: You can only delete your own products'
+      );
     });
 
     it('should reject deletion with active orders', async () => {
@@ -843,11 +912,16 @@ describe('Product CRUD Tests', () => {
         data: { id: 'prod_1' },
       });
 
-      const request = new NextRequest('http://localhost:3002/api/products/prod_1', {
-        method: 'DELETE',
-      });
+      const request = new NextRequest(
+        'http://localhost:3002/api/products/prod_1',
+        {
+          method: 'DELETE',
+        }
+      );
 
-      const response = await deleteProduct(request, { params: Promise.resolve({ id: 'prod_1' }) });
+      const response = await deleteProduct(request, {
+        params: Promise.resolve({ id: 'prod_1' }),
+      });
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -858,16 +932,23 @@ describe('Product CRUD Tests', () => {
 
   describe('Product Validation', () => {
     it('should validate product title requirements', () => {
-      const { isValidProductTitle, containsProfanity } = require('@repo/validation/validators');
-      
+      const {
+        isValidProductTitle,
+        containsProfanity,
+      } = require('@repo/validation/validators');
+
       // Mock the validators to test validation logic
       vi.mocked(isValidProductTitle).mockImplementation((title: string) => {
-        return title.length >= 3 && title.length <= 100 && !title.includes('<script>');
+        return (
+          title.length >= 3 &&
+          title.length <= 100 &&
+          !title.includes('<script>')
+        );
       });
 
       vi.mocked(containsProfanity).mockImplementation((text: string) => {
         const profanity = ['spam', 'scam', 'fake'];
-        return profanity.some(word => text.toLowerCase().includes(word));
+        return profanity.some((word) => text.toLowerCase().includes(word));
       });
 
       // Valid titles
@@ -882,30 +963,38 @@ describe('Product CRUD Tests', () => {
 
     it('should validate price ranges', () => {
       const { isPriceInRange } = require('@repo/validation/validators');
-      
+
       vi.mocked(isPriceInRange).mockImplementation((price: number) => {
-        return price >= 1 && price <= 99999999; // $0.01 to $999,999.99 in cents
+        return price >= 1 && price <= 99_999_999; // $0.01 to $999,999.99 in cents
       });
 
       expect(isPriceInRange(100)).toBe(true); // $1.00
-      expect(isPriceInRange(9999999)).toBe(true); // $99,999.99
+      expect(isPriceInRange(9_999_999)).toBe(true); // $99,999.99
       expect(isPriceInRange(0)).toBe(false); // $0.00
       expect(isPriceInRange(-100)).toBe(false); // Negative
-      expect(isPriceInRange(100000000)).toBe(false); // Too high
+      expect(isPriceInRange(100_000_000)).toBe(false); // Too high
     });
 
     it('should validate image URLs', () => {
       const { isAllowedImageUrl } = require('@repo/validation/validators');
-      
-      vi.mocked(isAllowedImageUrl).mockImplementation((url: string, allowedDomains: string[]) => {
-        return allowedDomains.some(domain => url.includes(domain));
-      });
+
+      vi.mocked(isAllowedImageUrl).mockImplementation(
+        (url: string, allowedDomains: string[]) => {
+          return allowedDomains.some((domain) => url.includes(domain));
+        }
+      );
 
       const allowedDomains = ['uploadthing.com', 'utfs.io'];
 
-      expect(isAllowedImageUrl('https://utfs.io/image.jpg', allowedDomains)).toBe(true);
-      expect(isAllowedImageUrl('https://uploadthing.com/image.jpg', allowedDomains)).toBe(true);
-      expect(isAllowedImageUrl('https://malicious.com/image.jpg', allowedDomains)).toBe(false);
+      expect(
+        isAllowedImageUrl('https://utfs.io/image.jpg', allowedDomains)
+      ).toBe(true);
+      expect(
+        isAllowedImageUrl('https://uploadthing.com/image.jpg', allowedDomains)
+      ).toBe(true);
+      expect(
+        isAllowedImageUrl('https://malicious.com/image.jpg', allowedDomains)
+      ).toBe(false);
     });
   });
 
@@ -922,8 +1011,8 @@ describe('Product CRUD Tests', () => {
           category: 'electronics',
           brand: 'Apple',
           condition: 'VERY_GOOD',
-          minPrice: 50000,
-          maxPrice: 100000,
+          minPrice: 50_000,
+          maxPrice: 100_000,
           search: 'iPhone',
           sortBy: 'price_desc',
         },
@@ -942,9 +1031,11 @@ describe('Product CRUD Tests', () => {
         sortBy: 'price_desc',
       });
 
-      const request = new NextRequest(`http://localhost:3002/api/products?${queryParams}`);
+      const request = new NextRequest(
+        `http://localhost:3002/api/products?${queryParams}`
+      );
 
-      const response = await getProducts(request);
+      const _response = await getProducts(request);
 
       expect(database.product.findMany).toHaveBeenCalledWith({
         where: expect.objectContaining({
@@ -952,7 +1043,7 @@ describe('Product CRUD Tests', () => {
           category: { slug: 'electronics' },
           brand: { contains: 'Apple' },
           condition: 'VERY_GOOD',
-          price: { gte: 50000, lte: 100000 },
+          price: { gte: 50_000, lte: 100_000 },
           OR: [
             { title: { contains: 'iPhone' } },
             { description: { contains: 'iPhone' } },

@@ -33,7 +33,7 @@ export function ProductActions({ product }: ProductActionsProps): React.JSX.Elem
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleAction = async (action: () => Promise<any>) => {
+  const handleAction = async (action: () => Promise<{ success: boolean }>) => {
     setIsLoading(true);
     try {
       await action();

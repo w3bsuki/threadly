@@ -19,7 +19,7 @@ export async function POST() {
         },
       }),
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to authenticate' },
       { status: 500 }

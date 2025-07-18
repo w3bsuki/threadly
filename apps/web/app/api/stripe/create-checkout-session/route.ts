@@ -1,11 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { database } from '@repo/database';
-import { stripe, calculatePlatformFee, isStripeConfigured } from '@repo/payments';
-import { paymentRateLimit, checkRateLimit } from '@repo/security';
-import { z } from 'zod';
-import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
+import {
+  calculatePlatformFee,
+  isStripeConfigured,
+  stripe,
+} from '@repo/payments';
+import { checkRateLimit, paymentRateLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 const createCheckoutSessionSchema = z.object({
   productId: z.string().min(1),
@@ -19,7 +22,7 @@ export async function POST(request: NextRequest) {
     if (!rateLimitResult.allowed) {
       return NextResponse.json(
         { error: rateLimitResult.error?.message || 'Rate limit exceeded' },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }
@@ -42,7 +45,7 @@ export async function POST(request: NextRequest) {
     // SECURITY: Get database user to ensure proper ID comparison
     const user = await database.user.findUnique({
       where: { clerkId: userId },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!user) {
@@ -113,10 +116,14 @@ export async function POST(request: NextRequest) {
     // Calculate fees
     const priceNumber = Number(product.price);
     const amountInCents = Math.round(priceNumber * 100);
-    const platformFeeInCents = Math.round(calculatePlatformFee(priceNumber) * 100);
-    
+    const platformFeeInCents = Math.round(
+      calculatePlatformFee(priceNumber) * 100
+    );
+
     // Create payment intent parameters
-    const paymentIntentParams: Parameters<typeof stripe.paymentIntents.create>[0] = {
+    const paymentIntentParams: Parameters<
+      typeof stripe.paymentIntents.create
+    >[0] = {
       amount: amountInCents,
       currency: 'usd',
       metadata: {
@@ -140,7 +147,8 @@ export async function POST(request: NextRequest) {
     // Otherwise, the platform will handle manual payouts later
 
     // Create payment intent
-    const paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
+    const paymentIntent =
+      await stripe.paymentIntents.create(paymentIntentParams);
 
     // Create payment record with Stripe payment intent ID
     await database.payment.create({
@@ -162,10 +170,9 @@ export async function POST(request: NextRequest) {
       clientSecret: paymentIntent.client_secret,
       orderId: order.id,
     });
-
   } catch (error) {
     logError('Checkout session creation error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.issues },

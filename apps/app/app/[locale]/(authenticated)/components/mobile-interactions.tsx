@@ -280,8 +280,7 @@ export function HapticButton({
   children: React.ReactNode;
   onClick?: () => void;
   feedbackType?: 'light' | 'medium' | 'heavy' | 'success' | 'error';
-  [key: string]: any;
-}) {
+} & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   const handleClick = useCallback(() => {
     hapticFeedback[feedbackType]();
     onClick?.();

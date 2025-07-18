@@ -12,7 +12,7 @@ export const generateMetadata = async ({
   params,
 }: CollectionsProps): Promise<Metadata> => {
   const { locale } = await params;
-  const dictionary = await getDictionary(locale);
+  const _dictionary = await getDictionary(locale);
 
   return createMetadata({
     title: 'Collections - Threadly',
@@ -22,12 +22,12 @@ export const generateMetadata = async ({
 
 const CollectionsPage = async ({ params }: CollectionsProps) => {
   const { locale } = await params;
-  const dictionary = await getDictionary(locale);
+  const _dictionary = await getDictionary(locale);
 
   return (
     <main className="min-h-screen bg-white">
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <h1 className="text-3xl font-semibold mb-8">Collections</h1>
+      <div className="mx-auto max-w-7xl px-4 py-12">
+        <h1 className="mb-8 font-semibold text-3xl">Collections</h1>
         <p className="text-gray-600">Curated collections coming soon.</p>
       </div>
     </main>

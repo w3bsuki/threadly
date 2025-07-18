@@ -81,7 +81,12 @@ const FavoritesPage = async ({ params }: { params: Promise<{ locale: string }> }
     },
   });
 
-  const getSellerName = (seller: any) => {
+  const getSellerName = (seller: {
+    id: string;
+    firstName: string | null;
+    lastName: string | null;
+    email: string | null;
+  }) => {
     if (seller.firstName && seller.lastName) {
       return `${seller.firstName} ${seller.lastName}`;
     }

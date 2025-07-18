@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useIsMobile } from '../../../../lib/hooks/use-media-query';
-import { ProductQuickViewMobile } from './mobile-view';
 import { ProductQuickViewDesktop } from './desktop-view';
+import { ProductQuickViewMobile } from './mobile-view';
 
 interface ProductQuickViewProps {
   product: {
@@ -48,10 +48,10 @@ export function ProductQuickView({ product, trigger }: ProductQuickViewProps) {
 
   return (
     <Component
+      onOpenChange={setOpen}
+      open={open}
       product={product}
       trigger={trigger}
-      open={open}
-      onOpenChange={setOpen}
     />
   );
 }

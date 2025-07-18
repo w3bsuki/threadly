@@ -1,13 +1,13 @@
 /**
  * API Endpoint Tests - Comprehensive Coverage
- * 
+ *
  * This test suite covers all critical API endpoints across the application
  * including payment, user, product, order, and address endpoints.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { NextRequest, NextResponse } from 'next/server';
 import { cleanup } from '@repo/testing';
+import { NextRequest, NextResponse } from 'next/server';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock dependencies
 vi.mock('@repo/auth/server', () => ({
@@ -118,7 +118,10 @@ describe('API Endpoint Tests', () => {
         const mockGetUser = async (userId: string) => {
           const user = await currentUser();
           if (!user) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json(
+              { error: 'Unauthorized' },
+              { status: 401 }
+            );
           }
 
           const dbUser = await database.user.findUnique({
@@ -137,7 +140,10 @@ describe('API Endpoint Tests', () => {
           });
 
           if (!dbUser) {
-            return NextResponse.json({ error: 'User not found' }, { status: 404 });
+            return NextResponse.json(
+              { error: 'User not found' },
+              { status: 404 }
+            );
           }
 
           return NextResponse.json({ user: dbUser });
@@ -167,7 +173,10 @@ describe('API Endpoint Tests', () => {
         const mockGetUser = async (userId: string) => {
           const user = await currentUser();
           if (!user) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json(
+              { error: 'Unauthorized' },
+              { status: 401 }
+            );
           }
 
           const dbUser = await database.user.findUnique({
@@ -175,7 +184,10 @@ describe('API Endpoint Tests', () => {
           });
 
           if (!dbUser) {
-            return NextResponse.json({ error: 'User not found' }, { status: 404 });
+            return NextResponse.json(
+              { error: 'User not found' },
+              { status: 404 }
+            );
           }
 
           return NextResponse.json({ user: dbUser });
@@ -226,7 +238,10 @@ describe('API Endpoint Tests', () => {
         const mockGetSuggestions = async () => {
           const user = await currentUser();
           if (!user) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json(
+              { error: 'Unauthorized' },
+              { status: 401 }
+            );
           }
 
           const suggestions = await database.user.findMany({
@@ -295,7 +310,10 @@ describe('API Endpoint Tests', () => {
         const mockGetAddresses = async () => {
           const { userId } = await auth();
           if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json(
+              { error: 'Unauthorized' },
+              { status: 401 }
+            );
           }
 
           const user = await database.user.findUnique({
@@ -303,7 +321,10 @@ describe('API Endpoint Tests', () => {
           });
 
           if (!user) {
-            return NextResponse.json({ error: 'User not found' }, { status: 404 });
+            return NextResponse.json(
+              { error: 'User not found' },
+              { status: 404 }
+            );
           }
 
           const addresses = await database.address.findMany({
@@ -356,7 +377,10 @@ describe('API Endpoint Tests', () => {
         const mockCreateAddress = async (addressData: any) => {
           const { userId } = await auth();
           if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json(
+              { error: 'Unauthorized' },
+              { status: 401 }
+            );
           }
 
           const user = await database.user.findUnique({
@@ -364,7 +388,10 @@ describe('API Endpoint Tests', () => {
           });
 
           if (!user) {
-            return NextResponse.json({ error: 'User not found' }, { status: 404 });
+            return NextResponse.json(
+              { error: 'User not found' },
+              { status: 404 }
+            );
           }
 
           const address = await database.address.create({
@@ -431,10 +458,16 @@ describe('API Endpoint Tests', () => {
 
         vi.mocked(database.address.update).mockResolvedValue(updatedAddress);
 
-        const mockUpdateAddress = async (addressId: string, updateData: any) => {
+        const mockUpdateAddress = async (
+          addressId: string,
+          updateData: any
+        ) => {
           const { userId } = await auth();
           if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json(
+              { error: 'Unauthorized' },
+              { status: 401 }
+            );
           }
 
           const user = await database.user.findUnique({
@@ -446,7 +479,10 @@ describe('API Endpoint Tests', () => {
           });
 
           if (!existingAddress || existingAddress.userId !== user?.id) {
-            return NextResponse.json({ error: 'Address not found' }, { status: 404 });
+            return NextResponse.json(
+              { error: 'Address not found' },
+              { status: 404 }
+            );
           }
 
           const address = await database.address.update({
@@ -496,7 +532,10 @@ describe('API Endpoint Tests', () => {
         const mockDeleteAddress = async (addressId: string) => {
           const { userId } = await auth();
           if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json(
+              { error: 'Unauthorized' },
+              { status: 401 }
+            );
           }
 
           const user = await database.user.findUnique({
@@ -508,7 +547,10 @@ describe('API Endpoint Tests', () => {
           });
 
           if (!existingAddress || existingAddress.userId !== user?.id) {
-            return NextResponse.json({ error: 'Address not found' }, { status: 404 });
+            return NextResponse.json(
+              { error: 'Address not found' },
+              { status: 404 }
+            );
           }
 
           if (existingAddress.isDefault) {
@@ -552,7 +594,10 @@ describe('API Endpoint Tests', () => {
         const mockDeleteAddress = async (addressId: string) => {
           const { userId } = await auth();
           if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json(
+              { error: 'Unauthorized' },
+              { status: 401 }
+            );
           }
 
           const user = await database.user.findUnique({
@@ -564,7 +609,10 @@ describe('API Endpoint Tests', () => {
           });
 
           if (!existingAddress || existingAddress.userId !== user?.id) {
-            return NextResponse.json({ error: 'Address not found' }, { status: 404 });
+            return NextResponse.json(
+              { error: 'Address not found' },
+              { status: 404 }
+            );
           }
 
           if (existingAddress.isDefault) {
@@ -660,10 +708,13 @@ describe('API Endpoint Tests', () => {
         const mockToggleFavorite = async (productId: string) => {
           const { userId } = await auth();
           if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json(
+              { error: 'Unauthorized' },
+              { status: 401 }
+            );
           }
 
-          const user = await database.user.findUnique({
+          const _user = await database.user.findUnique({
             where: { clerkId: userId },
           });
 
@@ -672,7 +723,10 @@ describe('API Endpoint Tests', () => {
           });
 
           if (!product) {
-            return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+            return NextResponse.json(
+              { error: 'Product not found' },
+              { status: 404 }
+            );
           }
 
           // Mock favorite logic (would use junction table in real implementation)
@@ -680,7 +734,9 @@ describe('API Endpoint Tests', () => {
 
           return NextResponse.json({
             favorited: isFavorited,
-            message: isFavorited ? 'Added to favorites' : 'Removed from favorites',
+            message: isFavorited
+              ? 'Added to favorites'
+              : 'Removed from favorites',
           });
         };
 
@@ -724,7 +780,7 @@ describe('API Endpoint Tests', () => {
         try {
           await database.user.findUnique({ where: { id: 'user_1' } });
           return NextResponse.json({ success: true });
-        } catch (error) {
+        } catch (_error) {
           return NextResponse.json(
             { error: 'Internal server error' },
             { status: 500 }
@@ -752,7 +808,7 @@ describe('API Endpoint Tests', () => {
         if (!rateLimitResult.allowed) {
           return NextResponse.json(
             { error: rateLimitResult.error?.message || 'Rate limit exceeded' },
-            { 
+            {
               status: 429,
               headers: rateLimitResult.headers,
             }
@@ -772,17 +828,17 @@ describe('API Endpoint Tests', () => {
 
     it('should handle validation errors consistently', async () => {
       const mockValidationEndpoint = async (input: any) => {
-        if (!input.email || !input.email.includes('@')) {
+        if (!input.email?.includes('@')) {
           return NextResponse.json(
-            { 
+            {
               error: 'Validation failed',
               details: [
                 {
                   field: 'email',
                   message: 'Valid email is required',
                   code: 'invalid_email',
-                }
-              ]
+                },
+              ],
             },
             { status: 400 }
           );
@@ -806,7 +862,7 @@ describe('API Endpoint Tests', () => {
 
       const mockPaginatedEndpoint = async (page: number, limit: number) => {
         const skip = (page - 1) * limit;
-        
+
         vi.mocked(database.product.findMany).mockResolvedValue([]);
         vi.mocked(database.product.count).mockResolvedValue(50);
 
@@ -864,8 +920,12 @@ describe('API Endpoint Tests', () => {
         }
         if (filters.minPrice || filters.maxPrice) {
           where.price = {};
-          if (filters.minPrice) where.price.gte = filters.minPrice;
-          if (filters.maxPrice) where.price.lte = filters.maxPrice;
+          if (filters.minPrice) {
+            where.price.gte = filters.minPrice;
+          }
+          if (filters.maxPrice) {
+            where.price.lte = filters.maxPrice;
+          }
         }
         if (filters.condition) {
           where.condition = filters.condition;
@@ -889,7 +949,7 @@ describe('API Endpoint Tests', () => {
       };
 
       const response = await mockFilteredEndpoint(filters);
-      const data = await response.json();
+      const _data = await response.json();
 
       expect(response.status).toBe(200);
       expect(database.product.findMany).toHaveBeenCalledWith({

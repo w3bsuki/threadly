@@ -25,8 +25,22 @@ interface ReportActionsProps {
     type: string;
     reason: string;
     status: string;
-    product?: any;
-    reportedUser?: any;
+    product?: {
+      id: string;
+      title: string;
+      status: string;
+      seller: {
+        id: string;
+        firstName: string | null;
+        lastName: string | null;
+      };
+    } | null;
+    reportedUser?: {
+      id: string;
+      firstName: string | null;
+      lastName: string | null;
+      email: string | null;
+    } | null;
   };
 }
 
@@ -34,7 +48,7 @@ export function ReportActions({ report }: ReportActionsProps): React.JSX.Element
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleAction = async (action: () => Promise<any>) => {
+  const handleAction = async (action: () => Promise<{ success: boolean }>) => {
     setIsLoading(true);
     try {
       await action();

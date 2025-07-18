@@ -1,25 +1,30 @@
-import type { Metadata } from "next";
-import { getDictionary } from "@repo/internationalization";
+import { getDictionary } from '@repo/internationalization';
+import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
-import { Suspense } from 'react';
 
 // Dynamic import for products content to reduce initial bundle size
-const ProductsContent = dynamic(() => import('./components/products-content').then(mod => ({ default: mod.ProductsContent })), {
-  loading: () => (
-    <div className="space-y-6">
-      <div className="h-12 bg-gray-200 rounded animate-pulse" />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {Array.from({ length: 12 }).map((_, i) => (
-          <div key={i} className="space-y-2">
-            <div className="aspect-square bg-gray-200 rounded animate-pulse" />
-            <div className="h-4 bg-gray-200 rounded animate-pulse" />
-            <div className="h-4 bg-gray-200 rounded animate-pulse w-2/3" />
-          </div>
-        ))}
+const ProductsContent = dynamic(
+  () =>
+    import('./components/products-content').then((mod) => ({
+      default: mod.ProductsContent,
+    })),
+  {
+    loading: () => (
+      <div className="space-y-6">
+        <div className="h-12 animate-pulse rounded bg-gray-200" />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div className="space-y-2" key={i}>
+              <div className="aspect-square animate-pulse rounded bg-gray-200" />
+              <div className="h-4 animate-pulse rounded bg-gray-200" />
+              <div className="h-4 w-2/3 animate-pulse rounded bg-gray-200" />
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-  )
-});
+    ),
+  }
+);
 
 export async function generateMetadata({
   params,
@@ -27,11 +32,11 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const dictionary = await getDictionary(locale);
-  
+  const _dictionary = await getDictionary(locale);
+
   return {
-    title: "Products - Threadly",
-    description: "Browse our collection of clothing and accessories",
+    title: 'Products - Threadly',
+    description: 'Browse our collection of clothing and accessories',
   };
 }
 
@@ -40,7 +45,7 @@ export default async function ProductsPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ 
+  searchParams: Promise<{
     category?: string;
     minPrice?: string;
     maxPrice?: string;
@@ -53,6 +58,11 @@ export default async function ProductsPage({
   const { locale } = await params;
   const resolvedSearchParams = await searchParams;
   const dictionary = await getDictionary(locale);
-  
-  return <ProductsContent searchParams={resolvedSearchParams} dictionary={dictionary} />;
+
+  return (
+    <ProductsContent
+      dictionary={dictionary}
+      searchParams={resolvedSearchParams}
+    />
+  );
 }

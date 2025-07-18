@@ -1,15 +1,15 @@
 'use client';
 
-import { create } from 'zustand';
-import { cartService, type CartItem } from '../services/cart-service';
 import { toast } from '@repo/design-system/components';
+import { create } from 'zustand';
+import { type CartItem, cartService } from '../services/cart-service';
 
 interface ServerCartState {
   items: CartItem[];
   isLoading: boolean;
   isInitialized: boolean;
   isOpen: boolean;
-  
+
   // Actions
   initCart: () => Promise<void>;
   addItem: (productId: string) => Promise<void>;
@@ -19,7 +19,7 @@ interface ServerCartState {
   toggleCart: () => void;
   openCart: () => void;
   closeCart: () => void;
-  
+
   // Computed values
   getTotalItems: () => number;
   getTotalPrice: () => number;
@@ -32,13 +32,15 @@ export const useServerCartStore = create<ServerCartState>((set, get) => ({
   isOpen: false,
 
   initCart: async () => {
-    if (get().isInitialized) return;
-    
+    if (get().isInitialized) {
+      return;
+    }
+
     set({ isLoading: true });
     try {
       const items = await cartService.getCart();
       set({ items, isInitialized: true });
-    } catch (error) {
+    } catch (_error) {
       // Error is handled by the service layer
     } finally {
       set({ isLoading: false });
@@ -47,7 +49,7 @@ export const useServerCartStore = create<ServerCartState>((set, get) => ({
 
   addItem: async (productId: string) => {
     // Check if already in cart
-    const exists = get().items.some(item => item.productId === productId);
+    const exists = get().items.some((item) => item.productId === productId);
     if (exists) {
       toast.error('Item already in cart');
       return;
@@ -57,7 +59,7 @@ export const useServerCartStore = create<ServerCartState>((set, get) => ({
     try {
       const item = await cartService.addToCart(productId);
       if (item) {
-        set(state => ({ items: [...state.items, item] }));
+        set((state) => ({ items: [...state.items, item] }));
         toast.success('Added to cart');
         get().openCart();
       }
@@ -71,8 +73,8 @@ export const useServerCartStore = create<ServerCartState>((set, get) => ({
   removeItem: async (productId: string) => {
     // Optimistically remove from UI
     const previousItems = get().items;
-    set(state => ({
-      items: state.items.filter(item => item.productId !== productId)
+    set((state) => ({
+      items: state.items.filter((item) => item.productId !== productId),
     }));
 
     try {
@@ -82,7 +84,7 @@ export const useServerCartStore = create<ServerCartState>((set, get) => ({
         set({ items: previousItems });
         toast.error('Failed to remove item');
       }
-    } catch (error) {
+    } catch (_error) {
       // Revert on error
       set({ items: previousItems });
       toast.error('Failed to remove item');
@@ -99,7 +101,7 @@ export const useServerCartStore = create<ServerCartState>((set, get) => ({
         set({ items: previousItems });
         toast.error('Failed to clear cart');
       }
-    } catch (error) {
+    } catch (_error) {
       set({ items: previousItems });
       toast.error('Failed to clear cart');
     } finally {
@@ -115,12 +117,12 @@ export const useServerCartStore = create<ServerCartState>((set, get) => ({
     }
   },
 
-  toggleCart: () => set(state => ({ isOpen: !state.isOpen })),
+  toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
   openCart: () => set({ isOpen: true }),
   closeCart: () => set({ isOpen: false }),
 
   getTotalItems: () => get().items.length,
-  
+
   getTotalPrice: () => {
     return get().items.reduce((total, item) => total + item.price, 0);
   },

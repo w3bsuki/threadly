@@ -38,6 +38,11 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
     return new NextResponse('Rate limit exceeded', { status: 429 });
   }
   
+  // Add performance headers
+  const headers = new Headers(request.headers);
+  headers.set('X-DNS-Prefetch-Control', 'on');
+  headers.set('Connection', 'keep-alive');
+  
   // Handle internationalization for non-API routes
   const i18nResponse = internationalizationMiddleware(request);
   if (i18nResponse) {
@@ -67,7 +72,18 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
     }
   }
   
-  return NextResponse.next();
+  const response = NextResponse.next({
+    request: {
+      headers,
+    },
+  });
+  
+  // Add cache headers for static assets
+  if (pathname.match(/\.(js|css|woff|woff2|ttf|otf)$/)) {
+    response.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+  }
+  
+  return response;
 });
 
 export default middleware;

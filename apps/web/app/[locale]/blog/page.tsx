@@ -44,40 +44,41 @@ const BlogIndex = async ({ params }: BlogProps) => {
             </h4>
           </div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-            {posts.length > 0 && posts.map((post, index) => (
-              <Link
-                href={`/blog/${post._slug}`}
-                className={cn(
-                  'flex cursor-pointer flex-col gap-4 hover:opacity-75',
-                  !index && 'md:col-span-2'
-                )}
-                key={post._slug}
-              >
-                <Image
-                  src={post.image.url}
-                  alt={post.image.alt ?? ''}
-                  width={post.image.width}
-                  height={post.image.height}
-                />
-                <div className="flex flex-row items-center gap-4">
-                  <p className="text-muted-foreground text-sm">
-                    {new Date(post.date).toLocaleDateString('en-US', {
-                      month: 'long',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })}
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <h3 className="max-w-3xl text-4xl tracking-tight">
-                    {post._title}
-                  </h3>
-                  <p className="max-w-3xl text-base text-muted-foreground">
-                    {post.description}
-                  </p>
-                </div>
-              </Link>
-            ))}
+            {posts.length > 0 &&
+              posts.map((post, index) => (
+                <Link
+                  className={cn(
+                    'flex cursor-pointer flex-col gap-4 hover:opacity-75',
+                    !index && 'md:col-span-2'
+                  )}
+                  href={`/blog/${post._slug}`}
+                  key={post._slug}
+                >
+                  <Image
+                    alt={post.image.alt ?? ''}
+                    height={post.image.height}
+                    src={post.image.url}
+                    width={post.image.width}
+                  />
+                  <div className="flex flex-row items-center gap-4">
+                    <p className="text-muted-foreground text-sm">
+                      {new Date(post.date).toLocaleDateString('en-US', {
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <h3 className="max-w-3xl text-4xl tracking-tight">
+                      {post._title}
+                    </h3>
+                    <p className="max-w-3xl text-base text-muted-foreground">
+                      {post.description}
+                    </p>
+                  </div>
+                </Link>
+              ))}
           </div>
         </div>
       </div>

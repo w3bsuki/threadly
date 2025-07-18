@@ -1,20 +1,23 @@
 'use client';
 
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
-import { Input } from '@repo/design-system/components';
-import { Separator } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { 
-  MessageCircle, 
-  Search, 
-  Send, 
-  Package, 
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Input,
+} from '@repo/design-system/components';
+import {
+  CheckCheck,
+  MessageCircle,
+  Package,
+  Search,
+  Send,
   User,
-  Clock,
-  CheckCheck
 } from 'lucide-react';
+import { useState } from 'react';
 
 interface User {
   id: string;
@@ -67,78 +70,97 @@ interface MessagesContentProps {
   currentUserId: string;
 }
 
-export function MessagesContent({ conversations, currentUserId }: MessagesContentProps) {
-  const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
+export function MessagesContent({
+  conversations,
+  currentUserId,
+}: MessagesContentProps) {
+  const [selectedConversation, setSelectedConversation] = useState<
+    string | null
+  >(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [newMessage, setNewMessage] = useState('');
 
   // Transform conversations to match the component's expected format
-  const transformedConversations = conversations.map(conv => {
+  const transformedConversations = conversations.map((conv) => {
     const otherUser = conv.buyerId === currentUserId ? conv.seller : conv.buyer;
-    const lastMessage = conv.messages[conv.messages.length - 1];
+    const lastMessage = conv.messages.at(-1);
     const unreadCount = conv._count.messages;
-    
+
     return {
       id: conv.id,
       otherUser: {
         id: otherUser.id,
-        name: `${otherUser.firstName || ''} ${otherUser.lastName || ''}`.trim() || otherUser.email,
+        name:
+          `${otherUser.firstName || ''} ${otherUser.lastName || ''}`.trim() ||
+          otherUser.email,
         imageUrl: otherUser.imageUrl || undefined,
       },
       product: {
         id: conv.product.id,
         title: conv.product.title,
         imageUrl: conv.product.images[0]?.imageUrl,
-        price: typeof conv.product.price === 'object' ? conv.product.price.toNumber() : conv.product.price,
+        price:
+          typeof conv.product.price === 'object'
+            ? conv.product.price.toNumber()
+            : conv.product.price,
       },
-      lastMessage: lastMessage ? {
-        content: lastMessage.content,
-        timestamp: lastMessage.createdAt,
-        isRead: lastMessage.read,
-        senderId: lastMessage.senderId,
-      } : null,
+      lastMessage: lastMessage
+        ? {
+            content: lastMessage.content,
+            timestamp: lastMessage.createdAt,
+            isRead: lastMessage.read,
+            senderId: lastMessage.senderId,
+          }
+        : null,
       unreadCount,
       rawConversation: conv,
     };
   });
 
-  const filteredConversations = transformedConversations.filter(conversation =>
-    conversation.otherUser.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    conversation.product.title.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredConversations = transformedConversations.filter(
+    (conversation) =>
+      conversation.otherUser.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      conversation.product.title
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
   );
 
   const formatTime = (date: Date) => {
     const now = new Date();
     const diff = now.getTime() - date.getTime();
     const hours = diff / (1000 * 60 * 60);
-    
+
     if (hours < 1) {
       const minutes = Math.floor(diff / (1000 * 60));
       return `${minutes}m ago`;
-    } else if (hours < 24) {
-      return `${Math.floor(hours)}h ago`;
-    } else {
-      const days = Math.floor(hours / 24);
-      return `${days}d ago`;
     }
+    if (hours < 24) {
+      return `${Math.floor(hours)}h ago`;
+    }
+    const days = Math.floor(hours / 24);
+    return `${days}d ago`;
   };
 
-  const selectedConv = transformedConversations.find(c => c.id === selectedConversation);
+  const selectedConv = transformedConversations.find(
+    (c) => c.id === selectedConversation
+  );
 
   return (
-    <div className="grid md:grid-cols-3 gap-6">
+    <div className="grid gap-6 md:grid-cols-3">
       {/* Conversations List */}
       <div className="md:col-span-1">
         <Card>
           <CardHeader>
             <CardTitle>Conversations</CardTitle>
             <div className="relative mt-2">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-gray-400" />
               <Input
+                className="pl-9"
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search messages..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
               />
             </div>
           </CardHeader>
@@ -151,58 +173,68 @@ export function MessagesContent({ conversations, currentUserId }: MessagesConten
               ) : (
                 filteredConversations.map((conversation) => (
                   <button
+                    className={`w-full p-4 text-left transition-colors hover:bg-gray-50 ${
+                      selectedConversation === conversation.id
+                        ? 'bg-gray-50'
+                        : ''
+                    }`}
                     key={conversation.id}
                     onClick={() => setSelectedConversation(conversation.id)}
-                    className={`w-full p-4 hover:bg-gray-50 transition-colors text-left ${
-                      selectedConversation === conversation.id ? 'bg-gray-50' : ''
-                    }`}
                   >
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
+                      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gray-200">
                         {conversation.otherUser.imageUrl ? (
                           <img
-                            src={conversation.otherUser.imageUrl}
                             alt={conversation.otherUser.name}
-                            className="w-10 h-10 rounded-full object-cover"
+                            className="h-10 w-10 rounded-full object-cover"
+                            src={conversation.otherUser.imageUrl}
                           />
                         ) : (
                           <User className="h-5 w-5 text-gray-600" />
                         )}
                       </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1">
-                          <h4 className="font-medium text-sm">{conversation.otherUser.name}</h4>
+
+                      <div className="min-w-0 flex-1">
+                        <div className="mb-1 flex items-center justify-between">
+                          <h4 className="font-medium text-sm">
+                            {conversation.otherUser.name}
+                          </h4>
                           {conversation.lastMessage && (
-                            <span className="text-xs text-gray-500">
-                              {formatTime(new Date(conversation.lastMessage.timestamp))}
+                            <span className="text-gray-500 text-xs">
+                              {formatTime(
+                                new Date(conversation.lastMessage.timestamp)
+                              )}
                             </span>
                           )}
                         </div>
-                        
-                        <div className="flex items-center gap-2 mb-1">
+
+                        <div className="mb-1 flex items-center gap-2">
                           <Package className="h-3 w-3 text-gray-400" />
-                          <span className="text-xs text-gray-600 truncate">
+                          <span className="truncate text-gray-600 text-xs">
                             {conversation.product.title}
                           </span>
-                          <span className="text-xs text-gray-500">
+                          <span className="text-gray-500 text-xs">
                             ${conversation.product.price}
                           </span>
                         </div>
-                        
+
                         {conversation.lastMessage && (
-                          <p className={`text-sm truncate ${
-                            !conversation.lastMessage.isRead && conversation.lastMessage.senderId !== currentUserId
-                              ? 'font-medium text-gray-900'
-                              : 'text-gray-500'
-                          }`}>
+                          <p
+                            className={`truncate text-sm ${
+                              !conversation.lastMessage.isRead &&
+                              conversation.lastMessage.senderId !==
+                                currentUserId
+                                ? 'font-medium text-gray-900'
+                                : 'text-gray-500'
+                            }`}
+                          >
                             {conversation.lastMessage.content}
                           </p>
                         )}
                       </div>
-                      
+
                       {conversation.unreadCount > 0 && (
-                        <Badge variant="default" className="ml-2">
+                        <Badge className="ml-2" variant="default">
                           {conversation.unreadCount}
                         </Badge>
                       )}
@@ -217,37 +249,39 @@ export function MessagesContent({ conversations, currentUserId }: MessagesConten
 
       {/* Chat Area */}
       <div className="md:col-span-2">
-        <Card className="h-full flex flex-col">
+        <Card className="flex h-full flex-col">
           {selectedConv ? (
             <>
               {/* Chat Header */}
               <CardHeader className="border-b">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200">
                     {selectedConv.otherUser.imageUrl ? (
                       <img
-                        src={selectedConv.otherUser.imageUrl}
                         alt={selectedConv.otherUser.name}
-                        className="w-10 h-10 rounded-full object-cover"
+                        className="h-10 w-10 rounded-full object-cover"
+                        src={selectedConv.otherUser.imageUrl}
                       />
                     ) : (
-                      <span className="text-sm font-medium text-gray-600">
+                      <span className="font-medium text-gray-600 text-sm">
                         {selectedConv.otherUser.name.charAt(0).toUpperCase()}
                       </span>
                     )}
                   </div>
-                  
+
                   <div className="flex-1">
-                    <h3 className="font-medium">{selectedConv.otherUser.name}</h3>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <h3 className="font-medium">
+                      {selectedConv.otherUser.name}
+                    </h3>
+                    <div className="flex items-center gap-2 text-gray-600 text-sm">
                       <Package className="h-3 w-3" />
                       <span>{selectedConv.product.title}</span>
                       <span>•</span>
                       <span>${selectedConv.product.price}</span>
                     </div>
                   </div>
-                  
-                  <Button variant="outline" size="sm" asChild>
+
+                  <Button asChild size="sm" variant="outline">
                     <a href={`/product/${selectedConv.product.id}`}>
                       View Item
                     </a>
@@ -256,10 +290,10 @@ export function MessagesContent({ conversations, currentUserId }: MessagesConten
               </CardHeader>
 
               {/* Messages */}
-              <CardContent className="flex-1 p-4 overflow-y-auto">
+              <CardContent className="flex-1 overflow-y-auto p-4">
                 <div className="space-y-4">
                   {selectedConv.rawConversation.messages.length === 0 ? (
-                    <div className="text-center text-gray-500 py-8">
+                    <div className="py-8 text-center text-gray-500">
                       No messages yet. Start the conversation!
                     </div>
                   ) : (
@@ -267,31 +301,39 @@ export function MessagesContent({ conversations, currentUserId }: MessagesConten
                       const isSender = message.senderId === currentUserId;
                       return (
                         <div
-                          key={message.id}
                           className={`flex items-start gap-3 ${isSender ? 'justify-end' : ''}`}
+                          key={message.id}
                         >
                           {!isSender && (
-                            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                              <span className="text-xs font-medium text-gray-600">
-                                {selectedConv.otherUser.name.charAt(0).toUpperCase()}
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
+                              <span className="font-medium text-gray-600 text-xs">
+                                {selectedConv.otherUser.name
+                                  .charAt(0)
+                                  .toUpperCase()}
                               </span>
                             </div>
                           )}
-                          <div className={`flex-1 ${isSender ? 'text-right' : ''}`}>
-                            <div className={`rounded-lg p-3 max-w-xs ${
-                              isSender 
-                                ? 'bg-blue-600 text-white ml-auto' 
-                                : 'bg-gray-100'
-                            }`}>
+                          <div
+                            className={`flex-1 ${isSender ? 'text-right' : ''}`}
+                          >
+                            <div
+                              className={`max-w-xs rounded-lg p-3 ${
+                                isSender
+                                  ? 'ml-auto bg-blue-600 text-white'
+                                  : 'bg-gray-100'
+                              }`}
+                            >
                               <p className="text-sm">{message.content}</p>
                             </div>
-                            <div className={`flex items-center gap-1 mt-1 ${
-                              isSender ? 'justify-end' : ''
-                            }`}>
+                            <div
+                              className={`mt-1 flex items-center gap-1 ${
+                                isSender ? 'justify-end' : ''
+                              }`}
+                            >
                               {isSender && message.read && (
                                 <CheckCheck className="h-3 w-3 text-gray-400" />
                               )}
-                              <span className="text-xs text-gray-500">
+                              <span className="text-gray-500 text-xs">
                                 {formatTime(new Date(message.createdAt))}
                               </span>
                             </div>
@@ -307,8 +349,7 @@ export function MessagesContent({ conversations, currentUserId }: MessagesConten
               <div className="border-t p-4">
                 <div className="flex items-center gap-2">
                   <Input
-                    placeholder="Type a message..."
-                    value={newMessage}
+                    className="flex-1"
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyPress={(e) => {
                       if (e.key === 'Enter' && newMessage.trim()) {
@@ -316,10 +357,10 @@ export function MessagesContent({ conversations, currentUserId }: MessagesConten
                         setNewMessage('');
                       }
                     }}
-                    className="flex-1"
+                    placeholder="Type a message..."
+                    value={newMessage}
                   />
-                  <Button 
-                    size="sm"
+                  <Button
                     disabled={!newMessage.trim()}
                     onClick={() => {
                       if (newMessage.trim()) {
@@ -327,6 +368,7 @@ export function MessagesContent({ conversations, currentUserId }: MessagesConten
                         setNewMessage('');
                       }
                     }}
+                    size="sm"
                   >
                     <Send className="h-4 w-4" />
                   </Button>
@@ -334,11 +376,15 @@ export function MessagesContent({ conversations, currentUserId }: MessagesConten
               </div>
             </>
           ) : (
-            <CardContent className="flex-1 flex items-center justify-center">
+            <CardContent className="flex flex-1 items-center justify-center">
               <div className="text-center">
-                <MessageCircle className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Select a conversation</h3>
-                <p className="text-gray-600">Choose a conversation from the left to start chatting</p>
+                <MessageCircle className="mx-auto mb-4 h-16 w-16 text-gray-400" />
+                <h3 className="mb-2 font-medium text-gray-900 text-lg">
+                  Select a conversation
+                </h3>
+                <p className="text-gray-600">
+                  Choose a conversation from the left to start chatting
+                </p>
               </div>
             </CardContent>
           )}

@@ -1,17 +1,22 @@
 import { currentUser } from '@repo/auth/server';
-import { database } from '@repo/database';
-import { redirect } from 'next/navigation';
-import type { Metadata } from 'next';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { Heart, Package, ExternalLink, ShoppingCart, Bell } from 'lucide-react';
-import Link from 'next/link';
-import Image from 'next/image';
 import { formatPrice } from '@repo/commerce/utils';
-import { decimalToNumber } from '@repo/utils';
+import { database } from '@repo/database';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@repo/design-system/components';
 import { getDictionary } from '@repo/internationalization';
 import { createMetadata } from '@repo/seo/metadata';
+import { decimalToNumber } from '@repo/utils';
+import { Bell, ExternalLink, Heart, Package, ShoppingCart } from 'lucide-react';
+import type { Metadata } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 type FavoritesProps = {
   params: Promise<{
@@ -23,7 +28,7 @@ export const generateMetadata = async ({
   params,
 }: FavoritesProps): Promise<Metadata> => {
   const { locale } = await params;
-  const dictionary = await getDictionary(locale);
+  const _dictionary = await getDictionary(locale);
 
   return createMetadata({
     title: 'My Favorites - Threadly',
@@ -33,16 +38,16 @@ export const generateMetadata = async ({
 
 const FavoritesPage = async ({ params }: FavoritesProps) => {
   const { locale } = await params;
-  const dictionary = await getDictionary(locale);
+  const _dictionary = await getDictionary(locale);
   const user = await currentUser();
-  
+
   if (!user) {
     redirect('/sign-in');
   }
 
   // Get database user
   const dbUser = await database.user.findUnique({
-    where: { clerkId: user.id }
+    where: { clerkId: user.id },
   });
 
   if (!dbUser) {
@@ -98,18 +103,19 @@ const FavoritesPage = async ({ params }: FavoritesProps) => {
 
   return (
     <main className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
+      <div className="mx-auto max-w-7xl px-4 py-8">
+        <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-2">My Favorites</h1>
+            <h1 className="mb-2 font-bold text-3xl">My Favorites</h1>
             <p className="text-muted-foreground">
-              {favorites.length} {favorites.length === 1 ? 'item' : 'items'} you've saved
+              {favorites.length} {favorites.length === 1 ? 'item' : 'items'}{' '}
+              you've saved
             </p>
           </div>
           {favorites.length > 0 && (
             <Button asChild>
               <Link href="/">
-                <Package className="h-4 w-4 mr-2" />
+                <Package className="mr-2 h-4 w-4" />
                 Browse More
               </Link>
             </Button>
@@ -117,16 +123,17 @@ const FavoritesPage = async ({ params }: FavoritesProps) => {
         </div>
 
         {favorites.length === 0 ? (
-          <Card className="max-w-2xl mx-auto">
-            <CardContent className="text-center py-16">
-              <Heart className="h-20 w-20 text-muted-foreground mx-auto mb-6" />
-              <h3 className="text-2xl font-semibold mb-3">No favorites yet</h3>
-              <p className="text-muted-foreground mb-8 text-lg">
-                Start browsing and save items you love by clicking the heart icon
+          <Card className="mx-auto max-w-2xl">
+            <CardContent className="py-16 text-center">
+              <Heart className="mx-auto mb-6 h-20 w-20 text-muted-foreground" />
+              <h3 className="mb-3 font-semibold text-2xl">No favorites yet</h3>
+              <p className="mb-8 text-lg text-muted-foreground">
+                Start browsing and save items you love by clicking the heart
+                icon
               </p>
               <Button asChild size="lg">
                 <Link href="/">
-                  <Package className="h-5 w-5 mr-2" />
+                  <Package className="mr-2 h-5 w-5" />
                   Start Browsing
                 </Link>
               </Button>
@@ -135,44 +142,53 @@ const FavoritesPage = async ({ params }: FavoritesProps) => {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {favorites.map((favorite) => (
-              <Card key={favorite.id} className="group hover:shadow-lg transition-all duration-200">
-                <div className="aspect-square relative overflow-hidden rounded-t-lg">
+              <Card
+                className="group transition-all duration-200 hover:shadow-lg"
+                key={favorite.id}
+              >
+                <div className="relative aspect-square overflow-hidden rounded-t-lg">
                   {favorite.product.images[0] ? (
                     <Image
-                      src={favorite.product.images[0].imageUrl}
                       alt={favorite.product.title}
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
                       fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      src={favorite.product.images[0].imageUrl}
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 flex items-center justify-center">
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
                       <Package className="h-12 w-12 text-white opacity-80" />
                     </div>
                   )}
-                  
+
                   {/* Status Badge */}
                   <div className="absolute top-3 left-3">
-                    <Badge 
-                      variant={favorite.product.status === 'AVAILABLE' ? 'default' : 'secondary'}
-                      className="text-xs font-medium"
+                    <Badge
+                      className="font-medium text-xs"
+                      variant={
+                        favorite.product.status === 'AVAILABLE'
+                          ? 'default'
+                          : 'secondary'
+                      }
                     >
-                      {favorite.product.status === 'AVAILABLE' ? 'Available' : 'Sold'}
+                      {favorite.product.status === 'AVAILABLE'
+                        ? 'Available'
+                        : 'Sold'}
                     </Badge>
                   </div>
 
                   {/* Favorite Count */}
-                  <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                  <div className="absolute top-3 right-3 flex items-center gap-1 rounded-full bg-black/60 px-2 py-1 text-white text-xs backdrop-blur-sm">
                     <Heart className="h-3 w-3 fill-current" />
                     {favorite.product._count.favorites}
                   </div>
                 </div>
 
                 <CardHeader className="p-4">
-                  <CardTitle className="text-lg line-clamp-2 mb-2">
+                  <CardTitle className="mb-2 line-clamp-2 text-lg">
                     {favorite.product.title}
                   </CardTitle>
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-green-600">
+                    <span className="font-bold text-2xl text-green-600">
                       {formatPrice(decimalToNumber(favorite.product.price))}
                     </span>
                     <Badge variant="outline">
@@ -182,23 +198,32 @@ const FavoritesPage = async ({ params }: FavoritesProps) => {
                 </CardHeader>
 
                 <CardContent className="p-4 pt-0">
-                  <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
+                  <div className="mb-4 flex items-center justify-between text-muted-foreground text-sm">
                     <span>by {getSellerName(favorite.product.seller)}</span>
-                    <span className="capitalize">{favorite.product.condition.toLowerCase()}</span>
+                    <span className="capitalize">
+                      {favorite.product.condition.toLowerCase()}
+                    </span>
                   </div>
 
                   <div className="flex gap-2">
-                    <Button asChild size="sm" className="flex-1">
+                    <Button asChild className="flex-1" size="sm">
                       <Link href={`/product/${favorite.product.id}`}>
-                        <ExternalLink className="h-4 w-4 mr-2" />
+                        <ExternalLink className="mr-2 h-4 w-4" />
                         View
                       </Link>
                     </Button>
-                    
+
                     {favorite.product.status === 'AVAILABLE' && (
-                      <Button asChild size="sm" variant="outline" className="flex-1">
-                        <Link href={`/product/${favorite.product.id}?action=add-to-cart`}>
-                          <ShoppingCart className="h-4 w-4 mr-2" />
+                      <Button
+                        asChild
+                        className="flex-1"
+                        size="sm"
+                        variant="outline"
+                      >
+                        <Link
+                          href={`/product/${favorite.product.id}?action=add-to-cart`}
+                        >
+                          <ShoppingCart className="mr-2 h-4 w-4" />
                           Buy Now
                         </Link>
                       </Button>
@@ -212,64 +237,72 @@ const FavoritesPage = async ({ params }: FavoritesProps) => {
 
         {/* Enhanced Quick Actions with Price Alerts */}
         {favorites.length > 0 && (
-          <div className="border-t pt-8 mt-12">
-            <h2 className="text-2xl font-semibold mb-6">Quick Actions</h2>
+          <div className="mt-12 border-t pt-8">
+            <h2 className="mb-6 font-semibold text-2xl">Quick Actions</h2>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              <Card className="hover:shadow-md transition-shadow">
+              <Card className="transition-shadow hover:shadow-md">
                 <CardContent className="p-6">
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className="p-2 bg-blue-100 rounded-lg">
+                  <div className="mb-3 flex items-start gap-3">
+                    <div className="rounded-lg bg-blue-100 p-2">
                       <Bell className="h-5 w-5 text-blue-600" />
                     </div>
                     <div>
-                      <h4 className="font-semibold mb-1">Price Alerts</h4>
-                      <p className="text-sm text-muted-foreground mb-4">
+                      <h4 className="mb-1 font-semibold">Price Alerts</h4>
+                      <p className="mb-4 text-muted-foreground text-sm">
                         Get notified when your favorite items go on sale
                       </p>
                     </div>
                   </div>
-                  <Button size="sm" className="w-full">
-                    Enable Price Alerts
+                  <Button className="w-full" disabled size="sm">
+                    Enable Price Alerts (Coming Soon)
                   </Button>
                 </CardContent>
               </Card>
-              
-              <Card className="hover:shadow-md transition-shadow">
+
+              <Card className="transition-shadow hover:shadow-md">
                 <CardContent className="p-6">
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className="p-2 bg-green-100 rounded-lg">
+                  <div className="mb-3 flex items-start gap-3">
+                    <div className="rounded-lg bg-green-100 p-2">
                       <Heart className="h-5 w-5 text-green-600" />
                     </div>
                     <div>
-                      <h4 className="font-semibold mb-1">Share Your List</h4>
-                      <p className="text-sm text-muted-foreground mb-4">
+                      <h4 className="mb-1 font-semibold">Share Your List</h4>
+                      <p className="mb-4 text-muted-foreground text-sm">
                         Show friends what you're interested in
                       </p>
                     </div>
                   </div>
-                  <Button size="sm" variant="outline" className="w-full">
-                    Share Favorites
+                  <Button
+                    className="w-full"
+                    disabled
+                    size="sm"
+                    variant="outline"
+                  >
+                    Share Favorites (Coming Soon)
                   </Button>
                 </CardContent>
               </Card>
-              
-              <Card className="hover:shadow-md transition-shadow">
+
+              <Card className="transition-shadow hover:shadow-md">
                 <CardContent className="p-6">
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className="p-2 bg-purple-100 rounded-lg">
+                  <div className="mb-3 flex items-start gap-3">
+                    <div className="rounded-lg bg-purple-100 p-2">
                       <Package className="h-5 w-5 text-purple-600" />
                     </div>
                     <div>
-                      <h4 className="font-semibold mb-1">Similar Items</h4>
-                      <p className="text-sm text-muted-foreground mb-4">
+                      <h4 className="mb-1 font-semibold">Similar Items</h4>
+                      <p className="mb-4 text-muted-foreground text-sm">
                         Find items like your favorites
                       </p>
                     </div>
                   </div>
-                  <Button asChild size="sm" variant="outline" className="w-full">
-                    <Link href="/?similar=true">
-                      Discover More
-                    </Link>
+                  <Button
+                    asChild
+                    className="w-full"
+                    size="sm"
+                    variant="outline"
+                  >
+                    <Link href="/?similar=true">Discover More</Link>
                   </Button>
                 </CardContent>
               </Card>

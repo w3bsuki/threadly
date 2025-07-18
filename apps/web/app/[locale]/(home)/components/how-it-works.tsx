@@ -1,8 +1,14 @@
-import React from 'react';
 import { Button } from '@repo/design-system/components';
-import { Search, Camera, MessageCircle, ShoppingBag, Heart, Zap } from 'lucide-react';
-import Link from 'next/link';
 import type { Dictionary } from '@repo/internationalization';
+import {
+  Camera,
+  Heart,
+  MessageCircle,
+  Search,
+  ShoppingBag,
+  Zap,
+} from 'lucide-react';
+import Link from 'next/link';
 
 type HowItWorksProps = {
   dictionary: Dictionary;
@@ -13,34 +19,38 @@ const steps = [
     id: 1,
     icon: Search,
     title: 'Discover',
-    description: 'Browse thousands of unique fashion items or search for exactly what you want',
+    description:
+      'Browse thousands of unique fashion items or search for exactly what you want',
     color: 'from-purple-500 to-pink-500',
-    bgColor: 'bg-purple-50'
+    bgColor: 'bg-purple-50',
   },
   {
     id: 2,
     icon: Heart,
     title: 'Love It',
-    description: 'Found something perfect? Save it to your favorites or buy it instantly',
+    description:
+      'Found something perfect? Save it to your favorites or buy it instantly',
     color: 'from-pink-500 to-rose-500',
-    bgColor: 'bg-pink-50'
+    bgColor: 'bg-pink-50',
   },
   {
     id: 3,
     icon: MessageCircle,
     title: 'Connect',
-    description: 'Chat with sellers, ask questions, and negotiate prices directly',
+    description:
+      'Chat with sellers, ask questions, and negotiate prices directly',
     color: 'from-blue-500 to-cyan-500',
-    bgColor: 'bg-blue-50'
+    bgColor: 'bg-blue-50',
   },
   {
     id: 4,
     icon: ShoppingBag,
     title: 'Get It',
-    description: 'Secure payment, fast shipping, and buyer protection on every purchase',
+    description:
+      'Secure payment, fast shipping, and buyer protection on every purchase',
     color: 'from-green-500 to-emerald-500',
-    bgColor: 'bg-green-50'
-  }
+    bgColor: 'bg-green-50',
+  },
 ];
 
 const sellingSteps = [
@@ -49,22 +59,22 @@ const sellingSteps = [
     icon: Camera,
     title: 'Photo & List',
     description: 'Take photos and create your listing in under 2 minutes',
-    color: 'from-orange-500 to-amber-500'
+    color: 'from-orange-500 to-amber-500',
   },
   {
     id: 2,
     icon: Zap,
     title: 'Get Noticed',
     description: 'Your item goes live instantly to our active community',
-    color: 'from-violet-500 to-purple-500'
+    color: 'from-violet-500 to-purple-500',
   },
   {
     id: 3,
     icon: MessageCircle,
     title: 'Sell Fast',
     description: 'Chat with interested buyers and close the deal',
-    color: 'from-teal-500 to-cyan-500'
-  }
+    color: 'from-teal-500 to-cyan-500',
+  },
 ];
 
 export const HowItWorks = async ({ dictionary }: HowItWorksProps) => {
@@ -76,8 +86,9 @@ export const HowItWorks = async ({ dictionary }: HowItWorksProps) => {
           <h2 className="mb-6 font-bold text-3xl tracking-tight md:text-5xl">
             How Threadly Works
           </h2>
-          <p className="mx-auto max-w-3xl text-lg text-gray-600">
-            Whether you're buying or selling, we've made it simple, safe, and fun to find your perfect fashion match
+          <p className="mx-auto max-w-3xl text-gray-600 text-lg">
+            Whether you're buying or selling, we've made it simple, safe, and
+            fun to find your perfect fashion match
           </p>
         </div>
 
@@ -94,28 +105,38 @@ export const HowItWorks = async ({ dictionary }: HowItWorksProps) => {
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             {steps.map((step, index) => (
-              <div key={step.id} className="relative">
+              <div className="relative" key={step.id}>
                 {/* Connecting Line */}
                 {index < steps.length - 1 && (
                   <div className="absolute top-12 left-1/2 hidden h-px w-full bg-gradient-to-r from-gray-300 to-transparent lg:block" />
                 )}
-                
-                <div className={`relative rounded-2xl ${step.bgColor} p-6 text-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1`}>
+
+                <div
+                  className={`relative rounded-2xl ${step.bgColor} hover:-translate-y-1 p-6 text-center transition-all duration-300 hover:shadow-lg`}
+                >
                   {/* Step Number */}
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <div className={`flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r ${step.color} text-xs font-bold text-white`}>
+                  <div className="-top-3 -translate-x-1/2 absolute left-1/2">
+                    <div
+                      className={`flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r ${step.color} font-bold text-white text-xs`}
+                    >
                       {step.id}
                     </div>
                   </div>
 
                   {/* Icon */}
-                  <div className={`mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-r ${step.color}`}>
+                  <div
+                    className={`mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-r ${step.color}`}
+                  >
                     <step.icon className="h-8 w-8 text-white" />
                   </div>
 
                   {/* Content */}
-                  <h4 className="mb-3 font-bold text-lg text-gray-900">{step.title}</h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">{step.description}</p>
+                  <h4 className="mb-3 font-bold text-gray-900 text-lg">
+                    {step.title}
+                  </h4>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    {step.description}
+                  </p>
                 </div>
               </div>
             ))}
@@ -135,28 +156,36 @@ export const HowItWorks = async ({ dictionary }: HowItWorksProps) => {
 
           <div className="grid gap-8 md:grid-cols-3">
             {sellingSteps.map((step, index) => (
-              <div key={step.id} className="relative">
+              <div className="relative" key={step.id}>
                 {/* Connecting Line */}
                 {index < sellingSteps.length - 1 && (
                   <div className="absolute top-12 left-1/2 hidden h-px w-full bg-gradient-to-r from-gray-300 to-transparent md:block" />
                 )}
-                
-                <div className="relative rounded-2xl bg-white p-8 text-center shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+
+                <div className="hover:-translate-y-1 relative rounded-2xl bg-white p-8 text-center shadow-lg transition-all duration-300 hover:shadow-xl">
                   {/* Step Number */}
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <div className={`flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r ${step.color} text-sm font-bold text-white`}>
+                  <div className="-top-4 -translate-x-1/2 absolute left-1/2">
+                    <div
+                      className={`flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r ${step.color} font-bold text-sm text-white`}
+                    >
                       {step.id}
                     </div>
                   </div>
 
                   {/* Icon */}
-                  <div className={`mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-r ${step.color}`}>
+                  <div
+                    className={`mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-r ${step.color}`}
+                  >
                     <step.icon className="h-10 w-10 text-white" />
                   </div>
 
                   {/* Content */}
-                  <h4 className="mb-4 font-bold text-xl text-gray-900">{step.title}</h4>
-                  <p className="text-gray-600 leading-relaxed">{step.description}</p>
+                  <h4 className="mb-4 font-bold text-gray-900 text-xl">
+                    {step.title}
+                  </h4>
+                  <p className="text-gray-600 leading-relaxed">
+                    {step.description}
+                  </p>
                 </div>
               </div>
             ))}
@@ -171,16 +200,26 @@ export const HowItWorks = async ({ dictionary }: HowItWorksProps) => {
           <p className="mb-8 text-lg text-purple-100">
             Join thousands of fashion lovers buying and selling on Threadly
           </p>
-          
+
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-            <Button size="lg" variant="secondary" className="gap-2 bg-white px-8 py-6 text-lg text-purple-600 hover:bg-gray-50" asChild>
+            <Button
+              asChild
+              className="gap-2 bg-white px-8 py-6 text-lg text-purple-600 hover:bg-gray-50"
+              size="lg"
+              variant="secondary"
+            >
               <Link href="/products">
                 <Search className="h-5 w-5" />
                 Start Shopping
               </Link>
             </Button>
-            
-            <Button size="lg" variant="outline" className="gap-2 border-white px-8 py-6 text-lg text-white hover:bg-white/10" asChild>
+
+            <Button
+              asChild
+              className="gap-2 border-white px-8 py-6 text-lg text-white hover:bg-white/10"
+              size="lg"
+              variant="outline"
+            >
               <Link href="/auth/register">
                 <Camera className="h-5 w-5" />
                 Start Selling
@@ -191,4 +230,4 @@ export const HowItWorks = async ({ dictionary }: HowItWorksProps) => {
       </div>
     </section>
   );
-}; 
+};

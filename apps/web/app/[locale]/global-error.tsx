@@ -1,7 +1,7 @@
 'use client';
 
-import { ErrorPage } from '@repo/error-handling/error-pages';
 import { fonts } from '@repo/design-system/lib/fonts';
+import { ErrorPage } from '@repo/error-handling/error-pages';
 import { captureException } from '@sentry/nextjs';
 import type NextError from 'next/error';
 import { useEffect } from 'react';
@@ -24,7 +24,7 @@ const GlobalError = ({ error, reset }: GlobalErrorProperties) => {
   };
 
   return (
-    <html lang="en" className={fonts}>
+    <html className={fonts} lang="en">
       <body>
         <ErrorPage
           error={standardError}

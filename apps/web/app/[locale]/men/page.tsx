@@ -5,14 +5,14 @@ export default function MenPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Category Navigation */}
-      <CategoryNav 
+      <CategoryNav
         category="men"
-        title="Men's Fashion"
         description="Discover unique men's fashion from our community of sellers"
+        title="Men's Fashion"
       />
-      
+
       {/* Product Grid with Men's Filter */}
       <ProductGrid category="men" />
     </div>
   );
-} 
+}

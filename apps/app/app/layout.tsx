@@ -29,6 +29,12 @@ type RootLayoutProperties = {
 
 const RootLayout = ({ children }: RootLayoutProperties) => (
   <html lang="en" className={fonts} suppressHydrationWarning>
+    <head>
+      <link rel="preconnect" href="https://img.clerk.com" />
+      <link rel="preconnect" href="https://utfs.io" />
+      <link rel="dns-prefetch" href="https://img.clerk.com" />
+      <link rel="dns-prefetch" href="https://utfs.io" />
+    </head>
     <body>
       <AppErrorBoundary>
         <AuthProvider

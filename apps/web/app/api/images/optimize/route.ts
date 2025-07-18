@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { ImageOptimizationService } from '../../../../lib/image-optimization';
-import { z } from 'zod';
 import { cache } from '@repo/cache';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { ImageOptimizationService } from '../../../../lib/image-optimization';
 
 const querySchema = z.object({
   url: z.string().url(),
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const params = Object.fromEntries(searchParams.entries());
-    
+
     const validation = querySchema.safeParse(params);
     if (!validation.success) {
       return NextResponse.json(
@@ -30,8 +30,12 @@ export async function GET(request: NextRequest) {
     const cacheKey = `optimized_image:${url}:${width}:${height}:${quality}:${format}`;
 
     // Check cache first
-    const cached = await cache.get<{ data: string; contentType: string; headers: Record<string, string> }>(cacheKey);
-    if (cached && cached.data) {
+    const cached = await cache.get<{
+      data: string;
+      contentType: string;
+      headers: Record<string, string>;
+    }>(cacheKey);
+    if (cached?.data) {
       const buffer = Buffer.from(cached.data, 'base64');
       return new NextResponse(buffer, {
         headers: cached.headers,
@@ -76,8 +80,7 @@ export async function GET(request: NextRequest) {
     return new NextResponse(optimized.data, {
       headers: optimized.headers,
     });
-  } catch (error) {
-    console.error('Image optimization error:', error);
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

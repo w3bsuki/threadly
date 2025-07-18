@@ -16,6 +16,7 @@ import { StepPhotosBasic } from './wizard-steps/step-photos-basic';
 import { StepDescription } from './wizard-steps/step-description';
 import { StepDetails } from './wizard-steps/step-details';
 import { StepReview } from './wizard-steps/step-review';
+import { ValidationErrorDetail } from '@repo/validation/schemas';
 
 const productSchema = z.object({
   title: z.string().min(1, 'Title is required').max(100, 'Title must be less than 100 characters'),
@@ -31,12 +32,44 @@ const productSchema = z.object({
 
 type ProductFormData = z.infer<typeof productSchema>;
 
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+interface Template {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  categoryId: string;
+  condition: string;
+  brand: string;
+  size: string;
+  color: string;
+  images: string[];
+}
+
+interface DraftProduct {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  categoryId: string;
+  condition: string;
+  brand: string;
+  size: string;
+  color: string;
+  images: Array<{ imageUrl: string }>;
+}
+
 interface MultiStepWizardProps {
   userId: string;
-  selectedTemplate?: any;
-  templates: any[];
-  categories: any[];
-  draftProduct?: any;
+  selectedTemplate?: Template;
+  templates: Template[];
+  categories: Category[];
+  draftProduct?: DraftProduct;
 }
 
 const STEPS = [
@@ -69,7 +102,7 @@ export function MultiStepWizard({
       brand: draftProduct?.brand || selectedTemplate?.brand || '',
       size: draftProduct?.size || selectedTemplate?.size || '',
       color: draftProduct?.color || selectedTemplate?.color || '',
-      images: draftProduct?.images?.map((img: any) => img.imageUrl) || selectedTemplate?.images || [],
+      images: draftProduct?.images?.map((img: { imageUrl: string }) => img.imageUrl) || selectedTemplate?.images || [],
     },
     mode: 'onChange',
   });
@@ -157,7 +190,7 @@ export function MultiStepWizard({
         router.push('/selling/listings');
       } else {
         if (result.details) {
-          result.details.forEach((detail: any) => {
+          result.details.forEach((detail: ValidationErrorDetail) => {
             toast.error(`${detail.path?.join('.')}: ${detail.message}`);
           });
         } else {

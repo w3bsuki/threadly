@@ -1,15 +1,14 @@
 /**
  * Authentication Flow Tests - 95% Coverage Required
- * 
+ *
  * This test suite covers all critical authentication functionality
  * including Clerk integration, middleware, and protected routes.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { cleanup, fireEvent, render, screen, waitFor } from '@repo/testing';
 import { NextRequest, NextResponse } from 'next/server';
-import { render, screen, fireEvent, waitFor } from '@repo/testing';
-import { cleanup } from '@repo/testing';
 import React from 'react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Clerk authentication
 vi.mock('@clerk/nextjs/server', () => ({
@@ -20,8 +19,12 @@ vi.mock('@clerk/nextjs/server', () => ({
 }));
 
 vi.mock('@clerk/nextjs', () => ({
-  SignIn: vi.fn(({ children }) => <div data-testid="sign-in-component">{children}</div>),
-  SignUp: vi.fn(({ children }) => <div data-testid="sign-up-component">{children}</div>),
+  SignIn: vi.fn(({ children }) => (
+    <div data-testid="sign-in-component">{children}</div>
+  )),
+  SignUp: vi.fn(({ children }) => (
+    <div data-testid="sign-up-component">{children}</div>
+  )),
   UserButton: vi.fn(() => <div data-testid="user-button">User Button</div>),
   useUser: vi.fn(),
   useAuth: vi.fn(),
@@ -55,7 +58,7 @@ describe('Authentication Flow Tests', () => {
   describe('User Authentication State', () => {
     it('should handle authenticated user state', async () => {
       const { useUser, useAuth } = await import('@clerk/nextjs');
-      
+
       vi.mocked(useUser).mockReturnValue({
         isLoaded: true,
         isSignedIn: true,
@@ -88,12 +91,13 @@ describe('Authentication Flow Tests', () => {
 
         return (
           <div>
-            <div data-testid="user-name">{user?.firstName} {user?.lastName}</div>
-            <div data-testid="user-email">{user?.emailAddresses[0]?.emailAddress}</div>
-            <button 
-              data-testid="get-token-btn"
-              onClick={() => getToken()}
-            >
+            <div data-testid="user-name">
+              {user?.firstName} {user?.lastName}
+            </div>
+            <div data-testid="user-email">
+              {user?.emailAddresses[0]?.emailAddress}
+            </div>
+            <button data-testid="get-token-btn" onClick={() => getToken()}>
               Get Token
             </button>
           </div>
@@ -103,11 +107,13 @@ describe('Authentication Flow Tests', () => {
       render(<TestComponent />);
 
       expect(screen.getByTestId('user-name')).toHaveTextContent('John Doe');
-      expect(screen.getByTestId('user-email')).toHaveTextContent('john@example.com');
-      
+      expect(screen.getByTestId('user-email')).toHaveTextContent(
+        'john@example.com'
+      );
+
       const getTokenBtn = screen.getByTestId('get-token-btn');
       fireEvent.click(getTokenBtn);
-      
+
       await waitFor(() => {
         expect(useAuth().getToken).toHaveBeenCalled();
       });
@@ -115,7 +121,7 @@ describe('Authentication Flow Tests', () => {
 
     it('should handle unauthenticated user state', async () => {
       const { useUser, useAuth } = await import('@clerk/nextjs');
-      
+
       vi.mocked(useUser).mockReturnValue({
         isLoaded: true,
         isSignedIn: false,
@@ -133,7 +139,11 @@ describe('Authentication Flow Tests', () => {
 
       const TestComponent = () => {
         const { isSignedIn } = useUser();
-        return isSignedIn ? <div>Signed in</div> : <div data-testid="not-signed-in">Not signed in</div>;
+        return isSignedIn ? (
+          <div>Signed in</div>
+        ) : (
+          <div data-testid="not-signed-in">Not signed in</div>
+        );
       };
 
       render(<TestComponent />);
@@ -142,7 +152,7 @@ describe('Authentication Flow Tests', () => {
 
     it('should handle loading state', async () => {
       const { useUser, useAuth } = await import('@clerk/nextjs');
-      
+
       vi.mocked(useUser).mockReturnValue({
         isLoaded: false,
         isSignedIn: false,
@@ -160,7 +170,11 @@ describe('Authentication Flow Tests', () => {
 
       const TestComponent = () => {
         const { isLoaded } = useUser();
-        return isLoaded ? <div>Loaded</div> : <div data-testid="loading">Loading...</div>;
+        return isLoaded ? (
+          <div>Loaded</div>
+        ) : (
+          <div data-testid="loading">Loading...</div>
+        );
       };
 
       render(<TestComponent />);
@@ -171,21 +185,21 @@ describe('Authentication Flow Tests', () => {
   describe('Authentication Components', () => {
     it('should render SignIn component', async () => {
       const { SignIn } = await import('@clerk/nextjs');
-      
+
       render(<SignIn />);
       expect(screen.getByTestId('sign-in-component')).toBeInTheDocument();
     });
 
     it('should render SignUp component', async () => {
       const { SignUp } = await import('@clerk/nextjs');
-      
+
       render(<SignUp />);
       expect(screen.getByTestId('sign-up-component')).toBeInTheDocument();
     });
 
     it('should render UserButton component', async () => {
       const { UserButton } = await import('@clerk/nextjs');
-      
+
       render(<UserButton />);
       expect(screen.getByTestId('user-button')).toBeInTheDocument();
     });
@@ -210,7 +224,7 @@ describe('Authentication Flow Tests', () => {
       });
 
       // Mock API endpoint that requires authentication
-      const authenticatedEndpoint = async (request: NextRequest) => {
+      const authenticatedEndpoint = async (_request: NextRequest) => {
         const { userId } = await auth();
         if (!userId) {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -221,7 +235,10 @@ describe('Authentication Flow Tests', () => {
         });
 
         if (!user) {
-          return NextResponse.json({ error: 'User not found' }, { status: 404 });
+          return NextResponse.json(
+            { error: 'User not found' },
+            { status: 404 }
+          );
         }
 
         return NextResponse.json({ user });
@@ -243,7 +260,7 @@ describe('Authentication Flow Tests', () => {
         sessionId: null,
       });
 
-      const authenticatedEndpoint = async (request: NextRequest) => {
+      const authenticatedEndpoint = async (_request: NextRequest) => {
         const { userId } = await auth();
         if (!userId) {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -270,7 +287,7 @@ describe('Authentication Flow Tests', () => {
 
       vi.mocked(database.user.findUnique).mockResolvedValue(null);
 
-      const authenticatedEndpoint = async (request: NextRequest) => {
+      const authenticatedEndpoint = async (_request: NextRequest) => {
         const { userId } = await auth();
         if (!userId) {
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -281,7 +298,10 @@ describe('Authentication Flow Tests', () => {
         });
 
         if (!user) {
-          return NextResponse.json({ error: 'User not found' }, { status: 404 });
+          return NextResponse.json(
+            { error: 'User not found' },
+            { status: 404 }
+          );
         }
 
         return NextResponse.json({ user });
@@ -365,13 +385,19 @@ describe('Authentication Flow Tests', () => {
         ...updateData,
       });
 
-      const updateUserEndpoint = async (clerkId: string, updates: typeof updateData) => {
+      const updateUserEndpoint = async (
+        clerkId: string,
+        updates: typeof updateData
+      ) => {
         const user = await database.user.findUnique({
           where: { clerkId },
         });
 
         if (!user) {
-          return NextResponse.json({ error: 'User not found' }, { status: 404 });
+          return NextResponse.json(
+            { error: 'User not found' },
+            { status: 404 }
+          );
         }
 
         const updatedUser = await database.user.update({
@@ -396,7 +422,7 @@ describe('Authentication Flow Tests', () => {
   describe('Sign Out Flow', () => {
     it('should handle sign out', async () => {
       const { useAuth } = await import('@clerk/nextjs');
-      
+
       const mockSignOut = vi.fn();
       vi.mocked(useAuth).mockReturnValue({
         isLoaded: true,
@@ -410,20 +436,17 @@ describe('Authentication Flow Tests', () => {
       const SignOutComponent = () => {
         const { signOut } = useAuth();
         return (
-          <button 
-            data-testid="sign-out-btn"
-            onClick={() => signOut()}
-          >
+          <button data-testid="sign-out-btn" onClick={() => signOut()}>
             Sign Out
           </button>
         );
       };
 
       render(<SignOutComponent />);
-      
+
       const signOutBtn = screen.getByTestId('sign-out-btn');
       fireEvent.click(signOutBtn);
-      
+
       expect(mockSignOut).toHaveBeenCalled();
     });
   });
@@ -431,25 +454,28 @@ describe('Authentication Flow Tests', () => {
   describe('Authentication Middleware', () => {
     it('should protect routes with authentication middleware', async () => {
       const { authMiddleware } = await import('@repo/auth/middleware');
-      
+
       const mockMiddleware = vi.fn((request: NextRequest) => {
         const url = request.nextUrl.clone();
         const authHeader = request.headers.get('authorization');
-        
+
         if (!authHeader) {
           url.pathname = '/sign-in';
           return NextResponse.redirect(url);
         }
-        
+
         return NextResponse.next();
       });
-      
+
       vi.mocked(authMiddleware).mockImplementation(mockMiddleware);
 
       // Test protected route without auth
-      const protectedRequest = new NextRequest('http://localhost:3001/dashboard', {
-        headers: {},
-      });
+      const protectedRequest = new NextRequest(
+        'http://localhost:3001/dashboard',
+        {
+          headers: {},
+        }
+      );
 
       const response = authMiddleware(protectedRequest);
       expect(response.status).toBe(307); // Redirect status
@@ -458,27 +484,30 @@ describe('Authentication Flow Tests', () => {
 
     it('should allow access to protected routes with valid authentication', async () => {
       const { authMiddleware } = await import('@repo/auth/middleware');
-      
+
       const mockMiddleware = vi.fn((request: NextRequest) => {
         const authHeader = request.headers.get('authorization');
-        
-        if (!authHeader || !authHeader.includes('Bearer valid-token')) {
+
+        if (!authHeader?.includes('Bearer valid-token')) {
           const url = request.nextUrl.clone();
           url.pathname = '/sign-in';
           return NextResponse.redirect(url);
         }
-        
+
         return NextResponse.next();
       });
-      
+
       vi.mocked(authMiddleware).mockImplementation(mockMiddleware);
 
       // Test protected route with valid auth
-      const authenticatedRequest = new NextRequest('http://localhost:3001/dashboard', {
-        headers: {
-          'authorization': 'Bearer valid-token',
-        },
-      });
+      const authenticatedRequest = new NextRequest(
+        'http://localhost:3001/dashboard',
+        {
+          headers: {
+            authorization: 'Bearer valid-token',
+          },
+        }
+      );
 
       const response = authMiddleware(authenticatedRequest);
       expect(response.status).toBe(200);
@@ -488,14 +517,14 @@ describe('Authentication Flow Tests', () => {
   describe('Error Handling', () => {
     it('should handle Clerk API errors', async () => {
       const { auth } = await import('@clerk/nextjs/server');
-      
+
       vi.mocked(auth).mockRejectedValue(new Error('Clerk API Error'));
 
-      const errorEndpoint = async (request: NextRequest) => {
+      const errorEndpoint = async (_request: NextRequest) => {
         try {
           const { userId } = await auth();
           return NextResponse.json({ userId });
-        } catch (error) {
+        } catch (_error) {
           return NextResponse.json(
             { error: 'Authentication failed' },
             { status: 500 }
@@ -513,8 +542,10 @@ describe('Authentication Flow Tests', () => {
 
     it('should handle network errors during authentication', async () => {
       const { useAuth } = await import('@clerk/nextjs');
-      
-      const mockGetToken = vi.fn().mockRejectedValue(new Error('Network error'));
+
+      const mockGetToken = vi
+        .fn()
+        .mockRejectedValue(new Error('Network error'));
       vi.mocked(useAuth).mockReturnValue({
         isLoaded: true,
         isSignedIn: true,
@@ -531,7 +562,7 @@ describe('Authentication Flow Tests', () => {
         const handleGetToken = async () => {
           try {
             await getToken();
-          } catch (err) {
+          } catch (_err) {
             setError('Failed to get token');
           }
         };
@@ -547,12 +578,14 @@ describe('Authentication Flow Tests', () => {
       };
 
       render(<TokenComponent />);
-      
+
       const getTokenBtn = screen.getByTestId('get-token');
       fireEvent.click(getTokenBtn);
-      
+
       await waitFor(() => {
-        expect(screen.getByTestId('error')).toHaveTextContent('Failed to get token');
+        expect(screen.getByTestId('error')).toHaveTextContent(
+          'Failed to get token'
+        );
       });
     });
   });
@@ -560,7 +593,7 @@ describe('Authentication Flow Tests', () => {
   describe('Session Management', () => {
     it('should handle session expiration', async () => {
       const { useAuth } = await import('@clerk/nextjs');
-      
+
       // Initially authenticated
       const mockUseAuth = {
         isLoaded: true,
@@ -583,14 +616,16 @@ describe('Authentication Flow Tests', () => {
             if (!token) {
               setTokenError(true);
             }
-          } catch (err) {
+          } catch (_err) {
             setTokenError(true);
           }
         };
 
         return (
           <div>
-            <div data-testid="auth-status">{isSignedIn ? 'Signed In' : 'Signed Out'}</div>
+            <div data-testid="auth-status">
+              {isSignedIn ? 'Signed In' : 'Signed Out'}
+            </div>
             <button data-testid="check-token" onClick={handleGetToken}>
               Check Token
             </button>
@@ -600,15 +635,15 @@ describe('Authentication Flow Tests', () => {
       };
 
       render(<SessionComponent />);
-      
+
       expect(screen.getByTestId('auth-status')).toHaveTextContent('Signed In');
-      
+
       // Simulate session expiration
       mockUseAuth.getToken = vi.fn().mockResolvedValue(null);
-      
+
       const checkTokenBtn = screen.getByTestId('check-token');
       fireEvent.click(checkTokenBtn);
-      
+
       await waitFor(() => {
         expect(screen.getByTestId('token-error')).toBeInTheDocument();
       });

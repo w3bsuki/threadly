@@ -10,6 +10,7 @@ import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
 import { getDictionary } from '@repo/internationalization';
 import { Providers } from './components/providers';
+import { ErrorBoundary } from '@repo/utils/src/error-boundary';
 
 type AppLayoutProperties = {
   readonly children: ReactNode;
@@ -64,7 +65,9 @@ const AuthenticatedLayout = async ({ children, params }: AppLayoutProperties) =>
               Beta feature now available
             </div>
           )}
-          {children}
+          <ErrorBoundary>
+            {children}
+          </ErrorBoundary>
         </AppLayout>
         <MobileBottomNav dictionary={dictionary} />
       </MobileInteractions>

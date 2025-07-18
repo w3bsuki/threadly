@@ -33,9 +33,10 @@ export const env = createEnv({
   ],
   server: {
     // Web-specific server variables
-    PORT: process.env.NODE_ENV === 'production' 
-      ? z.string().optional()
-      : z.string().default('3001'),
+    PORT:
+      process.env.NODE_ENV === 'production'
+        ? z.string().optional()
+        : z.string().default('3001'),
     ADMIN_SECRET: z.string().optional(),
   },
   client: {

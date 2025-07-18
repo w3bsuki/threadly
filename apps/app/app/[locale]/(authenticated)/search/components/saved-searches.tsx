@@ -28,7 +28,7 @@ interface SavedSearch {
   id: string;
   name: string;
   query: string;
-  filters: any;
+  filters: SearchFilters;
   alertEnabled: boolean;
   createdAt: string;
   updatedAt: string;

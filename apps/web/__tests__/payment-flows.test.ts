@@ -1,16 +1,15 @@
 /**
  * Payment Flow Tests - 100% Coverage Required
- * 
+ *
  * This test suite covers all critical payment processing functionality
  * including Stripe integration, webhooks, and payment verification.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { NextRequest, NextResponse } from 'next/server';
-import { POST as createCheckoutSession } from '../app/api/stripe/create-checkout-session/route';
-import { POST as verifyPayment } from '../../app/app/api/stripe/verify-payment/route';
-import { mockUsers, mockProducts, mockOrders } from '@repo/testing/mocks';
 import { cleanup } from '@repo/testing';
+import { NextRequest } from 'next/server';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { POST as verifyPayment } from '../../app/app/api/stripe/verify-payment/route';
+import { POST as createCheckoutSession } from '../app/api/stripe/create-checkout-session/route';
 
 // Mock external dependencies
 vi.mock('@clerk/nextjs/server', () => ({
@@ -92,7 +91,7 @@ describe('Payment Flow Tests', () => {
       vi.mocked(database.product.findUnique).mockResolvedValue({
         id: 'prod_1',
         title: 'iPhone 13 Pro',
-        price: 79999,
+        price: 79_999,
         status: 'AVAILABLE',
         sellerId: 'user_1',
         seller: {
@@ -113,25 +112,28 @@ describe('Payment Flow Tests', () => {
         buyerId: 'user_2',
         sellerId: 'user_1',
         productId: 'prod_1',
-        amount: 79999,
+        amount: 79_999,
         status: 'PENDING',
         shippingAddressId: 'addr_temp_1',
       });
       vi.mocked(stripe.paymentIntents.create).mockResolvedValue({
         id: 'pi_test_123',
         client_secret: 'pi_test_123_secret',
-        amount: 79999,
+        amount: 79_999,
         currency: 'usd',
         status: 'requires_payment_method',
       });
 
-      const request = new NextRequest('http://localhost:3001/api/stripe/create-checkout-session', {
-        method: 'POST',
-        body: JSON.stringify({
-          productId: 'prod_1',
-          sellerId: 'user_1',
-        }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3001/api/stripe/create-checkout-session',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            productId: 'prod_1',
+            sellerId: 'user_1',
+          }),
+        }
+      );
 
       const response = await createCheckoutSession(request);
       const data = await response.json();
@@ -142,7 +144,7 @@ describe('Payment Flow Tests', () => {
 
       // Verify payment intent was created with correct parameters
       expect(stripe.paymentIntents.create).toHaveBeenCalledWith({
-        amount: 79999,
+        amount: 79_999,
         currency: 'usd',
         metadata: {
           orderId: 'order_new_1',
@@ -170,13 +172,16 @@ describe('Payment Flow Tests', () => {
       const { auth } = await import('@clerk/nextjs/server');
       vi.mocked(auth).mockResolvedValue({ userId: null });
 
-      const request = new NextRequest('http://localhost:3001/api/stripe/create-checkout-session', {
-        method: 'POST',
-        body: JSON.stringify({
-          productId: 'prod_1',
-          sellerId: 'user_1',
-        }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3001/api/stripe/create-checkout-session',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            productId: 'prod_1',
+            sellerId: 'user_1',
+          }),
+        }
+      );
 
       const response = await createCheckoutSession(request);
       const data = await response.json();
@@ -197,7 +202,7 @@ describe('Payment Flow Tests', () => {
       vi.mocked(database.product.findUnique).mockResolvedValue({
         id: 'prod_1',
         title: 'iPhone 13 Pro',
-        price: 79999,
+        price: 79_999,
         status: 'AVAILABLE',
         sellerId: 'user_1',
         seller: {
@@ -205,13 +210,16 @@ describe('Payment Flow Tests', () => {
         },
       });
 
-      const request = new NextRequest('http://localhost:3001/api/stripe/create-checkout-session', {
-        method: 'POST',
-        body: JSON.stringify({
-          productId: 'prod_1',
-          sellerId: 'user_1',
-        }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3001/api/stripe/create-checkout-session',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            productId: 'prod_1',
+            sellerId: 'user_1',
+          }),
+        }
+      );
 
       const response = await createCheckoutSession(request);
       const data = await response.json();
@@ -231,13 +239,16 @@ describe('Payment Flow Tests', () => {
       });
       vi.mocked(database.product.findUnique).mockResolvedValue(null);
 
-      const request = new NextRequest('http://localhost:3001/api/stripe/create-checkout-session', {
-        method: 'POST',
-        body: JSON.stringify({
-          productId: 'prod_nonexistent',
-          sellerId: 'user_1',
-        }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3001/api/stripe/create-checkout-session',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            productId: 'prod_nonexistent',
+            sellerId: 'user_1',
+          }),
+        }
+      );
 
       const response = await createCheckoutSession(request);
       const data = await response.json();
@@ -254,13 +265,16 @@ describe('Payment Flow Tests', () => {
         headers: { 'X-RateLimit-Remaining': '0' },
       });
 
-      const request = new NextRequest('http://localhost:3001/api/stripe/create-checkout-session', {
-        method: 'POST',
-        body: JSON.stringify({
-          productId: 'prod_1',
-          sellerId: 'user_1',
-        }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3001/api/stripe/create-checkout-session',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            productId: 'prod_1',
+            sellerId: 'user_1',
+          }),
+        }
+      );
 
       const response = await createCheckoutSession(request);
       const data = await response.json();
@@ -273,13 +287,16 @@ describe('Payment Flow Tests', () => {
       const { auth } = await import('@clerk/nextjs/server');
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_user_2' });
 
-      const request = new NextRequest('http://localhost:3001/api/stripe/create-checkout-session', {
-        method: 'POST',
-        body: JSON.stringify({
-          productId: '', // Invalid empty string
-          sellerId: 'user_1',
-        }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3001/api/stripe/create-checkout-session',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            productId: '', // Invalid empty string
+            sellerId: 'user_1',
+          }),
+        }
+      );
 
       const response = await createCheckoutSession(request);
       const data = await response.json();
@@ -293,13 +310,16 @@ describe('Payment Flow Tests', () => {
       const { isStripeConfigured } = await import('@repo/payments');
       vi.mocked(isStripeConfigured).mockReturnValue(false);
 
-      const request = new NextRequest('http://localhost:3001/api/stripe/create-checkout-session', {
-        method: 'POST',
-        body: JSON.stringify({
-          productId: 'prod_1',
-          sellerId: 'user_1',
-        }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3001/api/stripe/create-checkout-session',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            productId: 'prod_1',
+            sellerId: 'user_1',
+          }),
+        }
+      );
 
       const response = await createCheckoutSession(request);
       const data = await response.json();
@@ -333,7 +353,7 @@ describe('Payment Flow Tests', () => {
       vi.mocked(stripe.paymentIntents.retrieve).mockResolvedValue({
         id: 'pi_test_123',
         status: 'succeeded',
-        amount: 79999,
+        amount: 79_999,
         created: Date.now() / 1000,
         metadata: {
           orderId: 'order_1',
@@ -348,13 +368,13 @@ describe('Payment Flow Tests', () => {
         buyerId: 'user_2',
         sellerId: 'user_1',
         productId: 'prod_1',
-        amount: { toNumber: () => 79999 },
+        amount: { toNumber: () => 79_999 },
         status: 'PENDING',
         product: {
           id: 'prod_1',
           title: 'iPhone 13 Pro',
           description: 'Excellent condition',
-          price: { toNumber: () => 79999 },
+          price: { toNumber: () => 79_999 },
           condition: 'VERY_GOOD',
           images: [{ url: 'https://example.com/image1.jpg' }],
           seller: { id: 'user_1', name: 'John Doe' },
@@ -367,12 +387,15 @@ describe('Payment Flow Tests', () => {
         status: 'PAID',
       });
 
-      const request = new NextRequest('http://localhost:3000/api/stripe/verify-payment', {
-        method: 'POST',
-        body: JSON.stringify({
-          paymentIntentId: 'pi_test_123',
-        }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/stripe/verify-payment',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            paymentIntentId: 'pi_test_123',
+          }),
+        }
+      );
 
       const response = await verifyPayment(request);
       const data = await response.json();
@@ -382,7 +405,7 @@ describe('Payment Flow Tests', () => {
       expect(data.order).toBeDefined();
       expect(data.order.id).toBe('order_1');
       expect(data.order.orderItems).toHaveLength(1);
-      expect(data.order.total).toBe(79999 * 1.08); // Including 8% tax
+      expect(data.order.total).toBe(79_999 * 1.08); // Including 8% tax
     });
 
     it('should reject unauthorized payment verification', async () => {
@@ -390,12 +413,15 @@ describe('Payment Flow Tests', () => {
         currentUser: vi.fn(() => Promise.resolve(null)),
       }));
 
-      const request = new NextRequest('http://localhost:3000/api/stripe/verify-payment', {
-        method: 'POST',
-        body: JSON.stringify({
-          paymentIntentId: 'pi_test_123',
-        }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/stripe/verify-payment',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            paymentIntentId: 'pi_test_123',
+          }),
+        }
+      );
 
       const response = await verifyPayment(request);
       const data = await response.json();
@@ -426,7 +452,7 @@ describe('Payment Flow Tests', () => {
       vi.mocked(stripe.paymentIntents.retrieve).mockResolvedValue({
         id: 'pi_test_123',
         status: 'succeeded',
-        amount: 79999,
+        amount: 79_999,
         created: Date.now() / 1000,
         metadata: {
           orderId: 'order_1',
@@ -436,12 +462,15 @@ describe('Payment Flow Tests', () => {
         },
       });
 
-      const request = new NextRequest('http://localhost:3000/api/stripe/verify-payment', {
-        method: 'POST',
-        body: JSON.stringify({
-          paymentIntentId: 'pi_test_123',
-        }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/stripe/verify-payment',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            paymentIntentId: 'pi_test_123',
+          }),
+        }
+      );
 
       const response = await verifyPayment(request);
       const data = await response.json();
@@ -472,7 +501,7 @@ describe('Payment Flow Tests', () => {
       vi.mocked(stripe.paymentIntents.retrieve).mockResolvedValue({
         id: 'pi_test_123',
         status: 'requires_payment_method',
-        amount: 79999,
+        amount: 79_999,
         created: Date.now() / 1000,
         metadata: {
           orderId: 'order_1',
@@ -482,12 +511,15 @@ describe('Payment Flow Tests', () => {
         },
       });
 
-      const request = new NextRequest('http://localhost:3000/api/stripe/verify-payment', {
-        method: 'POST',
-        body: JSON.stringify({
-          paymentIntentId: 'pi_test_123',
-        }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/stripe/verify-payment',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            paymentIntentId: 'pi_test_123',
+          }),
+        }
+      );
 
       const response = await verifyPayment(request);
       const data = await response.json();
@@ -519,7 +551,7 @@ describe('Payment Flow Tests', () => {
       vi.mocked(stripe.paymentIntents.retrieve).mockResolvedValue({
         id: 'pi_test_123',
         status: 'succeeded',
-        amount: 109998, // Total for 2 items
+        amount: 109_998, // Total for 2 items
         created: Date.now() / 1000,
         metadata: {
           // No orderId for cart scenario
@@ -533,14 +565,14 @@ describe('Payment Flow Tests', () => {
           buyerId: 'user_2',
           sellerId: 'user_1',
           productId: 'prod_1',
-          amount: { toNumber: () => 79999 },
+          amount: { toNumber: () => 79_999 },
           status: 'PENDING',
           createdAt: new Date(),
           product: {
             id: 'prod_1',
             title: 'iPhone 13 Pro',
             description: 'Excellent condition',
-            price: { toNumber: () => 79999 },
+            price: { toNumber: () => 79_999 },
             condition: 'VERY_GOOD',
             images: [{ url: 'https://example.com/image1.jpg' }],
             seller: { id: 'user_1', name: 'John Doe' },
@@ -552,14 +584,14 @@ describe('Payment Flow Tests', () => {
           buyerId: 'user_2',
           sellerId: 'user_1',
           productId: 'prod_2',
-          amount: { toNumber: () => 29999 },
+          amount: { toNumber: () => 29_999 },
           status: 'PENDING',
           createdAt: new Date(),
           product: {
             id: 'prod_2',
             title: 'Nike Shoes',
             description: 'Great condition',
-            price: { toNumber: () => 29999 },
+            price: { toNumber: () => 29_999 },
             condition: 'GOOD',
             images: [{ url: 'https://example.com/image2.jpg' }],
             seller: { id: 'user_1', name: 'John Doe' },
@@ -570,12 +602,15 @@ describe('Payment Flow Tests', () => {
 
       vi.mocked(database.order.findMany).mockResolvedValue(mockOrders);
 
-      const request = new NextRequest('http://localhost:3000/api/stripe/verify-payment', {
-        method: 'POST',
-        body: JSON.stringify({
-          paymentIntentId: 'pi_test_123',
-        }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/stripe/verify-payment',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            paymentIntentId: 'pi_test_123',
+          }),
+        }
+      );
 
       const response = await verifyPayment(request);
       const data = await response.json();
@@ -584,7 +619,7 @@ describe('Payment Flow Tests', () => {
       expect(data.status).toBe('succeeded');
       expect(data.order.orderItems).toHaveLength(2);
       expect(data.order.total).toBe(1099.98); // Payment amount in dollars
-      expect(data.order.subtotal).toBe(79999 + 29999); // Sum of order amounts
+      expect(data.order.subtotal).toBe(79_999 + 29_999); // Sum of order amounts
     });
   });
 
@@ -602,7 +637,7 @@ describe('Payment Flow Tests', () => {
       vi.mocked(database.product.findUnique).mockResolvedValue({
         id: 'prod_1',
         title: 'iPhone 13 Pro',
-        price: 79999,
+        price: 79_999,
         status: 'AVAILABLE',
         sellerId: 'user_1',
         seller: { stripeAccountId: 'acct_stripe_123' },
@@ -613,13 +648,16 @@ describe('Payment Flow Tests', () => {
         new Error('Your card was declined.')
       );
 
-      const request = new NextRequest('http://localhost:3001/api/stripe/create-checkout-session', {
-        method: 'POST',
-        body: JSON.stringify({
-          productId: 'prod_1',
-          sellerId: 'user_1',
-        }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3001/api/stripe/create-checkout-session',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            productId: 'prod_1',
+            sellerId: 'user_1',
+          }),
+        }
+      );
 
       const response = await createCheckoutSession(request);
       const data = await response.json();
@@ -637,13 +675,16 @@ describe('Payment Flow Tests', () => {
         new Error('Database connection failed')
       );
 
-      const request = new NextRequest('http://localhost:3001/api/stripe/create-checkout-session', {
-        method: 'POST',
-        body: JSON.stringify({
-          productId: 'prod_1',
-          sellerId: 'user_1',
-        }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3001/api/stripe/create-checkout-session',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            productId: 'prod_1',
+            sellerId: 'user_1',
+          }),
+        }
+      );
 
       const response = await createCheckoutSession(request);
       const data = await response.json();

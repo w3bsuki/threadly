@@ -1,6 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
-import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 export const config = {
   matcher: [
@@ -14,11 +14,11 @@ const defaultLocale = 'bg';
 // Protected routes that require authentication
 const isProtectedRoute = createRouteMatcher([
   '/profile(.*)',
-  '/favorites(.*)', 
+  '/favorites(.*)',
   '/cart(.*)',
   '/checkout(.*)',
   '/messages(.*)',
-  '/orders(.*)'
+  '/orders(.*)',
 ]);
 
 function getLocale(request: NextRequest): string {
@@ -26,16 +26,18 @@ function getLocale(request: NextRequest): string {
   const pathnameLocale = locales.find(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
-  
-  if (pathnameLocale) return pathnameLocale;
-  
+
+  if (pathnameLocale) {
+    return pathnameLocale;
+  }
+
   // Default to defaultLocale
   return defaultLocale;
 }
 
 export default clerkMiddleware(async (auth, request: NextRequest) => {
   const pathname = request.nextUrl.pathname;
-  
+
   // Check if the pathname already includes a locale
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
@@ -45,12 +47,12 @@ export default clerkMiddleware(async (auth, request: NextRequest) => {
     // Redirect if no locale in pathname
     const locale = getLocale(request);
     const newUrl = new URL(`/${locale}${pathname}`, request.url);
-    
+
     // For the root path, we can use rewrite instead of redirect for better UX
     if (pathname === '/' && locale === defaultLocale) {
       return NextResponse.rewrite(newUrl);
     }
-    
+
     return NextResponse.redirect(newUrl);
   }
 

@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "@repo/threadly-web",
   "private": true,
   "scripts": {
     "dev": "next dev --port 3001",
@@ -48,6 +48,7 @@
     "@stripe/react-stripe-js": "^3.7.0",
     "@stripe/stripe-js": "^7.4.0",
     "@t3-oss/env-nextjs": "^0.13.8",
+    "@tanstack/react-virtual": "^3.13.12",
     "algoliasearch": "^5.32.0",
     "canvas-confetti": "^1.9.3",
     "cookies-next": "^6.0.0",

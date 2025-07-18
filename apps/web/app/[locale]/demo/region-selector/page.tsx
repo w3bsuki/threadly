@@ -1,11 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import { Button } from '@repo/design-system/components';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/design-system/components';
-import { RegionSelector } from '../../components/region-selector';
-import { useCurrency } from '../../components/providers/currency-provider';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@repo/design-system/components';
 import { getCookie } from 'cookies-next';
+import { useState } from 'react';
+import { useCurrency } from '../../components/providers/currency-provider';
+import { RegionSelector } from '../../components/region-selector';
 
 export default function RegionSelectorDemo() {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,7 +28,7 @@ export default function RegionSelectorDemo() {
   const savedLanguage = getCookie('preferredLanguage');
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-4xl">
+    <div className="container mx-auto max-w-4xl px-4 py-8">
       <Card>
         <CardHeader>
           <CardTitle>Region Selector Demo</CardTitle>
@@ -32,38 +38,43 @@ export default function RegionSelectorDemo() {
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Current Settings */}
-          <div className="rounded-lg border p-4 bg-muted/50">
-            <h3 className="font-semibold mb-2">Current Settings</h3>
+          <div className="rounded-lg border bg-muted/50 p-4">
+            <h3 className="mb-2 font-semibold">Current Settings</h3>
             <div className="space-y-1 text-sm">
-              <p><span className="font-medium">Region:</span> {savedRegion || 'Not selected'}</p>
-              <p><span className="font-medium">Language:</span> {savedLanguage || 'Not selected'}</p>
-              <p><span className="font-medium">Currency:</span> {currency}</p>
+              <p>
+                <span className="font-medium">Region:</span>{' '}
+                {savedRegion || 'Not selected'}
+              </p>
+              <p>
+                <span className="font-medium">Language:</span>{' '}
+                {savedLanguage || 'Not selected'}
+              </p>
+              <p>
+                <span className="font-medium">Currency:</span> {currency}
+              </p>
             </div>
           </div>
 
           {/* Demo Actions */}
           <div className="space-y-4">
             <Button
-              onClick={() => setIsOpen(true)}
               className="w-full sm:w-auto"
+              onClick={() => setIsOpen(true)}
             >
               Open Region Selector
             </Button>
 
-            <RegionSelector
-              isOpen={isOpen}
-              onClose={() => setIsOpen(false)}
-            />
+            <RegionSelector isOpen={isOpen} onClose={() => setIsOpen(false)} />
           </div>
 
           {/* Price Examples */}
           <div>
-            <h3 className="font-semibold mb-3">Price Display Examples</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <h3 className="mb-3 font-semibold">Price Display Examples</h3>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {demoProducts.map((product) => (
-                <div key={product.name} className="rounded-lg border p-3">
-                  <p className="text-sm font-medium">{product.name}</p>
-                  <p className="text-lg font-bold mt-1">
+                <div className="rounded-lg border p-3" key={product.name}>
+                  <p className="font-medium text-sm">{product.name}</p>
+                  <p className="mt-1 font-bold text-lg">
                     {formatPrice(product.price)}
                   </p>
                 </div>
@@ -73,8 +84,8 @@ export default function RegionSelectorDemo() {
 
           {/* Features */}
           <div className="rounded-lg border p-4">
-            <h3 className="font-semibold mb-2">Features Implemented</h3>
-            <ul className="space-y-1 text-sm text-muted-foreground">
+            <h3 className="mb-2 font-semibold">Features Implemented</h3>
+            <ul className="space-y-1 text-muted-foreground text-sm">
               <li>✓ Bulgarian (BGN) and Ukrainian (UAH) currency support</li>
               <li>✓ Geo-detection for automatic region suggestion</li>
               <li>✓ Cookie persistence for user preferences</li>

@@ -1,6 +1,6 @@
 import { auth } from '@clerk/nextjs/server';
 import { database } from '@repo/database';
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 const toggleFavoriteSchema = z.object({
@@ -10,7 +10,7 @@ const toggleFavoriteSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -23,49 +23,44 @@ export async function POST(request: NextRequest) {
 
     // Get the database user
     const user = await database.user.findUnique({
-      where: { clerkId: userId }
+      where: { clerkId: userId },
     });
 
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Check if favorite already exists
     const existingFavorite = await database.favorite.findFirst({
       where: {
         userId: user.id,
-        productId: productId
-      }
+        productId,
+      },
     });
 
     if (existingFavorite) {
       // Remove favorite
       await database.favorite.delete({
-        where: { id: existingFavorite.id }
+        where: { id: existingFavorite.id },
       });
-      
-      return NextResponse.json({ 
+
+      return NextResponse.json({
         favorited: false,
-        message: 'Removed from favorites' 
-      });
-    } else {
-      // Add favorite
-      await database.favorite.create({
-        data: {
-          userId: user.id,
-          productId: productId
-        }
-      });
-      
-      return NextResponse.json({ 
-        favorited: true,
-        message: 'Added to favorites' 
+        message: 'Removed from favorites',
       });
     }
+    // Add favorite
+    await database.favorite.create({
+      data: {
+        userId: user.id,
+        productId,
+      },
+    });
 
+    return NextResponse.json({
+      favorited: true,
+      message: 'Added to favorites',
+    });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(

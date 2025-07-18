@@ -1,45 +1,58 @@
-"use client";
+'use client';
 
+import { useAnalyticsEvents } from '@repo/analytics';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+} from '@repo/design-system/components';
+import { ErrorBoundary } from '@repo/utils';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { Heart, Search } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useSearch } from '../../../../lib/hooks/use-search';
-import { useAnalyticsEvents } from '@repo/analytics';
-import Link from 'next/link';
-import Image from 'next/image';
-import { Card, CardContent } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
-import { Search, Filter, Grid, Heart } from 'lucide-react';
+
 // Inline ProductPlaceholder for loading states
-const ProductPlaceholder = ({ className = "w-full h-full" }: { className?: string }) => {
+const ProductPlaceholder = ({
+  className = 'w-full h-full',
+}: {
+  className?: string;
+}) => {
   return (
-    <div className={`bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center ${className}`}>
+    <div
+      className={`flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 ${className}`}
+    >
       <svg
-        width="80"
+        className="text-gray-300"
+        fill="none"
         height="80"
         viewBox="0 0 80 80"
-        fill="none"
+        width="80"
         xmlns="http://www.w3.org/2000/svg"
-        className="text-gray-300"
       >
         <path
           d="M20 25 C20 25, 25 20, 40 20 C55 20, 60 25, 60 25"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
           fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeWidth="2"
         />
         <path
           d="M40 20 L40 15 C40 12, 42 10, 45 10 C48 10, 50 12, 50 15"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
           fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeWidth="2"
         />
       </svg>
     </div>
   );
 };
-import { useEffect, useState } from 'react';
+
 import { formatCurrency } from '@/lib/utils/currency';
 
 interface SearchFilters {
@@ -54,17 +67,44 @@ interface SearchFilters {
 
 interface SearchResultsProps {
   initialQuery?: string;
+  enableVirtualization?: boolean;
+  containerHeight?: number;
 }
 
-export function SearchResults({ initialQuery = '' }: SearchResultsProps) {
+export function SearchResults({ 
+  initialQuery = '', 
+  enableVirtualization = false, 
+  containerHeight = 600 
+}: SearchResultsProps) {
   const searchParams = useSearchParams();
   const [mounted, setMounted] = useState(false);
-  const { trackSearchQuery, trackLoadMore: trackSearchLoadMore } = useAnalyticsEvents();
+  const parentRef = useRef<HTMLDivElement>(null);
+  const [columns, setColumns] = useState(2);
+  const { trackSearchQuery, trackLoadMore: trackSearchLoadMore } =
+    useAnalyticsEvents();
+
+  // Calculate columns based on screen size
+  useEffect(() => {
+    const calculateColumns = () => {
+      if (typeof window === 'undefined') return 2;
+      const width = window.innerWidth;
+      if (width >= 1280) return 4; // xl
+      if (width >= 1024) return 3; // lg
+      if (width >= 640) return 2; // sm
+      return 1; // base
+    };
+
+    setColumns(calculateColumns());
+    
+    const handleResize = () => setColumns(calculateColumns());
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Extract search parameters
   const query = searchParams.get('q') || initialQuery;
   const category = searchParams.get('category');
-  const brand = searchParams.get('brand'); 
+  const brand = searchParams.get('brand');
   const size = searchParams.get('size');
   const condition = searchParams.get('condition');
   const minPrice = searchParams.get('minPrice');
@@ -72,18 +112,29 @@ export function SearchResults({ initialQuery = '' }: SearchResultsProps) {
   const sort = searchParams.get('sort');
 
   // Build initial filters from URL params
-  const validSortOptions = ['relevance', 'price_asc', 'price_desc', 'newest', 'most_viewed', 'most_favorited'] as const;
-  const sortBy = validSortOptions.includes(sort as any) ? sort as typeof validSortOptions[number] : 'relevance';
-  
+  const validSortOptions = [
+    'relevance',
+    'price_asc',
+    'price_desc',
+    'newest',
+    'most_viewed',
+    'most_favorited',
+  ] as const;
+  const sortBy = validSortOptions.includes(sort as any)
+    ? (sort as (typeof validSortOptions)[number])
+    : 'relevance';
+
   const initialFilters = {
     query,
     categories: category ? [category] : undefined,
     brands: brand ? [brand] : undefined,
-    conditions: condition ? [condition as 'NEW' | 'LIKE_NEW' | 'GOOD' | 'FAIR'] : undefined,
+    conditions: condition
+      ? [condition as 'NEW' | 'LIKE_NEW' | 'GOOD' | 'FAIR']
+      : undefined,
     sizes: size ? [size] : undefined,
-    priceMin: minPrice ? parseInt(minPrice) : undefined,
-    priceMax: maxPrice ? parseInt(maxPrice) : undefined,
-    sortBy
+    priceMin: minPrice ? Number.parseInt(minPrice, 10) : undefined,
+    priceMax: maxPrice ? Number.parseInt(maxPrice, 10) : undefined,
+    sortBy,
   } as const;
 
   const {
@@ -97,7 +148,7 @@ export function SearchResults({ initialQuery = '' }: SearchResultsProps) {
     loadMore,
     hasMore,
     totalResults,
-    isEmpty
+    isEmpty,
   } = useSearch(initialFilters);
 
   useEffect(() => {
@@ -117,29 +168,53 @@ export function SearchResults({ initialQuery = '' }: SearchResultsProps) {
         sort: sortBy,
       });
     }
-  }, [mounted, query, results, trackSearchQuery, category, brand, condition, size, minPrice, maxPrice, sortBy]);
+  }, [
+    mounted,
+    query,
+    results,
+    trackSearchQuery,
+    category,
+    brand,
+    condition,
+    size,
+    minPrice,
+    maxPrice,
+    sortBy,
+  ]);
 
   if (!mounted) {
     return <SearchSkeleton />;
   }
 
   // Transform search results to match the expected format
-  const products = results?.hits.map(hit => ({
-    id: hit.id,
-    title: hit.title,
-    brand: hit.brand || null,
-    price: hit.price,
-    condition: hit.condition,
-    size: hit.size || null,
-    images: [{ imageUrl: hit.images[0] || '' }],
-    seller: {
-      firstName: hit.sellerName?.split(' ')[0] || null,
-      lastName: hit.sellerName?.split(' ').slice(1).join(' ') || null,
-    },
-    category: {
-      name: hit.categoryName || 'Other'
-    }
-  })) || [];
+  const products =
+    results?.hits.map((hit) => ({
+      id: hit.id,
+      title: hit.title,
+      brand: hit.brand || null,
+      price: hit.price,
+      condition: hit.condition,
+      size: hit.size || null,
+      images: [{ imageUrl: hit.images[0] || '' }],
+      seller: {
+        firstName: hit.sellerName?.split(' ')[0] || null,
+        lastName: hit.sellerName?.split(' ').slice(1).join(' ') || null,
+      },
+      category: {
+        name: hit.categoryName || 'Other',
+      },
+    })) || [];
+
+  // Setup virtualization for large result sets
+  const rowCount = Math.ceil(products.length / columns);
+  const estimatedRowHeight = 400; // Approximate height per row
+  
+  const virtualizer = useVirtualizer({
+    count: rowCount,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => estimatedRowHeight,
+    overscan: 2,
+  });
 
   if (loading && !results) {
     return <SearchSkeleton />;
@@ -147,11 +222,11 @@ export function SearchResults({ initialQuery = '' }: SearchResultsProps) {
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
+      <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-medium text-red-800">Search Error</h3>
-            <p className="text-red-600 mt-1">{error}</p>
+            <h3 className="font-medium text-lg text-red-800">Search Error</h3>
+            <p className="mt-1 text-red-600">{error}</p>
           </div>
           <Button onClick={retry} variant="destructive">
             Try Again
@@ -163,152 +238,277 @@ export function SearchResults({ initialQuery = '' }: SearchResultsProps) {
 
   if (!query.trim()) {
     return (
-      <div className="text-center py-12">
-        <Search className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">Start Your Search</h2>
-        <p className="text-gray-600">Enter a search term to find products, brands, or categories</p>
+      <div className="py-12 text-center">
+        <Search className="mx-auto mb-4 h-16 w-16 text-gray-400" />
+        <h2 className="mb-2 font-semibold text-gray-900 text-xl">
+          Start Your Search
+        </h2>
+        <p className="text-gray-600">
+          Enter a search term to find products, brands, or categories
+        </p>
       </div>
     );
   }
 
   if (isEmpty) {
     return (
-      <div className="text-center py-12">
-        <Search className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">No Results Found</h2>
-        <p className="text-gray-600 mb-6">
-          We couldn't find any products matching "{query}". Try different keywords or browse our categories.
+      <div className="py-12 text-center">
+        <Search className="mx-auto mb-4 h-16 w-16 text-gray-400" />
+        <h2 className="mb-2 font-semibold text-gray-900 text-xl">
+          No Results Found
+        </h2>
+        <p className="mb-6 text-gray-600">
+          We couldn't find any products matching "{query}". Try different
+          keywords or browse our categories.
         </p>
         <div className="space-x-4">
-          <Button variant="outline" asChild>
+          <Button asChild variant="outline">
             <Link href="/products">Browse All Products</Link>
           </Button>
-          <Button onClick={clearFilters}>
-            Clear Filters
-          </Button>
+          <Button onClick={clearFilters}>Clear Filters</Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div>
-      {/* Search Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold text-gray-900">
-            {query ? `Search Results for "${query}"` : 'All Products'}
-          </h1>
-          
-          {/* Search source indicator */}
-          {source && (
-            <div className="text-sm text-gray-500">
-              {source === 'algolia' && '⚡ Powered by Algolia'}
-              {source === 'database' && '📊 Database search'}
-              {source === 'error' && '⚠️ Fallback mode'}
-            </div>
-          )}
+    <ErrorBoundary
+      fallback={
+        <div className="flex items-center justify-center min-h-[400px] p-4">
+          <div className="text-center">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Error loading search results</h3>
+            <p className="text-sm text-gray-600">Please try refreshing the page or search again.</p>
+          </div>
         </div>
-        
-        <div className="flex items-center gap-4">
-          <p className="text-gray-600">
-            {loading ? 'Searching...' : 
-             `Found ${totalResults.toLocaleString()} ${totalResults === 1 ? 'product' : 'products'}`}
-          </p>
-          
-          {results?.processingTimeMS && (
-            <span className="text-xs text-gray-400">
-              ({results.processingTimeMS}ms)
-            </span>
-          )}
+      }
+    >
+      <div>
+        {/* Search Header */}
+        <div className="mb-8">
+          <div className="mb-4 flex items-center justify-between">
+            <h1 className="font-bold text-2xl text-gray-900">
+              {query ? `Search Results for "${query}"` : 'All Products'}
+            </h1>
+
+            {/* Search source indicator */}
+            {source && (
+              <div className="text-gray-500 text-sm">
+                {source === 'algolia' && '⚡ Powered by Algolia'}
+                {source === 'database' && '📊 Database search'}
+                {source === 'error' && '⚠️ Fallback mode'}
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center gap-4">
+            <p className="text-gray-600">
+              {loading
+                ? 'Searching...'
+                : `Found ${totalResults.toLocaleString()} ${totalResults === 1 ? 'product' : 'products'}`}
+            </p>
+
+            {results?.processingTimeMS && (
+              <span className="text-gray-400 text-xs">
+                ({results.processingTimeMS}ms)
+              </span>
+            )}
+          </div>
         </div>
-      </div>
 
       {/* Results Grid */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {products.map((product) => (
-          <Link key={product.id} href={`/product/${product.id}`}>
-            <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer overflow-hidden group">
-              <div className="relative aspect-[3/4] bg-gray-100">
-                {product.images[0] && 
-                 !product.images[0].imageUrl.includes('picsum.photos') && 
-                 !product.images[0].imageUrl.includes('placehold.co') ? (
-                  <Image
-                    src={product.images[0].imageUrl}
-                    alt={product.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                  />
-                ) : (
-                  <ProductPlaceholder className="h-full w-full" />
-                )}
-                
-                {/* Heart Button */}
-                <button 
-                  className="absolute top-3 right-3 rounded-full bg-white/90 p-2 backdrop-blur-sm transition-all hover:bg-white hover:scale-110"
-                  aria-label="Add to favorites"
-                >
-                  <Heart className="h-4 w-4 text-gray-600" />
-                </button>
-              </div>
-              
-              <CardContent className="p-4">
-                <div className="mb-2">
-                  <p className="text-xs font-medium text-blue-600 uppercase tracking-wide">
-                    {product.brand || 'Unknown Brand'}
-                  </p>
-                  <h3 className="font-semibold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                    {product.title}
-                  </h3>
-                </div>
-                
-                <div className="mb-3 flex items-center justify-between">
-                  <span className="text-lg font-bold text-gray-900">
-                    {formatCurrency(product.price)}
-                  </span>
-                  {product.size && (
-                    <Badge variant="outline" className="text-xs">
-                      Size {product.size}
-                    </Badge>
+      {(!enableVirtualization || products.length < 50) ? (
+        // Non-virtualized version for smaller lists
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {products.map((product) => (
+            <Link href={`/product/${product.id}`} key={product.id}>
+              <Card className="group h-full cursor-pointer overflow-hidden transition-shadow hover:shadow-lg">
+                <div className="relative aspect-[3/4] bg-gray-100">
+                  {product.images[0] &&
+                  !product.images[0].imageUrl.includes('picsum.photos') &&
+                  !product.images[0].imageUrl.includes('placehold.co') ? (
+                    <Image
+                      alt={product.title}
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      fill
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                      src={product.images[0].imageUrl}
+                    />
+                  ) : (
+                    <ProductPlaceholder className="h-full w-full" />
                   )}
+
+                  {/* Heart Button */}
+                  <button
+                    aria-label="Add to favorites"
+                    className="absolute top-3 right-3 rounded-full bg-white/90 p-2 backdrop-blur-sm transition-all hover:scale-110 hover:bg-white"
+                  >
+                    <Heart className="h-4 w-4 text-gray-600" />
+                  </button>
                 </div>
-                
-                <div className="flex items-center justify-between text-sm text-gray-600">
-                  <span>
-                    {product.seller 
-                      ? `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() || 'Anonymous'
-                      : 'Anonymous'
-                    }
-                  </span>
-                  <Badge variant="secondary" className="text-xs">
-                    {product.condition}
-                  </Badge>
+
+                <CardContent className="p-4">
+                  <div className="mb-2">
+                    <p className="font-medium text-blue-600 text-xs uppercase tracking-wide">
+                      {product.brand || 'Unknown Brand'}
+                    </p>
+                    <h3 className="line-clamp-2 font-semibold text-gray-900 transition-colors group-hover:text-blue-600">
+                      {product.title}
+                    </h3>
+                  </div>
+
+                  <div className="mb-3 flex items-center justify-between">
+                    <span className="font-bold text-gray-900 text-lg">
+                      {formatCurrency(product.price)}
+                    </span>
+                    {product.size && (
+                      <Badge className="text-xs" variant="outline">
+                        Size {product.size}
+                      </Badge>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between text-gray-600 text-sm">
+                    <span>
+                      {product.seller
+                        ? `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() ||
+                          'Anonymous'
+                        : 'Anonymous'}
+                    </span>
+                    <Badge className="text-xs" variant="secondary">
+                      {product.condition}
+                    </Badge>
+                  </div>
+
+                  {product.category && (
+                    <p className="mt-1 text-gray-500 text-xs">
+                      in {product.category.name}
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        // Virtualized version for larger lists
+        <div
+          ref={parentRef}
+          style={{ height: `${containerHeight}px`, overflow: 'auto' }}
+          className="w-full"
+        >
+          <div
+            style={{
+              height: `${virtualizer.getTotalSize()}px`,
+              position: 'relative',
+            }}
+          >
+            {virtualizer.getVirtualItems().map((virtualRow) => {
+              const rowIndex = virtualRow.index;
+              const startIndex = rowIndex * columns;
+              const rowProducts = products.slice(startIndex, startIndex + columns);
+
+              return (
+                <div
+                  key={virtualRow.key}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: `${virtualRow.size}px`,
+                    transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                >
+                  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {rowProducts.map((product) => (
+                      <Link href={`/product/${product.id}`} key={product.id}>
+                        <Card className="group h-full cursor-pointer overflow-hidden transition-shadow hover:shadow-lg">
+                          <div className="relative aspect-[3/4] bg-gray-100">
+                            {product.images[0] &&
+                            !product.images[0].imageUrl.includes('picsum.photos') &&
+                            !product.images[0].imageUrl.includes('placehold.co') ? (
+                              <Image
+                                alt={product.title}
+                                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                fill
+                                sizes="(max-width: 768px) 50vw, 25vw"
+                                src={product.images[0].imageUrl}
+                              />
+                            ) : (
+                              <ProductPlaceholder className="h-full w-full" />
+                            )}
+
+                            {/* Heart Button */}
+                            <button
+                              aria-label="Add to favorites"
+                              className="absolute top-3 right-3 rounded-full bg-white/90 p-2 backdrop-blur-sm transition-all hover:scale-110 hover:bg-white"
+                            >
+                              <Heart className="h-4 w-4 text-gray-600" />
+                            </button>
+                          </div>
+
+                          <CardContent className="p-4">
+                            <div className="mb-2">
+                              <p className="font-medium text-blue-600 text-xs uppercase tracking-wide">
+                                {product.brand || 'Unknown Brand'}
+                              </p>
+                              <h3 className="line-clamp-2 font-semibold text-gray-900 transition-colors group-hover:text-blue-600">
+                                {product.title}
+                              </h3>
+                            </div>
+
+                            <div className="mb-3 flex items-center justify-between">
+                              <span className="font-bold text-gray-900 text-lg">
+                                {formatCurrency(product.price)}
+                              </span>
+                              {product.size && (
+                                <Badge className="text-xs" variant="outline">
+                                  Size {product.size}
+                                </Badge>
+                              )}
+                            </div>
+
+                            <div className="flex items-center justify-between text-gray-600 text-sm">
+                              <span>
+                                {product.seller
+                                  ? `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() ||
+                                    'Anonymous'
+                                  : 'Anonymous'}
+                              </span>
+                              <Badge className="text-xs" variant="secondary">
+                                {product.condition}
+                              </Badge>
+                            </div>
+
+                            {product.category && (
+                              <p className="mt-1 text-gray-500 text-xs">
+                                in {product.category.name}
+                              </p>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
-                
-                {product.category && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    in {product.category.name}
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Load More Button */}
       {products.length > 0 && hasMore && (
         <div className="mt-12 text-center">
-          <Button 
-            variant="outline" 
-            size="lg" 
+          <Button
             className="px-8 py-3 font-medium"
+            disabled={loading}
             onClick={() => {
               loadMore();
               trackSearchLoadMore('search_results', products.length);
             }}
-            disabled={loading}
+            size="lg"
+            variant="outline"
           >
             {loading ? 'Loading...' : 'Load more results'}
           </Button>
@@ -318,10 +518,13 @@ export function SearchResults({ initialQuery = '' }: SearchResultsProps) {
       {/* End of results indicator */}
       {products.length > 0 && !hasMore && !loading && (
         <div className="mt-12 text-center">
-          <p className="text-gray-500 text-sm">You've reached the end of the search results.</p>
+          <p className="text-gray-500 text-sm">
+            You've reached the end of the search results.
+          </p>
         </div>
       )}
     </div>
+    </ErrorBoundary>
   );
 }
 
@@ -329,18 +532,18 @@ function SearchSkeleton() {
   return (
     <div className="space-y-8">
       <div className="space-y-4">
-        <div className="h-8 bg-gray-200 rounded w-1/3 animate-pulse" />
-        <div className="h-4 bg-gray-200 rounded w-1/6 animate-pulse" />
+        <div className="h-8 w-1/3 animate-pulse rounded bg-gray-200" />
+        <div className="h-4 w-1/6 animate-pulse rounded bg-gray-200" />
       </div>
-      
+
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="space-y-3">
-            <div className="aspect-[3/4] bg-gray-200 rounded-lg animate-pulse" />
+          <div className="space-y-3" key={i}>
+            <div className="aspect-[3/4] animate-pulse rounded-lg bg-gray-200" />
             <div className="space-y-2">
-              <div className="h-4 bg-gray-200 rounded animate-pulse" />
-              <div className="h-4 bg-gray-200 rounded w-2/3 animate-pulse" />
-              <div className="h-4 bg-gray-200 rounded w-1/3 animate-pulse" />
+              <div className="h-4 animate-pulse rounded bg-gray-200" />
+              <div className="h-4 w-2/3 animate-pulse rounded bg-gray-200" />
+              <div className="h-4 w-1/3 animate-pulse rounded bg-gray-200" />
             </div>
           </div>
         ))}

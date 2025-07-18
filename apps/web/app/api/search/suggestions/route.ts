@@ -1,7 +1,6 @@
 import { database } from '@repo/database';
-import { NextRequest, NextResponse } from 'next/server';
-import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -30,15 +29,12 @@ export async function GET(request: NextRequest) {
           },
         },
       },
-      orderBy: [
-        { views: 'desc' },
-        { createdAt: 'desc' },
-      ],
+      orderBy: [{ views: 'desc' }, { createdAt: 'desc' }],
       take: 3,
     });
 
     // Add product suggestions
-    products.forEach(product => {
+    products.forEach((product) => {
       suggestions.push({
         id: product.id,
         title: product.title,
@@ -105,7 +101,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Add category suggestions
-    categories.forEach(category => {
+    categories.forEach((category) => {
       suggestions.push({
         id: category.id,
         title: category.name,

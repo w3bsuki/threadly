@@ -1,27 +1,54 @@
 'use client';
 
-import { useCartStore } from '@/lib/stores/cart-store';
-import { Button } from '@repo/design-system/components';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Input } from '@repo/design-system/components';
-import { Label } from '@repo/design-system/components';
-import { RadioGroup, RadioGroupItem } from '@repo/design-system/components';
-import { Separator } from '@repo/design-system/components';
-import { Alert, AlertDescription } from '@repo/design-system/components';
-import { ArrowLeft, CreditCard, Truck, Shield, Lock, AlertCircle, Loader2 } from 'lucide-react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  Alert,
+  AlertDescription,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+  Label,
+  RadioGroup,
+  RadioGroupItem,
+  Separator,
+} from '@repo/design-system/components';
+import { formatCurrency } from '@repo/utils/currency';
+import {
+  Elements,
+  PaymentElement,
+  useElements,
+  useStripe,
+} from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import {
+  AlertCircle,
+  ArrowLeft,
+  CreditCard,
+  Loader2,
+  Shield,
+  Truck,
+} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, useCallback } from 'react';
-import { formatCurrency } from '@repo/utils/currency';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { z } from 'zod';
+import { useCartStore } from '@/lib/stores/cart-store';
+import { OrderData } from '@repo/validation/schemas';
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+);
 
 const checkoutSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
@@ -41,10 +68,14 @@ type CheckoutFormData = z.infer<typeof checkoutSchema>;
 interface CheckoutFormProps {
   clientSecret: string;
   paymentIntentId: string;
-  orderData: any;
+  orderData: OrderData;
 }
 
-function CheckoutForm({ clientSecret, paymentIntentId, orderData }: CheckoutFormProps) {
+function CheckoutForm({
+  clientSecret,
+  paymentIntentId,
+  orderData,
+}: CheckoutFormProps) {
   const router = useRouter();
   const { items, clearCart } = useCartStore();
   const stripe = useStripe();
@@ -75,13 +106,16 @@ function CheckoutForm({ clientSecret, paymentIntentId, orderData }: CheckoutForm
   };
 
   const selectedShipping = form.watch('shippingMethod');
-  const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
   const shippingCost = subtotal > 50 ? 0 : shippingCosts[selectedShipping];
   const tax = Math.round(subtotal * 0.08); // 8% tax
   const total = subtotal + shippingCost + tax;
 
   const onSubmit = async (data: CheckoutFormData) => {
-    if (!stripe || !elements) {
+    if (!(stripe && elements)) {
       setError('Payment system not loaded. Please refresh and try again.');
       return;
     }
@@ -147,10 +181,14 @@ function CheckoutForm({ clientSecret, paymentIntentId, orderData }: CheckoutForm
 
         // Clear cart and redirect to success page
         clearCart();
-        router.push(`/checkout/success?payment_intent=${result.paymentIntent.id}`);
+        router.push(
+          `/checkout/success?payment_intent=${result.paymentIntent.id}`
+        );
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
+      setError(
+        err instanceof Error ? err.message : 'An unexpected error occurred'
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -158,17 +196,17 @@ function CheckoutForm({ clientSecret, paymentIntentId, orderData }: CheckoutForm
 
   if (items.length === 0) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-16">
+      <div className="mx-auto max-w-7xl px-4 py-16">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          <h1 className="mb-4 font-bold text-2xl text-gray-900">
             Your cart is empty
           </h1>
-          <p className="text-gray-600 mb-8">
+          <p className="mb-8 text-gray-600">
             Add some items to your cart to continue checkout
           </p>
           <Button asChild>
             <Link href="/">
-              <ArrowLeft className="h-4 w-4 mr-2" />
+              <ArrowLeft className="mr-2 h-4 w-4" />
               Continue Shopping
             </Link>
           </Button>
@@ -179,8 +217,11 @@ function CheckoutForm({ clientSecret, paymentIntentId, orderData }: CheckoutForm
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-6">
+      <form
+        className="grid gap-6 lg:grid-cols-3"
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
+        <div className="space-y-6 lg:col-span-2">
           {/* Contact Information */}
           <Card>
             <CardHeader>
@@ -326,32 +367,46 @@ function CheckoutForm({ clientSecret, paymentIntentId, orderData }: CheckoutForm
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <RadioGroup value={field.value} onValueChange={field.onChange}>
-                        <div className="flex items-center justify-between p-4 border rounded-lg">
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <div className="flex items-center justify-between rounded-lg border p-4">
                           <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="standard" id="standard" />
-                            <Label htmlFor="standard" className="cursor-pointer">
+                            <RadioGroupItem id="standard" value="standard" />
+                            <Label
+                              className="cursor-pointer"
+                              htmlFor="standard"
+                            >
                               <div>
                                 <p className="font-medium">Standard Shipping</p>
-                                <p className="text-sm text-muted-foreground">5-7 business days</p>
+                                <p className="text-muted-foreground text-sm">
+                                  5-7 business days
+                                </p>
                               </div>
                             </Label>
                           </div>
                           <p className="font-medium">
-                            {subtotal > 50 ? 'FREE' : formatCurrency(shippingCosts.standard)}
+                            {subtotal > 50
+                              ? 'FREE'
+                              : formatCurrency(shippingCosts.standard)}
                           </p>
                         </div>
-                        <div className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex items-center justify-between rounded-lg border p-4">
                           <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="express" id="express" />
-                            <Label htmlFor="express" className="cursor-pointer">
+                            <RadioGroupItem id="express" value="express" />
+                            <Label className="cursor-pointer" htmlFor="express">
                               <div>
                                 <p className="font-medium">Express Shipping</p>
-                                <p className="text-sm text-muted-foreground">2-3 business days</p>
+                                <p className="text-muted-foreground text-sm">
+                                  2-3 business days
+                                </p>
                               </div>
                             </Label>
                           </div>
-                          <p className="font-medium">{formatCurrency(shippingCosts.express)}</p>
+                          <p className="font-medium">
+                            {formatCurrency(shippingCosts.express)}
+                          </p>
                         </div>
                       </RadioGroup>
                     </FormControl>
@@ -375,11 +430,13 @@ function CheckoutForm({ clientSecret, paymentIntentId, orderData }: CheckoutForm
               ) : (
                 <div className="flex items-center justify-center py-8">
                   <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
-                  <span className="ml-2 text-gray-600">Loading payment form...</span>
+                  <span className="ml-2 text-gray-600">
+                    Loading payment form...
+                  </span>
                 </div>
               )}
               {error && (
-                <Alert variant="destructive" className="mt-4">
+                <Alert className="mt-4" variant="destructive">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
@@ -398,26 +455,30 @@ function CheckoutForm({ clientSecret, paymentIntentId, orderData }: CheckoutForm
               {/* Items */}
               <div className="space-y-4">
                 {items.map((item) => (
-                  <div key={item.productId} className="flex gap-3">
+                  <div className="flex gap-3" key={item.productId}>
                     <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                      {item.imageUrl && !item.imageUrl.includes('placehold.co') && !item.imageUrl.includes('picsum.photos') ? (
+                      {item.imageUrl &&
+                      !item.imageUrl.includes('placehold.co') &&
+                      !item.imageUrl.includes('picsum.photos') ? (
                         <Image
-                          src={item.imageUrl}
                           alt={item.title}
-                          fill
                           className="object-cover"
+                          fill
+                          src={item.imageUrl}
                         />
                       ) : (
                         <div className="h-full w-full bg-gradient-to-br from-gray-100 to-gray-200" />
                       )}
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-medium line-clamp-2 text-sm">{item.title}</h4>
-                      <p className="text-sm text-muted-foreground">
+                      <h4 className="line-clamp-2 font-medium text-sm">
+                        {item.title}
+                      </h4>
+                      <p className="text-muted-foreground text-sm">
                         {item.size && `Size: ${item.size} • `}
                         Qty: {item.quantity}
                       </p>
-                      <p className="text-sm font-medium">
+                      <p className="font-medium text-sm">
                         {formatCurrency(item.price * item.quantity)}
                       </p>
                     </div>
@@ -450,20 +511,22 @@ function CheckoutForm({ clientSecret, paymentIntentId, orderData }: CheckoutForm
                 </div>
               </div>
 
-              <div className="pt-2 space-y-2">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="space-y-2 pt-2">
+                <div className="flex items-center gap-2 text-muted-foreground text-sm">
                   <Shield className="h-4 w-4" />
                   <span>Secure payment by Stripe</span>
                 </div>
               </div>
 
-              <Button 
-                type="submit" 
-                className="w-full" 
+              <Button
+                className="w-full"
+                disabled={!(stripe && clientSecret) || isProcessing}
                 size="lg"
-                disabled={!stripe || !clientSecret || isProcessing}
+                type="submit"
               >
-                {isProcessing ? 'Processing...' : `Pay ${formatCurrency(total)}`}
+                {isProcessing
+                  ? 'Processing...'
+                  : `Pay ${formatCurrency(total)}`}
               </Button>
             </CardContent>
           </Card>
@@ -477,7 +540,7 @@ export function CheckoutContent() {
   const [mounted, setMounted] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
-  const [orderData, setOrderData] = useState<any>(null);
+  const [orderData, setOrderData] = useState<OrderData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { items } = useCartStore();
@@ -488,14 +551,19 @@ export function CheckoutContent() {
     express: 12.99,
   };
 
-  const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
   const shippingCost = subtotal > 50 ? 0 : shippingCosts.standard; // Default to standard shipping
   const tax = Math.round(subtotal * 0.08); // 8% tax
   const total = subtotal + shippingCost + tax;
 
   // Create payment intent when component mounts
   const createPaymentIntent = useCallback(async () => {
-    if (items.length === 0) return;
+    if (items.length === 0) {
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
@@ -505,16 +573,16 @@ export function CheckoutContent() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items: items.map(item => ({
+          items: items.map((item) => ({
             productId: item.productId,
             quantity: item.quantity,
             price: item.price,
           })),
           costs: {
-            subtotal: subtotal,
+            subtotal,
             shipping: shippingCost,
-            tax: tax,
-            total: total,
+            tax,
+            total,
           },
         }),
       });
@@ -529,7 +597,9 @@ export function CheckoutContent() {
       setPaymentIntentId(data.paymentIntent.id);
       setOrderData(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to initialize checkout');
+      setError(
+        err instanceof Error ? err.message : 'Failed to initialize checkout'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -551,17 +621,17 @@ export function CheckoutContent() {
 
   if (items.length === 0) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-16">
+      <div className="mx-auto max-w-7xl px-4 py-16">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          <h1 className="mb-4 font-bold text-2xl text-gray-900">
             Your cart is empty
           </h1>
-          <p className="text-gray-600 mb-8">
+          <p className="mb-8 text-gray-600">
             Add some items to your cart to continue checkout
           </p>
           <Button asChild>
             <Link href="/">
-              <ArrowLeft className="h-4 w-4 mr-2" />
+              <ArrowLeft className="mr-2 h-4 w-4" />
               Continue Shopping
             </Link>
           </Button>
@@ -572,7 +642,7 @@ export function CheckoutContent() {
 
   if (isLoading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-16">
+      <div className="mx-auto max-w-7xl px-4 py-16">
         <div className="flex items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
           <span className="ml-2 text-gray-600">Initializing checkout...</span>
@@ -583,51 +653,49 @@ export function CheckoutContent() {
 
   if (error && !clientSecret) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-16">
+      <div className="mx-auto max-w-7xl px-4 py-16">
         <div className="text-center">
-          <Alert variant="destructive" className="mb-4 max-w-md mx-auto">
+          <Alert className="mx-auto mb-4 max-w-md" variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
-          <Button onClick={() => createPaymentIntent()}>
-            Try Again
-          </Button>
+          <Button onClick={() => createPaymentIntent()}>Try Again</Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="mx-auto max-w-7xl px-4 py-8">
       {/* Header */}
       <div className="mb-8">
         <Link
+          className="mb-4 inline-flex items-center text-gray-600 text-sm hover:text-gray-900"
           href="/cart"
-          className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-4"
         >
-          <ArrowLeft className="h-4 w-4 mr-1" />
+          <ArrowLeft className="mr-1 h-4 w-4" />
           Back to cart
         </Link>
-        <h1 className="text-3xl font-bold text-gray-900">Checkout</h1>
+        <h1 className="font-bold text-3xl text-gray-900">Checkout</h1>
       </div>
 
       {clientSecret && paymentIntentId && (
-        <Elements 
-          stripe={stripePromise}
+        <Elements
           options={{
             clientSecret,
             appearance: {
               theme: 'stripe',
             },
           }}
+          stripe={stripePromise}
         >
-          <CheckoutForm 
-            clientSecret={clientSecret} 
-            paymentIntentId={paymentIntentId}
+          <CheckoutForm
+            clientSecret={clientSecret}
             orderData={orderData}
+            paymentIntentId={paymentIntentId}
           />
         </Elements>
       )}
     </div>
   );
-};
+}

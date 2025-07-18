@@ -1,90 +1,94 @@
-import { ProductGrid } from '../(home)/components/product-grid';
-import { Button } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { Crown, Shield, Star, Award, ChevronRight } from 'lucide-react';
+import { Badge, Button } from '@repo/design-system/components';
+import { Award, ChevronRight, Crown, Shield, Star } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
+import { ProductGrid } from '../(home)/components/product-grid';
 
 // Inline ProductPlaceholder component
-const ProductPlaceholder = ({ className = "w-full h-full" }: { className?: string }) => {
+const ProductPlaceholder = ({
+  className = 'w-full h-full',
+}: {
+  className?: string;
+}) => {
   return (
-    <div className={`bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center relative ${className}`}>
+    <div
+      className={`relative flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 ${className}`}
+    >
       <svg
-        width="80"
+        className="text-gray-300"
+        fill="none"
         height="80"
         viewBox="0 0 80 80"
-        fill="none"
+        width="80"
         xmlns="http://www.w3.org/2000/svg"
-        className="text-gray-300"
       >
         {/* Clothing Hanger */}
         <path
           d="M20 25 C20 25, 25 20, 40 20 C55 20, 60 25, 60 25"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
           fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeWidth="2"
         />
-        
+
         {/* Hanger Hook */}
         <path
           d="M40 20 L40 15 C40 12, 42 10, 45 10 C48 10, 50 12, 50 15"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
           fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeWidth="2"
         />
-        
+
         {/* T-shirt Shape */}
         <path
           d="M25 28 L25 35 C25 37, 27 39, 29 39 L51 39 C53 39, 55 37, 55 35 L55 28"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
           fill="currentColor"
           fillOpacity="0.1"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeWidth="2"
         />
-        
+
         {/* T-shirt Body */}
         <rect
-          x="30"
-          y="35"
-          width="20"
+          fill="currentColor"
+          fillOpacity="0.1"
           height="30"
           rx="2"
           stroke="currentColor"
           strokeWidth="2"
-          fill="currentColor"
-          fillOpacity="0.1"
+          width="20"
+          x="30"
+          y="35"
         />
-        
+
         {/* Sleeves */}
         <path
           d="M25 28 L20 32 C18 34, 18 36, 20 38 L22 40 C23 41, 25 40, 25 38 L25 35"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
           fill="currentColor"
           fillOpacity="0.1"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeWidth="2"
         />
-        
+
         <path
           d="M55 28 L60 32 C62 34, 62 36, 60 38 L58 40 C57 41, 55 40, 55 38 L55 35"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
           fill="currentColor"
           fillOpacity="0.1"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeWidth="2"
         />
-        
+
         {/* Decorative Elements */}
-        <circle cx="35" cy="45" r="1" fill="currentColor" opacity="0.3" />
-        <circle cx="40" cy="48" r="1" fill="currentColor" opacity="0.3" />
-        <circle cx="45" cy="45" r="1" fill="currentColor" opacity="0.3" />
+        <circle cx="35" cy="45" fill="currentColor" opacity="0.3" r="1" />
+        <circle cx="40" cy="48" fill="currentColor" opacity="0.3" r="1" />
+        <circle cx="45" cy="45" fill="currentColor" opacity="0.3" r="1" />
       </svg>
-      
+
       {/* Subtle text */}
-      <div className="absolute bottom-4 text-xs text-gray-400 font-medium">
+      <div className="absolute bottom-4 font-medium text-gray-400 text-xs">
         Threadly
       </div>
     </div>
@@ -106,18 +110,20 @@ const features = [
   {
     icon: Shield,
     title: 'Authentication Guaranteed',
-    description: 'Every designer item is verified by our authentication experts'
+    description:
+      'Every designer item is verified by our authentication experts',
   },
   {
     icon: Star,
     title: 'Premium Condition',
-    description: 'Curated selection focusing on Like New and Excellent condition'
+    description:
+      'Curated selection focusing on Like New and Excellent condition',
   },
   {
     icon: Award,
     title: 'Luxury Experience',
-    description: 'White-glove service for high-value designer transactions'
-  }
+    description: 'White-glove service for high-value designer transactions',
+  },
 ];
 
 export default function DesignerPage() {
@@ -126,33 +132,34 @@ export default function DesignerPage() {
       {/* Hero Section with Gold Gradient */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-amber-400/20 to-yellow-500/20" />
-        <div className="relative max-w-7xl mx-auto px-4 py-16 md:py-24">
+        <div className="relative mx-auto max-w-7xl px-4 py-16 md:py-24">
           <div className="text-center">
-            <div className="flex items-center justify-center mb-6">
-              <Crown className="h-12 w-12 text-amber-400 mr-3" />
-              <h1 className="text-4xl md:text-6xl font-bold text-white">
+            <div className="mb-6 flex items-center justify-center">
+              <Crown className="mr-3 h-12 w-12 text-amber-400" />
+              <h1 className="font-bold text-4xl text-white md:text-6xl">
                 Designer
-                <span className="bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent ml-3">
+                <span className="ml-3 bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">
                   Marketplace
                 </span>
               </h1>
             </div>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-              Discover authenticated luxury fashion from the world's most coveted designers. 
-              Every piece is verified, every transaction is protected.
+            <p className="mx-auto mb-8 max-w-3xl text-gray-300 text-xl">
+              Discover authenticated luxury fashion from the world's most
+              coveted designers. Every piece is verified, every transaction is
+              protected.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
-              <Button 
-                size="lg" 
-                className="bg-gradient-to-r from-amber-400 to-yellow-500 text-black hover:from-amber-500 hover:to-yellow-600 font-semibold px-8 py-3"
+            <div className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-x-6 sm:space-y-0">
+              <Button
+                className="bg-gradient-to-r from-amber-400 to-yellow-500 px-8 py-3 font-semibold text-black hover:from-amber-500 hover:to-yellow-600"
+                size="lg"
               >
-                <Crown className="h-5 w-5 mr-2" />
+                <Crown className="mr-2 h-5 w-5" />
                 Shop Designer
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                className="border-amber-400 px-8 py-3 font-semibold text-amber-400 hover:bg-amber-400 hover:text-black"
                 size="lg"
-                className="border-amber-400 text-amber-400 hover:bg-amber-400 hover:text-black font-semibold px-8 py-3"
+                variant="outline"
               >
                 Sell Designer Items
               </Button>
@@ -163,14 +170,16 @@ export default function DesignerPage() {
 
       {/* Features Section */}
       <div className="bg-white">
-        <div className="max-w-7xl mx-auto px-4 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="mx-auto max-w-7xl px-4 py-16">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {features.map((feature) => (
-              <div key={feature.title} className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full mb-4">
+              <div className="text-center" key={feature.title}>
+                <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-amber-400 to-yellow-500">
                   <feature.icon className="h-8 w-8 text-black" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
+                <h3 className="mb-2 font-semibold text-gray-900 text-xl">
+                  {feature.title}
+                </h3>
                 <p className="text-gray-600">{feature.description}</p>
               </div>
             ))}
@@ -180,30 +189,37 @@ export default function DesignerPage() {
 
       {/* Designer Brands Grid */}
       <div className="bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 py-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Designer Brands</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Browse authenticated pieces from the world's most prestigious luxury fashion houses
+        <div className="mx-auto max-w-7xl px-4 py-16">
+          <div className="mb-12 text-center">
+            <h2 className="mb-4 font-bold text-3xl text-gray-900">
+              Featured Designer Brands
+            </h2>
+            <p className="mx-auto max-w-2xl text-gray-600">
+              Browse authenticated pieces from the world's most prestigious
+              luxury fashion houses
             </p>
           </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+
+          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
             {designerBrands.map((brand) => (
-              <Link 
-                key={brand.name}
-                href={`/designer/${brand.name.toLowerCase().replace(' ', '-')}`}
+              <Link
                 className="group"
+                href={`/designer/${brand.name.toLowerCase().replace(' ', '-')}`}
+                key={brand.name}
               >
-                <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow border-2 border-transparent hover:border-amber-200">
-                  <div className="aspect-[2/1] mb-4 bg-gray-100 rounded overflow-hidden">
-                    <ProductPlaceholder className="w-full h-full" />
+                <div className="rounded-lg border-2 border-transparent bg-white p-6 shadow-sm transition-shadow hover:border-amber-200 hover:shadow-md">
+                  <div className="mb-4 aspect-[2/1] overflow-hidden rounded bg-gray-100">
+                    <ProductPlaceholder className="h-full w-full" />
                   </div>
                   <div className="text-center">
-                    <h3 className="font-semibold text-gray-900 mb-1">{brand.name}</h3>
-                    <p className="text-sm text-gray-500 mb-2">{brand.items} items available</p>
-                    <Badge className="bg-gradient-to-r from-amber-400 to-yellow-500 text-black border-0">
-                      <Crown className="h-3 w-3 mr-1" />
+                    <h3 className="mb-1 font-semibold text-gray-900">
+                      {brand.name}
+                    </h3>
+                    <p className="mb-2 text-gray-500 text-sm">
+                      {brand.items} items available
+                    </p>
+                    <Badge className="border-0 bg-gradient-to-r from-amber-400 to-yellow-500 text-black">
+                      <Crown className="mr-1 h-3 w-3" />
                       Verified
                     </Badge>
                   </div>
@@ -216,19 +232,24 @@ export default function DesignerPage() {
 
       {/* Designer Products Grid */}
       <div className="bg-white">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold text-gray-900">Latest Designer Arrivals</h2>
-            <Button variant="outline" className="text-amber-600 border-amber-600 hover:bg-amber-50">
+        <div className="mx-auto max-w-7xl px-4 py-8">
+          <div className="mb-8 flex items-center justify-between">
+            <h2 className="font-bold text-2xl text-gray-900">
+              Latest Designer Arrivals
+            </h2>
+            <Button
+              className="border-amber-600 text-amber-600 hover:bg-amber-50"
+              variant="outline"
+            >
               View All Designer Items
-              <ChevronRight className="h-4 w-4 ml-1" />
+              <ChevronRight className="ml-1 h-4 w-4" />
             </Button>
           </div>
-          
+
           {/* Use existing ProductGrid with designer filter */}
           <ProductGrid category="designer" />
         </div>
       </div>
     </div>
   );
-} 
+}

@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { log } from '@repo/observability/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 interface WebVitalsPayload {
   metric: {
@@ -16,7 +16,7 @@ interface WebVitalsPayload {
 
 export async function POST(request: NextRequest) {
   try {
-    const data = await request.json() as WebVitalsPayload;
+    const data = (await request.json()) as WebVitalsPayload;
 
     // Log web vitals for monitoring
     log.info('Web Vitals Metric', {
@@ -25,12 +25,12 @@ export async function POST(request: NextRequest) {
       rating: data.rating,
       pathname: data.pathname,
       timestamp: data.timestamp,
-      userAgent: data.userAgent.substring(0, 100) // Truncate for logging
+      userAgent: data.userAgent.substring(0, 100), // Truncate for logging
     } as Record<string, any>);
 
     // Store in database for analytics (optional)
     // You could save this to a metrics table for trend analysis
-    
+
     // Send to external monitoring service (optional)
     // await sendToDatadog(data);
     // await sendToNewRelic(data);
@@ -61,10 +61,10 @@ export async function GET(request: NextRequest) {
         LCP: { avg: 2.1, p75: 2.8, p95: 4.2, good: 75, poor: 10 },
         FID: { avg: 45, p75: 62, p95: 120, good: 85, poor: 5 },
         CLS: { avg: 0.08, p75: 0.12, p95: 0.25, good: 80, poor: 8 },
-        FCP: { avg: 1.6, p75: 2.1, p95: 3.2, good: 78, poor: 12 }
+        FCP: { avg: 1.6, p75: 2.1, p95: 3.2, good: 78, poor: 12 },
       },
       sampleSize: 1000,
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
 
     return NextResponse.json(mockData);

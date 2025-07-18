@@ -1,5 +1,3 @@
-import { ContentSidebar } from '@/components/content-sidebar';
-import { env } from '@/env';
 import { ArrowLeftIcon } from '@radix-ui/react-icons';
 import { blog } from '@repo/cms';
 import { Body } from '@repo/cms/components/body';
@@ -11,6 +9,8 @@ import { createMetadata } from '@repo/seo/metadata';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { ContentSidebar } from '@/components/content-sidebar';
+import { env } from '@/env';
 
 const protocol = env.VERCEL_PROJECT_PRODUCTION_URL?.startsWith('https')
   ? 'https'
@@ -92,36 +92,36 @@ const BlogPost = async ({ params }: BlogPostProperties) => {
               </p>
               {post.image ? (
                 <Image
-                  src={post.image.url}
-                  width={post.image.width}
-                  height={post.image.height}
                   alt={post.image.alt ?? ''}
                   className="my-16 h-full w-full rounded-xl"
+                  height={post.image.height}
                   priority
+                  src={post.image.url}
+                  width={post.image.width}
                 />
               ) : undefined}
               <div className="mx-auto max-w-prose">
                 <Body
-                  content={post.body.json.content}
                   components={{
                     pre: ({ code, language }) => {
                       return (
                         <CodeBlock
-                          theme="vesper"
                           snippets={[{ code, language }]}
+                          theme="vesper"
                         />
                       );
                     },
                   }}
+                  content={post.body.json.content}
                 />
               </div>
             </div>
           </div>
           <div className="sticky top-24 hidden shrink-0 md:block">
             <ContentSidebar
-              toc={<TableOfContents data={post.body.json.toc} />}
-              readingTime={`${post.body.readingTime} min read`}
               date={new Date(post.date)}
+              readingTime={`${post.body.readingTime} min read`}
+              toc={<TableOfContents data={post.body.json.toc} />}
             />
           </div>
         </div>

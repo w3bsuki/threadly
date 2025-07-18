@@ -3,8 +3,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  Button,
 } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
 import type { Dictionary } from '@repo/internationalization';
 import { PhoneCall } from 'lucide-react';
 import Link from 'next/link';
@@ -29,7 +29,7 @@ export const FAQ: FC<FAQProps> = ({ dictionary }) => (
               </p>
             </div>
             <div className="">
-              <Button className="gap-4" variant="outline" asChild>
+              <Button asChild className="gap-4" variant="outline">
                 <Link href="/contact">
                   {dictionary.web.home.faq.cta}{' '}
                   <PhoneCall className="h-4 w-4" />
@@ -38,7 +38,7 @@ export const FAQ: FC<FAQProps> = ({ dictionary }) => (
             </div>
           </div>
         </div>
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion className="w-full" collapsible type="single">
           {dictionary.web.home.faq.items.map((item, index) => (
             <AccordionItem key={index} value={`index-${index}`}>
               <AccordionTrigger>{item.question}</AccordionTrigger>

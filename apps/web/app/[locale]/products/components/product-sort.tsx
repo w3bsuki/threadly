@@ -1,73 +1,74 @@
-"use client";
+'use client';
 
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from '@repo/design-system/components';
-import { ArrowUpDown, TrendingUp, DollarSign, Clock } from 'lucide-react';
+import { ArrowUpDown, Clock, DollarSign, TrendingUp } from 'lucide-react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 interface ProductSortProps {
   currentSort?: string;
 }
 
 const sortOptions = [
-  { 
-    value: "newest", 
-    label: "Newest first",
-    shortLabel: "Newest",
-    icon: Clock
+  {
+    value: 'newest',
+    label: 'Newest first',
+    shortLabel: 'Newest',
+    icon: Clock,
   },
-  { 
-    value: "price-asc", 
-    label: "Price: Low to High",
-    shortLabel: "Price ↑",
-    icon: DollarSign
+  {
+    value: 'price-asc',
+    label: 'Price: Low to High',
+    shortLabel: 'Price ↑',
+    icon: DollarSign,
   },
-  { 
-    value: "price-desc", 
-    label: "Price: High to Low",
-    shortLabel: "Price ↓",
-    icon: DollarSign
+  {
+    value: 'price-desc',
+    label: 'Price: High to Low',
+    shortLabel: 'Price ↓',
+    icon: DollarSign,
   },
-  { 
-    value: "popular", 
-    label: "Most Popular",
-    shortLabel: "Popular",
-    icon: TrendingUp
+  {
+    value: 'popular',
+    label: 'Most Popular',
+    shortLabel: 'Popular',
+    icon: TrendingUp,
   },
 ];
 
-export function ProductSort({ currentSort = "newest" }: ProductSortProps) {
+export function ProductSort({ currentSort = 'newest' }: ProductSortProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const handleSortChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    
-    if (value === "newest") {
-      params.delete("sort");
+
+    if (value === 'newest') {
+      params.delete('sort');
     } else {
-      params.set("sort", value);
+      params.set('sort', value);
     }
-    
+
     // Reset to page 1 when sort changes
-    params.delete("page");
-    
+    params.delete('page');
+
     const queryString = params.toString();
-    router.push(`${pathname}${queryString ? `?${queryString}` : ""}`);
+    router.push(`${pathname}${queryString ? `?${queryString}` : ''}`);
   };
 
-  const currentOption = sortOptions.find(option => option.value === currentSort) || sortOptions[0];
-  const CurrentIcon = currentOption.icon;
+  const currentOption =
+    sortOptions.find((option) => option.value === currentSort) ||
+    sortOptions[0];
+  const _CurrentIcon = currentOption.icon;
 
   return (
-    <Select value={currentSort} onValueChange={handleSortChange}>
-      <SelectTrigger className="w-full sm:w-[180px] lg:w-[200px] h-10 sm:h-9 text-sm bg-white border-gray-200 hover:border-gray-300 transition-colors">
+    <Select onValueChange={handleSortChange} value={currentSort}>
+      <SelectTrigger className="h-10 w-full border-gray-200 bg-white text-sm transition-colors hover:border-gray-300 sm:h-9 sm:w-[180px] lg:w-[200px]">
         <div className="flex items-center gap-2">
           <ArrowUpDown className="h-4 w-4 text-gray-500" />
           <span className="hidden sm:inline">Sort by:</span>
@@ -81,12 +82,12 @@ export function ProductSort({ currentSort = "newest" }: ProductSortProps) {
         {sortOptions.map((option) => {
           const Icon = option.icon;
           return (
-            <SelectItem 
-              key={option.value} 
+            <SelectItem
+              className="flex cursor-pointer items-center gap-2 py-2.5"
+              key={option.value}
               value={option.value}
-              className="flex items-center gap-2 py-2.5 cursor-pointer"
             >
-              <div className="flex items-center gap-2 w-full">
+              <div className="flex w-full items-center gap-2">
                 <Icon className="h-4 w-4 text-gray-500" />
                 <span>{option.label}</span>
               </div>

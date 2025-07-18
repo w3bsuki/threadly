@@ -35,6 +35,20 @@ export {
   type CSRFConfig,
 } from './csrf';
 
+// Export audit logging functions
+export {
+  createAuditLog,
+  getAuditLogs,
+  auditMiddleware,
+  type AuditEventType,
+  type AuditLogEntry,
+} from './audit-log';
+
+export {
+  withAuditLog,
+  logSecurityEvent,
+} from './audit-middleware';
+
 export const secure = async (
   allow: (ArcjetWellKnownBot | ArcjetBotCategory)[],
   sourceRequest?: Request

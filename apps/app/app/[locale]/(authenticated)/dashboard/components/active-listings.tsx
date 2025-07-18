@@ -17,7 +17,7 @@ interface ActiveListingsProps {
 interface Product {
   id: string;
   title: string;
-  price: any;
+  price: number;
   status: string;
   createdAt: Date;
   views: number;

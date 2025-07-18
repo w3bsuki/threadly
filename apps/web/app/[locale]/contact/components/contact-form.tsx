@@ -1,30 +1,43 @@
 'use client';
 
-import { Button } from '@repo/design-system/components';
-import { Calendar } from '@repo/design-system/components';
-import { Input } from '@repo/design-system/components';
-import { Label } from '@repo/design-system/components';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
+  Button,
+  Calendar,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@repo/design-system/components';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components';
 import { cn } from '@repo/design-system/lib/utils';
 import type { Dictionary } from '@repo/internationalization';
 import { format } from 'date-fns';
 import { CalendarIcon, Check, MoveRight } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
 const contactFormSchema = z.object({
-  firstName: z.string().min(1, 'First name is required').max(50, 'First name must be less than 50 characters'),
-  lastName: z.string().min(1, 'Last name is required').max(50, 'Last name must be less than 50 characters'),
+  firstName: z
+    .string()
+    .min(1, 'First name is required')
+    .max(50, 'First name must be less than 50 characters'),
+  lastName: z
+    .string()
+    .min(1, 'Last name is required')
+    .max(50, 'Last name must be less than 50 characters'),
   email: z.string().email('Valid email address is required'),
   company: z.string().optional(),
-  message: z.string().min(10, 'Message must be at least 10 characters').max(1000, 'Message must be less than 1000 characters'),
+  message: z
+    .string()
+    .min(10, 'Message must be at least 10 characters')
+    .max(1000, 'Message must be less than 1000 characters'),
   contactDate: z.date().optional(),
   resume: z.any().optional(),
 });
@@ -52,16 +65,16 @@ export const ContactForm = ({ dictionary }: ContactFormProps) => {
     mode: 'onChange',
   });
 
-  const onSubmit = async (data: ContactFormData) => {
+  const onSubmit = async (_data: ContactFormData) => {
     try {
       setIsSubmitting(true);
-      
+
       // TODO: Replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       setSubmitSuccess(true);
       form.reset();
-    } catch (error) {
+    } catch (_error) {
     } finally {
       setIsSubmitting(false);
     }
@@ -75,12 +88,16 @@ export const ContactForm = ({ dictionary }: ContactFormProps) => {
             <div className="mx-auto mb-8 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
               <Check className="h-8 w-8 text-green-600" />
             </div>
-            <h4 className="mb-4 text-2xl font-semibold">Thank you for contacting us!</h4>
-            <p className="text-muted-foreground">We'll get back to you within 24 hours.</p>
-            <Button 
-              onClick={() => setSubmitSuccess(false)} 
-              variant="outline" 
+            <h4 className="mb-4 font-semibold text-2xl">
+              Thank you for contacting us!
+            </h4>
+            <p className="text-muted-foreground">
+              We'll get back to you within 24 hours.
+            </p>
+            <Button
               className="mt-6"
+              onClick={() => setSubmitSuccess(false)}
+              variant="outline"
             >
               Send another message
             </Button>
@@ -123,39 +140,48 @@ export const ContactForm = ({ dictionary }: ContactFormProps) => {
 
           <div className="flex items-center justify-center">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="flex max-w-sm flex-col gap-4 rounded-md border p-8">
-                <p className="font-medium">{dictionary.web.contact.hero.form.title}</p>
-                
+              <form
+                className="flex max-w-sm flex-col gap-4 rounded-md border p-8"
+                onSubmit={form.handleSubmit(onSubmit)}
+              >
+                <p className="font-medium">
+                  {dictionary.web.contact.hero.form.title}
+                </p>
+
                 <FormField
                   control={form.control}
                   name="contactDate"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{dictionary.web.contact.hero.form.date}</FormLabel>
+                      <FormLabel>
+                        {dictionary.web.contact.hero.form.date}
+                      </FormLabel>
                       <FormControl>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button
-                              variant="outline"
                               className={cn(
                                 'w-full justify-start text-left font-normal',
                                 !field.value && 'text-muted-foreground'
                               )}
+                              variant="outline"
                             >
                               <CalendarIcon className="mr-2 h-4 w-4" />
                               {field.value ? (
                                 format(field.value, 'PPP')
                               ) : (
-                                <span>{dictionary.web.contact.hero.form.date}</span>
+                                <span>
+                                  {dictionary.web.contact.hero.form.date}
+                                </span>
                               )}
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0">
                             <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
                               initialFocus
+                              mode="single"
+                              onSelect={field.onChange}
+                              selected={field.value}
                             />
                           </PopoverContent>
                         </Popover>
@@ -170,7 +196,9 @@ export const ContactForm = ({ dictionary }: ContactFormProps) => {
                   name="firstName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{dictionary.web.contact.hero.form.firstName}</FormLabel>
+                      <FormLabel>
+                        {dictionary.web.contact.hero.form.firstName}
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="John" {...field} />
                       </FormControl>
@@ -184,7 +212,9 @@ export const ContactForm = ({ dictionary }: ContactFormProps) => {
                   name="lastName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{dictionary.web.contact.hero.form.lastName}</FormLabel>
+                      <FormLabel>
+                        {dictionary.web.contact.hero.form.lastName}
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="Smith" {...field} />
                       </FormControl>
@@ -200,7 +230,11 @@ export const ContactForm = ({ dictionary }: ContactFormProps) => {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input type="email" placeholder="john@example.com" {...field} />
+                        <Input
+                          placeholder="john@example.com"
+                          type="email"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -244,17 +278,25 @@ export const ContactForm = ({ dictionary }: ContactFormProps) => {
                   name="resume"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{dictionary.web.contact.hero.form.resume}</FormLabel>
+                      <FormLabel>
+                        {dictionary.web.contact.hero.form.resume}
+                      </FormLabel>
                       <FormControl>
-                        <Input type="file" accept=".pdf,.doc,.docx" />
+                        <Input accept=".pdf,.doc,.docx" type="file" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                <Button type="submit" className="w-full gap-4" disabled={isSubmitting}>
-                  {isSubmitting ? 'Sending...' : dictionary.web.contact.hero.form.cta}
+                <Button
+                  className="w-full gap-4"
+                  disabled={isSubmitting}
+                  type="submit"
+                >
+                  {isSubmitting
+                    ? 'Sending...'
+                    : dictionary.web.contact.hero.form.cta}
                   {!isSubmitting && <MoveRight className="h-4 w-4" />}
                 </Button>
               </form>

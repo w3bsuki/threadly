@@ -1,52 +1,62 @@
-import { Button } from '@repo/design-system/components';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/design-system/components';
-import { WifiOff, RefreshCw, Home, Search } from 'lucide-react';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@repo/design-system/components';
+import { Home, RefreshCw, Search, WifiOff } from 'lucide-react';
 import Link from 'next/link';
 
 export default function OfflinePage() {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
             <WifiOff className="h-8 w-8 text-gray-400" />
           </div>
-          <CardTitle className="text-xl font-semibold text-gray-900">
+          <CardTitle className="font-semibold text-gray-900 text-xl">
             You're offline
           </CardTitle>
           <CardDescription className="text-gray-600">
-            Check your internet connection and try again. Some content may be available from cache.
+            Check your internet connection and try again. Some content may be
+            available from cache.
           </CardDescription>
         </CardHeader>
-        
+
         <CardContent className="space-y-4">
-          <Button 
-            onClick={() => window.location.reload()} 
+          <Button
             className="w-full"
+            onClick={() => window.location.reload()}
             variant="default"
           >
-            <RefreshCw className="h-4 w-4 mr-2" />
+            <RefreshCw className="mr-2 h-4 w-4" />
             Try Again
           </Button>
-          
+
           <div className="grid grid-cols-2 gap-3">
-            <Button asChild variant="outline" className="flex-1">
+            <Button asChild className="flex-1" variant="outline">
               <Link href="/">
-                <Home className="h-4 w-4 mr-2" />
+                <Home className="mr-2 h-4 w-4" />
                 Home
               </Link>
             </Button>
-            
-            <Button asChild variant="outline" className="flex-1">
+
+            <Button asChild className="flex-1" variant="outline">
               <Link href="/search">
-                <Search className="h-4 w-4 mr-2" />
+                <Search className="mr-2 h-4 w-4" />
                 Search
               </Link>
             </Button>
           </div>
-          
-          <div className="text-center text-sm text-gray-500 mt-6">
-            <p>You can still browse cached pages and products you've viewed before.</p>
+
+          <div className="mt-6 text-center text-gray-500 text-sm">
+            <p>
+              You can still browse cached pages and products you've viewed
+              before.
+            </p>
           </div>
         </CardContent>
       </Card>

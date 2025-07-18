@@ -1,8 +1,8 @@
 'use client';
 
-import Link from 'next/link';
-import { ChevronRight, Home } from 'lucide-react';
 import { cn } from '@repo/design-system/lib/utils';
+import { ChevronRight, Home } from 'lucide-react';
+import Link from 'next/link';
 
 interface EnhancedHeaderProps {
   totalCount: number;
@@ -16,7 +16,11 @@ interface EnhancedHeaderProps {
   className?: string;
 }
 
-export function EnhancedHeader({ totalCount, currentFilters, className }: EnhancedHeaderProps) {
+export function EnhancedHeader({
+  totalCount,
+  currentFilters,
+  className,
+}: EnhancedHeaderProps) {
   // Generate breadcrumbs
   const breadcrumbs = [
     { label: 'Home', href: '/', icon: Home },
@@ -26,14 +30,18 @@ export function EnhancedHeader({ totalCount, currentFilters, className }: Enhanc
   // Add category-specific breadcrumb if filtered
   if (currentFilters.gender) {
     breadcrumbs.push({
-      label: currentFilters.gender.charAt(0).toUpperCase() + currentFilters.gender.slice(1),
+      label:
+        currentFilters.gender.charAt(0).toUpperCase() +
+        currentFilters.gender.slice(1),
       href: `/products?gender=${currentFilters.gender}`,
     });
   }
 
   if (currentFilters.category) {
     breadcrumbs.push({
-      label: currentFilters.category.charAt(0).toUpperCase() + currentFilters.category.slice(1),
+      label:
+        currentFilters.category.charAt(0).toUpperCase() +
+        currentFilters.category.slice(1),
       href: `/products?category=${currentFilters.category}`,
     });
   }
@@ -47,7 +55,10 @@ export function EnhancedHeader({ totalCount, currentFilters, className }: Enhanc
       return `${currentFilters.gender.charAt(0).toUpperCase() + currentFilters.gender.slice(1)}'s Fashion`;
     }
     if (currentFilters.category) {
-      return currentFilters.category.charAt(0).toUpperCase() + currentFilters.category.slice(1);
+      return (
+        currentFilters.category.charAt(0).toUpperCase() +
+        currentFilters.category.slice(1)
+      );
     }
     return 'Browse Products';
   };
@@ -64,18 +75,22 @@ export function EnhancedHeader({ totalCount, currentFilters, className }: Enhanc
   return (
     <div className={cn('mb-6', className)}>
       {/* Breadcrumbs */}
-      <nav className="flex items-center space-x-1 text-sm text-gray-500 mb-4">
+      <nav className="mb-4 flex items-center space-x-1 text-gray-500 text-sm">
         {breadcrumbs.map((crumb, index) => (
-          <div key={crumb.href} className="flex items-center">
-            {index > 0 && <ChevronRight className="h-4 w-4 mx-2 text-gray-400" />}
-            <Link 
-              href={crumb.href}
+          <div className="flex items-center" key={crumb.href}>
+            {index > 0 && (
+              <ChevronRight className="mx-2 h-4 w-4 text-gray-400" />
+            )}
+            <Link
               className={cn(
-                'flex items-center hover:text-gray-700 transition-colors',
-                index === breadcrumbs.length - 1 ? 'text-gray-900 font-medium' : 'hover:underline'
+                'flex items-center transition-colors hover:text-gray-700',
+                index === breadcrumbs.length - 1
+                  ? 'font-medium text-gray-900'
+                  : 'hover:underline'
               )}
+              href={crumb.href}
             >
-              {crumb.icon && <crumb.icon className="h-4 w-4 mr-1" />}
+              {crumb.icon && <crumb.icon className="mr-1 h-4 w-4" />}
               {crumb.label}
             </Link>
           </div>
@@ -84,12 +99,10 @@ export function EnhancedHeader({ totalCount, currentFilters, className }: Enhanc
 
       {/* Title and Subtitle */}
       <div className="mb-4">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="mb-2 font-bold text-2xl text-gray-900 sm:text-3xl">
           {getTitle()}
         </h1>
-        <p className="text-sm text-gray-600">
-          {getSubtitle()}
-        </p>
+        <p className="text-gray-600 text-sm">{getSubtitle()}</p>
       </div>
 
       {/* Active Filters Summary */}
@@ -97,17 +110,17 @@ export function EnhancedHeader({ totalCount, currentFilters, className }: Enhanc
         <div className="flex flex-wrap items-center gap-2 text-xs">
           <span className="text-gray-500">Filtered by:</span>
           {currentFilters.condition && (
-            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-800">
+            <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-gray-800 text-xs">
               Condition: {currentFilters.condition.replace('_', ' ')}
             </span>
           )}
           {currentFilters.minPrice && (
-            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-800">
+            <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-gray-800 text-xs">
               Min: ${currentFilters.minPrice}
             </span>
           )}
           {currentFilters.maxPrice && (
-            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-800">
+            <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-gray-800 text-xs">
               Max: ${currentFilters.maxPrice}
             </span>
           )}

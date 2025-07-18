@@ -1,7 +1,7 @@
-import { database } from '@repo/database';
 import { auth } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
+import { database } from '@repo/database';
 import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 import { SingleProductCheckout } from './components/single-product-checkout';
 
 export const metadata: Metadata = {
@@ -25,7 +25,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
 
   // Get database user
   const user = await database.user.findUnique({
-    where: { clerkId: userId }
+    where: { clerkId: userId },
   });
 
   if (!user) {
@@ -79,16 +79,18 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       <div className="container py-8">
         <div className="mx-auto max-w-4xl">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Complete Your Purchase</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className="font-bold text-3xl text-gray-900">
+              Complete Your Purchase
+            </h1>
+            <p className="mt-2 text-gray-600">
               Secure checkout powered by Stripe
             </p>
           </div>
-          
-          <SingleProductCheckout 
-            user={user} 
+
+          <SingleProductCheckout
             product={product}
             savedAddress={lastOrder?.Address || null}
+            user={user}
           />
         </div>
       </div>

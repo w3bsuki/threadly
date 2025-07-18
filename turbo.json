@@ -3,12 +3,15 @@
   "globalDependencies": ["**/.env.*local"],
   "ui": "tui",
   "envMode": "loose",
-  "globalPassThroughEnv": ["CI", "VERCEL"],
+  "globalPassThroughEnv": ["CI", "VERCEL", "NODE_ENV"],
   "concurrency": "20",
+  "remoteCache": {
+    "enabled": true
+  },
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "env": ["CI", "VERCEL"],
+      "env": ["CI", "VERCEL", "NODE_ENV"],
       "outputs": [
         ".next/**",
         "!.next/cache/**",
@@ -17,27 +20,38 @@
         "storybook-static/**",
         ".react-email/**",
         "dist/**"
-      ]
+      ],
+      "cache": true
     },
     "build:production": {
       "dependsOn": ["^build"],
-      "env": ["CI", "VERCEL"],
+      "env": ["CI", "VERCEL", "NODE_ENV"],
       "outputs": [
         ".next/**",
         "!.next/cache/**",
         ".basehub/**",
         "**/generated/**",
         "dist/**"
-      ]
+      ],
+      "cache": true
     },
     "test": {
-      "dependsOn": ["^test"]
+      "dependsOn": ["^test"],
+      "cache": true,
+      "outputs": ["coverage/**"]
     },
     "typecheck": {
-      "dependsOn": ["^typecheck"]
+      "dependsOn": ["^typecheck"],
+      "cache": true,
+      "outputs": ["**/*.tsbuildinfo"]
     },
     "analyze": {
-      "dependsOn": ["^analyze"]
+      "dependsOn": ["^analyze"],
+      "cache": true
+    },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "cache": true
     },
     "dev": {
       "cache": false,

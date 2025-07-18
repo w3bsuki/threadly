@@ -31,7 +31,7 @@ interface ProductWithDetails {
   id: string;
   title: string;
   description: string | null;
-  price: any;
+  price: number;
   status: string;
   createdAt: Date;
   views: number;

@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { getCacheService } from '@repo/cache';
+import { type NextRequest, NextResponse } from 'next/server';
 import { env } from '@/env';
 
 // Simple admin authentication - in production, use proper auth
@@ -12,13 +12,13 @@ export async function POST(request: NextRequest) {
     if (!authHeader || authHeader !== `Bearer ${ADMIN_SECRET}`) {
       return NextResponse.json(
         { error: 'Unauthorized' },
-        { 
+        {
           status: 401,
           headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'POST, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-          }
+          },
         }
       );
     }
@@ -36,7 +36,6 @@ export async function POST(request: NextRequest) {
       case 'search':
         await cache.invalidateSearchResults();
         break;
-      case 'all':
       default:
         // Clear all product-related caches
         await Promise.all([
@@ -46,34 +45,37 @@ export async function POST(request: NextRequest) {
         break;
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      message: `Cleared ${type} cache`,
-      type 
-    }, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    return NextResponse.json(
+      {
+        success: true,
+        message: `Cleared ${type} cache`,
+        type,
+      },
+      {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        },
       }
-    });
-  } catch (error) {
+    );
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Failed to clear cache' },
-      { 
+      {
         status: 500,
         headers: {
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Methods': 'POST, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        }
+        },
       }
     );
   }
 }
 
 // Handle preflight requests
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS(_request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
     headers: {
@@ -89,14 +91,12 @@ export async function OPTIONS(request: NextRequest) {
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get('authorization');
   if (!authHeader || authHeader !== `Bearer ${ADMIN_SECRET}`) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   return NextResponse.json({
     message: 'Cache clear endpoint ready',
-    usage: 'POST /api/admin/clear-cache with { type: "all" | "products" | "search" }'
+    usage:
+      'POST /api/admin/clear-cache with { type: "all" | "products" | "search" }',
   });
 }

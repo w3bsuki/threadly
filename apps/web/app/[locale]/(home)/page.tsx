@@ -1,18 +1,22 @@
-import { Suspense } from 'react';
 import { getDictionary } from '@repo/internationalization';
 import { createMetadata } from '@repo/seo/metadata';
-import { organizationStructuredData, websiteStructuredData } from '@repo/seo/structured-data';
+import {
+  organizationStructuredData,
+  websiteStructuredData,
+} from '@repo/seo/structured-data';
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { ProductGridServer } from '../../../components/product-grid-server';
-// Fix: Added ADMIN_SECRET environment variable for cache invalidation
-import { Button } from '@repo/design-system/components';
-import { ShoppingBag, Plus, Search, Recycle } from 'lucide-react';
-import Link from 'next/link';
-import { env } from '@/env';
 import { UnifiedSearchFilters } from '../components/unified-search-filters';
 
 // PPR: Static shell that can be prerendered
-function HomePageShell({ children, locale }: { children: React.ReactNode; locale: string }) {
+function HomePageShell({
+  children,
+  locale,
+}: {
+  children: React.ReactNode;
+  locale: string;
+}) {
   return (
     <main className="min-h-screen bg-white">
       {/* Unified Search Filters - Mobile Only */}
@@ -21,7 +25,7 @@ function HomePageShell({ children, locale }: { children: React.ReactNode; locale
       </div>
 
       {/* Products Grid */}
-      <div className="px-4 pt-4 pb-24 md:max-w-7xl md:mx-auto md:pt-6 md:pb-6">
+      <div className="px-4 pt-4 pb-24 md:mx-auto md:max-w-7xl md:pt-6 md:pb-6">
         {children}
       </div>
     </main>
@@ -33,7 +37,10 @@ function ProductGridLoading() {
   return (
     <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
       {Array.from({ length: 24 }).map((_, i) => (
-        <div key={i} className="aspect-[3/4] bg-gray-100 animate-pulse rounded-lg" />
+        <div
+          className="aspect-[3/4] animate-pulse rounded-lg bg-gray-100"
+          key={i}
+        />
       ))}
     </div>
   );
@@ -57,40 +64,44 @@ export const generateMetadata = async ({
   const dictionary = await getDictionary(locale);
 
   return createMetadata({
-    title: dictionary.web.home?.meta?.title || 'Threadly - Buy and sell fashion online',
-    description: dictionary.web.home?.meta?.description || 'Buy and sell pre-loved fashion items. Discover unique pieces from brands you love at great prices.',
+    title:
+      dictionary.web.home?.meta?.title ||
+      'Threadly - Buy and sell fashion online',
+    description:
+      dictionary.web.home?.meta?.description ||
+      'Buy and sell pre-loved fashion items. Discover unique pieces from brands you love at great prices.',
   });
 };
 
 const Home = async ({ params, searchParams }: HomeProps) => {
   const { locale } = await params;
   const { sort, brand, condition } = await searchParams;
-  const dictionary = await getDictionary(locale);
+  const _dictionary = await getDictionary(locale);
 
   return (
     <>
       {/* PPR: Static structured data can be prerendered */}
       <script
-        type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(organizationStructuredData),
         }}
+        type="application/ld+json"
       />
       <script
-        type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(websiteStructuredData),
         }}
+        type="application/ld+json"
       />
-      
+
       <HomePageShell locale={locale}>
         {/* PPR: Dynamic product grid with loading state */}
         <Suspense fallback={<ProductGridLoading />}>
-          <ProductGridServer 
-            limit={24} 
-            sort={sort}
+          <ProductGridServer
             brand={brand}
             condition={condition}
+            limit={24}
+            sort={sort}
           />
         </Suspense>
       </HomePageShell>

@@ -1,5 +1,5 @@
 {
-  "name": "app",
+  "name": "@repo/threadly-app",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
@@ -41,6 +41,7 @@
     "@stripe/react-stripe-js": "^3.7.0",
     "@stripe/stripe-js": "^7.4.0",
     "@t3-oss/env-nextjs": "^0.13.8",
+    "@tanstack/react-virtual": "^3.13.12",
     "@types/jsdom": "^21.1.7",
     "@uploadthing/react": "^7.3.2",
     "bullmq": "^5.56.4",

@@ -1,8 +1,8 @@
 {
-  "name": "next-forge",
+  "name": "threadly",
   "version": "5.0.1",
   "bin": {
-    "next-forge": "dist/index.js"
+    "threadly": "dist/index.js"
   },
   "files": [
     "dist/index.js"

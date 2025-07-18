@@ -1,21 +1,29 @@
-import { database } from '@repo/database';
-import type { Prisma } from '@repo/database';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-import { 
-  createSuccessResponse, 
+import {
+  createErrorResponse,
   createPaginationMeta,
-  createErrorResponse
+  createSuccessResponse,
 } from '@repo/api-utils';
 import { getCacheService } from '@repo/cache';
+import type { Prisma } from '@repo/database';
+import { database } from '@repo/database';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import type { NextRequest } from 'next/server';
+import { z } from 'zod';
 
 // Input validation schema
 const GetProductsSchema = z.object({
-  page: z.string().transform(val => parseInt(val) || 1).pipe(z.number().min(1)),
-  limit: z.string().transform(val => parseInt(val) || 20).pipe(z.number().min(1).max(50)),
+  page: z
+    .string()
+    .transform((val) => Number.parseInt(val, 10) || 1)
+    .pipe(z.number().min(1)),
+  limit: z
+    .string()
+    .transform((val) => Number.parseInt(val, 10) || 20)
+    .pipe(z.number().min(1).max(50)),
   category: z.string().optional(),
-  sortBy: z.enum(['newest', 'price-low', 'price-high', 'popular']).default('newest'),
+  sortBy: z
+    .enum(['newest', 'price-low', 'price-high', 'popular'])
+    .default('newest'),
   search: z.string().optional(),
 });
 
@@ -26,9 +34,9 @@ export async function GET(request: NextRequest) {
     if (!rateLimitResult.allowed) {
       return createErrorResponse(
         new Error(rateLimitResult.error?.message || 'Rate limit exceeded'),
-        { 
+        {
           status: 429,
-          headers: rateLimitResult.headers 
+          headers: rateLimitResult.headers,
         }
       );
     }
@@ -54,7 +62,7 @@ export async function GET(request: NextRequest) {
         // Add category filter if specified
         if (validatedParams.category && validatedParams.category !== 'All') {
           where.category = {
-            name: { equals: validatedParams.category, mode: 'insensitive' }
+            name: { equals: validatedParams.category, mode: 'insensitive' },
           };
         }
 
@@ -66,19 +74,27 @@ export async function GET(request: NextRequest) {
               { title: { contains: searchTerm, mode: 'insensitive' } },
               { brand: { contains: searchTerm, mode: 'insensitive' } },
               { description: { contains: searchTerm, mode: 'insensitive' } },
-              { category: { name: { contains: searchTerm, mode: 'insensitive' } } }
-            ]
+              {
+                category: {
+                  name: { contains: searchTerm, mode: 'insensitive' },
+                },
+              },
+            ],
           };
-          
+
           if (where.AND) {
-            where.AND = Array.isArray(where.AND) ? [...where.AND, searchFilter] : [where.AND, searchFilter];
+            where.AND = Array.isArray(where.AND)
+              ? [...where.AND, searchFilter]
+              : [where.AND, searchFilter];
           } else {
             where.AND = searchFilter;
           }
         }
 
         // Build orderBy clause
-        let orderBy: Prisma.ProductOrderByWithRelationInput | Prisma.ProductOrderByWithRelationInput[];
+        let orderBy:
+          | Prisma.ProductOrderByWithRelationInput
+          | Prisma.ProductOrderByWithRelationInput[];
         switch (validatedParams.sortBy) {
           case 'price-low':
             orderBy = { price: 'asc' };
@@ -90,10 +106,9 @@ export async function GET(request: NextRequest) {
             orderBy = [
               { favorites: { _count: 'desc' } },
               { views: 'desc' },
-              { createdAt: 'desc' }
+              { createdAt: 'desc' },
             ];
             break;
-          case 'newest':
           default:
             orderBy = { createdAt: 'desc' };
             break;
@@ -132,7 +147,7 @@ export async function GET(request: NextRequest) {
             skip,
             take: validatedParams.limit,
           }),
-          database.product.count({ where })
+          database.product.count({ where }),
         ]);
 
         // Transform products to match the expected format
@@ -147,18 +162,22 @@ export async function GET(request: NextRequest) {
           categoryId: product.categoryId,
           categoryName: product.category?.name || 'Unknown',
           parentCategoryName: 'Unisex',
-          images: product.images.map(img => img.imageUrl),
-          seller: product.seller ? {
-            id: product.seller.id,
-            name: `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() || 'Anonymous',
-            location: product.seller.location || 'Unknown',
-            rating: Number(product.seller.averageRating) || 0,
-          } : {
-            id: 'unknown',
-            name: 'Anonymous',
-            location: 'Unknown',
-            rating: 0,
-          },
+          images: product.images.map((img) => img.imageUrl),
+          seller: product.seller
+            ? {
+                id: product.seller.id,
+                name:
+                  `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() ||
+                  'Anonymous',
+                location: product.seller.location || 'Unknown',
+                rating: Number(product.seller.averageRating) || 0,
+              }
+            : {
+                id: 'unknown',
+                name: 'Anonymous',
+                location: 'Unknown',
+                rating: 0,
+              },
           favoritesCount: product._count.favorites,
           createdAt: product.createdAt.toISOString(),
         }));
@@ -166,7 +185,11 @@ export async function GET(request: NextRequest) {
         return {
           products: transformedProducts,
           totalCount,
-          pagination: createPaginationMeta(validatedParams.page, validatedParams.limit, totalCount)
+          pagination: createPaginationMeta(
+            validatedParams.page,
+            validatedParams.limit,
+            totalCount
+          ),
         };
       },
       300, // 5 minutes cache
@@ -175,9 +198,8 @@ export async function GET(request: NextRequest) {
 
     // Return standardized success response
     return createSuccessResponse(cachedResult.products, {
-      pagination: cachedResult.pagination
+      pagination: cachedResult.pagination,
     });
-
   } catch (error) {
     return createErrorResponse(error);
   }

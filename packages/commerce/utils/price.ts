@@ -5,7 +5,7 @@
  * in both server and client environments. It handles Prisma Decimal conversion
  * issues and provides standardized price formatting for the marketplace.
  * 
- * Following Next-Forge best practices for type safety and environment compatibility.
+ * Following Threadly best practices for type safety and environment compatibility.
  */
 
 // Type definitions for safe Decimal handling

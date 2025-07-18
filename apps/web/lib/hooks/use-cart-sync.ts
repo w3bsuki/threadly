@@ -1,17 +1,17 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
 import { useUser } from '@repo/auth/client';
 import { useCartStore } from '@repo/commerce';
-import { 
-  getCartItems,
-  addToCart as addToCartAction,
-  removeFromCart as removeFromCartAction,
-  updateCartQuantity as updateCartQuantityAction,
-  clearCart as clearCartAction,
-  syncCartWithDatabase
-} from '../../app/[locale]/cart/actions/cart-actions';
 import { toast } from '@repo/design-system';
+import { useCallback, useEffect } from 'react';
+import {
+  addToCart as addToCartAction,
+  clearCart as clearCartAction,
+  getCartItems,
+  removeFromCart as removeFromCartAction,
+  syncCartWithDatabase,
+  updateCartQuantity as updateCartQuantityAction,
+} from '../../app/[locale]/cart/actions/cart-actions';
 
 export function useCartSync() {
   const { user, isLoaded } = useUser();
@@ -31,7 +31,9 @@ export function useCartSync() {
   }, []);
 
   const syncFromDatabase = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     try {
       const result = await getCartItems();
@@ -46,13 +48,15 @@ export function useCartSync() {
           lastSyncTimestamp: Date.now(),
         });
       }
-    } catch (error) {
+    } catch (_error) {
       handleError('Failed to sync cart from database');
     }
   }, [user, handleError]);
 
   const syncToDatabase = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     try {
       const result = await syncCartWithDatabase(items);
@@ -67,77 +71,91 @@ export function useCartSync() {
           lastSyncTimestamp: Date.now(),
         });
       }
-    } catch (error) {
+    } catch (_error) {
       handleError('Failed to sync cart to database');
     }
   }, [user, items, handleError]);
 
-  const enhancedAddItem = useCallback(async (item: Parameters<typeof originalAddItem>[0]) => {
-    originalAddItem(item);
+  const enhancedAddItem = useCallback(
+    async (item: Parameters<typeof originalAddItem>[0]) => {
+      originalAddItem(item);
 
-    if (user) {
-      try {
-        const result = await addToCartAction({
-          productId: item.productId,
-          quantity: 1,
-        });
+      if (user) {
+        try {
+          const result = await addToCartAction({
+            productId: item.productId,
+            quantity: 1,
+          });
 
-        if (result.error) {
+          if (result.error) {
+            originalRemoveItem(item.productId);
+            handleError(result.error);
+            return;
+          }
+
+          if (result.cartItem) {
+            useCartStore.setState((state) => ({
+              items: state.items.map((cartItem) =>
+                cartItem.productId === item.productId
+                  ? result.cartItem!
+                  : cartItem
+              ),
+              lastSyncTimestamp: Date.now(),
+            }));
+          }
+        } catch (_error) {
           originalRemoveItem(item.productId);
-          handleError(result.error);
-          return;
+          handleError('Failed to add item to cart');
         }
-
-        if (result.cartItem) {
-          useCartStore.setState((state) => ({
-            items: state.items.map((cartItem) =>
-              cartItem.productId === item.productId ? result.cartItem! : cartItem
-            ),
-            lastSyncTimestamp: Date.now(),
-          }));
-        }
-      } catch (error) {
-        originalRemoveItem(item.productId);
-        handleError('Failed to add item to cart');
       }
-    }
-  }, [user, originalAddItem, originalRemoveItem, handleError]);
+    },
+    [user, originalAddItem, originalRemoveItem, handleError]
+  );
 
-  const enhancedRemoveItem = useCallback(async (productId: string) => {
-    const originalItems = items;
-    originalRemoveItem(productId);
+  const enhancedRemoveItem = useCallback(
+    async (productId: string) => {
+      const originalItems = items;
+      originalRemoveItem(productId);
 
-    if (user) {
-      try {
-        const result = await removeFromCartAction(productId);
-        if (result.error) {
+      if (user) {
+        try {
+          const result = await removeFromCartAction(productId);
+          if (result.error) {
+            useCartStore.setState({ items: originalItems });
+            handleError(result.error);
+          }
+        } catch (_error) {
           useCartStore.setState({ items: originalItems });
-          handleError(result.error);
+          handleError('Failed to remove item from cart');
         }
-      } catch (error) {
-        useCartStore.setState({ items: originalItems });
-        handleError('Failed to remove item from cart');
       }
-    }
-  }, [user, items, originalRemoveItem, handleError]);
+    },
+    [user, items, originalRemoveItem, handleError]
+  );
 
-  const enhancedUpdateQuantity = useCallback(async (productId: string, quantity: number) => {
-    const originalItems = items;
-    originalUpdateQuantity(productId, quantity);
+  const enhancedUpdateQuantity = useCallback(
+    async (productId: string, quantity: number) => {
+      const originalItems = items;
+      originalUpdateQuantity(productId, quantity);
 
-    if (user) {
-      try {
-        const result = await updateCartQuantityAction({ productId, quantity });
-        if (result.error) {
+      if (user) {
+        try {
+          const result = await updateCartQuantityAction({
+            productId,
+            quantity,
+          });
+          if (result.error) {
+            useCartStore.setState({ items: originalItems });
+            handleError(result.error);
+          }
+        } catch (_error) {
           useCartStore.setState({ items: originalItems });
-          handleError(result.error);
+          handleError('Failed to update quantity');
         }
-      } catch (error) {
-        useCartStore.setState({ items: originalItems });
-        handleError('Failed to update quantity');
       }
-    }
-  }, [user, items, originalUpdateQuantity, handleError]);
+    },
+    [user, items, originalUpdateQuantity, handleError]
+  );
 
   const enhancedClearCart = useCallback(async () => {
     const originalItems = items;
@@ -150,7 +168,7 @@ export function useCartSync() {
           useCartStore.setState({ items: originalItems });
           handleError(result.error);
         }
-      } catch (error) {
+      } catch (_error) {
         useCartStore.setState({ items: originalItems });
         handleError('Failed to clear cart');
       }
@@ -161,14 +179,14 @@ export function useCartSync() {
   useEffect(() => {
     if (isLoaded && user) {
       const hasLocalCart = items.length > 0;
-      
+
       if (hasLocalCart) {
         syncToDatabase();
       } else {
         syncFromDatabase();
       }
     }
-  }, [isLoaded, user, syncFromDatabase, syncToDatabase]);
+  }, [isLoaded, user, syncFromDatabase, syncToDatabase, items.length]);
 
   // Set up cross-tab synchronization
   useEffect(() => {

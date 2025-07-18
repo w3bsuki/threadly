@@ -1,24 +1,25 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { Suspense } from "react";
-import { database } from "@repo/database";
-import { ProductDetail } from "./components/product-detail";
-import { generateProductStructuredData, generateBreadcrumbStructuredData } from "@repo/seo/structured-data";
+import { database } from '@repo/database';
+import { getDictionary } from '@repo/internationalization';
+import {
+  generateBreadcrumbStructuredData,
+  generateProductStructuredData,
+} from '@repo/seo/structured-data';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
+import { ProductDetail } from './components/product-detail';
 
 // Static generation: Generate static params for most popular products
 export async function generateStaticParams() {
   const products = await database.product.findMany({
     where: {
-      status: "AVAILABLE",
+      status: 'AVAILABLE',
     },
-    orderBy: [
-      { views: "desc" },
-      { createdAt: "desc" }
-    ],
+    orderBy: [{ views: 'desc' }, { createdAt: 'desc' }],
     take: 100, // Generate static pages for top 100 products
     select: {
       id: true,
-    }
+    },
   });
 
   return products.map((product) => ({
@@ -40,7 +41,7 @@ export async function generateMetadata({
   const product = await database.product.findFirst({
     where: {
       id,
-      status: "AVAILABLE",
+      status: 'AVAILABLE',
     },
     include: {
       seller: {
@@ -55,7 +56,7 @@ export async function generateMetadata({
         },
       },
       images: {
-        orderBy: { displayOrder: "asc" },
+        orderBy: { displayOrder: 'asc' },
         take: 1,
       },
     },
@@ -63,7 +64,7 @@ export async function generateMetadata({
 
   if (!product) {
     return {
-      title: "Product Not Found",
+      title: 'Product Not Found',
     };
   }
 
@@ -74,10 +75,10 @@ export async function generateMetadata({
       title: product.title,
       description: product.description,
       images: product.images[0] ? [product.images[0].imageUrl] : [],
-      type: "website",
+      type: 'website',
     },
     twitter: {
-      card: "summary_large_image",
+      card: 'summary_large_image',
       title: product.title,
       description: product.description,
       images: product.images[0] ? [product.images[0].imageUrl] : [],
@@ -86,15 +87,16 @@ export async function generateMetadata({
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const { id } = await params;
+  const { id, locale } = await params;
+  const dictionary = await getDictionary(locale);
   const product = await database.product.findFirst({
     where: {
       id,
-      status: "AVAILABLE",
+      status: 'AVAILABLE',
     },
     include: {
       images: {
-        orderBy: { displayOrder: "asc" },
+        orderBy: { displayOrder: 'asc' },
       },
       seller: {
         select: {
@@ -107,7 +109,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             select: {
               Product: {
                 where: {
-                  status: "SOLD",
+                  status: 'SOLD',
                 },
               },
               Follow_Follow_followingIdToUser: true,
@@ -154,14 +156,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const similarProducts = await database.product.findMany({
     where: {
       categoryId: product.category.id,
-      status: "AVAILABLE",
+      status: 'AVAILABLE',
       NOT: {
         id: product.id,
       },
     },
     include: {
       images: {
-        orderBy: { displayOrder: "asc" },
+        orderBy: { displayOrder: 'asc' },
         take: 1,
       },
       seller: {
@@ -173,7 +175,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     },
     take: 8,
     orderBy: {
-      createdAt: "desc",
+      createdAt: 'desc',
     },
   });
 
@@ -187,7 +189,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     brand: product.brand || undefined,
     size: product.size || undefined,
     color: product.color || undefined,
-    images: product.images.map(image => ({
+    images: product.images.map((image) => ({
       imageUrl: image.imageUrl,
       alt: image.alt || undefined,
     })),
@@ -201,7 +203,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const breadcrumbStructuredData = generateBreadcrumbStructuredData([
     { name: 'Home', url: 'https://threadly.com' },
     { name: 'Products', url: 'https://threadly.com/products' },
-    { name: product.category.name, url: `https://threadly.com/products?category=${product.category.slug}` },
+    {
+      name: product.category.name,
+      url: `https://threadly.com/products?category=${product.category.slug}`,
+    },
     { name: product.title, url: `https://threadly.com/product/${product.id}` },
   ]);
 
@@ -213,17 +218,17 @@ export default async function ProductPage({ params }: ProductPageProps) {
       ...product.seller,
       _count: {
         listings: product.seller._count.Product,
-        followers: product.seller._count.Follow_Follow_followingIdToUser
-      }
+        followers: product.seller._count.Follow_Follow_followingIdToUser,
+      },
     },
     category: {
       ...product.category,
-      parent: product.category.Category
-    }
+      parent: product.category.Category,
+    },
   };
 
   // Transform similar products for component
-  const transformedSimilarProducts = similarProducts.map(similar => ({
+  const transformedSimilarProducts = similarProducts.map((similar) => ({
     ...similar,
     price: Number(similar.price),
   }));
@@ -232,21 +237,22 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <>
       {/* Static structured data */}
       <script
-        type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(productStructuredData),
         }}
+        type="application/ld+json"
       />
       <script
-        type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(breadcrumbStructuredData),
         }}
+        type="application/ld+json"
       />
-      
+
       {/* PPR: Main product detail with loading fallback */}
       <Suspense fallback={<ProductDetailLoading />}>
         <ProductDetail
+          dictionary={dictionary}
           product={transformedProduct}
           similarProducts={transformedSimilarProducts}
         />
@@ -258,34 +264,37 @@ export default async function ProductPage({ params }: ProductPageProps) {
 // PPR: Loading component for product detail
 function ProductDetailLoading() {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div className="mx-auto max-w-7xl px-4 py-8">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         {/* Image loading skeleton */}
         <div className="space-y-4">
-          <div className="aspect-square bg-muted/20 animate-pulse rounded-lg" />
+          <div className="aspect-square animate-pulse rounded-lg bg-muted/20" />
           <div className="grid grid-cols-4 gap-2">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="aspect-square bg-muted/20 animate-pulse rounded-lg" />
+              <div
+                className="aspect-square animate-pulse rounded-lg bg-muted/20"
+                key={i}
+              />
             ))}
           </div>
         </div>
-        
+
         {/* Product info loading skeleton */}
         <div className="space-y-6">
           <div className="space-y-4">
-            <div className="h-8 bg-muted/20 animate-pulse rounded w-3/4" />
-            <div className="h-6 bg-muted/20 animate-pulse rounded w-1/2" />
-            <div className="h-4 bg-muted/20 animate-pulse rounded w-full" />
-            <div className="h-4 bg-muted/20 animate-pulse rounded w-5/6" />
+            <div className="h-8 w-3/4 animate-pulse rounded bg-muted/20" />
+            <div className="h-6 w-1/2 animate-pulse rounded bg-muted/20" />
+            <div className="h-4 w-full animate-pulse rounded bg-muted/20" />
+            <div className="h-4 w-5/6 animate-pulse rounded bg-muted/20" />
           </div>
-          
+
           <div className="space-y-2">
-            <div className="h-4 bg-muted/20 animate-pulse rounded w-1/3" />
-            <div className="h-4 bg-muted/20 animate-pulse rounded w-1/4" />
-            <div className="h-4 bg-muted/20 animate-pulse rounded w-1/2" />
+            <div className="h-4 w-1/3 animate-pulse rounded bg-muted/20" />
+            <div className="h-4 w-1/4 animate-pulse rounded bg-muted/20" />
+            <div className="h-4 w-1/2 animate-pulse rounded bg-muted/20" />
           </div>
-          
-          <div className="h-12 bg-muted/20 animate-pulse rounded" />
+
+          <div className="h-12 animate-pulse rounded bg-muted/20" />
         </div>
       </div>
     </div>

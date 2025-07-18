@@ -1,17 +1,18 @@
 /**
  * Order Management Tests - 90% Coverage Required
- * 
+ *
  * This test suite covers all critical order management functionality
  * including order creation, updates, shipping, delivery, and tracking.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { NextRequest, NextResponse } from 'next/server';
-import { GET as getOrders, POST as createOrder } from '../../api/app/api/orders/route';
-import { POST as shipOrder } from '../../api/app/api/orders/[id]/ship/route';
-import { POST as deliverOrder } from '../../api/app/api/orders/[id]/deliver/route';
-import { mockUsers, mockProducts, mockOrders } from '@repo/testing/mocks';
 import { cleanup } from '@repo/testing';
+import { NextRequest, NextResponse } from 'next/server';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { POST as shipOrder } from '../../api/app/api/orders/[id]/ship/route';
+import {
+  POST as createOrder,
+  GET as getOrders,
+} from '../../api/app/api/orders/route';
 
 // Mock dependencies
 vi.mock('@repo/auth/server', () => ({
@@ -83,7 +84,7 @@ describe('Order Management Tests', () => {
       vi.mocked(database.product.findUnique).mockResolvedValue({
         id: 'prod_1',
         title: 'iPhone 13 Pro',
-        price: 79999,
+        price: 79_999,
         status: 'AVAILABLE',
         sellerId: 'user_1',
         seller: { id: 'user_1', name: 'John Doe' },
@@ -94,7 +95,7 @@ describe('Order Management Tests', () => {
         buyerId: 'user_2',
         sellerId: 'user_1',
         productId: 'prod_1',
-        amount: 79999,
+        amount: 79_999,
         status: 'PENDING',
         shippingAddressId: 'addr_1',
         createdAt: new Date(),
@@ -128,7 +129,7 @@ describe('Order Management Tests', () => {
         body: JSON.stringify({
           productId: 'prod_1',
           buyerId: 'user_2',
-          amount: 79999,
+          amount: 79_999,
           shippingAddressId: 'addr_1',
         }),
       });
@@ -139,7 +140,7 @@ describe('Order Management Tests', () => {
       expect(response.status).toBe(201);
       expect(data.order.id).toBe('order_new_1');
       expect(data.order.status).toBe('PENDING');
-      expect(data.order.amount).toBe(79999);
+      expect(data.order.amount).toBe(79_999);
 
       // Verify transaction operations
       expect(database.$transaction).toHaveBeenCalled();
@@ -163,7 +164,7 @@ describe('Order Management Tests', () => {
       vi.mocked(database.product.findUnique).mockResolvedValue({
         id: 'prod_1',
         title: 'iPhone 13 Pro',
-        price: 79999,
+        price: 79_999,
         status: 'AVAILABLE',
         sellerId: 'user_1', // Same as buyer
         seller: { id: 'user_1', name: 'John Doe' },
@@ -174,7 +175,7 @@ describe('Order Management Tests', () => {
         body: JSON.stringify({
           productId: 'prod_1',
           buyerId: 'user_1',
-          amount: 79999,
+          amount: 79_999,
           shippingAddressId: 'addr_1',
         }),
       });
@@ -204,7 +205,7 @@ describe('Order Management Tests', () => {
       vi.mocked(database.product.findUnique).mockResolvedValue({
         id: 'prod_1',
         title: 'iPhone 13 Pro',
-        price: 79999,
+        price: 79_999,
         status: 'SOLD', // Not available
         sellerId: 'user_1',
         seller: { id: 'user_1', name: 'John Doe' },
@@ -215,7 +216,7 @@ describe('Order Management Tests', () => {
         body: JSON.stringify({
           productId: 'prod_1',
           buyerId: 'user_2',
-          amount: 79999,
+          amount: 79_999,
           shippingAddressId: 'addr_1',
         }),
       });
@@ -277,7 +278,7 @@ describe('Order Management Tests', () => {
           buyerId: 'user_2',
           sellerId: 'user_1',
           productId: 'prod_1',
-          amount: { toNumber: () => 79999 },
+          amount: { toNumber: () => 79_999 },
           status: 'SHIPPED',
           createdAt: new Date(),
           product: {
@@ -286,8 +287,18 @@ describe('Order Management Tests', () => {
             images: [{ url: 'https://example.com/image1.jpg' }],
             category: { id: 'cat_1', name: 'Electronics' },
           },
-          buyer: { id: 'user_2', firstName: 'Jane', lastName: 'Smith', imageUrl: null },
-          seller: { id: 'user_1', firstName: 'John', lastName: 'Doe', imageUrl: null },
+          buyer: {
+            id: 'user_2',
+            firstName: 'Jane',
+            lastName: 'Smith',
+            imageUrl: null,
+          },
+          seller: {
+            id: 'user_1',
+            firstName: 'John',
+            lastName: 'Doe',
+            imageUrl: null,
+          },
           payment: { id: 'pay_1', status: 'succeeded' },
           review: null,
         },
@@ -296,7 +307,9 @@ describe('Order Management Tests', () => {
       vi.mocked(database.order.findMany).mockResolvedValue(mockOrders);
       vi.mocked(database.order.count).mockResolvedValue(1);
 
-      const request = new NextRequest('http://localhost:3002/api/orders?role=buyer&page=1&limit=20');
+      const request = new NextRequest(
+        'http://localhost:3002/api/orders?role=buyer&page=1&limit=20'
+      );
 
       const response = await getOrders(request);
       const data = await response.json();
@@ -329,7 +342,7 @@ describe('Order Management Tests', () => {
           buyerId: 'user_2',
           sellerId: 'user_1',
           productId: 'prod_1',
-          amount: { toNumber: () => 79999 },
+          amount: { toNumber: () => 79_999 },
           status: 'PAID',
           createdAt: new Date(),
           product: {
@@ -338,8 +351,18 @@ describe('Order Management Tests', () => {
             images: [{ url: 'https://example.com/image1.jpg' }],
             category: { id: 'cat_1', name: 'Electronics' },
           },
-          buyer: { id: 'user_2', firstName: 'Jane', lastName: 'Smith', imageUrl: null },
-          seller: { id: 'user_1', firstName: 'John', lastName: 'Doe', imageUrl: null },
+          buyer: {
+            id: 'user_2',
+            firstName: 'Jane',
+            lastName: 'Smith',
+            imageUrl: null,
+          },
+          seller: {
+            id: 'user_1',
+            firstName: 'John',
+            lastName: 'Doe',
+            imageUrl: null,
+          },
           payment: { id: 'pay_1', status: 'succeeded' },
           review: null,
         },
@@ -348,7 +371,9 @@ describe('Order Management Tests', () => {
       vi.mocked(database.order.findMany).mockResolvedValue(mockOrders);
       vi.mocked(database.order.count).mockResolvedValue(1);
 
-      const request = new NextRequest('http://localhost:3002/api/orders?role=seller&status=PAID');
+      const request = new NextRequest(
+        'http://localhost:3002/api/orders?role=seller&status=PAID'
+      );
 
       const response = await getOrders(request);
       const data = await response.json();
@@ -376,7 +401,9 @@ describe('Order Management Tests', () => {
       vi.mocked(database.order.findMany).mockResolvedValue([]);
       vi.mocked(database.order.count).mockResolvedValue(50);
 
-      const request = new NextRequest('http://localhost:3002/api/orders?page=3&limit=10');
+      const request = new NextRequest(
+        'http://localhost:3002/api/orders?page=3&limit=10'
+      );
 
       const response = await getOrders(request);
       const data = await response.json();
@@ -436,16 +463,21 @@ describe('Order Management Tests', () => {
         trackingNumber: 'TRACK123',
       });
 
-      const request = new NextRequest('http://localhost:3002/api/orders/order_1/ship', {
-        method: 'POST',
-        body: JSON.stringify({
-          trackingNumber: 'TRACK123',
-          carrier: 'FedEx',
-          estimatedDelivery: '2025-01-15',
-        }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3002/api/orders/order_1/ship',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            trackingNumber: 'TRACK123',
+            carrier: 'FedEx',
+            estimatedDelivery: '2025-01-15',
+          }),
+        }
+      );
 
-      const response = await shipOrder(request, { params: Promise.resolve({ id: 'order_1' }) });
+      const response = await shipOrder(request, {
+        params: Promise.resolve({ id: 'order_1' }),
+      });
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -495,14 +527,19 @@ describe('Order Management Tests', () => {
 
       vi.mocked(database.order.findUnique).mockResolvedValue(mockOrder);
 
-      const request = new NextRequest('http://localhost:3002/api/orders/order_1/ship', {
-        method: 'POST',
-        body: JSON.stringify({
-          trackingNumber: 'TRACK123',
-        }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3002/api/orders/order_1/ship',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            trackingNumber: 'TRACK123',
+          }),
+        }
+      );
 
-      const response = await shipOrder(request, { params: Promise.resolve({ id: 'order_1' }) });
+      const response = await shipOrder(request, {
+        params: Promise.resolve({ id: 'order_1' }),
+      });
       const data = await response.json();
 
       expect(response.status).toBe(403);
@@ -542,14 +579,19 @@ describe('Order Management Tests', () => {
 
       vi.mocked(database.order.findUnique).mockResolvedValue(mockOrder);
 
-      const request = new NextRequest('http://localhost:3002/api/orders/order_1/ship', {
-        method: 'POST',
-        body: JSON.stringify({
-          trackingNumber: 'TRACK123',
-        }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3002/api/orders/order_1/ship',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            trackingNumber: 'TRACK123',
+          }),
+        }
+      );
 
-      const response = await shipOrder(request, { params: Promise.resolve({ id: 'order_1' }) });
+      const response = await shipOrder(request, {
+        params: Promise.resolve({ id: 'order_1' }),
+      });
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -601,15 +643,24 @@ describe('Order Management Tests', () => {
         });
 
         if (!order) {
-          return NextResponse.json({ error: 'Order not found' }, { status: 404 });
+          return NextResponse.json(
+            { error: 'Order not found' },
+            { status: 404 }
+          );
         }
 
         if (order.buyerId !== user.id) {
-          return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
+          return NextResponse.json(
+            { error: 'Not authorized' },
+            { status: 403 }
+          );
         }
 
         if (order.status !== 'SHIPPED') {
-          return NextResponse.json({ error: 'Order not shipped yet' }, { status: 400 });
+          return NextResponse.json(
+            { error: 'Order not shipped yet' },
+            { status: 400 }
+          );
         }
 
         const updatedOrder = await database.order.update({
@@ -658,7 +709,7 @@ describe('Order Management Tests', () => {
       const mockOrder = {
         id: 'order_1',
         status: 'PENDING',
-        amount: { toNumber: () => 79999 },
+        amount: { toNumber: () => 79_999 },
         productId: 'prod_1',
       };
 
@@ -792,7 +843,7 @@ describe('Order Management Tests', () => {
           completedRevenue: 0,
         };
 
-        orders.forEach(order => {
+        orders.forEach((order) => {
           const amount = order.amount.toNumber();
           stats.totalRevenue += amount;
 

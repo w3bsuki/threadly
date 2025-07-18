@@ -1,20 +1,20 @@
 /**
  * Security Tests - Comprehensive Coverage
- * 
+ *
  * This test suite covers all critical security functionality
  * including rate limiting, input validation, authentication middleware,
  * and security vulnerability prevention.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { NextRequest, NextResponse } from 'next/server';
 import { cleanup } from '@repo/testing';
+import { NextRequest, NextResponse } from 'next/server';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock security dependencies
 vi.mock('@repo/security', () => ({
-  generalApiLimit: { windowMs: 60000, max: 100 },
-  paymentRateLimit: { windowMs: 60000, max: 10 },
-  authRateLimit: { windowMs: 60000, max: 5 },
+  generalApiLimit: { windowMs: 60_000, max: 100 },
+  paymentRateLimit: { windowMs: 60_000, max: 10 },
+  authRateLimit: { windowMs: 60_000, max: 5 },
   checkRateLimit: vi.fn(),
   authMiddleware: vi.fn(),
   csrfProtection: vi.fn(),
@@ -55,7 +55,9 @@ describe('Security Tests', () => {
 
   describe('Rate Limiting', () => {
     it('should enforce general API rate limits', async () => {
-      const { checkRateLimit, generalApiLimit } = await import('@repo/security');
+      const { checkRateLimit, generalApiLimit } = await import(
+        '@repo/security'
+      );
 
       // Test within limits
       vi.mocked(checkRateLimit).mockResolvedValue({
@@ -63,12 +65,12 @@ describe('Security Tests', () => {
         headers: {
           'X-RateLimit-Limit': '100',
           'X-RateLimit-Remaining': '99',
-          'X-RateLimit-Reset': String(Date.now() + 60000),
+          'X-RateLimit-Reset': String(Date.now() + 60_000),
         },
       });
 
       const request = new NextRequest('http://localhost:3002/api/products');
-      
+
       const mockEndpoint = async (req: NextRequest) => {
         const rateLimitResult = await checkRateLimit(generalApiLimit, req);
         if (!rateLimitResult.allowed) {
@@ -77,7 +79,10 @@ describe('Security Tests', () => {
             { status: 429, headers: rateLimitResult.headers }
           );
         }
-        return NextResponse.json({ success: true }, { headers: rateLimitResult.headers });
+        return NextResponse.json(
+          { success: true },
+          { headers: rateLimitResult.headers }
+        );
       };
 
       const response = await mockEndpoint(request);
@@ -89,7 +94,9 @@ describe('Security Tests', () => {
     });
 
     it('should block requests exceeding rate limits', async () => {
-      const { checkRateLimit, generalApiLimit } = await import('@repo/security');
+      const { checkRateLimit, generalApiLimit } = await import(
+        '@repo/security'
+      );
 
       vi.mocked(checkRateLimit).mockResolvedValue({
         allowed: false,
@@ -97,13 +104,13 @@ describe('Security Tests', () => {
         headers: {
           'X-RateLimit-Limit': '100',
           'X-RateLimit-Remaining': '0',
-          'X-RateLimit-Reset': String(Date.now() + 60000),
+          'X-RateLimit-Reset': String(Date.now() + 60_000),
           'Retry-After': '60',
         },
       });
 
       const request = new NextRequest('http://localhost:3002/api/products');
-      
+
       const mockEndpoint = async (req: NextRequest) => {
         const rateLimitResult = await checkRateLimit(generalApiLimit, req);
         if (!rateLimitResult.allowed) {
@@ -125,7 +132,9 @@ describe('Security Tests', () => {
     });
 
     it('should enforce stricter payment rate limits', async () => {
-      const { checkRateLimit, paymentRateLimit } = await import('@repo/security');
+      const { checkRateLimit, paymentRateLimit } = await import(
+        '@repo/security'
+      );
 
       vi.mocked(checkRateLimit).mockResolvedValue({
         allowed: false,
@@ -133,12 +142,14 @@ describe('Security Tests', () => {
         headers: {
           'X-RateLimit-Limit': '10',
           'X-RateLimit-Remaining': '0',
-          'X-RateLimit-Reset': String(Date.now() + 60000),
+          'X-RateLimit-Reset': String(Date.now() + 60_000),
         },
       });
 
-      const request = new NextRequest('http://localhost:3002/api/stripe/create-checkout-session');
-      
+      const request = new NextRequest(
+        'http://localhost:3002/api/stripe/create-checkout-session'
+      );
+
       const mockPaymentEndpoint = async (req: NextRequest) => {
         const rateLimitResult = await checkRateLimit(paymentRateLimit, req);
         if (!rateLimitResult.allowed) {
@@ -159,7 +170,9 @@ describe('Security Tests', () => {
     });
 
     it('should track rate limits per IP address', async () => {
-      const { checkRateLimit, generalApiLimit } = await import('@repo/security');
+      const { checkRateLimit, generalApiLimit } = await import(
+        '@repo/security'
+      );
 
       const request1 = new NextRequest('http://localhost:3002/api/products', {
         headers: { 'x-forwarded-for': '192.168.1.1' },
@@ -170,7 +183,7 @@ describe('Security Tests', () => {
       });
 
       // IP 1 is rate limited
-      vi.mocked(checkRateLimit).mockImplementation(async (config, req) => {
+      vi.mocked(checkRateLimit).mockImplementation(async (_config, req) => {
         const ip = req.headers.get('x-forwarded-for');
         if (ip === '192.168.1.1') {
           return {
@@ -193,7 +206,10 @@ describe('Security Tests', () => {
             { status: 429, headers: rateLimitResult.headers }
           );
         }
-        return NextResponse.json({ success: true }, { headers: rateLimitResult.headers });
+        return NextResponse.json(
+          { success: true },
+          { headers: rateLimitResult.headers }
+        );
       };
 
       const response1 = await mockEndpoint(request1);
@@ -211,8 +227,8 @@ describe('Security Tests', () => {
       const maliciousInputs = [
         "'; DROP TABLE users; --",
         "1' OR '1'='1",
-        "UNION SELECT * FROM passwords",
-        "; DELETE FROM products WHERE 1=1",
+        'UNION SELECT * FROM passwords',
+        '; DELETE FROM products WHERE 1=1',
         "' OR 1=1 --",
         "admin'--",
         "' UNION SELECT username, password FROM users--",
@@ -225,22 +241,22 @@ describe('Security Tests', () => {
           /['"];?\s*(drop|delete|truncate)/i,
           /--|\|/,
         ];
-        return sqlPatterns.some(pattern => pattern.test(input));
+        return sqlPatterns.some((pattern) => pattern.test(input));
       });
 
-      maliciousInputs.forEach(input => {
+      maliciousInputs.forEach((input) => {
         expect(containsSQLInjection(input)).toBe(true);
       });
 
       // Valid inputs should pass
       const validInputs = [
-        "iPhone 13 Pro",
-        "user@example.com",
-        "Regular product description",
-        "123 Main Street",
+        'iPhone 13 Pro',
+        'user@example.com',
+        'Regular product description',
+        '123 Main Street',
       ];
 
-      validInputs.forEach(input => {
+      validInputs.forEach((input) => {
         expect(containsSQLInjection(input)).toBe(false);
       });
     });
@@ -269,22 +285,22 @@ describe('Security Tests', () => {
           /<embed[\s\S]*?>/gi,
           /<object[\s\S]*?>/gi,
         ];
-        return xssPatterns.some(pattern => pattern.test(input));
+        return xssPatterns.some((pattern) => pattern.test(input));
       });
 
-      xssInputs.forEach(input => {
+      xssInputs.forEach((input) => {
         expect(containsXSS(input)).toBe(true);
       });
 
       // Valid inputs should pass
       const validInputs = [
-        "Normal text content",
-        "<b>Bold text</b>",
-        "<i>Italic text</i>",
-        "Price: $99.99",
+        'Normal text content',
+        '<b>Bold text</b>',
+        '<i>Italic text</i>',
+        'Price: $99.99',
       ];
 
-      validInputs.forEach(input => {
+      validInputs.forEach((input) => {
         expect(containsXSS(input)).toBe(false);
       });
     });
@@ -292,27 +308,36 @@ describe('Security Tests', () => {
     it('should sanitize HTML content safely', async () => {
       const { sanitizeHtml } = await import('@repo/validation');
 
-      vi.mocked(sanitizeHtml).mockImplementation((input: string, options: any) => {
-        const allowedTags = options?.allowedTags || ['b', 'i', 'em', 'strong', 'p', 'br'];
-        
-        // Simple mock sanitization - remove dangerous tags
-        let sanitized = input
-          .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
-          .replace(/<iframe[\s\S]*?>/gi, '')
-          .replace(/javascript:/gi, '')
-          .replace(/on\w+\s*=[^>]*/gi, '');
-        
-        // Keep only allowed tags
-        const tagRegex = /<\/?(\w+)[^>]*>/g;
-        sanitized = sanitized.replace(tagRegex, (match, tagName) => {
-          if (allowedTags.includes(tagName.toLowerCase())) {
-            return match;
-          }
-          return '';
-        });
-        
-        return sanitized;
-      });
+      vi.mocked(sanitizeHtml).mockImplementation(
+        (input: string, options: any) => {
+          const allowedTags = options?.allowedTags || [
+            'b',
+            'i',
+            'em',
+            'strong',
+            'p',
+            'br',
+          ];
+
+          // Simple mock sanitization - remove dangerous tags
+          let sanitized = input
+            .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
+            .replace(/<iframe[\s\S]*?>/gi, '')
+            .replace(/javascript:/gi, '')
+            .replace(/on\w+\s*=[^>]*/gi, '');
+
+          // Keep only allowed tags
+          const tagRegex = /<\/?(\w+)[^>]*>/g;
+          sanitized = sanitized.replace(tagRegex, (match, tagName) => {
+            if (allowedTags.includes(tagName.toLowerCase())) {
+              return match;
+            }
+            return '';
+          });
+
+          return sanitized;
+        }
+      );
 
       const dangerousHtml = `
         <p>Safe paragraph</p>
@@ -337,27 +362,36 @@ describe('Security Tests', () => {
     it('should validate file uploads securely', async () => {
       const { validateFileUpload } = await import('@repo/validation');
 
-      vi.mocked(validateFileUpload).mockImplementation((filename: string, size: number, mimeType: string) => {
-        const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-        const maxSize = 10 * 1024 * 1024; // 10MB
-        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
-        
-        const fileExtension = filename.toLowerCase().substring(filename.lastIndexOf('.'));
-        
-        if (!allowedMimeTypes.includes(mimeType)) {
-          return { isValid: false, error: 'Invalid file type' };
+      vi.mocked(validateFileUpload).mockImplementation(
+        (filename: string, size: number, mimeType: string) => {
+          const allowedMimeTypes = [
+            'image/jpeg',
+            'image/png',
+            'image/webp',
+            'image/gif',
+          ];
+          const maxSize = 10 * 1024 * 1024; // 10MB
+          const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
+
+          const fileExtension = filename
+            .toLowerCase()
+            .substring(filename.lastIndexOf('.'));
+
+          if (!allowedMimeTypes.includes(mimeType)) {
+            return { isValid: false, error: 'Invalid file type' };
+          }
+
+          if (!allowedExtensions.includes(fileExtension)) {
+            return { isValid: false, error: 'Invalid file extension' };
+          }
+
+          if (size > maxSize) {
+            return { isValid: false, error: 'File too large' };
+          }
+
+          return { isValid: true };
         }
-        
-        if (!allowedExtensions.includes(fileExtension)) {
-          return { isValid: false, error: 'Invalid file extension' };
-        }
-        
-        if (size > maxSize) {
-          return { isValid: false, error: 'File too large' };
-        }
-        
-        return { isValid: true };
-      });
+      );
 
       // Valid files
       const validFiles = [
@@ -366,21 +400,41 @@ describe('Security Tests', () => {
         { filename: 'avatar.webp', size: 500 * 1024, mimeType: 'image/webp' },
       ];
 
-      validFiles.forEach(file => {
-        const result = validateFileUpload(file.filename, file.size, file.mimeType);
+      validFiles.forEach((file) => {
+        const result = validateFileUpload(
+          file.filename,
+          file.size,
+          file.mimeType
+        );
         expect(result.isValid).toBe(true);
       });
 
       // Invalid files
       const invalidFiles = [
-        { filename: 'virus.exe', size: 1024, mimeType: 'application/x-executable' },
+        {
+          filename: 'virus.exe',
+          size: 1024,
+          mimeType: 'application/x-executable',
+        },
         { filename: 'script.js', size: 1024, mimeType: 'text/javascript' },
-        { filename: 'large.jpg', size: 15 * 1024 * 1024, mimeType: 'image/jpeg' }, // Too large
-        { filename: 'fake.png', size: 1024, mimeType: 'application/octet-stream' }, // Wrong MIME type
+        {
+          filename: 'large.jpg',
+          size: 15 * 1024 * 1024,
+          mimeType: 'image/jpeg',
+        }, // Too large
+        {
+          filename: 'fake.png',
+          size: 1024,
+          mimeType: 'application/octet-stream',
+        }, // Wrong MIME type
       ];
 
-      invalidFiles.forEach(file => {
-        const result = validateFileUpload(file.filename, file.size, file.mimeType);
+      invalidFiles.forEach((file) => {
+        const result = validateFileUpload(
+          file.filename,
+          file.size,
+          file.mimeType
+        );
         expect(result.isValid).toBe(false);
         expect(result.error).toBeDefined();
       });
@@ -391,7 +445,7 @@ describe('Security Tests', () => {
 
       vi.mocked(containsProfanity).mockImplementation((text: string) => {
         const profanityList = ['spam', 'scam', 'fake', 'fraud', 'stolen'];
-        return profanityList.some(word => text.toLowerCase().includes(word));
+        return profanityList.some((word) => text.toLowerCase().includes(word));
       });
 
       const inappropriateTexts = [
@@ -401,7 +455,7 @@ describe('Security Tests', () => {
         'SPAM message about products',
       ];
 
-      inappropriateTexts.forEach(text => {
+      inappropriateTexts.forEach((text) => {
         expect(containsProfanity(text)).toBe(true);
       });
 
@@ -411,7 +465,7 @@ describe('Security Tests', () => {
         'Beautiful handmade jewelry',
       ];
 
-      appropriateTexts.forEach(text => {
+      appropriateTexts.forEach((text) => {
         expect(containsProfanity(text)).toBe(false);
       });
     });
@@ -424,21 +478,26 @@ describe('Security Tests', () => {
       vi.mocked(requireAuth).mockImplementation((handler) => {
         return async (request: NextRequest) => {
           const authHeader = request.headers.get('authorization');
-          if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+          if (!authHeader?.startsWith('Bearer ')) {
+            return NextResponse.json(
+              { error: 'Unauthorized' },
+              { status: 401 }
+            );
           }
           return handler(request);
         };
       });
 
-      const protectedHandler = async (req: NextRequest) => {
+      const protectedHandler = async (_req: NextRequest) => {
         return NextResponse.json({ message: 'Protected resource accessed' });
       };
 
       const wrappedHandler = requireAuth(protectedHandler);
 
       // Request without auth
-      const unauthorizedRequest = new NextRequest('http://localhost:3002/api/protected');
+      const unauthorizedRequest = new NextRequest(
+        'http://localhost:3002/api/protected'
+      );
       const unauthorizedResponse = await wrappedHandler(unauthorizedRequest);
       const unauthorizedData = await unauthorizedResponse.json();
 
@@ -446,9 +505,12 @@ describe('Security Tests', () => {
       expect(unauthorizedData.error).toBe('Unauthorized');
 
       // Request with auth
-      const authorizedRequest = new NextRequest('http://localhost:3002/api/protected', {
-        headers: { 'authorization': 'Bearer valid-token' },
-      });
+      const authorizedRequest = new NextRequest(
+        'http://localhost:3002/api/protected',
+        {
+          headers: { authorization: 'Bearer valid-token' },
+        }
+      );
       const authorizedResponse = await wrappedHandler(authorizedRequest);
       const authorizedData = await authorizedResponse.json();
 
@@ -462,16 +524,16 @@ describe('Security Tests', () => {
       vi.mocked(requireRole).mockImplementation((roles: string[]) => {
         return (handler: any) => async (request: NextRequest) => {
           const userRole = request.headers.get('x-user-role');
-          
-          if (!userRole || !roles.includes(userRole)) {
+
+          if (!(userRole && roles.includes(userRole))) {
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
           }
-          
+
           return handler(request);
         };
       });
 
-      const adminHandler = async (req: NextRequest) => {
+      const adminHandler = async (_req: NextRequest) => {
         return NextResponse.json({ message: 'Admin resource accessed' });
       };
 
@@ -509,26 +571,35 @@ describe('Security Tests', () => {
           if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
             const csrfToken = request.headers.get('x-csrf-token');
             const sessionToken = request.headers.get('x-session-token');
-            
-            if (!csrfToken || !sessionToken || csrfToken !== `csrf-${sessionToken}`) {
-              return NextResponse.json({ error: 'CSRF token invalid' }, { status: 403 });
+
+            if (
+              !(csrfToken && sessionToken) ||
+              csrfToken !== `csrf-${sessionToken}`
+            ) {
+              return NextResponse.json(
+                { error: 'CSRF token invalid' },
+                { status: 403 }
+              );
             }
           }
           return handler(request);
         };
       });
 
-      const protectedHandler = async (req: NextRequest) => {
+      const protectedHandler = async (_req: NextRequest) => {
         return NextResponse.json({ message: 'Operation successful' });
       };
 
       const wrappedHandler = csrfProtection(protectedHandler);
 
       // POST request without CSRF token
-      const invalidRequest = new NextRequest('http://localhost:3002/api/products', {
-        method: 'POST',
-        body: JSON.stringify({ title: 'Test Product' }),
-      });
+      const invalidRequest = new NextRequest(
+        'http://localhost:3002/api/products',
+        {
+          method: 'POST',
+          body: JSON.stringify({ title: 'Test Product' }),
+        }
+      );
       const invalidResponse = await wrappedHandler(invalidRequest);
       const invalidData = await invalidResponse.json();
 
@@ -536,14 +607,17 @@ describe('Security Tests', () => {
       expect(invalidData.error).toBe('CSRF token invalid');
 
       // POST request with valid CSRF token
-      const validRequest = new NextRequest('http://localhost:3002/api/products', {
-        method: 'POST',
-        headers: {
-          'x-csrf-token': 'csrf-session123',
-          'x-session-token': 'session123',
-        },
-        body: JSON.stringify({ title: 'Test Product' }),
-      });
+      const validRequest = new NextRequest(
+        'http://localhost:3002/api/products',
+        {
+          method: 'POST',
+          headers: {
+            'x-csrf-token': 'csrf-session123',
+            'x-session-token': 'session123',
+          },
+          body: JSON.stringify({ title: 'Test Product' }),
+        }
+      );
       const validResponse = await wrappedHandler(validRequest);
       const validData = await validResponse.json();
 
@@ -562,20 +636,26 @@ describe('Security Tests', () => {
 
   describe('Security Headers', () => {
     it('should set appropriate security headers', async () => {
-      const mockSecurityMiddleware = async (request: NextRequest) => {
+      const mockSecurityMiddleware = async (_request: NextRequest) => {
         const response = NextResponse.json({ success: true });
-        
+
         // Add security headers
         response.headers.set('X-Content-Type-Options', 'nosniff');
         response.headers.set('X-Frame-Options', 'DENY');
         response.headers.set('X-XSS-Protection', '1; mode=block');
-        response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-        response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+        response.headers.set(
+          'Referrer-Policy',
+          'strict-origin-when-cross-origin'
+        );
+        response.headers.set(
+          'Permissions-Policy',
+          'camera=(), microphone=(), geolocation=()'
+        );
         response.headers.set(
           'Content-Security-Policy',
           "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
         );
-        
+
         return response;
       };
 
@@ -585,9 +665,15 @@ describe('Security Tests', () => {
       expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff');
       expect(response.headers.get('X-Frame-Options')).toBe('DENY');
       expect(response.headers.get('X-XSS-Protection')).toBe('1; mode=block');
-      expect(response.headers.get('Referrer-Policy')).toBe('strict-origin-when-cross-origin');
-      expect(response.headers.get('Permissions-Policy')).toBe('camera=(), microphone=(), geolocation=()');
-      expect(response.headers.get('Content-Security-Policy')).toContain("default-src 'self'");
+      expect(response.headers.get('Referrer-Policy')).toBe(
+        'strict-origin-when-cross-origin'
+      );
+      expect(response.headers.get('Permissions-Policy')).toBe(
+        'camera=(), microphone=(), geolocation=()'
+      );
+      expect(response.headers.get('Content-Security-Policy')).toContain(
+        "default-src 'self'"
+      );
     });
   });
 
@@ -595,10 +681,13 @@ describe('Security Tests', () => {
     it('should log security-related events', async () => {
       const { logSecurityEvent } = await import('@repo/observability/server');
 
-      const mockSecurityEventHandler = async (eventType: string, details: any) => {
+      const mockSecurityEventHandler = async (
+        eventType: string,
+        details: any
+      ) => {
         // Log security event
         logSecurityEvent(eventType, details);
-        
+
         return NextResponse.json({ logged: true });
       };
 
@@ -621,9 +710,18 @@ describe('Security Tests', () => {
       });
 
       expect(logSecurityEvent).toHaveBeenCalledTimes(3);
-      expect(logSecurityEvent).toHaveBeenCalledWith('RATE_LIMIT_EXCEEDED', expect.any(Object));
-      expect(logSecurityEvent).toHaveBeenCalledWith('INVALID_LOGIN_ATTEMPT', expect.any(Object));
-      expect(logSecurityEvent).toHaveBeenCalledWith('SQL_INJECTION_ATTEMPT', expect.any(Object));
+      expect(logSecurityEvent).toHaveBeenCalledWith(
+        'RATE_LIMIT_EXCEEDED',
+        expect.any(Object)
+      );
+      expect(logSecurityEvent).toHaveBeenCalledWith(
+        'INVALID_LOGIN_ATTEMPT',
+        expect.any(Object)
+      );
+      expect(logSecurityEvent).toHaveBeenCalledWith(
+        'SQL_INJECTION_ATTEMPT',
+        expect.any(Object)
+      );
     });
   });
 
@@ -636,29 +734,39 @@ describe('Security Tests', () => {
         const hasUpperCase = /[A-Z]/.test(password);
         const hasLowerCase = /[a-z]/.test(password);
         const hasNumbers = /\d/.test(password);
-        const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
-        
+        const hasSpecialChar = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(
+          password
+        );
+
         return {
-          isValid: password.length >= minLength && hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChar,
+          isValid:
+            password.length >= minLength &&
+            hasUpperCase &&
+            hasLowerCase &&
+            hasNumbers &&
+            hasSpecialChar,
           errors: [
-            ...(password.length < minLength ? ['Password must be at least 8 characters long'] : []),
-            ...((!hasUpperCase) ? ['Password must contain uppercase letters'] : []),
-            ...((!hasLowerCase) ? ['Password must contain lowercase letters'] : []),
-            ...((!hasNumbers) ? ['Password must contain numbers'] : []),
-            ...((!hasSpecialChar) ? ['Password must contain special characters'] : []),
+            ...(password.length < minLength
+              ? ['Password must be at least 8 characters long']
+              : []),
+            ...(hasUpperCase
+              ? []
+              : ['Password must contain uppercase letters']),
+            ...(hasLowerCase
+              ? []
+              : ['Password must contain lowercase letters']),
+            ...(hasNumbers ? [] : ['Password must contain numbers']),
+            ...(hasSpecialChar
+              ? []
+              : ['Password must contain special characters']),
           ],
         };
       });
 
       // Weak passwords
-      const weakPasswords = [
-        'password',
-        '12345678',
-        'Password',
-        'Password1',
-      ];
+      const weakPasswords = ['password', '12345678', 'Password', 'Password1'];
 
-      weakPasswords.forEach(password => {
+      weakPasswords.forEach((password) => {
         const result = isValidPassword(password);
         expect(result.isValid).toBe(false);
         expect(result.errors.length).toBeGreaterThan(0);
@@ -671,7 +779,7 @@ describe('Security Tests', () => {
         'C0mplex!Pass#2024',
       ];
 
-      strongPasswords.forEach(password => {
+      strongPasswords.forEach((password) => {
         const result = isValidPassword(password);
         expect(result.isValid).toBe(true);
         expect(result.errors.length).toBe(0);
@@ -686,11 +794,13 @@ describe('Security Tests', () => {
       vi.mocked(isValidEmail).mockImplementation((email: string) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const isValid = emailRegex.test(email);
-        
+
         // Additional security checks
-        const containsDangerousChars = /[<>()[\]\\.,;:\s@"]/.test(email.split('@')[0]);
+        const containsDangerousChars = /[<>()[\]\\.,;:\s@"]/.test(
+          email.split('@')[0]
+        );
         const isReasonableLength = email.length <= 254;
-        
+
         return isValid && !containsDangerousChars && isReasonableLength;
       });
 
@@ -701,7 +811,7 @@ describe('Security Tests', () => {
         'valid+email@test.org',
       ];
 
-      validEmails.forEach(email => {
+      validEmails.forEach((email) => {
         expect(isValidEmail(email)).toBe(true);
       });
 
@@ -712,10 +822,10 @@ describe('Security Tests', () => {
         'user@',
         'user<script>@domain.com',
         'user@domain',
-        'a'.repeat(250) + '@domain.com', // Too long
+        `${'a'.repeat(250)}@domain.com`, // Too long
       ];
 
-      invalidEmails.forEach(email => {
+      invalidEmails.forEach((email) => {
         expect(isValidEmail(email)).toBe(false);
       });
     });
@@ -737,10 +847,13 @@ describe('Security Tests', () => {
 
         for (const envVar of requiredEnvVars) {
           const value = process.env[envVar];
-          
+
           if (!value) {
             missing.push(envVar);
-          } else if (value.includes('placeholder') || value === 'your-key-here') {
+          } else if (
+            value.includes('placeholder') ||
+            value === 'your-key-here'
+          ) {
             insecure.push(envVar);
           }
         }
@@ -756,7 +869,7 @@ describe('Security Tests', () => {
       process.env.UPSTASH_REDIS_REST_URL = 'https://redis.upstash.io';
 
       const result = mockEnvCheck();
-      
+
       expect(result.missing).toHaveLength(0);
       expect(result.insecure).toHaveLength(0);
     });
@@ -764,10 +877,13 @@ describe('Security Tests', () => {
 
   describe('Request Size Limits', () => {
     it('should enforce request size limits', async () => {
-      const mockSizeLimitMiddleware = async (request: NextRequest, maxSize: number = 1024 * 1024) => {
+      const mockSizeLimitMiddleware = async (
+        request: NextRequest,
+        maxSize: number = 1024 * 1024
+      ) => {
         const contentLength = request.headers.get('content-length');
-        
-        if (contentLength && parseInt(contentLength) > maxSize) {
+
+        if (contentLength && Number.parseInt(contentLength, 10) > maxSize) {
           return NextResponse.json(
             { error: 'Request too large' },
             { status: 413 }

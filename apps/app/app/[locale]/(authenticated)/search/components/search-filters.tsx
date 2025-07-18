@@ -88,11 +88,11 @@ export function SearchFilters({ filters, onFiltersChange, onClearFilters, facets
     });
   };
 
-  const toggleCondition = (condition: string) => {
+  const toggleCondition = (condition: 'NEW' | 'LIKE_NEW' | 'GOOD' | 'FAIR') => {
     const currentConditions = filters.conditions || [];
-    const newConditions = currentConditions.includes(condition as any)
+    const newConditions = currentConditions.includes(condition)
       ? currentConditions.filter(c => c !== condition)
-      : [...currentConditions, condition as any];
+      : [...currentConditions, condition];
     
     onFiltersChange({ conditions: newConditions });
   };
@@ -143,7 +143,7 @@ export function SearchFilters({ filters, onFiltersChange, onClearFilters, facets
       <div className="flex items-center gap-2 overflow-x-auto pb-2">
         <Select
           value={filters.sortBy || 'relevance'}
-          onValueChange={(value) => onFiltersChange({ sortBy: value as any })}
+          onValueChange={(value) => onFiltersChange({ sortBy: value as 'relevance' | 'price_asc' | 'price_desc' | 'newest' | 'most_viewed' | 'most_favorited' })}
         >
           <SelectTrigger className="w-48">
             <SelectValue placeholder={dictionary.dashboard.search.filters.sortBy} />
@@ -202,9 +202,9 @@ export function SearchFilters({ filters, onFiltersChange, onClearFilters, facets
                   {CONDITIONS.map(condition => (
                     <Badge
                       key={condition.value}
-                      variant={filters.conditions?.includes(condition.value as any) ? "default" : "outline"}
+                      variant={filters.conditions?.includes(condition.value as 'NEW' | 'LIKE_NEW' | 'GOOD' | 'FAIR') ? "default" : "outline"}
                       className="cursor-pointer"
-                      onClick={() => toggleCondition(condition.value)}
+                      onClick={() => toggleCondition(condition.value as 'NEW' | 'LIKE_NEW' | 'GOOD' | 'FAIR')}
                     >
                       {condition.label}
                     </Badge>

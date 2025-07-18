@@ -8,6 +8,7 @@ import { randomUUID } from 'crypto';
 import { currentUser } from '@repo/auth/server';
 import { BulkOperationType, BulkOperationStatus } from '@/lib/database-types';
 import { ProductStatus } from '@repo/database/generated/client';
+import { BulkUpdateData } from '@repo/validation/schemas';
 
 export async function approveProduct(productId: string) {
   const isModerator = await canModerate();
@@ -206,15 +207,6 @@ export async function bulkUpdateProducts({
   }
 }
 
-interface BulkUpdateData {
-  price?: number;
-  status?: string;
-  categoryId?: string;
-  condition?: string;
-  brand?: string;
-  size?: string;
-  color?: string;
-}
 
 export async function bulkUpdateSellerProducts({
   productIds,

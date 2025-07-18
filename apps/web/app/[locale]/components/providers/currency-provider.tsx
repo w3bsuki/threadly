@@ -1,8 +1,18 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import {
+  type Currency,
+  formatCurrency as formatCurrencyUtil,
+  getCurrencySymbol,
+} from '@repo/internationalization/client';
 import { getCookie, setCookie } from 'cookies-next';
-import { type Currency, getCurrencySymbol, formatCurrency as formatCurrencyUtil } from '@repo/internationalization/client';
+import {
+  createContext,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 
 interface CurrencyContextType {
   currency: Currency;
@@ -11,7 +21,9 @@ interface CurrencyContextType {
   currencySymbol: string;
 }
 
-const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
+const CurrencyContext = createContext<CurrencyContextType | undefined>(
+  undefined
+);
 
 export function CurrencyProvider({ children }: { children: ReactNode }) {
   const [currency, setCurrencyState] = useState<Currency>('USD');
@@ -36,7 +48,9 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
   const currencySymbol = getCurrencySymbol(currency);
 
   return (
-    <CurrencyContext.Provider value={{ currency, setCurrency, formatPrice, currencySymbol }}>
+    <CurrencyContext.Provider
+      value={{ currency, setCurrency, formatPrice, currencySymbol }}
+    >
       {children}
     </CurrencyContext.Provider>
   );

@@ -1,9 +1,9 @@
-import { env } from '@/env';
 import { withCMS } from '@repo/cms/next-config';
 import { withToolbar } from '@repo/feature-flags/lib/toolbar';
 import { config, withAnalyzer } from '@repo/next-config';
-import { withLogging, withSentry } from '@repo/observability/next-config';
+import { withSentry } from '@repo/observability/next-config';
 import type { NextConfig } from 'next';
+import { env } from '@/env';
 
 let nextConfig: NextConfig = withToolbar(config);
 
@@ -58,12 +58,14 @@ nextConfig.webpack = (config, { isServer }) => {
       { module: /require-in-the-middle/ },
       { module: /@opentelemetry\/instrumentation/ },
     ];
-    
+
     // Add Prisma monorepo workaround plugin
-    const { PrismaPlugin } = require('@prisma/nextjs-monorepo-workaround-plugin');
+    const {
+      PrismaPlugin,
+    } = require('@prisma/nextjs-monorepo-workaround-plugin');
     config.plugins = [...config.plugins, new PrismaPlugin()];
   }
-  
+
   return config;
 };
 
@@ -134,9 +136,7 @@ if (process.env.NODE_ENV === 'production') {
 // Enable Sentry for all environments where DSN is provided
 try {
   nextConfig = withSentry(nextConfig);
-} catch (error) {
-  console.warn('Sentry configuration failed, continuing without Sentry:', error);
-}
+} catch (_error) {}
 
 if (env.ANALYZE === 'true') {
   nextConfig = withAnalyzer(nextConfig);

@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { DynamicCheckout } from './components/dynamic-checkout';
 
 export const metadata: Metadata = {

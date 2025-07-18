@@ -33,7 +33,7 @@ interface DashboardContentProps {
   };
   recentOrders: Array<{
     id: string;
-    amount: any;
+    amount: number;
     status: string;
     createdAt: Date;
     product: {

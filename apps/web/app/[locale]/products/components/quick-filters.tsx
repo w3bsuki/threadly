@@ -1,10 +1,9 @@
 'use client';
 
-import { useRouter, usePathname } from 'next/navigation';
-import { Button } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
+import { Badge, Button } from '@repo/design-system/components';
 import { cn } from '@repo/design-system/lib/utils';
-import { Crown, Tag, Package, Sparkles, Users, Baby, User } from 'lucide-react';
+import { Baby, Crown, Sparkles, Tag, User, Users } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface QuickFiltersProps {
   currentFilters: {
@@ -17,53 +16,53 @@ interface QuickFiltersProps {
 }
 
 const quickFilters = [
-  { 
-    id: 'women', 
-    label: 'Women', 
+  {
+    id: 'women',
+    label: 'Women',
     icon: Users,
     type: 'gender',
     value: 'women',
-    color: 'pink'
+    color: 'pink',
   },
-  { 
-    id: 'men', 
-    label: 'Men', 
+  {
+    id: 'men',
+    label: 'Men',
     icon: User,
     type: 'gender',
     value: 'men',
-    color: 'blue'
+    color: 'blue',
   },
-  { 
-    id: 'kids', 
-    label: 'Kids', 
+  {
+    id: 'kids',
+    label: 'Kids',
     icon: Baby,
     type: 'gender',
     value: 'kids',
-    color: 'green'
+    color: 'green',
   },
-  { 
-    id: 'new', 
-    label: 'New with tags', 
+  {
+    id: 'new',
+    label: 'New with tags',
     icon: Tag,
     type: 'condition',
     value: 'NEW_WITH_TAGS',
-    color: 'emerald'
+    color: 'emerald',
   },
-  { 
-    id: 'designer', 
-    label: 'Designer', 
+  {
+    id: 'designer',
+    label: 'Designer',
     icon: Crown,
     type: 'category',
     value: 'designer',
-    color: 'amber'
+    color: 'amber',
   },
-  { 
-    id: 'under50', 
-    label: 'Under $50', 
+  {
+    id: 'under50',
+    label: 'Under $50',
     icon: Sparkles,
     type: 'price',
     value: { maxPrice: '50', minPrice: '0' },
-    color: 'purple'
+    color: 'purple',
   },
 ];
 
@@ -71,7 +70,7 @@ export function QuickFilters({ currentFilters }: QuickFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const isFilterActive = (filter: typeof quickFilters[0]) => {
+  const isFilterActive = (filter: (typeof quickFilters)[0]) => {
     if (filter.type === 'gender') {
       return currentFilters.gender === filter.value;
     }
@@ -87,9 +86,9 @@ export function QuickFilters({ currentFilters }: QuickFiltersProps) {
     return false;
   };
 
-  const toggleFilter = (filter: typeof quickFilters[0]) => {
+  const toggleFilter = (filter: (typeof quickFilters)[0]) => {
     const params = new URLSearchParams();
-    
+
     // Copy existing filters except the one being toggled
     Object.entries(currentFilters).forEach(([key, value]) => {
       if (value) {
@@ -133,44 +132,61 @@ export function QuickFilters({ currentFilters }: QuickFiltersProps) {
 
     // Reset to page 1 when filters change
     params.delete('page');
-    
+
     const queryString = params.toString();
     router.push(`${pathname}${queryString ? `?${queryString}` : ''}`);
   };
 
   return (
-    <div className="flex overflow-x-auto gap-3 snap-x snap-mandatory scrollbar-hide">
-        {quickFilters.map((filter) => {
-          const Icon = filter.icon;
-          const active = isFilterActive(filter);
-          
-          return (
-            <Button
-              key={filter.id}
-              variant={active ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => toggleFilter(filter)}
-              className={cn(
-                'h-12 px-6 py-3 text-base font-semibold transition-all touch-manipulation whitespace-nowrap snap-start flex-shrink-0',
-                active ? 'bg-gray-900 text-white hover:bg-gray-800' : 'hover:border-gray-400',
-                !active && filter.color === 'pink' && 'hover:border-pink-300 hover:text-pink-700 hover:bg-pink-50',
-                !active && filter.color === 'blue' && 'hover:border-blue-300 hover:text-blue-700 hover:bg-blue-50',
-                !active && filter.color === 'green' && 'hover:border-green-300 hover:text-green-700 hover:bg-green-50',
-                !active && filter.color === 'emerald' && 'hover:border-emerald-300 hover:text-emerald-700 hover:bg-emerald-50',
-                !active && filter.color === 'amber' && 'hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50',
-                !active && filter.color === 'purple' && 'hover:border-purple-300 hover:text-purple-700 hover:bg-purple-50'
-              )}
-            >
-              <Icon className="h-5 w-5 mr-2" />
-              {filter.label}
-              {active && (
-                <Badge variant="secondary" className="ml-2 h-5 px-1.5 bg-white/20 text-white">
-                  ✓
-                </Badge>
-              )}
-            </Button>
-          );
-        })}
+    <div className="scrollbar-hide flex snap-x snap-mandatory gap-3 overflow-x-auto">
+      {quickFilters.map((filter) => {
+        const Icon = filter.icon;
+        const active = isFilterActive(filter);
+
+        return (
+          <Button
+            className={cn(
+              'h-12 flex-shrink-0 touch-manipulation snap-start whitespace-nowrap px-6 py-3 font-semibold text-base transition-all',
+              active
+                ? 'bg-gray-900 text-white hover:bg-gray-800'
+                : 'hover:border-gray-400',
+              !active &&
+                filter.color === 'pink' &&
+                'hover:border-pink-300 hover:bg-pink-50 hover:text-pink-700',
+              !active &&
+                filter.color === 'blue' &&
+                'hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700',
+              !active &&
+                filter.color === 'green' &&
+                'hover:border-green-300 hover:bg-green-50 hover:text-green-700',
+              !active &&
+                filter.color === 'emerald' &&
+                'hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700',
+              !active &&
+                filter.color === 'amber' &&
+                'hover:border-amber-300 hover:bg-amber-50 hover:text-amber-700',
+              !active &&
+                filter.color === 'purple' &&
+                'hover:border-purple-300 hover:bg-purple-50 hover:text-purple-700'
+            )}
+            key={filter.id}
+            onClick={() => toggleFilter(filter)}
+            size="sm"
+            variant={active ? 'default' : 'outline'}
+          >
+            <Icon className="mr-2 h-5 w-5" />
+            {filter.label}
+            {active && (
+              <Badge
+                className="ml-2 h-5 bg-white/20 px-1.5 text-white"
+                variant="secondary"
+              >
+                ✓
+              </Badge>
+            )}
+          </Button>
+        );
+      })}
     </div>
   );
 }

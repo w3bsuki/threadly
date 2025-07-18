@@ -1,17 +1,23 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { z } from 'zod';
 import { log, logError } from '@repo/observability/server';
-import { stripe, calculatePlatformFee, isStripeConfigured } from '@repo/payments';
-import { paymentRateLimit, checkRateLimit } from '@repo/security';
+import {
+  calculatePlatformFee,
+  isStripeConfigured,
+  stripe,
+} from '@repo/payments';
+import { checkRateLimit, paymentRateLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 const createPaymentIntentSchema = z.object({
-  items: z.array(z.object({
-    productId: z.string(),
-    quantity: z.number().min(1),
-    price: z.number().min(0),
-  })),
+  items: z.array(
+    z.object({
+      productId: z.string(),
+      quantity: z.number().min(1),
+      price: z.number().min(0),
+    })
+  ),
   costs: z.object({
     subtotal: z.number(),
     shipping: z.number(),
@@ -27,9 +33,9 @@ export async function POST(request: NextRequest) {
     if (!rateLimitResult.allowed) {
       return NextResponse.json(
         { error: rateLimitResult.error?.message || 'Rate limit exceeded' },
-        { 
+        {
           status: 429,
-          headers: rateLimitResult.headers
+          headers: rateLimitResult.headers,
         }
       );
     }
@@ -61,7 +67,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate products and check availability
-    const productIds = validatedData.items.map(item => item.productId);
+    const productIds = validatedData.items.map((item) => item.productId);
     const products = await database.product.findMany({
       where: {
         id: { in: productIds },
@@ -80,7 +86,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Calculate platform fee (5% of subtotal)
-    const platformFeeInCents = calculatePlatformFee(validatedData.costs.subtotal * 100);
+    const platformFeeInCents = calculatePlatformFee(
+      validatedData.costs.subtotal * 100
+    );
 
     // Create Stripe Payment Intent
     const paymentIntent = await stripe.paymentIntents.create({
@@ -110,7 +118,6 @@ export async function POST(request: NextRequest) {
         id: paymentIntent.id,
       },
     });
-
   } catch (error) {
     logError('Failed to create payment intent', error);
 

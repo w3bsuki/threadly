@@ -14,7 +14,10 @@ const AdminProductsPage = async ({ searchParams }: PageProps): Promise<React.JSX
   const statusFilter = params.status || 'all';
 
   // Build where clause
-  const where: any = {};
+  const where: {
+    OR?: Array<{ title?: { contains: string; mode: 'insensitive' } } | { description?: { contains: string; mode: 'insensitive' } }>;
+    status?: string;
+  } = {};
   
   if (search) {
     where.OR = [

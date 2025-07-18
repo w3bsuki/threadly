@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
-import { getDictionary } from "@repo/internationalization";
-import { CartContent } from "./components/cart-content";
+import { getDictionary } from '@repo/internationalization';
+import type { Metadata } from 'next';
+import { CartContent } from './components/cart-content';
 
 export async function generateMetadata({
   params,
@@ -8,11 +8,11 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const dictionary = await getDictionary(locale);
-  
+  const _dictionary = await getDictionary(locale);
+
   return {
-    title: "Cart - Threadly",
-    description: "Your shopping cart",
+    title: 'Cart - Threadly',
+    description: 'Your shopping cart',
   };
 }
 

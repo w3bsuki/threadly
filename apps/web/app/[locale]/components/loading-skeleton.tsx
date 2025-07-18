@@ -9,10 +9,10 @@ interface SkeletonProps {
 
 export function Skeleton({ className, animate = true }: SkeletonProps) {
   return (
-    <div 
+    <div
       className={cn(
-        "bg-gray-200 rounded-md",
-        animate && "animate-pulse",
+        'rounded-md bg-gray-200',
+        animate && 'animate-pulse',
         className
       )}
     />
@@ -34,7 +34,7 @@ export function ProductCardSkeleton() {
 
 export function ProductGridSkeleton({ count = 12 }: { count?: number }) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
       {Array.from({ length: count }, (_, i) => (
         <ProductCardSkeleton key={i} />
       ))}
@@ -63,7 +63,7 @@ export function ProductListSkeleton() {
   return (
     <div className="space-y-4">
       {Array.from({ length: 6 }, (_, i) => (
-        <div key={i} className="flex space-x-4">
+        <div className="flex space-x-4" key={i}>
           <Skeleton className="h-24 w-24 rounded-md" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-1/2" />
@@ -95,7 +95,7 @@ export function FiltersSkeleton() {
         <Skeleton className="h-4 w-20" />
         <div className="grid grid-cols-2 gap-2">
           {Array.from({ length: 4 }, (_, i) => (
-            <Skeleton key={i} className="h-8" />
+            <Skeleton className="h-8" key={i} />
           ))}
         </div>
       </div>
@@ -103,7 +103,7 @@ export function FiltersSkeleton() {
         <Skeleton className="h-4 w-24" />
         <div className="space-y-2">
           {Array.from({ length: 3 }, (_, i) => (
-            <Skeleton key={i} className="h-8" />
+            <Skeleton className="h-8" key={i} />
           ))}
         </div>
       </div>
@@ -127,7 +127,10 @@ export function CartSkeleton() {
   return (
     <div className="space-y-4">
       {Array.from({ length: 3 }, (_, i) => (
-        <div key={i} className="flex items-center space-x-4 p-4 border rounded-lg">
+        <div
+          className="flex items-center space-x-4 rounded-lg border p-4"
+          key={i}
+        >
           <Skeleton className="h-16 w-16 rounded-md" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-1/2" />

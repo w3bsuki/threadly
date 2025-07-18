@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import Image from 'next/image';
 import { cn } from '@repo/design-system/lib/utils';
+import Image from 'next/image';
+import { useState } from 'react';
 
 interface OptimizedImageProps {
   src: string;
@@ -21,7 +21,7 @@ interface OptimizedImageProps {
 }
 
 // Generate a simple blur placeholder
-const generateBlurDataURL = (width: number = 8, height: number = 8): string => {
+const generateBlurDataURL = (width = 8, height = 8): string => {
   return `data:image/svg+xml;base64,${Buffer.from(
     `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
       <rect width="100%" height="100%" fill="#f3f4f6"/>
@@ -43,7 +43,7 @@ export function OptimizedImage({
   height,
   fill,
   className,
-  sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
+  sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
   priority = false,
   quality = 85,
   placeholder = 'blur',
@@ -56,7 +56,8 @@ export function OptimizedImage({
   const [isVisible, setIsVisible] = useState(false);
 
   // Use provided blur or generate one
-  const finalBlurDataURL = blurDataURL || (placeholder === 'blur' ? generateBlurDataURL() : undefined);
+  const finalBlurDataURL =
+    blurDataURL || (placeholder === 'blur' ? generateBlurDataURL() : undefined);
 
   const handleLoad = () => {
     setIsLoading(false);
@@ -74,13 +75,13 @@ export function OptimizedImage({
   // If there's an error, show a fallback
   if (hasError) {
     return (
-      <div 
+      <div
         className={cn(
-          "bg-gray-100 flex items-center justify-center text-gray-400 text-sm",
-          fill ? "absolute inset-0" : "",
+          'flex items-center justify-center bg-gray-100 text-gray-400 text-sm',
+          fill ? 'absolute inset-0' : '',
           className
         )}
-        style={!fill ? { width, height } : undefined}
+        style={fill ? undefined : { width, height }}
       >
         <span>Image unavailable</span>
       </div>
@@ -91,10 +92,12 @@ export function OptimizedImage({
     src,
     alt,
     className: cn(
-      "transition-all duration-700 ease-in-out",
-      isLoading ? "opacity-0 scale-110 blur-sm" : "opacity-100 scale-100 blur-0",
-      !isVisible && !isLoading ? "opacity-0" : "",
-      isVisible ? "opacity-100" : "",
+      'transition-all duration-700 ease-in-out',
+      isLoading
+        ? 'scale-110 opacity-0 blur-sm'
+        : 'scale-100 opacity-100 blur-0',
+      isVisible || isLoading ? '' : 'opacity-0',
+      isVisible ? 'opacity-100' : '',
       className
     ),
     sizes,
@@ -102,21 +105,20 @@ export function OptimizedImage({
     quality,
     onLoad: handleLoad,
     onError: handleError,
-    ...(placeholder === 'blur' && finalBlurDataURL ? {
-      placeholder: 'blur' as const,
-      blurDataURL: finalBlurDataURL,
-    } : {}),
+    ...(placeholder === 'blur' && finalBlurDataURL
+      ? {
+          placeholder: 'blur' as const,
+          blurDataURL: finalBlurDataURL,
+        }
+      : {}),
   };
 
   if (fill) {
     return (
       <div className="relative overflow-hidden">
-        <Image
-          {...imageProps}
-          fill
-        />
+        <Image {...imageProps} fill />
         {isLoading && (
-          <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse">
+          <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200">
             <div className="absolute inset-0 bg-gradient-to-br from-transparent to-gray-300/20" />
           </div>
         )}
@@ -126,14 +128,10 @@ export function OptimizedImage({
 
   return (
     <div className="relative overflow-hidden" style={{ width, height }}>
-      <Image
-        {...imageProps}
-        width={width}
-        height={height}
-      />
+      <Image {...imageProps} height={height} width={width} />
       {isLoading && (
-        <div 
-          className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse"
+        <div
+          className="absolute inset-0 animate-pulse bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200"
           style={{ width, height }}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-transparent to-gray-300/20" />
@@ -156,14 +154,14 @@ export function ProductImage({
   priority?: boolean;
 }) {
   return (
-    <div className={cn("relative aspect-square overflow-hidden", className)}>
+    <div className={cn('relative aspect-square overflow-hidden', className)}>
       <OptimizedImage
-        src={src}
         alt={alt}
+        className="object-cover transition-transform duration-300 hover:scale-105"
         fill
         priority={priority}
         sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-        className="object-cover hover:scale-105 transition-transform duration-300"
+        src={src}
       />
     </div>
   );
@@ -180,15 +178,20 @@ export function HeroImage({
   className?: string;
 }) {
   return (
-    <div className={cn("relative aspect-[16/9] md:aspect-[21/9] overflow-hidden", className)}>
+    <div
+      className={cn(
+        'relative aspect-[16/9] overflow-hidden md:aspect-[21/9]',
+        className
+      )}
+    >
       <OptimizedImage
-        src={src}
         alt={alt}
+        className="object-cover"
         fill
         priority
-        sizes="100vw"
-        className="object-cover"
         quality={90}
+        sizes="100vw"
+        src={src}
       />
     </div>
   );
@@ -207,14 +210,14 @@ export function AvatarImage({
   className?: string;
 }) {
   return (
-    <div className={cn("relative overflow-hidden rounded-full", className)}>
+    <div className={cn('relative overflow-hidden rounded-full', className)}>
       <OptimizedImage
-        src={src}
         alt={alt}
-        width={size}
-        height={size}
         className="object-cover"
+        height={size}
         sizes={`${size}px`}
+        src={src}
+        width={size}
       />
     </div>
   );

@@ -9,14 +9,16 @@ export interface FavoriteResult {
 }
 
 export function useFavorites() {
-  const [optimisticFavorites, setOptimisticFavorites] = useState<Set<string>>(new Set());
+  const [optimisticFavorites, setOptimisticFavorites] = useState<Set<string>>(
+    new Set()
+  );
   const [isPending, startTransition] = useTransition();
 
   const toggleFavorite = async (productId: string): Promise<FavoriteResult> => {
     // Optimistic update
     const wasOptimistic = optimisticFavorites.has(productId);
     const newOptimisticSet = new Set(optimisticFavorites);
-    
+
     if (wasOptimistic) {
       newOptimisticSet.delete(productId);
     } else {
@@ -74,9 +76,11 @@ export function useFavorites() {
 
   const checkFavorite = async (productId: string): Promise<boolean> => {
     try {
-      const response = await fetch(`/api/favorites/check?productId=${productId}`);
+      const response = await fetch(
+        `/api/favorites/check?productId=${productId}`
+      );
       const result = await response.json();
-      
+
       if (response.ok && result.isFavorited) {
         const newSet = new Set(optimisticFavorites);
         newSet.add(productId);

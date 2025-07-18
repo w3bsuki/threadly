@@ -1,10 +1,9 @@
 import fs from 'node:fs';
-import { env } from '@/env';
 import { blog, legal } from '@repo/cms';
 import { database } from '@repo/database';
+import { log, logError, parseError } from '@repo/observability/server';
 import type { MetadataRoute } from 'next';
-import { log } from '@repo/observability/server';
-import { logError, parseError } from '@repo/observability/server';
+import { env } from '@/env';
 
 const appFolders = fs.readdirSync('app', { withFileTypes: true });
 const pages = appFolders
@@ -17,10 +16,12 @@ const pages = appFolders
 const getBaseUrl = () => {
   // Production URL from Vercel
   if (env.VERCEL_PROJECT_PRODUCTION_URL) {
-    const protocol = env.VERCEL_PROJECT_PRODUCTION_URL.startsWith('https') ? 'https' : 'http';
+    const protocol = env.VERCEL_PROJECT_PRODUCTION_URL.startsWith('https')
+      ? 'https'
+      : 'http';
     return `${protocol}://${env.VERCEL_PROJECT_PRODUCTION_URL}`;
   }
-  
+
   // Fallback to environment variable or localhost
   return process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 };
@@ -28,12 +29,14 @@ const getBaseUrl = () => {
 const baseUrl = getBaseUrl();
 
 // Conditionally fetch CMS data with fallbacks
-const getBlogSlugs = async (): Promise<Array<{ slug: string; lastModified: Date }>> => {
+const getBlogSlugs = async (): Promise<
+  Array<{ slug: string; lastModified: Date }>
+> => {
   try {
     const posts = await blog.getPosts();
     return posts.map((post) => ({
       slug: post._slug,
-      lastModified: new Date((post as any)._sys?.lastModifiedAt || Date.now())
+      lastModified: new Date((post as any)._sys?.lastModifiedAt || Date.now()),
     }));
   } catch (error) {
     log.warn(`Failed to fetch blog posts for sitemap: ${parseError(error)}`);
@@ -41,12 +44,14 @@ const getBlogSlugs = async (): Promise<Array<{ slug: string; lastModified: Date 
   }
 };
 
-const getLegalSlugs = async (): Promise<Array<{ slug: string; lastModified: Date }>> => {
+const getLegalSlugs = async (): Promise<
+  Array<{ slug: string; lastModified: Date }>
+> => {
   try {
     const posts = await legal.getPosts();
     return posts.map((post) => ({
       slug: post._slug,
-      lastModified: new Date((post as any)._sys?.lastModifiedAt || Date.now())
+      lastModified: new Date((post as any)._sys?.lastModifiedAt || Date.now()),
     }));
   } catch (error) {
     log.warn(`Failed to fetch legal posts for sitemap: ${parseError(error)}`);
@@ -55,7 +60,9 @@ const getLegalSlugs = async (): Promise<Array<{ slug: string; lastModified: Date
 };
 
 // Fetch product data for sitemap
-const getProductUrls = async (): Promise<Array<{ id: string; lastModified: Date }>> => {
+const getProductUrls = async (): Promise<
+  Array<{ id: string; lastModified: Date }>
+> => {
   try {
     const products = await database.product.findMany({
       where: {
@@ -66,14 +73,14 @@ const getProductUrls = async (): Promise<Array<{ id: string; lastModified: Date 
         createdAt: true,
       },
       orderBy: {
-        createdAt: 'desc'
+        createdAt: 'desc',
       },
-      take: 5000 // Limit to prevent sitemap from being too large
+      take: 5000, // Limit to prevent sitemap from being too large
     });
 
-    return products.map(product => ({
+    return products.map((product) => ({
       id: product.id,
-      lastModified: product.createdAt
+      lastModified: product.createdAt,
     }));
   } catch (error) {
     log.warn(`Failed to fetch products for sitemap: ${parseError(error)}`);
@@ -82,7 +89,9 @@ const getProductUrls = async (): Promise<Array<{ id: string; lastModified: Date 
 };
 
 // Fetch category data for sitemap
-const getCategoryUrls = async (): Promise<Array<{ slug: string; name: string; lastModified: Date }>> => {
+const getCategoryUrls = async (): Promise<
+  Array<{ slug: string; name: string; lastModified: Date }>
+> => {
   try {
     const categories = await database.category.findMany({
       select: {
@@ -92,27 +101,27 @@ const getCategoryUrls = async (): Promise<Array<{ slug: string; name: string; la
           select: {
             Product: {
               where: {
-                status: 'AVAILABLE'
-              }
-            }
-          }
-        }
+                status: 'AVAILABLE',
+              },
+            },
+          },
+        },
       },
       where: {
         Product: {
           some: {
-            status: 'AVAILABLE'
-          }
-        }
-      }
+            status: 'AVAILABLE',
+          },
+        },
+      },
     });
 
     return categories
-      .filter(category => category._count.Product > 0) // Only include categories with products
-      .map(category => ({
+      .filter((category) => category._count.Product > 0) // Only include categories with products
+      .map((category) => ({
         slug: category.slug,
         name: category.name,
-        lastModified: new Date()
+        lastModified: new Date(),
       }));
   } catch (error) {
     log.warn(`Failed to fetch categories for sitemap: ${parseError(error)}`);
@@ -121,26 +130,28 @@ const getCategoryUrls = async (): Promise<Array<{ slug: string; name: string; la
 };
 
 // Fetch user profile URLs (for public seller profiles)
-const getUserProfileUrls = async (): Promise<Array<{ id: string; lastModified: Date }>> => {
+const getUserProfileUrls = async (): Promise<
+  Array<{ id: string; lastModified: Date }>
+> => {
   try {
     const users = await database.user.findMany({
       where: {
         Product: {
           some: {
-            status: 'AVAILABLE' // Only users with available listings
-          }
-        }
+            status: 'AVAILABLE', // Only users with available listings
+          },
+        },
       },
       select: {
         id: true,
         joinedAt: true,
       },
-      take: 1000 // Limit to prevent sitemap from being too large
+      take: 1000, // Limit to prevent sitemap from being too large
     });
 
-    return users.map(user => ({
+    return users.map((user) => ({
       id: user.id,
-      lastModified: user.joinedAt
+      lastModified: user.joinedAt,
     }));
   } catch (error) {
     log.warn(`Failed to fetch user profiles for sitemap: ${parseError(error)}`);
@@ -151,13 +162,14 @@ const getUserProfileUrls = async (): Promise<Array<{ id: string; lastModified: D
 const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   try {
     // Fetch all dynamic content in parallel
-    const [blogs, legals, products, categories, userProfiles] = await Promise.all([
-      getBlogSlugs(),
-      getLegalSlugs(),
-      getProductUrls(),
-      getCategoryUrls(),
-      getUserProfileUrls()
-    ]);
+    const [blogs, legals, products, categories, userProfiles] =
+      await Promise.all([
+        getBlogSlugs(),
+        getLegalSlugs(),
+        getProductUrls(),
+        getCategoryUrls(),
+        getUserProfileUrls(),
+      ]);
 
     const sitemapEntries: MetadataRoute.Sitemap = [
       // Homepage - highest priority
@@ -218,7 +230,12 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
 
       // Other static pages
       ...pages
-        .filter(page => !['men', 'women', 'kids', 'unisex', 'products', 'search'].includes(page))
+        .filter(
+          (page) =>
+            !['men', 'women', 'kids', 'unisex', 'products', 'search'].includes(
+              page
+            )
+        )
         .map((page) => ({
           url: `${baseUrl}/${page}`,
           lastModified: new Date(),
@@ -287,10 +304,9 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
 
     log.info(`Generated sitemap with ${sitemapEntries.length} URLs`);
     return sitemapEntries;
-
   } catch (error) {
     logError('Error generating sitemap:', error);
-    
+
     // Fallback minimal sitemap
     return [
       {

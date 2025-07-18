@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
 // Export types and hook from commerce package
-export { useCartStore, type CartItem } from '@repo/commerce';
+export { type CartItem, useCartStore } from '@repo/commerce';
 
 // For backward compatibility, keep legacy interface as alias
 import type { CartItem as UnifiedCartItem } from '@repo/commerce';
@@ -12,13 +12,17 @@ export interface LegacyCartItem extends Omit<UnifiedCartItem, 'productId'> {
 }
 
 // Migration helper for existing components
-export const migrateCartItem = (legacyItem: LegacyCartItem): UnifiedCartItem => ({
+export const migrateCartItem = (
+  legacyItem: LegacyCartItem
+): UnifiedCartItem => ({
   ...legacyItem,
   productId: legacyItem.id,
   imageUrl: legacyItem.imageUrl || '',
 });
 
-export const migrateLegacyCartItem = (unifiedItem: UnifiedCartItem): LegacyCartItem => ({
+export const migrateLegacyCartItem = (
+  unifiedItem: UnifiedCartItem
+): LegacyCartItem => ({
   ...unifiedItem,
   id: unifiedItem.productId,
 });

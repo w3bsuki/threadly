@@ -2,7 +2,7 @@ import type { NextConfig } from 'next';
 
 /**
  * Performance-optimized Next.js configuration
- * Based on Next-Forge best practices
+ * Based on Threadly best practices
  */
 export const performanceConfig: Partial<NextConfig> = {
   // Enable React Compiler for faster builds and smaller bundles

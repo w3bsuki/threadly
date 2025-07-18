@@ -1,39 +1,44 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { Badge } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
-import { Heart, Crown, Eye, Star, MapPin } from "lucide-react";
-import { cn } from "@repo/design-system/lib/utils";
-import { formatCurrency } from "@/lib/utils/currency";
-import { useState } from "react";
-import { ProductQuickView } from "../../components/product-quick-view";
+import { Badge, Button } from '@repo/design-system/components';
+import { cn } from '@repo/design-system/lib/utils';
+import { Crown, Eye, Heart } from 'lucide-react';
+import Image from 'next/image';
+import { useState } from 'react';
+import { formatCurrency } from '@/lib/utils/currency';
+import { ProductQuickView } from '../../components/product-quick-view';
 
 // Inline ProductPlaceholder for loading states
-const ProductPlaceholder = ({ className = "w-full h-full" }: { className?: string }) => {
+const ProductPlaceholder = ({
+  className = 'w-full h-full',
+}: {
+  className?: string;
+}) => {
   return (
-    <div className={`bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center ${className}`}>
+    <div
+      className={`flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 ${className}`}
+    >
       <svg
-        width="60"
+        className="text-gray-300"
+        fill="none"
         height="60"
         viewBox="0 0 80 80"
-        fill="none"
+        width="60"
         xmlns="http://www.w3.org/2000/svg"
-        className="text-gray-300"
       >
         <path
           d="M20 25 C20 25, 25 20, 40 20 C55 20, 60 25, 60 25"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
           fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeWidth="2"
         />
         <path
           d="M40 20 L40 15 C40 12, 42 10, 45 10 C48 10, 50 12, 50 15"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
           fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeWidth="2"
         />
       </svg>
     </div>
@@ -44,13 +49,19 @@ const ProductPlaceholder = ({ className = "w-full h-full" }: { className?: strin
 function getTimeAgo(date: Date): string {
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
+  const diffMins = Math.floor(diffMs / 60_000);
+  const diffHours = Math.floor(diffMs / 3_600_000);
+  const diffDays = Math.floor(diffMs / 86_400_000);
 
-  if (diffMins < 60) return `${diffMins} minutes ago`;
-  if (diffHours < 24) return `${diffHours} hours ago`;
-  if (diffDays === 1) return '1 day ago';
+  if (diffMins < 60) {
+    return `${diffMins} minutes ago`;
+  }
+  if (diffHours < 24) {
+    return `${diffHours} hours ago`;
+  }
+  if (diffDays === 1) {
+    return '1 day ago';
+  }
   return `${diffDays} days ago`;
 }
 
@@ -84,18 +95,30 @@ interface ProductListViewProps {
 }
 
 const conditionLabels = {
-  NEW: "New",
-  LIKE_NEW: "Like New", 
-  EXCELLENT: "Excellent",
-  GOOD: "Good",
-  SATISFACTORY: "Fair"
+  NEW: 'New',
+  LIKE_NEW: 'Like New',
+  EXCELLENT: 'Excellent',
+  GOOD: 'Good',
+  SATISFACTORY: 'Fair',
 };
 
 // Designer brands for badge detection
 const designerBrands = [
-  'GUCCI', 'PRADA', 'CHANEL', 'LOUIS VUITTON', 'VERSACE', 
-  'DIOR', 'BALENCIAGA', 'HERMÈS', 'SAINT LAURENT', 'BOTTEGA VENETA',
-  'OFF-WHITE', 'BURBERRY', 'FENDI', 'GIVENCHY', 'VALENTINO'
+  'GUCCI',
+  'PRADA',
+  'CHANEL',
+  'LOUIS VUITTON',
+  'VERSACE',
+  'DIOR',
+  'BALENCIAGA',
+  'HERMÈS',
+  'SAINT LAURENT',
+  'BOTTEGA VENETA',
+  'OFF-WHITE',
+  'BURBERRY',
+  'FENDI',
+  'GIVENCHY',
+  'VALENTINO',
 ];
 
 // Product list item component
@@ -114,10 +137,15 @@ const ProductListItem = ({ product }: { product: Product }) => {
     }, 500);
   };
 
-  const isDesigner = product.brand ? 
-    designerBrands.some(brand => product.brand!.toUpperCase().includes(brand)) : false;
+  const isDesigner = product.brand
+    ? designerBrands.some((brand) =>
+        product.brand?.toUpperCase().includes(brand)
+      )
+    : false;
 
-  const uploadedAgo = product.createdAt ? getTimeAgo(product.createdAt) : 'recently';
+  const uploadedAgo = product.createdAt
+    ? getTimeAgo(product.createdAt)
+    : 'recently';
 
   // Transform product data to match ProductQuickView interface
   const transformedProduct = {
@@ -129,7 +157,7 @@ const ProductListItem = ({ product }: { product: Product }) => {
     size: 'One Size', // TODO: Add size to product interface
     condition: product.condition,
     categoryName: product.category,
-    images: product.images.map(img => img.imageUrl),
+    images: product.images.map((img) => img.imageUrl),
     seller: {
       id: product.seller.id,
       name: product.seller.firstName,
@@ -141,39 +169,44 @@ const ProductListItem = ({ product }: { product: Product }) => {
   };
 
   return (
-    <article className="group relative bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-      <ProductQuickView 
+    <article className="group relative rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md">
+      <ProductQuickView
         product={transformedProduct}
         trigger={
           <div className="cursor-pointer">
             <div className="flex gap-4">
               {/* Product Image */}
-              <div className="relative w-32 h-32 flex-shrink-0">
-                <div className="aspect-square overflow-hidden rounded-lg bg-gray-100 relative">
+              <div className="relative h-32 w-32 flex-shrink-0">
+                <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
                   {product.images.length > 0 ? (
                     <Image
-                      src={product.images[0].imageUrl}
                       alt={product.images[0].alt || product.title}
+                      className="object-cover object-center transition-opacity group-hover:opacity-75"
                       fill
-                      className="object-cover object-center group-hover:opacity-75 transition-opacity"
                       sizes="128px"
+                      src={product.images[0].imageUrl}
                     />
                   ) : (
                     <ProductPlaceholder className="h-full w-full" />
                   )}
-                  
+
                   {/* Condition badge */}
                   <div className="absolute top-2 left-2">
-                    <Badge variant="secondary" className="text-xs bg-white/90 text-gray-900">
-                      {conditionLabels[product.condition as keyof typeof conditionLabels] || product.condition.replace('_', ' ')}
+                    <Badge
+                      className="bg-white/90 text-gray-900 text-xs"
+                      variant="secondary"
+                    >
+                      {conditionLabels[
+                        product.condition as keyof typeof conditionLabels
+                      ] || product.condition.replace('_', ' ')}
                     </Badge>
                   </div>
 
                   {/* Designer badge */}
                   {isDesigner && (
                     <div className="absolute top-2 left-2 mt-7">
-                      <Badge className="text-xs bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 border-0">
-                        <Crown className="h-3 w-3 mr-1" />
+                      <Badge className="border-0 bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 text-xs">
+                        <Crown className="mr-1 h-3 w-3" />
                         Designer
                       </Badge>
                     </div>
@@ -182,39 +215,53 @@ const ProductListItem = ({ product }: { product: Product }) => {
               </div>
 
               {/* Product Details */}
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">{product.brand || 'Unknown'}</p>
-                    <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 mb-2">{product.title}</h3>
+              <div className="min-w-0 flex-1">
+                <div className="mb-2 flex items-start justify-between">
+                  <div className="min-w-0 flex-1">
+                    <p className="mb-1 text-gray-500 text-xs uppercase tracking-wide">
+                      {product.brand || 'Unknown'}
+                    </p>
+                    <h3 className="mb-2 line-clamp-2 font-semibold text-gray-900 text-lg">
+                      {product.title}
+                    </h3>
                   </div>
-                  
+
                   {/* Heart button */}
-                  <button 
-                    onClick={handleToggleFavorite}
-                    disabled={isPending}
+                  <button
+                    aria-label={
+                      isFavorited
+                        ? `Remove ${product.title} from favorites`
+                        : `Add ${product.title} to favorites`
+                    }
                     className={cn(
-                      'p-2 rounded-full transition-all',
-                      isFavorited ? 'bg-red-50 text-red-500' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
+                      'rounded-full p-2 transition-all',
+                      isFavorited
+                        ? 'bg-red-50 text-red-500'
+                        : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600'
                     )}
-                    aria-label={isFavorited ? `Remove ${product.title} from favorites` : `Add ${product.title} to favorites`}
+                    disabled={isPending}
+                    onClick={handleToggleFavorite}
                   >
-                    <Heart className={cn('h-5 w-5', isFavorited && 'fill-current')} />
+                    <Heart
+                      className={cn('h-5 w-5', isFavorited && 'fill-current')}
+                    />
                   </button>
                 </div>
 
                 {/* Price and Details */}
                 <div className="mb-3">
-                  <span className="text-2xl font-bold text-gray-900">
+                  <span className="font-bold text-2xl text-gray-900">
                     {formatCurrency(product.price)}
                   </span>
                 </div>
 
                 {/* Description */}
-                <p className="text-sm text-gray-600 line-clamp-2 mb-3">{product.description}</p>
+                <p className="mb-3 line-clamp-2 text-gray-600 text-sm">
+                  {product.description}
+                </p>
 
                 {/* Meta Info */}
-                <div className="flex items-center justify-between text-xs text-gray-500">
+                <div className="flex items-center justify-between text-gray-500 text-xs">
                   <div className="flex items-center space-x-4">
                     <span>Size: One Size</span>
                     <span>Category: {product.category}</span>
@@ -222,19 +269,25 @@ const ProductListItem = ({ product }: { product: Product }) => {
                   <div className="flex items-center space-x-3">
                     {product._count?.favorites > 0 && (
                       <div className="flex items-center">
-                        <Heart className="h-3 w-3 mr-1" />
+                        <Heart className="mr-1 h-3 w-3" />
                         {product._count.favorites}
                       </div>
                     )}
-                    <span>{product.seller.firstName} • {uploadedAgo}</span>
+                    <span>
+                      {product.seller.firstName} • {uploadedAgo}
+                    </span>
                   </div>
                 </div>
               </div>
 
               {/* Quick View button */}
-              <div className="flex-shrink-0 flex items-center">
-                <Button variant="outline" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Eye className="h-4 w-4 mr-2" />
+              <div className="flex flex-shrink-0 items-center">
+                <Button
+                  className="opacity-0 transition-opacity group-hover:opacity-100"
+                  size="sm"
+                  variant="outline"
+                >
+                  <Eye className="mr-2 h-4 w-4" />
                   Quick View
                 </Button>
               </div>

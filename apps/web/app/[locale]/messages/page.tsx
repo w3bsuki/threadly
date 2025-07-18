@@ -1,8 +1,8 @@
 import { auth } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
-import { Metadata } from 'next';
-import { MessagesContent } from './components/messages-content';
 import { database } from '@repo/database';
+import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
+import { MessagesContent } from './components/messages-content';
 
 export const metadata: Metadata = {
   title: 'Messages - Threadly',
@@ -28,10 +28,7 @@ export default async function MessagesPage() {
   // Fetch user's conversations
   const conversations = await database.conversation.findMany({
     where: {
-      OR: [
-        { buyerId: dbUser.id },
-        { sellerId: dbUser.id },
-      ],
+      OR: [{ buyerId: dbUser.id }, { sellerId: dbUser.id }],
     },
     include: {
       User_Conversation_buyerIdToUser: true,
@@ -72,22 +69,22 @@ export default async function MessagesPage() {
       <div className="container py-8">
         <div className="mx-auto max-w-6xl">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Messages</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className="font-bold text-3xl text-gray-900">Messages</h1>
+            <p className="mt-2 text-gray-600">
               Chat with sellers and buyers about your items
             </p>
           </div>
-          
-          <MessagesContent 
-            conversations={conversations.map(conv => ({
+
+          <MessagesContent
+            conversations={conversations.map((conv) => ({
               ...conv,
               buyer: conv.User_Conversation_buyerIdToUser,
               seller: conv.User_Conversation_sellerIdToUser,
               product: conv.Product,
               messages: conv.Message,
               _count: {
-                messages: conv._count.Message
-              }
+                messages: conv._count.Message,
+              },
             }))}
             currentUserId={dbUser.id}
           />

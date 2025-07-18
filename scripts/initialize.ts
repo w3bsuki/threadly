@@ -19,7 +19,7 @@ import {
   supportedPackageManagers,
 } from './utils.js';
 
-const cloneNextForge = async (name: string, packageManager: string) => {
+const cloneThreadly = async (name: string, packageManager: string) => {
   const command = [
     'npx create-next-app@latest',
     name,
@@ -211,7 +211,7 @@ export const initialize = async (options: {
   disableGit?: boolean;
 }) => {
   try {
-    intro("Let's start a next-forge project!");
+    intro("Let's start a threadly project!");
 
     const cwd = process.cwd();
     const name = options.name || (await getName());
@@ -225,8 +225,8 @@ export const initialize = async (options: {
     const s = spinner();
     const projectDir = join(cwd, name);
 
-    s.start('Cloning next-forge...');
-    await cloneNextForge(name, packageManager);
+    s.start('Cloning threadly...');
+    await cloneThreadly(name, packageManager);
 
     s.message('Moving into repository...');
     process.chdir(projectDir);

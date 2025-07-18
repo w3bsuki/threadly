@@ -21,14 +21,12 @@ export class ImageOptimizationService {
   static async optimizeImage(
     buffer: Buffer,
     options: ImageOptimizationOptions = {}
-  ): Promise<{ data: Buffer; contentType: string; headers: Record<string, string> }> {
-    const {
-      width,
-      height,
-      quality,
-      format = 'webp',
-      fit = 'cover',
-    } = options;
+  ): Promise<{
+    data: Buffer;
+    contentType: string;
+    headers: Record<string, string>;
+  }> {
+    const { width, height, quality, format = 'webp', fit = 'cover' } = options;
 
     let pipeline = sharp(buffer);
 
@@ -54,7 +52,7 @@ export class ImageOptimizationService {
       case 'avif':
         outputBuffer = await pipeline
           .avif({
-            quality: quality || this.DEFAULT_QUALITY.avif,
+            quality: quality || ImageOptimizationService.DEFAULT_QUALITY.avif,
             effort: 4, // Balance between speed and compression
           })
           .toBuffer();
@@ -64,7 +62,7 @@ export class ImageOptimizationService {
       case 'webp':
         outputBuffer = await pipeline
           .webp({
-            quality: quality || this.DEFAULT_QUALITY.webp,
+            quality: quality || ImageOptimizationService.DEFAULT_QUALITY.webp,
             effort: 4,
           })
           .toBuffer();
@@ -76,7 +74,7 @@ export class ImageOptimizationService {
         if (originalFormat === 'jpeg' || originalFormat === 'jpg') {
           outputBuffer = await pipeline
             .jpeg({
-              quality: quality || this.DEFAULT_QUALITY.jpeg,
+              quality: quality || ImageOptimizationService.DEFAULT_QUALITY.jpeg,
               mozjpeg: true,
             })
             .toBuffer();
@@ -84,7 +82,7 @@ export class ImageOptimizationService {
         } else if (originalFormat === 'png') {
           outputBuffer = await pipeline
             .png({
-              quality: quality || this.DEFAULT_QUALITY.png,
+              quality: quality || ImageOptimizationService.DEFAULT_QUALITY.png,
               compressionLevel: 9,
             })
             .toBuffer();
@@ -98,7 +96,7 @@ export class ImageOptimizationService {
     // Generate cache headers
     const headers = {
       'Content-Type': contentType,
-      'Cache-Control': `public, max-age=${this.MAX_AGE}, immutable`,
+      'Cache-Control': `public, max-age=${ImageOptimizationService.MAX_AGE}, immutable`,
       'X-Content-Type-Options': 'nosniff',
     };
 
@@ -113,9 +111,7 @@ export class ImageOptimizationService {
     baseUrl: string,
     sizes: number[] = [640, 750, 828, 1080, 1200, 1920]
   ): string {
-    return sizes
-      .map((size) => `${baseUrl}?w=${size} ${size}w`)
-      .join(', ');
+    return sizes.map((size) => `${baseUrl}?w=${size} ${size}w`).join(', ');
   }
 
   static generatePictureSources(
@@ -124,25 +120,29 @@ export class ImageOptimizationService {
   ): Array<{ srcSet: string; type: string }> {
     return [
       {
-        srcSet: sizes.map((size) => `${baseUrl}?w=${size}&f=avif ${size}w`).join(', '),
+        srcSet: sizes
+          .map((size) => `${baseUrl}?w=${size}&f=avif ${size}w`)
+          .join(', '),
         type: 'image/avif',
       },
       {
-        srcSet: sizes.map((size) => `${baseUrl}?w=${size}&f=webp ${size}w`).join(', '),
+        srcSet: sizes
+          .map((size) => `${baseUrl}?w=${size}&f=webp ${size}w`)
+          .join(', '),
         type: 'image/webp',
       },
     ];
   }
 
   static calculateAspectRatio(width: number, height: number): string {
-    const gcd = (a: number, b: number): number => b === 0 ? a : gcd(b, a % b);
+    const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
     const divisor = gcd(width, height);
     return `${width / divisor}/${height / divisor}`;
   }
 
   static async generateBlurPlaceholder(
     buffer: Buffer,
-    size: number = 40
+    size = 40
   ): Promise<string> {
     const blurredBuffer = await sharp(buffer)
       .resize(size, size, { fit: 'inside' })

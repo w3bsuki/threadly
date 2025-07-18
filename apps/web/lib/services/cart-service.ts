@@ -40,32 +40,28 @@ class CartService {
 
       const data: CartResponse = await response.json();
       return data.items;
-    } catch (error) {
+    } catch (_error) {
       return [];
     }
   }
 
   async addToCart(productId: string): Promise<CartItem | null> {
-    try {
-      const response = await fetch(`${this.baseUrl}/api/cart`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ productId }),
-        credentials: 'include',
-      });
+    const response = await fetch(`${this.baseUrl}/api/cart`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ productId }),
+      credentials: 'include',
+    });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to add to cart');
-      }
-
-      const data = await response.json();
-      return data.item;
-    } catch (error) {
-      throw error;
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to add to cart');
     }
+
+    const data = await response.json();
+    return data.item;
   }
 
   async removeFromCart(productId: string): Promise<boolean> {
@@ -83,7 +79,7 @@ class CartService {
       }
 
       return true;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -103,7 +99,7 @@ class CartService {
       }
 
       return true;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -113,7 +109,7 @@ class CartService {
     for (const item of localItems) {
       try {
         await this.addToCart(item.productId);
-      } catch (error) {
+      } catch (_error) {
         // Continue with other items if one fails
       }
     }

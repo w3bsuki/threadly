@@ -1,15 +1,14 @@
 /**
  * Cart Functionality Tests - 90% Coverage Required
- * 
+ *
  * This test suite covers all critical cart functionality
  * including add, remove, persistence, state management, and sync.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { renderHook, act } from '@repo/testing';
 import { createCartStore } from '@repo/cart/store';
-import type { CartItem, CartState, CartConfig } from '@repo/cart/types';
-import { cleanup } from '@repo/testing';
+import type { CartConfig, CartItem } from '@repo/cart/types';
+import { act, cleanup, renderHook } from '@repo/testing';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock browser APIs
 const mockLocalStorage = {
@@ -44,10 +43,10 @@ describe('Cart Functionality Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Create fresh cart store for each test
     useCart = createCartStore();
-    
+
     mockCartItem = {
       productId: 'prod_1',
       title: 'iPhone 13 Pro',
@@ -159,9 +158,9 @@ describe('Cart Functionality Tests', () => {
         result.current.addItem(secondItem);
       });
 
-      const ids = result.current.items.map(item => item.id);
+      const ids = result.current.items.map((item) => item.id);
       expect(new Set(ids).size).toBe(2); // All IDs should be unique
-      expect(ids.every(id => id && id.startsWith('cart-'))).toBe(true);
+      expect(ids.every((id) => id?.startsWith('cart-'))).toBe(true);
     });
   });
 
@@ -236,7 +235,7 @@ describe('Cart Functionality Tests', () => {
   describe('Update Item Quantity', () => {
     beforeEach(() => {
       const { result } = renderHook(() => useCart());
-      
+
       // Add item first
       act(() => {
         result.current.addItem(mockCartItem);
@@ -368,7 +367,9 @@ describe('Cart Functionality Tests', () => {
         result.current.clearCart();
       });
 
-      expect(result.current.lastSyncTimestamp).toBeGreaterThan(originalTimestamp);
+      expect(result.current.lastSyncTimestamp).toBeGreaterThan(
+        originalTimestamp
+      );
     });
   });
 
@@ -424,7 +425,7 @@ describe('Cart Functionality Tests', () => {
   describe('Cart Getters and Utilities', () => {
     beforeEach(() => {
       const { result } = renderHook(() => useCart());
-      
+
       const secondItem = {
         ...mockCartItem,
         productId: 'prod_2',
@@ -521,11 +522,11 @@ describe('Cart Functionality Tests', () => {
 
       // localStorage.setItem should have been called
       expect(mockLocalStorage.setItem).toHaveBeenCalled();
-      
+
       const calls = vi.mocked(mockLocalStorage.setItem).mock.calls;
-      const lastCall = calls[calls.length - 1];
+      const lastCall = calls.at(-1);
       expect(lastCall[0]).toBe('threadly-cart-unified');
-      
+
       const savedData = JSON.parse(lastCall[1]);
       expect(savedData.state.items).toHaveLength(1);
       expect(savedData.state.items[0].productId).toBe('prod_1');
@@ -570,7 +571,7 @@ describe('Cart Functionality Tests', () => {
       expect(mockBroadcastChannel.postMessage).toHaveBeenCalledWith({
         type: 'CART_UPDATED',
         items: expect.arrayContaining([
-          expect.objectContaining({ productId: 'prod_1' })
+          expect.objectContaining({ productId: 'prod_1' }),
         ]),
         timestamp: expect.any(Number),
       });
@@ -628,10 +629,11 @@ describe('Cart Functionality Tests', () => {
     it('should sync with server when enabled', async () => {
       const mockResponse = {
         ok: true,
-        json: () => Promise.resolve({
-          items: [{ ...mockCartItem, quantity: 2 }],
-          timestamp: Date.now() + 1000,
-        }),
+        json: () =>
+          Promise.resolve({
+            items: [{ ...mockCartItem, quantity: 2 }],
+            timestamp: Date.now() + 1000,
+          }),
       };
 
       vi.mocked(fetch).mockResolvedValue(mockResponse as any);
@@ -736,7 +738,7 @@ describe('Cart Functionality Tests', () => {
       });
 
       const calls = vi.mocked(mockLocalStorage.setItem).mock.calls;
-      const relevantCall = calls.find(call => call[0] === 'custom-cart-key');
+      const relevantCall = calls.find((call) => call[0] === 'custom-cart-key');
       expect(relevantCall).toBeDefined();
     });
 
@@ -763,7 +765,10 @@ describe('Cart Functionality Tests', () => {
         await result.current.syncWithServer?.();
       });
 
-      expect(fetch).toHaveBeenCalledWith('/api/custom-cart', expect.any(Object));
+      expect(fetch).toHaveBeenCalledWith(
+        '/api/custom-cart',
+        expect.any(Object)
+      );
     });
 
     it('should disable broadcast when configured', () => {
@@ -807,17 +812,17 @@ describe('Cart Functionality Tests', () => {
 
       act(() => {
         result.current.addItem(mockCartItem);
-        result.current.updateQuantity('prod_1', 999999);
+        result.current.updateQuantity('prod_1', 999_999);
       });
 
-      expect(result.current.items[0].quantity).toBe(999999);
-      expect(result.current.getTotalItems()).toBe(999999);
+      expect(result.current.items[0].quantity).toBe(999_999);
+      expect(result.current.getTotalItems()).toBe(999_999);
     });
 
     it('should handle cart operations when localStorage is unavailable', () => {
       // Simulate localStorage being unavailable
       const originalLocalStorage = window.localStorage;
-      delete (window as any).localStorage;
+      (window as any).localStorage = undefined;
 
       const { result } = renderHook(() => useCart());
 
@@ -838,7 +843,7 @@ describe('Cart Functionality Tests', () => {
     it('should handle BroadcastChannel being unavailable', () => {
       // Simulate BroadcastChannel being unavailable
       const originalBroadcastChannel = window.BroadcastChannel;
-      delete (window as any).BroadcastChannel;
+      (window as any).BroadcastChannel = undefined;
 
       const { result } = renderHook(() => useCart());
 

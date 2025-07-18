@@ -8,7 +8,7 @@ export default async function LegalLayout({
   params: Promise<{ locale: string }>;
 }) {
   await params; // Await the params even if not used, as per Next.js 15 requirement
-  
+
   return (
     <>
       {children}

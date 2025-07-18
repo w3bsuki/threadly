@@ -5,14 +5,14 @@ export default function KidsPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Category Navigation */}
-      <CategoryNav 
+      <CategoryNav
         category="kids"
-        title="Kids' Fashion"
         description="Discover unique kids' fashion from our community of sellers"
+        title="Kids' Fashion"
       />
-      
+
       {/* Product Grid with Kids' Filter */}
       <ProductGrid category="kids" />
     </div>
   );
-} 
+}

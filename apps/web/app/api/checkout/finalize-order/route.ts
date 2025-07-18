@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { z } from 'zod';
 import { log, logError } from '@repo/observability/server';
 import { stripe } from '@repo/payments';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 const finalizeOrderSchema = z.object({
   paymentIntentId: z.string(),
@@ -14,13 +14,15 @@ const finalizeOrderSchema = z.object({
     postalCode: z.string().min(1),
     country: z.string().min(1),
   }),
-  billingAddress: z.object({
-    street: z.string().min(1),
-    city: z.string().min(1),
-    state: z.string().min(1),
-    postalCode: z.string().min(1),
-    country: z.string().min(1),
-  }).optional(),
+  billingAddress: z
+    .object({
+      street: z.string().min(1),
+      city: z.string().min(1),
+      state: z.string().min(1),
+      postalCode: z.string().min(1),
+      country: z.string().min(1),
+    })
+    .optional(),
   shippingMethod: z.enum(['standard', 'express']),
   contactInfo: z.object({
     firstName: z.string().min(1),
@@ -51,14 +53,22 @@ export async function POST(request: NextRequest) {
     }
 
     // Retrieve the payment intent from Stripe
-    const paymentIntent = await stripe.paymentIntents.retrieve(validatedData.paymentIntentId);
+    const paymentIntent = await stripe.paymentIntents.retrieve(
+      validatedData.paymentIntentId
+    );
 
     if (!paymentIntent || paymentIntent.metadata.buyerId !== dbUser.id) {
-      return NextResponse.json({ error: 'Invalid payment intent' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Invalid payment intent' },
+        { status: 400 }
+      );
     }
 
     if (paymentIntent.status !== 'succeeded') {
-      return NextResponse.json({ error: 'Payment not completed' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Payment not completed' },
+        { status: 400 }
+      );
     }
 
     // Parse items and costs from payment intent metadata
@@ -91,12 +101,15 @@ export async function POST(request: NextRequest) {
       });
 
       for (const item of items) {
-        const product = products.find(p => p.id === item.productId);
-        if (!product) continue;
+        const product = products.find((p) => p.id === item.productId);
+        if (!product) {
+          continue;
+        }
 
         // Calculate individual order amounts
         const itemTotal = item.price * item.quantity;
-        const itemShipping = Math.round((costs.shipping / items.length) * 100) / 100;
+        const itemShipping =
+          Math.round((costs.shipping / items.length) * 100) / 100;
         const itemTax = Math.round((costs.tax / items.length) * 100) / 100;
         const orderTotal = itemTotal + itemShipping + itemTax;
 
@@ -149,21 +162,20 @@ export async function POST(request: NextRequest) {
     });
 
     log.info('Successfully finalized orders', {
-      orderIds: orders.map(o => o.id),
+      orderIds: orders.map((o) => o.id),
       userId: dbUser.id,
       paymentIntentId: paymentIntent.id,
     });
 
     return NextResponse.json({
       success: true,
-      orders: orders.map(order => ({
+      orders: orders.map((order) => ({
         id: order.id,
         sellerId: order.sellerId,
         productId: order.productId,
         amount: Number(order.amount),
       })),
     });
-
   } catch (error) {
     logError('Failed to finalize order', error);
 

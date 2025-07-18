@@ -1,11 +1,16 @@
 'use server';
 
 import { auth } from '@clerk/nextjs/server';
+import type { CartItem } from '@repo/commerce';
 import { database } from '@repo/database';
-import { parseError, trackDatabaseOperation, setUserContext, setProductContext } from '@repo/observability/server';
+import {
+  parseError,
+  setProductContext,
+  setUserContext,
+  trackDatabaseOperation,
+} from '@repo/observability/server';
 import { revalidateTag } from 'next/cache';
 import { z } from 'zod';
-import type { CartItem } from '@repo/commerce';
 
 const addToCartSchema = z.object({
   productId: z.string().min(1),
@@ -49,20 +54,24 @@ export async function addToCart(input: {
     });
 
     // Find product with enhanced monitoring
-    const product = await trackDatabaseOperation('find_product', 'product', async () => {
-      return database.product.findUnique({
-        where: { id: productId },
-        include: {
-          seller: {
-            select: { id: true, firstName: true, lastName: true },
+    const product = await trackDatabaseOperation(
+      'find_product',
+      'product',
+      async () => {
+        return database.product.findUnique({
+          where: { id: productId },
+          include: {
+            seller: {
+              select: { id: true, firstName: true, lastName: true },
+            },
+            images: {
+              orderBy: { displayOrder: 'asc' },
+              take: 1,
+            },
           },
-          images: {
-            orderBy: { displayOrder: 'asc' },
-            take: 1,
-          },
-        },
-      });
-    });
+        });
+      }
+    );
 
     if (!product) {
       return { error: 'Product not found' };
@@ -90,7 +99,7 @@ export async function addToCart(input: {
       where: {
         userId_productId: {
           userId: user.id,
-          productId: productId,
+          productId,
         },
       },
     });
@@ -118,8 +127,8 @@ export async function addToCart(input: {
       cartItem = await database.cartItem.create({
         data: {
           userId: user.id,
-          productId: productId,
-          quantity: quantity,
+          productId,
+          quantity,
         },
         include: {
           product: {
@@ -144,9 +153,10 @@ export async function addToCart(input: {
       price: Number(cartItem.product.price),
       imageUrl: cartItem.product.images[0]?.imageUrl || '',
       sellerId: cartItem.product.sellerId,
-      sellerName: cartItem.product.seller.firstName || cartItem.product.seller.lastName
-        ? `${cartItem.product.seller.firstName || ''} ${cartItem.product.seller.lastName || ''}`.trim()
-        : undefined,
+      sellerName:
+        cartItem.product.seller.firstName || cartItem.product.seller.lastName
+          ? `${cartItem.product.seller.firstName || ''} ${cartItem.product.seller.lastName || ''}`.trim()
+          : undefined,
       condition: cartItem.product.condition,
       size: cartItem.product.size ?? undefined,
       color: cartItem.product.color ?? undefined,
@@ -154,14 +164,16 @@ export async function addToCart(input: {
     };
 
     revalidateTag(`user-cart-${user.id}`);
-    
+
     return { cartItem: formattedCartItem };
   } catch (error) {
     return { error: parseError(error) };
   }
 }
 
-export async function removeFromCart(productId: string): Promise<{ error?: string }> {
+export async function removeFromCart(
+  productId: string
+): Promise<{ error?: string }> {
   try {
     const { userId } = await auth();
     if (!userId) {
@@ -180,13 +192,13 @@ export async function removeFromCart(productId: string): Promise<{ error?: strin
       where: {
         userId_productId: {
           userId: user.id,
-          productId: productId,
+          productId,
         },
       },
     });
 
     revalidateTag(`user-cart-${user.id}`);
-    
+
     return {};
   } catch (error) {
     return { error: parseError(error) };
@@ -222,14 +234,14 @@ export async function updateCartQuantity(input: {
       where: {
         userId_productId: {
           userId: user.id,
-          productId: productId,
+          productId,
         },
       },
       data: { quantity },
     });
 
     revalidateTag(`user-cart-${user.id}`);
-    
+
     return {};
   } catch (error) {
     return { error: parseError(error) };
@@ -256,7 +268,7 @@ export async function clearCart(): Promise<{ error?: string }> {
     });
 
     revalidateTag(`user-cart-${user.id}`);
-    
+
     return {};
   } catch (error) {
     return { error: parseError(error) };
@@ -300,17 +312,18 @@ export async function getCartItems(): Promise<{
     });
 
     const formattedItems: CartItem[] = cartItems
-      .filter(item => item.product.status === 'AVAILABLE')
-      .map(item => ({
+      .filter((item) => item.product.status === 'AVAILABLE')
+      .map((item) => ({
         id: `cart-${item.id}`,
         productId: item.productId,
         title: item.product.title,
         price: Number(item.product.price),
         imageUrl: item.product.images[0]?.imageUrl || '',
         sellerId: item.product.sellerId,
-        sellerName: item.product.seller.firstName || item.product.seller.lastName
-          ? `${item.product.seller.firstName || ''} ${item.product.seller.lastName || ''}`.trim()
-          : undefined,
+        sellerName:
+          item.product.seller.firstName || item.product.seller.lastName
+            ? `${item.product.seller.firstName || ''} ${item.product.seller.lastName || ''}`.trim()
+            : undefined,
         condition: item.product.condition,
         size: item.product.size ?? undefined,
         color: item.product.color ?? undefined,
@@ -346,7 +359,7 @@ export async function syncCartWithDatabase(
       });
 
       if (localItems.length > 0) {
-        const cartItemsData = localItems.map(item => ({
+        const cartItemsData = localItems.map((item) => ({
           userId: user.id,
           productId: item.productId,
           quantity: item.quantity,

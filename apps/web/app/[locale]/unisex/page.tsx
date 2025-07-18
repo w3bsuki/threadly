@@ -5,14 +5,14 @@ export default function UnisexPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Category Navigation */}
-      <CategoryNav 
+      <CategoryNav
         category="unisex"
-        title="Unisex Fashion"
         description="Discover gender-neutral fashion pieces that work for everyone"
+        title="Unisex Fashion"
       />
-      
+
       {/* Product Grid with Unisex Filter */}
       <ProductGrid category="unisex" />
     </div>
   );
-} 
+}

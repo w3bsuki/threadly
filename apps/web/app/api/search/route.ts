@@ -1,10 +1,9 @@
-import { database } from '@repo/database';
-import type { Prisma } from '@repo/database';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
-import { NextRequest, NextResponse } from 'next/server';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
 import { getCacheService } from '@repo/cache';
+import type { Prisma } from '@repo/database';
+import { database } from '@repo/database';
+import { logError } from '@repo/observability/server';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,7 +12,7 @@ export async function GET(request: NextRequest) {
     if (!rateLimitResult.allowed) {
       return NextResponse.json(
         { error: rateLimitResult.error?.message || 'Rate limit exceeded' },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }
@@ -37,11 +36,11 @@ export async function GET(request: NextRequest) {
           where: {
             OR: [
               { name: { equals: category } },
-              { slug: { equals: category } }
-            ]
-          }
+              { slug: { equals: category } },
+            ],
+          },
         });
-        
+
         if (categoryFilter) {
           whereClause.categoryId = categoryFilter.id;
         }
@@ -53,7 +52,7 @@ export async function GET(request: NextRequest) {
           images: { orderBy: { displayOrder: 'asc' } },
           seller: { select: { id: true, firstName: true, lastName: true } },
           category: true,
-          _count: { select: { favorites: true } }
+          _count: { select: { favorites: true } },
         },
         orderBy: { createdAt: 'desc' },
         take: 24,
@@ -68,10 +67,10 @@ export async function GET(request: NextRequest) {
 
     const searchTerm = query.toLowerCase().trim();
     const cache = getCacheService();
-    
+
     // Create cache key for search results
     const cacheKey = `search:${searchTerm}`;
-    
+
     // Use cache-aside pattern for search results
     const products = await cache.remember(
       cacheKey,
@@ -122,10 +121,7 @@ export async function GET(request: NextRequest) {
               },
             },
           },
-          orderBy: [
-            { views: 'desc' },
-            { createdAt: 'desc' },
-          ],
+          orderBy: [{ views: 'desc' }, { createdAt: 'desc' }],
           take: 50, // Limit results
         });
       },

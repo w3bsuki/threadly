@@ -1,16 +1,22 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { z } from 'zod';
 import { log, logError } from '@repo/observability/server';
-import { stripe, calculatePlatformFee, isStripeConfigured } from '@repo/payments';
+import {
+  calculatePlatformFee,
+  isStripeConfigured,
+  stripe,
+} from '@repo/payments';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 const createOrderSchema = z.object({
-  items: z.array(z.object({
-    productId: z.string(),
-    quantity: z.number().min(1),
-    price: z.number().min(0),
-  })),
+  items: z.array(
+    z.object({
+      productId: z.string(),
+      quantity: z.number().min(1),
+      price: z.number().min(0),
+    })
+  ),
   shippingAddress: z.object({
     street: z.string().min(1),
     city: z.string().min(1),
@@ -18,13 +24,15 @@ const createOrderSchema = z.object({
     postalCode: z.string().min(1),
     country: z.string().min(1),
   }),
-  billingAddress: z.object({
-    street: z.string().min(1),
-    city: z.string().min(1),
-    state: z.string().min(1),
-    postalCode: z.string().min(1),
-    country: z.string().min(1),
-  }).optional(),
+  billingAddress: z
+    .object({
+      street: z.string().min(1),
+      city: z.string().min(1),
+      state: z.string().min(1),
+      postalCode: z.string().min(1),
+      country: z.string().min(1),
+    })
+    .optional(),
   paymentMethod: z.object({
     type: z.enum(['card']),
   }),
@@ -66,7 +74,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate products and check availability
-    const productIds = validatedData.items.map(item => item.productId);
+    const productIds = validatedData.items.map((item) => item.productId);
     const products = await database.product.findMany({
       where: {
         id: { in: productIds },
@@ -85,7 +93,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Calculate platform fee (5% of subtotal)
-    const platformFeeInCents = calculatePlatformFee(validatedData.costs.subtotal * 100);
+    const platformFeeInCents = calculatePlatformFee(
+      validatedData.costs.subtotal * 100
+    );
 
     // Create Stripe Payment Intent
     const paymentIntent = await stripe.paymentIntents.create({
@@ -104,13 +114,21 @@ export async function POST(request: NextRequest) {
       const createdOrders = [];
 
       for (const item of validatedData.items) {
-        const product = products.find(p => p.id === item.productId);
-        if (!product) continue;
+        const product = products.find((p) => p.id === item.productId);
+        if (!product) {
+          continue;
+        }
 
         // Calculate individual order amounts
         const itemTotal = item.price * item.quantity;
-        const itemShipping = Math.round((validatedData.costs.shipping / validatedData.items.length) * 100) / 100;
-        const itemTax = Math.round((validatedData.costs.tax / validatedData.items.length) * 100) / 100;
+        const itemShipping =
+          Math.round(
+            (validatedData.costs.shipping / validatedData.items.length) * 100
+          ) / 100;
+        const itemTax =
+          Math.round(
+            (validatedData.costs.tax / validatedData.items.length) * 100
+          ) / 100;
         const orderTotal = itemTotal + itemShipping + itemTax;
 
         // Create shipping address first
@@ -152,7 +170,7 @@ export async function POST(request: NextRequest) {
     });
 
     log.info('Successfully created cart orders', {
-      orderIds: orders.map(o => o.id),
+      orderIds: orders.map((o) => o.id),
       userId: dbUser.id,
       total: validatedData.costs.total,
     });
@@ -163,14 +181,13 @@ export async function POST(request: NextRequest) {
         clientSecret: paymentIntent.client_secret,
         id: paymentIntent.id,
       },
-      orders: orders.map(order => ({
+      orders: orders.map((order) => ({
         id: order.id,
         sellerId: order.sellerId,
         productId: order.productId,
         amount: Number(order.amount),
       })),
     });
-
   } catch (error) {
     logError('Failed to create cart orders', error);
 

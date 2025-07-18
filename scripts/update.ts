@@ -129,7 +129,7 @@ const getDiff = async (
 
 export const update = async (options: { from?: string; to?: string }) => {
   try {
-    intro("Let's update your next-forge project!");
+    intro("Let's update your threadly project!");
 
     const cwd = process.cwd();
     const availableVersions = await getAvailableVersions();
@@ -169,7 +169,7 @@ export const update = async (options: { from?: string; to?: string }) => {
     s.message('Creating temporary directory...');
     await createTemporaryDirectory(tempDirName);
 
-    s.message('Cloning next-forge...');
+    s.message('Cloning threadly...');
     await cloneRepository(tempDirName);
 
     s.message('Moving into repository...');

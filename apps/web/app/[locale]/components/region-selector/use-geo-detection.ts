@@ -1,6 +1,9 @@
-import { useEffect, useState } from 'react';
+import {
+  getRegionByCountryCode,
+  type Region,
+} from '@repo/internationalization/client';
 import { getCookie } from 'cookies-next';
-import { getRegionByCountryCode, type Region } from '@repo/internationalization/client';
+import { useEffect, useState } from 'react';
 
 interface GeoData {
   country?: string;
@@ -24,8 +27,8 @@ export function useGeoDetection() {
     if (typeof window !== 'undefined') {
       // Client-side: Make a request to get geo data
       fetch('/api/geo')
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           if (data.country) {
             const region = getRegionByCountryCode(data.country);
             setGeoData({

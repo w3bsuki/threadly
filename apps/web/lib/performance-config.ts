@@ -64,10 +64,7 @@ export const performanceConfig = {
       'https://upstash.io',
     ],
     // Preconnect to critical origins
-    preconnect: [
-      'https://fonts.googleapis.com',
-      'https://fonts.gstatic.com',
-    ],
+    preconnect: ['https://fonts.googleapis.com', 'https://fonts.gstatic.com'],
   },
 
   // Lazy loading configuration
@@ -116,9 +113,7 @@ export function shouldPrioritizeResource(
 }
 
 // Helper to generate blur data URL for images
-export function generateBlurDataURL(
-  dominantColor: string = '#f3f4f6'
-): string {
+export function generateBlurDataURL(dominantColor = '#f3f4f6'): string {
   const svg = `
     <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg">
       <rect width="40" height="40" fill="${dominantColor}"/>

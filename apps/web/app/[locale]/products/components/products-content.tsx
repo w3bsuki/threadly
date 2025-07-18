@@ -1,21 +1,12 @@
-import { database } from "@repo/database";
-import type { Prisma } from "@repo/database";
-import type { Dictionary } from "@repo/internationalization";
-import { ProductGrid } from "./product-grid";
-import { ProductFilters } from "./product-filters";
-import { CollapsibleFilters } from "./collapsible-filters";
-import { ProductFiltersMobile } from "./product-filters-mobile";
-import { ProductSort } from "./product-sort";
-import { QuickFilters } from "./quick-filters";
-import { Pagination } from "./pagination";
-import { LayoutSwitcher, ViewMode } from "./layout-switcher";
-import { ProductListView } from "./product-list-view";
-import { EnhancedHeader } from "./enhanced-header";
-import { ProductsClientWrapper } from "./products-client-wrapper";
-import { UnifiedSearchFilters } from "../../components/unified-search-filters";
-import { Separator } from '@repo/design-system/components';
-import { SlidersHorizontal } from 'lucide-react';
-import { withDatabaseErrorHandling } from '@/lib/utils/error-handling';
+import type { Prisma } from '@repo/database';
+import { database } from '@repo/database';
+import type { Dictionary } from '@repo/internationalization';
+import { UnifiedSearchFilters } from '../../components/unified-search-filters';
+import { CollapsibleFilters } from './collapsible-filters';
+import { EnhancedHeader } from './enhanced-header';
+import { Pagination } from './pagination';
+import { ProductFiltersMobile } from './product-filters-mobile';
+import { ProductsClientWrapper } from './products-client-wrapper';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -32,13 +23,16 @@ interface ProductsContentProps {
   dictionary: Dictionary;
 }
 
-export async function ProductsContent({ searchParams, dictionary }: ProductsContentProps) {
-  const page = parseInt(searchParams.page || "1");
+export async function ProductsContent({
+  searchParams,
+  dictionary,
+}: ProductsContentProps) {
+  const page = Number.parseInt(searchParams.page || '1', 10);
   const skip = (page - 1) * ITEMS_PER_PAGE;
 
   // Build where clause for filtering
   const where: Prisma.ProductWhereInput = {
-    status: "AVAILABLE",
+    status: 'AVAILABLE',
   };
 
   // Handle gender filtering by category name
@@ -46,8 +40,8 @@ export async function ProductsContent({ searchParams, dictionary }: ProductsCont
     where.category = {
       OR: [
         { name: { contains: searchParams.gender, mode: 'insensitive' } },
-        { slug: { contains: searchParams.gender, mode: 'insensitive' } }
-      ]
+        { slug: { contains: searchParams.gender, mode: 'insensitive' } },
+      ],
     };
   }
 
@@ -60,23 +54,27 @@ export async function ProductsContent({ searchParams, dictionary }: ProductsCont
           {
             OR: [
               { name: { contains: searchParams.gender, mode: 'insensitive' } },
-              { slug: { contains: searchParams.gender, mode: 'insensitive' } }
-            ]
+              { slug: { contains: searchParams.gender, mode: 'insensitive' } },
+            ],
           },
           {
             OR: [
-              { name: { contains: searchParams.category, mode: 'insensitive' } },
-              { slug: { contains: searchParams.category, mode: 'insensitive' } }
-            ]
-          }
-        ]
+              {
+                name: { contains: searchParams.category, mode: 'insensitive' },
+              },
+              {
+                slug: { contains: searchParams.category, mode: 'insensitive' },
+              },
+            ],
+          },
+        ],
       };
     } else {
       where.category = {
         OR: [
           { name: { contains: searchParams.category, mode: 'insensitive' } },
-          { slug: { contains: searchParams.category, mode: 'insensitive' } }
-        ]
+          { slug: { contains: searchParams.category, mode: 'insensitive' } },
+        ],
       };
     }
   }
@@ -84,10 +82,10 @@ export async function ProductsContent({ searchParams, dictionary }: ProductsCont
   if (searchParams.minPrice || searchParams.maxPrice) {
     where.price = {};
     if (searchParams.minPrice) {
-      where.price.gte = parseFloat(searchParams.minPrice);
+      where.price.gte = Number.parseFloat(searchParams.minPrice);
     }
     if (searchParams.maxPrice) {
-      where.price.lte = parseFloat(searchParams.maxPrice);
+      where.price.lte = Number.parseFloat(searchParams.maxPrice);
     }
   }
 
@@ -96,14 +94,14 @@ export async function ProductsContent({ searchParams, dictionary }: ProductsCont
   }
 
   // Build orderBy for sorting
-  let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: "desc" }; // default to newest
-  
-  if (searchParams.sort === "price-asc") {
-    orderBy = { price: "asc" };
-  } else if (searchParams.sort === "price-desc") {
-    orderBy = { price: "desc" };
-  } else if (searchParams.sort === "popular") {
-    orderBy = { views: "desc" };
+  let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: 'desc' }; // default to newest
+
+  if (searchParams.sort === 'price-asc') {
+    orderBy = { price: 'asc' };
+  } else if (searchParams.sort === 'price-desc') {
+    orderBy = { price: 'desc' };
+  } else if (searchParams.sort === 'popular') {
+    orderBy = { views: 'desc' };
   }
 
   // Fetch products with pagination
@@ -115,7 +113,7 @@ export async function ProductsContent({ searchParams, dictionary }: ProductsCont
       take: ITEMS_PER_PAGE,
       include: {
         images: {
-          orderBy: { displayOrder: "asc" },
+          orderBy: { displayOrder: 'asc' },
           take: 1,
         },
         seller: {
@@ -146,7 +144,7 @@ export async function ProductsContent({ searchParams, dictionary }: ProductsCont
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   // Transform products to match ProductGrid interface
-  const transformedProducts = products.map(product => ({
+  const transformedProducts = products.map((product) => ({
     id: product.id,
     title: product.title,
     description: product.description,
@@ -154,7 +152,7 @@ export async function ProductsContent({ searchParams, dictionary }: ProductsCont
     condition: product.condition,
     category: product.category.name,
     brand: product.brand || undefined,
-    images: product.images.map(image => ({
+    images: product.images.map((image) => ({
       id: image.id,
       imageUrl: image.imageUrl,
       alt: image.alt || undefined,
@@ -162,7 +160,7 @@ export async function ProductsContent({ searchParams, dictionary }: ProductsCont
     })),
     seller: {
       id: product.seller.id,
-      firstName: product.seller.firstName || "Anonymous",
+      firstName: product.seller.firstName || 'Anonymous',
     },
     _count: product._count,
     views: product.views,
@@ -182,17 +180,17 @@ export async function ProductsContent({ searchParams, dictionary }: ProductsCont
   return (
     <div className="min-h-screen bg-white">
       {/* Unified Search Filters - Mobile Only */}
-      <div className="lg:hidden border-0">
+      <div className="border-0 lg:hidden">
         <UnifiedSearchFilters totalCount={totalCount} />
       </div>
 
       {/* Products Grid - Same container as main page */}
-      <div className="max-w-7xl mx-auto px-4 pt-3 pb-6">
+      <div className="mx-auto max-w-7xl px-4 pt-3 pb-6">
         {/* Header Section - Desktop Only */}
-        <div className="hidden lg:block mb-6">
-          <EnhancedHeader 
-            totalCount={totalCount}
+        <div className="mb-6 hidden lg:block">
+          <EnhancedHeader
             currentFilters={searchParams}
+            totalCount={totalCount}
           />
         </div>
 
@@ -201,7 +199,7 @@ export async function ProductsContent({ searchParams, dictionary }: ProductsCont
           {/* Desktop Sidebar Filters */}
           <aside className="hidden lg:block">
             <div className="sticky top-24">
-              <CollapsibleFilters 
+              <CollapsibleFilters
                 categories={categories}
                 currentFilters={searchParams}
                 dictionary={dictionary}
@@ -210,18 +208,19 @@ export async function ProductsContent({ searchParams, dictionary }: ProductsCont
           </aside>
 
           {/* Product Grid */}
-          <main className="flex-1 min-w-0">
+          <main className="min-w-0 flex-1">
             {transformedProducts.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="max-w-md mx-auto">
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <div className="py-12 text-center">
+                <div className="mx-auto max-w-md">
+                  <h3 className="mb-2 font-medium text-gray-900 text-lg">
                     No products found
                   </h3>
-                  <p className="text-sm text-gray-600 mb-6">
-                    Try adjusting your filters or search terms to find what you're looking for
+                  <p className="mb-6 text-gray-600 text-sm">
+                    Try adjusting your filters or search terms to find what
+                    you're looking for
                   </p>
                   <div className="lg:hidden">
-                    <ProductFiltersMobile 
+                    <ProductFiltersMobile
                       categories={categories}
                       currentFilters={searchParams}
                       dictionary={dictionary}
@@ -231,18 +230,18 @@ export async function ProductsContent({ searchParams, dictionary }: ProductsCont
               </div>
             ) : (
               <div className="space-y-6">
-                <ProductsClientWrapper 
+                <ProductsClientWrapper
+                  dictionary={dictionary}
                   products={transformedProducts}
                   searchParams={searchParams}
-                  dictionary={dictionary}
                 />
                 {totalPages > 1 && (
-                  <div className="border-t pt-6 mt-8">
+                  <div className="mt-8 border-t pt-6">
                     <Pagination
-                      currentPage={page}
-                      totalPages={totalPages}
                       baseUrl="/products"
+                      currentPage={page}
                       searchParams={searchParams}
+                      totalPages={totalPages}
                     />
                   </div>
                 )}

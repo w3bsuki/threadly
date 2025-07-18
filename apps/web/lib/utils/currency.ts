@@ -1,6 +1,6 @@
-import { formatPrice, databaseDollarsToStripeCents } from '@repo/utils/price';
-import { getCookie } from 'cookies-next';
 import type { Currency, Language } from '@repo/internationalization/client';
+import { databaseDollarsToStripeCents, formatPrice } from '@repo/utils/price';
+import { getCookie } from 'cookies-next';
 
 /**
  * Format price from database (stored as dollars) for display
@@ -9,11 +9,17 @@ import type { Currency, Language } from '@repo/internationalization/client';
  * @param locale - Optional locale override (defaults to user's preferred language)
  * @returns Formatted price string (e.g., "$29.99", "85,00 лв")
  */
-export function formatProductPrice(price: number, currency?: string, locale?: string): string {
+export function formatProductPrice(
+  price: number,
+  currency?: string,
+  locale?: string
+): string {
   // Get user's preferred currency from cookie if not provided
-  const preferredCurrency = currency || (getCookie('preferredCurrency') as Currency) || 'USD';
-  const preferredLanguage = locale || (getCookie('preferredLanguage') as Language) || 'en';
-  
+  const preferredCurrency =
+    currency || (getCookie('preferredCurrency') as Currency) || 'USD';
+  const preferredLanguage =
+    locale || (getCookie('preferredLanguage') as Language) || 'en';
+
   // Map language codes to full locales
   const localeMap: Record<string, string> = {
     en: 'en-US',
@@ -25,9 +31,9 @@ export function formatProductPrice(price: number, currency?: string, locale?: st
     pt: 'pt-PT',
     zh: 'zh-CN',
   };
-  
+
   const fullLocale = localeMap[preferredLanguage] || 'en-US';
-  
+
   // Convert database dollars to cents, then format
   const cents = databaseDollarsToStripeCents(price);
   return formatPrice(cents, preferredCurrency, fullLocale);

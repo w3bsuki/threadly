@@ -1,46 +1,45 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
-import { useCartStore } from "../../../../../lib/stores/cart-store";
-import { useFavorites } from "../../../../../lib/hooks/use-favorites";
-import { useAnalyticsEvents } from "@repo/analytics";
-import { Badge } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
-import { SignInCTA } from "../../../../../components/sign-in-cta";
-import { Card, CardContent } from '@repo/design-system/components';
-import { toast } from "@repo/design-system";
-import { useRouter } from "next/navigation";
-import { Separator } from '@repo/design-system/components';
+import { useAnalyticsEvents } from '@repo/analytics';
+import { toast } from '@repo/design-system';
 import {
+  Badge,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
+  Button,
+  Card,
+  CardContent,
 } from '@repo/design-system/components';
+import { cn } from '@repo/design-system/lib/utils';
 import {
-  Heart,
-  Share2,
-  MessageCircle,
-  Package,
-  Shield,
-  Calendar,
-  Users,
-  ShoppingCart,
+  formatPriceForDisplay,
+  getRegionByCountryCode,
+  type Region,
+} from '@repo/internationalization/client';
+import { getCookie } from 'cookies-next';
+import {
   ChevronLeft,
   ChevronRight,
+  Heart,
+  MessageCircle,
+  Package,
+  Share2,
+  ShoppingCart,
   Star,
-  MapPin,
-  Truck,
-} from "lucide-react";
-import { cn } from "@repo/design-system/lib/utils";
+  Users,
+} from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 // Removed server-only import from client component
 import { formatCurrency } from '@/lib/utils/currency';
-import { getCookie } from 'cookies-next';
-import { getRegionByCountryCode, formatPriceForDisplay, type Region } from '@repo/internationalization/client';
+import { useFavorites } from '../../../../../lib/hooks/use-favorites';
+import { useCartStore } from '../../../../../lib/stores/cart-store';
 
 interface Product {
   id: string;
@@ -93,35 +92,42 @@ interface SimilarProduct {
 interface ProductDetailProps {
   product: Product;
   similarProducts: SimilarProduct[];
+  dictionary: any;
 }
 
 const conditionLabels = {
-  NEW_WITH_TAGS: "New with tags",
-  NEW_WITHOUT_TAGS: "New without tags",
-  VERY_GOOD: "Very good",
-  GOOD: "Good",
-  SATISFACTORY: "Satisfactory",
+  NEW_WITH_TAGS: 'New with tags',
+  NEW_WITHOUT_TAGS: 'New without tags',
+  VERY_GOOD: 'Very good',
+  GOOD: 'Good',
+  SATISFACTORY: 'Satisfactory',
 };
 
 const conditionColors = {
-  NEW_WITH_TAGS: "bg-green-100 text-green-800",
-  NEW_WITHOUT_TAGS: "bg-blue-100 text-blue-800",
-  VERY_GOOD: "bg-purple-100 text-purple-800",
-  GOOD: "bg-yellow-100 text-yellow-800",
-  SATISFACTORY: "bg-gray-100 text-gray-800",
+  NEW_WITH_TAGS: 'bg-green-100 text-green-800',
+  NEW_WITHOUT_TAGS: 'bg-blue-100 text-blue-800',
+  VERY_GOOD: 'bg-purple-100 text-purple-800',
+  GOOD: 'bg-yellow-100 text-yellow-800',
+  SATISFACTORY: 'bg-gray-100 text-gray-800',
 };
 
-export function ProductDetail({ product, similarProducts }: ProductDetailProps) {
+export function ProductDetail({
+  product,
+  similarProducts,
+  dictionary,
+}: ProductDetailProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [isImageGalleryOpen, setIsImageGalleryOpen] = useState(false);
+  const [_isImageGalleryOpen, _setIsImageGalleryOpen] = useState(false);
   const { addItem, isInCart } = useCartStore();
-  const { toggleFavorite, checkFavorite, isFavorited, isPending } = useFavorites();
-  const { trackProductView, trackCartAdd, trackProductFavorite } = useAnalyticsEvents();
-  const galleryRef = useRef<HTMLDivElement>(null);
+  const { toggleFavorite, checkFavorite, isFavorited, isPending } =
+    useFavorites();
+  const { trackProductView, trackCartAdd, trackProductFavorite } =
+    useAnalyticsEvents();
+  const _galleryRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  
+
   const isProductInCart = isInCart(product.id);
-  
+
   // Get user's region for price display
   const [userRegion, setUserRegion] = useState<Region | undefined>();
   const [userCurrency, setUserCurrency] = useState<string>('USD');
@@ -131,16 +137,16 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
   // Check if product is already favorited on mount and track product view
   useEffect(() => {
     checkFavorite(product.id);
-    
+
     // Get user's region and currency preferences
     const regionCode = getCookie('region') as string;
-    const currency = getCookie('preferredCurrency') as string || 'USD';
+    const currency = (getCookie('preferredCurrency') as string) || 'USD';
     if (regionCode) {
       const region = getRegionByCountryCode(regionCode);
       setUserRegion(region);
     }
     setUserCurrency(currency);
-    
+
     // Track product view for analytics
     trackProductView({
       id: product.id,
@@ -157,21 +163,25 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
     const result = await toggleFavorite(product.id);
     if (result.success) {
       // Track favorite action
-      trackProductFavorite({
-        id: product.id,
-        title: product.title,
-        price: product.price / 100,
-        category: product.category.name,
-      }, isFavorited(product.id));
+      trackProductFavorite(
+        {
+          id: product.id,
+          title: product.title,
+          price: product.price / 100,
+          category: product.category.name,
+        },
+        isFavorited(product.id)
+      );
     }
   };
 
   const handleAddToCart = () => {
     try {
-      const sellerName = product.seller.firstName && product.seller.lastName
-        ? `${product.seller.firstName} ${product.seller.lastName}`
-        : "Anonymous Seller";
-        
+      const sellerName =
+        product.seller.firstName && product.seller.lastName
+          ? `${product.seller.firstName} ${product.seller.lastName}`
+          : 'Anonymous Seller';
+
       addItem({
         productId: product.id,
         title: product.title,
@@ -182,7 +192,7 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
         condition: product.condition,
         size: product.size || undefined,
       });
-      
+
       // Track add to cart
       trackCartAdd({
         id: product.id,
@@ -192,13 +202,13 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
         brand: product.brand,
         condition: product.condition,
       });
-      
-      toast.success("Added to cart", {
+
+      toast.success('Added to cart', {
         description: `${product.title} has been added to your cart.`,
       });
-    } catch (error) {
-      toast.error("Error", {
-        description: "Failed to add item to cart. Please try again.",
+    } catch (_error) {
+      toast.error('Error', {
+        description: 'Failed to add item to cart. Please try again.',
       });
     }
   };
@@ -210,11 +220,11 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
 
   const handleImageNavigation = (direction: 'prev' | 'next') => {
     if (direction === 'prev') {
-      setSelectedImageIndex(prev => 
+      setSelectedImageIndex((prev) =>
         prev === 0 ? product.images.length - 1 : prev - 1
       );
     } else {
-      setSelectedImageIndex(prev => 
+      setSelectedImageIndex((prev) =>
         prev === product.images.length - 1 ? 0 : prev + 1
       );
     }
@@ -223,8 +233,10 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
   // Touch swipe handling for mobile
   const handleTouchStart = useRef<{ x: number; y: number } | null>(null);
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!handleTouchStart.current) return;
-    
+    if (!handleTouchStart.current) {
+      return;
+    }
+
     const currentX = e.touches[0].clientX;
     const currentY = e.touches[0].clientY;
     const diffX = handleTouchStart.current.x - currentX;
@@ -244,7 +256,7 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
     <div className="min-h-screen bg-white">
       {/* Mobile Header - Breadcrumb hidden on mobile */}
       <div className="container px-4 py-4 md:py-6">
-        <Breadcrumb className="hidden md:block mb-6">
+        <Breadcrumb className="mb-6 hidden md:block">
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink href="/">Home</BreadcrumbLink>
@@ -267,35 +279,37 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage className="truncate">{product.title}</BreadcrumbPage>
+              <BreadcrumbPage className="truncate">
+                {product.title}
+              </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
-        <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
+        <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
           {/* Enhanced Image Gallery */}
           <div className="space-y-3 md:space-y-4">
-            <div 
-              className="relative aspect-square bg-gray-100 rounded-xl md:rounded-2xl overflow-hidden"
+            <div
+              className="relative aspect-square overflow-hidden rounded-xl bg-gray-100 md:rounded-2xl"
+              onTouchMove={handleTouchMove}
               onTouchStart={(e) => {
                 handleTouchStart.current = {
                   x: e.touches[0].clientX,
-                  y: e.touches[0].clientY
+                  y: e.touches[0].clientY,
                 };
               }}
-              onTouchMove={handleTouchMove}
             >
               {product.images[selectedImageIndex] ? (
                 <Image
-                  src={product.images[selectedImageIndex].imageUrl}
                   alt={product.images[selectedImageIndex].alt || product.title}
-                  fill
                   className="object-cover"
+                  fill
                   priority
                   sizes="(max-width: 768px) 100vw, 50vw"
+                  src={product.images[selectedImageIndex].imageUrl}
                 />
               ) : (
-                <div className="flex items-center justify-center h-full text-gray-400">
+                <div className="flex h-full items-center justify-center text-gray-400">
                   <Package className="h-16 w-16" />
                 </div>
               )}
@@ -304,32 +318,34 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
               {product.images.length > 1 && (
                 <>
                   <Button
-                    variant="ghost"
-                    size="sm"
+                    className="-translate-y-1/2 absolute top-1/2 left-2 h-10 w-10 rounded-full bg-white/80 p-0 shadow-sm backdrop-blur-sm hover:bg-white"
                     onClick={() => handleImageNavigation('prev')}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white backdrop-blur-sm rounded-full h-10 w-10 p-0 shadow-sm"
+                    size="sm"
+                    variant="ghost"
                   >
                     <ChevronLeft className="h-5 w-5" />
                   </Button>
                   <Button
-                    variant="ghost"
-                    size="sm"
+                    className="-translate-y-1/2 absolute top-1/2 right-2 h-10 w-10 rounded-full bg-white/80 p-0 shadow-sm backdrop-blur-sm hover:bg-white"
                     onClick={() => handleImageNavigation('next')}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white backdrop-blur-sm rounded-full h-10 w-10 p-0 shadow-sm"
+                    size="sm"
+                    variant="ghost"
                   >
                     <ChevronRight className="h-5 w-5" />
                   </Button>
 
                   {/* Image indicators */}
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+                  <div className="-translate-x-1/2 absolute bottom-4 left-1/2 flex space-x-2">
                     {product.images.map((_, index) => (
                       <button
+                        className={cn(
+                          'h-2 w-2 rounded-full transition-colors',
+                          index === selectedImageIndex
+                            ? 'bg-white'
+                            : 'bg-white/50'
+                        )}
                         key={index}
                         onClick={() => setSelectedImageIndex(index)}
-                        className={cn(
-                          "w-2 h-2 rounded-full transition-colors",
-                          index === selectedImageIndex ? "bg-white" : "bg-white/50"
-                        )}
                       />
                     ))}
                   </div>
@@ -339,24 +355,24 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
 
             {/* Thumbnail Grid - Desktop only */}
             {product.images.length > 1 && (
-              <div className="hidden md:grid grid-cols-4 gap-2">
+              <div className="hidden grid-cols-4 gap-2 md:grid">
                 {product.images.map((image, index) => (
                   <button
+                    className={cn(
+                      'aspect-square overflow-hidden rounded-lg border-2 bg-gray-100 transition-colors',
+                      selectedImageIndex === index
+                        ? 'border-black'
+                        : 'border-transparent hover:border-gray-300'
+                    )}
                     key={index}
                     onClick={() => setSelectedImageIndex(index)}
-                    className={cn(
-                      "aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 transition-colors",
-                      selectedImageIndex === index 
-                        ? "border-black" 
-                        : "border-transparent hover:border-gray-300"
-                    )}
                   >
                     <Image
-                      src={image.imageUrl}
                       alt={image.alt || `${product.title} ${index + 1}`}
-                      width={120}
+                      className="h-full w-full object-cover"
                       height={120}
-                      className="w-full h-full object-cover"
+                      src={image.imageUrl}
+                      width={120}
                     />
                   </button>
                 ))}
@@ -369,49 +385,64 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
             {/* Header */}
             <div className="space-y-4">
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold leading-tight mb-3">
+                <h1 className="mb-3 font-bold text-2xl leading-tight md:text-3xl">
                   {product.title}
                 </h1>
                 <div className="mb-4">
-                  <div className="text-3xl md:text-4xl font-bold text-black">
-                    {userRegion 
-                      ? formatPriceForDisplay(product.price, userRegion, userCurrency as any).displayPrice
-                      : formatCurrency(product.price)
-                    }
+                  <div className="font-bold text-3xl text-black md:text-4xl">
+                    {userRegion
+                      ? formatPriceForDisplay(
+                          product.price,
+                          userRegion,
+                          userCurrency as any
+                        ).displayPrice
+                      : formatCurrency(product.price)}
                   </div>
                   {userRegion && (
-                    <p className="text-sm text-gray-600 mt-1">
-                      {formatPriceForDisplay(product.price, userRegion, userCurrency as any).taxInfo}
+                    <p className="mt-1 text-gray-600 text-sm">
+                      {
+                        formatPriceForDisplay(
+                          product.price,
+                          userRegion,
+                          userCurrency as any
+                        ).taxInfo
+                      }
                     </p>
                   )}
                 </div>
               </div>
-              
+
               {/* Badges - Mobile optimized */}
-              <div className="flex flex-wrap items-center gap-2 mb-4">
-                <Badge 
-                  variant="secondary"
+              <div className="mb-4 flex flex-wrap items-center gap-2">
+                <Badge
                   className={cn(
-                    "text-sm font-medium",
-                    conditionColors[product.condition as keyof typeof conditionColors]
+                    'font-medium text-sm',
+                    conditionColors[
+                      product.condition as keyof typeof conditionColors
+                    ]
                   )}
+                  variant="secondary"
                 >
-                  {conditionLabels[product.condition as keyof typeof conditionLabels]}
+                  {
+                    conditionLabels[
+                      product.condition as keyof typeof conditionLabels
+                    ]
+                  }
                 </Badge>
                 {product.size && (
-                  <Badge variant="outline" className="text-sm">
+                  <Badge className="text-sm" variant="outline">
                     Size {product.size}
                   </Badge>
                 )}
                 {product.brand && (
-                  <Badge variant="outline" className="text-sm font-medium">
+                  <Badge className="font-medium text-sm" variant="outline">
                     {product.brand}
                   </Badge>
                 )}
               </div>
 
               {/* Product Stats */}
-              <div className="flex items-center gap-4 text-sm text-gray-600">
+              <div className="flex items-center gap-4 text-gray-600 text-sm">
                 <div className="flex items-center gap-1">
                   <Heart className="h-4 w-4" />
                   <span>{product._count.favorites}</span>
@@ -423,7 +454,11 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
                   Listed {new Date(product.createdAt).toLocaleDateString()}
                 </span>
                 <span className="sm:hidden">
-                  {Math.ceil((Date.now() - new Date(product.createdAt).getTime()) / (1000 * 60 * 60 * 24))}d ago
+                  {Math.ceil(
+                    (Date.now() - new Date(product.createdAt).getTime()) /
+                      (1000 * 60 * 60 * 24)
+                  )}
+                  d ago
                 </span>
               </div>
             </div>
@@ -434,26 +469,32 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
                 <div className="flex items-center gap-3">
                   {product.seller.imageUrl ? (
                     <Image
-                      src={product.seller.imageUrl}
-                      alt={`${product.seller.firstName} ${product.seller.lastName}` || "Seller"}
-                      width={48}
-                      height={48}
+                      alt={
+                        `${product.seller.firstName} ${product.seller.lastName}` ||
+                        'Seller'
+                      }
                       className="rounded-full"
+                      height={48}
+                      src={product.seller.imageUrl}
+                      width={48}
                     />
                   ) : (
-                    <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200">
                       <Users className="h-5 w-5 text-gray-500" />
                     </div>
                   )}
-                  <div className="flex-1 min-w-0">
-                    <Link href={`/seller/${product.seller.id}`} className="hover:underline">
-                      <h3 className="font-semibold text-sm text-gray-900 truncate">
-                        {product.seller.firstName && product.seller.lastName 
-                          ? `${product.seller.firstName} ${product.seller.lastName}` 
-                          : "Anonymous Seller"}
+                  <div className="min-w-0 flex-1">
+                    <Link
+                      className="hover:underline"
+                      href={`/seller/${product.seller.id}`}
+                    >
+                      <h3 className="truncate font-semibold text-gray-900 text-sm">
+                        {product.seller.firstName && product.seller.lastName
+                          ? `${product.seller.firstName} ${product.seller.lastName}`
+                          : 'Anonymous Seller'}
                       </h3>
                     </Link>
-                    <div className="flex items-center gap-3 text-xs text-gray-500">
+                    <div className="flex items-center gap-3 text-gray-500 text-xs">
                       <div className="flex items-center gap-1">
                         <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                         <span>4.8</span>
@@ -461,13 +502,17 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
                       <span>•</span>
                       <span>{product.seller._count.listings} sold</span>
                       <span>•</span>
-                      <span className="hidden sm:inline">Member since {memberSince}</span>
+                      <span className="hidden sm:inline">
+                        Member since {memberSince}
+                      </span>
                       <span className="sm:hidden">{memberSince}</span>
                     </div>
                   </div>
-                  <Link href={`/messages?sellerId=${product.seller.id}&productId=${product.id}`}>
-                    <Button variant="outline" size="sm" className="text-xs">
-                      <MessageCircle className="h-3 w-3 mr-1" />
+                  <Link
+                    href={`/messages?sellerId=${product.seller.id}&productId=${product.id}`}
+                  >
+                    <Button className="text-xs" size="sm" variant="outline">
+                      <MessageCircle className="mr-1 h-3 w-3" />
                       Message
                     </Button>
                   </Link>
@@ -478,7 +523,7 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
             {/* Product Details - Collapsed on mobile */}
             <Card className="border border-gray-200">
               <CardContent className="p-4">
-                <h3 className="font-semibold mb-3 text-sm">Details</h3>
+                <h3 className="mb-3 font-semibold text-sm">Details</h3>
                 <div className="space-y-2 text-sm">
                   {product.brand && (
                     <div className="flex justify-between">
@@ -501,7 +546,11 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
                   <div className="flex justify-between">
                     <span className="text-gray-500">Condition</span>
                     <span className="font-medium">
-                      {conditionLabels[product.condition as keyof typeof conditionLabels]}
+                      {
+                        conditionLabels[
+                          product.condition as keyof typeof conditionLabels
+                        ]
+                      }
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -513,49 +562,54 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
             </Card>
 
             {/* Desktop Action Buttons */}
-            <div className="hidden md:block space-y-3">
+            <div className="hidden space-y-3 md:block">
               {isProductInCart ? (
-                <Button 
-                  size="lg" 
-                  className="w-full bg-gray-800 text-white hover:bg-gray-700 h-12 text-base font-medium"
+                <Button
+                  className="h-12 w-full bg-gray-800 font-medium text-base text-white hover:bg-gray-700"
                   onClick={() => router.push('/cart')}
+                  size="lg"
                 >
                   <ShoppingCart className="mr-2 h-5 w-5" />
                   View Cart
                 </Button>
               ) : (
                 <>
-                  <Button 
-                    size="lg" 
-                    className="w-full bg-black text-white hover:bg-gray-800 h-12 text-base font-medium"
+                  <Button
+                    className="h-12 w-full bg-black font-medium text-base text-white hover:bg-gray-800"
                     onClick={handleBuyNow}
+                    size="lg"
                   >
                     <ShoppingCart className="mr-2 h-5 w-5" />
                     Buy Now
                   </Button>
-                  <Button 
-                    size="lg" 
-                    variant="outline"
-                    className="w-full h-12 text-base font-medium"
+                  <Button
+                    className="h-12 w-full font-medium text-base"
                     onClick={handleAddToCart}
+                    size="lg"
+                    variant="outline"
                   >
                     <ShoppingCart className="mr-2 h-5 w-5" />
                     Add to Cart
                   </Button>
                 </>
               )}
-              
+
               <div className="grid grid-cols-2 gap-3">
-                <Button 
-                  variant="outline" 
-                  className="w-full h-10"
-                  onClick={handleToggleFavorite}
+                <Button
+                  className="h-10 w-full"
                   disabled={isPending}
+                  onClick={handleToggleFavorite}
+                  variant="outline"
                 >
-                  <Heart className={cn("mr-2 h-4 w-4", isFavorited(product.id) && "fill-current")} />
-                  {isFavorited(product.id) ? "Saved" : "Save"}
+                  <Heart
+                    className={cn(
+                      'mr-2 h-4 w-4',
+                      isFavorited(product.id) && 'fill-current'
+                    )}
+                  />
+                  {isFavorited(product.id) ? 'Saved' : 'Save'}
                 </Button>
-                <Button variant="outline" className="w-full h-10">
+                <Button className="h-10 w-full" variant="outline">
                   <Share2 className="mr-2 h-4 w-4" />
                   Share
                 </Button>
@@ -567,8 +621,8 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
         {/* Description */}
         <Card className="mt-8 border border-gray-200">
           <CardContent className="p-4 md:p-6">
-            <h3 className="font-semibold mb-3 text-base">Description</h3>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+            <h3 className="mb-3 font-semibold text-base">Description</h3>
+            <p className="whitespace-pre-wrap text-gray-700 leading-relaxed">
               {product.description}
             </p>
           </CardContent>
@@ -577,36 +631,38 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
         {/* Similar Products */}
         {similarProducts.length > 0 && (
           <div className="mt-12">
-            <h3 className="text-xl md:text-2xl font-bold mb-6">Similar Items</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+            <h3 className="mb-6 font-bold text-xl md:text-2xl">
+              Similar Items
+            </h3>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
               {similarProducts.map((similar) => (
-                <Link key={similar.id} href={`/product/${similar.id}`}>
-                  <Card className="group hover:shadow-lg transition-all duration-200 border border-gray-200 overflow-hidden">
+                <Link href={`/product/${similar.id}`} key={similar.id}>
+                  <Card className="group overflow-hidden border border-gray-200 transition-all duration-200 hover:shadow-lg">
                     <div className="relative aspect-[3/4] bg-gray-100">
                       {similar.images[0] ? (
                         <Image
-                          src={similar.images[0].imageUrl}
                           alt={similar.images[0].alt || similar.title}
+                          className="object-cover transition-transform duration-200 group-hover:scale-105"
                           fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-200"
                           sizes="(max-width: 768px) 50vw, 25vw"
+                          src={similar.images[0].imageUrl}
                         />
                       ) : (
-                        <div className="flex items-center justify-center h-full text-gray-400">
+                        <div className="flex h-full items-center justify-center text-gray-400">
                           <Package className="h-8 w-8" />
                         </div>
                       )}
                     </div>
                     <CardContent className="p-3">
-                      <h4 className="font-medium line-clamp-2 mb-1 text-sm leading-tight">
+                      <h4 className="mb-1 line-clamp-2 font-medium text-sm leading-tight">
                         {similar.title}
                       </h4>
-                      <p className="text-xs text-gray-500 mb-2 truncate">
-                        {similar.seller.firstName && similar.seller.lastName 
-                          ? `${similar.seller.firstName} ${similar.seller.lastName}` 
-                          : "Anonymous"}
+                      <p className="mb-2 truncate text-gray-500 text-xs">
+                        {similar.seller.firstName && similar.seller.lastName
+                          ? `${similar.seller.firstName} ${similar.seller.lastName}`
+                          : 'Anonymous'}
                       </p>
-                      <span className="text-base font-semibold text-black">
+                      <span className="font-semibold text-base text-black">
                         {formatCurrency(similar.price)}
                       </span>
                     </CardContent>
@@ -619,47 +675,58 @@ export function ProductDetail({ product, similarProducts }: ProductDetailProps) 
       </div>
 
       {/* Mobile Sticky Action Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 space-y-3">
+      <div className="fixed right-0 bottom-0 left-0 space-y-3 border-gray-200 border-t bg-white p-4 md:hidden">
         <div className="flex gap-3">
-          <Button 
-            variant="outline" 
-            className="flex-1 h-12 border-black text-black hover:bg-gray-50"
-            onClick={handleToggleFavorite}
+          <Button
+            className="h-12 flex-1 border-black text-black hover:bg-gray-50"
             disabled={isPending}
+            onClick={handleToggleFavorite}
+            variant="outline"
           >
-            <Heart className={cn("mr-2 h-4 w-4", isFavorited(product.id) && "fill-current")} />
-            {isFavorited(product.id) ? "Saved" : "Save"}
+            <Heart
+              className={cn(
+                'mr-2 h-4 w-4',
+                isFavorited(product.id) && 'fill-current'
+              )}
+            />
+            {isFavorited(product.id)
+              ? dictionary.web.global.navigation.saved || 'Saved'
+              : dictionary.web.cart.save || 'Save'}
           </Button>
-          <Button variant="outline" className="h-12 px-4 border-gray-300">
+          <Button className="h-12 border-gray-300 px-4" variant="outline">
             <Share2 className="h-4 w-4" />
           </Button>
         </div>
         {isProductInCart ? (
-          <Button 
-            size="lg" 
-            className="w-full bg-gray-800 text-white hover:bg-gray-700 h-12 text-base font-medium"
+          <Button
+            className="h-12 w-full bg-gray-800 font-medium text-base text-white hover:bg-gray-700"
             onClick={() => router.push('/cart')}
+            size="lg"
           >
             <ShoppingCart className="mr-2 h-5 w-5" />
-            View Cart
+            {dictionary.web.global.navigation.myCart || 'View Cart'}
           </Button>
         ) : (
-          <Button 
-            size="lg" 
-            className="w-full bg-black text-white hover:bg-gray-800 h-12 text-base font-medium"
+          <Button
+            className="h-12 w-full bg-black font-medium text-base text-white hover:bg-gray-800"
             onClick={handleBuyNow}
+            size="lg"
           >
             <ShoppingCart className="mr-2 h-5 w-5" />
-            Buy Now - {userRegion 
-              ? formatPriceForDisplay(product.price, userRegion, userCurrency as any).displayPrice
-              : formatCurrency(product.price)
-            }
+            {dictionary.web.cart.addToCart || 'Buy Now'} -{' '}
+            {userRegion
+              ? formatPriceForDisplay(
+                  product.price,
+                  userRegion,
+                  userCurrency as any
+                ).displayPrice
+              : formatCurrency(product.price)}
           </Button>
         )}
       </div>
 
       {/* Mobile bottom padding */}
-      <div className="md:hidden h-32" />
+      <div className="h-32 md:hidden" />
     </div>
   );
 }

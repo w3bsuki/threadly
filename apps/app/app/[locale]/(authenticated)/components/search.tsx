@@ -28,7 +28,7 @@ export const Search: React.FC = () => {
     }
   };
 
-  const handleSuggestionClick = (suggestion: any) => {
+  const handleSuggestionClick = (suggestion: { title: string; image?: string; brand?: string; category?: string; price: number }) => {
     setQuery(suggestion.title);
     addToHistory(suggestion.title);
     router.push(`/search?q=${encodeURIComponent(suggestion.title)}`);

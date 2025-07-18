@@ -1,4 +1,3 @@
-import { ContentSidebar } from '@/components/content-sidebar';
 import { ArrowLeftIcon } from '@radix-ui/react-icons';
 import { legal } from '@repo/cms';
 import { Body } from '@repo/cms/components/body';
@@ -7,6 +6,7 @@ import { createMetadata } from '@repo/seo/metadata';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { ContentSidebar } from '@/components/content-sidebar';
 
 type LegalPageProperties = {
   readonly params: Promise<{
@@ -67,9 +67,9 @@ const LegalPage = async ({ params }: LegalPageProperties) => {
         </div>
         <div className="sticky top-24 hidden shrink-0 md:block">
           <ContentSidebar
-            toc={<TableOfContents data={post.body.json.toc} />}
-            readingTime={`${post.body.readingTime} min read`}
             date={new Date()}
+            readingTime={`${post.body.readingTime} min read`}
+            toc={<TableOfContents data={post.body.json.toc} />}
           />
         </div>
       </div>

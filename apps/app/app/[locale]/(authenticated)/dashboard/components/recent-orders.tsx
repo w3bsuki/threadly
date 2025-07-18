@@ -8,7 +8,7 @@ import type { Dictionary } from '@repo/internationalization';
 interface RecentOrdersProps {
   orders: Array<{
     id: string;
-    amount: any;
+    amount: number;
     status: string;
     createdAt: Date;
     buyerId: string;

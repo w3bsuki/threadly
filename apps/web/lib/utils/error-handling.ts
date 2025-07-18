@@ -1,5 +1,5 @@
-import { parseError, logError } from '@repo/observability/server';
 import type { Prisma } from '@repo/database';
+import { logError, parseError } from '@repo/observability/server';
 
 export interface ErrorResponse {
   error: string;
@@ -28,7 +28,7 @@ export async function handleDatabaseError(
   // Handle specific Prisma errors
   if (error instanceof Error && 'code' in error) {
     const prismaError = error as Prisma.PrismaClientKnownRequestError;
-    
+
     switch (prismaError.code) {
       case 'P2002':
         return {
@@ -67,17 +67,12 @@ export async function handleDatabaseError(
  * Log successful database operations for monitoring
  */
 export function logDatabaseOperation(
-  operation: string,
+  _operation: string,
   duration: number,
-  metadata?: Record<string, unknown>
+  _metadata?: Record<string, unknown>
 ): void {
   // Only log slow queries in production
   if (process.env.NODE_ENV === 'production' && duration > 1000) {
-    console.warn(`Slow database operation: ${operation}`, {
-      duration: `${duration}ms`,
-      metadata,
-      timestamp: new Date().toISOString(),
-    });
   }
 
   // Always log in development
@@ -99,13 +94,13 @@ export async function withDatabaseErrorHandling<T>(
   try {
     const result = await fn();
     const duration = Date.now() - startTime;
-    
+
     logDatabaseOperation(operation, duration, context);
-    
+
     return result;
   } catch (error) {
     const duration = Date.now() - startTime;
-    
+
     const errorResponse = await handleDatabaseError(error, operation, {
       ...context,
       duration: `${duration}ms`,

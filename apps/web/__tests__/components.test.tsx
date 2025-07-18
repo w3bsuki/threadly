@@ -1,77 +1,104 @@
 /**
  * Critical UI Components Tests
- * 
+ *
  * This test suite covers critical UI components including
  * ProductCard, CheckoutForm, Dashboard, and mobile components.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor, within } from '@repo/testing';
-import { cleanup } from '@repo/testing';
+import { cleanup, fireEvent, render, screen } from '@repo/testing';
 import React from 'react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Next.js components
 vi.mock('next/image', () => ({
-  default: ({ src, alt, ...props }: any) => <img src={src} alt={alt} {...props} />,
+  default: ({ src, alt, ...props }: any) => (
+    <img alt={alt} src={src} {...props} />
+  ),
 }));
 
 vi.mock('next/link', () => ({
-  default: ({ href, children, ...props }: any) => <a href={href} {...props}>{children}</a>,
+  default: ({ href, children, ...props }: any) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
+  ),
 }));
 
 // Mock UI components
 vi.mock('@repo/design-system/components', () => ({
   Button: ({ children, onClick, disabled, variant, ...props }: any) => (
-    <button 
-      onClick={onClick} 
-      disabled={disabled} 
-      className={`btn btn-${variant}`} 
+    <button
+      className={`btn btn-${variant}`}
+      disabled={disabled}
+      onClick={onClick}
       {...props}
     >
       {children}
     </button>
   ),
   Card: ({ children, className, ...props }: any) => (
-    <div className={`card ${className}`} {...props}>{children}</div>
+    <div className={`card ${className}`} {...props}>
+      {children}
+    </div>
   ),
   CardHeader: ({ children, ...props }: any) => (
-    <div className="card-header" {...props}>{children}</div>
+    <div className="card-header" {...props}>
+      {children}
+    </div>
   ),
   CardContent: ({ children, ...props }: any) => (
-    <div className="card-content" {...props}>{children}</div>
+    <div className="card-content" {...props}>
+      {children}
+    </div>
   ),
   CardFooter: ({ children, ...props }: any) => (
-    <div className="card-footer" {...props}>{children}</div>
+    <div className="card-footer" {...props}>
+      {children}
+    </div>
   ),
   Input: ({ value, onChange, placeholder, type = 'text', ...props }: any) => (
-    <input 
+    <input
+      onChange={onChange}
+      placeholder={placeholder}
       type={type}
-      value={value} 
-      onChange={onChange} 
-      placeholder={placeholder} 
+      value={value}
       {...props}
     />
   ),
   Label: ({ children, ...props }: any) => <label {...props}>{children}</label>,
   Badge: ({ children, variant, ...props }: any) => (
-    <span className={`badge badge-${variant}`} {...props}>{children}</span>
+    <span className={`badge badge-${variant}`} {...props}>
+      {children}
+    </span>
   ),
   Skeleton: ({ className, ...props }: any) => (
     <div className={`skeleton ${className}`} {...props} />
   ),
-  Dialog: ({ open, onOpenChange, children }: any) => 
-    open ? <div className="dialog" data-testid="dialog">{children}</div> : null,
+  Dialog: ({ open, onOpenChange, children }: any) =>
+    open ? (
+      <div className="dialog" data-testid="dialog">
+        {children}
+      </div>
+    ) : null,
   DialogContent: ({ children, ...props }: any) => (
-    <div className="dialog-content" {...props}>{children}</div>
+    <div className="dialog-content" {...props}>
+      {children}
+    </div>
   ),
   DialogHeader: ({ children, ...props }: any) => (
-    <div className="dialog-header" {...props}>{children}</div>
+    <div className="dialog-header" {...props}>
+      {children}
+    </div>
   ),
   DialogTitle: ({ children, ...props }: any) => (
-    <h2 className="dialog-title" {...props}>{children}</h2>
+    <h2 className="dialog-title" {...props}>
+      {children}
+    </h2>
   ),
   DialogFooter: ({ children, ...props }: any) => (
-    <div className="dialog-footer" {...props}>{children}</div>
+    <div className="dialog-footer" {...props}>
+      {children}
+    </div>
   ),
 }));
 
@@ -129,43 +156,53 @@ describe('Critical UI Components Tests', () => {
       return (
         <div className="product-card" data-testid="product-card">
           <div className="product-image">
-            <img src={product.images[0]?.imageUrl} alt={product.title} />
-            <button 
+            <img alt={product.title} src={product.images[0]?.imageUrl} />
+            <button
+              aria-label={
+                isFavorited ? 'Remove from favorites' : 'Add to favorites'
+              }
               className="favorite-btn"
               onClick={() => {
                 setIsFavorited(!isFavorited);
                 onFavorite?.(product.id, !isFavorited);
               }}
-              aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
             >
               {isFavorited ? '❤️' : '🤍'}
             </button>
           </div>
-          
+
           <div className="product-info">
             <h3 className="product-title">{product.title}</h3>
             <p className="product-price">${product.price}</p>
             <p className="product-condition">{product.condition}</p>
-            
+
             <div className="seller-info">
-              <span className="seller-name">{product.seller.firstName} {product.seller.lastName}</span>
-              {product.seller.verified && <span className="verified-badge">✓</span>}
-              <span className="seller-rating">★ {product.seller.averageRating}</span>
+              <span className="seller-name">
+                {product.seller.firstName} {product.seller.lastName}
+              </span>
+              {product.seller.verified && (
+                <span className="verified-badge">✓</span>
+              )}
+              <span className="seller-rating">
+                ★ {product.seller.averageRating}
+              </span>
             </div>
-            
+
             <div className="product-stats">
-              <span className="favorites-count">{product._count.favorites} favorites</span>
+              <span className="favorites-count">
+                {product._count.favorites} favorites
+              </span>
             </div>
           </div>
-          
+
           <div className="product-actions">
-            <button 
+            <button
               className="add-to-cart-btn"
               onClick={() => onAddToCart?.(product)}
             >
               Add to Cart
             </button>
-            <a href={`/products/${product.id}`} className="view-details-btn">
+            <a className="view-details-btn" href={`/products/${product.id}`}>
               View Details
             </a>
           </div>
@@ -178,10 +215,10 @@ describe('Critical UI Components Tests', () => {
       const mockOnAddToCart = vi.fn();
 
       render(
-        <ProductCard 
-          product={mockProduct} 
-          onFavorite={mockOnFavorite}
+        <ProductCard
           onAddToCart={mockOnAddToCart}
+          onFavorite={mockOnFavorite}
+          product={mockProduct}
         />
       );
 
@@ -196,7 +233,7 @@ describe('Critical UI Components Tests', () => {
 
     it('should display product image with correct alt text', () => {
       render(<ProductCard product={mockProduct} />);
-      
+
       const image = screen.getByAltText('iPhone 13 Pro');
       expect(image).toBeInTheDocument();
       expect(image).toHaveAttribute('src', 'https://utfs.io/image1.jpg');
@@ -204,40 +241,45 @@ describe('Critical UI Components Tests', () => {
 
     it('should show verified badge for verified sellers', () => {
       render(<ProductCard product={mockProduct} />);
-      
+
       expect(screen.getByText('✓')).toBeInTheDocument();
     });
 
     it('should handle favorite toggle', () => {
       const mockOnFavorite = vi.fn();
-      
-      render(<ProductCard product={mockProduct} onFavorite={mockOnFavorite} />);
-      
+
+      render(<ProductCard onFavorite={mockOnFavorite} product={mockProduct} />);
+
       const favoriteBtn = screen.getByLabelText('Add to favorites');
       expect(favoriteBtn).toBeInTheDocument();
       expect(favoriteBtn).toHaveTextContent('🤍');
-      
+
       fireEvent.click(favoriteBtn);
-      
+
       expect(mockOnFavorite).toHaveBeenCalledWith('prod_1', true);
       expect(favoriteBtn).toHaveTextContent('❤️');
-      expect(favoriteBtn).toHaveAttribute('aria-label', 'Remove from favorites');
+      expect(favoriteBtn).toHaveAttribute(
+        'aria-label',
+        'Remove from favorites'
+      );
     });
 
     it('should handle add to cart action', () => {
       const mockOnAddToCart = vi.fn();
-      
-      render(<ProductCard product={mockProduct} onAddToCart={mockOnAddToCart} />);
-      
+
+      render(
+        <ProductCard onAddToCart={mockOnAddToCart} product={mockProduct} />
+      );
+
       const addToCartBtn = screen.getByText('Add to Cart');
       fireEvent.click(addToCartBtn);
-      
+
       expect(mockOnAddToCart).toHaveBeenCalledWith(mockProduct);
     });
 
     it('should have correct view details link', () => {
       render(<ProductCard product={mockProduct} />);
-      
+
       const viewDetailsLink = screen.getByText('View Details');
       expect(viewDetailsLink).toHaveAttribute('href', '/products/prod_1');
     });
@@ -250,9 +292,9 @@ describe('Critical UI Components Tests', () => {
           verified: false,
         },
       };
-      
+
       render(<ProductCard product={unverifiedProduct} />);
-      
+
       expect(screen.queryByText('✓')).not.toBeInTheDocument();
     });
   });
@@ -283,7 +325,10 @@ describe('Critical UI Components Tests', () => {
         paymentMethod: 'card',
       });
 
-      const subtotal = items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
+      const subtotal = items.reduce(
+        (sum: number, item: any) => sum + item.price * item.quantity,
+        0
+      );
       const tax = subtotal * 0.08;
       const shipping = 9.99;
       const total = subtotal + tax + shipping;
@@ -298,8 +343,8 @@ describe('Critical UI Components Tests', () => {
           <div className="order-summary">
             <h2>Order Summary</h2>
             {items.map((item: any) => (
-              <div key={item.id} className="order-item">
-                <img src={item.imageUrl} alt={item.title} />
+              <div className="order-item" key={item.id}>
+                <img alt={item.title} src={item.imageUrl} />
                 <div className="item-details">
                   <h3>{item.title}</h3>
                   <p>Condition: {item.condition}</p>
@@ -309,7 +354,7 @@ describe('Critical UI Components Tests', () => {
                 </div>
               </div>
             ))}
-            
+
             <div className="order-totals">
               <div className="total-line">
                 <span>Subtotal:</span>
@@ -330,75 +375,87 @@ describe('Critical UI Components Tests', () => {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="checkout-form-fields">
+          <form className="checkout-form-fields" onSubmit={handleSubmit}>
             <h2>Shipping Information</h2>
-            
+
             <div className="form-group">
               <label htmlFor="email">Email</label>
               <input
                 id="email"
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                required
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                required
               />
             </div>
-            
+
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="firstName">First Name</label>
                 <input
                   id="firstName"
+                  onChange={(e) =>
+                    setFormData({ ...formData, firstName: e.target.value })
+                  }
+                  required
                   type="text"
                   value={formData.firstName}
-                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                  required
                 />
               </div>
-              
+
               <div className="form-group">
                 <label htmlFor="lastName">Last Name</label>
                 <input
                   id="lastName"
+                  onChange={(e) =>
+                    setFormData({ ...formData, lastName: e.target.value })
+                  }
+                  required
                   type="text"
                   value={formData.lastName}
-                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                  required
                 />
               </div>
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="address">Address</label>
               <input
                 id="address"
+                onChange={(e) =>
+                  setFormData({ ...formData, address: e.target.value })
+                }
+                required
                 type="text"
                 value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                required
               />
             </div>
-            
+
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="city">City</label>
                 <input
                   id="city"
+                  onChange={(e) =>
+                    setFormData({ ...formData, city: e.target.value })
+                  }
+                  required
                   type="text"
                   value={formData.city}
-                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                  required
                 />
               </div>
-              
+
               <div className="form-group">
                 <label htmlFor="zipCode">ZIP Code</label>
                 <input
                   id="zipCode"
+                  onChange={(e) =>
+                    setFormData({ ...formData, zipCode: e.target.value })
+                  }
+                  required
                   type="text"
                   value={formData.zipCode}
-                  onChange={(e) => setFormData({ ...formData, zipCode: e.target.value })}
-                  required
                 />
               </div>
             </div>
@@ -407,20 +464,22 @@ describe('Critical UI Components Tests', () => {
             <div className="payment-methods">
               <label>
                 <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="card"
                   checked={formData.paymentMethod === 'card'}
-                  onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
+                  name="paymentMethod"
+                  onChange={(e) =>
+                    setFormData({ ...formData, paymentMethod: e.target.value })
+                  }
+                  type="radio"
+                  value="card"
                 />
                 Credit/Debit Card
               </label>
             </div>
 
-            <button 
-              type="submit" 
+            <button
               className="place-order-btn"
               disabled={loading}
+              type="submit"
             >
               {loading ? 'Processing...' : `Place Order - $${total.toFixed(2)}`}
             </button>
@@ -476,12 +535,24 @@ describe('Critical UI Components Tests', () => {
       render(<CheckoutForm items={mockCartItems} onSubmit={mockOnSubmit} />);
 
       // Fill form
-      fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'test@example.com' } });
-      fireEvent.change(screen.getByLabelText('First Name'), { target: { value: 'John' } });
-      fireEvent.change(screen.getByLabelText('Last Name'), { target: { value: 'Doe' } });
-      fireEvent.change(screen.getByLabelText('Address'), { target: { value: '123 Main St' } });
-      fireEvent.change(screen.getByLabelText('City'), { target: { value: 'New York' } });
-      fireEvent.change(screen.getByLabelText('ZIP Code'), { target: { value: '10001' } });
+      fireEvent.change(screen.getByLabelText('Email'), {
+        target: { value: 'test@example.com' },
+      });
+      fireEvent.change(screen.getByLabelText('First Name'), {
+        target: { value: 'John' },
+      });
+      fireEvent.change(screen.getByLabelText('Last Name'), {
+        target: { value: 'Doe' },
+      });
+      fireEvent.change(screen.getByLabelText('Address'), {
+        target: { value: '123 Main St' },
+      });
+      fireEvent.change(screen.getByLabelText('City'), {
+        target: { value: 'New York' },
+      });
+      fireEvent.change(screen.getByLabelText('ZIP Code'), {
+        target: { value: '10001' },
+      });
 
       // Submit form
       const submitBtn = screen.getByText(/Place Order/);
@@ -499,7 +570,7 @@ describe('Critical UI Components Tests', () => {
         },
         {
           subtotal: 799.99,
-          tax: 64.00,
+          tax: 64.0,
           shipping: 9.99,
           total: 873.98,
         }
@@ -526,21 +597,30 @@ describe('Critical UI Components Tests', () => {
   });
 
   describe('Mobile Product Filters Component', () => {
-    const MobileFilters = ({ filters, onFilterChange, onClose, isOpen }: any) => {
-      if (!isOpen) return null;
+    const MobileFilters = ({
+      filters,
+      onFilterChange,
+      onClose,
+      isOpen,
+    }: any) => {
+      if (!isOpen) {
+        return null;
+      }
 
       return (
         <div className="mobile-filters" data-testid="mobile-filters">
           <div className="filters-header">
             <h2>Filters</h2>
-            <button onClick={onClose} className="close-btn">×</button>
+            <button className="close-btn" onClick={onClose}>
+              ×
+            </button>
           </div>
-          
+
           <div className="filter-section">
             <h3>Category</h3>
-            <select 
-              value={filters.category || ''} 
+            <select
               onChange={(e) => onFilterChange('category', e.target.value)}
+              value={filters.category || ''}
             >
               <option value="">All Categories</option>
               <option value="electronics">Electronics</option>
@@ -548,51 +628,59 @@ describe('Critical UI Components Tests', () => {
               <option value="books">Books</option>
             </select>
           </div>
-          
+
           <div className="filter-section">
             <h3>Condition</h3>
             <div className="condition-options">
-              {['NEW_WITH_TAGS', 'NEW_WITHOUT_TAGS', 'VERY_GOOD', 'GOOD', 'SATISFACTORY'].map(condition => (
+              {[
+                'NEW_WITH_TAGS',
+                'NEW_WITHOUT_TAGS',
+                'VERY_GOOD',
+                'GOOD',
+                'SATISFACTORY',
+              ].map((condition) => (
                 <label key={condition}>
                   <input
-                    type="radio"
-                    name="condition"
-                    value={condition}
                     checked={filters.condition === condition}
-                    onChange={(e) => onFilterChange('condition', e.target.value)}
+                    name="condition"
+                    onChange={(e) =>
+                      onFilterChange('condition', e.target.value)
+                    }
+                    type="radio"
+                    value={condition}
                   />
                   {condition.replace(/_/g, ' ')}
                 </label>
               ))}
             </div>
           </div>
-          
+
           <div className="filter-section">
             <h3>Price Range</h3>
             <div className="price-inputs">
               <input
-                type="number"
-                placeholder="Min price"
-                value={filters.minPrice || ''}
                 onChange={(e) => onFilterChange('minPrice', e.target.value)}
+                placeholder="Min price"
+                type="number"
+                value={filters.minPrice || ''}
               />
               <input
-                type="number"
-                placeholder="Max price"
-                value={filters.maxPrice || ''}
                 onChange={(e) => onFilterChange('maxPrice', e.target.value)}
+                placeholder="Max price"
+                type="number"
+                value={filters.maxPrice || ''}
               />
             </div>
           </div>
-          
+
           <div className="filters-footer">
-            <button 
-              onClick={() => onFilterChange('clear')}
+            <button
               className="clear-filters-btn"
+              onClick={() => onFilterChange('clear')}
             >
               Clear All
             </button>
-            <button onClick={onClose} className="apply-filters-btn">
+            <button className="apply-filters-btn" onClick={onClose}>
               Apply Filters
             </button>
           </div>
@@ -601,14 +689,19 @@ describe('Critical UI Components Tests', () => {
     };
 
     it('should render when open', () => {
-      const mockFilters = { category: '', condition: '', minPrice: '', maxPrice: '' };
-      
+      const mockFilters = {
+        category: '',
+        condition: '',
+        minPrice: '',
+        maxPrice: '',
+      };
+
       render(
-        <MobileFilters 
-          filters={mockFilters} 
+        <MobileFilters
+          filters={mockFilters}
           isOpen={true}
-          onFilterChange={vi.fn()}
           onClose={vi.fn()}
+          onFilterChange={vi.fn()}
         />
       );
 
@@ -617,14 +710,19 @@ describe('Critical UI Components Tests', () => {
     });
 
     it('should not render when closed', () => {
-      const mockFilters = { category: '', condition: '', minPrice: '', maxPrice: '' };
-      
+      const mockFilters = {
+        category: '',
+        condition: '',
+        minPrice: '',
+        maxPrice: '',
+      };
+
       render(
-        <MobileFilters 
-          filters={mockFilters} 
+        <MobileFilters
+          filters={mockFilters}
           isOpen={false}
-          onFilterChange={vi.fn()}
           onClose={vi.fn()}
+          onFilterChange={vi.fn()}
         />
       );
 
@@ -633,33 +731,46 @@ describe('Critical UI Components Tests', () => {
 
     it('should handle category filter changes', () => {
       const mockOnFilterChange = vi.fn();
-      const mockFilters = { category: '', condition: '', minPrice: '', maxPrice: '' };
-      
+      const mockFilters = {
+        category: '',
+        condition: '',
+        minPrice: '',
+        maxPrice: '',
+      };
+
       render(
-        <MobileFilters 
-          filters={mockFilters} 
+        <MobileFilters
+          filters={mockFilters}
           isOpen={true}
-          onFilterChange={mockOnFilterChange}
           onClose={vi.fn()}
+          onFilterChange={mockOnFilterChange}
         />
       );
 
       const categorySelect = screen.getByDisplayValue('All Categories');
       fireEvent.change(categorySelect, { target: { value: 'electronics' } });
 
-      expect(mockOnFilterChange).toHaveBeenCalledWith('category', 'electronics');
+      expect(mockOnFilterChange).toHaveBeenCalledWith(
+        'category',
+        'electronics'
+      );
     });
 
     it('should handle condition filter changes', () => {
       const mockOnFilterChange = vi.fn();
-      const mockFilters = { category: '', condition: '', minPrice: '', maxPrice: '' };
-      
+      const mockFilters = {
+        category: '',
+        condition: '',
+        minPrice: '',
+        maxPrice: '',
+      };
+
       render(
-        <MobileFilters 
-          filters={mockFilters} 
+        <MobileFilters
+          filters={mockFilters}
           isOpen={true}
-          onFilterChange={mockOnFilterChange}
           onClose={vi.fn()}
+          onFilterChange={mockOnFilterChange}
         />
       );
 
@@ -671,14 +782,19 @@ describe('Critical UI Components Tests', () => {
 
     it('should handle price range changes', () => {
       const mockOnFilterChange = vi.fn();
-      const mockFilters = { category: '', condition: '', minPrice: '', maxPrice: '' };
-      
+      const mockFilters = {
+        category: '',
+        condition: '',
+        minPrice: '',
+        maxPrice: '',
+      };
+
       render(
-        <MobileFilters 
-          filters={mockFilters} 
+        <MobileFilters
+          filters={mockFilters}
           isOpen={true}
-          onFilterChange={mockOnFilterChange}
           onClose={vi.fn()}
+          onFilterChange={mockOnFilterChange}
         />
       );
 
@@ -690,14 +806,19 @@ describe('Critical UI Components Tests', () => {
 
     it('should handle clear filters action', () => {
       const mockOnFilterChange = vi.fn();
-      const mockFilters = { category: 'electronics', condition: 'VERY_GOOD', minPrice: '100', maxPrice: '500' };
-      
+      const mockFilters = {
+        category: 'electronics',
+        condition: 'VERY_GOOD',
+        minPrice: '100',
+        maxPrice: '500',
+      };
+
       render(
-        <MobileFilters 
-          filters={mockFilters} 
+        <MobileFilters
+          filters={mockFilters}
           isOpen={true}
-          onFilterChange={mockOnFilterChange}
           onClose={vi.fn()}
+          onFilterChange={mockOnFilterChange}
         />
       );
 
@@ -709,14 +830,19 @@ describe('Critical UI Components Tests', () => {
 
     it('should handle close action', () => {
       const mockOnClose = vi.fn();
-      const mockFilters = { category: '', condition: '', minPrice: '', maxPrice: '' };
-      
+      const mockFilters = {
+        category: '',
+        condition: '',
+        minPrice: '',
+        maxPrice: '',
+      };
+
       render(
-        <MobileFilters 
-          filters={mockFilters} 
+        <MobileFilters
+          filters={mockFilters}
           isOpen={true}
-          onFilterChange={vi.fn()}
           onClose={mockOnClose}
+          onFilterChange={vi.fn()}
         />
       );
 
@@ -763,7 +889,7 @@ describe('Critical UI Components Tests', () => {
 
       const skeletonGrid = screen.getByTestId('skeleton-grid');
       expect(skeletonGrid).toBeInTheDocument();
-      
+
       const skeletons = screen.getAllByTestId('product-skeleton');
       expect(skeletons).toHaveLength(6);
     });
@@ -781,7 +907,7 @@ describe('Critical UI Components Tests', () => {
       const [hasError, setHasError] = React.useState(false);
 
       React.useEffect(() => {
-        const errorHandler = (error: ErrorEvent) => {
+        const errorHandler = (_error: ErrorEvent) => {
           setHasError(true);
         };
 
@@ -790,13 +916,21 @@ describe('Critical UI Components Tests', () => {
       }, []);
 
       if (hasError) {
-        return fallback || <div data-testid="error-fallback">Something went wrong</div>;
+        return (
+          fallback || (
+            <div data-testid="error-fallback">Something went wrong</div>
+          )
+        );
       }
 
       return children;
     };
 
-    const BuggyComponent = ({ shouldThrow = false }: { shouldThrow?: boolean }) => {
+    const BuggyComponent = ({
+      shouldThrow = false,
+    }: {
+      shouldThrow?: boolean;
+    }) => {
       if (shouldThrow) {
         throw new Error('Test error');
       }
@@ -814,8 +948,10 @@ describe('Critical UI Components Tests', () => {
     });
 
     it('should render custom fallback on error', () => {
-      const customFallback = <div data-testid="custom-error">Custom error message</div>;
-      
+      const customFallback = (
+        <div data-testid="custom-error">Custom error message</div>
+      );
+
       render(
         <ErrorBoundary fallback={customFallback}>
           <BuggyComponent shouldThrow={true} />
@@ -848,23 +984,26 @@ describe('Critical UI Components Tests', () => {
 
     it('should support keyboard navigation', () => {
       const mockOnClick = vi.fn();
-      
+
       render(
-        <button onClick={mockOnClick} onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            mockOnClick();
-          }
-        }}>
+        <button
+          onClick={mockOnClick}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              mockOnClick();
+            }
+          }}
+        >
           Click me
         </button>
       );
 
       const button = screen.getByText('Click me');
-      
+
       // Test keyboard interaction
       fireEvent.keyDown(button, { key: 'Enter' });
       expect(mockOnClick).toHaveBeenCalledTimes(1);
-      
+
       fireEvent.keyDown(button, { key: ' ' });
       expect(mockOnClick).toHaveBeenCalledTimes(2);
     });
@@ -872,12 +1011,16 @@ describe('Critical UI Components Tests', () => {
     it('should have proper focus management', () => {
       const FocusComponent = () => {
         const buttonRef = React.useRef<HTMLButtonElement>(null);
-        
+
         React.useEffect(() => {
           buttonRef.current?.focus();
         }, []);
 
-        return <button ref={buttonRef} data-testid="focus-button">Focus me</button>;
+        return (
+          <button data-testid="focus-button" ref={buttonRef}>
+            Focus me
+          </button>
+        );
       };
 
       render(<FocusComponent />);

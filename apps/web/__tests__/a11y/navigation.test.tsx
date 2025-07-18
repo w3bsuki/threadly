@@ -1,19 +1,19 @@
+import { a11yTestHelpers, renderNavigationWithA11y } from '@repo/testing/a11y';
 import { describe, it } from 'vitest';
-import { renderNavigationWithA11y, a11yTestHelpers } from '@repo/testing/a11y';
 import '@repo/testing/a11y/axe-matchers';
 
 // Mock navigation components
 const MockMainNavigation = () => (
-  <nav role="navigation" aria-label="Main navigation">
+  <nav aria-label="Main navigation">
     <div>
-      <a href="/" aria-current="page">
+      <a aria-current="page" href="/">
         <span className="sr-only">Threadly</span>
-        <img src="/logo.svg" alt="Threadly Logo" width="32" height="32" />
+        <img alt="Threadly Logo" height="32" src="/logo.svg" width="32" />
       </a>
     </div>
-    <ul role="list">
+    <ul>
       <li>
-        <a href="/browse" aria-describedby="browse-desc">
+        <a aria-describedby="browse-desc" href="/browse">
           Browse
         </a>
         <div id="browse-desc">Browse all products</div>
@@ -27,18 +27,26 @@ const MockMainNavigation = () => (
     </ul>
     <div>
       <button
-        type="button"
-        aria-expanded="false"
         aria-controls="user-menu"
+        aria-expanded="false"
         aria-label="User menu"
+        type="button"
       >
         Account
       </button>
-      <div id="user-menu" role="menu" hidden>
-        <a href="/profile" role="menuitem">Profile</a>
-        <a href="/orders" role="menuitem">Orders</a>
-        <a href="/settings" role="menuitem">Settings</a>
-        <button type="button" role="menuitem">Sign Out</button>
+      <div hidden id="user-menu" role="menu">
+        <a href="/profile" role="menuitem">
+          Profile
+        </a>
+        <a href="/orders" role="menuitem">
+          Orders
+        </a>
+        <a href="/settings" role="menuitem">
+          Settings
+        </a>
+        <button role="menuitem" type="button">
+          Sign Out
+        </button>
       </div>
     </div>
   </nav>
@@ -46,7 +54,7 @@ const MockMainNavigation = () => (
 
 const MockBreadcrumbs = () => (
   <nav aria-label="Breadcrumb">
-    <ol role="list">
+    <ol>
       <li>
         <a href="/">Home</a>
       </li>
@@ -68,13 +76,13 @@ const MockBreadcrumbs = () => (
 
 const MockSkipLinks = () => (
   <div>
-    <a href="#main-content" className="skip-link">
+    <a className="skip-link" href="#main-content">
       Skip to main content
     </a>
-    <a href="#main-navigation" className="skip-link">
+    <a className="skip-link" href="#main-navigation">
       Skip to navigation
     </a>
-    <a href="#footer" className="skip-link">
+    <a className="skip-link" href="#footer">
       Skip to footer
     </a>
   </div>
@@ -87,7 +95,7 @@ const MockPageLayout = () => (
       <h1>Page Title</h1>
       <MockMainNavigation />
     </header>
-    <main id="main-content" role="main">
+    <main id="main-content">
       <MockBreadcrumbs />
       <h2>Section Heading</h2>
       <p>Main content goes here.</p>
@@ -107,7 +115,7 @@ describe('Navigation Accessibility', () => {
 
     it('should have proper navigation structure', () => {
       const { container } = renderNavigationWithA11y(<MockMainNavigation />);
-      
+
       const nav = container.querySelector('nav');
       expect(nav).toHaveAttribute('role', 'navigation');
       expect(nav).toHaveAttribute('aria-label', 'Main navigation');
@@ -115,25 +123,25 @@ describe('Navigation Accessibility', () => {
 
     it('should have accessible logo', () => {
       const { container } = renderNavigationWithA11y(<MockMainNavigation />);
-      
+
       const logo = container.querySelector('img');
       expect(logo).toHaveAttribute('alt', 'Threadly Logo');
     });
 
     it('should have keyboard accessible menu items', () => {
       const { container } = renderNavigationWithA11y(<MockMainNavigation />);
-      
+
       const menuButton = container.querySelector('[aria-controls="user-menu"]');
       expect(menuButton).toHaveAttribute('aria-expanded', 'false');
       expect(menuButton).toHaveAttribute('aria-label', 'User menu');
-      
+
       const menu = container.querySelector('#user-menu');
       expect(menu).toHaveAttribute('role', 'menu');
     });
 
     it('should have current page indicator', () => {
       const { container } = renderNavigationWithA11y(<MockMainNavigation />);
-      
+
       const currentPage = container.querySelector('[aria-current="page"]');
       expect(currentPage).toBeInTheDocument();
     });
@@ -147,17 +155,17 @@ describe('Navigation Accessibility', () => {
 
     it('should have proper breadcrumb structure', () => {
       const { container } = renderNavigationWithA11y(<MockBreadcrumbs />);
-      
+
       const nav = container.querySelector('nav');
       expect(nav).toHaveAttribute('aria-label', 'Breadcrumb');
-      
+
       const list = container.querySelector('ol');
       expect(list).toHaveAttribute('role', 'list');
     });
 
     it('should indicate current page', () => {
       const { container } = renderNavigationWithA11y(<MockBreadcrumbs />);
-      
+
       const currentPage = container.querySelector('[aria-current="page"]');
       expect(currentPage).toBeInTheDocument();
       expect(currentPage).toHaveTextContent('Vintage T-Shirt');
@@ -165,10 +173,10 @@ describe('Navigation Accessibility', () => {
 
     it('should hide decorative separators from screen readers', () => {
       const { container } = renderNavigationWithA11y(<MockBreadcrumbs />);
-      
+
       const separators = container.querySelectorAll('[aria-hidden="true"]');
       expect(separators.length).toBeGreaterThan(0);
-      
+
       separators.forEach((separator) => {
         expect(separator).toHaveTextContent('/');
       });
@@ -183,9 +191,9 @@ describe('Navigation Accessibility', () => {
 
     it('should have meaningful link text', () => {
       const { container } = renderNavigationWithA11y(<MockSkipLinks />);
-      
+
       const skipLinks = container.querySelectorAll('.skip-link');
-      
+
       skipLinks.forEach((link) => {
         expect(link.textContent).toMatch(/skip to/i);
         expect(link.getAttribute('href')).toMatch(/^#/);
@@ -201,14 +209,14 @@ describe('Navigation Accessibility', () => {
 
     it('should have proper heading hierarchy', () => {
       const { container } = renderNavigationWithA11y(<MockPageLayout />);
-      
+
       const headings = a11yTestHelpers.getHeadings(container);
       const h1 = container.querySelector('h1');
       const h2 = container.querySelector('h2');
-      
+
       expect(h1).toBeInTheDocument();
       expect(h2).toBeInTheDocument();
-      
+
       // H1 should come before H2
       const allHeadings = Array.from(headings);
       const h1Index = allHeadings.indexOf(h1!);
@@ -218,20 +226,20 @@ describe('Navigation Accessibility', () => {
 
     it('should have proper landmark roles', () => {
       const { container } = renderNavigationWithA11y(<MockPageLayout />);
-      
+
       const main = container.querySelector('main');
       expect(main).toHaveAttribute('role', 'main');
       expect(main).toHaveAttribute('id', 'main-content');
-      
+
       const footer = container.querySelector('footer');
       expect(footer).toHaveAttribute('role', 'contentinfo');
     });
 
     it('should have skip link targets', () => {
       const { container } = renderNavigationWithA11y(<MockPageLayout />);
-      
+
       const skipLinks = container.querySelectorAll('.skip-link');
-      
+
       skipLinks.forEach((link) => {
         const href = link.getAttribute('href');
         if (href?.startsWith('#')) {

@@ -1,7 +1,7 @@
-import { Metadata } from 'next';
+import { database } from '@repo/database';
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { SuccessContent } from './components/success-content';
-import { database } from '@repo/database';
 
 export const metadata: Metadata = {
   title: 'Order Confirmed - Threadly',
@@ -18,29 +18,29 @@ interface SuccessPageProps {
 export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   const { orderId, session_id } = await searchParams;
 
-  if (!orderId && !session_id) {
+  if (!(orderId || session_id)) {
     redirect('/');
   }
 
   // Fetch order by ID or by Stripe payment ID through payment relation
   const order = await database.order.findFirst({
-    where: orderId 
+    where: orderId
       ? { id: orderId }
-      : session_id 
-      ? { Payment: { stripePaymentId: session_id } }
-      : undefined,
+      : session_id
+        ? { Payment: { stripePaymentId: session_id } }
+        : undefined,
     include: {
       Product: {
         include: {
           images: {
             take: 1,
-            orderBy: { displayOrder: 'asc' }
-          }
-        }
+            orderBy: { displayOrder: 'asc' },
+          },
+        },
       },
       User_Order_buyerIdToUser: true,
       User_Order_sellerIdToUser: true,
-    }
+    },
   });
 
   if (!order) {
@@ -54,7 +54,7 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
     totalAmount: order.amount,
     product: order.Product,
     buyer: order.User_Order_buyerIdToUser,
-    seller: order.User_Order_sellerIdToUser
+    seller: order.User_Order_sellerIdToUser,
   };
 
   return (

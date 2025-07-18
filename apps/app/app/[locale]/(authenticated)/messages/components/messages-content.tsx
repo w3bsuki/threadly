@@ -3,30 +3,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useChannel, useTypingIndicator } from '@repo/real-time/client';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
+import { Card, CardContent } from '@repo/design-system/components';
 import { Button } from '@repo/design-system/components';
-import { Input } from '@repo/design-system/components';
-import { Avatar, AvatarFallback, AvatarImage } from '@repo/design-system/components';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/design-system/components';
-import { ScrollArea } from '@repo/design-system/components';
-import { Separator } from '@repo/design-system/components';
-import { 
-  MessageCircle, 
-  Send, 
-  Search, 
-  Package, 
-  Clock,
-  CheckCheck,
-  Check,
-  PlusCircle,
-  Filter
-} from 'lucide-react';
-import { format, formatDistanceToNow } from 'date-fns';
-import Image from 'next/image';
+import { MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import { sendMessage, markMessagesAsRead } from '../actions/message-actions';
 import { ErrorBoundary } from '@/components/error-boundary';
+import { ConversationList } from './conversation-list';
+import { ChatArea } from './chat-area';
+import { NewConversationCard } from './new-conversation-card';
 
 interface User {
   id: string;
@@ -142,20 +127,6 @@ export function MessagesContent({
     setConversationsList(conversations);
   }, [conversations]);
 
-  // Filter conversations based on search
-  const filteredConversations = conversationsList.filter(conversation => {
-    if (!searchQuery) return true;
-    
-    const otherUser = conversation.buyerId === currentUserId 
-      ? conversation.seller 
-      : conversation.buyer;
-    
-    const searchText = searchQuery.toLowerCase();
-    return (
-      conversation.product.title.toLowerCase().includes(searchText) ||
-      `${otherUser.firstName} ${otherUser.lastName}`.toLowerCase().includes(searchText)
-    );
-  });
 
   // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = () => {
@@ -342,32 +313,6 @@ export function MessagesContent({
     }
   };
 
-  const getOtherUser = (conversation: Conversation) => {
-    return conversation.buyerId === currentUserId 
-      ? conversation.seller 
-      : conversation.buyer;
-  };
-
-  const getUserRole = (conversation: Conversation) => {
-    return conversation.buyerId === currentUserId ? 'buying' : 'selling';
-  };
-
-  const getLastMessage = (conversation: Conversation) => {
-    return conversation.messages[0] || null;
-  };
-
-  const formatMessageTime = (date: Date) => {
-    const now = new Date();
-    const diffInHours = Math.abs(now.getTime() - date.getTime()) / (1000 * 60 * 60);
-    
-    if (diffInHours < 24) {
-      return format(date, 'HH:mm');
-    } else if (diffInHours < 168) { // 7 days
-      return format(date, 'EEE HH:mm');
-    } else {
-      return format(date, 'MMM d');
-    }
-  };
 
   if (conversations.length === 0 && !showNewConversation) {
     return (
@@ -398,410 +343,51 @@ export function MessagesContent({
   return (
     <ErrorBoundary>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-12rem)]">
-      {/* Conversations List */}
-      <div className="lg:col-span-1">
-        <Card className="h-full flex flex-col">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">Conversations</CardTitle>
-              <Badge variant="secondary">
-                {filteredConversations.length}
-              </Badge>
-            </div>
-            
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search conversations..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-
-            {/* Filter Tabs */}
-            <Tabs value={filterType || 'all'} className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="all" asChild>
-                  <Link href="/messages">All</Link>
-                </TabsTrigger>
-                <TabsTrigger value="buying" asChild>
-                  <Link href="/messages?type=buying">Buying</Link>
-                </TabsTrigger>
-                <TabsTrigger value="selling" asChild>
-                  <Link href="/messages?type=selling">Selling</Link>
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </CardHeader>
-          
-          <CardContent className="flex-1 p-0">
-            <ScrollArea className="h-full">
-              <div className="space-y-1 p-4">
-                {filteredConversations.map((conversation) => {
-                  const otherUser = getOtherUser(conversation);
-                  const role = getUserRole(conversation);
-                  const lastMessage = getLastMessage(conversation);
-                  const unreadCount = conversation._count.messages;
-                  
-                  return (
-                    <div
-                      key={conversation.id}
-                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors hover:bg-muted/50 ${
-                        selectedConversation?.id === conversation.id ? 'bg-muted' : ''
-                      }`}
-                      onClick={() => setSelectedConversation(conversation)}
-                    >
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={otherUser.imageUrl || undefined} />
-                        <AvatarFallback>
-                          {otherUser.firstName?.[0]}{otherUser.lastName?.[0]}
-                        </AvatarFallback>
-                      </Avatar>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <h4 className="font-medium text-sm truncate">
-                            {otherUser.firstName} {otherUser.lastName}
-                          </h4>
-                          <div className="flex items-center gap-1">
-                            {lastMessage && (
-                              <span className="text-xs text-muted-foreground">
-                                {formatMessageTime(lastMessage.createdAt)}
-                              </span>
-                            )}
-                            {unreadCount > 0 && (
-                              <Badge variant="destructive" className="h-5 w-5 p-0 text-xs">
-                                {unreadCount}
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                        
-                        <p className="text-xs text-muted-foreground truncate">
-                          {conversation.product.title}
-                        </p>
-                        
-                        {lastMessage && (
-                          <p className="text-xs text-muted-foreground truncate mt-1">
-                            {lastMessage.content}
-                          </p>
-                        )}
-                        
-                        <div className="flex items-center gap-2 mt-1">
-                          <Badge variant={role === 'buying' ? 'default' : 'secondary'} className="text-xs">
-                            {role === 'buying' ? 'Buying' : 'Selling'}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">
-                            ${conversation.product.price}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </ScrollArea>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Chat Area */}
-      <div className="lg:col-span-2">
-        {showNewConversation && targetUser && targetProduct ? (
-          <NewConversationCard 
-            targetUser={targetUser}
-            targetProduct={targetProduct}
-            onCreateConversation={handleCreateConversation}
-            isCreating={isCreatingConversation}
-            onCancel={() => setShowNewConversation(false)}
+        <div className="lg:col-span-1">
+          <ConversationList
+            conversations={conversationsList}
+            currentUserId={currentUserId}
+            selectedConversationId={selectedConversation?.id}
+            onSelectConversation={setSelectedConversation}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            filterType={filterType}
           />
-        ) : selectedConversation ? (
-          <Card className="h-full flex flex-col">
-            {/* Chat Header */}
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-3">
-                <Avatar className="h-10 w-10">
-                  <AvatarImage src={getOtherUser(selectedConversation).imageUrl || undefined} />
-                  <AvatarFallback>
-                    {getOtherUser(selectedConversation).firstName?.[0]}
-                    {getOtherUser(selectedConversation).lastName?.[0]}
-                  </AvatarFallback>
-                </Avatar>
-                
-                <div className="flex-1">
-                  <h3 className="font-semibold">
-                    {getOtherUser(selectedConversation).firstName} {getOtherUser(selectedConversation).lastName}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {getUserRole(selectedConversation) === 'buying' ? 'Seller' : 'Buyer'}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline">
-                    {selectedConversation.status}
-                  </Badge>
-                </div>
-              </div>
-
-              {/* Product Info */}
-              <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                <div className="relative w-12 h-12 flex-shrink-0">
-                  <Image
-                    src={selectedConversation.product.images[0]?.imageUrl || '/placeholder.png'}
-                    alt={selectedConversation.product.title}
-                    fill
-                    className="object-cover rounded-md"
-                  />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-medium text-sm">{selectedConversation.product.title}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    ${selectedConversation.product.price.toFixed(2)}
-                  </p>
-                </div>
-                <Button variant="outline" size="sm" asChild>
-                  <Link href={`/selling/listings/${selectedConversation.productId}`}>
-                    View Item
-                  </Link>
-                </Button>
-              </div>
-            </CardHeader>
-
-            {/* Messages */}
-            <CardContent className="flex-1 p-0">
-              <ScrollArea className="h-full p-4">
-                <div className="space-y-4">
-                  {selectedConversation.messages.length === 0 ? (
-                    <div className="text-center py-8">
-                      <MessageCircle className="mx-auto h-8 w-8 text-muted-foreground/50 mb-2" />
-                      <p className="text-sm text-muted-foreground">
-                        No messages yet. Start the conversation!
-                      </p>
-                    </div>
-                  ) : (
-                    selectedConversation.messages.map((message) => {
-                      const isFromCurrentUser = message.senderId === currentUserId;
-                      
-                      return (
-                        <div
-                          key={message.id}
-                          className={`flex ${isFromCurrentUser ? 'justify-end' : 'justify-start'}`}
-                        >
-                          <div
-                            className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                              isFromCurrentUser
-                                ? 'bg-primary text-primary-foreground'
-                                : 'bg-muted'
-                            }`}
-                          >
-                            <p className="text-sm">{message.content}</p>
-                            <div className={`flex items-center gap-1 mt-1 ${
-                              isFromCurrentUser ? 'justify-end' : 'justify-start'
-                            }`}>
-                              <span className="text-xs opacity-70">
-                                {format(message.createdAt, 'HH:mm')}
-                              </span>
-                              {isFromCurrentUser && (
-                                <div className="text-xs opacity-70">
-                                  {message.read ? (
-                                    <CheckCheck className="h-3 w-3" />
-                                  ) : (
-                                    <Check className="h-3 w-3" />
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })
-                  )}
-                  
-                  {/* Typing Indicator */}
-                  {typingUsers.length > 0 && (
-                    <div className="flex justify-start">
-                      <div className="bg-muted px-4 py-2 rounded-lg">
-                        <div className="flex items-center gap-1">
-                          <div className="flex gap-1">
-                            <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                            <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                            <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                          </div>
-                          <span className="text-xs text-muted-foreground ml-2">
-                            {getOtherUser(selectedConversation).firstName} is typing...
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  
-                  <div ref={messagesEndRef} />
-                </div>
-              </ScrollArea>
-            </CardContent>
-
-            {/* Message Input */}
-            <div className="p-4 border-t">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Type your message..."
-                  value={messageInput}
-                  onChange={(e) => handleTyping(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSendMessage();
-                    }
-                  }}
-                  disabled={isSending}
-                />
-                <Button 
-                  onClick={handleSendMessage}
-                  disabled={!messageInput.trim() || isSending}
-                  size="icon"
-                >
-                  <Send className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </Card>
-        ) : (
-          <Card className="h-full flex items-center justify-center">
-            <CardContent className="text-center">
-              <MessageCircle className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Select a conversation</h3>
-              <p className="text-muted-foreground">
-                Choose a conversation from the list to start chatting
-              </p>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    </div>
-    </ErrorBoundary>
-  );
-}
-
-interface NewConversationCardProps {
-  targetUser: {
-    id: string;
-    firstName: string | null;
-    lastName: string | null;
-    imageUrl: string | null;
-  };
-  targetProduct: {
-    id: string;
-    title: string;
-    price: number;
-    images: { imageUrl: string }[];
-  };
-  onCreateConversation: (message: string) => Promise<void>;
-  isCreating: boolean;
-  onCancel: () => void;
-}
-
-function NewConversationCard({ 
-  targetUser, 
-  targetProduct, 
-  onCreateConversation, 
-  isCreating,
-  onCancel 
-}: NewConversationCardProps) {
-  const [message, setMessage] = useState('');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (message.trim()) {
-      await onCreateConversation(message);
-      setMessage('');
-    }
-  };
-
-  return (
-    <Card className="h-full flex flex-col">
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={targetUser.imageUrl || undefined} />
-              <AvatarFallback>
-                {targetUser.firstName?.[0]}
-                {targetUser.lastName?.[0]}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <h3 className="font-semibold">
-                {targetUser.firstName} {targetUser.lastName}
-              </h3>
-              <p className="text-sm text-muted-foreground">Start a new conversation</p>
-            </div>
-          </div>
-          <Button variant="ghost" size="sm" onClick={onCancel}>
-            Cancel
-          </Button>
-        </div>
-      </CardHeader>
-
-      <CardContent className="flex-1 flex flex-col">
-        {/* Product Info */}
-        <div className="mb-4 p-3 bg-muted rounded-lg">
-          <div className="flex gap-3">
-            {targetProduct.images[0] && (
-              <div className="relative w-16 h-16 rounded-md overflow-hidden">
-                <Image
-                  src={targetProduct.images[0].imageUrl}
-                  alt={targetProduct.title}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            )}
-            <div className="flex-1">
-              <h4 className="font-medium line-clamp-1">{targetProduct.title}</h4>
-              <p className="text-lg font-bold">${targetProduct.price.toFixed(2)}</p>
-            </div>
-          </div>
         </div>
 
-        {/* Message Form */}
-        <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
-          <div className="flex-1 mb-4">
-            <label htmlFor="message" className="block text-sm font-medium mb-2">
-              Your message
-            </label>
-            <textarea
-              id="message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Hi! I'm interested in your item..."
-              className="w-full h-32 p-3 border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={isCreating}
-              required
+        <div className="lg:col-span-2">
+          {showNewConversation && targetUser && targetProduct ? (
+            <NewConversationCard 
+              targetUser={targetUser}
+              targetProduct={targetProduct}
+              onCreateConversation={handleCreateConversation}
+              isCreating={isCreatingConversation}
+              onCancel={() => setShowNewConversation(false)}
             />
-          </div>
-          
-          <div className="flex gap-2">
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={onCancel}
-              disabled={isCreating}
-            >
-              Cancel
-            </Button>
-            <Button 
-              type="submit" 
-              disabled={isCreating || !message.trim()}
-              className="flex-1"
-            >
-              {isCreating ? 'Starting conversation...' : 'Send Message'}
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+          ) : selectedConversation ? (
+            <ChatArea
+              conversation={selectedConversation}
+              currentUserId={currentUserId}
+              messageInput={messageInput}
+              onMessageInputChange={handleTyping}
+              onSendMessage={handleSendMessage}
+              isSending={isSending}
+              typingUsers={typingUsers}
+              messagesEndRef={messagesEndRef}
+            />
+          ) : (
+            <Card className="h-full flex items-center justify-center">
+              <CardContent className="text-center">
+                <MessageCircle className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
+                <h3 className="text-lg font-semibold mb-2">Select a conversation</h3>
+                <p className="text-muted-foreground">
+                  Choose a conversation from the list to start chatting
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
+    </ErrorBoundary>
   );
 }

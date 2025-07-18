@@ -15,11 +15,7 @@ const STATIC_ASSETS = [
 ];
 
 // API endpoints to cache for offline access
-const API_ENDPOINTS = [
-  '/api/search',
-  '/api/categories',
-  '/api/products',
-];
+const _API_ENDPOINTS = ['/api/search', '/api/categories', '/api/products'];
 
 // Maximum cache sizes to prevent storage overflow
 const MAX_CACHE_SIZE = {
@@ -32,33 +28,28 @@ const MAX_CACHE_SIZE = {
 const cacheFirst = async (request, cacheName) => {
   const cache = await caches.open(cacheName);
   const cachedResponse = await cache.match(request);
-  
+
   if (cachedResponse) {
     return cachedResponse;
   }
-  
-  try {
-    const networkResponse = await fetch(request);
-    if (networkResponse.ok) {
-      cache.put(request, networkResponse.clone());
-    }
-    return networkResponse;
-  } catch (error) {
-    throw error;
+  const networkResponse = await fetch(request);
+  if (networkResponse.ok) {
+    cache.put(request, networkResponse.clone());
   }
+  return networkResponse;
 };
 
 const networkFirst = async (request, cacheName, timeout = 3000) => {
   const cache = await caches.open(cacheName);
-  
+
   try {
     const networkResponse = await Promise.race([
       fetch(request),
-      new Promise((_, reject) => 
+      new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Network timeout')), timeout)
-      )
+      ),
     ]);
-    
+
     if (networkResponse.ok) {
       cache.put(request, networkResponse.clone());
     }
@@ -75,21 +66,22 @@ const networkFirst = async (request, cacheName, timeout = 3000) => {
 const staleWhileRevalidate = async (request, cacheName) => {
   const cache = await caches.open(cacheName);
   const cachedResponse = await cache.match(request);
-  
+
   // Fetch from network in background
-  const fetchPromise = fetch(request).then(response => {
-    if (response.ok) {
-      cache.put(request, response.clone());
-    }
-    return response;
-  }).catch(error => {
-  });
-  
+  const fetchPromise = fetch(request)
+    .then((response) => {
+      if (response.ok) {
+        cache.put(request, response.clone());
+      }
+      return response;
+    })
+    .catch((_error) => {});
+
   // Return cached version immediately if available
   if (cachedResponse) {
     return cachedResponse;
   }
-  
+
   // Wait for network if no cache
   return fetchPromise;
 };
@@ -98,44 +90,43 @@ const staleWhileRevalidate = async (request, cacheName) => {
 const cleanupCache = async (cacheName, maxSize) => {
   const cache = await caches.open(cacheName);
   const keys = await cache.keys();
-  
+
   if (keys.length > maxSize) {
     const keysToDelete = keys.slice(0, keys.length - maxSize);
-    await Promise.all(
-      keysToDelete.map(key => cache.delete(key))
-    );
+    await Promise.all(keysToDelete.map((key) => cache.delete(key)));
   }
 };
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
-  
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => {
         return cache.addAll(STATIC_ASSETS);
       })
       .then(() => {
         // Force activation of new service worker
         return self.skipWaiting();
       })
-      .catch(error => {
-      })
+      .catch((_error) => {})
   );
 });
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  
   event.waitUntil(
-    caches.keys()
-      .then(cacheNames => {
+    caches
+      .keys()
+      .then((cacheNames) => {
         return Promise.all(
-          cacheNames.map(cacheName => {
-            if (cacheName !== CACHE_NAME && 
-                cacheName !== DYNAMIC_CACHE && 
-                cacheName !== IMAGE_CACHE && 
-                cacheName !== API_CACHE) {
+          cacheNames.map((cacheName) => {
+            if (
+              cacheName !== CACHE_NAME &&
+              cacheName !== DYNAMIC_CACHE &&
+              cacheName !== IMAGE_CACHE &&
+              cacheName !== API_CACHE
+            ) {
               return caches.delete(cacheName);
             }
           })
@@ -145,8 +136,7 @@ self.addEventListener('activate', (event) => {
         // Take control of all clients immediately
         return self.clients.claim();
       })
-      .catch(error => {
-      })
+      .catch((_error) => {})
   );
 });
 
@@ -154,12 +144,12 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
-  
+
   // Skip non-GET requests and chrome-extension requests
   if (request.method !== 'GET' || url.protocol === 'chrome-extension:') {
     return;
   }
-  
+
   // Handle different types of requests
   if (url.pathname.startsWith('/api/')) {
     // API requests - network first with cache fallback
@@ -168,15 +158,18 @@ self.addEventListener('fetch', (event) => {
         .catch(async () => {
           // Return offline page for failed API requests
           const cache = await caches.open(CACHE_NAME);
-          return cache.match('/offline') || new Response(
-            JSON.stringify({ 
-              error: 'Offline',
-              message: 'This content is not available offline'
-            }),
-            {
-              status: 503,
-              headers: { 'Content-Type': 'application/json' }
-            }
+          return (
+            cache.match('/offline') ||
+            new Response(
+              JSON.stringify({
+                error: 'Offline',
+                message: 'This content is not available offline',
+              }),
+              {
+                status: 503,
+                headers: { 'Content-Type': 'application/json' },
+              }
+            )
           );
         })
         .finally(() => {
@@ -192,7 +185,7 @@ self.addEventListener('fetch', (event) => {
           return new Response(
             '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" fill="#f3f4f6"><rect width="100%" height="100%" fill="#e5e7eb"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="#9ca3af">Image unavailable offline</text></svg>',
             {
-              headers: { 'Content-Type': 'image/svg+xml' }
+              headers: { 'Content-Type': 'image/svg+xml' },
             }
           );
         })
@@ -202,9 +195,7 @@ self.addEventListener('fetch', (event) => {
     );
   } else if (url.pathname.startsWith('/_next/static/')) {
     // Next.js static assets - cache first (long-term cache)
-    event.respondWith(
-      cacheFirst(request, CACHE_NAME)
-    );
+    event.respondWith(cacheFirst(request, CACHE_NAME));
   } else {
     // HTML pages and other assets - stale while revalidate
     event.respondWith(
@@ -216,9 +207,10 @@ self.addEventListener('fetch', (event) => {
           if (offlinePage) {
             return offlinePage;
           }
-          
+
           // Fallback offline page
-          return new Response(`
+          return new Response(
+            `
             <!DOCTYPE html>
             <html>
               <head>
@@ -248,9 +240,11 @@ self.addEventListener('fetch', (event) => {
                 </div>
               </body>
             </html>
-          `, {
-            headers: { 'Content-Type': 'text/html' }
-          });
+          `,
+            {
+              headers: { 'Content-Type': 'text/html' },
+            }
+          );
         })
         .finally(() => {
           cleanupCache(DYNAMIC_CACHE, MAX_CACHE_SIZE.dynamic);
@@ -261,22 +255,22 @@ self.addEventListener('fetch', (event) => {
 
 // Background sync for failed requests
 self.addEventListener('sync', (event) => {
-  
   if (event.tag === 'background-sync') {
     event.waitUntil(
       // Retry failed requests when back online
-      self.clients.matchAll().then(clients => {
-        clients.forEach(client => {
-          client.postMessage({ type: 'SYNC_AVAILABLE' });
-        });
-      })
+      self.clients
+        .matchAll()
+        .then((clients) => {
+          clients.forEach((client) => {
+            client.postMessage({ type: 'SYNC_AVAILABLE' });
+          });
+        })
     );
   }
 });
 
 // Push notifications (for future use)
 self.addEventListener('push', (event) => {
-  
   const options = {
     body: event.data ? event.data.text() : 'New update available!',
     icon: '/icon-192x192.png',
@@ -285,28 +279,25 @@ self.addEventListener('push', (event) => {
     actions: [
       {
         action: 'open',
-        title: 'Open App'
+        title: 'Open App',
       },
       {
         action: 'close',
-        title: 'Close'
-      }
-    ]
+        title: 'Close',
+      },
+    ],
   };
-  
-  event.waitUntil(
-    self.registration.showNotification('Threadly', options)
-  );
+
+  event.waitUntil(self.registration.showNotification('Threadly', options));
 });
 
 // Notification click handling
 self.addEventListener('notificationclick', (event) => {
-  
   event.notification.close();
-  
+
   if (event.action === 'open' || !event.action) {
     event.waitUntil(
-      self.clients.matchAll().then(clients => {
+      self.clients.matchAll().then((clients) => {
         // Focus existing tab if available
         for (const client of clients) {
           if (client.url.includes(self.location.origin)) {
@@ -322,13 +313,11 @@ self.addEventListener('notificationclick', (event) => {
 
 // Message handling from main thread
 self.addEventListener('message', (event) => {
-  
   if (event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-  
+
   if (event.data.type === 'GET_VERSION') {
     event.ports[0].postMessage({ version: CACHE_NAME });
   }
 });
-

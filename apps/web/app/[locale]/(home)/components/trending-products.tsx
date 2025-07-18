@@ -1,56 +1,56 @@
-import { Button } from '@repo/design-system/components';
-import { Heart, Eye, MapPin, Star } from 'lucide-react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { database } from '@repo/database';
 import { getCacheService } from '@repo/cache';
+import { database } from '@repo/database';
+import { Button } from '@repo/design-system/components';
 import { logError } from '@repo/observability/server';
+import { Eye, Heart, MapPin, Star } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 import { formatCurrency } from '@/lib/utils/currency';
 
 export const TrendingProducts = async () => {
   try {
     const cacheService = getCacheService({
-      url: process.env.UPSTASH_REDIS_REST_URL || process.env.REDIS_URL || 'redis://localhost:6379',
+      url:
+        process.env.UPSTASH_REDIS_REST_URL ||
+        process.env.REDIS_URL ||
+        'redis://localhost:6379',
       token: process.env.UPSTASH_REDIS_REST_TOKEN || undefined,
       defaultTTL: 1800, // 30 minutes
     });
 
     // Try to get trending products from cache first
     let transformedProducts = await cacheService.getTrendingProducts();
-    
+
     if (!transformedProducts) {
       // Fetch trending products from database
       const trendingProducts = await database.product.findMany({
-      where: {
-        status: 'AVAILABLE',
-      },
-      include: {
-        images: {
-          orderBy: { displayOrder: 'asc' },
-          take: 1,
+        where: {
+          status: 'AVAILABLE',
         },
-        seller: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            location: true,
-            averageRating: true,
+        include: {
+          images: {
+            orderBy: { displayOrder: 'asc' },
+            take: 1,
+          },
+          seller: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              location: true,
+              averageRating: true,
+            },
+          },
+          _count: {
+            select: {
+              favorites: true,
+            },
           },
         },
-        _count: {
-          select: {
-            favorites: true,
-          },
-        },
-      },
-      orderBy: [
-        { views: 'desc' },
-        { createdAt: 'desc' },
-      ],
-      take: 6,
-    });
+        orderBy: [{ views: 'desc' }, { createdAt: 'desc' }],
+        take: 6,
+      });
 
       transformedProducts = trendingProducts.map((product) => ({
         id: product.id,
@@ -60,15 +60,18 @@ export const TrendingProducts = async () => {
         originalPrice: null, // We don't have this in our schema
         condition: product.condition,
         size: product.size || 'One Size',
-        images: product.images.map(img => img.imageUrl).filter(Boolean),
+        images: product.images.map((img) => img.imageUrl).filter(Boolean),
         seller: {
-          name: product.seller ? `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() || 'Anonymous' : 'Anonymous',
+          name: product.seller
+            ? `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() ||
+              'Anonymous'
+            : 'Anonymous',
           rating: product.seller?.averageRating || 0,
-          location: product.seller?.location || 'Unknown'
+          location: product.seller?.location || 'Unknown',
         },
         likes: product._count.favorites,
         views: product.views,
-        timeAgo: '2 hours ago' // Simplified for now
+        timeAgo: '2 hours ago', // Simplified for now
       }));
 
       // Cache the transformed products
@@ -77,7 +80,7 @@ export const TrendingProducts = async () => {
 
     if (transformedProducts.length === 0) {
       return (
-        <section className="w-full py-16 lg:py-24 bg-gray-50">
+        <section className="w-full bg-gray-50 py-16 lg:py-24">
           <div className="container mx-auto px-4 text-center">
             <p className="text-gray-500">No trending products found</p>
           </div>
@@ -86,14 +89,14 @@ export const TrendingProducts = async () => {
     }
 
     return (
-      <section className="w-full py-16 lg:py-24 bg-gray-50">
+      <section className="w-full bg-gray-50 py-16 lg:py-24">
         <div className="container mx-auto px-4">
           {/* Section Header */}
           <div className="mb-12 text-center">
             <h2 className="mb-4 font-bold text-3xl tracking-tight md:text-5xl">
               Trending Now
             </h2>
-            <p className="mx-auto max-w-2xl text-lg text-gray-600">
+            <p className="mx-auto max-w-2xl text-gray-600 text-lg">
               The most popular items everyone's talking about
             </p>
           </div>
@@ -102,41 +105,47 @@ export const TrendingProducts = async () => {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {transformedProducts.map((product: any) => (
               <Link
-                key={product.id}
+                className="group hover:-translate-y-1 relative overflow-hidden rounded-2xl bg-white shadow-lg transition-all duration-300 hover:shadow-2xl"
                 href={`/product/${product.id}`}
-                className="group relative overflow-hidden rounded-2xl bg-white shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+                key={product.id}
               >
                 {/* Image Container */}
                 <div className="aspect-[4/3] overflow-hidden">
-                  {product.images[0] && !product.images[0].includes('picsum.photos') && !product.images[0].includes('placehold.co') ? (
+                  {product.images[0] &&
+                  !product.images[0].includes('picsum.photos') &&
+                  !product.images[0].includes('placehold.co') ? (
                     <Image
-                      src={product.images[0]}
                       alt={product.title}
-                      width={400}
-                      height={300}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      height={300}
+                      src={product.images[0]}
+                      width={400}
                     />
                   ) : (
-                    <div className="h-full w-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white transition-transform duration-500 group-hover:scale-105">
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-orange-500 to-red-500 text-white transition-transform duration-500 group-hover:scale-105">
                       <div className="text-center">
-                        <div className="text-xl font-bold mb-1">🔥</div>
-                        <div className="text-lg font-semibold">{product.brand}</div>
-                        <div className="text-xs opacity-80">{product.condition}</div>
+                        <div className="mb-1 font-bold text-xl">🔥</div>
+                        <div className="font-semibold text-lg">
+                          {product.brand}
+                        </div>
+                        <div className="text-xs opacity-80">
+                          {product.condition}
+                        </div>
                       </div>
                     </div>
                   )}
-                  
+
                   {/* Heart Button */}
-                  <button 
-                    className="absolute top-4 right-4 rounded-full bg-white/90 p-2 backdrop-blur-sm transition-all hover:bg-white hover:scale-110"
+                  <button
                     aria-label="Add to favorites"
+                    className="absolute top-4 right-4 rounded-full bg-white/90 p-2 backdrop-blur-sm transition-all hover:scale-110 hover:bg-white"
                   >
                     <Heart className="h-4 w-4 text-gray-600" />
                   </button>
 
                   {/* Trending Badge */}
                   <div className="absolute top-4 left-4">
-                    <div className="flex items-center gap-1 rounded-full bg-gradient-to-r from-orange-500 to-red-500 px-3 py-1 text-xs font-medium text-white">
+                    <div className="flex items-center gap-1 rounded-full bg-gradient-to-r from-orange-500 to-red-500 px-3 py-1 font-medium text-white text-xs">
                       🔥 TRENDING
                     </div>
                   </div>
@@ -145,24 +154,26 @@ export const TrendingProducts = async () => {
                 {/* Content */}
                 <div className="p-6">
                   <div className="mb-2">
-                    <p className="text-xs font-medium text-orange-600 uppercase tracking-wide">
+                    <p className="font-medium text-orange-600 text-xs uppercase tracking-wide">
                       {product.brand}
                     </p>
-                    <h3 className="font-semibold text-lg text-gray-900 line-clamp-2 group-hover:text-orange-600 transition-colors">
+                    <h3 className="line-clamp-2 font-semibold text-gray-900 text-lg transition-colors group-hover:text-orange-600">
                       {product.title}
                     </h3>
                   </div>
 
                   <div className="mb-3 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-xl text-gray-900">{formatCurrency(product.price)}</span>
+                      <span className="font-bold text-gray-900 text-xl">
+                        {formatCurrency(product.price)}
+                      </span>
                       {product.originalPrice && (
-                        <span className="text-sm text-gray-500 line-through">
+                        <span className="text-gray-500 text-sm line-through">
                           {formatCurrency(product.originalPrice)}
                         </span>
                       )}
                     </div>
-                    <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700">
+                    <span className="rounded-full bg-gray-100 px-2 py-1 font-medium text-gray-700 text-xs">
                       Size {product.size}
                     </span>
                   </div>
@@ -170,22 +181,26 @@ export const TrendingProducts = async () => {
                   {/* Seller Info */}
                   <div className="mb-3 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-600">by {product.seller.name}</span>
+                      <span className="text-gray-600 text-sm">
+                        by {product.seller.name}
+                      </span>
                       {product.seller.rating > 0 && (
                         <div className="flex items-center gap-1">
                           <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                          <span className="text-xs text-gray-500">{product.seller.rating}</span>
+                          <span className="text-gray-500 text-xs">
+                            {product.seller.rating}
+                          </span>
                         </div>
                       )}
                     </div>
-                    <div className="flex items-center gap-1 text-xs text-gray-500">
+                    <div className="flex items-center gap-1 text-gray-500 text-xs">
                       <MapPin className="h-3 w-3" />
                       {product.seller.location}
                     </div>
                   </div>
 
                   {/* Stats */}
-                  <div className="flex items-center justify-between text-sm text-gray-500">
+                  <div className="flex items-center justify-between text-gray-500 text-sm">
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-1">
                         <Heart className="h-4 w-4" />
@@ -196,7 +211,7 @@ export const TrendingProducts = async () => {
                         <span>{product.views}</span>
                       </div>
                     </div>
-                    <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
+                    <span className="rounded-full bg-blue-100 px-2 py-1 font-medium text-blue-800 text-xs">
                       {product.condition}
                     </span>
                   </div>
@@ -210,10 +225,10 @@ export const TrendingProducts = async () => {
 
           {/* View All Button */}
           <div className="mt-12 text-center">
-            <Button 
-              size="lg" 
-              className="gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600"
+            <Button
               asChild
+              className="gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600"
+              size="lg"
             >
               <Link href="/products?sort=trending">
                 View All Trending
@@ -227,7 +242,7 @@ export const TrendingProducts = async () => {
   } catch (error) {
     logError('Failed to fetch trending products:', error);
     return (
-      <section className="w-full py-16 lg:py-24 bg-gray-50">
+      <section className="w-full bg-gray-50 py-16 lg:py-24">
         <div className="container mx-auto px-4 text-center">
           <p className="text-gray-500">Unable to load trending products</p>
         </div>
