@@ -1,4 +1,5 @@
 import { database } from '@repo/database';
+import type { ProductStatus } from '@repo/database';
 import { AdminProductsClient } from './admin-products-client';
 import { validatePaginationParams, buildCursorWhere, processPaginationResult } from '@repo/design-system/lib/pagination';
 import type { ReactElement } from 'react';
@@ -16,7 +17,7 @@ const AdminProductsPage = async ({ searchParams }: PageProps): Promise<React.JSX
   // Build where clause
   const where: {
     OR?: Array<{ title?: { contains: string; mode: 'insensitive' } } | { description?: { contains: string; mode: 'insensitive' } }>;
-    status?: string;
+    status?: ProductStatus;
   } = {};
   
   if (search) {
@@ -27,7 +28,10 @@ const AdminProductsPage = async ({ searchParams }: PageProps): Promise<React.JSX
   }
   
   if (statusFilter !== 'all') {
-    where.status = statusFilter.toUpperCase();
+    const upperStatus = statusFilter.toUpperCase() as ProductStatus;
+    if (upperStatus === 'AVAILABLE' || upperStatus === 'SOLD' || upperStatus === 'RESERVED' || upperStatus === 'REMOVED') {
+      where.status = upperStatus;
+    }
   }
 
   // Parse pagination parameters
