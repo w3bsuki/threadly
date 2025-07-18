@@ -2,7 +2,7 @@ import { currentUser } from '@repo/auth/server';
 import { getPusherServer } from '@repo/real-time/src/server/pusher-server';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<Response> {
   try {
     const user = await currentUser();
     if (!user) {
