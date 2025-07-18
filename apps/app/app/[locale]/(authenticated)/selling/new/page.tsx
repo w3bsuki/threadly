@@ -132,10 +132,10 @@ const SellNewItemPage = async ({
         <div className="mx-auto w-full max-w-4xl">
           <MultiStepWizard 
             userId={dbUser.id} 
-            selectedTemplate={selectedTemplate}
+            selectedTemplate={selectedTemplate || undefined}
             templates={templates}
             categories={categories}
-            draftProduct={draftProduct}
+            draftProduct={draftProduct || undefined}
           />
         </div>
       </div>

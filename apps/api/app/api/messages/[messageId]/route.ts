@@ -199,7 +199,7 @@ export async function DELETE(
     }
 
     // Only the sender can delete their own message
-    if (accessCheck.message.senderId !== accessCheck.user.id) {
+    if (!accessCheck.message || !accessCheck.user || accessCheck.message.senderId !== accessCheck.user.id) {
       return NextResponse.json(
         {
           success: false,
@@ -210,7 +210,7 @@ export async function DELETE(
     }
 
     // Check if message was sent recently (within 5 minutes)
-    const messageAge = Date.now() - accessCheck.message.createdAt.getTime();
+    const messageAge = Date.now() - accessCheck.message!.createdAt.getTime();
     const fiveMinutes = 5 * 60 * 1000;
 
     if (messageAge > fiveMinutes) {

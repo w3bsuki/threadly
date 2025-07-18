@@ -77,8 +77,14 @@ const AdminProductsPage = async ({ searchParams }: PageProps): Promise<React.JSX
     take: pagination.limit
   });
 
+  // Convert Decimal price to number for client component
+  const formattedProducts = products.map(product => ({
+    ...product,
+    price: Number(product.price)
+  }));
+
   // Process pagination result
-  const paginationResult = processPaginationResult(products, pagination.limit, totalCount);
+  const paginationResult = processPaginationResult(formattedProducts, pagination.limit, totalCount);
 
   return <AdminProductsClient paginatedData={paginationResult} search={search} statusFilter={statusFilter} />;
 };

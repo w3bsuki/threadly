@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { currentUser } from '@repo/auth/server';
 import { z } from 'zod';
 import { database } from '@repo/database';
 
@@ -20,17 +20,26 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const user = await currentUser();
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
     
+    // Get database user ID from Clerk ID
+    const dbUser = await database.user.findUnique({
+      where: { clerkId: user.id }
+    });
+    
+    if (!dbUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+    
     const template = await database.productTemplate.findFirst({
       where: { 
         id,
-        userId,
+        userId: dbUser.id,
       },
       include: {
         category: {
@@ -58,8 +67,8 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const user = await currentUser();
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -67,10 +76,19 @@ export async function PUT(
     const body = await request.json();
     const validatedData = updateTemplateSchema.parse(body);
 
+    // Get database user ID from Clerk ID
+    const dbUser = await database.user.findUnique({
+      where: { clerkId: user.id }
+    });
+    
+    if (!dbUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
     const template = await database.productTemplate.findFirst({
       where: { 
         id,
-        userId,
+        userId: dbUser.id,
       },
     });
 
@@ -106,17 +124,26 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const user = await currentUser();
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
     
+    // Get database user ID from Clerk ID
+    const dbUser = await database.user.findUnique({
+      where: { clerkId: user.id }
+    });
+    
+    if (!dbUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+    
     const template = await database.productTemplate.findFirst({
       where: { 
         id,
-        userId,
+        userId: dbUser.id,
       },
     });
 

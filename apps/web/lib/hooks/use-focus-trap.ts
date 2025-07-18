@@ -14,7 +14,7 @@ export function useFocusTrap(isActive: boolean) {
     );
 
     const firstFocusable = focusableElements[0];
-    const lastFocusable = focusableElements.at(-1);
+    const lastFocusable = focusableElements[focusableElements.length - 1];
 
     // Focus first element when trap activates
     firstFocusable?.focus();

@@ -67,7 +67,10 @@ async function getActiveListings(userId: string): Promise<Product[]> {
         }
       });
       
-      return products;
+      return products.map(product => ({
+        ...product,
+        price: Number(product.price)
+      }));
     },
     300
   );

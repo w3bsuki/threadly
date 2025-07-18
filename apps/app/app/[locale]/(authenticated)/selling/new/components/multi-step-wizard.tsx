@@ -98,7 +98,7 @@ export function MultiStepWizard({
       description: draftProduct?.description || selectedTemplate?.description || '',
       price: draftProduct?.price ? Number(draftProduct.price) / 100 : selectedTemplate?.price || 0,
       categoryId: draftProduct?.categoryId || selectedTemplate?.categoryId || '',
-      condition: draftProduct?.condition || selectedTemplate?.condition || 'GOOD',
+      condition: (draftProduct?.condition || selectedTemplate?.condition || 'GOOD') as 'NEW_WITH_TAGS' | 'NEW_WITHOUT_TAGS' | 'VERY_GOOD' | 'GOOD' | 'SATISFACTORY' | undefined,
       brand: draftProduct?.brand || selectedTemplate?.brand || '',
       size: draftProduct?.size || selectedTemplate?.size || '',
       color: draftProduct?.color || selectedTemplate?.color || '',
@@ -190,8 +190,9 @@ export function MultiStepWizard({
         router.push('/selling/listings');
       } else {
         if (result.details) {
-          result.details.forEach((detail: ValidationErrorDetail) => {
-            toast.error(`${detail.path?.join('.')}: ${detail.message}`);
+          result.details.forEach((detail) => {
+            const path = detail.path?.map(p => String(p)).join('.');
+            toast.error(`${path}: ${detail.message}`);
           });
         } else {
           toast.error(result.error || 'Failed to create product');

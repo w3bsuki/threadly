@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { currentUser } from '@repo/auth/server';
 import { z } from 'zod';
 import { database } from '@repo/database';
 
@@ -17,13 +17,22 @@ const createTemplateSchema = z.object({
 
 export async function GET() {
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const user = await currentUser();
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Get database user ID from Clerk ID
+    const dbUser = await database.user.findUnique({
+      where: { clerkId: user.id }
+    });
+    
+    if (!dbUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+    
     const templates = await database.productTemplate.findMany({
-      where: { userId },
+      where: { userId: dbUser.id },
       include: {
         category: {
           select: {
@@ -44,18 +53,27 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const user = await currentUser();
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
     const validatedData = createTemplateSchema.parse(body);
 
+    // Get database user ID from Clerk ID
+    const dbUser = await database.user.findUnique({
+      where: { clerkId: user.id }
+    });
+    
+    if (!dbUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
     const template = await database.productTemplate.create({
       data: {
         ...validatedData,
-        userId,
+        userId: dbUser.id,
       },
       include: {
         category: {
