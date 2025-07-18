@@ -292,12 +292,10 @@ export async function POST(request: NextRequest) {
       });
 
       await pusherServer.sendMessage({
-        message: {
-          ...message,
-          isOwnMessage: false,
-        },
+        id: message.id,
         conversationId: validatedData.conversationId,
         senderId: accessCheck.user!.id,
+        content: message.content,
         createdAt: message.createdAt,
       });
     } catch (error) {
