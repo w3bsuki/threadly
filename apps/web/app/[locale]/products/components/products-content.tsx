@@ -202,7 +202,7 @@ export async function ProductsContent({
   });
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* Search Header */}
       <SearchHeader 
         totalCount={totalCount} 
@@ -242,10 +242,10 @@ export async function ProductsContent({
             {transformedProducts.length === 0 ? (
               <div className="py-12 text-center">
                 <div className="mx-auto max-w-md">
-                  <h3 className="mb-2 font-medium text-gray-900 text-lg">
+                  <h3 className="mb-2 font-medium text-foreground text-lg">
                     No products found
                   </h3>
-                  <p className="mb-6 text-gray-600 text-sm">
+                  <p className="mb-6 text-muted-foreground text-sm">
                     Try adjusting your filters or search terms to find what
                     you're looking for
                   </p>

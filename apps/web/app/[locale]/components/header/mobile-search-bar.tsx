@@ -51,15 +51,15 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-white">
+    <div className="fixed inset-0 z-50 flex flex-col bg-background">
       {/* Search Header */}
       <div className="flex items-center gap-3 border-gray-200 border-b p-4">
         <form className="flex flex-1 items-center" onSubmit={handleSearch}>
           <div className="relative flex-1">
-            <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-5 w-5 text-gray-400" />
+            <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-5 w-5 text-muted-foreground/70" />
             <input
               aria-label="Search products"
-              className="w-full rounded-lg border border-gray-200 bg-gray-50 py-3 pr-4 pl-10 text-base focus:border-transparent focus:outline-none focus:ring-2 focus:ring-black"
+              className="w-full rounded-[var(--radius-lg)] border border-gray-200 bg-muted py-3 pr-4 pl-10 text-base focus:border-transparent focus:outline-none focus:ring-2 focus:ring-black"
               onChange={(e) => setSearchValue(e.target.value)}
               placeholder={
                 dictionary.web.global.navigation?.searchPlaceholder ||
@@ -75,24 +75,24 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
         <Button
           aria-expanded={showCategories}
           aria-label="Toggle categories"
-          className={`h-11 w-11 rounded-lg transition-all ${
-            showCategories ? 'bg-gray-100' : 'hover:bg-gray-50'
+          className={`h-11 w-11 rounded-[var(--radius-lg)] transition-all ${
+            showCategories ? 'bg-secondary' : 'hover:bg-muted'
           }`}
           onClick={() => setShowCategories(!showCategories)}
           size="icon"
           variant="ghost"
         >
-          <Filter className="h-5 w-5 text-gray-600" />
+          <Filter className="h-5 w-5 text-muted-foreground" />
         </Button>
 
         <Button
           aria-label="Close search"
-          className="h-11 w-11 rounded-lg hover:bg-gray-50"
+          className="h-11 w-11 rounded-[var(--radius-lg)] hover:bg-muted"
           onClick={onClose}
           size="icon"
           variant="ghost"
         >
-          <X className="h-5 w-5 text-gray-600" />
+          <X className="h-5 w-5 text-muted-foreground" />
         </Button>
       </div>
 
@@ -100,26 +100,26 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
       <div className="flex-1 overflow-y-auto">
         {showCategories ? (
           <div className="p-4">
-            <h3 className="mb-4 font-medium text-gray-900 text-sm">
+            <h3 className="mb-4 font-medium text-foreground text-sm">
               Shop by Category
             </h3>
             <div className="space-y-1">
               {categories.map((category) => (
                 <div
-                  className="overflow-hidden rounded-lg border border-gray-200"
+                  className="overflow-hidden rounded-[var(--radius-lg)] border border-gray-200"
                   key={category.name}
                 >
                   <div className="flex items-center justify-between">
                     <Link
                       aria-label={`Browse ${category.name} category`}
-                      className="flex flex-1 items-center gap-3 p-4 transition-colors hover:bg-gray-50"
+                      className="flex flex-1 items-center gap-3 p-4 transition-colors hover:bg-muted"
                       href={category.href}
                       onClick={onClose}
                     >
                       <span aria-hidden="true" className="text-xl">
                         {category.icon}
                       </span>
-                      <span className="font-medium text-gray-900">
+                      <span className="font-medium text-foreground">
                         {category.name}
                       </span>
                     </Link>
@@ -130,7 +130,7 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
                           category.name
                         )}
                         aria-label={`${expandedCategories.includes(category.name) ? 'Hide' : 'Show'} ${category.name} subcategories`}
-                        className="m-2 h-10 min-w-[44px] px-3 font-medium text-gray-600 text-xs hover:text-gray-900"
+                        className="m-2 h-10 min-w-[44px] px-3 font-medium text-muted-foreground text-xs hover:text-foreground"
                         onClick={() => toggleCategoryExpansion(category.name)}
                         size="sm"
                         variant="ghost"
@@ -144,12 +144,12 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
 
                   {expandedCategories.includes(category.name) &&
                     category.subcategories.length > 0 && (
-                      <div className="border-gray-200 border-t bg-gray-50">
-                        <div className="grid grid-cols-2 gap-px bg-gray-200">
+                      <div className="border-gray-200 border-t bg-muted">
+                        <div className="grid grid-cols-2 gap-px bg-accent">
                           {category.subcategories.map((sub) => (
                             <Link
                               aria-label={`Browse ${sub.name} in ${category.name}${(sub as any).popular ? ' - Popular' : ''}`}
-                              className={`flex min-h-[44px] items-center gap-2 bg-gray-50 p-3 transition-colors hover:bg-white ${
+                              className={`flex min-h-[44px] items-center gap-2 bg-muted p-3 transition-colors hover:bg-background ${
                                 (sub as any).popular
                                   ? 'ring-1 ring-blue-200'
                                   : ''
@@ -161,7 +161,7 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
                               <span aria-hidden="true" className="text-sm">
                                 {sub.icon}
                               </span>
-                              <span className="font-medium text-gray-700 text-sm">
+                              <span className="font-medium text-secondary-foreground text-sm">
                                 {sub.name}
                               </span>
                               {(sub as any).popular && (
@@ -184,7 +184,7 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
         ) : (
           <div className="p-4">
             {searchValue ? (
-              <div className="py-8 text-center text-gray-500">
+              <div className="py-8 text-center text-muted-foreground">
                 <Search className="mx-auto mb-3 h-12 w-12 text-gray-300" />
                 <p className="text-sm">
                   Press enter to search for "{searchValue}"
@@ -193,7 +193,7 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
             ) : (
               <div className="space-y-4">
                 <div>
-                  <h3 className="mb-3 font-medium text-gray-900 text-sm">
+                  <h3 className="mb-3 font-medium text-foreground text-sm">
                     Quick Links
                   </h3>
                   <div className="space-y-2">
@@ -204,7 +204,7 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
                       { label: 'All Brands', href: '/brands' },
                     ].map((link) => (
                       <Link
-                        className="block rounded-lg px-3 py-2 text-gray-700 text-sm transition-colors hover:bg-gray-50 hover:text-black"
+                        className="block rounded-[var(--radius-lg)] px-3 py-2 text-secondary-foreground text-sm transition-colors hover:bg-muted hover:text-foreground"
                         href={link.href}
                         key={link.label}
                         onClick={onClose}

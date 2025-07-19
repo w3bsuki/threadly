@@ -11,10 +11,10 @@ const SearchResults = dynamic(
   {
     loading: () => (
       <div className="space-y-4">
-        <div className="h-8 animate-pulse rounded bg-gray-200" />
+        <div className="h-8 animate-pulse rounded bg-accent" />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div className="h-64 animate-pulse rounded bg-gray-200" key={i} />
+            <div className="h-64 animate-pulse rounded bg-accent" key={i} />
           ))}
         </div>
       </div>
@@ -64,7 +64,7 @@ export default async function SearchPage({
   const _dictionary = await getDictionary(locale);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <SearchResults initialQuery={query} />
       </div>

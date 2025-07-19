@@ -91,10 +91,10 @@ export default async function BrowsePage({
       <div className="container py-6 lg:py-8">
         {/* Header */}
         <div className="mb-8 text-center lg:mb-12">
-          <h1 className="mb-3 font-bold text-3xl text-gray-900 lg:mb-4 lg:text-4xl">
+          <h1 className="mb-3 font-bold text-3xl text-foreground lg:mb-4 lg:text-4xl">
             Browse Threadly
           </h1>
-          <p className="mx-auto max-w-2xl px-4 text-gray-600 text-lg lg:text-xl">
+          <p className="mx-auto max-w-2xl px-4 text-muted-foreground text-lg lg:text-xl">
             Discover unique fashion finds from trusted sellers in our community
             marketplace
           </p>
@@ -105,10 +105,10 @@ export default async function BrowsePage({
           <Card className="border-0 bg-blue-50 shadow-sm">
             <CardContent className="p-4 text-center lg:p-6">
               <Package className="mx-auto mb-2 h-6 w-6 text-blue-600 lg:h-8 lg:w-8" />
-              <div className="font-bold text-gray-900 text-xl lg:text-2xl">
+              <div className="font-bold text-foreground text-xl lg:text-2xl">
                 {totalProducts.toLocaleString()}
               </div>
-              <div className="text-gray-600 text-xs lg:text-sm">
+              <div className="text-muted-foreground text-xs lg:text-sm">
                 Items Available
               </div>
             </CardContent>
@@ -117,10 +117,10 @@ export default async function BrowsePage({
           <Card className="border-0 bg-green-50 shadow-sm">
             <CardContent className="p-4 text-center lg:p-6">
               <Users className="mx-auto mb-2 h-6 w-6 text-green-600 lg:h-8 lg:w-8" />
-              <div className="font-bold text-gray-900 text-xl lg:text-2xl">
+              <div className="font-bold text-foreground text-xl lg:text-2xl">
                 {totalUsers.toLocaleString()}
               </div>
-              <div className="text-gray-600 text-xs lg:text-sm">
+              <div className="text-muted-foreground text-xs lg:text-sm">
                 Community Members
               </div>
             </CardContent>
@@ -129,10 +129,10 @@ export default async function BrowsePage({
           <Card className="col-span-2 border-0 bg-yellow-50 shadow-sm lg:col-span-1">
             <CardContent className="p-4 text-center lg:p-6">
               <Star className="mx-auto mb-2 h-6 w-6 text-yellow-600 lg:h-8 lg:w-8" />
-              <div className="font-bold text-gray-900 text-xl lg:text-2xl">
+              <div className="font-bold text-foreground text-xl lg:text-2xl">
                 {completedOrders.toLocaleString()}
               </div>
-              <div className="text-gray-600 text-xs lg:text-sm">
+              <div className="text-muted-foreground text-xs lg:text-sm">
                 Happy Customers
               </div>
             </CardContent>
@@ -154,12 +154,12 @@ export default async function BrowsePage({
                 href={`/products?category=${category.slug}`}
                 key={category.id}
               >
-                <Card className="border-0 bg-white shadow-sm transition-all duration-200 hover:scale-[1.02] hover:shadow-md">
+                <Card className="border-0 bg-background shadow-sm transition-all duration-200 hover:scale-[1.02] hover:shadow-md">
                   <CardContent className="p-3 text-center lg:p-4">
-                    <h3 className="font-medium text-gray-900 text-sm lg:text-base">
+                    <h3 className="font-medium text-foreground text-sm lg:text-base">
                       {category.name}
                     </h3>
-                    <p className="mt-1 text-gray-600 text-xs lg:text-sm">
+                    <p className="mt-1 text-muted-foreground text-xs lg:text-sm">
                       {category._count.Product} items
                     </p>
                   </CardContent>
@@ -220,10 +220,10 @@ export default async function BrowsePage({
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
             {topSellers.map((seller) => (
               <Link href={`/profile/${seller.id}`} key={seller.id}>
-                <Card className="border-0 bg-white shadow-sm transition-all duration-200 hover:scale-[1.02] hover:shadow-md">
+                <Card className="border-0 bg-background shadow-sm transition-all duration-200 hover:scale-[1.02] hover:shadow-md">
                   <CardContent className="p-4 lg:p-6">
                     <div className="mb-3 flex items-center gap-3 lg:mb-4 lg:gap-4">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 lg:h-12 lg:w-12">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-full)] bg-accent lg:h-12 lg:w-12">
                         {seller.imageUrl ? (
                           <AvatarImage
                             alt={`${seller.firstName} ${seller.lastName}`}
@@ -232,7 +232,7 @@ export default async function BrowsePage({
                             size={40}
                           />
                         ) : (
-                          <span className="font-semibold text-gray-600 text-sm lg:text-lg">
+                          <span className="font-semibold text-muted-foreground text-sm lg:text-lg">
                             {(
                               seller.firstName?.[0] ||
                               seller.lastName?.[0] ||
@@ -243,10 +243,10 @@ export default async function BrowsePage({
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <h3 className="truncate font-medium text-gray-900 text-sm lg:text-base">
+                        <h3 className="truncate font-medium text-foreground text-sm lg:text-base">
                           {seller.firstName} {seller.lastName}
                         </h3>
-                        <div className="mt-1 flex items-center gap-3 text-gray-600 text-xs lg:gap-4 lg:text-sm">
+                        <div className="mt-1 flex items-center gap-3 text-muted-foreground text-xs lg:gap-4 lg:text-sm">
                           <span>{seller._count.Product} items</span>
                           {seller.averageRating && (
                             <div className="flex items-center gap-1">

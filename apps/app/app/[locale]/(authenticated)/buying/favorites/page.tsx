@@ -145,7 +145,7 @@ const FavoritesPage = async ({ params }: { params: Promise<{ locale: string }> }
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 flex items-center justify-center">
-                      <Package className="h-12 w-12 text-white opacity-80" />
+                      <Package className="h-12 w-12 text-background opacity-80" />
                     </div>
                   )}
                   
@@ -160,7 +160,7 @@ const FavoritesPage = async ({ params }: { params: Promise<{ locale: string }> }
                   </div>
 
                   {/* Favorite Count */}
-                  <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                  <div className="absolute top-2 right-2 bg-foreground/50 text-background text-xs px-2 py-1 rounded-[var(--radius-full)] flex items-center gap-1">
                     <Heart className="h-3 w-3 fill-current" />
                     {favorite.product._count.favorites}
                   </div>

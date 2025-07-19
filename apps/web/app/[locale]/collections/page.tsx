@@ -25,10 +25,10 @@ const CollectionsPage = async ({ params }: CollectionsProps) => {
   const _dictionary = await getDictionary(locale);
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-background">
       <div className="mx-auto max-w-7xl px-4 py-12">
         <h1 className="mb-8 font-semibold text-3xl">Collections</h1>
-        <p className="text-gray-600">Curated collections coming soon.</p>
+        <p className="text-muted-foreground">Curated collections coming soon.</p>
       </div>
     </main>
   );

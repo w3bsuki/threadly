@@ -28,9 +28,9 @@ export function SearchResultsSkeleton() {
 export function SearchInputSkeleton() {
   return (
     <div className="relative">
-      <Skeleton className="h-10 w-full rounded-lg" />
+      <Skeleton className="h-10 w-full rounded-[var(--radius-lg)]" />
       <div className="absolute right-3 top-1/2 -translate-y-1/2">
-        <Skeleton className="h-5 w-5 rounded-full" />
+        <Skeleton className="h-5 w-5 rounded-[var(--radius-full)]" />
       </div>
     </div>
   );
@@ -39,7 +39,7 @@ export function SearchInputSkeleton() {
 // Search suggestions skeleton
 export function SearchSuggestionsSkeleton() {
   return (
-    <div className="absolute top-full left-0 right-0 mt-2 bg-white border rounded-lg shadow-lg p-4 space-y-3">
+    <div className="absolute top-full left-0 right-0 mt-2 bg-background border rounded-[var(--radius-lg)] shadow-lg p-4 space-y-3">
       {Array.from({ length: 5 }).map((_, i) => (
         <div key={i} className="flex items-center space-x-3">
           <Skeleton className="h-4 w-4" />

@@ -2,7 +2,6 @@ import './styles.css';
 import { AnalyticsProvider } from '@repo/analytics';
 import { ClerkProvider } from '@repo/auth/client';
 import {
-  Banner,
   DesignSystemProvider,
   ServiceWorkerRegistration,
 } from '@repo/design-system';
@@ -11,14 +10,14 @@ import { cn } from '@repo/design-system/lib/utils';
 import { Toolbar } from '@repo/feature-flags/components/toolbar';
 import { getDictionary } from '@repo/internationalization';
 import { ErrorBoundary } from '@repo/utils/src/error-boundary';
-import { Recycle } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { UnifiedBottomNav } from '../../components/navigation/unified-bottom-nav';
-import { UnifiedHeader } from '../../components/navigation/unified-header';
 import { Footer } from './components/footer';
+import { Header } from './components/header';
+import { UnifiedBottomNav } from '../../components/navigation/unified-bottom-nav';
 import { PerformanceMonitor } from './components/performance-monitor';
 import { CurrencyProvider } from './components/providers/currency-provider';
 import { I18nProvider } from './components/providers/i18n-provider';
+import { PromotionalBanner } from './products/components/promotional-banner';
 
 type RootLayoutProperties = {
   readonly children: ReactNode;
@@ -43,7 +42,7 @@ const RootLayout = async ({ children, params }: RootLayoutProperties) => {
       <body>
         {/* Skip to main content link for accessibility */}
         <a
-          className="sr-only z-[100] rounded-md bg-black px-4 py-2 text-white focus:not-sr-only focus:absolute focus:top-4 focus:left-4"
+          className="sr-only z-[100] rounded-[var(--radius-md)] bg-foreground px-4 py-2 text-background focus:not-sr-only focus:absolute focus:top-4 focus:left-4"
           href="#main-content"
         >
           {dictionary.web.global.accessibility?.skipToMainContent ||
@@ -59,15 +58,8 @@ const RootLayout = async ({ children, params }: RootLayoutProperties) => {
                     debug={process.env.NODE_ENV === 'development'}
                   />
 
-                  <Banner
-                    icon={<Recycle className="h-4 w-4" />}
-                    variant="success"
-                  >
-                    🌱 New platform launch! Join Threadly's sustainable fashion
-                    marketplace
-                  </Banner>
-
-                  <UnifiedHeader />
+                  <PromotionalBanner />
+                  <Header />
                   <main
                     className="min-h-screen pb-16 md:pb-0"
                     id="main-content"

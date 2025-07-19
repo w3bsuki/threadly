@@ -25,9 +25,9 @@ const getStatusColor = (status: string) => {
     case 'CANCELLED':
       return 'bg-red-100 text-red-800';
     case 'REFUNDED':
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-secondary text-secondary-foreground';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-secondary text-secondary-foreground';
   }
 };
 
@@ -108,8 +108,8 @@ export async function OrdersList({ userId }: OrdersListProps) {
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-8">
-          <div className="rounded-full bg-gray-100 dark:bg-gray-800 p-3 mb-4">
-            <Package className="h-8 w-8 text-gray-500 dark:text-gray-400" />
+          <div className="rounded-[var(--radius-full)] bg-secondary dark:bg-secondary-foreground p-3 mb-4">
+            <Package className="h-8 w-8 text-muted-foreground dark:text-muted-foreground" />
           </div>
           <h3 className="text-base font-medium mb-1">No orders yet</h3>
           <p className="text-sm text-muted-foreground mb-4 text-center max-w-sm">
@@ -162,10 +162,10 @@ export async function OrdersList({ userId }: OrdersListProps) {
                     src={order.Product.images[0].imageUrl}
                     alt={order.Product.title}
                     fill
-                    className="object-cover rounded-lg"
+                    className="object-cover rounded-[var(--radius-lg)]"
                   />
                 ) : (
-                  <div className="w-full h-full bg-muted rounded-lg flex items-center justify-center">
+                  <div className="w-full h-full bg-muted rounded-[var(--radius-lg)] flex items-center justify-center">
                     <Package className="h-5 w-5 text-muted-foreground" />
                   </div>
                 )}

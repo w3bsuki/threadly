@@ -156,7 +156,7 @@ export function SavedSearches({ currentQuery = '', currentFilters, onApplySearch
           {savedSearches.map((search) => (
             <div 
               key={search.id}
-              className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
+              className="flex items-center justify-between p-3 border rounded-[var(--radius-lg)] hover:bg-muted/50 transition-colors"
             >
               <div 
                 className="flex-1 cursor-pointer" 

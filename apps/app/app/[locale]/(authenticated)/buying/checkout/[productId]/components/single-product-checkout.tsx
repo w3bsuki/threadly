@@ -360,7 +360,7 @@ function CheckoutForm({ user, product, savedAddress }: SingleProductCheckoutProp
                 <FormItem>
                   <FormControl>
                     <RadioGroup value={field.value} onValueChange={field.onChange}>
-                      <div className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex items-center justify-between p-4 border rounded-[var(--radius-lg)]">
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="standard" id="standard" />
                           <Label htmlFor="standard" className="cursor-pointer">
@@ -374,7 +374,7 @@ function CheckoutForm({ user, product, savedAddress }: SingleProductCheckoutProp
                           {productPrice > 50 ? 'FREE' : formatCurrency(shippingCosts.standard)}
                         </p>
                       </div>
-                      <div className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex items-center justify-between p-4 border rounded-[var(--radius-lg)]">
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="express" id="express" />
                           <Label htmlFor="express" className="cursor-pointer">
@@ -429,10 +429,10 @@ function CheckoutForm({ user, product, savedAddress }: SingleProductCheckoutProp
                   alt={product.title}
                   width={80}
                   height={80}
-                  className="rounded-md object-cover"
+                  className="rounded-[var(--radius-md)] object-cover"
                 />
               ) : (
-                <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-md" />
+                <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-[var(--radius-md)]" />
               )}
               <div className="flex-1">
                 <h4 className="font-medium line-clamp-2">{product.title}</h4>

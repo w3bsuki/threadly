@@ -6,7 +6,7 @@ function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="skeleton"
       className={cn(
         "bg-gradient-to-r from-gray-200/80 via-gray-100 to-gray-200/80",
-        "animate-shimmer bg-[length:200%_100%] rounded-md",
+        "animate-shimmer bg-[length:200%_100%] rounded-[var(--radius-md)]",
         "relative overflow-hidden",
         className
       )}
@@ -25,7 +25,7 @@ function SkeletonShimmer({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="skeleton-shimmer"
       className={cn(
         "bg-gradient-to-r from-gray-200/60 via-gray-50 to-gray-200/60",
-        "animate-shimmer bg-[length:200%_100%] rounded-md",
+        "animate-shimmer bg-[length:200%_100%] rounded-[var(--radius-md)]",
         "relative overflow-hidden",
         className
       )}
@@ -79,7 +79,7 @@ function SkeletonAvatar({
 
   return (
     <Skeleton
-      className={cn("rounded-full", sizeClasses[size], className)}
+      className={cn("rounded-[var(--radius-full)]", sizeClasses[size], className)}
       {...props}
     />
   )

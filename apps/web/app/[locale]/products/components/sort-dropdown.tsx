@@ -37,7 +37,7 @@ export function SortDropdown() {
     <select 
       value={currentSort} 
       onChange={(e) => handleSortChange(e.target.value)}
-      className="rounded border border-gray-300 px-3 py-2 text-sm"
+      className="rounded border border-border px-3 py-2 text-sm"
     >
       {SORT_OPTIONS.map((option) => (
         <option key={option.value} value={option.value}>

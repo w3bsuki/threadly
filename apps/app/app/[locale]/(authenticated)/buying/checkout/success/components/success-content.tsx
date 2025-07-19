@@ -171,7 +171,7 @@ export function SuccessContent({ paymentIntentId, userId }: SuccessContentProps)
             <h3 className="font-semibold">Items Purchased</h3>
             {order.orderItems.map((item) => (
               <div key={item.id} className="flex gap-4">
-                <div className="relative h-20 w-20 rounded-lg overflow-hidden bg-gray-100">
+                <div className="relative h-20 w-20 rounded-[var(--radius-lg)] overflow-hidden bg-secondary">
                   {item.product.images[0] ? (
                     <Image
                       src={item.product.images[0].url}

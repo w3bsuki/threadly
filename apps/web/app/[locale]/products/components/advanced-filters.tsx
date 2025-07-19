@@ -129,17 +129,17 @@ export function AdvancedFilters({ onClose, categories = [] }: AdvancedFiltersPro
               placeholder="Min"
               value={priceRange[0]}
               onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
-              className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm"
+              className="flex-1 rounded border border-border px-3 py-2 text-sm"
             />
             <input
               type="number"
               placeholder="Max"
               value={priceRange[1]}
               onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
-              className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm"
+              className="flex-1 rounded border border-border px-3 py-2 text-sm"
             />
           </div>
-          <div className="flex justify-between text-sm text-gray-600">
+          <div className="flex justify-between text-sm text-muted-foreground">
             <span>${priceRange[0]}</span>
             <span>${priceRange[1]}</span>
           </div>
@@ -152,7 +152,7 @@ export function AdvancedFilters({ onClose, categories = [] }: AdvancedFiltersPro
         <select 
           value={selectedCondition} 
           onChange={(e) => setSelectedCondition(e.target.value)}
-          className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+          className="w-full rounded border border-border px-3 py-2 text-sm"
         >
           <option value="">Any condition</option>
           {CONDITIONS.map((condition) => (
@@ -170,7 +170,7 @@ export function AdvancedFilters({ onClose, categories = [] }: AdvancedFiltersPro
           <select 
             value={selectedCategory} 
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded border border-border px-3 py-2 text-sm"
           >
             <option value="">Any category</option>
             {categories.map((category) => (
@@ -188,7 +188,7 @@ export function AdvancedFilters({ onClose, categories = [] }: AdvancedFiltersPro
         <select 
           value={selectedSize} 
           onChange={(e) => setSelectedSize(e.target.value)}
-          className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+          className="w-full rounded border border-border px-3 py-2 text-sm"
         >
           <option value="">Any size</option>
           {SIZES.map((size) => (

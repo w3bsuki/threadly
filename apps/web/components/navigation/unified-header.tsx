@@ -25,7 +25,7 @@ export function UnifiedHeader() {
   } = useHeaderState();
 
   return (
-    <header className="sticky top-0 z-50 bg-black md:bg-white">
+    <header className="sticky top-0 z-50 bg-foreground md:bg-background">
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex h-16 items-center justify-between md:h-16">
           {/* Mobile Layout */}
@@ -34,7 +34,7 @@ export function UnifiedHeader() {
               aria-controls="mobile-menu"
               aria-expanded={isMenuOpen}
               aria-label="Open navigation menu"
-              className="-ml-2 h-9 w-9 text-white hover:bg-white/10"
+              className="-ml-2 h-9 w-9 text-background hover:bg-background/10"
               onClick={() => setMenuOpen(true)}
               size="icon"
               variant="ghost"
@@ -43,7 +43,7 @@ export function UnifiedHeader() {
             </Button>
 
             <Link className="-translate-x-1/2 absolute left-1/2" href="/">
-              <span className="font-bold text-white text-xl">Threadly</span>
+              <span className="font-bold text-background text-xl">Threadly</span>
             </Link>
 
             <UserActions
@@ -56,10 +56,10 @@ export function UnifiedHeader() {
           {/* Desktop Layout */}
           <div className="hidden w-full items-center justify-between md:flex">
             <Link className="flex items-center space-x-2" href="/">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-black">
-                <span className="font-bold text-lg text-white">T</span>
+              <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-lg)] bg-foreground">
+                <span className="font-bold text-lg text-background">T</span>
               </div>
-              <span className="font-bold text-black text-xl">Threadly</span>
+              <span className="font-bold text-foreground text-xl">Threadly</span>
             </Link>
 
             <SearchBar

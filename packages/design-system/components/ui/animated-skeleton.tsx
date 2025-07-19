@@ -31,7 +31,7 @@ export function AnimatedSkeleton({
       key={i}
       className={cn(
         animationClass,
-        circle && 'rounded-full',
+        circle && 'rounded-[var(--radius-full)]',
         className
       )}
       style={{
@@ -49,7 +49,7 @@ export function AnimatedSkeleton({
 export function ProductCardSkeleton() {
   return (
     <div className="space-y-3">
-      <AnimatedSkeleton height={300} className="rounded-lg" />
+      <AnimatedSkeleton height={300} className="rounded-[var(--radius-lg)]" />
       <div className="space-y-2">
         <AnimatedSkeleton height={20} width="80%" />
         <AnimatedSkeleton height={16} width="60%" />

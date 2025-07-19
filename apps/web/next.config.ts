@@ -106,7 +106,7 @@ nextConfig.headers = async () => {
         },
         {
           key: 'Content-Security-Policy',
-          value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://maps.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https:; frame-src https://js.stripe.com https://hooks.stripe.com;",
+          value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://maps.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https: https://uploadthing.com https://utfs.io wss://uploadthing.com; frame-src https://js.stripe.com https://hooks.stripe.com;",
         },
       ],
     },

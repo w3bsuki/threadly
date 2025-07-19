@@ -22,11 +22,11 @@ interface ImageUploadLazyProps {
 function ImageUploadSkeleton() {
   return (
     <div className="space-y-4">
-      <Skeleton className="h-48 w-full rounded-lg" />
+      <Skeleton className="h-48 w-full rounded-[var(--radius-lg)]" />
       <div className="flex space-x-2">
-        <Skeleton className="h-16 w-16 rounded-md" />
-        <Skeleton className="h-16 w-16 rounded-md" />
-        <Skeleton className="h-16 w-16 rounded-md" />
+        <Skeleton className="h-16 w-16 rounded-[var(--radius-md)]" />
+        <Skeleton className="h-16 w-16 rounded-[var(--radius-md)]" />
+        <Skeleton className="h-16 w-16 rounded-[var(--radius-md)]" />
       </div>
     </div>
   );

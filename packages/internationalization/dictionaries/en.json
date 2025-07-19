@@ -29,7 +29,14 @@
         "savedItems": "Saved Items",
         "myCart": "My Cart",
         "howItWorks": "How It Works",
-        "helpAndSupport": "Help & Support"
+        "helpAndSupport": "Help & Support",
+        "home": "Home"
+      },
+      "promotionalBanner": {
+        "freeShipping": "Free shipping on orders over $50",
+        "newArrivals": "New arrivals daily from verified sellers",
+        "securePayments": "Secure payments & buyer protection",
+        "joinCommunity": "Join 10,000+ fashion lovers"
       },
       "subCategories": {
         "tshirts": "T-shirts",
@@ -365,6 +372,8 @@
       "dashboard": "Dashboard",
       "orders": "Orders",
       "listings": "Listings",
+      "business": "Business",
+      "reviews": "Reviews",
       "messages": "Messages",
       "analytics": "Analytics",
       "settings": "Settings",

@@ -127,7 +127,7 @@ export class PaymentErrorBoundary extends Component<Props, State> {
         <div className="min-h-[400px] flex items-center justify-center p-4">
           <Card className="max-w-md w-full">
             <CardHeader className="text-center">
-              <div className="mx-auto w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mb-4">
+              <div className="mx-auto w-12 h-12 bg-destructive/10 rounded-[var(--radius-full)] flex items-center justify-center mb-4">
                 <CreditCard className="h-6 w-6 text-destructive" />
               </div>
               <CardTitle className="text-lg">{errorMessage.title}</CardTitle>
@@ -145,7 +145,7 @@ export class PaymentErrorBoundary extends Component<Props, State> {
               </Alert>
 
               {this.props.productTitle && (
-                <div className="text-center p-3 bg-muted rounded-lg">
+                <div className="text-center p-3 bg-muted rounded-[var(--radius-lg)]">
                   <p className="text-sm text-muted-foreground">Item:</p>
                   <p className="font-medium">{this.props.productTitle}</p>
                 </div>

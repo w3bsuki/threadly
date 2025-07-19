@@ -123,7 +123,7 @@ export function MessageInput({
   };
 
   return (
-    <div className="border-t bg-white p-4">
+    <div className="border-t bg-background p-4">
       <div className="flex items-end gap-2">
         {/* Attachment button */}
         <div className="flex flex-col gap-1">
@@ -155,7 +155,7 @@ export function MessageInput({
             placeholder={placeholder}
             disabled={isSending}
             className={cn(
-              'min-h-[40px] max-h-[120px] resize-none border-gray-200 focus:border-blue-500 focus:ring-blue-500',
+              'min-h-[40px] max-h-[120px] resize-none border-border focus:border-blue-500 focus:ring-blue-500',
               'pr-12 py-2'
             )}
             rows={1}
@@ -166,7 +166,7 @@ export function MessageInput({
             <span
               className={cn(
                 'absolute bottom-2 right-2 text-xs',
-                content.length > 1000 ? 'text-red-500' : 'text-gray-400'
+                content.length > 1000 ? 'text-red-500' : 'text-muted-foreground'
               )}
             >
               {content.length}/1000
@@ -187,14 +187,14 @@ export function MessageInput({
 
       {/* Upload progress */}
       {isUploading && (
-        <div className="mt-2 flex items-center gap-2 text-sm text-gray-600">
-          <div className="animate-spin h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full" />
+        <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="animate-spin h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-[var(--radius-full)]" />
           Uploading image...
         </div>
       )}
 
       {/* Tips */}
-      <div className="mt-2 text-xs text-gray-500">
+      <div className="mt-2 text-xs text-muted-foreground">
         Press Enter to send • Shift+Enter for new line
       </div>
     </div>

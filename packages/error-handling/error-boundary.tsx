@@ -118,7 +118,7 @@ export class ErrorBoundary extends Component<Props, State> {
       // If isolate is true, render the error in place without affecting the whole page
       if (isolate) {
         return (
-          <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
+          <div className="rounded-[var(--radius-lg)] border border-destructive/50 bg-destructive/10 p-4">
             <p className="text-sm font-medium text-destructive">
               Something went wrong in this section
             </p>

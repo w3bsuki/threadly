@@ -46,7 +46,7 @@ export const Testimonials = ({ dictionary }: TestimonialsProps) => {
             <h2 className="mb-4 font-bold text-3xl tracking-tight md:text-5xl">
               Why Choose Threadly?
             </h2>
-            <p className="mx-auto max-w-2xl text-gray-600 text-lg">
+            <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
               A marketplace built for fashion lovers who care about style,
               quality, and sustainability
             </p>
@@ -58,16 +58,16 @@ export const Testimonials = ({ dictionary }: TestimonialsProps) => {
               const IconComponent = value.icon;
               return (
                 <div
-                  className="hover:-translate-y-1 flex flex-col items-center rounded-2xl bg-white p-6 text-center shadow-lg transition-all duration-300 hover:shadow-xl"
+                  className="hover:-translate-y-1 flex flex-col items-center rounded-2xl bg-background p-6 text-center shadow-lg transition-all duration-300 hover:shadow-xl"
                   key={index}
                 >
-                  <div className={`rounded-full p-4 ${value.color} mb-4`}>
+                  <div className={`rounded-[var(--radius-full)] p-4 ${value.color} mb-4`}>
                     <IconComponent className="h-8 w-8" />
                   </div>
-                  <h3 className="mb-3 font-bold text-gray-900 text-lg">
+                  <h3 className="mb-3 font-bold text-foreground text-lg">
                     {value.title}
                   </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
+                  <p className="text-muted-foreground text-sm leading-relaxed">
                     {value.description}
                   </p>
                 </div>
@@ -77,10 +77,10 @@ export const Testimonials = ({ dictionary }: TestimonialsProps) => {
 
           {/* Call to Action */}
           <div className="text-center">
-            <p className="mb-4 text-gray-700 text-lg">
+            <p className="mb-4 text-secondary-foreground text-lg">
               Ready to discover your next favorite piece?
             </p>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               Join our growing community of fashion enthusiasts who prioritize
               quality and sustainability.
             </p>

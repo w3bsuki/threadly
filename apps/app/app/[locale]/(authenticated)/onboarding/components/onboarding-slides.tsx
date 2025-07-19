@@ -34,14 +34,14 @@ export const onboardingSlides: OnboardingSlide[] = [
       <div className="space-y-6">
         <div className="flex justify-center mb-8">
           <div className="relative">
-            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 animate-pulse" />
+            <div className="w-32 h-32 rounded-[var(--radius-full)] bg-gradient-to-br from-purple-500 to-pink-500 animate-pulse" />
             <Sparkles className="absolute top-0 right-0 w-8 h-8 text-yellow-400" />
           </div>
         </div>
         
         <div className="grid gap-4 md:grid-cols-3">
           <div className="text-center">
-            <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-purple-100 flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto mb-3 rounded-[var(--radius-full)] bg-purple-100 flex items-center justify-center">
               <Users className="w-8 h-8 text-purple-600" />
             </div>
             <h3 className="font-semibold mb-1">Trusted Community</h3>
@@ -49,7 +49,7 @@ export const onboardingSlides: OnboardingSlide[] = [
           </div>
           
           <div className="text-center">
-            <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-green-100 flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto mb-3 rounded-[var(--radius-full)] bg-green-100 flex items-center justify-center">
               <Shield className="w-8 h-8 text-green-600" />
             </div>
             <h3 className="font-semibold mb-1">100% Secure</h3>
@@ -57,7 +57,7 @@ export const onboardingSlides: OnboardingSlide[] = [
           </div>
           
           <div className="text-center">
-            <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-blue-100 flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto mb-3 rounded-[var(--radius-full)] bg-blue-100 flex items-center justify-center">
               <TrendingUp className="w-8 h-8 text-blue-600" />
             </div>
             <h3 className="font-semibold mb-1">Low Fees</h3>
@@ -74,7 +74,7 @@ export const onboardingSlides: OnboardingSlide[] = [
       <div className="space-y-4">
         <div className="grid gap-4">
           <div className="flex gap-4 items-start">
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+            <div className="flex-shrink-0 w-10 h-10 rounded-[var(--radius-full)] bg-blue-100 flex items-center justify-center">
               <span className="font-bold text-blue-600">1</span>
             </div>
             <div className="flex-1">
@@ -89,7 +89,7 @@ export const onboardingSlides: OnboardingSlide[] = [
           </div>
           
           <div className="flex gap-4 items-start">
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+            <div className="flex-shrink-0 w-10 h-10 rounded-[var(--radius-full)] bg-green-100 flex items-center justify-center">
               <span className="font-bold text-green-600">2</span>
             </div>
             <div className="flex-1">
@@ -104,7 +104,7 @@ export const onboardingSlides: OnboardingSlide[] = [
           </div>
           
           <div className="flex gap-4 items-start">
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+            <div className="flex-shrink-0 w-10 h-10 rounded-[var(--radius-full)] bg-purple-100 flex items-center justify-center">
               <span className="font-bold text-purple-600">3</span>
             </div>
             <div className="flex-1">
@@ -119,7 +119,7 @@ export const onboardingSlides: OnboardingSlide[] = [
           </div>
           
           <div className="flex gap-4 items-start">
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
+            <div className="flex-shrink-0 w-10 h-10 rounded-[var(--radius-full)] bg-yellow-100 flex items-center justify-center">
               <span className="font-bold text-yellow-600">4</span>
             </div>
             <div className="flex-1">
@@ -155,7 +155,7 @@ export const onboardingSlides: OnboardingSlide[] = [
       <div className="space-y-4">
         <div className="grid gap-4">
           <div className="flex gap-4 items-start">
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center">
+            <div className="flex-shrink-0 w-10 h-10 rounded-[var(--radius-full)] bg-pink-100 flex items-center justify-center">
               <span className="font-bold text-pink-600">1</span>
             </div>
             <div className="flex-1">
@@ -170,7 +170,7 @@ export const onboardingSlides: OnboardingSlide[] = [
           </div>
           
           <div className="flex gap-4 items-start">
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+            <div className="flex-shrink-0 w-10 h-10 rounded-[var(--radius-full)] bg-green-100 flex items-center justify-center">
               <span className="font-bold text-green-600">2</span>
             </div>
             <div className="flex-1">
@@ -185,7 +185,7 @@ export const onboardingSlides: OnboardingSlide[] = [
           </div>
           
           <div className="flex gap-4 items-start">
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+            <div className="flex-shrink-0 w-10 h-10 rounded-[var(--radius-full)] bg-blue-100 flex items-center justify-center">
               <span className="font-bold text-blue-600">3</span>
             </div>
             <div className="flex-1">
@@ -200,7 +200,7 @@ export const onboardingSlides: OnboardingSlide[] = [
           </div>
           
           <div className="flex gap-4 items-start">
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+            <div className="flex-shrink-0 w-10 h-10 rounded-[var(--radius-full)] bg-purple-100 flex items-center justify-center">
               <span className="font-bold text-purple-600">4</span>
             </div>
             <div className="flex-1">
@@ -319,7 +319,7 @@ export const onboardingSlides: OnboardingSlide[] = [
       <div className="space-y-6">
         <div className="flex justify-center mb-6">
           <div className="relative">
-            <div className="w-24 h-24 rounded-full bg-green-100 flex items-center justify-center">
+            <div className="w-24 h-24 rounded-[var(--radius-full)] bg-green-100 flex items-center justify-center">
               <CheckCircle className="w-12 h-12 text-green-600" />
             </div>
             <Sparkles className="absolute -top-2 -right-2 w-6 h-6 text-yellow-400" />
@@ -335,7 +335,7 @@ export const onboardingSlides: OnboardingSlide[] = [
           <Card className="border-2 hover:border-primary transition-colors cursor-pointer">
             <CardContent className="pt-6">
               <div className="text-center space-y-3">
-                <div className="w-16 h-16 mx-auto rounded-full bg-blue-100 flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto rounded-[var(--radius-full)] bg-blue-100 flex items-center justify-center">
                   <ShoppingBag className="w-8 h-8 text-blue-600" />
                 </div>
                 <h4 className="font-semibold">Start Shopping</h4>
@@ -353,7 +353,7 @@ export const onboardingSlides: OnboardingSlide[] = [
           <Card className="border-2 hover:border-primary transition-colors cursor-pointer">
             <CardContent className="pt-6">
               <div className="text-center space-y-3">
-                <div className="w-16 h-16 mx-auto rounded-full bg-green-100 flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto rounded-[var(--radius-full)] bg-green-100 flex items-center justify-center">
                   <Camera className="w-8 h-8 text-green-600" />
                 </div>
                 <h4 className="font-semibold">List Your First Item</h4>

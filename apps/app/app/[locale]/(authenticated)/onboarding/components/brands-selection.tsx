@@ -86,7 +86,7 @@ export function BrandsSelection({ selectedBrands, onSelect }: BrandsSelectionPro
           />
 
           {showSuggestions && filteredSuggestions.length > 0 && (
-            <div className="absolute z-10 w-full mt-1 bg-popover border rounded-md shadow-md max-h-48 overflow-y-auto">
+            <div className="absolute z-10 w-full mt-1 bg-popover border rounded-[var(--radius-md)] shadow-md max-h-48 overflow-y-auto">
               {filteredSuggestions.map((brand) => (
                 <button
                   key={brand}
@@ -111,7 +111,7 @@ export function BrandsSelection({ selectedBrands, onSelect }: BrandsSelectionPro
                 {brand}
                 <button
                   onClick={() => removeBrand(brand)}
-                  className="ml-2 p-0.5 hover:bg-background/20 rounded-full transition-colors"
+                  className="ml-2 p-0.5 hover:bg-background/20 rounded-[var(--radius-full)] transition-colors"
                 >
                   <X className="w-3 h-3" />
                 </button>

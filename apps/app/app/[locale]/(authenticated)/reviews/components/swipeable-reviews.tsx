@@ -117,7 +117,7 @@ export function SwipeableReviews({ reviews, className }: SwipeableReviewsProps) 
               key={index}
               onClick={() => goToReview(index)}
               className={cn(
-                "w-2 h-2 rounded-full transition-all",
+                "w-2 h-2 rounded-[var(--radius-full)] transition-all",
                 index === currentIndex
                   ? "bg-primary w-6"
                   : "bg-muted-foreground/30"
@@ -149,7 +149,7 @@ export function SwipeableReviews({ reviews, className }: SwipeableReviewsProps) 
         <button
           onClick={prevReview}
           className={cn(
-            "pointer-events-auto bg-background/80 backdrop-blur border rounded-full p-2 shadow-lg transition-opacity",
+            "pointer-events-auto bg-background/80 backdrop-blur border rounded-[var(--radius-full)] p-2 shadow-lg transition-opacity",
             currentIndex === 0 ? "opacity-0" : "opacity-100"
           )}
           disabled={currentIndex === 0}
@@ -160,7 +160,7 @@ export function SwipeableReviews({ reviews, className }: SwipeableReviewsProps) 
         <button
           onClick={nextReview}
           className={cn(
-            "pointer-events-auto bg-background/80 backdrop-blur border rounded-full p-2 shadow-lg transition-opacity",
+            "pointer-events-auto bg-background/80 backdrop-blur border rounded-[var(--radius-full)] p-2 shadow-lg transition-opacity",
             currentIndex === reviews.length - 1 ? "opacity-0" : "opacity-100"
           )}
           disabled={currentIndex === reviews.length - 1}

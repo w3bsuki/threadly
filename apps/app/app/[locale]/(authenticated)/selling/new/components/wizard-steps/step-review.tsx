@@ -56,7 +56,7 @@ export function StepReview({ form, categories }: StepReviewProps) {
                 <img
                   src={image}
                   alt={`Product ${index + 1}`}
-                  className="w-full h-full object-cover rounded-md"
+                  className="w-full h-full object-cover rounded-[var(--radius-md)]"
                 />
                 {index === 0 && (
                   <Badge className="absolute top-1 left-1 text-xs">Main</Badge>
@@ -148,7 +148,7 @@ export function StepReview({ form, categories }: StepReviewProps) {
         </CardContent>
       </Card>
 
-      <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+      <div className="bg-green-50 border border-green-200 p-4 rounded-[var(--radius-lg)]">
         <p className="text-sm text-green-800">
           🎉 <strong>Ready to go!</strong> Your listing looks great and is ready to publish. 
           Click "Publish Listing" to make it live for buyers to see.

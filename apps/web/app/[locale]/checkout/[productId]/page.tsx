@@ -79,10 +79,10 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
       <div className="container py-8">
         <div className="mx-auto max-w-4xl">
           <div className="mb-8">
-            <h1 className="font-bold text-3xl text-gray-900">
+            <h1 className="font-bold text-3xl text-foreground">
               Complete Your Purchase
             </h1>
-            <p className="mt-2 text-gray-600">
+            <p className="mt-2 text-muted-foreground">
               Secure checkout powered by Stripe
             </p>
           </div>

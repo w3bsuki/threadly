@@ -29,10 +29,10 @@ export function LoadingState({
 
   if (type === 'overlay') {
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-6 flex flex-col items-center space-y-4">
-          <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
-          {text && <p className="text-gray-600">{text}</p>}
+      <div className="fixed inset-0 bg-foreground/50 flex items-center justify-center z-50">
+        <div className="bg-background rounded-[var(--radius-lg)] p-6 flex flex-col items-center space-y-4">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          {text && <p className="text-muted-foreground">{text}</p>}
         </div>
       </div>
     );
@@ -40,8 +40,8 @@ export function LoadingState({
 
   return (
     <div className={cn('flex items-center justify-center', className)}>
-      <Loader2 className={cn('animate-spin text-gray-600', sizeClasses[size])} />
-      {text && <span className="ml-2 text-sm text-gray-600">{text}</span>}
+      <Loader2 className={cn('animate-spin text-muted-foreground', sizeClasses[size])} />
+      {text && <span className="ml-2 text-sm text-muted-foreground">{text}</span>}
     </div>
   );
 }
@@ -58,9 +58,9 @@ export function ProgressBar({
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
   
   return (
-    <div className={cn('w-full bg-gray-200 rounded-full h-2', className)}>
+    <div className={cn('w-full bg-accent rounded-[var(--radius-full)] h-2', className)}>
       <div 
-        className="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-out"
+        className="bg-blue-600 h-2 rounded-[var(--radius-full)] transition-all duration-300 ease-out"
         style={{ width: `${percentage}%` }}
       />
     </div>
@@ -81,6 +81,6 @@ export function Spinner({
   };
 
   return (
-    <Loader2 className={cn('animate-spin text-gray-600', sizeClasses[size], className)} />
+    <Loader2 className={cn('animate-spin text-muted-foreground', sizeClasses[size], className)} />
   );
 }

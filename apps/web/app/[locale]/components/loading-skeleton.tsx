@@ -11,7 +11,7 @@ export function Skeleton({ className, animate = true }: SkeletonProps) {
   return (
     <div
       className={cn(
-        'rounded-md bg-gray-200',
+        'rounded-[var(--radius-md)] bg-accent',
         animate && 'animate-pulse',
         className
       )}
@@ -64,7 +64,7 @@ export function ProductListSkeleton() {
     <div className="space-y-4">
       {Array.from({ length: 6 }, (_, i) => (
         <div className="flex space-x-4" key={i}>
-          <Skeleton className="h-24 w-24 rounded-md" />
+          <Skeleton className="h-24 w-24 rounded-[var(--radius-md)]" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-1/2" />
             <Skeleton className="h-4 w-1/3" />
@@ -81,8 +81,8 @@ export function HeaderSkeleton() {
     <div className="flex items-center justify-between p-4">
       <Skeleton className="h-8 w-32" />
       <div className="flex items-center space-x-2">
-        <Skeleton className="h-8 w-8 rounded-full" />
-        <Skeleton className="h-8 w-8 rounded-full" />
+        <Skeleton className="h-8 w-8 rounded-[var(--radius-full)]" />
+        <Skeleton className="h-8 w-8 rounded-[var(--radius-full)]" />
       </div>
     </div>
   );
@@ -128,10 +128,10 @@ export function CartSkeleton() {
     <div className="space-y-4">
       {Array.from({ length: 3 }, (_, i) => (
         <div
-          className="flex items-center space-x-4 rounded-lg border p-4"
+          className="flex items-center space-x-4 rounded-[var(--radius-lg)] border p-4"
           key={i}
         >
-          <Skeleton className="h-16 w-16 rounded-md" />
+          <Skeleton className="h-16 w-16 rounded-[var(--radius-md)]" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-1/2" />
             <Skeleton className="h-4 w-1/3" />

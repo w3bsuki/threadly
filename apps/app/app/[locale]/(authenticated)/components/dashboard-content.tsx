@@ -54,8 +54,8 @@ export function DashboardContent({ user, dictionary, metrics, recentOrders }: Da
       
       {/* Clean Header */}
       <div>
-        <h1 className="text-3xl font-bold text-black">{dictionary.dashboard.dashboard.title}</h1>
-        <p className="text-gray-500 mt-1">
+        <h1 className="text-3xl font-bold text-foreground">{dictionary.dashboard.dashboard.title}</h1>
+        <p className="text-muted-foreground mt-1">
           {dictionary.dashboard.dashboard.welcomeMessage.replace('{{name}}', user.firstName || '')}
         </p>
       </div>
@@ -64,14 +64,14 @@ export function DashboardContent({ user, dictionary, metrics, recentOrders }: Da
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="border border-gray-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-700">{dictionary.dashboard.dashboard.metrics.totalRevenue}</CardTitle>
-            <DollarSignIcon className="h-4 w-4 text-gray-400" />
+            <CardTitle className="text-sm font-medium text-secondary-foreground">{dictionary.dashboard.dashboard.metrics.totalRevenue}</CardTitle>
+            <DollarSignIcon className="h-4 w-4 text-muted-foreground/70" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-black">
+            <div className="text-2xl font-bold text-foreground">
               ${((totalRevenue || 0) / 100).toFixed(2)}
             </div>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               {completedSales} {dictionary.dashboard.dashboard.metrics.completedSales}
             </p>
           </CardContent>
@@ -79,12 +79,12 @@ export function DashboardContent({ user, dictionary, metrics, recentOrders }: Da
 
         <Card className="border border-gray-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-700">{dictionary.dashboard.dashboard.metrics.activeListings}</CardTitle>
-            <PackageIcon className="h-4 w-4 text-gray-400" />
+            <CardTitle className="text-sm font-medium text-secondary-foreground">{dictionary.dashboard.dashboard.metrics.activeListings}</CardTitle>
+            <PackageIcon className="h-4 w-4 text-muted-foreground/70" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-black">{activeListings}</div>
-            <p className="text-xs text-gray-500">
+            <div className="text-2xl font-bold text-foreground">{activeListings}</div>
+            <p className="text-xs text-muted-foreground">
               {dictionary.dashboard.dashboard.metrics.itemsCurrentlyForSale}
             </p>
           </CardContent>
@@ -92,12 +92,12 @@ export function DashboardContent({ user, dictionary, metrics, recentOrders }: Da
 
         <Card className="border border-gray-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-700">{dictionary.dashboard.dashboard.metrics.messages}</CardTitle>
-            <MessageCircleIcon className="h-4 w-4 text-gray-400" />
+            <CardTitle className="text-sm font-medium text-secondary-foreground">{dictionary.dashboard.dashboard.metrics.messages}</CardTitle>
+            <MessageCircleIcon className="h-4 w-4 text-muted-foreground/70" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-black">{unreadMessages}</div>
-            <p className="text-xs text-gray-500">
+            <div className="text-2xl font-bold text-foreground">{unreadMessages}</div>
+            <p className="text-xs text-muted-foreground">
               {dictionary.dashboard.dashboard.metrics.unreadMessages}
             </p>
           </CardContent>
@@ -105,12 +105,12 @@ export function DashboardContent({ user, dictionary, metrics, recentOrders }: Da
 
         <Card className="border border-gray-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-700">{dictionary.dashboard.dashboard.metrics.quickAction}</CardTitle>
-            <PlusIcon className="h-4 w-4 text-gray-400" />
+            <CardTitle className="text-sm font-medium text-secondary-foreground">{dictionary.dashboard.dashboard.metrics.quickAction}</CardTitle>
+            <PlusIcon className="h-4 w-4 text-muted-foreground/70" />
           </CardHeader>
           <CardContent>
             <Link href="/selling/new">
-              <Button className="w-full bg-black text-white hover:bg-gray-800">
+              <Button className="w-full bg-primary text-background hover:bg-primary/90">
                 <PlusIcon className="mr-2 h-4 w-4" />
                 {dictionary.dashboard.dashboard.actions.listNewItem}
               </Button>
@@ -132,7 +132,7 @@ export function DashboardContent({ user, dictionary, metrics, recentOrders }: Da
               <div className="space-y-4">
                 {recentOrders.map((order) => (
                   <div key={order.id} className="flex items-center space-x-4">
-                    <div className="h-12 w-12 rounded-md overflow-hidden bg-muted relative">
+                    <div className="h-12 w-12 rounded-[var(--radius-md)] overflow-hidden bg-muted relative">
                       <Image
                         src={order.product.images[0]?.imageUrl || ''}
                         alt={order.product.title}
@@ -200,30 +200,30 @@ export function DashboardContent({ user, dictionary, metrics, recentOrders }: Da
           <CardContent>
             <div className="space-y-2">
               <Link href="/selling/listings">
-                <Button variant="ghost" className="w-full justify-start hover:bg-gray-50">
+                <Button variant="ghost" className="w-full justify-start hover:bg-muted">
                   <PackageIcon className="mr-2 h-4 w-4" />
                   {dictionary.dashboard.dashboard.quickLinks.manageListings}
                 </Button>
               </Link>
               <Link href="/selling/history">
-                <Button variant="ghost" className="w-full justify-start hover:bg-gray-50">
+                <Button variant="ghost" className="w-full justify-start hover:bg-muted">
                   <TrendingUpIcon className="mr-2 h-4 w-4" />
                   {dictionary.dashboard.dashboard.quickLinks.salesHistory}
                 </Button>
               </Link>
               <Link href="/messages">
-                <Button variant="ghost" className="w-full justify-start hover:bg-gray-50">
+                <Button variant="ghost" className="w-full justify-start hover:bg-muted">
                   <MessageCircleIcon className="mr-2 h-4 w-4" />
                   {dictionary.dashboard.navigation.messages}
                   {unreadMessages > 0 && (
-                    <Badge className="ml-auto bg-black text-white">
+                    <Badge className="ml-auto bg-primary text-background">
                       {unreadMessages}
                     </Badge>
                   )}
                 </Button>
               </Link>
               <Link href="/profile">
-                <Button variant="ghost" className="w-full justify-start hover:bg-gray-50">
+                <Button variant="ghost" className="w-full justify-start hover:bg-muted">
                   <EyeIcon className="mr-2 h-4 w-4" />
                   {dictionary.dashboard.dashboard.quickLinks.profileSettings}
                 </Button>
@@ -243,7 +243,7 @@ export function DashboardContent({ user, dictionary, metrics, recentOrders }: Da
           <CardContent>
             <div className="grid gap-4 md:grid-cols-3">
               <div className="text-center">
-                <div className="rounded-full bg-primary/10 p-3 mx-auto w-fit">
+                <div className="rounded-[var(--radius-full)] bg-primary/10 p-3 mx-auto w-fit">
                   <PlusIcon className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="mt-2 font-semibold">{dictionary.dashboard.dashboard.gettingStarted.listFirstItem}</h3>
@@ -255,7 +255,7 @@ export function DashboardContent({ user, dictionary, metrics, recentOrders }: Da
                 </Link>
               </div>
               <div className="text-center">
-                <div className="rounded-full bg-primary/10 p-3 mx-auto w-fit">
+                <div className="rounded-[var(--radius-full)] bg-primary/10 p-3 mx-auto w-fit">
                   <HeartIcon className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="mt-2 font-semibold">{dictionary.dashboard.dashboard.gettingStarted.exploreShop}</h3>
@@ -273,7 +273,7 @@ export function DashboardContent({ user, dictionary, metrics, recentOrders }: Da
                 </a>
               </div>
               <div className="text-center">
-                <div className="rounded-full bg-primary/10 p-3 mx-auto w-fit">
+                <div className="rounded-[var(--radius-full)] bg-primary/10 p-3 mx-auto w-fit">
                   <EyeIcon className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="mt-2 font-semibold">{dictionary.dashboard.dashboard.gettingStarted.completeProfile}</h3>

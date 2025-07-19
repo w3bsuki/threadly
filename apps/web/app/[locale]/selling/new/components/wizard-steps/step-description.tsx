@@ -73,7 +73,7 @@ export function StepDescription({ form, categories }: StepDescriptionProps) {
         )}
       />
 
-      <div className="bg-muted/50 p-4 rounded-lg space-y-2">
+      <div className="bg-muted/50 p-4 rounded-[var(--radius-lg)] space-y-2">
         <p className="text-sm font-medium">💡 Writing Tips:</p>
         <ul className="text-sm text-muted-foreground space-y-1">
           <li>• Mention brand, size, and condition upfront</li>

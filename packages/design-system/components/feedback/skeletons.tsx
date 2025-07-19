@@ -10,7 +10,7 @@ export function LoadingSpinner({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
   };
 
   return (
-    <div className={cn("animate-spin rounded-full border-2 border-gray-300 border-t-black", sizeClasses[size])} />
+    <div className={cn("animate-spin rounded-[var(--radius-full)] border-2 border-border border-t-black", sizeClasses[size])} />
   );
 }
 
@@ -43,10 +43,10 @@ export function LoadingButton({
 // Page loading overlay
 export function PageLoadingOverlay() {
   return (
-    <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
       <div className="text-center space-y-4">
         <LoadingSpinner size="lg" />
-        <p className="text-gray-600">Loading...</p>
+        <p className="text-muted-foreground">Loading...</p>
       </div>
     </div>
   );
@@ -65,9 +65,9 @@ export function ListSkeleton({
   return (
     <div className="space-y-4">
       {Array.from({ length: items }).map((_, i) => (
-        <div key={i} className="flex items-start space-x-3 p-4 border border-gray-200 rounded-lg">
-          {showAvatar && <Skeleton className="h-10 w-10 rounded-full" />}
-          {showImage && <Skeleton className="h-16 w-16 rounded-lg" />}
+        <div key={i} className="flex items-start space-x-3 p-4 border border-border rounded-[var(--radius-lg)]">
+          {showAvatar && <Skeleton className="h-10 w-10 rounded-[var(--radius-full)]" />}
+          {showImage && <Skeleton className="h-16 w-16 rounded-[var(--radius-lg)]" />}
           <div className="flex-1 space-y-2">
             <div className="flex items-center justify-between">
               <Skeleton className="h-4 w-24" />
@@ -85,7 +85,7 @@ export function ListSkeleton({
 // Table skeleton
 export function TableSkeleton({ rows = 5, cols = 4 }: { rows?: number; cols?: number }) {
   return (
-    <div className="border rounded-lg overflow-hidden">
+    <div className="border rounded-[var(--radius-lg)] overflow-hidden">
       {/* Header */}
       <div className="border-b p-4 bg-muted/50">
         <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
@@ -102,7 +102,7 @@ export function TableSkeleton({ rows = 5, cols = 4 }: { rows?: number; cols?: nu
             <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
               {Array.from({ length: cols }).map((_, j) => (
                 <div key={j} className="flex items-center gap-2">
-                  {j === 0 && <Skeleton className="h-8 w-8 rounded-full" />}
+                  {j === 0 && <Skeleton className="h-8 w-8 rounded-[var(--radius-full)]" />}
                   <Skeleton className="h-4 flex-1" />
                 </div>
               ))}
@@ -120,7 +120,7 @@ export function ProfileSkeleton() {
     <div className="space-y-8">
       {/* Profile header */}
       <div className="flex items-start space-x-6">
-        <Skeleton className="h-24 w-24 rounded-full" />
+        <Skeleton className="h-24 w-24 rounded-[var(--radius-full)]" />
         <div className="flex-1 space-y-3">
           <Skeleton className="h-6 w-48" />
           <Skeleton className="h-4 w-32" />
@@ -157,7 +157,7 @@ export function DashboardSkeleton() {
       {/* Stats cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="border border-gray-200 rounded-lg p-6 space-y-3">
+          <div key={i} className="border border-border rounded-[var(--radius-lg)] p-6 space-y-3">
             <div className="flex items-center justify-between">
               <Skeleton className="h-4 w-20" />
               <Skeleton className="h-4 w-4" />
@@ -182,8 +182,8 @@ export function NotificationSkeleton() {
   return (
     <div className="space-y-3">
       {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className="flex items-start gap-3 p-3 border rounded-lg">
-          <Skeleton className="h-8 w-8 rounded-full" />
+        <div key={i} className="flex items-start gap-3 p-3 border rounded-[var(--radius-lg)]">
+          <Skeleton className="h-8 w-8 rounded-[var(--radius-full)]" />
           <div className="flex-1 space-y-1">
             <Skeleton className="h-4 w-3/4" />
             <Skeleton className="h-3 w-1/2" />

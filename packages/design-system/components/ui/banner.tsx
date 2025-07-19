@@ -19,7 +19,7 @@ interface BannerProps {
 
 const bannerVariants = {
   default: 'bg-muted border-border text-foreground',
-  success: 'bg-green-50 border-green-200 text-green-800',
+  success: 'bg-blue-600 border-blue-700 text-white',
   info: 'bg-blue-50 border-blue-200 text-blue-800',
   warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
 };
@@ -33,12 +33,14 @@ export function Banner({
   className,
 }: BannerProps) {
   return (
-    <div className={cn(bannerVariants[variant], 'border-b', className)}>
-      <div className="max-w-7xl mx-auto px-4 py-2">
+    <div className={cn(bannerVariants[variant], 'border-b overflow-hidden', className)}>
+      <div className="max-w-7xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 flex-1 min-w-0">
-            {icon && <div className="shrink-0">{icon}</div>}
-            <div className="text-sm font-medium truncate">{children}</div>
+          <div className="flex items-center gap-2 flex-1 min-w-0 overflow-hidden">
+            {icon && <div className="shrink-0 text-xl">{icon}</div>}
+            <div className="text-lg font-semibold whitespace-nowrap animate-[scroll_15s_linear_infinite]">
+              {children}
+            </div>
           </div>
           
           <div className="flex items-center gap-2 shrink-0">
@@ -58,7 +60,7 @@ export function Banner({
                 variant="ghost"
                 size="sm"
                 onClick={onDismiss}
-                className="h-6 w-6 p-0 hover:bg-black/10"
+                className="h-6 w-6 p-0 hover:bg-white/20 text-white"
                 aria-label="Dismiss banner"
               >
                 <X className="h-3 w-3" />

@@ -86,7 +86,7 @@ export function AnimatedToastDemo() {
             description: 'Your action was completed successfully.',
           })
         }
-        className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+        className="px-4 py-2 bg-green-500 text-background rounded hover:bg-green-600 transition-colors"
       >
         Show Success
       </button>
@@ -100,7 +100,7 @@ export function AnimatedToastDemo() {
             },
           })
         }
-        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+        className="px-4 py-2 bg-red-500 text-background rounded hover:bg-red-600 transition-colors"
       >
         Show Error
       </button>

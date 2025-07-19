@@ -37,10 +37,10 @@ export default function GlobalError({ error, reset }: GlobalErrorProps): React.J
   return (
     <html lang="en" className={fonts}>
       <body>
-        <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4">
+        <div className="flex min-h-screen flex-col items-center justify-center bg-muted px-4">
           <div className="w-full max-w-md space-y-6 text-center">
             {/* Error Icon */}
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[var(--radius-full)] bg-red-100">
               <svg
                 className="h-8 w-8 text-red-600"
                 fill="none"
@@ -59,21 +59,21 @@ export default function GlobalError({ error, reset }: GlobalErrorProps): React.J
 
             {/* Error Message */}
             <div className="space-y-2">
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-foreground">
                 Dashboard Error
               </h1>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 We've encountered an issue with your seller dashboard. Our technical team has been notified and is working to resolve this immediately.
               </p>
             </div>
 
             {/* Error Details */}
             {error.digest && (
-              <div className="rounded-lg bg-gray-100 p-3">
-                <p className="text-sm text-gray-600">
+              <div className="rounded-[var(--radius-lg)] bg-secondary p-3">
+                <p className="text-sm text-muted-foreground">
                   <strong>Error ID:</strong> {error.digest}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Please include this ID if contacting support.
                 </p>
               </div>
@@ -109,7 +109,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps): React.J
             </div>
 
             {/* Support Information */}
-            <div className="rounded-lg bg-blue-50 p-4 text-sm">
+            <div className="rounded-[var(--radius-lg)] bg-blue-50 p-4 text-sm">
               <p className="text-blue-800">
                 <strong>Need immediate help?</strong>
               </p>
@@ -121,10 +121,10 @@ export default function GlobalError({ error, reset }: GlobalErrorProps): React.J
             {/* Error Details for Development */}
             {process.env.NODE_ENV === 'development' && (
               <details className="mt-6 text-left">
-                <summary className="cursor-pointer text-sm text-gray-500">
+                <summary className="cursor-pointer text-sm text-muted-foreground">
                   Error details (development only)
                 </summary>
-                <pre className="mt-2 overflow-auto rounded bg-gray-100 p-3 text-xs text-gray-700">
+                <pre className="mt-2 overflow-auto rounded bg-secondary p-3 text-xs text-secondary-foreground">
                   {error.message}
                   {error.stack && `\n\n${error.stack}`}
                 </pre>

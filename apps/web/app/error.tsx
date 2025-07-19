@@ -17,19 +17,19 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-muted">
       <div className="max-w-md w-full text-center px-6">
         <div className="mb-8">
           <div className="flex justify-center mb-4">
             <AlertTriangle className="h-16 w-16 text-red-500" />
           </div>
-          <h1 className="text-3xl font-semibold text-gray-900">Something went wrong</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-3xl font-semibold text-foreground">Something went wrong</h1>
+          <p className="text-muted-foreground mt-2">
             We encountered an unexpected error. Please try again or contact support if the problem persists.
           </p>
           
           {error.digest && (
-            <p className="text-sm text-gray-500 mt-2">
+            <p className="text-sm text-muted-foreground mt-2">
               Error ID: {error.digest}
             </p>
           )}
@@ -54,7 +54,7 @@ export default function Error({
           </Button>
         </div>
         
-        <div className="mt-12 text-sm text-gray-500">
+        <div className="mt-12 text-sm text-muted-foreground">
           <p>
             If this error persists, please{' '}
             <Link href="/contact" className="text-blue-600 hover:underline">

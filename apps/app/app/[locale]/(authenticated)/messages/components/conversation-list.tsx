@@ -181,7 +181,7 @@ export const ConversationList = memo(({
                 return (
                   <div
                     key={conversation.id}
-                    className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors hover:bg-muted/50 ${
+                    className={`flex items-center gap-3 p-3 rounded-[var(--radius-lg)] cursor-pointer transition-colors hover:bg-muted/50 ${
                       selectedConversationId === conversation.id ? 'bg-muted' : ''
                     }`}
                     onClick={() => onSelectConversation(conversation)}
@@ -270,7 +270,7 @@ export const ConversationList = memo(({
                   >
                     <div className="p-4">
                       <div
-                        className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors hover:bg-muted/50 ${
+                        className={`flex items-center gap-3 p-3 rounded-[var(--radius-lg)] cursor-pointer transition-colors hover:bg-muted/50 ${
                           selectedConversationId === conversation.id ? 'bg-muted' : ''
                         }`}
                         onClick={() => onSelectConversation(conversation)}

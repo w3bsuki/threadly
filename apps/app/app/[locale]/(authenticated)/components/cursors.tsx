@@ -35,7 +35,7 @@ const Cursor = ({
       />
     </svg>
     <div
-      className="absolute top-4 left-1.5 whitespace-nowrap rounded-full px-2 py-0.5 text-white text-xs"
+      className="absolute top-4 left-1.5 whitespace-nowrap rounded-[var(--radius-full)] px-2 py-0.5 text-background text-xs"
       style={{
         backgroundColor: color,
       }}

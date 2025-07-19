@@ -38,7 +38,7 @@ export default function RegionSelectorDemo() {
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Current Settings */}
-          <div className="rounded-lg border bg-muted/50 p-4">
+          <div className="rounded-[var(--radius-lg)] border bg-muted/50 p-4">
             <h3 className="mb-2 font-semibold">Current Settings</h3>
             <div className="space-y-1 text-sm">
               <p>
@@ -72,7 +72,7 @@ export default function RegionSelectorDemo() {
             <h3 className="mb-3 font-semibold">Price Display Examples</h3>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {demoProducts.map((product) => (
-                <div className="rounded-lg border p-3" key={product.name}>
+                <div className="rounded-[var(--radius-lg)] border p-3" key={product.name}>
                   <p className="font-medium text-sm">{product.name}</p>
                   <p className="mt-1 font-bold text-lg">
                     {formatPrice(product.price)}
@@ -83,7 +83,7 @@ export default function RegionSelectorDemo() {
           </div>
 
           {/* Features */}
-          <div className="rounded-lg border p-4">
+          <div className="rounded-[var(--radius-lg)] border p-4">
             <h3 className="mb-2 font-semibold">Features Implemented</h3>
             <ul className="space-y-1 text-muted-foreground text-sm">
               <li>✓ Bulgarian (BGN) and Ukrainian (UAH) currency support</li>

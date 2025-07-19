@@ -93,7 +93,7 @@ const BlogPost = async ({ params }: BlogPostProperties) => {
               {post.image ? (
                 <Image
                   alt={post.image.alt ?? ''}
-                  className="my-16 h-full w-full rounded-xl"
+                  className="my-16 h-full w-full rounded-[var(--radius-xl)]"
                   height={post.image.height}
                   priority
                   src={post.image.url}

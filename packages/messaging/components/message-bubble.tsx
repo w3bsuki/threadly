@@ -52,8 +52,8 @@ export const MessageBubble = memo<MessageBubbleProps>(function MessageBubble({
           className={cn(
             'relative rounded-2xl px-4 py-2 max-w-sm break-words',
             isOwn
-              ? 'bg-blue-600 text-white rounded-br-md'
-              : 'bg-gray-100 text-gray-900 rounded-bl-md',
+              ? 'bg-blue-600 text-background rounded-br-md'
+              : 'bg-secondary text-foreground rounded-bl-md',
             isSending && 'opacity-60',
             isFailed && 'bg-red-100 border border-red-200'
           )}
@@ -64,7 +64,7 @@ export const MessageBubble = memo<MessageBubbleProps>(function MessageBubble({
               <img
                 src={message.imageUrl}
                 alt="Shared image"
-                className="rounded-lg max-w-full h-auto max-h-64 object-cover"
+                className="rounded-[var(--radius-lg)] max-w-full h-auto max-h-64 object-cover"
                 loading="lazy"
               />
             </div>
@@ -78,9 +78,9 @@ export const MessageBubble = memo<MessageBubbleProps>(function MessageBubble({
             <div className="flex items-center gap-1 mt-1">
               {isSending && (
                 <div className="flex gap-1">
-                  <div className="w-1 h-1 bg-white/60 rounded-full animate-pulse" />
-                  <div className="w-1 h-1 bg-white/60 rounded-full animate-pulse delay-75" />
-                  <div className="w-1 h-1 bg-white/60 rounded-full animate-pulse delay-150" />
+                  <div className="w-1 h-1 bg-background/60 rounded-[var(--radius-full)] animate-pulse" />
+                  <div className="w-1 h-1 bg-background/60 rounded-[var(--radius-full)] animate-pulse delay-75" />
+                  <div className="w-1 h-1 bg-background/60 rounded-[var(--radius-full)] animate-pulse delay-150" />
                 </div>
               )}
               {isFailed && (
@@ -92,7 +92,7 @@ export const MessageBubble = memo<MessageBubbleProps>(function MessageBubble({
                 <div className="flex gap-0.5">
                   <div
                     className={cn(
-                      'w-3 h-3 text-white/60',
+                      'w-3 h-3 text-background/60',
                       message.read && 'text-blue-200'
                     )}
                   >
@@ -111,7 +111,7 @@ export const MessageBubble = memo<MessageBubbleProps>(function MessageBubble({
         {showTimestamp && (
           <span
             className={cn(
-              'text-xs text-gray-500 px-2',
+              'text-xs text-muted-foreground px-2',
               isOwn && 'text-right'
             )}
           >

@@ -35,8 +35,8 @@ export function SearchFilters({
   return (
     <div className={`space-y-6 ${className}`}>
       {filters.map((filterGroup) => (
-        <div key={filterGroup.key} className="border-b border-gray-200 pb-4">
-          <h3 className="font-medium text-gray-900 mb-3">{filterGroup.label}</h3>
+        <div key={filterGroup.key} className="border-b border-border pb-4">
+          <h3 className="font-medium text-foreground mb-3">{filterGroup.label}</h3>
           
           {filterGroup.type === 'checkbox' && (
             <div className="space-y-2">
@@ -52,9 +52,9 @@ export function SearchFilters({
                         : currentValues.filter((v: any) => v !== option.value);
                       handleFilterChange(filterGroup.key, newValues);
                     }}
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                    className="h-4 w-4 text-blue-600 border-border rounded"
                   />
-                  <span className="ml-2 text-sm text-gray-700">{option.label}</span>
+                  <span className="ml-2 text-sm text-secondary-foreground">{option.label}</span>
                 </label>
               ))}
             </div>
@@ -69,9 +69,9 @@ export function SearchFilters({
                     name={filterGroup.key}
                     checked={selectedFilters[filterGroup.key] === option.value}
                     onChange={() => handleFilterChange(filterGroup.key, option.value)}
-                    className="h-4 w-4 text-blue-600 border-gray-300"
+                    className="h-4 w-4 text-blue-600 border-border"
                   />
-                  <span className="ml-2 text-sm text-gray-700">{option.label}</span>
+                  <span className="ml-2 text-sm text-secondary-foreground">{option.label}</span>
                 </label>
               ))}
             </div>
@@ -85,9 +85,9 @@ export function SearchFilters({
                 max={filterGroup.options[filterGroup.options.length - 1]?.value || 100}
                 value={selectedFilters[filterGroup.key] || 0}
                 onChange={(e) => handleFilterChange(filterGroup.key, Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                className="w-full h-2 bg-accent rounded-[var(--radius-lg)] appearance-none cursor-pointer"
               />
-              <div className="flex justify-between text-xs text-gray-500">
+              <div className="flex justify-between text-xs text-muted-foreground">
                 <span>{filterGroup.options[0]?.label}</span>
                 <span>{filterGroup.options[filterGroup.options.length - 1]?.label}</span>
               </div>

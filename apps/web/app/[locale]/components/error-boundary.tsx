@@ -62,10 +62,10 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="mb-4">
               <AlertCircle className="mx-auto h-12 w-12 text-red-500" />
             </div>
-            <h2 className="mb-2 font-semibold text-gray-900 text-xl">
+            <h2 className="mb-2 font-semibold text-foreground text-xl">
               Something went wrong
             </h2>
-            <p className="mb-6 text-gray-600">
+            <p className="mb-6 text-muted-foreground">
               We're sorry, but something unexpected happened. Please try
               refreshing the page or go back to the homepage.
             </p>
@@ -90,10 +90,10 @@ export class ErrorBoundary extends Component<Props, State> {
 
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <details className="mt-6 text-left">
-                <summary className="cursor-pointer text-gray-500 text-sm hover:text-gray-700">
+                <summary className="cursor-pointer text-muted-foreground text-sm hover:text-secondary-foreground">
                   Error Details (Development)
                 </summary>
-                <pre className="mt-2 overflow-auto rounded bg-gray-100 p-2 text-xs">
+                <pre className="mt-2 overflow-auto rounded bg-secondary p-2 text-xs">
                   {this.state.error.stack}
                 </pre>
               </details>
@@ -110,10 +110,10 @@ export class ErrorBoundary extends Component<Props, State> {
 // Simplified error fallback components
 export function ProductErrorFallback({ onRetry }: { onRetry?: () => void }) {
   return (
-    <div className="flex aspect-square items-center justify-center rounded-lg bg-gray-100">
+    <div className="flex aspect-square items-center justify-center rounded-[var(--radius-lg)] bg-secondary">
       <div className="p-4 text-center">
-        <AlertCircle className="mx-auto mb-2 h-8 w-8 text-gray-400" />
-        <p className="mb-3 text-gray-500 text-sm">Failed to load product</p>
+        <AlertCircle className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
+        <p className="mb-3 text-muted-foreground text-sm">Failed to load product</p>
         {onRetry && (
           <Button onClick={onRetry} size="sm" variant="outline">
             <RefreshCw className="mr-1 h-3 w-3" />
@@ -134,11 +134,11 @@ export function ImageErrorFallback({
 }) {
   return (
     <div
-      className={`flex items-center justify-center bg-gray-100 ${className}`}
+      className={`flex items-center justify-center bg-secondary ${className}`}
     >
       <div className="p-4 text-center">
-        <AlertCircle className="mx-auto mb-1 h-6 w-6 text-gray-400" />
-        <p className="text-gray-500 text-xs">Image unavailable</p>
+        <AlertCircle className="mx-auto mb-1 h-6 w-6 text-muted-foreground" />
+        <p className="text-muted-foreground text-xs">Image unavailable</p>
       </div>
     </div>
   );
@@ -147,9 +147,9 @@ export function ImageErrorFallback({
 export function SearchErrorFallback({ onRetry }: { onRetry?: () => void }) {
   return (
     <div className="py-12 text-center">
-      <AlertCircle className="mx-auto mb-4 h-12 w-12 text-gray-400" />
-      <h3 className="mb-2 font-medium text-gray-900 text-lg">Search failed</h3>
-      <p className="mb-6 text-gray-600">
+      <AlertCircle className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+      <h3 className="mb-2 font-medium text-foreground text-lg">Search failed</h3>
+      <p className="mb-6 text-muted-foreground">
         We couldn't complete your search. Please try again.
       </p>
       {onRetry && (

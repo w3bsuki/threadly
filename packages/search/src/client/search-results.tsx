@@ -32,8 +32,8 @@ export function SearchResults({
   if (isLoading) {
     return (
       <div className={`flex justify-center items-center py-8 ${className}`}>
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-        <span className="ml-2 text-gray-600">Searching...</span>
+        <div className="animate-spin rounded-[var(--radius-full)] h-8 w-8 border-b-2 border-blue-500"></div>
+        <span className="ml-2 text-muted-foreground">Searching...</span>
       </div>
     );
   }
@@ -41,7 +41,7 @@ export function SearchResults({
   if (error) {
     return (
       <div className={`text-center py-8 ${className}`}>
-        <div className="text-red-600 bg-red-50 border border-red-200 rounded-md p-4">
+        <div className="text-red-600 bg-red-50 border border-red-200 rounded-[var(--radius-md)] p-4">
           <p className="font-medium">Search Error</p>
           <p className="text-sm mt-1">{error}</p>
         </div>
@@ -52,7 +52,7 @@ export function SearchResults({
   if (results.length === 0) {
     return (
       <div className={`text-center py-8 ${className}`}>
-        <div className="text-gray-500">
+        <div className="text-muted-foreground">
           <p className="text-lg font-medium">No results found</p>
           <p className="text-sm mt-1">Try adjusting your search terms or filters</p>
         </div>
@@ -62,7 +62,7 @@ export function SearchResults({
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <div className="text-sm text-gray-600 mb-4">
+      <div className="text-sm text-muted-foreground mb-4">
         {results.length} result{results.length !== 1 ? 's' : ''} found
       </div>
       
@@ -70,7 +70,7 @@ export function SearchResults({
         {results.map((result) => (
           <div
             key={result.id}
-            className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+            className="border border-border rounded-[var(--radius-lg)] p-4 hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => onResultClick?.(result)}
           >
             {renderResult ? (
@@ -92,21 +92,21 @@ function DefaultResultCard({ result }: { result: SearchResult }) {
         <img
           src={result.imageUrl}
           alt={result.title}
-          className="w-16 h-16 object-cover rounded-md flex-shrink-0"
+          className="w-16 h-16 object-cover rounded-[var(--radius-md)] flex-shrink-0"
         />
       )}
       <div className="flex-1 min-w-0">
-        <h3 className="text-lg font-medium text-gray-900 truncate">
+        <h3 className="text-lg font-medium text-foreground truncate">
           {result.title}
         </h3>
         {result.description && (
-          <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
             {result.description}
           </p>
         )}
         <div className="flex items-center justify-between mt-2">
           {result.category && (
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-[var(--radius-full)] text-xs font-medium bg-secondary text-secondary-foreground">
               {result.category}
             </span>
           )}

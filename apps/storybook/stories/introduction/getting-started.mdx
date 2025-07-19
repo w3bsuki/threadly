@@ -1,0 +1,267 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Introduction/Getting Started" />
+
+# Getting Started
+
+Get up and running with the Threadly Design System in your project.
+
+## Installation
+
+The Threadly Design System is part of the monorepo and can be imported directly from the `@repo/design-system` package.
+
+### Prerequisites
+
+- Node.js 18.0 or higher
+- pnpm 8.0 or higher
+- React 19.0 or higher
+- Next.js 15.0 or higher
+
+### Using the Design System
+
+Since Threadly uses a monorepo structure, the design system is already available as a workspace package:
+
+```tsx
+// Import components from the design system
+import { Button, Card, Input } from '@repo/design-system/components';
+import { useToast } from '@repo/design-system/hooks';
+```
+
+## Project Setup
+
+### 1. Global Styles
+
+Import the design system's global styles in your app's root layout:
+
+```tsx
+// app/layout.tsx
+import '@repo/design-system/styles/globals.css';
+```
+
+### 2. Theme Provider
+
+Wrap your application with the ThemeProvider to enable theme switching:
+
+```tsx
+// app/layout.tsx
+import { ThemeProvider } from '@repo/design-system/providers';
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+### 3. Font Configuration
+
+The design system uses Geist Sans and Geist Mono fonts. These should be configured in your Next.js app:
+
+```tsx
+// app/layout.tsx
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
+      {/* ... */}
+    </html>
+  );
+}
+```
+
+## Basic Usage
+
+### Using Components
+
+All components are TypeScript-first with full type safety:
+
+```tsx
+import { Button } from '@repo/design-system/components';
+
+export function MyComponent() {
+  return (
+    <Button variant="default" size="lg" onClick={() => console.log('Clicked!')}>
+      Click me
+    </Button>
+  );
+}
+```
+
+### Using Design Tokens
+
+Access design tokens through CSS custom properties:
+
+```css
+.my-custom-component {
+  /* Colors */
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  
+  /* Spacing */
+  padding: var(--space-4);
+  margin-bottom: var(--space-6);
+  
+  /* Typography */
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-relaxed);
+  
+  /* Borders & Shadows */
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+```
+
+### Using Hooks
+
+The design system provides several useful hooks:
+
+```tsx
+import { useToast, useMediaQuery, useMounted } from '@repo/design-system/hooks';
+
+function MyComponent() {
+  const { toast } = useToast();
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  const mounted = useMounted();
+  
+  const handleClick = () => {
+    toast({
+      title: "Success!",
+      description: "Your action was completed.",
+    });
+  };
+  
+  if (!mounted) return null;
+  
+  return (
+    <div>
+      {isMobile ? 'Mobile View' : 'Desktop View'}
+    </div>
+  );
+}
+```
+
+## TypeScript Support
+
+The design system is built with TypeScript and exports all necessary types:
+
+```tsx
+import type { ButtonProps } from '@repo/design-system/components';
+
+interface MyButtonProps extends ButtonProps {
+  customProp?: string;
+}
+
+export function MyButton({ customProp, ...props }: MyButtonProps) {
+  return <Button {...props} />;
+}
+```
+
+## Tree Shaking
+
+The design system is optimized for tree shaking. Import only what you need:
+
+```tsx
+// ✅ Good - Only imports what's needed
+import { Button } from '@repo/design-system/components';
+
+// ❌ Avoid - Imports entire library
+import * as DesignSystem from '@repo/design-system';
+```
+
+## Customization
+
+### Extending Components
+
+Components can be extended using the `className` prop or by wrapping them:
+
+```tsx
+// Using className
+<Button className="my-custom-button">
+  Custom Button
+</Button>
+
+// Wrapping components
+export function PrimaryButton(props: ButtonProps) {
+  return <Button variant="default" {...props} />;
+}
+```
+
+### Overriding Tokens
+
+You can override design tokens at any level:
+
+```css
+/* Global override */
+:root {
+  --color-primary: oklch(0.7 0.2 250);
+}
+
+/* Component-level override */
+.my-component {
+  --button-height-md: 3rem;
+}
+```
+
+## Best Practices
+
+### 1. **Use Semantic Tokens**
+Always use semantic tokens instead of primitive values:
+
+```css
+/* ✅ Good */
+color: var(--color-foreground);
+
+/* ❌ Avoid */
+color: var(--color-gray-950);
+```
+
+### 2. **Maintain Consistency**
+Use the provided variants and sizes instead of custom styles:
+
+```tsx
+/* ✅ Good */
+<Button variant="secondary" size="sm">
+
+/* ❌ Avoid */
+<Button style={{ padding: '0.25rem 0.5rem' }}>
+```
+
+### 3. **Accessibility First**
+Always include proper ARIA labels and keyboard support:
+
+```tsx
+<Button
+  aria-label="Save document"
+  onClick={handleSave}
+>
+  <SaveIcon />
+</Button>
+```
+
+## Next Steps
+
+Now that you have the design system set up, explore:
+
+- **[Design Principles](/story/introduction-design-principles--docs)** - Our design philosophy
+- **[Design Tokens](/story/design-tokens-overview--docs)** - Available tokens and usage
+- **[Components](/story/ui-button--docs)** - Component library and examples
+- **[Patterns](/story/patterns-overview--docs)** - Common UI patterns
+
+## Need Help?
+
+- Check the component documentation for detailed props and examples
+- Join #design-system channel for support
+- Submit issues or PRs on GitHub

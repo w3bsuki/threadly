@@ -57,13 +57,13 @@ function AppErrorPage({ error, errorId, onReset, isDevelopment }: Omit<ErrorPage
         <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
           <button
             onClick={onReset}
-            className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            className="inline-flex items-center rounded-[var(--radius-md)] bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           >
             Try again
           </button>
           <a
             href="/"
-            className="inline-flex items-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+            className="inline-flex items-center rounded-[var(--radius-md)] border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
           >
             Go to homepage
           </a>
@@ -74,7 +74,7 @@ function AppErrorPage({ error, errorId, onReset, isDevelopment }: Omit<ErrorPage
             <summary className="cursor-pointer text-sm text-muted-foreground">
               Error details (development only)
             </summary>
-            <pre className="mt-4 overflow-auto rounded-md bg-muted p-4 text-xs">
+            <pre className="mt-4 overflow-auto rounded-[var(--radius-md)] bg-muted p-4 text-xs">
               {error.stack || error.message}
             </pre>
           </details>
@@ -88,7 +88,7 @@ function PageErrorPage({ error, errorId, onReset, isDevelopment }: Omit<ErrorPag
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="mx-auto max-w-2xl">
-        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-8">
+        <div className="rounded-[var(--radius-lg)] border border-destructive/50 bg-destructive/10 p-8">
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0">
               <svg
@@ -152,7 +152,7 @@ function PageErrorPage({ error, errorId, onReset, isDevelopment }: Omit<ErrorPag
 
 function ComponentErrorPage({ error, errorId, onReset, isDevelopment }: Omit<ErrorPageProps, 'level'> & { isDevelopment: boolean }) {
   return (
-    <div className="rounded-lg border border-destructive/50 bg-destructive/5 p-6">
+    <div className="rounded-[var(--radius-lg)] border border-destructive/50 bg-destructive/5 p-6">
       <div className="flex items-center gap-3 mb-3">
         <svg
           className="h-5 w-5 text-destructive"
@@ -220,13 +220,13 @@ export function NotFoundErrorPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
           <a
             href="/"
-            className="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            className="inline-flex items-center rounded-[var(--radius-md)] bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           >
             Go to homepage
           </a>
           <button
             onClick={() => window.history.back()}
-            className="inline-flex items-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+            className="inline-flex items-center rounded-[var(--radius-md)] border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
           >
             Go back
           </button>
@@ -268,7 +268,7 @@ export function MaintenanceErrorPage() {
         </p>
         
         <div className="mb-8">
-          <div className="mx-auto h-2 w-48 overflow-hidden rounded-full bg-muted">
+          <div className="mx-auto h-2 w-48 overflow-hidden rounded-[var(--radius-full)] bg-muted">
             <div className="h-full w-1/3 animate-pulse bg-primary" />
           </div>
         </div>

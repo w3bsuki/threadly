@@ -11,16 +11,16 @@ import Link from 'next/link';
 
 export default function OfflinePage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-muted p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-            <WifiOff className="h-8 w-8 text-gray-400" />
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[var(--radius-full)] bg-secondary">
+            <WifiOff className="h-8 w-8 text-muted-foreground" />
           </div>
-          <CardTitle className="font-semibold text-gray-900 text-xl">
+          <CardTitle className="font-semibold text-foreground text-xl">
             You're offline
           </CardTitle>
-          <CardDescription className="text-gray-600">
+          <CardDescription className="text-muted-foreground">
             Check your internet connection and try again. Some content may be
             available from cache.
           </CardDescription>
@@ -52,7 +52,7 @@ export default function OfflinePage() {
             </Button>
           </div>
 
-          <div className="mt-6 text-center text-gray-500 text-sm">
+          <div className="mt-6 text-center text-muted-foreground text-sm">
             <p>
               You can still browse cached pages and products you've viewed
               before.

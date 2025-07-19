@@ -37,21 +37,21 @@ function QuickAction({ href, icon: Icon, label, bgColor, iconColor, badge, isPri
   
   const content = (
     <div className={cn(
-      "relative flex flex-col items-center justify-center p-4 rounded-lg border transition-all cursor-pointer touch-manipulation active:scale-95 duration-200",
+      "relative flex flex-col items-center justify-center p-4 rounded-[var(--radius-lg)] border transition-all cursor-pointer touch-manipulation active:scale-95 duration-200",
       "min-h-[88px] sm:min-h-[80px] md:min-h-[72px] lg:min-h-[64px]",
       isPrimary
         ? "border-primary/20 bg-primary/5 hover:bg-primary/10 hover:border-primary/40"
         : "border-border bg-card hover:bg-accent hover:border-accent-foreground/20"
     )} style={{ WebkitTapHighlightColor: 'transparent' }}>
       <div className={cn(
-        "p-2.5 rounded-lg mb-2",
+        "p-2.5 rounded-[var(--radius-lg)] mb-2",
         bgColor
       )}>
         <Icon className={cn("h-6 w-6 sm:h-5 sm:w-5", iconColor)} />
       </div>
       <span className="text-sm sm:text-xs font-medium">{label}</span>
       {badge !== undefined && badge > 0 && (
-        <div className="absolute top-2 right-2 h-5 w-5 rounded-full bg-destructive text-destructive-foreground text-xs font-bold flex items-center justify-center">
+        <div className="absolute top-2 right-2 h-5 w-5 rounded-[var(--radius-full)] bg-destructive text-destructive-foreground text-xs font-bold flex items-center justify-center">
           {badge > 9 ? '9+' : badge}
         </div>
       )}
@@ -142,8 +142,8 @@ export function ModernQuickActions({ dictionary }: ModernQuickActionsProps) {
       href: '/settings',
       icon: Settings,
       label: 'Settings',
-      bgColor: 'bg-gray-100',
-      iconColor: 'text-gray-600',
+      bgColor: 'bg-secondary',
+      iconColor: 'text-muted-foreground',
     },
   ];
 
@@ -175,9 +175,9 @@ export function ModernQuickActions({ dictionary }: ModernQuickActionsProps) {
                       key={index} 
                       href={action.href} 
                       onClick={() => setMoreActionsOpen(false)}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors"
+                      className="flex items-center gap-3 p-3 rounded-[var(--radius-lg)] hover:bg-accent transition-colors"
                     >
-                      <div className={cn("p-2 rounded-lg", action.bgColor)}>
+                      <div className={cn("p-2 rounded-[var(--radius-lg)]", action.bgColor)}>
                         <action.icon className={cn("h-5 w-5", action.iconColor)} />
                       </div>
                       <span className="font-medium">{action.label}</span>

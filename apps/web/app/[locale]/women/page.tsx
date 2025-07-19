@@ -40,7 +40,7 @@ export async function generateMetadata({
 
 export default function WomenPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* Category Navigation */}
       <CategoryNav
         category="women"

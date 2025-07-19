@@ -198,7 +198,7 @@ export const AnimatedCartButton: React.FC<AnimatedCartButtonProps> = ({
 
       {/* Success ripple effect */}
       {state === 'success' && (
-        <div className="absolute inset-0 bg-[oklch(var(--brand-secondary)/.3)] rounded-md animate-ping opacity-0" />
+        <div className="absolute inset-0 bg-[oklch(var(--brand-secondary)/.3)] rounded-[var(--radius-md)] animate-ping opacity-0" />
       )}
     </Button>
   );
@@ -325,20 +325,20 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
       <Button
         variant={variant}
         className={cn(
-          'rounded-full shadow-lg hover:shadow-xl transition-all duration-300 relative active:scale-95 hover:scale-105',
+          'rounded-[var(--radius-full)] shadow-lg hover:shadow-xl transition-all duration-300 relative active:scale-95 hover:scale-105',
           sizeClasses[size],
           pulse && 'animate-pulse'
         )}
         onClick={onClick}
       >
         {pulse && (
-          <div className="absolute inset-0 rounded-full bg-current opacity-20 animate-ping" />
+          <div className="absolute inset-0 rounded-[var(--radius-full)] bg-current opacity-20 animate-ping" />
         )}
         
         {icon}
         
         {badge && badge > 0 && (
-          <div className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center animate-bounce-in">
+          <div className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground text-xs font-bold rounded-[var(--radius-full)] h-6 w-6 flex items-center justify-center animate-bounce-in">
             {badge > 99 ? '99+' : badge}
           </div>
         )}
@@ -365,7 +365,7 @@ export const LoadingDots: React.FC<{
         <div
           key={index}
           className={cn(
-            'rounded-full animate-pulse',
+            'rounded-[var(--radius-full)] animate-pulse',
             dotSize,
             color === 'current' ? 'bg-current' : color,
             `animation-delay-${index * 200}`
@@ -440,7 +440,7 @@ export const CartFloatAnimation: React.FC<{
       <div
         className={cn(
           'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2',
-          'w-16 h-16 bg-white rounded-lg shadow-lg border-2 border-[oklch(var(--brand-primary))]',
+          'w-16 h-16 bg-background rounded-[var(--radius-lg)] shadow-lg border-2 border-[oklch(var(--brand-primary))]',
           'animate-bounce-in opacity-0',
           'flex items-center justify-center'
         )}

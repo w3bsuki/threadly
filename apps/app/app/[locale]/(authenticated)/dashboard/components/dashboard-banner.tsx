@@ -1,7 +1,8 @@
 import type { Dictionary } from '@repo/internationalization';
 import { currentUser } from '@repo/auth/server';
-import { DollarSign, ShoppingBag, Package, MessageSquare } from 'lucide-react';
+import { DollarSign, ShoppingBag, Package, MessageSquare, ShoppingCart, TrendingUp } from 'lucide-react';
 import { cn } from '@repo/design-system/lib/utils';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/design-system/components/ui/tabs';
 
 interface DashboardBannerProps {
   user: Awaited<ReturnType<typeof currentUser>>;
@@ -10,6 +11,8 @@ interface DashboardBannerProps {
     totalRevenue: number;
     completedSales: number;
     activeListings: number;
+    totalSpent: number;
+    totalPurchases: number;
     unreadMessages: number;
   };
 }
@@ -26,7 +29,7 @@ export function DashboardBanner({ user, dictionary, metrics }: DashboardBannerPr
 
   const firstName = user.firstName || 'there';
 
-  const stats = [
+  const sellingStats = [
     {
       label: 'Revenue',
       value: `$${metrics.totalRevenue.toLocaleString()}`,
@@ -36,7 +39,7 @@ export function DashboardBanner({ user, dictionary, metrics }: DashboardBannerPr
     {
       label: 'Sales',
       value: metrics.completedSales.toString(),
-      icon: ShoppingBag,
+      icon: TrendingUp,
       iconColor: 'text-blue-600 dark:text-blue-400',
     },
     {
@@ -44,6 +47,21 @@ export function DashboardBanner({ user, dictionary, metrics }: DashboardBannerPr
       value: metrics.activeListings.toString(),
       icon: Package,
       iconColor: 'text-purple-600 dark:text-purple-400',
+    },
+  ];
+
+  const buyingStats = [
+    {
+      label: 'Spent',
+      value: `$${metrics.totalSpent.toLocaleString()}`,
+      icon: ShoppingCart,
+      iconColor: 'text-indigo-600 dark:text-indigo-400',
+    },
+    {
+      label: 'Orders',
+      value: metrics.totalPurchases.toString(),
+      icon: ShoppingBag,
+      iconColor: 'text-cyan-600 dark:text-cyan-400',
     },
     {
       label: 'Messages',
@@ -54,42 +72,57 @@ export function DashboardBanner({ user, dictionary, metrics }: DashboardBannerPr
     },
   ];
 
+  const renderStatCard = (stat: typeof sellingStats[0] & { highlight?: boolean }, index: number) => (
+    <div
+      key={index}
+      className={cn(
+        "flex items-center space-x-4 rounded-lg p-4 transition-all",
+        "bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10",
+        "hover:bg-gray-50 dark:hover:bg-white/10",
+        stat.highlight && "ring-2 ring-orange-500 dark:ring-orange-400 ring-opacity-50"
+      )}
+    >
+      <div className="rounded-full p-3 bg-gray-100 dark:bg-white/10">
+        <stat.icon className={cn("h-5 w-5", stat.iconColor)} />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-sm text-gray-600 dark:text-gray-400">{stat.label}</p>
+        <p className="text-lg font-semibold text-gray-900 dark:text-white truncate">
+          {stat.value}
+        </p>
+      </div>
+    </div>
+  );
+
   return (
     <div className="relative rounded-xl overflow-hidden bg-gray-100 dark:bg-black border border-gray-200 dark:border-gray-800">
       <div className="px-4 py-6 sm:px-6 sm:py-8">
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div>
             <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
               {getGreeting()}, {firstName}
             </h1>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              Here's your account overview
+              Your buying and selling overview
             </p>
           </div>
           
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
-            {stats.map((stat, index) => (
-              <div
-                key={index}
-                className={cn(
-                  "flex items-center space-x-3 rounded-lg p-3 transition-all",
-                  "bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10",
-                  "hover:bg-gray-50 dark:hover:bg-white/10",
-                  stat.highlight && "ring-2 ring-orange-500 dark:ring-orange-400 ring-opacity-50"
-                )}
-              >
-                <div className="rounded-full p-2 bg-gray-100 dark:bg-white/10">
-                  <stat.icon className={cn("h-4 w-4", stat.iconColor)} />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs text-gray-600 dark:text-gray-400">{stat.label}</p>
-                  <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
-                    {stat.value}
-                  </p>
-                </div>
+          <Tabs defaultValue="selling" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="selling">Selling</TabsTrigger>
+              <TabsTrigger value="buying">Buying</TabsTrigger>
+            </TabsList>
+            <TabsContent value="selling" className="mt-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                {sellingStats.map(renderStatCard)}
               </div>
-            ))}
-          </div>
+            </TabsContent>
+            <TabsContent value="buying" className="mt-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                {buyingStats.map(renderStatCard)}
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>

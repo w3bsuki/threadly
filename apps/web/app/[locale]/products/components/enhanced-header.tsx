@@ -75,17 +75,17 @@ export function EnhancedHeader({
   return (
     <div className={cn('mb-6', className)}>
       {/* Breadcrumbs */}
-      <nav className="mb-4 flex items-center space-x-1 text-gray-500 text-sm">
+      <nav className="mb-4 flex items-center space-x-1 text-muted-foreground text-sm">
         {breadcrumbs.map((crumb, index) => (
           <div className="flex items-center" key={crumb.href}>
             {index > 0 && (
-              <ChevronRight className="mx-2 h-4 w-4 text-gray-400" />
+              <ChevronRight className="mx-2 h-4 w-4 text-muted-foreground" />
             )}
             <Link
               className={cn(
-                'flex items-center transition-colors hover:text-gray-700',
+                'flex items-center transition-colors hover:text-secondary-foreground',
                 index === breadcrumbs.length - 1
-                  ? 'font-medium text-gray-900'
+                  ? 'font-medium text-foreground'
                   : 'hover:underline'
               )}
               href={crumb.href}
@@ -99,28 +99,28 @@ export function EnhancedHeader({
 
       {/* Title and Subtitle */}
       <div className="mb-4">
-        <h1 className="mb-2 font-bold text-2xl text-gray-900 sm:text-3xl">
+        <h1 className="mb-2 font-bold text-2xl text-foreground sm:text-3xl">
           {getTitle()}
         </h1>
-        <p className="text-gray-600 text-sm">{getSubtitle()}</p>
+        <p className="text-muted-foreground text-sm">{getSubtitle()}</p>
       </div>
 
       {/* Active Filters Summary */}
       {Object.values(currentFilters).some(Boolean) && (
         <div className="flex flex-wrap items-center gap-2 text-xs">
-          <span className="text-gray-500">Filtered by:</span>
+          <span className="text-muted-foreground">Filtered by:</span>
           {currentFilters.condition && (
-            <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-gray-800 text-xs">
+            <span className="inline-flex items-center rounded-[var(--radius-full)] bg-secondary px-2 py-1 text-secondary-foreground text-xs">
               Condition: {currentFilters.condition.replace('_', ' ')}
             </span>
           )}
           {currentFilters.minPrice && (
-            <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-gray-800 text-xs">
+            <span className="inline-flex items-center rounded-[var(--radius-full)] bg-secondary px-2 py-1 text-secondary-foreground text-xs">
               Min: ${currentFilters.minPrice}
             </span>
           )}
           {currentFilters.maxPrice && (
-            <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-gray-800 text-xs">
+            <span className="inline-flex items-center rounded-[var(--radius-full)] bg-secondary px-2 py-1 text-secondary-foreground text-xs">
               Max: ${currentFilters.maxPrice}
             </span>
           )}

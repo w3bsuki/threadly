@@ -13,7 +13,7 @@ export function AuthPrompt({ title, description, locale }: AuthPromptProps) {
     <div className="container mx-auto px-4 py-8 max-w-2xl">
       <Card className="border-2 border-dashed">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[var(--radius-full)] bg-muted">
             <Lock className="h-8 w-8 text-muted-foreground" />
           </div>
           <CardTitle className="text-2xl">{title}</CardTitle>

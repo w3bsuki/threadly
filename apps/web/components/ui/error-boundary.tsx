@@ -40,7 +40,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
         <div className="min-h-[400px] flex flex-col items-center justify-center p-8 text-center">
           <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
           <h2 className="text-xl font-semibold mb-2">Something went wrong</h2>
-          <p className="text-gray-600 mb-6 max-w-md">
+          <p className="text-muted-foreground mb-6 max-w-md">
             We encountered an unexpected error. Please try refreshing the page or contact support if the problem persists.
           </p>
           <Button
@@ -70,7 +70,7 @@ export function ErrorFallback({
     <div className="min-h-[400px] flex flex-col items-center justify-center p-8 text-center">
       <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
       <h2 className="text-xl font-semibold mb-2">Oops! Something went wrong</h2>
-      <p className="text-gray-600 mb-4 max-w-md">
+      <p className="text-muted-foreground mb-4 max-w-md">
         {error.message || 'An unexpected error occurred'}
       </p>
       <div className="flex gap-2">

@@ -85,8 +85,8 @@ export default async function MessagesPage({ params }: MessagesPageProps) {
         <div className="container py-8">
           <div className="mx-auto max-w-6xl">
             <div className="mb-8">
-              <h1 className="font-bold text-3xl text-gray-900">Messages</h1>
-              <p className="mt-2 text-gray-600">
+              <h1 className="font-bold text-3xl text-foreground">Messages</h1>
+              <p className="mt-2 text-muted-foreground">
                 Chat with sellers and buyers about your items
               </p>
             </div>

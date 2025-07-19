@@ -1,0 +1,273 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Introduction/Design Principles" />
+
+# Design Principles
+
+The guiding principles that shape every decision in the Threadly Design System.
+
+## Core Principles
+
+### 1. Clarity Over Cleverness
+
+**Principle**: Every interface element should have a clear purpose and be immediately understandable.
+
+**In Practice**:
+- Use familiar patterns that users recognize
+- Write clear, concise labels and messages
+- Avoid ambiguous icons without text labels
+- Prioritize function over form
+
+**Example**:
+```tsx
+// ✅ Clear and explicit
+<Button variant="destructive">
+  Delete Account
+</Button>
+
+// ❌ Ambiguous
+<Button variant="destructive">
+  <TrashIcon />
+</Button>
+```
+
+### 2. Consistency Builds Trust
+
+**Principle**: Consistent patterns create predictable experiences that users can learn and rely on.
+
+**In Practice**:
+- Use the same patterns for similar actions across the app
+- Maintain consistent spacing, colors, and typography
+- Follow established component behaviors
+- Keep interaction patterns uniform
+
+**Example**:
+- All forms use the same validation patterns
+- All modals have consistent close button placement
+- All loading states use the same skeleton patterns
+
+### 3. Accessibility is Non-Negotiable
+
+**Principle**: Our products must be usable by everyone, regardless of their abilities or circumstances.
+
+**In Practice**:
+- Meet WCAG 2.1 AA standards minimum
+- Ensure full keyboard navigation
+- Provide proper ARIA labels and roles
+- Test with screen readers
+- Maintain color contrast ratios
+
+**Requirements**:
+- Minimum contrast ratio: 4.5:1 for normal text
+- Minimum contrast ratio: 3:1 for large text
+- All interactive elements must be keyboard accessible
+- Focus indicators must be clearly visible
+
+### 4. Performance is a Feature
+
+**Principle**: Fast, responsive interfaces are essential for good user experience.
+
+**In Practice**:
+- Lazy load components and images
+- Minimize bundle sizes through tree-shaking
+- Use CSS transforms for animations
+- Implement virtual scrolling for long lists
+- Optimize for Core Web Vitals
+
+**Targets**:
+- First Contentful Paint: < 1.8s
+- Largest Contentful Paint: < 2.5s
+- Cumulative Layout Shift: < 0.1
+- First Input Delay: < 100ms
+
+### 5. Mobile-First, Always
+
+**Principle**: Design for mobile constraints first, then enhance for larger screens.
+
+**In Practice**:
+- Touch targets minimum 44x44px
+- Design for one-handed use
+- Optimize for slower connections
+- Consider device capabilities
+- Test on real devices
+
+**Example**:
+```css
+/* Mobile-first approach */
+.component {
+  /* Mobile styles */
+  padding: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .component {
+    /* Desktop enhancements */
+    padding: var(--space-6);
+  }
+}
+```
+
+### 6. Progressive Disclosure
+
+**Principle**: Show only what's necessary at each step, revealing complexity gradually.
+
+**In Practice**:
+- Start with the most common use cases
+- Hide advanced options behind progressive UI
+- Use sensible defaults
+- Provide clear paths to more information
+- Don't overwhelm new users
+
+**Example**:
+- Basic search visible, advanced filters in dropdown
+- Common actions in toolbar, more in context menu
+- Summary views with detail expansion
+
+### 7. Fail Gracefully
+
+**Principle**: When things go wrong, help users understand and recover.
+
+**In Practice**:
+- Provide clear error messages
+- Suggest actionable next steps
+- Preserve user data during errors
+- Show fallback UI for loading states
+- Log errors for debugging
+
+**Example**:
+```tsx
+<ErrorBoundary
+  fallback={
+    <Alert variant="destructive">
+      <AlertTitle>Something went wrong</AlertTitle>
+      <AlertDescription>
+        We couldn't load your data. Please try refreshing the page.
+      </AlertDescription>
+    </Alert>
+  }
+>
+  <YourComponent />
+</ErrorBoundary>
+```
+
+### 8. Data-Informed Design
+
+**Principle**: Use analytics and user feedback to guide design decisions.
+
+**In Practice**:
+- Track component usage patterns
+- A/B test significant changes
+- Gather user feedback regularly
+- Monitor error rates and performance
+- Iterate based on real usage
+
+## Design Language
+
+### Visual Hierarchy
+
+Create clear visual hierarchy through:
+- **Size**: Larger elements draw more attention
+- **Color**: Use color purposefully to guide attention
+- **Space**: White space creates grouping and emphasis
+- **Weight**: Bold text for important information
+
+### Motion and Animation
+
+Use motion purposefully:
+- **Feedback**: Confirm user actions
+- **Orientation**: Show spatial relationships
+- **Continuity**: Connect states and views
+- **Character**: Add personality without distraction
+
+**Animation Principles**:
+- Keep it subtle (200-300ms for most transitions)
+- Use easing functions for natural movement
+- Respect prefers-reduced-motion settings
+- Test performance on lower-end devices
+
+### Color Usage
+
+Our minimalist color palette serves specific purposes:
+- **Primary**: Main actions and key UI elements
+- **Secondary**: Supporting actions and less emphasis
+- **Destructive**: Dangerous or irreversible actions
+- **Muted**: De-emphasized content
+- **Success/Warning/Info**: System feedback
+
+### Typography
+
+Typography creates hierarchy and readability:
+- **Headings**: Clear content structure
+- **Body**: Optimal reading experience
+- **Captions**: Supporting information
+- **Monospace**: Code and technical content
+
+## Component Design
+
+### Component Principles
+
+1. **Single Responsibility**: Each component does one thing well
+2. **Composability**: Components work together seamlessly
+3. **Flexibility**: Adaptable to different contexts
+4. **Predictability**: Consistent behavior across uses
+
+### State Management
+
+Components should clearly communicate their state:
+- **Default**: Ready for interaction
+- **Hover**: Indicates interactivity
+- **Focus**: Shows keyboard navigation
+- **Active**: Currently being interacted with
+- **Disabled**: Not available for interaction
+- **Loading**: Operation in progress
+- **Error**: Problem requiring attention
+
+### Interaction Patterns
+
+Consistent interaction patterns across components:
+- **Click/Tap**: Primary activation
+- **Hover**: Preview or additional information
+- **Long Press**: Secondary actions (mobile)
+- **Drag**: Reordering or moving
+- **Swipe**: Navigation or actions (mobile)
+
+## Responsive Design
+
+### Breakpoint Philosophy
+
+Our breakpoints are based on content needs, not devices:
+- **Small (< 640px)**: Single column, stacked layout
+- **Medium (640px - 1024px)**: Two column layouts possible
+- **Large (1024px - 1280px)**: Full desktop experience
+- **Extra Large (> 1280px)**: Enhanced desktop features
+
+### Responsive Principles
+
+1. **Content First**: Layout adapts to content needs
+2. **Touch Friendly**: Larger targets on touch devices
+3. **Flexible Grids**: Fluid layouts that adapt
+4. **Progressive Enhancement**: Add features for larger screens
+
+## Putting It All Together
+
+These principles work together to create experiences that are:
+- **Intuitive**: Users know what to do
+- **Efficient**: Tasks are completed quickly
+- **Accessible**: Everyone can use them
+- **Reliable**: Consistent and predictable
+- **Delightful**: Pleasant to use
+
+Remember: these principles are guidelines, not rigid rules. Use your judgment and always consider the user's context and needs.
+
+## Questions to Ask
+
+When designing or implementing:
+1. Is this the simplest solution?
+2. Does this follow existing patterns?
+3. Can everyone use this?
+4. Will this perform well?
+5. Does this work on mobile?
+6. What happens when this fails?
+7. What do the analytics tell us?
+
+By following these principles, we create a design system that serves both our users and our teams effectively.

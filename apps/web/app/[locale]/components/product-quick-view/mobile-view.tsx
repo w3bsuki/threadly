@@ -84,18 +84,12 @@ export function ProductQuickViewMobile({
         )}
       </DialogTrigger>
 
-      <DialogContent className="max-h-[85dvh] w-[90dvw] max-w-sm gap-0 overflow-hidden rounded-xl border-0 bg-card p-0 shadow-2xl">
-        <div className="relative flex h-full flex-col bg-card">
+      <DialogContent className="max-h-[85dvh] w-[90dvw] max-w-sm gap-0 border-0 bg-card p-0 shadow-2xl overflow-hidden rounded-[var(--radius-xl)]">
+        <div className="relative flex h-full max-h-[90dvh] flex-col bg-card overflow-hidden">
           {/* Close Button */}
-          <button
-            className="absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-background/95 shadow-sm backdrop-blur-sm transition-all hover:scale-105 hover:shadow-md"
-            onClick={() => onOpenChange?.(false)}
-          >
-            <X className="h-4 w-4 text-foreground" />
-          </button>
 
           {/* Product Image */}
-          <div className="relative aspect-square flex-shrink-0">
+          <div className="relative aspect-[4/3] flex-shrink-0">
             <Image
               alt={product.title}
               className="object-cover"
@@ -115,7 +109,7 @@ export function ProductQuickViewMobile({
             {/* Discount Badge */}
             {product.originalPrice && (
               <div className="absolute top-3 right-12">
-                <Badge className="rounded-md bg-destructive px-2 py-1 font-medium text-destructive-foreground text-xs shadow-sm">
+                <Badge className="rounded-[var(--radius-md)] bg-destructive px-2 py-1 font-medium text-destructive-foreground text-xs shadow-sm">
                   -
                   {Math.round(
                     ((product.originalPrice - product.price) /
@@ -129,7 +123,7 @@ export function ProductQuickViewMobile({
           </div>
 
           {/* Content */}
-          <div className="flex flex-1 flex-col space-y-4 p-4">
+          <div className="flex flex-1 flex-col space-y-4 p-4 min-h-0 overflow-y-auto">
             {/* Product Info */}
             <div>
               <p className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
@@ -178,7 +172,7 @@ export function ProductQuickViewMobile({
             </div>
 
             {/* Actions */}
-            <div className="mt-auto grid grid-cols-2 gap-3 pt-2">
+            <div className="sticky bottom-0 bg-card border-t pt-4 grid grid-cols-2 gap-3">
               <Button
                 className="h-12 rounded-lg bg-primary font-semibold text-primary-foreground text-sm transition-all hover:bg-primary/90"
                 disabled={isLoading}

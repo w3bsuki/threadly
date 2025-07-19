@@ -150,8 +150,8 @@ export function MessageThread({ conversationId, className }: MessageThreadProps)
     return (
       <div className={cn('flex flex-col h-full items-center justify-center p-8', className)}>
         <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Failed to load messages</h3>
-        <p className="text-gray-600 text-center mb-4">{error}</p>
+        <h3 className="text-lg font-semibold text-foreground mb-2">Failed to load messages</h3>
+        <p className="text-muted-foreground text-center mb-4">{error}</p>
         <Button onClick={() => window.location.reload()}>
           Try again
         </Button>
@@ -160,7 +160,7 @@ export function MessageThread({ conversationId, className }: MessageThreadProps)
   }
 
   return (
-    <div className={cn('flex flex-col h-full bg-white', className)}>
+    <div className={cn('flex flex-col h-full bg-background', className)}>
       {/* Messages container */}
       <div
         ref={containerRef}
@@ -175,11 +175,11 @@ export function MessageThread({ conversationId, className }: MessageThreadProps)
               size="sm"
               onClick={loadMoreMessages}
               disabled={isLoadingMore}
-              className="text-gray-600"
+              className="text-muted-foreground"
             >
               {isLoadingMore ? (
                 <div className="flex items-center gap-2">
-                  <div className="animate-spin h-4 w-4 border-2 border-gray-400 border-t-transparent rounded-full" />
+                  <div className="animate-spin h-4 w-4 border-2 border-gray-400 border-t-transparent rounded-[var(--radius-full)]" />
                   Loading...
                 </div>
               ) : (
@@ -227,9 +227,9 @@ export function MessageThread({ conversationId, className }: MessageThreadProps)
         {/* Empty state */}
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="bg-gray-100 rounded-full p-4 mb-4">
+            <div className="bg-secondary rounded-[var(--radius-full)] p-4 mb-4">
               <svg 
-                className="h-8 w-8 text-gray-400" 
+                className="h-8 w-8 text-muted-foreground" 
                 fill="none" 
                 viewBox="0 0 24 24" 
                 stroke="currentColor"
@@ -242,8 +242,8 @@ export function MessageThread({ conversationId, className }: MessageThreadProps)
                 />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Start the conversation</h3>
-            <p className="text-gray-500 max-w-sm">
+            <h3 className="text-lg font-medium text-foreground mb-2">Start the conversation</h3>
+            <p className="text-muted-foreground max-w-sm">
               Send a message to get the conversation started. Be friendly and ask any questions about the item.
             </p>
           </div>
@@ -260,7 +260,7 @@ export function MessageThread({ conversationId, className }: MessageThreadProps)
             variant="secondary"
             size="sm"
             onClick={() => scrollToBottom(true)}
-            className="rounded-full h-10 w-10 p-0 shadow-lg"
+            className="rounded-[var(--radius-full)] h-10 w-10 p-0 shadow-lg"
           >
             <ChevronDown className="h-4 w-4" />
           </Button>

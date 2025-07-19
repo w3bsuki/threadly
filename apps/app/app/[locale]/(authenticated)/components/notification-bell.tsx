@@ -34,7 +34,7 @@ export function NotificationBell(): React.JSX.Element {
           {unreadCount > 0 && (
             <Badge 
               variant="destructive" 
-              className="absolute -right-1 -top-1 h-5 w-5 rounded-full p-0 text-xs"
+              className="absolute -right-1 -top-1 h-5 w-5 rounded-[var(--radius-full)] p-0 text-xs"
             >
               {unreadCount > 99 ? '99+' : unreadCount}
             </Badge>
@@ -86,7 +86,7 @@ export function NotificationBell(): React.JSX.Element {
                         {notification.title}
                       </span>
                       {!notification.read && (
-                        <div className="h-2 w-2 rounded-full bg-blue-500" />
+                        <div className="h-2 w-2 rounded-[var(--radius-full)] bg-blue-500" />
                       )}
                     </div>
                     <p className="text-xs text-muted-foreground line-clamp-2">

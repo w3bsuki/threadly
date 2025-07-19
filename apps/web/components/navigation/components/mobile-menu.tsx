@@ -2,6 +2,7 @@ import { SignInButton, useUser } from '@repo/auth/client';
 import { Button } from '@repo/design-system/components';
 import { Heart, Plus, ShoppingBag, User, X } from 'lucide-react';
 import Link from 'next/link';
+import { env } from '@/env';
 import { SafeUserButton } from '../../../app/[locale]/components/header/safe-user-button';
 import { CategoryMenu } from './category-menu';
 
@@ -44,14 +45,14 @@ export function MobileMenu({
     <div className="fixed inset-0 z-50 md:hidden">
       <div
         aria-hidden="true"
-        className="fade-in-0 absolute inset-0 animate-in bg-black/80 backdrop-blur-sm duration-200"
+        className="fade-in-0 absolute inset-0 animate-in bg-foreground/80 duration-200"
         onClick={onClose}
       />
 
       <div
         aria-label="Navigation menu"
         aria-modal="true"
-        className="slide-in-from-top relative flex h-full animate-in flex-col bg-white duration-300"
+        className="slide-in-from-top relative flex h-full animate-in flex-col bg-background duration-300"
         id="mobile-menu"
         role="dialog"
       >
@@ -79,7 +80,7 @@ export function MobileMenu({
                   <p className="font-semibold text-lg">
                     {user?.firstName} {user?.lastName}
                   </p>
-                  <p className="text-gray-600 text-sm">View your profile</p>
+                  <p className="text-muted-foreground text-sm">View your profile</p>
                 </div>
               </div>
             ) : (
@@ -102,43 +103,43 @@ export function MobileMenu({
 
           <div className="space-y-3 p-4">
             <Link
-              className="flex items-center gap-4 rounded-xl bg-pink-50 p-4 transition-all hover:bg-pink-100 active:scale-95"
+              className="flex items-center gap-4 rounded-[var(--radius-xl)] bg-pink-50 p-4 transition-all hover:bg-pink-100 active:scale-95"
               href="/favorites"
               onClick={onClose}
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-pink-100">
+              <div className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-full)] bg-pink-100">
                 <Heart className="h-6 w-6 text-pink-600" />
               </div>
               <div>
                 <p className="font-medium">Saved Items</p>
-                <p className="text-gray-600 text-sm">
+                <p className="text-muted-foreground text-sm">
                   Your wishlist & favorites
                 </p>
               </div>
             </Link>
 
             <Link
-              className="flex items-center gap-4 rounded-xl bg-blue-50 p-4 transition-all hover:bg-blue-100 active:scale-95"
+              className="flex items-center gap-4 rounded-[var(--radius-xl)] bg-blue-50 p-4 transition-all hover:bg-blue-100 active:scale-95"
               href="/products"
               onClick={onClose}
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
+              <div className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-full)] bg-blue-100">
                 <ShoppingBag className="h-6 w-6 text-blue-600" />
               </div>
               <div>
                 <p className="font-medium">Browse All</p>
-                <p className="text-gray-600 text-sm">Explore everything</p>
+                <p className="text-muted-foreground text-sm">Explore everything</p>
               </div>
             </Link>
           </div>
         </div>
 
-        <div className="border-t bg-gray-50 p-4">
+        <div className="border-t bg-muted p-4">
           <Button
             asChild
-            className="h-14 w-full bg-black font-medium text-base text-white hover:bg-gray-800"
+            className="h-14 w-full bg-foreground font-medium text-base text-background hover:bg-secondary-foreground"
           >
-            <Link href={`/${locale}/selling/new`} onClick={onClose}>
+            <Link href={`${env.NEXT_PUBLIC_APP_URL}/${locale}/selling/new`} onClick={onClose}>
               <Plus className="mr-2 h-5 w-5" />
               Start Selling
             </Link>

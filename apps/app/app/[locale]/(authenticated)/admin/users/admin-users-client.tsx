@@ -105,7 +105,7 @@ function UserTable({ users }: { users: UserWithDetails[] }) {
     <div className="space-y-4">
       {/* Bulk Actions */}
       {selectedUsers.length > 0 && (
-        <div className="flex items-center gap-2 p-4 bg-muted/50 rounded-lg">
+        <div className="flex items-center gap-2 p-4 bg-muted/50 rounded-[var(--radius-lg)]">
           <span className="text-sm font-medium">
             {selectedUsers.length} users selected
           </span>

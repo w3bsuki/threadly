@@ -428,7 +428,7 @@ export function AddressManagement() {
             {addresses.map((address) => (
               <div
                 key={address.id}
-                className="border rounded-lg p-4 hover:border-gray-300 transition-colors"
+                className="border rounded-[var(--radius-lg)] p-4 hover:border-border transition-colors"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">

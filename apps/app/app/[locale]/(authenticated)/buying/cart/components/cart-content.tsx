@@ -92,7 +92,7 @@ export function CartContent({ userId }: CartContentProps): React.JSX.Element {
                     alt={item.title}
                     aspectRatio="square"
                     fill
-                    className="object-cover rounded-md"
+                    className="object-cover rounded-[var(--radius-md)]"
                     quality={75}
                     blur={true}
                   />

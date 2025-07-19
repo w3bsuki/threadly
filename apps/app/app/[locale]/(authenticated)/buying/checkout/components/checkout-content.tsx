@@ -404,7 +404,7 @@ export function CheckoutContent({ user }: CheckoutContentProps): React.JSX.Eleme
                           defaultValue={field.value}
                           className="grid gap-4"
                         >
-                          <div className="flex items-center space-x-3 p-3 border rounded-lg">
+                          <div className="flex items-center space-x-3 p-3 border rounded-[var(--radius-lg)]">
                             <RadioGroupItem value="standard" id="standard" />
                             <Label htmlFor="standard" className="flex-1 cursor-pointer">
                               <div className="flex justify-between items-center">
@@ -419,7 +419,7 @@ export function CheckoutContent({ user }: CheckoutContentProps): React.JSX.Eleme
                             </Label>
                           </div>
 
-                          <div className="flex items-center space-x-3 p-3 border rounded-lg">
+                          <div className="flex items-center space-x-3 p-3 border rounded-[var(--radius-lg)]">
                             <RadioGroupItem value="express" id="express" />
                             <Label htmlFor="express" className="flex-1 cursor-pointer">
                               <div className="flex justify-between items-center">
@@ -432,7 +432,7 @@ export function CheckoutContent({ user }: CheckoutContentProps): React.JSX.Eleme
                             </Label>
                           </div>
 
-                          <div className="flex items-center space-x-3 p-3 border rounded-lg">
+                          <div className="flex items-center space-x-3 p-3 border rounded-[var(--radius-lg)]">
                             <RadioGroupItem value="overnight" id="overnight" />
                             <Label htmlFor="overnight" className="flex-1 cursor-pointer">
                               <div className="flex justify-between items-center">
@@ -497,7 +497,7 @@ export function CheckoutContent({ user }: CheckoutContentProps): React.JSX.Eleme
                       src={item.imageUrl}
                       alt={item.title}
                       fill
-                      className="object-cover rounded-md"
+                      className="object-cover rounded-[var(--radius-md)]"
                     />
                   </div>
                   <div className="flex-1 min-w-0">

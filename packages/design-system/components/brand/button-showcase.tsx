@@ -121,8 +121,8 @@ export function BrandButtonShowcase() {
         <h3 className="text-lg font-semibold text-foreground">Real-World Usage Examples</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Product Card Example */}
-          <div className="p-4 border border-border rounded-lg space-y-3">
-            <div className="h-32 bg-muted rounded-md"></div>
+          <div className="p-4 border border-border rounded-[var(--radius-lg)] space-y-3">
+            <div className="h-32 bg-muted rounded-[var(--radius-md)]"></div>
             <h4 className="font-medium">Vintage Denim Jacket</h4>
             <p className="text-2xl font-bold text-[oklch(var(--brand-primary))]">$89</p>
             <div className="space-y-2">
@@ -142,9 +142,9 @@ export function BrandButtonShowcase() {
           </div>
 
           {/* Seller Profile Example */}
-          <div className="p-4 border border-border rounded-lg space-y-3">
+          <div className="p-4 border border-border rounded-[var(--radius-lg)] space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-muted rounded-full"></div>
+              <div className="w-12 h-12 bg-muted rounded-[var(--radius-full)]"></div>
               <div>
                 <h4 className="font-medium">Fashion Seller</h4>
                 <p className="text-sm text-muted-foreground">⭐ 4.9 (234 reviews)</p>
@@ -162,10 +162,10 @@ export function BrandButtonShowcase() {
           </div>
 
           {/* Premium Feature Example */}
-          <div className="p-4 border border-border rounded-lg space-y-3">
+          <div className="p-4 border border-border rounded-[var(--radius-lg)] space-y-3">
             <div className="text-center space-y-2">
-              <div className="w-16 h-16 bg-gradient-to-r from-[oklch(var(--brand-primary))] to-[oklch(var(--brand-accent))] rounded-full mx-auto flex items-center justify-center">
-                <Star className="text-white" />
+              <div className="w-16 h-16 bg-gradient-to-r from-[oklch(var(--brand-primary))] to-[oklch(var(--brand-accent))] rounded-[var(--radius-full)] mx-auto flex items-center justify-center">
+                <Star className="text-background" />
               </div>
               <h4 className="font-medium">Premium Membership</h4>
               <p className="text-sm text-muted-foreground">Unlock exclusive features</p>

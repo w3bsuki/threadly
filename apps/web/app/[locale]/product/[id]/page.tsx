@@ -268,11 +268,11 @@ function ProductDetailLoading() {
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         {/* Image loading skeleton */}
         <div className="space-y-4">
-          <div className="aspect-square animate-pulse rounded-lg bg-muted/20" />
+          <div className="aspect-square animate-pulse rounded-[var(--radius-lg)] bg-muted/20" />
           <div className="grid grid-cols-4 gap-2">
             {Array.from({ length: 4 }).map((_, i) => (
               <div
-                className="aspect-square animate-pulse rounded-lg bg-muted/20"
+                className="aspect-square animate-pulse rounded-[var(--radius-lg)] bg-muted/20"
                 key={i}
               />
             ))}

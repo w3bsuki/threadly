@@ -140,7 +140,7 @@ export class AppErrorBoundary extends Component<Props, State> {
         <div className="min-h-screen flex items-center justify-center bg-background p-4">
           <Card className="max-w-lg w-full">
             <CardHeader className="text-center">
-              <div className="mx-auto w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mb-4">
+              <div className="mx-auto w-12 h-12 bg-destructive/10 rounded-[var(--radius-full)] flex items-center justify-center mb-4">
                 <AlertTriangle className="h-6 w-6 text-destructive" />
               </div>
               <CardTitle className="text-xl">Something went wrong</CardTitle>

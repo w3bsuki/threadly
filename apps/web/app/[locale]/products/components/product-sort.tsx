@@ -68,9 +68,9 @@ export function ProductSort({ currentSort = 'newest' }: ProductSortProps) {
 
   return (
     <Select onValueChange={handleSortChange} value={currentSort}>
-      <SelectTrigger className="h-10 w-full border-gray-200 bg-white text-sm transition-colors hover:border-gray-300 sm:h-9 sm:w-[180px] lg:w-[200px]">
+      <SelectTrigger className="h-10 w-full border-border bg-background text-sm transition-colors hover:border-border sm:h-9 sm:w-[180px] lg:w-[200px]">
         <div className="flex items-center gap-2">
-          <ArrowUpDown className="h-4 w-4 text-gray-500" />
+          <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
           <span className="hidden sm:inline">Sort by:</span>
           <span className="font-medium">
             <span className="sm:hidden">{currentOption.shortLabel}</span>
@@ -88,7 +88,7 @@ export function ProductSort({ currentSort = 'newest' }: ProductSortProps) {
               value={option.value}
             >
               <div className="flex w-full items-center gap-2">
-                <Icon className="h-4 w-4 text-gray-500" />
+                <Icon className="h-4 w-4 text-muted-foreground" />
                 <span>{option.label}</span>
               </div>
             </SelectItem>

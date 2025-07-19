@@ -66,7 +66,7 @@ export function CartDropdown(): React.JSX.Element {
                         src={item.imageUrl}
                         alt={item.title}
                         fill
-                        className="object-cover rounded-md"
+                        className="object-cover rounded-[var(--radius-md)]"
                       />
                     </div>
 

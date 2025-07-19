@@ -8,7 +8,7 @@ function Skeleton({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('animate-pulse rounded-md bg-gray-200/80', className)}
+      className={cn('animate-pulse rounded-[var(--radius-md)] bg-accent/80', className)}
       {...props}
     />
   );
@@ -20,19 +20,19 @@ interface ProductLoadingSkeletonProps {
 
 function ProductCardSkeleton() {
   return (
-    <Card className="h-full overflow-hidden border-0 bg-white shadow-sm">
+    <Card className="h-full overflow-hidden border-0 bg-background shadow-sm">
       {/* Image Skeleton */}
-      <div className="relative aspect-[4/5] bg-gray-100 sm:aspect-[3/4]">
+      <div className="relative aspect-[4/5] bg-secondary sm:aspect-[3/4]">
         <Skeleton className="absolute inset-0" />
 
         {/* Condition Badge Skeleton */}
         <div className="absolute top-2 left-2">
-          <Skeleton className="h-5 w-16 rounded-full" />
+          <Skeleton className="h-5 w-16 rounded-[var(--radius-full)]" />
         </div>
 
         {/* Favorites Skeleton */}
         <div className="absolute top-2 right-2">
-          <Skeleton className="h-6 w-12 rounded-full" />
+          <Skeleton className="h-6 w-12 rounded-[var(--radius-full)]" />
         </div>
       </div>
 
@@ -102,7 +102,7 @@ export function ProductHeaderSkeleton() {
 // Filter sidebar skeleton
 export function ProductFiltersSkeleton() {
   return (
-    <div className="space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+    <div className="space-y-6 rounded-[var(--radius-lg)] border border-border bg-background p-6 shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between">
         <Skeleton className="h-6 w-16" />

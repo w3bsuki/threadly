@@ -72,7 +72,7 @@ export function StepPhotosBasic({ form }: StepPhotosBasicProps) {
         />
       </div>
 
-      <div className="bg-muted/50 p-4 rounded-lg">
+      <div className="bg-muted/50 p-4 rounded-[var(--radius-lg)]">
         <p className="text-sm text-muted-foreground">
           📸 <strong>Photo Tips:</strong> Use natural lighting, show all angles, and include any flaws or wear. 
           First photo will be your main listing image.

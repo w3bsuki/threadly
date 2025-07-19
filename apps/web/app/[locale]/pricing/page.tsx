@@ -67,7 +67,7 @@ const SellingInfo = () => (
         {/* How it Works */}
         <div className="grid w-full max-w-4xl grid-cols-1 gap-8 md:grid-cols-3">
           <div className="flex flex-col items-center gap-4 p-6 text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-purple-100">
+            <div className="flex h-16 w-16 items-center justify-center rounded-[var(--radius-full)] bg-purple-100">
               <span className="font-bold text-2xl text-purple-600">1</span>
             </div>
             <h3 className="font-semibold text-xl">List Your Items</h3>
@@ -78,7 +78,7 @@ const SellingInfo = () => (
           </div>
 
           <div className="flex flex-col items-center gap-4 p-6 text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-purple-100">
+            <div className="flex h-16 w-16 items-center justify-center rounded-[var(--radius-full)] bg-purple-100">
               <span className="font-bold text-2xl text-purple-600">2</span>
             </div>
             <h3 className="font-semibold text-xl">Connect with Buyers</h3>
@@ -88,7 +88,7 @@ const SellingInfo = () => (
           </div>
 
           <div className="flex flex-col items-center gap-4 p-6 text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-purple-100">
+            <div className="flex h-16 w-16 items-center justify-center rounded-[var(--radius-full)] bg-purple-100">
               <span className="font-bold text-2xl text-purple-600">3</span>
             </div>
             <h3 className="font-semibold text-xl">Get Paid</h3>
@@ -158,7 +158,7 @@ const SellingInfo = () => (
         <div className="flex flex-col gap-4 sm:flex-row">
           <Button
             asChild
-            className="gap-3 bg-gradient-to-r from-purple-600 to-pink-600 px-8 py-6 text-lg text-white hover:from-purple-700 hover:to-pink-700"
+            className="gap-3 bg-gradient-to-r from-purple-600 to-pink-600 px-8 py-6 text-lg text-background hover:from-purple-700 hover:to-pink-700"
             size="lg"
           >
             <Link href="/auth/register">Start Selling Today</Link>

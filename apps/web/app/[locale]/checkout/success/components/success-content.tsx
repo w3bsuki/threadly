@@ -82,43 +82,43 @@ export const SuccessContent = ({ order }: SuccessContentProps) => {
     <div className="mx-auto max-w-3xl px-4 py-16">
       <div className="text-center">
         {/* Success Icon */}
-        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
+        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-[var(--radius-full)] bg-green-100">
           <CheckCircle className="h-12 w-12 text-green-600" />
         </div>
 
         {/* Title */}
-        <h1 className="mb-2 font-bold text-3xl text-gray-900">
+        <h1 className="mb-2 font-bold text-3xl text-foreground">
           Order Confirmed!
         </h1>
-        <p className="mb-8 text-gray-600 text-lg">
+        <p className="mb-8 text-muted-foreground text-lg">
           Thank you for your purchase. Your order has been successfully placed.
         </p>
 
         {/* Order Number */}
-        <div className="mb-8 rounded-lg bg-gray-50 p-6">
-          <p className="mb-1 text-gray-600 text-sm">Order number</p>
-          <p className="font-mono font-semibold text-2xl text-gray-900">
+        <div className="mb-8 rounded-[var(--radius-lg)] bg-muted p-6">
+          <p className="mb-1 text-muted-foreground text-sm">Order number</p>
+          <p className="font-mono font-semibold text-2xl text-foreground">
             {order.orderNumber}
           </p>
         </div>
 
         {/* What's Next */}
-        <div className="mb-8 rounded-lg border bg-white p-8">
-          <h2 className="mb-6 font-semibold text-gray-900 text-xl">
+        <div className="mb-8 rounded-[var(--radius-lg)] border bg-background p-8">
+          <h2 className="mb-6 font-semibold text-foreground text-xl">
             What happens next?
           </h2>
           <div className="mx-auto max-w-md space-y-6 text-left">
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+                <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-full)] bg-blue-100">
                   <Mail className="h-5 w-5 text-blue-600" />
                 </div>
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900">
+                <h3 className="font-semibold text-foreground">
                   Order confirmation
                 </h3>
-                <p className="mt-1 text-gray-600 text-sm">
+                <p className="mt-1 text-muted-foreground text-sm">
                   We've sent a confirmation email with your order details and
                   tracking information.
                 </p>
@@ -126,15 +126,15 @@ export const SuccessContent = ({ order }: SuccessContentProps) => {
             </div>
             <div className="flex gap-4">
               <div className="flex-shrink-0">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
+                <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-full)] bg-purple-100">
                   <Package className="h-5 w-5 text-purple-600" />
                 </div>
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900">
+                <h3 className="font-semibold text-foreground">
                   Shipping updates
                 </h3>
-                <p className="mt-1 text-gray-600 text-sm">
+                <p className="mt-1 text-muted-foreground text-sm">
                   You'll receive updates when your order is packed and shipped.
                   Expected delivery in 3-5 business days.
                 </p>

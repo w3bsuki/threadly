@@ -42,7 +42,7 @@ export function CollapsibleFilters({
       {/* Collapse/Expand Button */}
       <Button
         className={cn(
-          'absolute top-0 z-10 h-10 w-10 border border-gray-200 bg-white shadow-sm hover:bg-gray-50',
+          'absolute top-0 z-10 h-10 w-10 border border-border bg-background shadow-sm hover:bg-muted',
           isCollapsed ? 'right-1' : '-right-5'
         )}
         onClick={() => setIsCollapsed(!isCollapsed)}
@@ -59,10 +59,10 @@ export function CollapsibleFilters({
       {/* Collapsed State */}
       {isCollapsed && (
         <div className="flex flex-col items-center space-y-3 py-4">
-          <div className="rounded-lg bg-gray-100 p-2">
-            <Filter className="h-5 w-5 text-gray-600" />
+          <div className="rounded-[var(--radius-lg)] bg-secondary p-2">
+            <Filter className="h-5 w-5 text-muted-foreground" />
           </div>
-          <div className="writing-mode-vertical font-medium text-gray-500 text-xs">
+          <div className="writing-mode-vertical font-medium text-muted-foreground text-xs">
             {dictionary.web.global.filters.filters}
           </div>
         </div>

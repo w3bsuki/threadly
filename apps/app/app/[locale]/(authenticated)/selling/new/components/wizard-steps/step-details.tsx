@@ -134,7 +134,7 @@ export function StepDetails({ form }: StepDetailsProps) {
         />
       </div>
 
-      <div className="bg-muted/50 p-4 rounded-lg">
+      <div className="bg-muted/50 p-4 rounded-[var(--radius-lg)]">
         <p className="text-sm text-muted-foreground">
           ✨ <strong>Pro Tip:</strong> Accurate details help buyers find your item and reduce returns. 
           Include brand and size for better search visibility.

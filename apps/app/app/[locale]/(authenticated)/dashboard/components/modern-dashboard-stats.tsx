@@ -21,7 +21,7 @@ function MetricCard({ title, value, icon: Icon, iconColor, iconBg }: MetricCardP
             <p className="text-xs text-muted-foreground mt-1 sm:text-sm">{title}</p>
           </div>
           <div className={cn(
-            "p-2 rounded-lg shrink-0",
+            "p-2 rounded-[var(--radius-lg)] shrink-0",
             iconBg
           )}>
             <Icon className={cn("h-4 w-4 sm:h-5 sm:w-5", iconColor)} />

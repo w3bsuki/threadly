@@ -48,7 +48,7 @@ export function RoleSelection({ selectedRole, onSelect }: RoleSelectionProps): R
               key={role.value}
               onClick={() => onSelect(role.value)}
               className={cn(
-                'flex items-start p-4 rounded-lg border-2 transition-all text-left',
+                'flex items-start p-4 rounded-[var(--radius-lg)] border-2 transition-all text-left',
                 'hover:border-primary/50 hover:bg-accent/50',
                 isSelected
                   ? 'border-primary bg-primary/5'
@@ -57,7 +57,7 @@ export function RoleSelection({ selectedRole, onSelect }: RoleSelectionProps): R
             >
               <div
                 className={cn(
-                  'p-3 rounded-full mr-4 transition-colors',
+                  'p-3 rounded-[var(--radius-full)] mr-4 transition-colors',
                   isSelected
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted text-muted-foreground'

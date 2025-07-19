@@ -214,10 +214,10 @@ export function OfflineIndicator(): React.ReactElement | null {
 
   return (
     <div className="fixed top-4 left-4 right-4 z-50 mx-auto max-w-sm">
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 shadow-sm">
+      <div className="bg-yellow-50 border border-yellow-200 rounded-[var(--radius-lg)] p-3 shadow-sm">
         <div className="flex items-center">
           <div className="flex-shrink-0">
-            <div className="h-2 w-2 bg-yellow-400 rounded-full" />
+            <div className="h-2 w-2 bg-yellow-400 rounded-[var(--radius-full)]" />
           </div>
           <div className="ml-3">
             <p className="text-sm text-yellow-800">

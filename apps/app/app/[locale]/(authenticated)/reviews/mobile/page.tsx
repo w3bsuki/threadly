@@ -185,7 +185,7 @@ export default async function MobileReviewsPage({ searchParams }: ReviewsPagePro
               <Edit3 className="h-4 w-4" />
               <span className="hidden sm:inline">Write</span>
               {pendingReviewOrders.length > 0 && (
-                <span className="ml-1 text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">
+                <span className="ml-1 text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded-[var(--radius-full)]">
                   {pendingReviewOrders.length}
                 </span>
               )}
@@ -222,10 +222,10 @@ export default async function MobileReviewsPage({ searchParams }: ReviewsPagePro
                     href={`/reviews/mobile?tab=write&orderId=${order.id}`}
                     className="block"
                   >
-                    <div className="bg-card rounded-lg border p-4 hover:border-primary/50 transition-colors">
+                    <div className="bg-card rounded-[var(--radius-lg)] border p-4 hover:border-primary/50 transition-colors">
                       <div className="flex gap-3">
                         {order.Product.images[0] && (
-                          <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                          <div className="relative w-16 h-16 rounded-[var(--radius-lg)] overflow-hidden flex-shrink-0">
                             <img
                               src={order.Product.images[0].imageUrl}
                               alt={order.Product.title}
@@ -290,10 +290,10 @@ export default async function MobileReviewsPage({ searchParams }: ReviewsPagePro
             ) : (
               <div className="space-y-4">
                 {givenReviews.map((review) => (
-                  <div key={review.id} className="bg-card rounded-lg border p-4">
+                  <div key={review.id} className="bg-card rounded-[var(--radius-lg)] border p-4">
                     <div className="flex items-start gap-3">
                       {review.Order.Product.images[0] && (
-                        <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
+                        <div className="relative w-12 h-12 rounded-[var(--radius-lg)] overflow-hidden flex-shrink-0">
                           <img
                             src={review.Order.Product.images[0].imageUrl}
                             alt={review.Order.Product.title}

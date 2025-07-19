@@ -18,12 +18,12 @@ export function OnlineStatus({ userId, className, showText = false }: OnlineStat
     return (
       <div className={`relative ${className}`}>
         <div
-          className={`w-2 h-2 rounded-full ${
+          className={`w-2 h-2 rounded-[var(--radius-full)] ${
             isOnline ? 'bg-green-500' : 'bg-gray-400'
           }`}
         />
         {isOnline && (
-          <div className="absolute inset-0 w-2 h-2 rounded-full bg-green-500 animate-ping" />
+          <div className="absolute inset-0 w-2 h-2 rounded-[var(--radius-full)] bg-green-500 animate-ping" />
         )}
       </div>
     );
@@ -34,7 +34,7 @@ export function OnlineStatus({ userId, className, showText = false }: OnlineStat
       variant={isOnline ? 'default' : 'secondary'}
       className={`text-xs ${className}`}
     >
-      <Dot className={`w-3 h-3 mr-1 ${isOnline ? 'text-green-500' : 'text-gray-400'}`} />
+      <Dot className={`w-3 h-3 mr-1 ${isOnline ? 'text-green-500' : 'text-muted-foreground'}`} />
       {isOnline ? 'Online' : 'Offline'}
     </Badge>
   );

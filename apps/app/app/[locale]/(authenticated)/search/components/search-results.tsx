@@ -139,7 +139,7 @@ export function SearchResults({ initialQuery = '', initialFilters, dictionary }:
         {results?.hits.map((product) => (
           <div 
             key={product.id} 
-            className="group cursor-pointer rounded-xl border bg-card text-card-foreground shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+            className="group cursor-pointer rounded-[var(--radius-xl)] border bg-card text-card-foreground shadow-sm overflow-hidden hover:shadow-md transition-shadow"
           >
             <LazyImage
               src={product.images[0] || ''}

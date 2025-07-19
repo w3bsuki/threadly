@@ -16,7 +16,7 @@ export const MobileActions = memo(() => {
       ) : (
         <SignInButton mode="modal">
           <Button
-            className="-mr-2 h-9 w-9 text-white hover:bg-white/10"
+            className="-mr-2 h-9 w-9 text-background hover:bg-background/10"
             size="icon"
             variant="ghost"
           >

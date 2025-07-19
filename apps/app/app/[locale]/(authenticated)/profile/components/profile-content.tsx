@@ -31,7 +31,9 @@ import {
   Shield,
   CreditCard,
   Users,
-  UserPlus
+  UserPlus,
+  BarChart3,
+  MessageSquare
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { updateUserProfile, updateNotificationSettings, updateShippingAddress } from '../actions/profile-actions';
@@ -259,9 +261,11 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
 
       {/* Settings Tabs */}
       <Tabs defaultValue="profile" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-3 md:grid-cols-6">
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="address">Address</TabsTrigger>
+          <TabsTrigger value="business">Business</TabsTrigger>
+          <TabsTrigger value="reviews">Reviews</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
         </TabsList>
@@ -390,6 +394,172 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
           <AddressManagement />
         </TabsContent>
 
+        {/* Business Tab */}
+        <TabsContent value="business">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5" />
+                Business Analytics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Monthly Revenue</CardTitle>
+                      <DollarSign className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">${stats.total_earnings.toFixed(2)}</div>
+                      <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Conversion Rate</CardTitle>
+                      <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">
+                        {stats.active_listings > 0 ? ((stats.products_sold / stats.active_listings) * 100).toFixed(1) : 0}%
+                      </div>
+                      <p className="text-xs text-muted-foreground">Views to sales ratio</p>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Avg Sale Price</CardTitle>
+                      <Package className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">
+                        ${stats.products_sold > 0 ? (stats.total_earnings / stats.products_sold).toFixed(2) : '0.00'}
+                      </div>
+                      <p className="text-xs text-muted-foreground">Per item sold</p>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="font-medium">Business Insights</h4>
+                  <div className="grid gap-4">
+                    <div className="flex items-center justify-between p-4 border rounded-[var(--radius-lg)]">
+                      <div>
+                        <div className="font-medium">Performance Overview</div>
+                        <div className="text-sm text-muted-foreground">
+                          Track your selling metrics and growth
+                        </div>
+                      </div>
+                      <Button variant="outline" size="sm">View Details</Button>
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 border rounded-[var(--radius-lg)]">
+                      <div>
+                        <div className="font-medium">Sales Reports</div>
+                        <div className="text-sm text-muted-foreground">
+                          Detailed analytics and reporting
+                        </div>
+                      </div>
+                      <Button variant="outline" size="sm">Generate Report</Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Reviews Tab */}
+        <TabsContent value="reviews">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Star className="h-5 w-5" />
+                Reviews & Feedback
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Average Rating</CardTitle>
+                      <Star className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">4.8</div>
+                      <p className="text-xs text-muted-foreground">Based on 23 reviews</p>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Response Rate</CardTitle>
+                      <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">95%</div>
+                      <p className="text-xs text-muted-foreground">Within 24 hours</p>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="font-medium">Recent Reviews</h4>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3 p-4 border rounded-[var(--radius-lg)]">
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback>JD</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-sm">John Doe</span>
+                          <div className="flex">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Star key={star} className="h-3 w-3 fill-current text-yellow-400" />
+                            ))}
+                          </div>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          Great seller! Item was exactly as described and shipped quickly.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3 p-4 border rounded-[var(--radius-lg)]">
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback>SM</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-sm">Sarah Miller</span>
+                          <div className="flex">
+                            {[1, 2, 3, 4].map((star) => (
+                              <Star key={star} className="h-3 w-3 fill-current text-yellow-400" />
+                            ))}
+                            <Star className="h-3 w-3 text-gray-300" />
+                          </div>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          Good quality item. Would buy from this seller again.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Button variant="outline" className="w-full">
+                    View All Reviews
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         {/* Notifications Tab */}
         <TabsContent value="notifications">
           <Card>
@@ -409,7 +579,7 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                       control={notificationForm.control}
                       name="emailOrders"
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <FormItem className="flex flex-row items-center justify-between rounded-[var(--radius-lg)] border p-4">
                           <div className="space-y-0.5">
                             <FormLabel className="text-base">Order Updates</FormLabel>
                             <FormDescription>
@@ -430,7 +600,7 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                       control={notificationForm.control}
                       name="emailMessages"
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <FormItem className="flex flex-row items-center justify-between rounded-[var(--radius-lg)] border p-4">
                           <div className="space-y-0.5">
                             <FormLabel className="text-base">New Messages</FormLabel>
                             <FormDescription>
@@ -451,7 +621,7 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                       control={notificationForm.control}
                       name="emailMarketing"
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <FormItem className="flex flex-row items-center justify-between rounded-[var(--radius-lg)] border p-4">
                           <div className="space-y-0.5">
                             <FormLabel className="text-base">Marketing Emails</FormLabel>
                             <FormDescription>
@@ -478,7 +648,7 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                       control={notificationForm.control}
                       name="pushNotifications"
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <FormItem className="flex flex-row items-center justify-between rounded-[var(--radius-lg)] border p-4">
                           <div className="space-y-0.5">
                             <FormLabel className="text-base">Enable Push Notifications</FormLabel>
                             <FormDescription>
@@ -499,7 +669,7 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                       control={notificationForm.control}
                       name="pushMessages"
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <FormItem className="flex flex-row items-center justify-between rounded-[var(--radius-lg)] border p-4">
                           <div className="space-y-0.5">
                             <FormLabel className="text-base">Message Notifications</FormLabel>
                             <FormDescription>
@@ -537,7 +707,7 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex items-center justify-between p-4 border rounded-[var(--radius-lg)]">
                   <div>
                     <div className="font-medium">Two-Factor Authentication</div>
                     <div className="text-sm text-muted-foreground">
@@ -547,7 +717,7 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                   <Badge variant="outline">Managed by Clerk</Badge>
                 </div>
 
-                <div className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex items-center justify-between p-4 border rounded-[var(--radius-lg)]">
                   <div>
                     <div className="font-medium">Password</div>
                     <div className="text-sm text-muted-foreground">
@@ -557,7 +727,7 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                   <Badge variant="outline">Managed by Clerk</Badge>
                 </div>
 
-                <div className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex items-center justify-between p-4 border rounded-[var(--radius-lg)]">
                   <div>
                     <div className="font-medium">Connected Accounts</div>
                     <div className="text-sm text-muted-foreground">

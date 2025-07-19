@@ -97,7 +97,7 @@ export default function Loading() {
                 <CardContent className="space-y-4">
                   {/* Product */}
                   <div className="flex gap-3">
-                    <Skeleton className="h-20 w-20 rounded-md" />
+                    <Skeleton className="h-20 w-20 rounded-[var(--radius-md)]" />
                     <div className="flex-1 space-y-2">
                       <Skeleton className="h-4 w-full" />
                       <Skeleton className="h-3 w-24" />

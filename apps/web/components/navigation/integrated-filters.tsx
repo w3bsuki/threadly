@@ -85,18 +85,18 @@ const SIZES = [
 ];
 
 const COLORS = [
-  { value: 'black', label: 'Black', hex: '#000000' },
-  { value: 'white', label: 'White', hex: '#FFFFFF' },
-  { value: 'gray', label: 'Gray', hex: '#6B7280' },
-  { value: 'red', label: 'Red', hex: '#EF4444' },
-  { value: 'blue', label: 'Blue', hex: '#3B82F6' },
-  { value: 'green', label: 'Green', hex: '#10B981' },
-  { value: 'yellow', label: 'Yellow', hex: '#F59E0B' },
-  { value: 'purple', label: 'Purple', hex: '#8B5CF6' },
-  { value: 'pink', label: 'Pink', hex: '#EC4899' },
-  { value: 'brown', label: 'Brown', hex: '#92400E' },
-  { value: 'navy', label: 'Navy', hex: '#1E3A8A' },
-  { value: 'beige', label: 'Beige', hex: '#D2B48C' },
+  { value: 'black', label: 'Black', className: 'bg-black' },
+  { value: 'white', label: 'White', className: 'bg-white' },
+  { value: 'gray', label: 'Gray', className: 'bg-gray-500' },
+  { value: 'red', label: 'Red', className: 'bg-red-500' },
+  { value: 'blue', label: 'Blue', className: 'bg-blue-500' },
+  { value: 'green', label: 'Green', className: 'bg-green-500' },
+  { value: 'yellow', label: 'Yellow', className: 'bg-yellow-500' },
+  { value: 'purple', label: 'Purple', className: 'bg-purple-500' },
+  { value: 'pink', label: 'Pink', className: 'bg-pink-500' },
+  { value: 'brown', label: 'Brown', className: 'bg-amber-800' },
+  { value: 'navy', label: 'Navy', className: 'bg-blue-900' },
+  { value: 'beige', label: 'Beige', className: 'bg-orange-100' },
 ];
 
 const SORT_OPTIONS = [
@@ -226,7 +226,7 @@ export function IntegratedFilters({
               step={5}
               value={priceRange}
             />
-            <div className="mt-2 flex justify-between text-gray-500 text-sm">
+            <div className="mt-2 flex justify-between text-muted-foreground text-sm">
               <span>${priceRange[0]}</span>
               <span>${priceRange[1]}</span>
             </div>
@@ -285,7 +285,7 @@ export function IntegratedFilters({
                       {category.name}
                     </Button>
                     {category.count && (
-                      <span className="ml-2 text-gray-500 text-xs">
+                      <span className="ml-2 text-muted-foreground text-xs">
                         {category.count}
                       </span>
                     )}
@@ -321,7 +321,7 @@ export function IntegratedFilters({
                       {brand.name}
                     </Button>
                     {brand.count && (
-                      <span className="ml-2 text-gray-500 text-xs">
+                      <span className="ml-2 text-muted-foreground text-xs">
                         {brand.count}
                       </span>
                     )}
@@ -368,8 +368,10 @@ export function IntegratedFilters({
                 }
               >
                 <div
-                  className="mr-2 h-3 w-3 rounded-full border"
-                  style={{ backgroundColor: color.hex }}
+                  className={cn(
+                    "mr-2 h-3 w-3 rounded-full border",
+                    color.className
+                  )}
                 />
                 {color.label}
               </Button>
@@ -413,7 +415,7 @@ export function IntegratedFilters({
 
         {hasActiveFilters && (
           <Button
-            className="text-red-600 hover:text-red-700"
+            className="text-destructive hover:text-destructive/90"
             onClick={onClearFilters}
             size="sm"
             variant="ghost"

@@ -63,8 +63,8 @@ export function LayoutSwitcher({
             className={cn(
               'h-9 w-9 p-0',
               isActive
-                ? 'bg-gray-900 text-white hover:bg-gray-800'
-                : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                ? 'bg-foreground text-background hover:bg-secondary-foreground'
+                : 'text-muted-foreground hover:bg-muted hover:text-foreground'
             )}
             key={view.id}
             onClick={() => handleViewChange(view.id)}

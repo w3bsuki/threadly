@@ -18,7 +18,7 @@ function HomePageShell({
   locale: string;
 }) {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-background">
       {/* Unified Search Filters - Mobile Only */}
       <div className="md:hidden">
         <UnifiedSearchFilters />
@@ -38,7 +38,7 @@ function ProductGridLoading() {
     <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
       {Array.from({ length: 24 }).map((_, i) => (
         <div
-          className="aspect-[3/4] animate-pulse rounded-lg bg-gray-100"
+          className="aspect-[3/4] animate-pulse rounded-[var(--radius-lg)] bg-secondary"
           key={i}
         />
       ))}

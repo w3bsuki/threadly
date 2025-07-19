@@ -34,10 +34,10 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
   return (
     <html>
       <body>
-        <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4">
+        <div className="flex min-h-screen flex-col items-center justify-center bg-muted px-4">
           <div className="w-full max-w-md space-y-6 text-center">
             {/* Error Icon */}
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[var(--radius-full)] bg-red-100">
               <svg
                 aria-hidden="true"
                 className="h-8 w-8 text-red-600"
@@ -56,10 +56,10 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
 
             {/* Error Message */}
             <div className="space-y-2">
-              <h1 className="font-bold text-2xl text-gray-900">
+              <h1 className="font-bold text-2xl text-foreground">
                 Something went wrong
               </h1>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 We've encountered an unexpected error. Our team has been
                 notified and is working to fix this issue.
               </p>
@@ -84,10 +84,10 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             {/* Error Details for Development */}
             {process.env.NODE_ENV === 'development' && (
               <details className="mt-6 text-left">
-                <summary className="cursor-pointer text-gray-500 text-sm">
+                <summary className="cursor-pointer text-muted-foreground text-sm">
                   Error details (development only)
                 </summary>
-                <pre className="mt-2 overflow-auto rounded bg-gray-100 p-3 text-gray-700 text-xs">
+                <pre className="mt-2 overflow-auto rounded bg-secondary p-3 text-secondary-foreground text-xs">
                   {error.message}
                   {error.stack && `\n\n${error.stack}`}
                 </pre>

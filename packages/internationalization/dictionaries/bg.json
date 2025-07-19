@@ -29,7 +29,14 @@
         "savedItems": "Запазени артикули",
         "myCart": "Моята количка",
         "howItWorks": "Как работи",
-        "helpAndSupport": "Помощ и поддръжка"
+        "helpAndSupport": "Помощ и поддръжка",
+        "home": "Начало"
+      },
+      "promotionalBanner": {
+        "freeShipping": "Безплатна доставка над 100 лв.",
+        "newArrivals": "Нови артикули всеки ден",
+        "securePayments": "Сигурни плащания",
+        "joinCommunity": "10,000+ любители на модата"
       },
       "time": {
         "minutes": "минути",
@@ -373,6 +380,8 @@
       "dashboard": "Начало",
       "orders": "Поръчки",
       "listings": "Обяви",
+      "business": "Бизнес",
+      "reviews": "Отзиви",
       "messages": "Съобщения",
       "analytics": "Анализи",
       "settings": "Настройки",
@@ -877,6 +886,23 @@
       "sendMessage": "Изпрати съобщение",
       "followUser": "Последвай потребител",
       "unfollowUser": "Спри да следваш"
+    },
+    "product": {
+      "anonymous": "Анонимен",
+      "new": "Ново",
+      "adding": "Добавяне...",
+      "inCart": "В количката",
+      "buyNow": "Купи сега",
+      "viewMore": "Виж повече",
+      "failedToAddToCart": "Неуспешно добавяне в количката",
+      "designer": "Дизайнерски",
+      "conditions": {
+        "newWithTags": "Ново с етикети",
+        "newWithoutTags": "Ново без етикети",
+        "veryGood": "Много добро",
+        "good": "Добро",
+        "fair": "Задоволително"
+      }
     },
     "countries": {
       "unitedStates": "Съединени щати",

@@ -26,7 +26,7 @@ export function ModernDashboardHeader({ user, dictionary }: ModernDashboardHeade
   return (
     <div className="space-y-4 lg:space-y-6">
       {/* Welcome Section with improved mobile styling */}
-      <div className="bg-card rounded-lg border border-border p-4 sm:p-6 shadow-sm">
+      <div className="bg-card rounded-[var(--radius-lg)] border border-border p-4 sm:p-6 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="space-y-2">
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground tracking-tight">
@@ -57,7 +57,7 @@ export function ModernDashboardHeader({ user, dictionary }: ModernDashboardHeade
             >
               <Bell className="h-5 w-5 sm:h-4 sm:w-4" />
               <span className="sr-only">{dictionary.dashboard.navigation.notifications}</span>
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-[var(--radius-full)]" />
             </Button>
             
             <Button 
@@ -85,7 +85,7 @@ export function ModernDashboardHeader({ user, dictionary }: ModernDashboardHeade
         >
           <Bell className="h-4 w-4" />
           <span className="sr-only">{dictionary.dashboard.navigation.notifications}</span>
-          <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+          <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-[var(--radius-full)]" />
         </Button>
         
         <Button 

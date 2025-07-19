@@ -38,26 +38,26 @@ export const MobileCategoriesNav = memo(({
 
   return (
     <div className="p-4">
-      <h3 className="mb-4 font-medium text-gray-500 text-xs uppercase tracking-wider">
+      <h3 className="mb-4 font-medium text-muted-foreground text-xs uppercase tracking-wider">
         Shop by Category
       </h3>
       <div className="space-y-2">
         {categories.map((category) => (
           <div
-            className="overflow-hidden rounded-xl border border-gray-200"
+            className="overflow-hidden rounded-[var(--radius-xl)] border border-border"
             key={category.name}
           >
             <div className="flex min-h-[44px] items-center">
               <Link
                 aria-label={`Browse ${category.name} category`}
-                className="flex flex-1 items-center gap-3 p-4 transition-colors hover:bg-gray-50 active:scale-95"
+                className="flex flex-1 items-center gap-3 p-4 transition-colors hover:bg-muted active:scale-95"
                 href={category.href}
                 onClick={onClose}
               >
                 <span aria-hidden="true" className="text-2xl">
                   {category.icon}
                 </span>
-                <span className="font-medium text-gray-900">
+                <span className="font-medium text-foreground">
                   {category.name}
                 </span>
               </Link>
@@ -66,7 +66,7 @@ export const MobileCategoriesNav = memo(({
                 <Button
                   aria-expanded={expandedCategories.includes(category.name)}
                   aria-label={`${expandedCategories.includes(category.name) ? 'Hide' : 'Show'} ${category.name} subcategories`}
-                  className="m-2 h-10 min-w-[44px] px-3 font-medium text-gray-600 text-xs hover:text-gray-900"
+                  className="m-2 h-10 min-w-[44px] px-3 font-medium text-muted-foreground text-xs hover:text-foreground"
                   onClick={() => onToggleCategory(category.name)}
                   size="sm"
                   variant="ghost"
@@ -78,12 +78,12 @@ export const MobileCategoriesNav = memo(({
 
             {expandedCategories.includes(category.name) &&
               category.subcategories.length > 0 && (
-                <div className="border-gray-200 border-t bg-gray-50">
-                  <div className="grid grid-cols-2 gap-px bg-gray-200 p-2">
+                <div className="border-border border-t bg-muted">
+                  <div className="grid grid-cols-2 gap-px bg-accent p-2">
                     {category.subcategories.map((sub) => (
                       <Link
                         aria-label={`Browse ${sub.name} in ${category.name}${(sub as any).popular ? ' - Popular' : ''}`}
-                        className={`flex min-h-[44px] items-center gap-2 rounded bg-white p-3 transition-colors hover:bg-gray-50 active:scale-95 ${
+                        className={`flex min-h-[44px] items-center gap-2 rounded bg-background p-3 transition-colors hover:bg-muted active:scale-95 ${
                           (sub as any).popular ? 'ring-1 ring-blue-200' : ''
                         }`}
                         href={sub.href}
@@ -93,7 +93,7 @@ export const MobileCategoriesNav = memo(({
                         <span aria-hidden="true" className="text-lg">
                           {sub.icon}
                         </span>
-                        <span className="font-medium text-gray-700 text-sm">
+                        <span className="font-medium text-secondary-foreground text-sm">
                           {sub.name}
                         </span>
                         {(sub as any).popular && (

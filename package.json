@@ -34,7 +34,10 @@
     "seed:products": "tsx scripts/seed-products.ts",
     "check:monitoring": "tsx scripts/check-monitoring.ts",
     "clean": "git clean -xdf node_modules",
-    "typecheck": "turbo typecheck"
+    "typecheck": "turbo typecheck",
+    "design-system:audit": "tsx scripts/design-system-audit.ts",
+    "design-system:migrate": "tsx scripts/migrate-to-design-system.ts",
+    "design-system:migrate:dry": "tsx scripts/migrate-to-design-system.ts --dry-run --verbose"
   },
   "devDependencies": {
     "@auto-it/first-time-contributor": "^11.3.0",

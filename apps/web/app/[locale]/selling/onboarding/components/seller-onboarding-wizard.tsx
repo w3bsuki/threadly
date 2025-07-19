@@ -76,7 +76,7 @@ export function SellerOnboardingWizard({
             </div>
           </div>
 
-          <div className="space-y-2 rounded-lg bg-gray-50 p-4">
+          <div className="space-y-2 rounded-[var(--radius-lg)] bg-muted p-4">
             <p className="font-semibold text-sm">
               Benefits of selling on Threadly:
             </p>

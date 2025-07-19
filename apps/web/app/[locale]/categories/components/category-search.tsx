@@ -21,13 +21,13 @@ export const CategorySearch = () => {
 
   return (
     <div className="relative mb-8">
-      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
       <input
         type="text"
         placeholder="Search categories..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="w-full max-w-md rounded-lg border border-gray-300 bg-white py-3 pl-10 pr-4 text-sm placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        className="w-full max-w-md rounded-[var(--radius-lg)] border border-border bg-background py-3 pl-10 pr-4 text-sm placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
       />
     </div>
   );

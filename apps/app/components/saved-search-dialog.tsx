@@ -118,7 +118,7 @@ export function SavedSearchDialog({ query, filters, onSave }: SavedSearchDialogP
             />
           </div>
 
-          <div className="rounded-lg bg-muted p-3 space-y-1">
+          <div className="rounded-[var(--radius-lg)] bg-muted p-3 space-y-1">
             <p className="text-sm font-medium">Search Details</p>
             <p className="text-xs text-muted-foreground">Query: "{query}"</p>
             {filters && Object.keys(filters).length > 0 && (

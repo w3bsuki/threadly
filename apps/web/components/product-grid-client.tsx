@@ -158,14 +158,14 @@ const ProductCard = ({ product }: { product: Product }) => {
   return (
     <article
       aria-label={`Product: ${product.title}`}
-      className="group relative overflow-hidden rounded-lg border border-gray-100 bg-white transition-all duration-200 hover:shadow-lg"
+      className="group relative overflow-hidden rounded-[var(--radius-lg)] border border-gray-100 bg-background transition-all duration-200 hover:shadow-lg"
     >
       <ProductQuickView
         product={transformedProduct}
         trigger={
           <div className="flex h-full cursor-pointer flex-col">
             {/* Image Container with Wishlist Button */}
-            <div className="relative aspect-[3/4] overflow-hidden bg-gray-50">
+            <div className="relative aspect-[3/4] overflow-hidden bg-muted">
               {product.images.length > 0 ? (
                 <Image
                   alt={product.title}
@@ -187,10 +187,10 @@ const ProductCard = ({ product }: { product: Product }) => {
                     ? 'Remove from favorites'
                     : 'Add to favorites'
                 }
-                className={`absolute top-2 right-2 h-9 w-9 rounded-full shadow-sm transition-all ${
+                className={`absolute top-2 right-2 h-9 w-9 rounded-[var(--radius-full)] shadow-sm transition-all ${
                   isFavorited(product.id)
-                    ? 'bg-red-500 text-white'
-                    : 'bg-white/90 text-gray-700 backdrop-blur-sm hover:bg-white'
+                    ? 'bg-red-500 text-background'
+                    : 'bg-background/90 text-secondary-foreground backdrop-blur-sm hover:bg-background'
                 } flex items-center justify-center`}
                 disabled={isPending}
                 onClick={handleToggleFavorite}
@@ -205,12 +205,12 @@ const ProductCard = ({ product }: { product: Product }) => {
                 product.condition === 'NEW_WITH_TAGS') && (
                 <div className="absolute top-2 left-2">
                   {product.isDesigner ? (
-                    <Badge className="border-0 bg-[var(--brand-primary)] px-2 py-0.5 font-semibold text-[10px] text-white">
+                    <Badge className="border-0 bg-[var(--brand-primary)] px-2 py-0.5 font-semibold text-[10px] text-background">
                       DESIGNER
                     </Badge>
                   ) : (
                     product.condition === 'NEW_WITH_TAGS' && (
-                      <Badge className="border-0 bg-green-500 px-2 py-0.5 font-semibold text-[10px] text-white">
+                      <Badge className="border-0 bg-green-500 px-2 py-0.5 font-semibold text-[10px] text-background">
                         NEW
                       </Badge>
                     )
@@ -222,15 +222,15 @@ const ProductCard = ({ product }: { product: Product }) => {
             {/* Content Section */}
             <div className="relative flex flex-1 flex-col p-3">
               {/* Brand & Title */}
-              <p className="font-semibold text-[11px] text-gray-500 uppercase tracking-wide">
+              <p className="font-semibold text-[11px] text-muted-foreground uppercase tracking-wide">
                 {product.brand}
               </p>
-              <h3 className="mt-0.5 line-clamp-2 font-medium text-gray-900 text-sm leading-tight">
+              <h3 className="mt-0.5 line-clamp-2 font-medium text-foreground text-sm leading-tight">
                 {product.title}
               </h3>
 
               {/* Seller Info */}
-              <p className="mt-1 text-gray-400 text-xs">
+              <p className="mt-1 text-muted-foreground/70 text-xs">
                 by {product.seller.name} • {product.seller.location}
               </p>
 
@@ -238,15 +238,15 @@ const ProductCard = ({ product }: { product: Product }) => {
               <div className="mt-auto pt-2">
                 <div className="flex items-end justify-between">
                   <div>
-                    <span className="font-bold text-gray-900 text-lg">
+                    <span className="font-bold text-foreground text-lg">
                       {formatCurrency(product.price)}
                     </span>
                     {product.originalPrice && (
-                      <span className="ml-1.5 text-gray-400 text-xs line-through">
+                      <span className="ml-1.5 text-muted-foreground/70 text-xs line-through">
                         {formatCurrency(product.originalPrice)}
                       </span>
                     )}
-                    <p className="mt-0.5 text-gray-500 text-xs">
+                    <p className="mt-0.5 text-muted-foreground text-xs">
                       Size {product.size}
                     </p>
                   </div>
@@ -256,10 +256,10 @@ const ProductCard = ({ product }: { product: Product }) => {
               {/* Cart Button - Bottom Right Corner */}
               <button
                 aria-label={isProductInCart ? 'In cart' : 'Add to cart'}
-                className={`absolute right-2 bottom-2 h-8 w-8 rounded-full shadow-sm transition-colors ${
+                className={`absolute right-2 bottom-2 h-8 w-8 rounded-[var(--radius-full)] shadow-sm transition-colors ${
                   isProductInCart
-                    ? 'bg-green-500 text-white'
-                    : 'bg-black text-white hover:bg-gray-800'
+                    ? 'bg-green-500 text-background'
+                    : 'bg-primary text-background hover:bg-primary/90'
                 } flex items-center justify-center`}
                 onClick={handleAddToCart}
               >
@@ -507,7 +507,7 @@ export function ProductGridClient({
             {/* Filter Chips */}
             <div className="hidden items-center space-x-2 lg:flex">
               <select
-                className="rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm transition-colors duration-200 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                className="rounded-[var(--radius-md)] border border-gray-200 bg-background px-3 py-1.5 text-sm transition-colors duration-200 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                 onChange={(e) => updateFilter('category', e.target.value)}
                 value={filters.category}
               >
@@ -519,7 +519,7 @@ export function ProductGridClient({
               </select>
 
               <select
-                className="rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm transition-colors duration-200 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                className="rounded-[var(--radius-md)] border border-gray-200 bg-background px-3 py-1.5 text-sm transition-colors duration-200 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                 onChange={(e) => updateFilter('brand', e.target.value)}
                 value={filters.brand}
               >
@@ -531,7 +531,7 @@ export function ProductGridClient({
               </select>
 
               <select
-                className="rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm transition-colors duration-200 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                className="rounded-[var(--radius-md)] border border-gray-200 bg-background px-3 py-1.5 text-sm transition-colors duration-200 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                 onChange={(e) => updateFilter('condition', e.target.value)}
                 value={filters.condition}
               >
@@ -546,7 +546,7 @@ export function ProductGridClient({
             {/* Clear Filters */}
             {activeFilterCount > 0 && (
               <Button
-                className="text-gray-500 text-xs hover:text-gray-700"
+                className="text-muted-foreground text-xs hover:text-secondary-foreground"
                 onClick={clearFilters}
                 size="sm"
                 variant="ghost"
@@ -559,7 +559,7 @@ export function ProductGridClient({
 
           <div className="flex items-center space-x-3">
             {/* Results count */}
-            <span className="hidden font-medium text-gray-600 text-sm md:block">
+            <span className="hidden font-medium text-muted-foreground text-sm md:block">
               {filteredProducts.length} of {filterOptions.totalCount} items
             </span>
           </div>
@@ -567,7 +567,7 @@ export function ProductGridClient({
 
         {/* Mobile filter panel */}
         {showFilters && (
-          <div className="mb-2 space-y-2 rounded-lg border border-gray-200 bg-white p-2 md:hidden">
+          <div className="mb-2 space-y-2 rounded-[var(--radius-lg)] border border-gray-200 bg-background p-2 md:hidden">
             <div className="flex items-center justify-between">
               <h3 className="font-medium">Filters</h3>
               {activeFilterCount > 0 && (
@@ -579,7 +579,7 @@ export function ProductGridClient({
 
             <div className="grid grid-cols-2 gap-3">
               <select
-                className="rounded border border-gray-200 px-3 py-2 text-sm"
+                className="rounded-[var(--radius-md)] border border-gray-200 px-3 py-2 text-sm"
                 onChange={(e) => updateFilter('category', e.target.value)}
                 value={filters.category}
               >
@@ -591,7 +591,7 @@ export function ProductGridClient({
               </select>
 
               <select
-                className="rounded border border-gray-200 px-3 py-2 text-sm"
+                className="rounded-[var(--radius-md)] border border-gray-200 px-3 py-2 text-sm"
                 onChange={(e) => updateFilter('brand', e.target.value)}
                 value={filters.brand}
               >
@@ -603,7 +603,7 @@ export function ProductGridClient({
               </select>
 
               <select
-                className="rounded border border-gray-200 px-3 py-2 text-sm"
+                className="rounded-[var(--radius-md)] border border-gray-200 px-3 py-2 text-sm"
                 onChange={(e) => updateFilter('size', e.target.value)}
                 value={filters.size}
               >
@@ -615,7 +615,7 @@ export function ProductGridClient({
               </select>
 
               <select
-                className="rounded border border-gray-200 px-3 py-2 text-sm"
+                className="rounded-[var(--radius-md)] border border-gray-200 px-3 py-2 text-sm"
                 onChange={(e) => updateFilter('condition', e.target.value)}
                 value={filters.condition}
               >
@@ -639,7 +639,7 @@ export function ProductGridClient({
         {/* Empty state */}
         {filteredProducts.length === 0 && (
           <div className="py-12 text-center">
-            <p className="mb-4 text-gray-500 text-lg">No products found</p>
+            <p className="mb-4 text-muted-foreground text-lg">No products found</p>
             <Button onClick={clearFilters} variant="outline">
               Clear all filters
             </Button>

@@ -13,7 +13,7 @@ export function OrdersListSkeleton() {
                 <SkeletonShimmer className="h-4 w-24" />
               </div>
               <div className="text-right space-y-2">
-                <SkeletonShimmer className="h-6 w-20 rounded-full" />
+                <SkeletonShimmer className="h-6 w-20 rounded-[var(--radius-full)]" />
                 <SkeletonShimmer className="h-5 w-16" />
               </div>
             </div>
@@ -21,7 +21,7 @@ export function OrdersListSkeleton() {
           
           <CardContent>
             <div className="flex gap-3 mb-4">
-              <SkeletonShimmer className="w-16 h-16 rounded-md" />
+              <SkeletonShimmer className="w-16 h-16 rounded-[var(--radius-md)]" />
               <div className="flex-1 space-y-2">
                 <SkeletonText lines={2} />
                 <div className="flex items-center justify-between">
@@ -41,8 +41,8 @@ export function OrdersListSkeleton() {
             </div>
             
             <div className="flex justify-end gap-2 mt-4 pt-3 border-t">
-              <SkeletonShimmer className="h-8 w-24 rounded-md" />
-              <SkeletonShimmer className="h-8 w-28 rounded-md" />
+              <SkeletonShimmer className="h-8 w-24 rounded-[var(--radius-md)]" />
+              <SkeletonShimmer className="h-8 w-28 rounded-[var(--radius-md)]" />
             </div>
           </CardContent>
         </Card>
@@ -58,7 +58,7 @@ export function OrdersStatsSkeleton() {
         <Card key={i} className="overflow-hidden">
           <CardContent className="p-4">
             <div className="text-center space-y-2">
-              <SkeletonShimmer className="h-8 w-12 mx-auto rounded-md" />
+              <SkeletonShimmer className="h-8 w-12 mx-auto rounded-[var(--radius-md)]" />
               <SkeletonShimmer className="h-4 w-20 mx-auto" />
             </div>
           </CardContent>

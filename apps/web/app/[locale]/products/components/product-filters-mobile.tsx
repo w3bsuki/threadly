@@ -203,7 +203,7 @@ export function ProductFiltersMobile({
 
           {/* Active Filters Summary */}
           {activeFiltersCount > 0 && (
-            <div className="mb-6 rounded-lg bg-gray-50 p-4">
+            <div className="mb-6 rounded-[var(--radius-lg)] bg-muted p-4">
               <div className="mb-3 flex items-center justify-between">
                 <span className="font-medium text-sm">
                   {dictionary.web.global.filters.filters}
@@ -253,7 +253,7 @@ export function ProductFiltersMobile({
                 <div className="space-y-4 pb-4">
                   {categories.map((category) => (
                     <div key={category.id}>
-                      <Label className="-mx-2 flex min-h-[44px] cursor-pointer items-center gap-3 rounded-md px-2 py-2 hover:bg-gray-50">
+                      <Label className="-mx-2 flex min-h-[44px] cursor-pointer items-center gap-3 rounded-[var(--radius-md)] px-2 py-2 hover:bg-muted">
                         <Checkbox
                           checked={currentFilters.category === category.id}
                           className="h-5 w-5"
@@ -271,7 +271,7 @@ export function ProductFiltersMobile({
                         <div className="mt-2 ml-8 space-y-2">
                           {category.children.map((child) => (
                             <Label
-                              className="-mx-2 flex min-h-[44px] cursor-pointer items-center gap-3 rounded-md px-2 py-2 hover:bg-gray-50"
+                              className="-mx-2 flex min-h-[44px] cursor-pointer items-center gap-3 rounded-[var(--radius-md)] px-2 py-2 hover:bg-muted"
                               key={child.id}
                             >
                               <Checkbox
@@ -311,7 +311,7 @@ export function ProductFiltersMobile({
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="flex-1">
-                      <Label className="mb-1 block text-gray-600 text-xs">
+                      <Label className="mb-1 block text-muted-foreground text-xs">
                         Min
                       </Label>
                       <Input
@@ -328,7 +328,7 @@ export function ProductFiltersMobile({
                       />
                     </div>
                     <div className="flex-1">
-                      <Label className="mb-1 block text-gray-600 text-xs">
+                      <Label className="mb-1 block text-muted-foreground text-xs">
                         Max
                       </Label>
                       <Input
@@ -365,7 +365,7 @@ export function ProductFiltersMobile({
                 <div className="space-y-3 pb-4">
                   {conditions.map((condition) => (
                     <Label
-                      className="-mx-2 flex min-h-[44px] cursor-pointer items-center gap-3 rounded-md px-2 py-2 hover:bg-gray-50"
+                      className="-mx-2 flex min-h-[44px] cursor-pointer items-center gap-3 rounded-[var(--radius-md)] px-2 py-2 hover:bg-muted"
                       key={condition.value}
                     >
                       <Checkbox

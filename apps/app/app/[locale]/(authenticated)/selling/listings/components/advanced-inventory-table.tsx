@@ -251,13 +251,13 @@ export function AdvancedInventoryTable({
       case 'AVAILABLE':
         return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
       case 'SOLD':
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
+        return 'bg-secondary text-secondary-foreground dark:bg-secondary-foreground dark:text-muted-foreground';
       case 'RESERVED':
         return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
       case 'REMOVED':
         return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
+        return 'bg-secondary text-secondary-foreground dark:bg-secondary-foreground dark:text-muted-foreground';
     }
   };
 
@@ -431,7 +431,7 @@ export function AdvancedInventoryTable({
             </Dialog>
           )}
           
-          <div className="flex rounded-md border">
+          <div className="flex rounded-[var(--radius-md)] border">
             <Button
               variant={viewMode === 'grid' ? 'default' : 'ghost'}
               size="sm"
@@ -493,7 +493,7 @@ export function AdvancedInventoryTable({
                       />
                     </TableCell>
                     <TableCell>
-                      <div className="relative h-12 w-12 overflow-hidden rounded-md">
+                      <div className="relative h-12 w-12 overflow-hidden rounded-[var(--radius-md)]">
                         {product.images[0] ? (
                           <Image
                             src={product.images[0].imageUrl}
@@ -586,7 +586,7 @@ export function AdvancedInventoryTable({
                   <Checkbox
                     checked={selectedProducts.has(product.id)}
                     onCheckedChange={() => handleSelectProduct(product.id)}
-                    className="bg-white/90 border-gray-300"
+                    className="bg-background/90 border-border"
                   />
                 </div>
                 
@@ -614,7 +614,7 @@ export function AdvancedInventoryTable({
                   <div className="absolute bottom-2 right-2">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 bg-white/80 hover:bg-white/90">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 bg-background/80 hover:bg-background/90">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>

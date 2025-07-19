@@ -61,7 +61,7 @@ const AuthenticatedLayout = async ({ children, params }: AppLayoutProperties) =>
       <MobileInteractions enableHaptic={true}>
         <AppLayout isAdmin={isAdmin} dictionary={dictionary}>
           {betaFeature && (
-            <div className="mb-4 rounded-lg bg-blue-500 p-3 text-center text-sm text-white">
+            <div className="mb-4 rounded-[var(--radius-lg)] bg-blue-500 p-3 text-center text-sm text-background">
               Beta feature now available
             </div>
           )}

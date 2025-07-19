@@ -257,7 +257,7 @@ export function TemplateManager({
               <div className="absolute top-2 right-2 z-10">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 bg-white/80 hover:bg-white/90">
+                    <Button variant="ghost" size="icon" className="h-8 w-8 bg-background/80 hover:bg-background/90">
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>

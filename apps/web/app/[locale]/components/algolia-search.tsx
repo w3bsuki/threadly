@@ -184,14 +184,14 @@ export function AlgoliaSearch({
       >
         <div className="relative">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Search className="h-5 w-5 text-gray-400" />
+            <Search className="h-5 w-5 text-muted-foreground/70" />
           </div>
           <input
             className={cn(
-              'block w-full rounded-lg border border-gray-300 py-2 pr-10 pl-10',
+              'block w-full rounded-[var(--radius-lg)] border border-gray-300 py-2 pr-10 pl-10',
               'focus:border-black focus:ring-2 focus:ring-black',
               'text-sm placeholder-gray-500',
-              isMobile && 'bg-gray-50'
+              isMobile && 'bg-muted'
             )}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setShowResults(true)}
@@ -210,7 +210,7 @@ export function AlgoliaSearch({
               }}
               type="button"
             >
-              <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+              <X className="h-4 w-4 text-muted-foreground/70 hover:text-muted-foreground" />
             </button>
           )}
         </div>
@@ -218,10 +218,10 @@ export function AlgoliaSearch({
 
       {/* Search Results Dropdown */}
       {showResults && (
-        <div className="absolute z-50 mt-2 w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xl">
+        <div className="absolute z-50 mt-2 w-full overflow-hidden rounded-[var(--radius-lg)] border border-gray-200 bg-background shadow-xl">
           {isLoading ? (
-            <div className="p-4 text-center text-gray-500">
-              <div className="inline-block h-6 w-6 animate-spin rounded-full border-gray-900 border-b-2" />
+            <div className="p-4 text-center text-muted-foreground">
+              <div className="inline-block h-6 w-6 animate-spin rounded-[var(--radius-full)] border-gray-900 border-b-2" />
             </div>
           ) : results.length > 0 ? (
             <>
@@ -229,8 +229,8 @@ export function AlgoliaSearch({
                 {results.map((product, index) => (
                   <Link
                     className={cn(
-                      'flex items-center gap-3 p-3 transition-colors hover:bg-gray-50',
-                      selectedIndex === index && 'bg-gray-50'
+                      'flex items-center gap-3 p-3 transition-colors hover:bg-muted',
+                      selectedIndex === index && 'bg-muted'
                     )}
                     href={`/products/${product.objectID}`}
                     key={product.objectID}
@@ -244,17 +244,17 @@ export function AlgoliaSearch({
                       <div className="relative h-12 w-12 flex-shrink-0">
                         <Image
                           alt={product.title}
-                          className="rounded-md object-cover"
+                          className="rounded-[var(--radius-md)] object-cover"
                           fill
                           src={product.images[0].imageUrl}
                         />
                       </div>
                     )}
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-medium text-gray-900 text-sm">
+                      <p className="truncate font-medium text-foreground text-sm">
                         {product.title}
                       </p>
-                      <p className="text-gray-500 text-xs">
+                      <p className="text-muted-foreground text-xs">
                         {product.brand && `${product.brand} • `}${product.price}
                       </p>
                     </div>
@@ -263,7 +263,7 @@ export function AlgoliaSearch({
               </div>
               <div className="border-gray-200 border-t p-3">
                 <button
-                  className="font-medium text-gray-600 text-sm hover:text-gray-900"
+                  className="font-medium text-muted-foreground text-sm hover:text-foreground"
                   onClick={handleSearchSubmit}
                 >
                   View all results for "{query}"
@@ -272,21 +272,21 @@ export function AlgoliaSearch({
             </>
           ) : query.trim() ? (
             <div className="p-8 text-center">
-              <p className="mb-2 text-gray-500">
+              <p className="mb-2 text-muted-foreground">
                 No results found for "{query}"
               </p>
-              <p className="text-gray-400 text-sm">
+              <p className="text-muted-foreground/70 text-sm">
                 Try searching for different keywords
               </p>
             </div>
           ) : recentSearches.length > 0 ? (
             <div>
               <div className="flex items-center justify-between border-gray-200 border-b px-4 py-2">
-                <span className="font-medium text-gray-700 text-sm">
+                <span className="font-medium text-secondary-foreground text-sm">
                   Recent Searches
                 </span>
                 <button
-                  className="text-gray-500 text-xs hover:text-gray-700"
+                  className="text-muted-foreground text-xs hover:text-secondary-foreground"
                   onClick={clearRecentSearches}
                 >
                   Clear all
@@ -295,11 +295,11 @@ export function AlgoliaSearch({
               <div className="py-2">
                 {recentSearches.map((search, index) => (
                   <button
-                    className="flex w-full items-center gap-2 px-4 py-2 text-gray-700 text-sm hover:bg-gray-50"
+                    className="flex w-full items-center gap-2 px-4 py-2 text-secondary-foreground text-sm hover:bg-muted"
                     key={index}
                     onClick={() => handleRecentSearch(search)}
                   >
-                    <Clock className="h-3 w-3 text-gray-400" />
+                    <Clock className="h-3 w-3 text-muted-foreground/70" />
                     {search}
                   </button>
                 ))}

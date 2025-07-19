@@ -7,7 +7,7 @@ export function MessageListSkeleton() {
     <div className="space-y-4 p-4">
       {Array.from({ length: 6 }).map((_, i) => (
         <div key={i} className="flex items-start space-x-3">
-          <Skeleton className="h-10 w-10 rounded-full" />
+          <Skeleton className="h-10 w-10 rounded-[var(--radius-full)]" />
           <div className="flex-1 space-y-2">
             <div className="flex items-center justify-between">
               <Skeleton className="h-4 w-24" />
@@ -28,7 +28,7 @@ export function ConversationSkeleton() {
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center space-x-3 p-4 border-b">
-        <Skeleton className="h-10 w-10 rounded-full" />
+        <Skeleton className="h-10 w-10 rounded-[var(--radius-full)]" />
         <div className="flex-1 space-y-1">
           <Skeleton className="h-4 w-24" />
           <Skeleton className="h-3 w-16" />
@@ -51,7 +51,7 @@ export function ConversationSkeleton() {
             )}>
               <Skeleton className="h-4 w-20" />
               <Skeleton className={cn(
-                "h-10 rounded-lg",
+                "h-10 rounded-[var(--radius-lg)]",
                 i % 3 === 0 ? "w-32" : "w-40"
               )} />
             </div>
@@ -61,7 +61,7 @@ export function ConversationSkeleton() {
       
       {/* Input */}
       <div className="p-4 border-t">
-        <Skeleton className="h-12 w-full rounded-lg" />
+        <Skeleton className="h-12 w-full rounded-[var(--radius-lg)]" />
       </div>
     </div>
   );
@@ -71,9 +71,9 @@ export function ConversationSkeleton() {
 export function ChatInputSkeleton() {
   return (
     <div className="flex items-center space-x-2 p-4 border-t">
-      <Skeleton className="h-10 w-10 rounded-full" />
-      <Skeleton className="h-10 flex-1 rounded-lg" />
-      <Skeleton className="h-10 w-10 rounded-lg" />
+      <Skeleton className="h-10 w-10 rounded-[var(--radius-full)]" />
+      <Skeleton className="h-10 flex-1 rounded-[var(--radius-lg)]" />
+      <Skeleton className="h-10 w-10 rounded-[var(--radius-lg)]" />
     </div>
   );
 }
@@ -92,7 +92,7 @@ export function MessageBubbleSkeleton({
       )}>
         <Skeleton className="h-3 w-16" />
         <Skeleton className={cn(
-          "h-10 rounded-lg",
+          "h-10 rounded-[var(--radius-lg)]",
           isOwn ? "w-32" : "w-40"
         )} />
       </div>

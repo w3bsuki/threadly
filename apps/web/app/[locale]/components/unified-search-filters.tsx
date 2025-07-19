@@ -57,11 +57,11 @@ export const UnifiedSearchFilters = ({
 
   return (
     <div
-      className="relative border-gray-100 border-b bg-white"
+      className="relative border-gray-100 border-b bg-background"
       ref={containerRef}
     >
       <div className="px-4 py-2">
-        <div className="rounded-lg border border-gray-200 bg-gray-50 shadow-sm">
+        <div className="rounded-[var(--radius-lg)] border border-gray-200 bg-muted shadow-sm">
           {/* Search Bar with Category Dropdown */}
           <div className="relative">
             <div className="flex items-center">
@@ -69,8 +69,8 @@ export const UnifiedSearchFilters = ({
               <button
                 className={`flex items-center gap-1.5 rounded-l-lg border-gray-200 border-r px-3 py-2.5 transition-all ${
                   showCategories
-                    ? 'bg-black text-white'
-                    : 'bg-black text-white hover:bg-gray-800'
+                    ? 'bg-primary text-background'
+                    : 'bg-primary text-background hover:bg-primary/90'
                 }`}
                 onClick={() => setShowCategories(!showCategories)}
               >
@@ -82,7 +82,7 @@ export const UnifiedSearchFilters = ({
 
               {/* Search Input */}
               <div className="flex flex-1 items-center px-3">
-                <Search className="mr-2 h-4 w-4 flex-shrink-0 text-gray-400" />
+                <Search className="mr-2 h-4 w-4 flex-shrink-0 text-muted-foreground/70" />
                 <input
                   className="w-full bg-transparent py-2.5 text-sm placeholder-gray-500 transition-all focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
                   onBlur={() => setIsSearchFocused(false)}
@@ -98,28 +98,28 @@ export const UnifiedSearchFilters = ({
 
             {/* Categories Dropdown */}
             {showCategories && (
-              <div className="absolute top-full right-0 left-0 z-50 mt-1 max-h-[70vh] overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg">
+              <div className="absolute top-full right-0 left-0 z-50 mt-1 max-h-[70vh] overflow-y-auto rounded-[var(--radius-xl)] border border-gray-200 bg-background shadow-lg">
                 <div className="p-3">
-                  <h3 className="mb-2 px-1 font-semibold text-gray-500 text-xs uppercase tracking-wider">
+                  <h3 className="mb-2 px-1 font-semibold text-muted-foreground text-xs uppercase tracking-wider">
                     Categories
                   </h3>
                   <div className="space-y-1">
                     {categories.map((category) => (
                       <div
-                        className="overflow-hidden rounded-lg border border-gray-200"
+                        className="overflow-hidden rounded-[var(--radius-lg)] border border-gray-200"
                         key={category.name}
                       >
                         <div className="flex items-center">
                           <Link
                             aria-label={`Browse ${category.name} category`}
-                            className="flex flex-1 items-center gap-2 px-3 py-2.5 transition-colors hover:bg-gray-50 active:scale-95"
+                            className="flex flex-1 items-center gap-2 px-3 py-2.5 transition-colors hover:bg-muted active:scale-95"
                             href={category.href}
                             onClick={() => setShowCategories(false)}
                           >
                             <span aria-hidden="true" className="text-lg">
                               {category.icon}
                             </span>
-                            <span className="font-medium text-gray-900 text-sm">
+                            <span className="font-medium text-foreground text-sm">
                               {category.name}
                             </span>
                           </Link>
@@ -131,7 +131,7 @@ export const UnifiedSearchFilters = ({
                                   category.name
                                 )}
                                 aria-label={`${expandedCategories.includes(category.name) ? 'Hide' : 'Show'} ${category.name} subcategories`}
-                                className="m-1 h-8 px-2 font-medium text-gray-600 text-xs hover:text-gray-900"
+                                className="m-1 h-8 px-2 font-medium text-muted-foreground text-xs hover:text-foreground"
                                 onClick={() =>
                                   toggleCategoryExpansion(category.name)
                                 }
@@ -147,14 +147,14 @@ export const UnifiedSearchFilters = ({
 
                         {expandedCategories.includes(category.name) &&
                           category.subcategories && (
-                            <div className="border-gray-200 border-t bg-gray-50">
-                              <div className="grid grid-cols-2 gap-px bg-gray-200 p-1">
+                            <div className="border-gray-200 border-t bg-muted">
+                              <div className="grid grid-cols-2 gap-px bg-accent p-1">
                                 {category.subcategories
                                   .slice(0, 4)
                                   .map((sub) => (
                                     <Link
                                       aria-label={`Browse ${sub.name} in ${category.name}${(sub as any).popular ? ' - Popular' : ''}`}
-                                      className={`flex items-center gap-1.5 rounded bg-white px-2 py-2 transition-colors hover:bg-gray-50 active:scale-95 ${
+                                      className={`flex items-center gap-1.5 rounded-[var(--radius-md)] bg-background px-2 py-2 transition-colors hover:bg-muted active:scale-95 ${
                                         (sub as any).popular
                                           ? 'ring-1 ring-blue-200'
                                           : ''
@@ -169,7 +169,7 @@ export const UnifiedSearchFilters = ({
                                       >
                                         {sub.icon}
                                       </span>
-                                      <span className="font-medium text-gray-700 text-xs">
+                                      <span className="font-medium text-secondary-foreground text-xs">
                                         {sub.name}
                                       </span>
                                       {(sub as any).popular && (
@@ -184,7 +184,7 @@ export const UnifiedSearchFilters = ({
                                   ))}
                                 {category.subcategories.length > 4 && (
                                   <Link
-                                    className="col-span-2 flex items-center justify-center gap-1 rounded bg-blue-50 px-2 py-2 transition-colors hover:bg-blue-100 active:scale-95"
+                                    className="col-span-2 flex items-center justify-center gap-1 rounded-[var(--radius-md)] bg-blue-50 px-2 py-2 transition-colors hover:bg-blue-100 active:scale-95"
                                     href={category.href}
                                     onClick={() => setShowCategories(false)}
                                   >
@@ -205,21 +205,21 @@ export const UnifiedSearchFilters = ({
                   <div className="mt-3 border-gray-100 border-t pt-3">
                     <div className="flex gap-1">
                       <Link
-                        className="flex-1 rounded-md bg-black px-3 py-2 text-center font-medium text-white text-xs transition-colors hover:bg-gray-800"
+                        className="flex-1 rounded-[var(--radius-md)] bg-primary px-3 py-2 text-center font-medium text-background text-xs transition-colors hover:bg-primary/90"
                         href="/products?condition=NEW_WITH_TAGS"
                         onClick={() => setShowCategories(false)}
                       >
                         NEW
                       </Link>
                       <Link
-                        className="flex-1 rounded-md bg-orange-500 px-3 py-2 text-center font-medium text-white text-xs transition-colors hover:bg-orange-600"
+                        className="flex-1 rounded-[var(--radius-md)] bg-orange-500 px-3 py-2 text-center font-medium text-background text-xs transition-colors hover:bg-orange-600"
                         href="/products?sort=popular"
                         onClick={() => setShowCategories(false)}
                       >
                         TRENDING
                       </Link>
                       <Link
-                        className="flex-1 rounded-md bg-red-500 px-3 py-2 text-center font-medium text-white text-xs transition-colors hover:bg-red-600"
+                        className="flex-1 rounded-[var(--radius-md)] bg-red-500 px-3 py-2 text-center font-medium text-background text-xs transition-colors hover:bg-red-600"
                         href="/products?sale=true"
                         onClick={() => setShowCategories(false)}
                       >

@@ -28,7 +28,7 @@ export default function SellingError({
           We encountered an error while loading the selling dashboard. This might be due to a configuration issue.
         </p>
         {process.env.NODE_ENV === 'development' && (
-          <div className="mt-4 p-4 bg-muted rounded-md text-left">
+          <div className="mt-4 p-4 bg-muted rounded-[var(--radius-md)] text-left">
             <p className="text-sm font-mono text-muted-foreground break-all">
               {error.message}
             </p>

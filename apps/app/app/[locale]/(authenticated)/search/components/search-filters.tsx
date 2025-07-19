@@ -164,7 +164,7 @@ export function SearchFilters({ filters, onFiltersChange, onClearFilters, facets
               <Filter className="h-4 w-4 mr-2" />
               {dictionary.web.global.filters.filters}
               {hasActiveFilters && (
-                <Badge variant="destructive" className="ml-2 h-5 w-5 rounded-full p-0 text-xs">
+                <Badge variant="destructive" className="ml-2 h-5 w-5 rounded-[var(--radius-full)] p-0 text-xs">
                   !
                 </Badge>
               )}
@@ -282,7 +282,7 @@ export function SearchFilters({ filters, onFiltersChange, onClearFilters, facets
                   {COLORS.map(color => (
                     <div
                       key={color.value}
-                      className={`cursor-pointer p-2 rounded-lg border-2 transition-all ${
+                      className={`cursor-pointer p-2 rounded-[var(--radius-lg)] border-2 transition-all ${
                         filters.colors?.includes(color.value) 
                           ? 'border-primary bg-primary/10' 
                           : 'border-border hover:border-primary/50'
@@ -291,7 +291,7 @@ export function SearchFilters({ filters, onFiltersChange, onClearFilters, facets
                     >
                       <div className="flex items-center gap-2">
                         <div 
-                          className="w-4 h-4 rounded-full border"
+                          className="w-4 h-4 rounded-[var(--radius-full)] border"
                           style={{ backgroundColor: color.hex }}
                         />
                         <span className="text-xs font-medium">{color.label}</span>
@@ -355,7 +355,7 @@ export function SearchFilters({ filters, onFiltersChange, onClearFilters, facets
             <Badge key={color} variant="secondary" className="gap-1">
               <div className="flex items-center gap-1">
                 <div 
-                  className="w-3 h-3 rounded-full border"
+                  className="w-3 h-3 rounded-[var(--radius-full)] border"
                   style={{ backgroundColor: COLORS.find(c => c.value === color)?.hex }}
                 />
                 {color}

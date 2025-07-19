@@ -4,29 +4,7 @@ import { Button } from '@repo/design-system/components';
 import { cn } from '@repo/design-system/lib/utils';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-
-const offers = [
-  {
-    id: 1,
-    text: 'Free shipping on orders over $50',
-    icon: '📦',
-  },
-  {
-    id: 2,
-    text: 'New arrivals daily from verified sellers',
-    icon: '✨',
-  },
-  {
-    id: 3,
-    text: 'Secure payments & buyer protection',
-    icon: '🔒',
-  },
-  {
-    id: 4,
-    text: 'Join 10,000+ fashion lovers',
-    icon: '💕',
-  },
-];
+import { useI18n } from '../../components/providers/i18n-provider';
 
 interface PromotionalBannerProps {
   className?: string;
@@ -36,6 +14,30 @@ export function PromotionalBanner({ className }: PromotionalBannerProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [currentOffer, setCurrentOffer] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const { dictionary } = useI18n();
+
+  const offers = [
+    {
+      id: 1,
+      text: dictionary.web?.global?.promotionalBanner?.freeShipping || 'Free shipping on orders over $50',
+      icon: '📦',
+    },
+    {
+      id: 2,
+      text: dictionary.web?.global?.promotionalBanner?.newArrivals || 'New arrivals daily from verified sellers',
+      icon: '✨',
+    },
+    {
+      id: 3,
+      text: dictionary.web?.global?.promotionalBanner?.securePayments || 'Secure payments & buyer protection',
+      icon: '🔒',
+    },
+    {
+      id: 4,
+      text: dictionary.web?.global?.promotionalBanner?.joinCommunity || 'Join 10,000+ fashion lovers',
+      icon: '💕',
+    },
+  ];
 
   // Check if banner was dismissed
   useEffect(() => {
@@ -81,25 +83,14 @@ export function PromotionalBanner({ className }: PromotionalBannerProps) {
   }
 
   return (
-    <div className={cn('relative bg-gray-50', className)}>
-      <div className="mx-auto max-w-7xl px-4 py-3">
+    <div className={cn('relative bg-primary text-primary-foreground', className)}>
+      <div className="mx-auto max-w-7xl px-3 py-2 sm:px-4 sm:py-3">
         <div className="flex items-center justify-between">
           {/* Offer content */}
           <div className="flex flex-1 items-center justify-center space-x-3">
-            {/* Navigation arrows - desktop only */}
-            <Button
-              className="hidden h-8 w-8 text-gray-400 hover:text-gray-600 md:flex"
-              onClick={() =>
-                goToOffer((currentOffer - 1 + offers.length) % offers.length)
-              }
-              size="icon"
-              variant="ghost"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
 
             {/* Offer text with fade transition */}
-            <div className="relative flex h-6 items-center">
+            <div className="relative flex items-center justify-center w-full">
               {offers.map((offer, index) => (
                 <div
                   className={cn(
@@ -110,50 +101,25 @@ export function PromotionalBanner({ className }: PromotionalBannerProps) {
                   )}
                   key={offer.id}
                 >
-                  <span className="font-medium text-gray-700 text-sm">
-                    <span className="mr-2">{offer.icon}</span>
-                    {offer.text}
+                  <span className="flex items-center text-xs sm:text-sm md:text-base font-medium">
+                    <span className="mr-1.5 sm:mr-2 text-base sm:text-lg">{offer.icon}</span>
+                    <span className="truncate">{offer.text}</span>
                   </span>
                 </div>
               ))}
             </div>
 
-            {/* Navigation arrows - desktop only */}
-            <Button
-              className="hidden h-8 w-8 text-gray-400 hover:text-gray-600 md:flex"
-              onClick={() => goToOffer((currentOffer + 1) % offers.length)}
-              size="icon"
-              variant="ghost"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
           </div>
 
-          {/* Navigation dots */}
-          <div className="mr-8 hidden items-center space-x-1.5 md:flex">
-            {offers.map((_, index) => (
-              <button
-                aria-label={`Go to offer ${index + 1}`}
-                className={cn(
-                  'h-1.5 w-1.5 rounded-full transition-all duration-300',
-                  index === currentOffer
-                    ? 'w-3 bg-gray-600'
-                    : 'bg-gray-300 hover:bg-gray-400'
-                )}
-                key={index}
-                onClick={() => goToOffer(index)}
-              />
-            ))}
-          </div>
 
           {/* Close button */}
           <Button
-            className="-mr-2 h-8 w-8 text-gray-400 hover:text-gray-600"
+            className="ml-2 h-6 w-6 hover:opacity-80"
             onClick={handleDismiss}
             size="icon"
             variant="ghost"
           >
-            <X className="h-4 w-4" />
+            <X className="h-3 w-3" />
             <span className="sr-only">Dismiss banner</span>
           </Button>
         </div>

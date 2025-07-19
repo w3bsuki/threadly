@@ -10,9 +10,9 @@ export function DashboardHeaderSkeleton() {
       </div>
       
       <div className="flex items-center gap-2">
-        <Skeleton className="h-11 w-11 rounded-lg" />
-        <Skeleton className="h-11 w-11 rounded-lg" />
-        <Skeleton className="h-11 w-32 rounded-lg" />
+        <Skeleton className="h-11 w-11 rounded-[var(--radius-lg)]" />
+        <Skeleton className="h-11 w-11 rounded-[var(--radius-lg)]" />
+        <Skeleton className="h-11 w-32 rounded-[var(--radius-lg)]" />
       </div>
     </div>
   );
@@ -30,7 +30,7 @@ export function DashboardStatsSkeleton() {
                 <Skeleton className="h-8 w-16" />
                 <Skeleton className="h-4 w-12" />
               </div>
-              <Skeleton className="h-10 w-10 rounded-xl" />
+              <Skeleton className="h-10 w-10 rounded-[var(--radius-xl)]" />
             </div>
           </CardContent>
         </Card>
@@ -45,15 +45,15 @@ export function QuickActionsSkeleton() {
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <Skeleton className="h-6 w-32" />
-          <Skeleton className="h-10 w-20 rounded-lg" />
+          <Skeleton className="h-10 w-20 rounded-[var(--radius-lg)]" />
         </div>
       </CardHeader>
       <CardContent>
         <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="p-4 rounded-lg border border-border bg-card min-h-[80px]">
+            <div key={i} className="p-4 rounded-[var(--radius-lg)] border border-border bg-card min-h-[80px]">
               <div className="flex items-start gap-3">
-                <Skeleton className="h-10 w-10 rounded-lg" />
+                <Skeleton className="h-10 w-10 rounded-[var(--radius-lg)]" />
                 <div className="flex-1 space-y-2">
                   <Skeleton className="h-4 w-24" />
                   <Skeleton className="h-3 w-32" />
@@ -73,16 +73,16 @@ export function RecentOrdersSkeleton() {
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <Skeleton className="h-6 w-32" />
-          <Skeleton className="h-10 w-20 rounded-lg" />
+          <Skeleton className="h-10 w-20 rounded-[var(--radius-lg)]" />
         </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="flex items-center gap-3 p-3 rounded-lg min-h-[72px]">
+            <div key={i} className="flex items-center gap-3 p-3 rounded-[var(--radius-lg)] min-h-[72px]">
               <div className="relative flex-shrink-0">
-                <Skeleton className="w-12 h-12 rounded-lg" />
-                <Skeleton className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full" />
+                <Skeleton className="w-12 h-12 rounded-[var(--radius-lg)]" />
+                <Skeleton className="absolute -bottom-1 -right-1 w-5 h-5 rounded-[var(--radius-full)]" />
               </div>
               
               <div className="flex-1 min-w-0">
@@ -96,7 +96,7 @@ export function RecentOrdersSkeleton() {
                   </div>
                   <div className="text-right flex-shrink-0 space-y-1">
                     <Skeleton className="h-4 w-12" />
-                    <Skeleton className="h-5 w-16 rounded-full" />
+                    <Skeleton className="h-5 w-16 rounded-[var(--radius-full)]" />
                   </div>
                 </div>
               </div>
@@ -127,7 +127,7 @@ export function DashboardSkeleton() {
               <div className="space-y-4">
                 {Array.from({ length: 3 }).map((_, i) => (
                   <div key={i} className="flex items-center gap-3">
-                    <Skeleton className="h-10 w-10 rounded-lg" />
+                    <Skeleton className="h-10 w-10 rounded-[var(--radius-lg)]" />
                     <div className="flex-1 space-y-2">
                       <Skeleton className="h-4 w-24" />
                       <Skeleton className="h-3 w-32" />

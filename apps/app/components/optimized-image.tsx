@@ -6,7 +6,7 @@ import type { ImageProps } from 'next/image';
 
 const NextImage = dynamic(() => import('next/image'), {
   ssr: true,
-  loading: () => <div className="animate-pulse bg-gray-200 w-full h-full rounded" />,
+  loading: () => <div className="animate-pulse bg-accent w-full h-full rounded" />,
 });
 
 interface OptimizedImageProps extends ImageProps {
@@ -48,7 +48,7 @@ export function OptimizedImage({
     return (
       <div 
         data-image-src={props.src}
-        className={`animate-pulse bg-gray-200 rounded ${props.className || ''}`}
+        className={`animate-pulse bg-accent rounded ${props.className || ''}`}
         style={{
           width: props.width || '100%',
           height: props.height || '100%',

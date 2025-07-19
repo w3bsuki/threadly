@@ -150,7 +150,7 @@ export const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
               key={image.id || index}
               onClick={() => handleImageSelect(index)}
               className={cn(
-                'relative rounded-lg overflow-hidden border-2 transition-all',
+                'relative rounded-[var(--radius-lg)] overflow-hidden border-2 transition-all',
                 selectedIndex === index
                   ? 'border-primary shadow-md'
                   : 'border-transparent hover:border-muted-foreground/50'
@@ -165,7 +165,7 @@ export const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
                 quality={60}
               />
               {index === 3 && images.length > 4 && (
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-xs font-medium">
+                <div className="absolute inset-0 bg-foreground/50 flex items-center justify-center text-background text-xs font-medium">
                   +{images.length - 4}
                 </div>
               )}

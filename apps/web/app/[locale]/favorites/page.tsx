@@ -163,7 +163,7 @@ const FavoritesPage = async ({ params }: FavoritesProps) => {
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
-                      <Package className="h-12 w-12 text-white opacity-80" />
+                      <Package className="h-12 w-12 text-background opacity-80" />
                     </div>
                   )}
 
@@ -184,7 +184,7 @@ const FavoritesPage = async ({ params }: FavoritesProps) => {
                   </div>
 
                   {/* Favorite Count */}
-                  <div className="absolute top-3 right-3 flex items-center gap-1 rounded-full bg-black/60 px-2 py-1 text-white text-xs backdrop-blur-sm">
+                  <div className="absolute top-3 right-3 flex items-center gap-1 rounded-[var(--radius-full)] bg-foreground/60 px-2 py-1 text-background text-xs backdrop-blur-sm">
                     <Heart className="h-3 w-3 fill-current" />
                     {favorite.product._count.favorites}
                   </div>
@@ -250,7 +250,7 @@ const FavoritesPage = async ({ params }: FavoritesProps) => {
               <Card className="transition-shadow hover:shadow-md">
                 <CardContent className="p-6">
                   <div className="mb-3 flex items-start gap-3">
-                    <div className="rounded-lg bg-blue-100 p-2">
+                    <div className="rounded-[var(--radius-lg)] bg-blue-100 p-2">
                       <Bell className="h-5 w-5 text-blue-600" />
                     </div>
                     <div>
@@ -269,7 +269,7 @@ const FavoritesPage = async ({ params }: FavoritesProps) => {
               <Card className="transition-shadow hover:shadow-md">
                 <CardContent className="p-6">
                   <div className="mb-3 flex items-start gap-3">
-                    <div className="rounded-lg bg-green-100 p-2">
+                    <div className="rounded-[var(--radius-lg)] bg-green-100 p-2">
                       <Heart className="h-5 w-5 text-green-600" />
                     </div>
                     <div>
@@ -293,7 +293,7 @@ const FavoritesPage = async ({ params }: FavoritesProps) => {
               <Card className="transition-shadow hover:shadow-md">
                 <CardContent className="p-6">
                   <div className="mb-3 flex items-start gap-3">
-                    <div className="rounded-lg bg-purple-100 p-2">
+                    <div className="rounded-[var(--radius-lg)] bg-purple-100 p-2">
                       <Package className="h-5 w-5 text-purple-600" />
                     </div>
                     <div>

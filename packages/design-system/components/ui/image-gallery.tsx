@@ -110,7 +110,7 @@ export function ImageGallery({
                   <div
                     key={image.id}
                     className={cn(
-                      'relative cursor-pointer overflow-hidden rounded-lg',
+                      'relative cursor-pointer overflow-hidden rounded-[var(--radius-lg)]',
                       itemClassName
                     )}
                     style={{ height: itemHeight }}
@@ -141,7 +141,7 @@ export function ImageGallery({
               <div
                 key={image.id}
                 className={cn(
-                  'relative cursor-pointer overflow-hidden rounded-lg aspect-square',
+                  'relative cursor-pointer overflow-hidden rounded-[var(--radius-lg)] aspect-square',
                   itemClassName
                 )}
                 onClick={() => enableLightbox && setSelectedIndex(index)}
@@ -165,11 +165,11 @@ export function ImageGallery({
             className="max-w-[90vw] max-h-[90vh] p-0"
             onKeyDown={handleKeyDown}
           >
-            <div className="relative w-full h-full flex items-center justify-center bg-black">
+            <div className="relative w-full h-full flex items-center justify-center bg-foreground">
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-4 right-4 text-white hover:bg-white/20 z-10"
+                className="absolute top-4 right-4 text-background hover:bg-background/20 z-10"
                 onClick={() => setSelectedIndex(null)}
               >
                 <X className="h-6 w-6" />
@@ -179,7 +179,7 @@ export function ImageGallery({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 z-10"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-background hover:bg-background/20 z-10"
                   onClick={handlePrevious}
                 >
                   <ChevronLeft className="h-6 w-6" />
@@ -190,7 +190,7 @@ export function ImageGallery({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 z-10"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-background hover:bg-background/20 z-10"
                   onClick={handleNext}
                 >
                   <ChevronRight className="h-6 w-6" />
@@ -205,7 +205,7 @@ export function ImageGallery({
                 />
               </div>
 
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-sm">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-background text-sm">
                 {selectedIndex + 1} / {images.length}
               </div>
             </div>

@@ -32,7 +32,7 @@ export function LocationSelection({ location, onSelect }: LocationSelectionProps
           />
         </div>
 
-        <div className="bg-muted/50 rounded-lg p-4 text-sm text-muted-foreground">
+        <div className="bg-muted/50 rounded-[var(--radius-lg)] p-4 text-sm text-muted-foreground">
           <div className="flex items-start gap-2">
             <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
             <div className="space-y-1">

@@ -8,7 +8,7 @@ type FooterProps = {
 
 export const Footer = ({ dictionary }: FooterProps) => {
   return (
-    <footer className="mt-16 border-gray-200 border-t bg-white">
+    <footer className="mt-16 border-gray-200 border-t bg-background">
       <div className="mx-auto max-w-7xl px-4 py-8">
         {/* Main Footer Links */}
         <nav
@@ -16,13 +16,13 @@ export const Footer = ({ dictionary }: FooterProps) => {
           className="grid grid-cols-2 gap-8 md:grid-cols-4"
         >
           <div>
-            <h3 className="mb-3 font-semibold text-gray-900">
+            <h3 className="mb-3 font-semibold text-foreground">
               {dictionary.web.footer?.sections?.company || 'Threadly'}
             </h3>
             <ul className="space-y-2">
               <li>
                 <Link
-                  className="text-gray-600 text-sm hover:text-gray-900"
+                  className="text-muted-foreground text-sm hover:text-foreground"
                   href="/contact"
                 >
                   {dictionary.web.footer?.links?.about || 'About'}
@@ -30,7 +30,7 @@ export const Footer = ({ dictionary }: FooterProps) => {
               </li>
               <li>
                 <Link
-                  className="text-gray-600 text-sm hover:text-gray-900"
+                  className="text-muted-foreground text-sm hover:text-foreground"
                   href="/pricing"
                 >
                   {dictionary.web.footer?.links?.howItWorks || 'How it works'}
@@ -38,7 +38,7 @@ export const Footer = ({ dictionary }: FooterProps) => {
               </li>
               <li>
                 <Link
-                  className="text-gray-600 text-sm hover:text-gray-900"
+                  className="text-muted-foreground text-sm hover:text-foreground"
                   href="/contact"
                 >
                   {dictionary.web.footer?.links?.careers || 'Careers'}
@@ -46,7 +46,7 @@ export const Footer = ({ dictionary }: FooterProps) => {
               </li>
               <li>
                 <Link
-                  className="text-gray-600 text-sm hover:text-gray-900"
+                  className="text-muted-foreground text-sm hover:text-foreground"
                   href="/contact"
                 >
                   {dictionary.web.footer?.links?.press || 'Press'}
@@ -56,13 +56,13 @@ export const Footer = ({ dictionary }: FooterProps) => {
           </div>
 
           <div>
-            <h3 className="mb-3 font-semibold text-gray-900">
+            <h3 className="mb-3 font-semibold text-foreground">
               {dictionary.web.footer?.sections?.discover || 'Discover'}
             </h3>
             <ul className="space-y-2">
               <li>
                 <Link
-                  className="text-gray-600 text-sm hover:text-gray-900"
+                  className="text-muted-foreground text-sm hover:text-foreground"
                   href="/products?gender=women"
                 >
                   {dictionary.web.footer?.links?.women || 'Women'}
@@ -70,7 +70,7 @@ export const Footer = ({ dictionary }: FooterProps) => {
               </li>
               <li>
                 <Link
-                  className="text-gray-600 text-sm hover:text-gray-900"
+                  className="text-muted-foreground text-sm hover:text-foreground"
                   href="/products?gender=men"
                 >
                   {dictionary.web.footer?.links?.men || 'Men'}
@@ -78,7 +78,7 @@ export const Footer = ({ dictionary }: FooterProps) => {
               </li>
               <li>
                 <Link
-                  className="text-gray-600 text-sm hover:text-gray-900"
+                  className="text-muted-foreground text-sm hover:text-foreground"
                   href="/products?gender=kids"
                 >
                   {dictionary.web.footer?.links?.kids || 'Kids'}
@@ -86,7 +86,7 @@ export const Footer = ({ dictionary }: FooterProps) => {
               </li>
               <li>
                 <Link
-                  className="text-gray-600 text-sm hover:text-gray-900"
+                  className="text-muted-foreground text-sm hover:text-foreground"
                   href="/categories/home"
                 >
                   {dictionary.web.footer?.links?.home || 'Home'}
@@ -96,13 +96,13 @@ export const Footer = ({ dictionary }: FooterProps) => {
           </div>
 
           <div>
-            <h3 className="mb-3 font-semibold text-gray-900">
+            <h3 className="mb-3 font-semibold text-foreground">
               {dictionary.web.footer?.sections?.selling || 'Selling'}
             </h3>
             <ul className="space-y-2">
               <li>
                 <Link
-                  className="text-gray-600 text-sm hover:text-gray-900"
+                  className="text-muted-foreground text-sm hover:text-foreground"
                   href="/pricing"
                 >
                   {dictionary.web.footer?.links?.sellNow || 'Sell now'}
@@ -110,7 +110,7 @@ export const Footer = ({ dictionary }: FooterProps) => {
               </li>
               <li>
                 <Link
-                  className="text-gray-600 text-sm hover:text-gray-900"
+                  className="text-muted-foreground text-sm hover:text-foreground"
                   href="/pricing"
                 >
                   {dictionary.web.footer?.links?.sellingGuide ||
@@ -119,7 +119,7 @@ export const Footer = ({ dictionary }: FooterProps) => {
               </li>
               <li>
                 <Link
-                  className="text-gray-600 text-sm hover:text-gray-900"
+                  className="text-muted-foreground text-sm hover:text-foreground"
                   href="/pricing"
                 >
                   {dictionary.web.footer?.links?.fees || 'Fees'}
@@ -127,7 +127,7 @@ export const Footer = ({ dictionary }: FooterProps) => {
               </li>
               <li>
                 <Link
-                  className="text-gray-600 text-sm hover:text-gray-900"
+                  className="text-muted-foreground text-sm hover:text-foreground"
                   href="/contact"
                 >
                   {dictionary.web.footer?.links?.shipping || 'Shipping'}
@@ -137,13 +137,13 @@ export const Footer = ({ dictionary }: FooterProps) => {
           </div>
 
           <div>
-            <h3 className="mb-3 font-semibold text-gray-900">
+            <h3 className="mb-3 font-semibold text-foreground">
               {dictionary.web.footer?.sections?.help || 'Help'}
             </h3>
             <ul className="space-y-2">
               <li>
                 <Link
-                  className="text-gray-600 text-sm hover:text-gray-900"
+                  className="text-muted-foreground text-sm hover:text-foreground"
                   href="/contact"
                 >
                   {dictionary.web.footer?.links?.helpCentre || 'Help centre'}
@@ -151,7 +151,7 @@ export const Footer = ({ dictionary }: FooterProps) => {
               </li>
               <li>
                 <Link
-                  className="text-gray-600 text-sm hover:text-gray-900"
+                  className="text-muted-foreground text-sm hover:text-foreground"
                   href="/contact"
                 >
                   {dictionary.web.footer?.links?.contactUs || 'Contact us'}
@@ -159,7 +159,7 @@ export const Footer = ({ dictionary }: FooterProps) => {
               </li>
               <li>
                 <Link
-                  className="text-gray-600 text-sm hover:text-gray-900"
+                  className="text-muted-foreground text-sm hover:text-foreground"
                   href="/contact"
                 >
                   {dictionary.web.footer?.links?.sizeGuide || 'Size guide'}
@@ -167,7 +167,7 @@ export const Footer = ({ dictionary }: FooterProps) => {
               </li>
               <li>
                 <Link
-                  className="text-gray-600 text-sm hover:text-gray-900"
+                  className="text-muted-foreground text-sm hover:text-foreground"
                   href="/contact"
                 >
                   {dictionary.web.footer?.links?.returns || 'Returns'}
@@ -185,19 +185,19 @@ export const Footer = ({ dictionary }: FooterProps) => {
           </div>
 
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div className="mb-4 flex items-center space-x-4 text-gray-600 text-sm md:mb-0">
-              <Link className="hover:text-gray-900" href="/legal/terms">
+            <div className="mb-4 flex items-center space-x-4 text-muted-foreground text-sm md:mb-0">
+              <Link className="hover:text-foreground" href="/legal/terms">
                 {dictionary.web.footer?.links?.terms || 'Terms'}
               </Link>
-              <Link className="hover:text-gray-900" href="/legal/privacy">
+              <Link className="hover:text-foreground" href="/legal/privacy">
                 {dictionary.web.footer?.links?.privacy || 'Privacy'}
               </Link>
-              <Link className="hover:text-gray-900" href="/legal/cookies">
+              <Link className="hover:text-foreground" href="/legal/cookies">
                 {dictionary.web.footer?.links?.cookies || 'Cookies'}
               </Link>
             </div>
 
-            <div className="text-gray-600 text-sm">
+            <div className="text-muted-foreground text-sm">
               {dictionary.web.footer?.copyright ||
                 '© 2024 Threadly. All rights reserved.'}
             </div>

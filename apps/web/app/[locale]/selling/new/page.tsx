@@ -32,7 +32,7 @@ const SellNewItemPage = async ({
   const { locale } = await params;
 
   if (!user) {
-    redirect(`${process.env.NEXT_PUBLIC_APP_URL}/sign-in?redirect_url=${encodeURIComponent(`${process.env.NEXT_PUBLIC_WEB_URL}/${locale}/selling/new`)}`);
+    redirect(`${process.env.NEXT_PUBLIC_APP_URL}/${locale}/selling/new`);
   }
 
   try {

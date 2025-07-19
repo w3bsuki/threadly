@@ -117,13 +117,13 @@ export const ChatArea = memo(({
           </div>
         </div>
 
-        <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+        <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-[var(--radius-lg)]">
           <div className="relative w-12 h-12 flex-shrink-0">
             <Image
               src={conversation.product.images[0]?.imageUrl || '/placeholder.png'}
               alt={conversation.product.title}
               fill
-              className="object-cover rounded-md"
+              className="object-cover rounded-[var(--radius-md)]"
             />
           </div>
           <div className="flex-1">
@@ -160,7 +160,7 @@ export const ChatArea = memo(({
                     className={`flex ${isFromCurrentUser ? 'justify-end' : 'justify-start'}`}
                   >
                     <div
-                      className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                      className={`max-w-xs lg:max-w-md px-4 py-2 rounded-[var(--radius-lg)] ${
                         isFromCurrentUser
                           ? 'bg-primary text-primary-foreground'
                           : 'bg-muted'

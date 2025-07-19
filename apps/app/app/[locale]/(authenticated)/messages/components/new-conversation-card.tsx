@@ -67,10 +67,10 @@ export const NewConversationCard = memo(({
       </CardHeader>
 
       <CardContent className="flex-1 flex flex-col">
-        <div className="mb-4 p-3 bg-muted rounded-lg">
+        <div className="mb-4 p-3 bg-muted rounded-[var(--radius-lg)]">
           <div className="flex gap-3">
             {targetProduct.images[0] && (
-              <div className="relative w-16 h-16 rounded-md overflow-hidden">
+              <div className="relative w-16 h-16 rounded-[var(--radius-md)] overflow-hidden">
                 <Image
                   src={targetProduct.images[0].imageUrl}
                   alt={targetProduct.title}
@@ -96,7 +96,7 @@ export const NewConversationCard = memo(({
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Hi! I'm interested in your item..."
-              className="w-full h-32 p-3 border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full h-32 p-3 border rounded-[var(--radius-md)] resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={isCreating}
               required
             />

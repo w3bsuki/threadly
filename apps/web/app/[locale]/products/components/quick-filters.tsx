@@ -148,7 +148,7 @@ export function QuickFilters({ currentFilters }: QuickFiltersProps) {
             className={cn(
               'h-12 flex-shrink-0 touch-manipulation snap-start whitespace-nowrap px-6 py-3 font-semibold text-base transition-all',
               active
-                ? 'bg-gray-900 text-white hover:bg-gray-800'
+                ? 'bg-foreground text-background hover:bg-secondary-foreground'
                 : 'hover:border-gray-400',
               !active &&
                 filter.color === 'pink' &&
@@ -178,7 +178,7 @@ export function QuickFilters({ currentFilters }: QuickFiltersProps) {
             {filter.label}
             {active && (
               <Badge
-                className="ml-2 h-5 bg-white/20 px-1.5 text-white"
+                className="ml-2 h-5 bg-background/20 px-1.5 text-background"
                 variant="secondary"
               >
                 ✓

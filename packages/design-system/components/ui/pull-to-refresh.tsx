@@ -45,7 +45,7 @@ export function PullToRefreshIndicator({
         <div
           className={cn(
             'transition-all duration-200 ease-out',
-            canRefresh ? 'text-green-600' : 'text-gray-400'
+            canRefresh ? 'text-green-600' : 'text-muted-foreground'
           )}
         >
           {isRefreshing ? (
@@ -67,7 +67,7 @@ export function PullToRefreshIndicator({
                 ? 'text-blue-600'
                 : canRefresh
                 ? 'text-green-600'
-                : 'text-gray-500'
+                : 'text-muted-foreground'
             )}
           >
             {isRefreshing
@@ -79,10 +79,10 @@ export function PullToRefreshIndicator({
         </div>
 
         {/* Progress bar */}
-        <div className="w-16 h-1 bg-gray-200 rounded-full overflow-hidden">
+        <div className="w-16 h-1 bg-accent rounded-[var(--radius-full)] overflow-hidden">
           <div
             className={cn(
-              'h-full transition-all duration-200 ease-out rounded-full',
+              'h-full transition-all duration-200 ease-out rounded-[var(--radius-full)]',
               canRefresh ? 'bg-green-500' : 'bg-gray-400'
             )}
             style={{ width: `${progress * 100}%` }}

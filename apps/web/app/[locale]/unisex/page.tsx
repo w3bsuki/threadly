@@ -3,7 +3,7 @@ import { CategoryNav } from '../components/category-nav';
 
 export default function UnisexPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* Category Navigation */}
       <CategoryNav
         category="unisex"

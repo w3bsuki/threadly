@@ -53,7 +53,7 @@ export function ReviewCard({ review, variant = 'default' }: ReviewCardProps) {
 
   return (
     <div className={cn(
-      "bg-card rounded-lg border",
+      "bg-card rounded-[var(--radius-lg)] border",
       variant === 'compact' ? 'p-3' : 'p-4'
     )}>
       {/* Header */}
@@ -118,7 +118,7 @@ export function ReviewCard({ review, variant = 'default' }: ReviewCardProps) {
               {review.photos.map((photo, index) => (
                 <div
                   key={index}
-                  className="relative aspect-square rounded-lg overflow-hidden cursor-pointer"
+                  className="relative aspect-square rounded-[var(--radius-lg)] overflow-hidden cursor-pointer"
                   onClick={() => {
                     setCurrentPhotoIndex(index);
                     setShowAllPhotos(false);
@@ -135,7 +135,7 @@ export function ReviewCard({ review, variant = 'default' }: ReviewCardProps) {
             </div>
           ) : (
             <div className="relative">
-              <div className="relative aspect-video rounded-lg overflow-hidden bg-muted">
+              <div className="relative aspect-video rounded-[var(--radius-lg)] overflow-hidden bg-muted">
                 <Image
                   src={review.photos[currentPhotoIndex]}
                   alt={`Review photo ${currentPhotoIndex + 1}`}
@@ -149,7 +149,7 @@ export function ReviewCard({ review, variant = 'default' }: ReviewCardProps) {
                     <button
                       onClick={prevPhoto}
                       className={cn(
-                        "absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white rounded-full p-1",
+                        "absolute left-2 top-1/2 -translate-y-1/2 bg-foreground/50 text-background rounded-[var(--radius-full)] p-1",
                         currentPhotoIndex === 0 && "opacity-50 cursor-not-allowed"
                       )}
                       disabled={currentPhotoIndex === 0}
@@ -160,7 +160,7 @@ export function ReviewCard({ review, variant = 'default' }: ReviewCardProps) {
                     <button
                       onClick={nextPhoto}
                       className={cn(
-                        "absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white rounded-full p-1",
+                        "absolute right-2 top-1/2 -translate-y-1/2 bg-foreground/50 text-background rounded-[var(--radius-full)] p-1",
                         currentPhotoIndex === review.photos.length - 1 && "opacity-50 cursor-not-allowed"
                       )}
                       disabled={currentPhotoIndex === review.photos.length - 1}
@@ -174,10 +174,10 @@ export function ReviewCard({ review, variant = 'default' }: ReviewCardProps) {
                         <div
                           key={index}
                           className={cn(
-                            "w-1.5 h-1.5 rounded-full transition-colors",
+                            "w-1.5 h-1.5 rounded-[var(--radius-full)] transition-colors",
                             index === currentPhotoIndex
-                              ? "bg-white"
-                              : "bg-white/50"
+                              ? "bg-background"
+                              : "bg-background/50"
                           )}
                         />
                       ))}
@@ -189,7 +189,7 @@ export function ReviewCard({ review, variant = 'default' }: ReviewCardProps) {
                 {variant === 'default' && review.photos.length > 1 && (
                   <button
                     onClick={() => setShowAllPhotos(true)}
-                    className="absolute top-2 right-2 bg-black/50 text-white rounded-md px-2 py-1 text-xs flex items-center gap-1"
+                    className="absolute top-2 right-2 bg-foreground/50 text-background rounded-[var(--radius-md)] px-2 py-1 text-xs flex items-center gap-1"
                   >
                     <Camera className="h-3 w-3" />
                     {review.photos.length}

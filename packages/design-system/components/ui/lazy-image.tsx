@@ -100,7 +100,7 @@ export const LazyImage = ({
   const defaultFallback = (
     <div className="flex h-full w-full items-center justify-center bg-muted text-muted-foreground">
       <div className="text-center">
-        <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-muted-foreground/20 flex items-center justify-center">
+        <div className="w-12 h-12 mx-auto mb-2 rounded-[var(--radius-full)] bg-muted-foreground/20 flex items-center justify-center">
           <svg
             width="24"
             height="24"
@@ -221,7 +221,7 @@ export const LazyAvatar = ({
   );
 
   return (
-    <div className={cn('rounded-full overflow-hidden', sizeClasses[size], className)}>
+    <div className={cn('rounded-[var(--radius-full)] overflow-hidden', sizeClasses[size], className)}>
       {src && !imageError ? (
         <LazyImage
           src={src}

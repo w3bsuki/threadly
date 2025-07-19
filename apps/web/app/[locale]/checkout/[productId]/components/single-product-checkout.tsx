@@ -347,7 +347,7 @@ function CheckoutForm({
                         onValueChange={field.onChange}
                         value={field.value}
                       >
-                        <div className="flex items-center justify-between rounded-lg border p-4">
+                        <div className="flex items-center justify-between rounded-[var(--radius-lg)] border p-4">
                           <div className="flex items-center space-x-2">
                             <RadioGroupItem id="standard" value="standard" />
                             <Label
@@ -368,7 +368,7 @@ function CheckoutForm({
                               : formatCurrency(shippingCosts.standard)}
                           </p>
                         </div>
-                        <div className="flex items-center justify-between rounded-lg border p-4">
+                        <div className="flex items-center justify-between rounded-[var(--radius-lg)] border p-4">
                           <div className="flex items-center space-x-2">
                             <RadioGroupItem id="express" value="express" />
                             <Label className="cursor-pointer" htmlFor="express">
@@ -424,13 +424,13 @@ function CheckoutForm({
                 {product.images[0] ? (
                   <Image
                     alt={product.title}
-                    className="rounded-md object-cover"
+                    className="rounded-[var(--radius-md)] object-cover"
                     height={80}
                     src={product.images[0].imageUrl}
                     width={80}
                   />
                 ) : (
-                  <div className="h-20 w-20 rounded-md bg-gradient-to-br from-gray-100 to-gray-200" />
+                  <div className="h-20 w-20 rounded-[var(--radius-md)] bg-gradient-to-br from-gray-100 to-gray-200" />
                 )}
                 <div className="flex-1">
                   <h4 className="line-clamp-2 font-medium">{product.title}</h4>
@@ -529,8 +529,8 @@ export function SingleProductCheckout(props: SingleProductCheckoutProps) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <div className="mx-auto mb-2 h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
-          <p className="text-gray-600">Loading checkout...</p>
+          <div className="mx-auto mb-2 h-8 w-8 animate-spin rounded-[var(--radius-full)] border-4 border-blue-600 border-t-transparent" />
+          <p className="text-muted-foreground">Loading checkout...</p>
         </div>
       </div>
     );

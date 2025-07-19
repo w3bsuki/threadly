@@ -74,7 +74,7 @@ const CategoriesPage = async ({ params, searchParams }: CategoriesProps) => {
   const categories = await getCategoriesWithCounts(search);
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-background">
       <div className="mx-auto max-w-7xl px-4 py-12">
         <h1 className="mb-8 font-semibold text-3xl">Browse Categories</h1>
         

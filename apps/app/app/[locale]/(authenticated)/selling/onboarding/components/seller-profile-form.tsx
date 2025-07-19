@@ -55,7 +55,7 @@ export function SellerProfileForm({ data, onUpdate, onNext, onBack }: SellerProf
                 type="button"
                 variant="secondary"
                 size="icon"
-                className="absolute bottom-0 right-0 rounded-full"
+                className="absolute bottom-0 right-0 rounded-[var(--radius-full)]"
                 onClick={() => {
                   // TODO: Implement photo upload
                 }}

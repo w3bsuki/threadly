@@ -19,7 +19,7 @@ const ProductPlaceholder = ({
       className={`flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 ${className}`}
     >
       <svg
-        className="text-gray-300"
+        className="text-muted-foreground"
         fill="none"
         height="60"
         viewBox="0 0 80 80"
@@ -169,7 +169,7 @@ const ProductListItem = ({ product }: { product: Product }) => {
   };
 
   return (
-    <article className="group relative rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md">
+    <article className="group relative rounded-[var(--radius-lg)] border border-border bg-background p-4 transition-shadow hover:shadow-md">
       <ProductQuickView
         product={transformedProduct}
         trigger={
@@ -177,7 +177,7 @@ const ProductListItem = ({ product }: { product: Product }) => {
             <div className="flex gap-4">
               {/* Product Image */}
               <div className="relative h-32 w-32 flex-shrink-0">
-                <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
+                <div className="relative aspect-square overflow-hidden rounded-[var(--radius-lg)] bg-secondary">
                   {product.images.length > 0 ? (
                     <Image
                       alt={product.images[0].alt || product.title}
@@ -193,7 +193,7 @@ const ProductListItem = ({ product }: { product: Product }) => {
                   {/* Condition badge */}
                   <div className="absolute top-2 left-2">
                     <Badge
-                      className="bg-white/90 text-gray-900 text-xs"
+                      className="bg-background/90 text-foreground text-xs"
                       variant="secondary"
                     >
                       {conditionLabels[
@@ -218,10 +218,10 @@ const ProductListItem = ({ product }: { product: Product }) => {
               <div className="min-w-0 flex-1">
                 <div className="mb-2 flex items-start justify-between">
                   <div className="min-w-0 flex-1">
-                    <p className="mb-1 text-gray-500 text-xs uppercase tracking-wide">
+                    <p className="mb-1 text-muted-foreground text-xs uppercase tracking-wide">
                       {product.brand || 'Unknown'}
                     </p>
-                    <h3 className="mb-2 line-clamp-2 font-semibold text-gray-900 text-lg">
+                    <h3 className="mb-2 line-clamp-2 font-semibold text-foreground text-lg">
                       {product.title}
                     </h3>
                   </div>
@@ -234,10 +234,10 @@ const ProductListItem = ({ product }: { product: Product }) => {
                         : `Add ${product.title} to favorites`
                     }
                     className={cn(
-                      'rounded-full p-2 transition-all',
+                      'rounded-[var(--radius-full)] p-2 transition-all',
                       isFavorited
                         ? 'bg-red-50 text-red-500'
-                        : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600'
+                        : 'text-muted-foreground hover:bg-muted hover:text-muted-foreground'
                     )}
                     disabled={isPending}
                     onClick={handleToggleFavorite}
@@ -250,18 +250,18 @@ const ProductListItem = ({ product }: { product: Product }) => {
 
                 {/* Price and Details */}
                 <div className="mb-3">
-                  <span className="font-bold text-2xl text-gray-900">
+                  <span className="font-bold text-2xl text-foreground">
                     {formatCurrency(product.price)}
                   </span>
                 </div>
 
                 {/* Description */}
-                <p className="mb-3 line-clamp-2 text-gray-600 text-sm">
+                <p className="mb-3 line-clamp-2 text-muted-foreground text-sm">
                   {product.description}
                 </p>
 
                 {/* Meta Info */}
-                <div className="flex items-center justify-between text-gray-500 text-xs">
+                <div className="flex items-center justify-between text-muted-foreground text-xs">
                   <div className="flex items-center space-x-4">
                     <span>Size: One Size</span>
                     <span>Category: {product.category}</span>

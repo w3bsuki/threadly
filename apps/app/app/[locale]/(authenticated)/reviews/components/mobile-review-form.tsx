@@ -157,7 +157,7 @@ export function MobileReviewForm({
         <div className="p-4">
           <div className="flex items-center gap-3">
             {productImage && (
-              <div className="relative w-16 h-16 rounded-lg overflow-hidden">
+              <div className="relative w-16 h-16 rounded-[var(--radius-lg)] overflow-hidden">
                 <Image
                   src={productImage}
                   alt={productTitle}
@@ -190,7 +190,7 @@ export function MobileReviewForm({
                         key={star}
                         type="button"
                         onClick={() => field.onChange(star)}
-                        className="p-2 hover:bg-muted rounded-full transition-all transform active:scale-95"
+                        className="p-2 hover:bg-muted rounded-[var(--radius-full)] transition-all transform active:scale-95"
                       >
                         <Star
                           className={cn(
@@ -220,7 +220,7 @@ export function MobileReviewForm({
             <div className="flex gap-2 overflow-x-auto pb-2">
               {photoPreviews.map((preview, index) => (
                 <div key={index} className="relative flex-shrink-0">
-                  <div className="relative w-20 h-20 rounded-lg overflow-hidden">
+                  <div className="relative w-20 h-20 rounded-[var(--radius-lg)] overflow-hidden">
                     <Image
                       src={preview}
                       alt={`Review photo ${index + 1}`}
@@ -231,7 +231,7 @@ export function MobileReviewForm({
                   <button
                     type="button"
                     onClick={() => removePhoto(index)}
-                    className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1"
+                    className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-[var(--radius-full)] p-1"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -239,7 +239,7 @@ export function MobileReviewForm({
               ))}
               
               {photoFiles.length < MAX_PHOTOS && (
-                <label className="flex-shrink-0 w-20 h-20 border-2 border-dashed border-muted-foreground/25 rounded-lg flex items-center justify-center cursor-pointer hover:border-muted-foreground/50 transition-colors">
+                <label className="flex-shrink-0 w-20 h-20 border-2 border-dashed border-muted-foreground/25 rounded-[var(--radius-lg)] flex items-center justify-center cursor-pointer hover:border-muted-foreground/50 transition-colors">
                   <input
                     type="file"
                     accept="image/*"

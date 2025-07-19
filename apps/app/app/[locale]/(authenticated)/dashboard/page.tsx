@@ -4,6 +4,7 @@ import { getDictionary } from '@repo/internationalization';
 import { currentUser } from '@repo/auth/server';
 import { DashboardBanner } from './components/dashboard-banner';
 import { ActiveListings } from './components/active-listings';
+import { ActivePurchases } from './components/active-purchases';
 import { DashboardStatsLoading } from './components/loading-states';
 import { requireOnboarding } from '../components/onboarding-check';
 import { getCacheService } from '@repo/cache';
@@ -35,7 +36,13 @@ async function getDashboardMetrics(dbUserId: string) {
     cacheKey,
     async () => {
       try {
-        const [activeListings, totalSales, unreadMessages] = await Promise.all([
+        const [
+          activeListings, 
+          totalSales, 
+          totalPurchases,
+          unreadMessages
+        ] = await Promise.all([
+          // Selling metrics
           database.product.count({
             where: {
               sellerId: dbUserId,
@@ -50,6 +57,16 @@ async function getDashboardMetrics(dbUserId: string) {
             _sum: { amount: true },
             _count: true
           }),
+          // Buying metrics
+          database.order.aggregate({
+            where: {
+              buyerId: dbUserId,
+              status: { in: ['SHIPPED', 'DELIVERED'] }
+            },
+            _sum: { amount: true },
+            _count: true
+          }),
+          // Messages
           database.message.count({
             where: {
               read: false,
@@ -67,9 +84,14 @@ async function getDashboardMetrics(dbUserId: string) {
         ]);
 
         return {
+          // Selling metrics
           activeListings,
           totalRevenue: decimalToNumber(totalSales?._sum?.amount),
           completedSales: totalSales?._count || 0,
+          // Buying metrics  
+          totalSpent: decimalToNumber(totalPurchases?._sum?.amount),
+          totalPurchases: totalPurchases?._count || 0,
+          // General
           unreadMessages,
         };
       } catch (error) {
@@ -78,6 +100,8 @@ async function getDashboardMetrics(dbUserId: string) {
           activeListings: 0,
           totalRevenue: 0,
           completedSales: 0,
+          totalSpent: 0,
+          totalPurchases: 0,
           unreadMessages: 0,
         };
       }
@@ -117,6 +141,11 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
       {/* Active Listings */}
       <Suspense fallback={<DashboardStatsLoading />}>
         <ActiveListings userId={dbUser.id} dictionary={dictionary} />
+      </Suspense>
+
+      {/* Active Purchases */}
+      <Suspense fallback={<DashboardStatsLoading />}>
+        <ActivePurchases userId={dbUser.id} dictionary={dictionary} />
       </Suspense>
     </div>
   );

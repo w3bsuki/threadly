@@ -158,7 +158,7 @@ function PullToRefresh({
     <div ref={containerRef} className="relative">
       <div
         ref={refreshRef}
-        className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-16 w-8 h-8 flex items-center justify-center bg-primary text-primary-foreground rounded-full shadow-lg transition-all duration-200 ease-out opacity-0 z-50"
+        className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-16 w-8 h-8 flex items-center justify-center bg-primary text-primary-foreground rounded-[var(--radius-full)] shadow-lg transition-all duration-200 ease-out opacity-0 z-50"
         style={{ transform: 'translateX(-50%) translateY(-60px) scale(0.5)' }}
       >
         <svg
@@ -261,9 +261,9 @@ function OfflineIndicator() {
   if (isOnline) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 bg-red-500 text-white text-center py-2 text-sm z-50">
+    <div className="fixed top-0 left-0 right-0 bg-red-500 text-background text-center py-2 text-sm z-50">
       <div className="flex items-center justify-center gap-2">
-        <div className="w-2 h-2 bg-white rounded-full"></div>
+        <div className="w-2 h-2 bg-background rounded-[var(--radius-full)]"></div>
         You're offline. Some features may not work.
       </div>
     </div>

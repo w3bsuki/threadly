@@ -82,7 +82,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = async ({
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                  "flex items-center gap-3 px-3 py-2 rounded-[var(--radius-lg)] text-sm font-medium transition-colors",
                   "hover:bg-accent hover:text-accent-foreground"
                 )}
               >

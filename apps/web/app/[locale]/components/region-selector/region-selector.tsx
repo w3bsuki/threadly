@@ -164,7 +164,7 @@ export function RegionSelector({
               <h3 className="mb-3 font-medium text-sm">
                 Choose your country/region
               </h3>
-              <ScrollArea className="h-[200px] rounded-md border p-2">
+              <ScrollArea className="h-[200px] rounded-[var(--radius-md)] border p-2">
                 <div className="grid grid-cols-2 gap-2">
                   {Object.values(regions).map((region) => (
                     <Button
@@ -242,7 +242,7 @@ export function RegionSelector({
 
             {/* Summary */}
             {selectedRegion && selectedCurrency && selectedLanguage && (
-              <div className="rounded-lg border bg-muted/50 p-4">
+              <div className="rounded-[var(--radius-lg)] border bg-muted/50 p-4">
                 <p className="text-muted-foreground text-sm">Your selection:</p>
                 <div className="mt-2 space-y-1">
                   <p className="text-sm">

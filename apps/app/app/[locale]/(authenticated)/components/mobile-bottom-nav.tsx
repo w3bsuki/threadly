@@ -4,12 +4,13 @@ import { Button } from '@repo/design-system/components';
 import { Badge } from '@repo/design-system/components';
 import { cn } from '@repo/design-system/lib/utils';
 import { 
-  Home, 
+  Search, 
   MessageCircle, 
-  ShoppingBag,
+  LayoutDashboard,
   User,
   Plus,
-  Heart
+  Heart,
+  ShoppingBag
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -36,9 +37,16 @@ export function MobileBottomNav({ className, unreadMessages = 0, dictionary }: M
   const navItems = [
     {
       href: '/dashboard',
-      icon: Home,
+      icon: LayoutDashboard,
+      label: dictionary.dashboard.navigation.dashboard,
+      badge: null,
+    },
+    {
+      href: process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3001/products',
+      icon: Search,
       label: dictionary.web.global.navigation.browse,
       badge: null,
+      isExternal: true,
     },
     {
       href: '/selling/new',
@@ -46,12 +54,6 @@ export function MobileBottomNav({ className, unreadMessages = 0, dictionary }: M
       label: dictionary.web.global.navigation.sell,
       badge: null,
       isSpecial: true,
-    },
-    {
-      href: '/buying/orders',
-      icon: ShoppingBag,
-      label: dictionary.dashboard.navigation.orders,
-      badge: null,
     },
     {
       href: '/messages',
@@ -85,14 +87,19 @@ export function MobileBottomNav({ className, unreadMessages = 0, dictionary }: M
               (item.href !== '/' && pathname.startsWith(item.href));
             const Icon = item.icon;
             
+            const LinkComponent = item.isExternal ? 'a' : Link;
+            const linkProps = item.isExternal 
+              ? { href: item.href, target: '_blank', rel: 'noopener noreferrer' }
+              : { href: item.href };
+
             return (
-              <Link key={item.href} href={item.href} className="flex-1">
+              <LinkComponent key={item.href} {...linkProps} className="flex-1">
                 <Button
                   variant="ghost"
                   size="sm"
                   className={cn(
                     'relative flex flex-col items-center justify-center',
-                    'h-16 w-full gap-1 rounded-lg',
+                    'h-16 w-full gap-1 rounded-[var(--radius-lg)]',
                     'min-h-[44px] min-w-[44px]', // Ensure minimum touch target
                     'text-xs font-medium',
                     'hover:bg-accent/50 active:bg-accent',
@@ -159,7 +166,7 @@ export function MobileBottomNav({ className, unreadMessages = 0, dictionary }: M
                     {item.label}
                   </span>
                 </Button>
-              </Link>
+              </LinkComponent>
             );
           })}
         </nav>
@@ -207,7 +214,7 @@ export function SecondaryActionsNav({ dictionary }: { dictionary: Dictionary }):
                 size="icon"
                 variant="secondary"
                 className={cn(
-                  'relative h-12 w-12 rounded-full',
+                  'relative h-12 w-12 rounded-[var(--radius-full)]',
                   'shadow-lg shadow-black/10',
                   'bg-background/95 backdrop-blur',
                   'border border-border/50',

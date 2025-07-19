@@ -36,6 +36,32 @@ export interface ProductCardProps {
   onQuickView?: (productId: string) => void;
   onShare?: (productId: string) => void;
   className?: string;
+  dictionary?: {
+    web?: {
+      product?: {
+        anonymous?: string;
+        new?: string;
+        adding?: string;
+        inCart?: string;
+        conditions?: {
+          newWithTags?: string;
+          newWithoutTags?: string;
+          veryGood?: string;
+          good?: string;
+          fair?: string;
+        };
+      };
+      tooltips?: {
+        addToCart?: string;
+        quickView?: string;
+      };
+      global?: {
+        filters?: {
+          size?: string;
+        };
+      };
+    };
+  };
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -47,12 +73,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   onQuickView,
   onShare,
   className,
+  dictionary,
 }) => {
   const [isLiked, setIsLiked] = React.useState(product.isLiked || false);
   const [imageError, setImageError] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const sellerName = `${seller.firstName || ''} ${seller.lastName || ''}`.trim() || 'Anonymous';
+  const sellerName = `${seller.firstName || ''} ${seller.lastName || ''}`.trim() || dictionary?.web?.product?.anonymous || 'Anonymous';
   const priceFormatted = (product.price / 100).toFixed(2);
   const originalPriceFormatted = product.originalPrice ? (product.originalPrice / 100).toFixed(2) : null;
 
@@ -120,8 +147,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           {/* Badges Overlay */}
           <div className="absolute left-2 top-2 flex flex-col gap-1">
             {product.isNew && (
-              <Badge variant="default" className="bg-[oklch(var(--brand-secondary))] text-white text-xs">
-                New
+              <Badge variant="default" className="bg-[oklch(var(--brand-secondary))] text-background text-xs">
+{dictionary?.web?.product?.new || 'New'}
               </Badge>
             )}
             {product.discountPercentage && (
@@ -136,7 +163,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <Button
               size="icon"
               variant="secondary"
-              className="h-8 w-8 rounded-full bg-white/90 hover:bg-white"
+              className="h-8 w-8 rounded-[var(--radius-full)] bg-background/90 hover:bg-background"
               onClick={handleLikeToggle}
             >
               <HeartAnimation isLiked={isLiked} size={16} />
@@ -144,7 +171,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <Button
               size="icon"
               variant="secondary"
-              className="h-8 w-8 rounded-full bg-white/90 hover:bg-white"
+              className="h-8 w-8 rounded-[var(--radius-full)] bg-background/90 hover:bg-background"
               onClick={handleQuickView}
             >
               <Eye size={16} />
@@ -152,7 +179,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <Button
               size="icon"
               variant="secondary"
-              className="h-8 w-8 rounded-full bg-white/90 hover:bg-white"
+              className="h-8 w-8 rounded-[var(--radius-full)] bg-background/90 hover:bg-background"
               onClick={handleShare}
             >
               <Share2 size={16} />
@@ -169,7 +196,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 disabled={isLoading}
               >
                 <ShoppingCart className="mr-2" size={16} />
-                {isLoading ? 'Adding...' : 'Quick Add'}
+{isLoading ? (dictionary?.web?.product?.adding || 'Adding...') : (dictionary?.web?.tooltips?.addToCart || 'Quick Add')}
               </Button>
             </div>
           )}
@@ -196,19 +223,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           {(product.brand || product.size) && (
             <div className="flex gap-2 text-xs text-muted-foreground">
               {product.brand && <span className="font-medium">{product.brand}</span>}
-              {product.size && <span>Size {product.size}</span>}
+{product.size && <span>{dictionary?.web?.global?.filters?.size || 'Size'} {product.size}</span>}
             </div>
           )}
 
           {/* Condition */}
           <div className="flex items-center gap-2">
             <ConditionStars rating={product.condition} size={10} />
-            <span className="text-xs text-muted-foreground">
-              {product.condition === 5 && 'New with tags'}
-              {product.condition === 4 && 'New without tags'}
-              {product.condition === 3 && 'Very good'}
-              {product.condition === 2 && 'Good'}
-              {product.condition === 1 && 'Satisfactory'}
+<span className="text-xs text-muted-foreground">
+              {product.condition === 5 && (dictionary?.web?.product?.conditions?.newWithTags || 'New with tags')}
+              {product.condition === 4 && (dictionary?.web?.product?.conditions?.newWithoutTags || 'New without tags')}
+              {product.condition === 3 && (dictionary?.web?.product?.conditions?.veryGood || 'Very good')}
+              {product.condition === 2 && (dictionary?.web?.product?.conditions?.good || 'Good')}
+              {product.condition === 1 && (dictionary?.web?.product?.conditions?.fair || 'Satisfactory')}
             </span>
           </div>
 
@@ -234,7 +261,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               disabled={isLoading}
             >
               <ShoppingCart className="mr-1" size={14} />
-              {isLoading ? 'Adding...' : 'Add'}
+{isLoading ? (dictionary?.web?.product?.adding || 'Adding...') : (dictionary?.web?.tooltips?.addToCart || 'Add')}
             </Button>
           )}
         </div>

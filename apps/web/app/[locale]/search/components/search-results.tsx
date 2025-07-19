@@ -83,6 +83,7 @@ export function SearchResults({
   const { trackSearchQuery, trackLoadMore: trackSearchLoadMore } =
     useAnalyticsEvents();
 
+
   // Calculate columns based on screen size
   useEffect(() => {
     const calculateColumns = () => {
@@ -151,6 +152,36 @@ export function SearchResults({
     isEmpty,
   } = useSearch(initialFilters);
 
+  // Transform search results to match the expected format (after useSearch)
+  const products =
+    results?.hits.map((hit) => ({
+      id: hit.id,
+      title: hit.title,
+      brand: hit.brand || null,
+      price: hit.price,
+      condition: hit.condition,
+      size: hit.size || null,
+      images: [{ imageUrl: hit.images[0] || '' }],
+      seller: {
+        firstName: hit.sellerName?.split(' ')[0] || null,
+        lastName: hit.sellerName?.split(' ').slice(1).join(' ') || null,
+      },
+      category: {
+        name: hit.categoryName || 'Other',
+      },
+    })) || [];
+
+  // Setup virtualization for large result sets (always initialize)
+  const rowCount = Math.ceil(products.length / columns);
+  const estimatedRowHeight = 400;
+  
+  const virtualizer = useVirtualizer({
+    count: rowCount,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => estimatedRowHeight,
+    overscan: 2,
+  });
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -186,43 +217,13 @@ export function SearchResults({
     return <SearchSkeleton />;
   }
 
-  // Transform search results to match the expected format
-  const products =
-    results?.hits.map((hit) => ({
-      id: hit.id,
-      title: hit.title,
-      brand: hit.brand || null,
-      price: hit.price,
-      condition: hit.condition,
-      size: hit.size || null,
-      images: [{ imageUrl: hit.images[0] || '' }],
-      seller: {
-        firstName: hit.sellerName?.split(' ')[0] || null,
-        lastName: hit.sellerName?.split(' ').slice(1).join(' ') || null,
-      },
-      category: {
-        name: hit.categoryName || 'Other',
-      },
-    })) || [];
-
-  // Setup virtualization for large result sets
-  const rowCount = Math.ceil(products.length / columns);
-  const estimatedRowHeight = 400; // Approximate height per row
-  
-  const virtualizer = useVirtualizer({
-    count: rowCount,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => estimatedRowHeight,
-    overscan: 2,
-  });
-
   if (loading && !results) {
     return <SearchSkeleton />;
   }
 
   if (error) {
     return (
-      <div className="mb-8 rounded-lg border border-red-200 bg-red-50 p-6">
+      <div className="mb-8 rounded-[var(--radius-lg)] border border-red-200 bg-red-50 p-6">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-medium text-lg text-red-800">Search Error</h3>
@@ -239,11 +240,11 @@ export function SearchResults({
   if (!query.trim()) {
     return (
       <div className="py-12 text-center">
-        <Search className="mx-auto mb-4 h-16 w-16 text-gray-400" />
-        <h2 className="mb-2 font-semibold text-gray-900 text-xl">
+        <Search className="mx-auto mb-4 h-16 w-16 text-muted-foreground/70" />
+        <h2 className="mb-2 font-semibold text-foreground text-xl">
           Start Your Search
         </h2>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           Enter a search term to find products, brands, or categories
         </p>
       </div>
@@ -253,11 +254,11 @@ export function SearchResults({
   if (isEmpty) {
     return (
       <div className="py-12 text-center">
-        <Search className="mx-auto mb-4 h-16 w-16 text-gray-400" />
-        <h2 className="mb-2 font-semibold text-gray-900 text-xl">
+        <Search className="mx-auto mb-4 h-16 w-16 text-muted-foreground/70" />
+        <h2 className="mb-2 font-semibold text-foreground text-xl">
           No Results Found
         </h2>
-        <p className="mb-6 text-gray-600">
+        <p className="mb-6 text-muted-foreground">
           We couldn't find any products matching "{query}". Try different
           keywords or browse our categories.
         </p>
@@ -276,8 +277,8 @@ export function SearchResults({
       fallback={
         <div className="flex items-center justify-center min-h-[400px] p-4">
           <div className="text-center">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Error loading search results</h3>
-            <p className="text-sm text-gray-600">Please try refreshing the page or search again.</p>
+            <h3 className="text-lg font-semibold text-foreground mb-2">Error loading search results</h3>
+            <p className="text-sm text-muted-foreground">Please try refreshing the page or search again.</p>
           </div>
         </div>
       }
@@ -286,13 +287,13 @@ export function SearchResults({
         {/* Search Header */}
         <div className="mb-8">
           <div className="mb-4 flex items-center justify-between">
-            <h1 className="font-bold text-2xl text-gray-900">
+            <h1 className="font-bold text-2xl text-foreground">
               {query ? `Search Results for "${query}"` : 'All Products'}
             </h1>
 
             {/* Search source indicator */}
             {source && (
-              <div className="text-gray-500 text-sm">
+              <div className="text-muted-foreground text-sm">
                 {source === 'algolia' && '⚡ Powered by Algolia'}
                 {source === 'database' && '📊 Database search'}
                 {source === 'error' && '⚠️ Fallback mode'}
@@ -301,14 +302,14 @@ export function SearchResults({
           </div>
 
           <div className="flex items-center gap-4">
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               {loading
                 ? 'Searching...'
                 : `Found ${totalResults.toLocaleString()} ${totalResults === 1 ? 'product' : 'products'}`}
             </p>
 
             {results?.processingTimeMS && (
-              <span className="text-gray-400 text-xs">
+              <span className="text-muted-foreground/70 text-xs">
                 ({results.processingTimeMS}ms)
               </span>
             )}
@@ -322,7 +323,7 @@ export function SearchResults({
           {products.map((product) => (
             <Link href={`/product/${product.id}`} key={product.id}>
               <Card className="group h-full cursor-pointer overflow-hidden transition-shadow hover:shadow-lg">
-                <div className="relative aspect-[3/4] bg-gray-100">
+                <div className="relative aspect-[3/4] bg-secondary">
                   {product.images[0] &&
                   !product.images[0].imageUrl.includes('picsum.photos') &&
                   !product.images[0].imageUrl.includes('placehold.co') ? (
@@ -340,9 +341,9 @@ export function SearchResults({
                   {/* Heart Button */}
                   <button
                     aria-label="Add to favorites"
-                    className="absolute top-3 right-3 rounded-full bg-white/90 p-2 backdrop-blur-sm transition-all hover:scale-110 hover:bg-white"
+                    className="absolute top-3 right-3 rounded-[var(--radius-full)] bg-background/90 p-2 backdrop-blur-sm transition-all hover:scale-110 hover:bg-background"
                   >
-                    <Heart className="h-4 w-4 text-gray-600" />
+                    <Heart className="h-4 w-4 text-muted-foreground" />
                   </button>
                 </div>
 
@@ -351,13 +352,13 @@ export function SearchResults({
                     <p className="font-medium text-blue-600 text-xs uppercase tracking-wide">
                       {product.brand || 'Unknown Brand'}
                     </p>
-                    <h3 className="line-clamp-2 font-semibold text-gray-900 transition-colors group-hover:text-blue-600">
+                    <h3 className="line-clamp-2 font-semibold text-foreground transition-colors group-hover:text-blue-600">
                       {product.title}
                     </h3>
                   </div>
 
                   <div className="mb-3 flex items-center justify-between">
-                    <span className="font-bold text-gray-900 text-lg">
+                    <span className="font-bold text-foreground text-lg">
                       {formatCurrency(product.price)}
                     </span>
                     {product.size && (
@@ -367,7 +368,7 @@ export function SearchResults({
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between text-gray-600 text-sm">
+                  <div className="flex items-center justify-between text-muted-foreground text-sm">
                     <span>
                       {product.seller
                         ? `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() ||
@@ -380,7 +381,7 @@ export function SearchResults({
                   </div>
 
                   {product.category && (
-                    <p className="mt-1 text-gray-500 text-xs">
+                    <p className="mt-1 text-muted-foreground text-xs">
                       in {product.category.name}
                     </p>
                   )}
@@ -423,7 +424,7 @@ export function SearchResults({
                     {rowProducts.map((product) => (
                       <Link href={`/product/${product.id}`} key={product.id}>
                         <Card className="group h-full cursor-pointer overflow-hidden transition-shadow hover:shadow-lg">
-                          <div className="relative aspect-[3/4] bg-gray-100">
+                          <div className="relative aspect-[3/4] bg-secondary">
                             {product.images[0] &&
                             !product.images[0].imageUrl.includes('picsum.photos') &&
                             !product.images[0].imageUrl.includes('placehold.co') ? (
@@ -441,9 +442,9 @@ export function SearchResults({
                             {/* Heart Button */}
                             <button
                               aria-label="Add to favorites"
-                              className="absolute top-3 right-3 rounded-full bg-white/90 p-2 backdrop-blur-sm transition-all hover:scale-110 hover:bg-white"
+                              className="absolute top-3 right-3 rounded-[var(--radius-full)] bg-background/90 p-2 backdrop-blur-sm transition-all hover:scale-110 hover:bg-background"
                             >
-                              <Heart className="h-4 w-4 text-gray-600" />
+                              <Heart className="h-4 w-4 text-muted-foreground" />
                             </button>
                           </div>
 
@@ -452,13 +453,13 @@ export function SearchResults({
                               <p className="font-medium text-blue-600 text-xs uppercase tracking-wide">
                                 {product.brand || 'Unknown Brand'}
                               </p>
-                              <h3 className="line-clamp-2 font-semibold text-gray-900 transition-colors group-hover:text-blue-600">
+                              <h3 className="line-clamp-2 font-semibold text-foreground transition-colors group-hover:text-blue-600">
                                 {product.title}
                               </h3>
                             </div>
 
                             <div className="mb-3 flex items-center justify-between">
-                              <span className="font-bold text-gray-900 text-lg">
+                              <span className="font-bold text-foreground text-lg">
                                 {formatCurrency(product.price)}
                               </span>
                               {product.size && (
@@ -468,7 +469,7 @@ export function SearchResults({
                               )}
                             </div>
 
-                            <div className="flex items-center justify-between text-gray-600 text-sm">
+                            <div className="flex items-center justify-between text-muted-foreground text-sm">
                               <span>
                                 {product.seller
                                   ? `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() ||
@@ -481,7 +482,7 @@ export function SearchResults({
                             </div>
 
                             {product.category && (
-                              <p className="mt-1 text-gray-500 text-xs">
+                              <p className="mt-1 text-muted-foreground text-xs">
                                 in {product.category.name}
                               </p>
                             )}
@@ -518,7 +519,7 @@ export function SearchResults({
       {/* End of results indicator */}
       {products.length > 0 && !hasMore && !loading && (
         <div className="mt-12 text-center">
-          <p className="text-gray-500 text-sm">
+          <p className="text-muted-foreground text-sm">
             You've reached the end of the search results.
           </p>
         </div>
@@ -532,18 +533,18 @@ function SearchSkeleton() {
   return (
     <div className="space-y-8">
       <div className="space-y-4">
-        <div className="h-8 w-1/3 animate-pulse rounded bg-gray-200" />
-        <div className="h-4 w-1/6 animate-pulse rounded bg-gray-200" />
+        <div className="h-8 w-1/3 animate-pulse rounded-[var(--radius-md)] bg-accent" />
+        <div className="h-4 w-1/6 animate-pulse rounded-[var(--radius-md)] bg-accent" />
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {Array.from({ length: 8 }).map((_, i) => (
           <div className="space-y-3" key={i}>
-            <div className="aspect-[3/4] animate-pulse rounded-lg bg-gray-200" />
+            <div className="aspect-[3/4] animate-pulse rounded-[var(--radius-lg)] bg-accent" />
             <div className="space-y-2">
-              <div className="h-4 animate-pulse rounded bg-gray-200" />
-              <div className="h-4 w-2/3 animate-pulse rounded bg-gray-200" />
-              <div className="h-4 w-1/3 animate-pulse rounded bg-gray-200" />
+              <div className="h-4 animate-pulse rounded-[var(--radius-md)] bg-accent" />
+              <div className="h-4 w-2/3 animate-pulse rounded-[var(--radius-md)] bg-accent" />
+              <div className="h-4 w-1/3 animate-pulse rounded-[var(--radius-md)] bg-accent" />
             </div>
           </div>
         ))}

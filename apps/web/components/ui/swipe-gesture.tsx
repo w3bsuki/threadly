@@ -211,19 +211,19 @@ export function SwipeableCard({
   return (
     <div className={cn('relative overflow-hidden', className)}>
       {leftAction && (
-        <div className="absolute left-0 top-0 h-full w-20 flex items-center justify-center bg-green-500 text-white">
+        <div className="absolute left-0 top-0 h-full w-20 flex items-center justify-center bg-green-500 text-background">
           {leftAction}
         </div>
       )}
       
       {rightAction && (
-        <div className="absolute right-0 top-0 h-full w-20 flex items-center justify-center bg-red-500 text-white">
+        <div className="absolute right-0 top-0 h-full w-20 flex items-center justify-center bg-red-500 text-background">
           {rightAction}
         </div>
       )}
       
       <div
-        className="relative z-10 bg-white transition-transform duration-200 ease-out"
+        className="relative z-10 bg-background transition-transform duration-200 ease-out"
         style={{
           transform: `translateX(${transform}px)`,
           transition: isDragging ? 'none' : 'transform 0.2s ease-out'

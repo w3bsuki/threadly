@@ -108,7 +108,7 @@ const conditionColors = {
   NEW_WITHOUT_TAGS: 'bg-blue-100 text-blue-800',
   VERY_GOOD: 'bg-purple-100 text-purple-800',
   GOOD: 'bg-yellow-100 text-yellow-800',
-  SATISFACTORY: 'bg-gray-100 text-gray-800',
+  SATISFACTORY: 'bg-secondary text-foreground/90',
 };
 
 export function ProductDetail({
@@ -253,7 +253,7 @@ export function ProductDetail({
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* Mobile Header - Breadcrumb hidden on mobile */}
       <div className="container px-4 py-4 md:py-6">
         <Breadcrumb className="mb-6 hidden md:block">
@@ -290,7 +290,7 @@ export function ProductDetail({
           {/* Enhanced Image Gallery */}
           <div className="space-y-3 md:space-y-4">
             <div
-              className="relative aspect-square overflow-hidden rounded-xl bg-gray-100 md:rounded-2xl"
+              className="relative aspect-square overflow-hidden rounded-[var(--radius-xl)] bg-secondary md:rounded-[var(--radius-2xl)]"
               onTouchMove={handleTouchMove}
               onTouchStart={(e) => {
                 handleTouchStart.current = {
@@ -309,7 +309,7 @@ export function ProductDetail({
                   src={product.images[selectedImageIndex].imageUrl}
                 />
               ) : (
-                <div className="flex h-full items-center justify-center text-gray-400">
+                <div className="flex h-full items-center justify-center text-muted-foreground/70">
                   <Package className="h-16 w-16" />
                 </div>
               )}
@@ -318,7 +318,7 @@ export function ProductDetail({
               {product.images.length > 1 && (
                 <>
                   <Button
-                    className="-translate-y-1/2 absolute top-1/2 left-2 h-10 w-10 rounded-full bg-white/80 p-0 shadow-sm backdrop-blur-sm hover:bg-white"
+                    className="-translate-y-1/2 absolute top-1/2 left-2 h-10 w-10 rounded-[var(--radius-full)] bg-background/80 p-0 shadow-sm backdrop-blur-sm hover:bg-background"
                     onClick={() => handleImageNavigation('prev')}
                     size="sm"
                     variant="ghost"
@@ -326,7 +326,7 @@ export function ProductDetail({
                     <ChevronLeft className="h-5 w-5" />
                   </Button>
                   <Button
-                    className="-translate-y-1/2 absolute top-1/2 right-2 h-10 w-10 rounded-full bg-white/80 p-0 shadow-sm backdrop-blur-sm hover:bg-white"
+                    className="-translate-y-1/2 absolute top-1/2 right-2 h-10 w-10 rounded-[var(--radius-full)] bg-background/80 p-0 shadow-sm backdrop-blur-sm hover:bg-background"
                     onClick={() => handleImageNavigation('next')}
                     size="sm"
                     variant="ghost"
@@ -339,10 +339,10 @@ export function ProductDetail({
                     {product.images.map((_, index) => (
                       <button
                         className={cn(
-                          'h-2 w-2 rounded-full transition-colors',
+                          'h-2 w-2 rounded-[var(--radius-full)] transition-colors',
                           index === selectedImageIndex
-                            ? 'bg-white'
-                            : 'bg-white/50'
+                            ? 'bg-background'
+                            : 'bg-background/50'
                         )}
                         key={index}
                         onClick={() => setSelectedImageIndex(index)}
@@ -359,7 +359,7 @@ export function ProductDetail({
                 {product.images.map((image, index) => (
                   <button
                     className={cn(
-                      'aspect-square overflow-hidden rounded-lg border-2 bg-gray-100 transition-colors',
+                      'aspect-square overflow-hidden rounded-[var(--radius-lg)] border-2 bg-secondary transition-colors',
                       selectedImageIndex === index
                         ? 'border-black'
                         : 'border-transparent hover:border-gray-300'
@@ -389,7 +389,7 @@ export function ProductDetail({
                   {product.title}
                 </h1>
                 <div className="mb-4">
-                  <div className="font-bold text-3xl text-black md:text-4xl">
+                  <div className="font-bold text-3xl text-foreground md:text-4xl">
                     {userRegion
                       ? formatPriceForDisplay(
                           product.price,
@@ -399,7 +399,7 @@ export function ProductDetail({
                       : formatCurrency(product.price)}
                   </div>
                   {userRegion && (
-                    <p className="mt-1 text-gray-600 text-sm">
+                    <p className="mt-1 text-muted-foreground text-sm">
                       {
                         formatPriceForDisplay(
                           product.price,
@@ -442,7 +442,7 @@ export function ProductDetail({
               </div>
 
               {/* Product Stats */}
-              <div className="flex items-center gap-4 text-gray-600 text-sm">
+              <div className="flex items-center gap-4 text-muted-foreground text-sm">
                 <div className="flex items-center gap-1">
                   <Heart className="h-4 w-4" />
                   <span>{product._count.favorites}</span>
@@ -473,14 +473,14 @@ export function ProductDetail({
                         `${product.seller.firstName} ${product.seller.lastName}` ||
                         'Seller'
                       }
-                      className="rounded-full"
+                      className="rounded-[var(--radius-full)]"
                       height={48}
                       src={product.seller.imageUrl}
                       width={48}
                     />
                   ) : (
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200">
-                      <Users className="h-5 w-5 text-gray-500" />
+                    <div className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-full)] bg-accent">
+                      <Users className="h-5 w-5 text-muted-foreground" />
                     </div>
                   )}
                   <div className="min-w-0 flex-1">
@@ -488,13 +488,13 @@ export function ProductDetail({
                       className="hover:underline"
                       href={`/seller/${product.seller.id}`}
                     >
-                      <h3 className="truncate font-semibold text-gray-900 text-sm">
+                      <h3 className="truncate font-semibold text-foreground text-sm">
                         {product.seller.firstName && product.seller.lastName
                           ? `${product.seller.firstName} ${product.seller.lastName}`
                           : 'Anonymous Seller'}
                       </h3>
                     </Link>
-                    <div className="flex items-center gap-3 text-gray-500 text-xs">
+                    <div className="flex items-center gap-3 text-muted-foreground text-xs">
                       <div className="flex items-center gap-1">
                         <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                         <span>4.8</span>
@@ -527,24 +527,24 @@ export function ProductDetail({
                 <div className="space-y-2 text-sm">
                   {product.brand && (
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Brand</span>
+                      <span className="text-muted-foreground">Brand</span>
                       <span className="font-medium">{product.brand}</span>
                     </div>
                   )}
                   {product.size && (
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Size</span>
+                      <span className="text-muted-foreground">Size</span>
                       <span className="font-medium">{product.size}</span>
                     </div>
                   )}
                   {product.color && (
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Color</span>
+                      <span className="text-muted-foreground">Color</span>
                       <span className="font-medium">{product.color}</span>
                     </div>
                   )}
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Condition</span>
+                    <span className="text-muted-foreground">Condition</span>
                     <span className="font-medium">
                       {
                         conditionLabels[
@@ -554,7 +554,7 @@ export function ProductDetail({
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Category</span>
+                    <span className="text-muted-foreground">Category</span>
                     <span className="font-medium">{product.category.name}</span>
                   </div>
                 </div>
@@ -565,7 +565,7 @@ export function ProductDetail({
             <div className="hidden space-y-3 md:block">
               {isProductInCart ? (
                 <Button
-                  className="h-12 w-full bg-gray-800 font-medium text-base text-white hover:bg-gray-700"
+                  className="h-12 w-full bg-primary/90 font-medium text-base text-background hover:bg-secondary-foreground"
                   onClick={() => router.push('/cart')}
                   size="lg"
                 >
@@ -575,7 +575,7 @@ export function ProductDetail({
               ) : (
                 <>
                   <Button
-                    className="h-12 w-full bg-black font-medium text-base text-white hover:bg-gray-800"
+                    className="h-12 w-full bg-primary font-medium text-base text-background hover:bg-primary/90"
                     onClick={handleBuyNow}
                     size="lg"
                   >
@@ -622,7 +622,7 @@ export function ProductDetail({
         <Card className="mt-8 border border-gray-200">
           <CardContent className="p-4 md:p-6">
             <h3 className="mb-3 font-semibold text-base">Description</h3>
-            <p className="whitespace-pre-wrap text-gray-700 leading-relaxed">
+            <p className="whitespace-pre-wrap text-secondary-foreground leading-relaxed">
               {product.description}
             </p>
           </CardContent>
@@ -638,7 +638,7 @@ export function ProductDetail({
               {similarProducts.map((similar) => (
                 <Link href={`/product/${similar.id}`} key={similar.id}>
                   <Card className="group overflow-hidden border border-gray-200 transition-all duration-200 hover:shadow-lg">
-                    <div className="relative aspect-[3/4] bg-gray-100">
+                    <div className="relative aspect-[3/4] bg-secondary">
                       {similar.images[0] ? (
                         <Image
                           alt={similar.images[0].alt || similar.title}
@@ -648,7 +648,7 @@ export function ProductDetail({
                           src={similar.images[0].imageUrl}
                         />
                       ) : (
-                        <div className="flex h-full items-center justify-center text-gray-400">
+                        <div className="flex h-full items-center justify-center text-muted-foreground/70">
                           <Package className="h-8 w-8" />
                         </div>
                       )}
@@ -657,12 +657,12 @@ export function ProductDetail({
                       <h4 className="mb-1 line-clamp-2 font-medium text-sm leading-tight">
                         {similar.title}
                       </h4>
-                      <p className="mb-2 truncate text-gray-500 text-xs">
+                      <p className="mb-2 truncate text-muted-foreground text-xs">
                         {similar.seller.firstName && similar.seller.lastName
                           ? `${similar.seller.firstName} ${similar.seller.lastName}`
                           : 'Anonymous'}
                       </p>
-                      <span className="font-semibold text-base text-black">
+                      <span className="font-semibold text-base text-foreground">
                         {formatCurrency(similar.price)}
                       </span>
                     </CardContent>
@@ -675,10 +675,10 @@ export function ProductDetail({
       </div>
 
       {/* Mobile Sticky Action Bar */}
-      <div className="fixed right-0 bottom-0 left-0 space-y-3 border-gray-200 border-t bg-white p-4 md:hidden">
+      <div className="fixed right-0 bottom-0 left-0 space-y-3 border-gray-200 border-t bg-background p-4 md:hidden">
         <div className="flex gap-3">
           <Button
-            className="h-12 flex-1 border-black text-black hover:bg-gray-50"
+            className="h-12 flex-1 border-black text-foreground hover:bg-muted"
             disabled={isPending}
             onClick={handleToggleFavorite}
             variant="outline"
@@ -699,7 +699,7 @@ export function ProductDetail({
         </div>
         {isProductInCart ? (
           <Button
-            className="h-12 w-full bg-gray-800 font-medium text-base text-white hover:bg-gray-700"
+            className="h-12 w-full bg-primary/90 font-medium text-base text-background hover:bg-secondary-foreground"
             onClick={() => router.push('/cart')}
             size="lg"
           >
@@ -708,7 +708,7 @@ export function ProductDetail({
           </Button>
         ) : (
           <Button
-            className="h-12 w-full bg-black font-medium text-base text-white hover:bg-gray-800"
+            className="h-12 w-full bg-primary font-medium text-base text-background hover:bg-primary/90"
             onClick={handleBuyNow}
             size="lg"
           >

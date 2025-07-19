@@ -40,7 +40,7 @@ function StatCard({ title, value, icon: Icon, trend }: StatCardProps) {
               </p>
             )}
           </div>
-          <div className="rounded-full bg-muted p-3">
+          <div className="rounded-[var(--radius-full)] bg-muted p-3">
             <Icon className="h-5 w-5 text-muted-foreground sm:h-6 sm:w-6" />
           </div>
         </div>

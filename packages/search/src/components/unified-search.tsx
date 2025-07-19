@@ -48,13 +48,13 @@ export function UnifiedSearch({
 
   return (
     <div className={`relative flex-1 ${className}`}>
-      <div className="flex items-center overflow-hidden rounded-lg bg-gray-100">
+      <div className="flex items-center overflow-hidden rounded-[var(--radius-lg)] bg-secondary">
         <div className="flex flex-1 items-center px-4">
-          <Search className="mr-2 h-5 w-5 flex-shrink-0 text-gray-400" />
+          <Search className="mr-2 h-5 w-5 flex-shrink-0 text-muted-foreground" />
           <input
             ref={searchInputRef}
             aria-label="Search products"
-            className="w-full bg-transparent py-3 text-gray-900 placeholder-gray-500 transition-all focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="w-full bg-transparent py-3 text-foreground placeholder-gray-500 transition-all focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
             placeholder={placeholder}
             type="text"
             value={searchQuery}
@@ -68,14 +68,14 @@ export function UnifiedSearch({
             aria-controls="categories-menu"
             aria-expanded={categoriesExpanded}
             aria-label="Toggle categories menu"
-            className={`h-full w-10 rounded-none border-gray-200 border-l transition-all hover:bg-gray-200 ${
-              categoriesExpanded ? 'bg-gray-200' : ''
+            className={`h-full w-10 rounded-none border-border border-l transition-all hover:bg-accent ${
+              categoriesExpanded ? 'bg-accent' : ''
             }`}
             onClick={onCategoriesToggle}
             size="icon"
             variant="ghost"
           >
-            <Filter className="h-4 w-4 text-gray-600" />
+            <Filter className="h-4 w-4 text-muted-foreground" />
           </Button>
         )}
       </div>
@@ -128,7 +128,7 @@ export function MobileSearch({
     return (
       <Button
         aria-label="Open search"
-        className={`h-9 w-9 text-white hover:bg-white/10 ${className}`}
+        className={`h-9 w-9 text-background hover:bg-background/10 ${className}`}
         onClick={() => setIsExpanded(true)}
         size="icon"
         variant="ghost"
@@ -140,11 +140,11 @@ export function MobileSearch({
 
   return (
     <div className={`relative flex items-center ${className}`}>
-      <Search className="absolute left-3 h-4 w-4 text-gray-400" />
+      <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
       <input
         ref={searchInputRef}
         aria-label="Search"
-        className="w-full rounded-lg bg-white/10 py-2 pl-10 pr-4 text-white placeholder-white/60 backdrop-blur-sm transition-all focus:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/20"
+        className="w-full rounded-[var(--radius-lg)] bg-background/10 py-2 pl-10 pr-4 text-background placeholder-white/60 backdrop-blur-sm transition-all focus:bg-background/20 focus:outline-none focus:ring-2 focus:ring-white/20"
         placeholder={placeholder}
         type="text"
         value={searchQuery}

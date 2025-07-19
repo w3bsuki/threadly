@@ -336,7 +336,7 @@ export function MessagesContent({
           <CardHeader>
             <CardTitle>Conversations</CardTitle>
             <div className="relative mt-2">
-              <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-gray-400" />
+              <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground/70" />
               <Input
                 className="pl-9"
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -348,22 +348,22 @@ export function MessagesContent({
           <CardContent className="p-0">
             <div className="divide-y">
               {filteredConversations.length === 0 ? (
-                <div className="p-6 text-center text-gray-500">
+                <div className="p-6 text-center text-muted-foreground">
                   No conversations yet
                 </div>
               ) : (
                 filteredConversations.map((conversation) => (
                   <button
-                    className={`w-full p-4 text-left transition-colors hover:bg-gray-50 ${
+                    className={`w-full p-4 text-left transition-colors hover:bg-muted ${
                       selectedConversation === conversation.id
-                        ? 'bg-gray-50'
+                        ? 'bg-muted'
                         : ''
                     }`}
                     key={conversation.id}
                     onClick={() => setSelectedConversation(conversation.id)}
                   >
                     <div className="flex items-start gap-3">
-                      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gray-200">
+                      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[var(--radius-full)] bg-accent">
                         {conversation.otherUser.imageUrl ? (
                           <AvatarImage
                             alt={conversation.otherUser.name}
@@ -372,7 +372,7 @@ export function MessagesContent({
                             size={40}
                           />
                         ) : (
-                          <User className="h-5 w-5 text-gray-600" />
+                          <User className="h-5 w-5 text-muted-foreground" />
                         )}
                       </div>
 
@@ -382,7 +382,7 @@ export function MessagesContent({
                             {conversation.otherUser.name}
                           </h4>
                           {conversation.lastMessage && (
-                            <span className="text-gray-500 text-xs">
+                            <span className="text-muted-foreground text-xs">
                               {formatTime(
                                 new Date(conversation.lastMessage.timestamp)
                               )}
@@ -391,11 +391,11 @@ export function MessagesContent({
                         </div>
 
                         <div className="mb-1 flex items-center gap-2">
-                          <Package className="h-3 w-3 text-gray-400" />
-                          <span className="truncate text-gray-600 text-xs">
+                          <Package className="h-3 w-3 text-muted-foreground/70" />
+                          <span className="truncate text-muted-foreground text-xs">
                             {conversation.product.title}
                           </span>
-                          <span className="text-gray-500 text-xs">
+                          <span className="text-muted-foreground text-xs">
                             ${conversation.product.price}
                           </span>
                         </div>
@@ -406,8 +406,8 @@ export function MessagesContent({
                               !conversation.lastMessage.isRead &&
                               conversation.lastMessage.senderId !==
                                 currentUserId
-                                ? 'font-medium text-gray-900'
-                                : 'text-gray-500'
+                                ? 'font-medium text-foreground'
+                                : 'text-muted-foreground'
                             }`}
                           >
                             {conversation.lastMessage.content}
@@ -437,7 +437,7 @@ export function MessagesContent({
               {/* Chat Header */}
               <CardHeader className="border-b">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-full)] bg-accent">
                     {selectedConv.otherUser.imageUrl ? (
                       <AvatarImage
                         alt={selectedConv.otherUser.name}
@@ -446,7 +446,7 @@ export function MessagesContent({
                         size={40}
                       />
                     ) : (
-                      <span className="font-medium text-gray-600 text-sm">
+                      <span className="font-medium text-muted-foreground text-sm">
                         {selectedConv.otherUser.name.charAt(0).toUpperCase()}
                       </span>
                     )}
@@ -456,7 +456,7 @@ export function MessagesContent({
                     <h3 className="font-medium">
                       {selectedConv.otherUser.name}
                     </h3>
-                    <div className="flex items-center gap-2 text-gray-600 text-sm">
+                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
                       <Package className="h-3 w-3" />
                       <span>{selectedConv.product.title}</span>
                       <span>•</span>
@@ -476,7 +476,7 @@ export function MessagesContent({
               <CardContent className="flex-1 overflow-y-auto p-4">
                 <div className="space-y-4">
                   {selectedConv.rawConversation.messages.length === 0 && optimisticMessages.length === 0 && realTimeMessages.length === 0 && failedMessages.length === 0 ? (
-                    <div className="py-8 text-center text-gray-500">
+                    <div className="py-8 text-center text-muted-foreground">
                       No messages yet. Start the conversation!
                     </div>
                   ) : (
@@ -487,7 +487,7 @@ export function MessagesContent({
                       return Object.entries(groupedMessages).map(([dateGroup, messages]) => (
                         <div key={dateGroup}>
                           <div className="my-4 text-center">
-                            <span className="rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-600">
+                            <span className="rounded-[var(--radius-full)] bg-secondary px-3 py-1 text-xs text-muted-foreground">
                               {dateGroup}
                             </span>
                           </div>
@@ -501,8 +501,8 @@ export function MessagesContent({
                                 key={message.id}
                               >
                           {!isSender && (
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
-                              <span className="font-medium text-gray-600 text-xs">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-full)] bg-accent">
+                              <span className="font-medium text-muted-foreground text-xs">
                                 {selectedConv.otherUser.name
                                   .charAt(0)
                                   .toUpperCase()}
@@ -513,23 +513,23 @@ export function MessagesContent({
                             className={`flex-1 ${isSender ? 'text-right' : ''}`}
                           >
                             <div
-                              className={`max-w-xs rounded-lg p-3 ${
+                              className={`max-w-xs rounded-[var(--radius-lg)] p-3 ${
                                 isSender
                                   ? `ml-auto ${
                                       isFailed
-                                        ? 'bg-red-600 text-white'
+                                        ? 'bg-red-600 text-background'
                                         : isOptimistic
-                                        ? 'bg-blue-600 text-white opacity-70'
-                                        : 'bg-blue-600 text-white'
+                                        ? 'bg-blue-600 text-background opacity-70'
+                                        : 'bg-blue-600 text-background'
                                     }`
-                                  : 'bg-gray-100'
+                                  : 'bg-secondary'
                               }`}
                             >
                               <p className="text-sm">{message.content}</p>
                               {isFailed && (
                                 <button
                                   onClick={() => retryMessage(message)}
-                                  className="mt-2 text-xs text-white underline hover:no-underline"
+                                  className="mt-2 text-xs text-background underline hover:no-underline"
                                 >
                                   Retry
                                 </button>
@@ -541,16 +541,16 @@ export function MessagesContent({
                               }`}
                             >
                               {isSender && !isOptimistic && !isFailed && message.read && (
-                                <CheckCheck className="h-3 w-3 text-gray-400" />
+                                <CheckCheck className="h-3 w-3 text-muted-foreground/70" />
                               )}
                               {isOptimistic && (
-                                <span className="text-gray-400 text-xs">Sending...</span>
+                                <span className="text-muted-foreground/70 text-xs">Sending...</span>
                               )}
                               {isFailed && (
                                 <span className="text-red-500 text-xs">Failed</span>
                               )}
                               {!isOptimistic && !isFailed && (
-                                <span className="text-gray-500 text-xs">
+                                <span className="text-muted-foreground text-xs">
                                   {formatTime(new Date(message.createdAt))}
                                 </span>
                               )}
@@ -567,17 +567,17 @@ export function MessagesContent({
                   {/* Typing indicator */}
                   {typingUsers.length > 0 && (
                     <div className="flex items-start gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200">
-                        <span className="font-medium text-gray-600 text-xs">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-full)] bg-accent">
+                        <span className="font-medium text-muted-foreground text-xs">
                           {selectedConv?.otherUser.name.charAt(0).toUpperCase()}
                         </span>
                       </div>
                       <div className="flex-1">
-                        <div className="max-w-xs rounded-lg bg-gray-100 p-3">
+                        <div className="max-w-xs rounded-[var(--radius-lg)] bg-secondary p-3">
                           <div className="flex space-x-1">
-                            <div className="animate-pulse h-2 w-2 rounded-full bg-gray-400"></div>
-                            <div className="animate-pulse h-2 w-2 rounded-full bg-gray-400 delay-75"></div>
-                            <div className="animate-pulse h-2 w-2 rounded-full bg-gray-400 delay-150"></div>
+                            <div className="animate-pulse h-2 w-2 rounded-[var(--radius-full)] bg-muted-foreground/20"></div>
+                            <div className="animate-pulse h-2 w-2 rounded-[var(--radius-full)] bg-muted-foreground/20 delay-75"></div>
+                            <div className="animate-pulse h-2 w-2 rounded-[var(--radius-full)] bg-muted-foreground/20 delay-150"></div>
                           </div>
                         </div>
                       </div>
@@ -615,11 +615,11 @@ export function MessagesContent({
           ) : (
             <CardContent className="flex flex-1 items-center justify-center">
               <div className="text-center">
-                <MessageCircle className="mx-auto mb-4 h-16 w-16 text-gray-400" />
-                <h3 className="mb-2 font-medium text-gray-900 text-lg">
+                <MessageCircle className="mx-auto mb-4 h-16 w-16 text-muted-foreground/70" />
+                <h3 className="mb-2 font-medium text-foreground text-lg">
                   Select a conversation
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-muted-foreground">
                   Choose a conversation from the left to start chatting
                 </p>
               </div>

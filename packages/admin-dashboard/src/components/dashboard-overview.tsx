@@ -19,14 +19,14 @@ export function DashboardOverview({
     <div className="space-y-6 p-6">
       <div>
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-        <p className="text-gray-600 mt-1">
+        <p className="text-muted-foreground mt-1">
           Platform overview and management tools
         </p>
       </div>
 
       <MetricsCards metrics={metrics} loading={loading} />
       
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-8 text-muted-foreground">
         <p>Additional dashboard widgets coming soon...</p>
       </div>
     </div>

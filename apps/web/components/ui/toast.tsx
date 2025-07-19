@@ -116,7 +116,7 @@ function ToastItem({ toast }: { toast: Toast }) {
   return (
     <div
       className={cn(
-        'pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg border shadow-lg transition-all duration-300',
+        'pointer-events-auto w-full max-w-sm overflow-hidden rounded-[var(--radius-lg)] border shadow-lg transition-all duration-300',
         colors[toast.type],
         isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
       )}
@@ -147,7 +147,7 @@ function ToastItem({ toast }: { toast: Toast }) {
           <div className="ml-4 flex-shrink-0 flex">
             <button
               onClick={handleRemove}
-              className="inline-flex rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+              className="inline-flex rounded-[var(--radius-md)] focus:outline-none focus:ring-2 focus:ring-offset-2"
             >
               <X className="h-5 w-5" />
             </button>

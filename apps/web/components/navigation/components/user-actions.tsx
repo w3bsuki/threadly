@@ -2,6 +2,7 @@ import { SignInButton, useUser } from '@repo/auth/client';
 import { Button } from '@repo/design-system/components';
 import { Heart, Plus, User } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { CartDropdown } from '../../../app/[locale]/components/header/cart-dropdown';
 import { SafeUserButton } from '../../../app/[locale]/components/header/safe-user-button';
 import { env } from '../../../env';
@@ -30,17 +31,16 @@ export function UserActions({ variant, locale, onClose }: UserActionsProps) {
         {isSignedIn ? (
           <SafeUserButton />
         ) : (
-          <SignInButton mode="modal">
-            <Button className="flex items-center" variant="ghost">
+          <Button asChild className="flex items-center" variant="ghost">
+            <Link href={`${env.NEXT_PUBLIC_APP_URL}/sign-in`}>
               <User className="mr-2 h-5 w-5" />
               <span>Sign In</span>
-            </Button>
-          </SignInButton>
+            </Link>
+          </Button>
         )}
 
         <Button
           asChild
-          className="bg-black text-white hover:bg-gray-800"
           variant="default"
         >
           <Link href={`${env.NEXT_PUBLIC_APP_URL}/selling/new`}>
@@ -57,15 +57,16 @@ export function UserActions({ variant, locale, onClose }: UserActionsProps) {
       {isSignedIn ? (
         <SafeUserButton />
       ) : (
-        <SignInButton mode="modal">
-          <Button
-            className="-mr-2 h-9 w-9 text-white hover:bg-white/10"
-            size="icon"
-            variant="ghost"
-          >
+        <Button
+          asChild
+          className="-mr-2 h-9 w-9"
+          size="icon"
+          variant="ghost"
+        >
+          <Link href={`${env.NEXT_PUBLIC_APP_URL}/sign-in`}>
             <User className="h-5 w-5" />
-          </Button>
-        </SignInButton>
+          </Link>
+        </Button>
       )}
     </div>
   );

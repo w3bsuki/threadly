@@ -77,7 +77,7 @@ export function OptimizedImage({
     return (
       <div
         className={cn(
-          'flex items-center justify-center bg-gray-100 text-gray-400 text-sm',
+          'flex items-center justify-center bg-secondary text-muted-foreground text-sm',
           fill ? 'absolute inset-0' : '',
           className
         )}
@@ -210,7 +210,7 @@ export function AvatarImage({
   className?: string;
 }) {
   return (
-    <div className={cn('relative overflow-hidden rounded-full', className)}>
+    <div className={cn('relative overflow-hidden rounded-[var(--radius-full)]', className)}>
       <OptimizedImage
         alt={alt}
         className="object-cover"

@@ -118,7 +118,7 @@ export function StreamlinedOnboarding({ userId }: StreamlinedOnboardingProps): R
                       <div
                         key={index}
                         className={cn(
-                          "w-2 h-2 rounded-full transition-all",
+                          "w-2 h-2 rounded-[var(--radius-full)] transition-all",
                           index === currentSlide 
                             ? "w-6 bg-primary" 
                             : "bg-muted-foreground/30"

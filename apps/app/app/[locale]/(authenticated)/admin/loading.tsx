@@ -31,7 +31,7 @@ export default function AdminLoading() {
           </CardHeader>
           <CardContent className="space-y-3">
             {[...Array(2)].map((_, i) => (
-              <div key={i} className="p-3 border rounded-lg">
+              <div key={i} className="p-3 border rounded-[var(--radius-lg)]">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Skeleton className="h-5 w-5" />
@@ -80,7 +80,7 @@ export default function AdminLoading() {
               <div key={i} className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Skeleton className="h-4 w-8" />
-                  <Skeleton className="h-8 w-8 rounded-full" />
+                  <Skeleton className="h-8 w-8 rounded-[var(--radius-full)]" />
                   <div>
                     <Skeleton className="h-4 w-32 mb-1" />
                     <Skeleton className="h-3 w-20" />

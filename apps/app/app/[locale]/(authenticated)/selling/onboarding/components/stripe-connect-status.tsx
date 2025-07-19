@@ -76,9 +76,9 @@ export const StripeConnectStatus = ({ status, compact = false }: StripeConnectSt
       default:
         return {
           icon: XCircle,
-          color: 'text-gray-600',
-          bgColor: 'bg-gray-50',
-          borderColor: 'border-gray-200',
+          color: 'text-muted-foreground',
+          bgColor: 'bg-muted',
+          borderColor: 'border-border',
           badge: 'outline' as const,
           title: 'Not Connected',
           description: 'Connect your Stripe account to start accepting payments',

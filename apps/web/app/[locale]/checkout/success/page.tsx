@@ -58,7 +58,7 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       <SuccessContent order={orderData} />
     </div>
   );

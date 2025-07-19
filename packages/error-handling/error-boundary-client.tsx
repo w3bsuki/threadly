@@ -116,7 +116,7 @@ export class ErrorBoundary extends Component<Props, State> {
       if (!fallback) {
         return (
           <div className={`error-boundary error-boundary--${level}`}>
-            <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center">
+            <div className="rounded-[var(--radius-lg)] border border-red-200 bg-red-50 p-6 text-center">
               <h2 className="mb-2 text-lg font-semibold text-red-800">
                 {level === 'page' ? 'Page Error' : 'Something went wrong'}
               </h2>
@@ -127,7 +127,7 @@ export class ErrorBoundary extends Component<Props, State> {
               </p>
               <button
                 onClick={this.resetErrorBoundary}
-                className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                className="rounded-[var(--radius-md)] bg-red-600 px-4 py-2 text-sm font-medium text-background hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
               >
                 Try Again
               </button>
@@ -195,7 +195,7 @@ function AsyncErrorFallback() {
   return (
     <div className="flex items-center justify-center p-4">
       <div className="text-center">
-        <p className="text-sm text-gray-600">Failed to load content</p>
+        <p className="text-sm text-muted-foreground">Failed to load content</p>
         <button
           onClick={() => window.location.reload()}
           className="mt-2 text-sm text-blue-600 hover:text-blue-800"

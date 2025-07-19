@@ -49,10 +49,10 @@ export const DesktopHeader = () => {
     <div className="hidden w-full items-center justify-between md:flex">
       {/* Left: Logo */}
       <Link className="flex items-center space-x-2" href="/">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-black">
-          <span className="font-bold text-lg text-white">T</span>
+        <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-lg)] bg-foreground">
+          <span className="font-bold text-lg text-background">T</span>
         </div>
-        <span className="font-bold text-black text-xl">Threadly</span>
+        <span className="font-bold text-foreground text-xl">Threadly</span>
       </Link>
 
       {/* Center: Search Bar with Categories Button Inside */}

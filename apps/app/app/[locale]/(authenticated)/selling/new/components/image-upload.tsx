@@ -96,7 +96,7 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
             disabled={isUploading || isUploadThingUploading || value.length >= maxFiles}
           />
           
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[var(--radius-lg)] bg-muted">
             <Upload className="h-6 w-6 text-muted-foreground" />
           </div>
           
@@ -138,7 +138,7 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
                   <X className="h-3 w-3" />
                 </Button>
                 {index === 0 && (
-                  <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                  <div className="absolute bottom-2 left-2 bg-foreground/70 text-background text-xs px-2 py-1 rounded">
                     Main
                   </div>
                 )}

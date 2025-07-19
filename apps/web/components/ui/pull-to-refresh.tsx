@@ -89,7 +89,7 @@ export function PullToRefresh({
           opacity: pullDistance > 20 ? 1 : 0
         }}
       >
-        <div className="flex flex-col items-center text-gray-600">
+        <div className="flex flex-col items-center text-muted-foreground">
           <RefreshCw
             className={cn(
               'h-5 w-5 transition-transform duration-200',

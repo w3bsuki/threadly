@@ -111,9 +111,9 @@ export function RecentlyViewed({ className }: RecentlyViewedProps) {
         {viewedProducts.slice(0, 8).map((product) => (
           <div 
             key={product.id}
-            className="flex items-center gap-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors group"
+            className="flex items-center gap-3 p-3 border rounded-[var(--radius-lg)] hover:bg-muted/50 transition-colors group"
           >
-            <div className="w-12 h-12 rounded-md overflow-hidden bg-muted flex-shrink-0">
+            <div className="w-12 h-12 rounded-[var(--radius-md)] overflow-hidden bg-muted flex-shrink-0">
               {product.image ? (
                 <img
                   src={product.image}

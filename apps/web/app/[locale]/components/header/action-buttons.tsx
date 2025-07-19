@@ -36,7 +36,7 @@ export const ActionButtons = memo(() => {
 
       <Button
         asChild
-        className="bg-black text-white hover:bg-gray-800"
+        className="bg-foreground text-background hover:bg-secondary-foreground"
         variant="default"
       >
         <Link href={`${env.NEXT_PUBLIC_APP_URL}/selling/new`}>

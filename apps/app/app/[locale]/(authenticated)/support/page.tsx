@@ -133,7 +133,7 @@ const SupportPage = async ({ params }: { params: Promise<{ locale: string }> }) 
               {contactMethods.map((method) => (
                 <div 
                   key={method.title}
-                  className={`p-4 rounded-lg border ${method.primary ? 'border-primary bg-primary/5' : 'border-border'}`}
+                  className={`p-4 rounded-[var(--radius-lg)] border ${method.primary ? 'border-primary bg-primary/5' : 'border-border'}`}
                 >
                   <div className="flex items-center gap-3 mb-2">
                     <method.icon className="h-5 w-5 text-primary" />
@@ -172,7 +172,7 @@ const SupportPage = async ({ params }: { params: Promise<{ locale: string }> }) 
               <Card key={category.title} className="hover:shadow-md transition-shadow">
                 <CardHeader>
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg border ${category.color}`}>
+                    <div className={`p-2 rounded-[var(--radius-lg)] border ${category.color}`}>
                       <category.icon className="h-5 w-5" />
                     </div>
                     <div>
@@ -242,19 +242,19 @@ const SupportPage = async ({ params }: { params: Promise<{ locale: string }> }) 
           <CardContent>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 text-sm">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-green-500 rounded-[var(--radius-full)]"></div>
                 <span>Website</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-green-500 rounded-[var(--radius-full)]"></div>
                 <span>Payments</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-green-500 rounded-[var(--radius-full)]"></div>
                 <span>Messaging</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-green-500 rounded-[var(--radius-full)]"></div>
                 <span>Search</span>
               </div>
             </div>

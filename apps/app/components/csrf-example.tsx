@@ -72,14 +72,14 @@ export function CSRFExample(): React.JSX.Element {
       <div className="space-y-2">
         <button
           onClick={handleTestAPI}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          className="px-4 py-2 bg-blue-500 text-background rounded hover:bg-blue-600"
         >
           Test API with fetchWithCSRF
         </button>
         
         <button
           onClick={handleManualAPI}
-          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 ml-2"
+          className="px-4 py-2 bg-green-500 text-background rounded hover:bg-green-600 ml-2"
         >
           Test API with manual headers
         </button>
@@ -94,14 +94,14 @@ export function CSRFExample(): React.JSX.Element {
         />
         <button
           type="submit"
-          className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
+          className="px-4 py-2 bg-purple-500 text-background rounded hover:bg-purple-600"
         >
           Submit Form with CSRF
         </button>
       </form>
 
       {result && (
-        <pre className="mt-4 p-4 bg-gray-100 rounded overflow-auto">
+        <pre className="mt-4 p-4 bg-secondary rounded overflow-auto">
           {result}
         </pre>
       )}

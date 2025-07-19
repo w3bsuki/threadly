@@ -20,14 +20,14 @@ interface RecentOrdersProps {
 export function RecentOrders({ orders, dictionary }: RecentOrdersProps) {
   if (orders.length === 0) {
     return (
-      <Card className="overflow-hidden bg-gray-950 border-gray-800">
+      <Card className="overflow-hidden bg-foreground border-gray-800">
         <CardHeader className="pb-3 px-4 border-b border-gray-800">
-          <CardTitle className="text-base font-medium text-white">{dictionary.dashboard.dashboard.recentOrders.title}</CardTitle>
+          <CardTitle className="text-base font-medium text-background">{dictionary.dashboard.dashboard.recentOrders.title}</CardTitle>
         </CardHeader>
         <CardContent className="px-4 pb-4 pt-4">
           <div className="flex flex-col items-center justify-center py-8 text-center">
-            <Package className="h-10 w-10 text-gray-600 mb-3" />
-            <p className="text-sm text-gray-500">
+            <Package className="h-10 w-10 text-muted-foreground mb-3" />
+            <p className="text-sm text-muted-foreground">
               No recent orders yet
             </p>
           </div>
@@ -37,12 +37,12 @@ export function RecentOrders({ orders, dictionary }: RecentOrdersProps) {
   }
 
   return (
-    <Card className="overflow-hidden bg-gray-950 border-gray-800">
+    <Card className="overflow-hidden bg-foreground border-gray-800">
       <CardHeader className="flex flex-row items-center justify-between pb-3 px-4 border-b border-gray-800">
-        <CardTitle className="text-base font-medium text-white">{dictionary.dashboard.dashboard.recentOrders.title}</CardTitle>
+        <CardTitle className="text-base font-medium text-background">{dictionary.dashboard.dashboard.recentOrders.title}</CardTitle>
         <Link
           href="/selling/orders"
-          className="text-xs text-gray-400 hover:text-white transition-colors"
+          className="text-xs text-muted-foreground hover:text-background transition-colors"
         >
           View all
         </Link>
@@ -50,24 +50,24 @@ export function RecentOrders({ orders, dictionary }: RecentOrdersProps) {
       <CardContent className="px-4 pb-4 pt-4">
         <div className="space-y-2">
           {orders.map((order) => (
-            <div key={order.id} className="flex items-center gap-3 p-2 rounded-lg bg-black/30 hover:bg-black/50 transition-colors border border-gray-800">
-              <div className="relative h-10 w-10 rounded-lg overflow-hidden bg-gray-900 shrink-0">
+            <div key={order.id} className="flex items-center gap-3 p-2 rounded-[var(--radius-lg)] bg-foreground/30 hover:bg-foreground/50 transition-colors border border-gray-800">
+              <div className="relative h-10 w-10 rounded-[var(--radius-lg)] overflow-hidden bg-foreground shrink-0">
                 <div className="w-full h-full flex items-center justify-center">
-                  <Package className="h-5 w-5 text-gray-600" />
+                  <Package className="h-5 w-5 text-muted-foreground" />
                 </div>
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate text-white">
+                <p className="text-sm font-medium truncate text-background">
                   #{order.id.slice(-8)}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   {new Date(order.createdAt).toLocaleDateString()}
                 </p>
               </div>
 
               <div className="text-right">
-                <p className="text-sm font-medium text-white">
+                <p className="text-sm font-medium text-background">
                   ${Number(order.amount).toFixed(2)}
                 </p>
                 <Badge variant={

@@ -93,7 +93,7 @@ const OrdersPage = async ({
       case 'CANCELLED':
         return 'bg-red-100 text-red-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-secondary text-secondary-foreground';
     }
   };
 
@@ -222,10 +222,10 @@ const OrdersPage = async ({
                         <img
                           src={order.Product.images[0].imageUrl}
                           alt={order.Product.title}
-                          className="w-full h-full object-cover rounded-md"
+                          className="w-full h-full object-cover rounded-[var(--radius-md)]"
                         />
                       ) : (
-                        <div className="w-full h-full bg-muted rounded-md flex items-center justify-center">
+                        <div className="w-full h-full bg-muted rounded-[var(--radius-md)] flex items-center justify-center">
                           <Package className="h-6 w-6 text-muted-foreground" />
                         </div>
                       )}

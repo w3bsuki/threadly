@@ -81,7 +81,7 @@ export const FeaturedCategories = async () => {
       return (
         <section className="w-full py-16 lg:py-24">
           <div className="container mx-auto px-4 text-center">
-            <p className="text-gray-500">No categories found</p>
+            <p className="text-muted-foreground">No categories found</p>
           </div>
         </section>
       );
@@ -94,7 +94,7 @@ export const FeaturedCategories = async () => {
             <h2 className="mb-4 font-bold text-3xl tracking-tight md:text-5xl">
               Shop by Category
             </h2>
-            <p className="mx-auto max-w-2xl text-gray-600 text-lg">
+            <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
               Find exactly what you're looking for in our curated fashion
               categories
             </p>
@@ -104,7 +104,7 @@ export const FeaturedCategories = async () => {
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {transformedCategories.map((category: any) => (
               <Link
-                className="group hover:-translate-y-1 relative overflow-hidden rounded-2xl bg-white shadow-lg transition-all duration-300 hover:shadow-xl"
+                className="group hover:-translate-y-1 relative overflow-hidden rounded-2xl bg-background shadow-lg transition-all duration-300 hover:shadow-xl"
                 href={category.href}
                 key={category.id}
               >
@@ -120,7 +120,7 @@ export const FeaturedCategories = async () => {
                     />
                   ) : (
                     <div
-                      className={`h-full w-full bg-gradient-to-br ${category.color} flex items-center justify-center text-white transition-transform duration-500 group-hover:scale-110`}
+                      className={`h-full w-full bg-gradient-to-br ${category.color} flex items-center justify-center text-background transition-transform duration-500 group-hover:scale-110`}
                     >
                       <div className="text-center">
                         <div className="mb-2 font-bold text-4xl">
@@ -140,20 +140,20 @@ export const FeaturedCategories = async () => {
                 />
 
                 {/* Content */}
-                <div className="absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6 text-white">
+                <div className="absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6 text-background">
                   <div className="flex items-end justify-between">
                     <div>
                       <h3 className="mb-1 font-bold text-xl">
                         {category.name}
                       </h3>
-                      <p className="mb-2 text-sm text-white/80">
+                      <p className="mb-2 text-sm text-background/80">
                         {category.description}
                       </p>
-                      <span className="text-white/60 text-xs">
+                      <span className="text-background/60 text-xs">
                         {category.count}
                       </span>
                     </div>
-                    <div className="rounded-full bg-white/20 p-2 backdrop-blur-sm transition-all duration-300 group-hover:bg-white/30">
+                    <div className="rounded-[var(--radius-full)] bg-background/20 p-2 backdrop-blur-sm transition-all duration-300 group-hover:bg-background/30">
                       <ArrowRight className="h-5 w-5" />
                     </div>
                   </div>
@@ -166,7 +166,7 @@ export const FeaturedCategories = async () => {
           <div className="mt-12 text-center">
             <Button
               asChild
-              className="gap-2 border-gray-200 px-8 py-6 text-lg hover:bg-gray-50"
+              className="gap-2 border-border px-8 py-6 text-lg hover:bg-muted"
               size="lg"
               variant="outline"
             >
@@ -184,7 +184,7 @@ export const FeaturedCategories = async () => {
     return (
       <section className="w-full py-16 lg:py-24">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-gray-500">Unable to load categories</p>
+          <p className="text-muted-foreground">Unable to load categories</p>
         </div>
       </section>
     );

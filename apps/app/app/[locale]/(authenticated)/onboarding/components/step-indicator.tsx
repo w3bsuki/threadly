@@ -13,7 +13,7 @@ export function StepIndicator({ currentStep, totalSteps }: StepIndicatorProps): 
         <div key={step} className="flex items-center">
           <div
             className={cn(
-              'w-10 h-10 rounded-full flex items-center justify-center transition-colors',
+              'w-10 h-10 rounded-[var(--radius-full)] flex items-center justify-center transition-colors',
               step < currentStep
                 ? 'bg-primary text-primary-foreground'
                 : step === currentStep

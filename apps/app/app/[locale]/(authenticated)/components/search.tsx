@@ -96,7 +96,7 @@ export const Search: React.FC = () => {
       {showDropdown && (showSuggestions || showHistory) && (
         <div
           ref={dropdownRef}
-          className="absolute top-full left-4 right-4 z-50 mt-1 bg-background border rounded-md shadow-lg max-h-80 overflow-y-auto"
+          className="absolute top-full left-4 right-4 z-50 mt-1 bg-background border rounded-[var(--radius-md)] shadow-lg max-h-80 overflow-y-auto"
         >
           {/* Search History */}
           {showHistory && (

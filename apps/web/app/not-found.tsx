@@ -4,12 +4,12 @@ import Link from 'next/link';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-muted">
       <div className="max-w-md w-full text-center px-6">
         <div className="mb-8">
-          <div className="text-9xl font-bold text-gray-300">404</div>
-          <h1 className="text-3xl font-semibold text-gray-900 mt-4">Page Not Found</h1>
-          <p className="text-gray-600 mt-2">
+          <div className="text-9xl font-bold text-muted-foreground">404</div>
+          <h1 className="text-3xl font-semibold text-foreground mt-4">Page Not Found</h1>
+          <p className="text-muted-foreground mt-2">
             Sorry, we couldn't find the page you're looking for.
           </p>
         </div>
@@ -38,7 +38,7 @@ export default function NotFound() {
           </Button>
         </div>
         
-        <div className="mt-12 text-sm text-gray-500">
+        <div className="mt-12 text-sm text-muted-foreground">
           <p>Need help? <Link href="/contact" className="text-blue-600 hover:underline">Contact support</Link></p>
         </div>
       </div>

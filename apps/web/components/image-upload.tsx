@@ -38,7 +38,17 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
     onUploadError: (error: Error) => {
       setIsUploading(false);
       
-      alert(`Upload failed: ${error.message}. Please try again.`);
+      console.error('Upload error:', error);
+      
+      if (error.message.includes('auth') || error.message.includes('Authentication')) {
+        alert('Authentication required. Please log in to upload images.');
+      } else if (error.message.includes('rate')) {
+        alert('Too many uploads. Please wait a moment and try again.');
+      } else if (error.message.includes('size')) {
+        alert('File is too large. Please choose files under 8MB.');
+      } else {
+        alert(`Failed to upload image: ${error.message || 'Unknown error'}. Please try again.`);
+      }
     },
     onUploadBegin: (name: string) => {
       setIsUploading(true);
@@ -62,7 +72,12 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
     try {
       await startUpload(validFiles);
     } catch (error) {
-      alert("Upload failed. Please check your internet connection and try again.");
+      console.error('Upload failed:', error);
+      if (error instanceof Error) {
+        alert(`Upload failed: ${error.message}`);
+      } else {
+        alert("Upload failed. Please check your internet connection and try again.");
+      }
     }
   };
 
@@ -104,7 +119,7 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
             disabled={isUploading || isUploadThingUploading || value.length >= maxFiles}
           />
           
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-muted">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[var(--radius-lg)] bg-muted">
             <Upload className="h-6 w-6 text-muted-foreground" />
           </div>
           
@@ -147,7 +162,7 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
                   <X className="h-3 w-3" />
                 </Button>
                 {index === 0 && (
-                  <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                  <div className="absolute bottom-2 left-2 bg-foreground/70 text-background text-xs px-2 py-1 rounded">
                     Main
                   </div>
                 )}

@@ -110,7 +110,7 @@ const AdminReportsPage: React.FC = async () => {
             <CardTitle className="text-sm font-medium">Dismissed</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-600">{stats.dismissed}</div>
+            <div className="text-2xl font-bold text-muted-foreground">{stats.dismissed}</div>
           </CardContent>
         </Card>
       </div>
@@ -123,10 +123,10 @@ const AdminReportsPage: React.FC = async () => {
         <CardContent>
           <div className="space-y-4">
             {reports.map((report) => (
-              <div key={report.id} className="border rounded-lg p-4">
+              <div key={report.id} className="border rounded-[var(--radius-lg)] p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4">
-                    <div className="p-2 rounded-lg bg-red-50 text-red-600">
+                    <div className="p-2 rounded-[var(--radius-lg)] bg-red-50 text-red-600">
                       {report.type === 'PRODUCT' && <Package className="h-4 w-4" />}
                       {report.type === 'USER' && <User className="h-4 w-4" />}
                       {report.type === 'MESSAGE' && <MessageCircle className="h-4 w-4" />}

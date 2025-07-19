@@ -23,7 +23,7 @@ export const Stats = ({ dictionary }: StatsProps) => (
           <div className="grid w-full grid-cols-1 gap-2 text-left sm:grid-cols-2 lg:grid-cols-2">
             {dictionary.web.home.stats.items.map((item, index) => (
               <div
-                className="flex flex-col justify-between gap-0 rounded-md border p-6"
+                className="flex flex-col justify-between gap-0 rounded-[var(--radius-md)] border p-6"
                 key={index}
               >
                 {Number.parseFloat(item.delta) > 0 ? (

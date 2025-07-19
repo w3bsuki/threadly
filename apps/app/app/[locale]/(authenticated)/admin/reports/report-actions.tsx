@@ -90,7 +90,7 @@ export function ReportActions({ report }: ReportActionsProps): React.JSX.Element
             
             <DropdownMenuItem
               onClick={() => handleAction(() => dismissReport(report.id))}
-              className="text-gray-600"
+              className="text-muted-foreground"
             >
               <X className="h-4 w-4 mr-2" />
               Dismiss Report
@@ -118,7 +118,7 @@ export function ReportActions({ report }: ReportActionsProps): React.JSX.Element
             
             <DropdownMenuItem
               onClick={() => handleAction(() => dismissReport(report.id))}
-              className="text-gray-600"
+              className="text-muted-foreground"
             >
               <X className="h-4 w-4 mr-2" />
               Dismiss Report

@@ -58,7 +58,7 @@ export default async function BusinessDashboardPage({ params, searchParams }: Bu
       </div>
       
       <div className="grid gap-6">
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-background rounded-[var(--radius-lg)] shadow p-6">
           <h2 className="text-lg font-semibold mb-4">Coming Soon</h2>
           <p className="text-muted-foreground">
             Business dashboard features are under development. Check back soon for:

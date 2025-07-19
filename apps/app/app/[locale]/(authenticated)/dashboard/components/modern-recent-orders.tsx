@@ -39,7 +39,7 @@ const getStatusColor = (status: string) => {
     case 'DELIVERED':
       return 'bg-green-100 text-green-800 border-green-200';
     default:
-      return 'bg-gray-100 text-gray-800 border-gray-200';
+      return 'bg-secondary text-secondary-foreground border-border';
   }
 };
 
@@ -147,7 +147,7 @@ export async function ModernRecentOrders({ userId, dictionary }: ModernRecentOrd
               <Link 
                 key={order.id} 
                 href={`/buying/orders/${order.id}`}
-                className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors min-h-[72px] touch-manipulation active:scale-95 duration-200"
+                className="flex items-center gap-3 p-3 rounded-[var(--radius-lg)] hover:bg-accent/50 transition-colors min-h-[72px] touch-manipulation active:scale-95 duration-200"
                 style={{ WebkitTapHighlightColor: 'transparent' }}
               >
                 {/* Product Image */}
@@ -156,14 +156,14 @@ export async function ModernRecentOrders({ userId, dictionary }: ModernRecentOrd
                     <img
                       src={order.Product.images[0].imageUrl}
                       alt={order.Product.title}
-                      className="w-12 h-12 rounded-lg object-cover"
+                      className="w-12 h-12 rounded-[var(--radius-lg)] object-cover"
                     />
                   ) : (
-                    <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-[var(--radius-lg)] bg-muted flex items-center justify-center">
                       <Package className="h-5 w-5 text-muted-foreground" />
                     </div>
                   )}
-                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-background rounded-full flex items-center justify-center border">
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-background rounded-[var(--radius-full)] flex items-center justify-center border">
                     {isBuying ? (
                       <ArrowRight className="h-3 w-3 text-blue-600" />
                     ) : (

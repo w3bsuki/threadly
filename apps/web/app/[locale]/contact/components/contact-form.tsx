@@ -85,7 +85,7 @@ export const ContactForm = ({ dictionary }: ContactFormProps) => {
       <div className="w-full py-20 lg:py-40">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center">
-            <div className="mx-auto mb-8 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+            <div className="mx-auto mb-8 flex h-16 w-16 items-center justify-center rounded-[var(--radius-full)] bg-green-100">
               <Check className="h-8 w-8 text-green-600" />
             </div>
             <h4 className="mb-4 font-semibold text-2xl">
@@ -141,7 +141,7 @@ export const ContactForm = ({ dictionary }: ContactFormProps) => {
           <div className="flex items-center justify-center">
             <Form {...form}>
               <form
-                className="flex max-w-sm flex-col gap-4 rounded-md border p-8"
+                className="flex max-w-sm flex-col gap-4 rounded-[var(--radius-md)] border p-8"
                 onSubmit={form.handleSubmit(onSubmit)}
               >
                 <p className="font-medium">
@@ -263,7 +263,7 @@ export const ContactForm = ({ dictionary }: ContactFormProps) => {
                       <FormLabel>Message</FormLabel>
                       <FormControl>
                         <textarea
-                          className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="flex min-h-[80px] w-full rounded-[var(--radius-md)] border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                           placeholder="Tell us about your inquiry..."
                           {...field}
                         />

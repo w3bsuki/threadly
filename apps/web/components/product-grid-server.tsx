@@ -209,16 +209,16 @@ export async function ProductGridServer({
     // Return empty state on error with more details in development
     return (
       <div className="mx-auto max-w-7xl px-4 py-12 text-center">
-        <h2 className="mb-4 font-semibold text-2xl text-gray-900">
+        <h2 className="mb-4 font-semibold text-2xl text-foreground">
           Unable to load products
         </h2>
-        <p className="mb-8 text-gray-600">
+        <p className="mb-8 text-muted-foreground">
           We're having trouble loading products right now. Please try again
           later.
         </p>
         <p className="mb-4 text-red-600 text-sm">Error: {errorMessage}</p>
         <a
-          className="inline-flex items-center rounded-md border border-transparent bg-black px-6 py-3 font-medium text-base text-white shadow-sm hover:bg-gray-800"
+          className="inline-flex items-center rounded-[var(--radius-md)] border border-transparent bg-foreground px-6 py-3 font-medium text-base text-background shadow-sm hover:bg-secondary-foreground"
           href="/"
         >
           Refresh page

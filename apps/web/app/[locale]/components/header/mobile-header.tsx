@@ -19,7 +19,7 @@ export const MobileHeader = () => {
           aria-controls="mobile-menu"
           aria-expanded={isMenuOpen}
           aria-label="Open navigation menu"
-          className="-ml-2 h-9 w-9 text-white hover:bg-white/10"
+          className="-ml-2 h-9 w-9 text-background hover:bg-background/10"
           onClick={() => setMenuOpen(true)}
           size="icon"
           variant="ghost"
@@ -29,7 +29,7 @@ export const MobileHeader = () => {
 
         {/* Center: Logo */}
         <Link className="-translate-x-1/2 absolute left-1/2" href="/">
-          <span className="font-bold text-white text-xl">Threadly</span>
+          <span className="font-bold text-background text-xl">Threadly</span>
         </Link>
 
         {/* Right: Account */}

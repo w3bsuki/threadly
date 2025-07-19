@@ -12,6 +12,19 @@ type Condition =
 interface ConditionBadgeProps {
   condition: Condition;
   className?: string;
+  dictionary?: {
+    web?: {
+      product?: {
+        conditions?: {
+          newWithTags?: string;
+          newWithoutTags?: string;
+          veryGood?: string;
+          good?: string;
+          fair?: string;
+        };
+      };
+    };
+  };
 }
 
 const conditionConfig = {
@@ -41,7 +54,7 @@ const conditionConfig = {
   },
 };
 
-export function ConditionBadge({ condition, className }: ConditionBadgeProps) {
+export function ConditionBadge({ condition, className, dictionary }: ConditionBadgeProps) {
   const config = conditionConfig[condition];
   
   if (!config) {
@@ -52,6 +65,25 @@ export function ConditionBadge({ condition, className }: ConditionBadgeProps) {
     );
   }
 
+  // Get translated label
+  const getLabel = () => {
+    switch (condition) {
+      case 'NEW_WITH_TAGS':
+        return dictionary?.web?.product?.conditions?.newWithTags || config.label;
+      case 'NEW_WITHOUT_TAGS':
+        return dictionary?.web?.product?.conditions?.newWithoutTags || config.label;
+      case 'VERY_GOOD':
+        return dictionary?.web?.product?.conditions?.veryGood || config.label;
+      case 'GOOD':
+        return dictionary?.web?.product?.conditions?.good || config.label;
+      case 'SATISFACTORY':
+      case 'FAIR':
+        return dictionary?.web?.product?.conditions?.fair || config.label;
+      default:
+        return config.label;
+    }
+  };
+
   return (
     <Badge 
       variant="outline" 
@@ -61,7 +93,7 @@ export function ConditionBadge({ condition, className }: ConditionBadgeProps) {
         className
       )}
     >
-      {config.label}
+      {getLabel()}
     </Badge>
   );
 }

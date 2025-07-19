@@ -51,7 +51,7 @@ export class AppErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundar
         <div className="min-h-screen bg-background flex items-center justify-center p-4">
           <Card className="w-full max-w-md">
             <CardHeader className="text-center">
-              <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-red-100 flex items-center justify-center">
+              <div className="mx-auto mb-4 h-12 w-12 rounded-[var(--radius-full)] bg-red-100 flex items-center justify-center">
                 <AlertCircle className="h-6 w-6 text-red-600" />
               </div>
               <CardTitle className="text-xl">Something went wrong</CardTitle>
@@ -126,7 +126,7 @@ export class AnalyticsErrorBoundary extends Component<ErrorBoundaryProps, ErrorB
         <Card>
           <CardContent className="p-6">
             <div className="text-center space-y-4">
-              <div className="mx-auto h-12 w-12 rounded-full bg-orange-100 flex items-center justify-center">
+              <div className="mx-auto h-12 w-12 rounded-[var(--radius-full)] bg-orange-100 flex items-center justify-center">
                 <BarChart3 className="h-6 w-6 text-orange-600" />
               </div>
               <div>
@@ -182,7 +182,7 @@ export class PaymentErrorBoundary extends Component<ErrorBoundaryProps, ErrorBou
         <Card className="border-red-200">
           <CardContent className="p-6">
             <div className="text-center space-y-4">
-              <div className="mx-auto h-12 w-12 rounded-full bg-red-100 flex items-center justify-center">
+              <div className="mx-auto h-12 w-12 rounded-[var(--radius-full)] bg-red-100 flex items-center justify-center">
                 <CreditCard className="h-6 w-6 text-red-600" />
               </div>
               <div>
@@ -243,8 +243,8 @@ export class ProductErrorBoundary extends Component<ErrorBoundaryProps, ErrorBou
         <Card>
           <CardContent className="p-6">
             <div className="text-center space-y-4">
-              <div className="mx-auto h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center">
-                <Package className="h-6 w-6 text-gray-600" />
+              <div className="mx-auto h-12 w-12 rounded-[var(--radius-full)] bg-secondary flex items-center justify-center">
+                <Package className="h-6 w-6 text-muted-foreground" />
               </div>
               <div>
                 <h3 className="text-sm font-medium">Product Load Error</h3>
@@ -294,7 +294,7 @@ export class FormErrorBoundary extends Component<ErrorBoundaryProps, ErrorBounda
   render() {
     if (this.state.hasError) {
       return (
-        <div className="p-4 border border-red-200 rounded-lg bg-red-50">
+        <div className="p-4 border border-red-200 rounded-[var(--radius-lg)] bg-red-50">
           <div className="text-center space-y-3">
             <AlertCircle className="h-8 w-8 text-red-600 mx-auto" />
             <div>
@@ -323,7 +323,7 @@ export class FormErrorBoundary extends Component<ErrorBoundaryProps, ErrorBounda
 // Generic Error Fallback Components for specific scenarios
 export function ChartErrorFallback({ onRetry }: { onRetry?: () => void }): React.JSX.Element {
   return (
-    <div className="h-[120px] flex items-center justify-center border border-dashed border-muted-foreground/25 rounded-lg">
+    <div className="h-[120px] flex items-center justify-center border border-dashed border-muted-foreground/25 rounded-[var(--radius-lg)]">
       <div className="text-center space-y-2">
         <BarChart3 className="h-6 w-6 text-muted-foreground mx-auto" />
         <p className="text-xs text-muted-foreground">Chart unavailable</p>

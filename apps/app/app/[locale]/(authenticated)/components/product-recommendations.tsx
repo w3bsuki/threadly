@@ -77,7 +77,7 @@ export function ProductRecommendations({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="space-y-2">
-                <Skeleton className="aspect-square rounded-lg" />
+                <Skeleton className="aspect-square rounded-[var(--radius-lg)]" />
                 <Skeleton className="h-4 w-full" />
                 <Skeleton className="h-4 w-2/3" />
               </div>
@@ -133,7 +133,7 @@ export function ProductRecommendations({
               className="group"
             >
               <div className="space-y-2">
-                <div className="aspect-square bg-muted rounded-lg overflow-hidden">
+                <div className="aspect-square bg-muted rounded-[var(--radius-lg)] overflow-hidden">
                   {/* Product image would go here */}
                   <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                     <Package className="h-8 w-8" />

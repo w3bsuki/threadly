@@ -6,7 +6,7 @@ import {
 
 export default function Loading() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* Spacer for mobile navigation */}
       <div className="h-32 md:hidden" />
 

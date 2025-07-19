@@ -158,7 +158,7 @@ const AdminDashboard: React.FC = async () => {
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <div className="flex items-center justify-between p-3 border rounded-lg">
+            <div className="flex items-center justify-between p-3 border rounded-[var(--radius-lg)]">
               <div className="flex items-center gap-3">
                 <AlertTriangle className="h-5 w-5 text-yellow-600" />
                 <div>
@@ -173,7 +173,7 @@ const AdminDashboard: React.FC = async () => {
               </a>
             </div>
             
-            <div className="flex items-center justify-between p-3 border rounded-lg">
+            <div className="flex items-center justify-between p-3 border rounded-[var(--radius-lg)]">
               <div className="flex items-center gap-3">
                 <Clock className="h-5 w-5 text-blue-600" />
                 <div>
@@ -235,10 +235,10 @@ const AdminDashboard: React.FC = async () => {
                     <img 
                       src={seller.imageUrl} 
                       alt={`${seller.firstName} ${seller.lastName}`}
-                      className="h-8 w-8 rounded-full object-cover"
+                      className="h-8 w-8 rounded-[var(--radius-full)] object-cover"
                     />
                   ) : (
-                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
+                    <div className="h-8 w-8 rounded-[var(--radius-full)] bg-muted flex items-center justify-center">
                       <Users className="h-4 w-4" />
                     </div>
                   )}

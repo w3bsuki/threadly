@@ -168,19 +168,19 @@ export const CategoryNav = ({
   const categoryData = subcategories[category];
 
   return (
-    <div className="bg-white">
+    <div className="bg-background">
       {/* Header */}
       <div className="mx-auto max-w-7xl px-4 py-6">
-        <div className="mb-4 flex items-center space-x-2 text-gray-500 text-sm">
-          <Link className="hover:text-gray-900" href="/">
+        <div className="mb-4 flex items-center space-x-2 text-muted-foreground text-sm">
+          <Link className="hover:text-foreground" href="/">
             Home
           </Link>
           <span>/</span>
-          <span className="text-gray-900 capitalize">{category}</span>
+          <span className="text-foreground capitalize">{category}</span>
         </div>
 
-        <h1 className="mb-2 font-bold text-3xl text-gray-900">{title}</h1>
-        <p className="text-gray-600">{description}</p>
+        <h1 className="mb-2 font-bold text-3xl text-foreground">{title}</h1>
+        <p className="text-muted-foreground">{description}</p>
       </div>
 
       {/* Navigation Dropdowns */}
@@ -189,7 +189,7 @@ export const CategoryNav = ({
           {/* Clothing Dropdown */}
           <div className="relative">
             <button
-              className="flex items-center space-x-1 py-2 font-medium text-gray-900 text-sm hover:text-gray-700"
+              className="flex items-center space-x-1 py-2 font-medium text-foreground text-sm hover:text-secondary-foreground"
               onClick={() =>
                 setActiveDropdown(
                   activeDropdown === 'clothing' ? null : 'clothing'
@@ -201,11 +201,11 @@ export const CategoryNav = ({
             </button>
 
             {activeDropdown === 'clothing' && (
-              <div className="absolute top-full left-0 z-50 mt-1 w-64 rounded-lg border border-gray-200 bg-white shadow-lg">
+              <div className="absolute top-full left-0 z-50 mt-1 w-64 rounded-[var(--radius-lg)] border border-gray-200 bg-background shadow-lg">
                 <div className="p-2">
                   {categoryData.clothing.map((item) => (
                     <Link
-                      className="block rounded px-3 py-2 text-gray-700 text-sm hover:bg-gray-50"
+                      className="block rounded-[var(--radius-md)] px-3 py-2 text-secondary-foreground text-sm hover:bg-muted"
                       href={item.href}
                       key={item.name}
                       onClick={() => setActiveDropdown(null)}
@@ -221,7 +221,7 @@ export const CategoryNav = ({
           {/* Shoes Dropdown */}
           <div className="relative">
             <button
-              className="flex items-center space-x-1 py-2 font-medium text-gray-900 text-sm hover:text-gray-700"
+              className="flex items-center space-x-1 py-2 font-medium text-foreground text-sm hover:text-secondary-foreground"
               onClick={() =>
                 setActiveDropdown(activeDropdown === 'shoes' ? null : 'shoes')
               }
@@ -231,11 +231,11 @@ export const CategoryNav = ({
             </button>
 
             {activeDropdown === 'shoes' && (
-              <div className="absolute top-full left-0 z-50 mt-1 w-64 rounded-lg border border-gray-200 bg-white shadow-lg">
+              <div className="absolute top-full left-0 z-50 mt-1 w-64 rounded-[var(--radius-lg)] border border-gray-200 bg-background shadow-lg">
                 <div className="p-2">
                   {categoryData.shoes.map((item) => (
                     <Link
-                      className="block rounded px-3 py-2 text-gray-700 text-sm hover:bg-gray-50"
+                      className="block rounded-[var(--radius-md)] px-3 py-2 text-secondary-foreground text-sm hover:bg-muted"
                       href={item.href}
                       key={item.name}
                       onClick={() => setActiveDropdown(null)}
@@ -251,7 +251,7 @@ export const CategoryNav = ({
           {/* Accessories Dropdown */}
           <div className="relative">
             <button
-              className="flex items-center space-x-1 py-2 font-medium text-gray-900 text-sm hover:text-gray-700"
+              className="flex items-center space-x-1 py-2 font-medium text-foreground text-sm hover:text-secondary-foreground"
               onClick={() =>
                 setActiveDropdown(
                   activeDropdown === 'accessories' ? null : 'accessories'
@@ -263,11 +263,11 @@ export const CategoryNav = ({
             </button>
 
             {activeDropdown === 'accessories' && (
-              <div className="absolute top-full left-0 z-50 mt-1 w-64 rounded-lg border border-gray-200 bg-white shadow-lg">
+              <div className="absolute top-full left-0 z-50 mt-1 w-64 rounded-[var(--radius-lg)] border border-gray-200 bg-background shadow-lg">
                 <div className="p-2">
                   {categoryData.accessories.map((item) => (
                     <Link
-                      className="block rounded px-3 py-2 text-gray-700 text-sm hover:bg-gray-50"
+                      className="block rounded-[var(--radius-md)] px-3 py-2 text-secondary-foreground text-sm hover:bg-muted"
                       href={item.href}
                       key={item.name}
                       onClick={() => setActiveDropdown(null)}
@@ -282,7 +282,7 @@ export const CategoryNav = ({
 
           {/* All Categories Link */}
           <Link
-            className="flex items-center space-x-1 py-2 font-medium text-gray-900 text-sm hover:text-gray-700"
+            className="flex items-center space-x-1 py-2 font-medium text-foreground text-sm hover:text-secondary-foreground"
             href={`/products?gender=${category}`}
           >
             <Grid className="h-4 w-4" />

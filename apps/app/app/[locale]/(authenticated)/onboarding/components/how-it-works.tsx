@@ -106,7 +106,7 @@ export function HowItWorks({ selectedRole }: HowItWorksProps): React.JSX.Element
                   <CardContent className="pt-6">
                     <div className="flex gap-4">
                       <div className="flex-shrink-0">
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-[var(--radius-full)] bg-primary/10 flex items-center justify-center">
                           <Icon className="w-5 h-5 text-primary" />
                         </div>
                       </div>
@@ -138,7 +138,7 @@ export function HowItWorks({ selectedRole }: HowItWorksProps): React.JSX.Element
                   <CardContent className="pt-6">
                     <div className="flex gap-4">
                       <div className="flex-shrink-0">
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-[var(--radius-full)] bg-primary/10 flex items-center justify-center">
                           <Icon className="w-5 h-5 text-primary" />
                         </div>
                       </div>
@@ -165,7 +165,7 @@ export function HowItWorks({ selectedRole }: HowItWorksProps): React.JSX.Element
                 <CardContent className="pt-6">
                   <div className="flex gap-4">
                     <div className="flex-shrink-0">
-                      <div className="w-10 h-10 rounded-full bg-background flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-[var(--radius-full)] bg-background flex items-center justify-center">
                         <Icon className="w-5 h-5 text-primary" />
                       </div>
                     </div>

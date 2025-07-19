@@ -28,7 +28,7 @@ export function TypingIndicator({
   return (
     <div
       className={cn(
-        'inline-flex items-center gap-2 bg-gray-100 rounded-2xl rounded-bl-md',
+        'inline-flex items-center gap-2 bg-secondary rounded-2xl rounded-bl-md',
         containerSizes[size],
         className
       )}
@@ -37,7 +37,7 @@ export function TypingIndicator({
       <div className="flex gap-1">
         <div
           className={cn(
-            'bg-gray-400 rounded-full animate-pulse',
+            'bg-gray-400 rounded-[var(--radius-full)] animate-pulse',
             dotSizes[size]
           )}
           style={{
@@ -47,7 +47,7 @@ export function TypingIndicator({
         />
         <div
           className={cn(
-            'bg-gray-400 rounded-full animate-pulse',
+            'bg-gray-400 rounded-[var(--radius-full)] animate-pulse',
             dotSizes[size]
           )}
           style={{
@@ -57,7 +57,7 @@ export function TypingIndicator({
         />
         <div
           className={cn(
-            'bg-gray-400 rounded-full animate-pulse',
+            'bg-gray-400 rounded-[var(--radius-full)] animate-pulse',
             dotSizes[size]
           )}
           style={{
@@ -69,7 +69,7 @@ export function TypingIndicator({
       
       {/* Typing text */}
       <span className={cn(
-        'text-gray-500 italic',
+        'text-muted-foreground italic',
         size === 'sm' && 'text-xs',
         size === 'md' && 'text-sm',
         size === 'lg' && 'text-base'

@@ -15,8 +15,8 @@ const AnalyticsCharts = dynamic(
     loading: () => (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="rounded-lg border bg-card p-6">
-            <div className="animate-pulse bg-gray-200 h-32 rounded" />
+          <div key={i} className="rounded-[var(--radius-lg)] border bg-card p-6">
+            <div className="animate-pulse bg-accent h-32 rounded" />
           </div>
         ))}
       </div>
@@ -95,7 +95,7 @@ export function DashboardTabsClient({
                 .sort((a, b) => b.views - a.views)
                 .slice(0, 5)
                 .map((product) => (
-                  <div key={product.id} className="flex items-center justify-between p-3 rounded-lg border">
+                  <div key={product.id} className="flex items-center justify-between p-3 rounded-[var(--radius-lg)] border">
                     <div>
                       <h3 className="font-medium">{product.title}</h3>
                       <p className="text-sm text-muted-foreground">

@@ -103,7 +103,7 @@ function ProductTable({ products }: { products: ProductWithDetails[] }) {
     <div className="space-y-4">
       {/* Bulk Actions */}
       {selectedProducts.length > 0 && (
-        <div className="flex items-center gap-2 p-4 bg-muted/50 rounded-lg">
+        <div className="flex items-center gap-2 p-4 bg-muted/50 rounded-[var(--radius-lg)]">
           <span className="text-sm font-medium">
             {selectedProducts.length} products selected
           </span>
@@ -175,12 +175,12 @@ function ProductTable({ products }: { products: ProductWithDetails[] }) {
                         alt={product.title}
                         width={64}
                         height={64}
-                        className="h-16 w-16 rounded-lg object-cover"
+                        className="h-16 w-16 rounded-[var(--radius-lg)] object-cover"
                         sizes="64px"
                         priority={index < 5}
                       />
                     ) : (
-                      <div className="h-16 w-16 rounded-lg bg-muted flex items-center justify-center">
+                      <div className="h-16 w-16 rounded-[var(--radius-lg)] bg-muted flex items-center justify-center">
                         No image
                       </div>
                     )}

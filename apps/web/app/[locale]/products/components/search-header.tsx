@@ -19,7 +19,7 @@ export function SearchHeader({
   searchQuery,
 }: SearchHeaderProps) {
   return (
-    <div className="border-b bg-white px-4 py-4">
+    <div className="border-b bg-background px-4 py-4">
       <div className="mx-auto max-w-7xl">
         <div className="flex items-center gap-4">
           <div className="flex-1">
@@ -46,7 +46,7 @@ export function SearchHeader({
           </div>
         </div>
         
-        <div className="mt-2 flex items-center justify-between text-sm text-gray-600">
+        <div className="mt-2 flex items-center justify-between text-sm text-muted-foreground">
           <span>
             {totalCount.toLocaleString()} {totalCount === 1 ? 'product' : 'products'}
             {searchQuery && ` for "${searchQuery}"`}

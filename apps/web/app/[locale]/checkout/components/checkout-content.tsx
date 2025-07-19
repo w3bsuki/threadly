@@ -198,10 +198,10 @@ function CheckoutForm({
     return (
       <div className="mx-auto max-w-7xl px-4 py-16">
         <div className="text-center">
-          <h1 className="mb-4 font-bold text-2xl text-gray-900">
+          <h1 className="mb-4 font-bold text-2xl text-foreground">
             Your cart is empty
           </h1>
-          <p className="mb-8 text-gray-600">
+          <p className="mb-8 text-muted-foreground">
             Add some items to your cart to continue checkout
           </p>
           <Button asChild>
@@ -371,7 +371,7 @@ function CheckoutForm({
                         onValueChange={field.onChange}
                         value={field.value}
                       >
-                        <div className="flex items-center justify-between rounded-lg border p-4">
+                        <div className="flex items-center justify-between rounded-[var(--radius-lg)] border p-4">
                           <div className="flex items-center space-x-2">
                             <RadioGroupItem id="standard" value="standard" />
                             <Label
@@ -392,7 +392,7 @@ function CheckoutForm({
                               : formatCurrency(shippingCosts.standard)}
                           </p>
                         </div>
-                        <div className="flex items-center justify-between rounded-lg border p-4">
+                        <div className="flex items-center justify-between rounded-[var(--radius-lg)] border p-4">
                           <div className="flex items-center space-x-2">
                             <RadioGroupItem id="express" value="express" />
                             <Label className="cursor-pointer" htmlFor="express">
@@ -429,8 +429,8 @@ function CheckoutForm({
                 <PaymentElement />
               ) : (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
-                  <span className="ml-2 text-gray-600">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                  <span className="ml-2 text-muted-foreground">
                     Loading payment form...
                   </span>
                 </div>
@@ -456,7 +456,7 @@ function CheckoutForm({
               <div className="space-y-4">
                 {items.map((item) => (
                   <div className="flex gap-3" key={item.productId}>
-                    <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                    <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-[var(--radius-md)] border border-border">
                       {item.imageUrl &&
                       !item.imageUrl.includes('placehold.co') &&
                       !item.imageUrl.includes('picsum.photos') ? (
@@ -623,10 +623,10 @@ export function CheckoutContent() {
     return (
       <div className="mx-auto max-w-7xl px-4 py-16">
         <div className="text-center">
-          <h1 className="mb-4 font-bold text-2xl text-gray-900">
+          <h1 className="mb-4 font-bold text-2xl text-foreground">
             Your cart is empty
           </h1>
-          <p className="mb-8 text-gray-600">
+          <p className="mb-8 text-muted-foreground">
             Add some items to your cart to continue checkout
           </p>
           <Button asChild>
@@ -644,8 +644,8 @@ export function CheckoutContent() {
     return (
       <div className="mx-auto max-w-7xl px-4 py-16">
         <div className="flex items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
-          <span className="ml-2 text-gray-600">Initializing checkout...</span>
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <span className="ml-2 text-muted-foreground">Initializing checkout...</span>
         </div>
       </div>
     );
@@ -670,13 +670,13 @@ export function CheckoutContent() {
       {/* Header */}
       <div className="mb-8">
         <Link
-          className="mb-4 inline-flex items-center text-gray-600 text-sm hover:text-gray-900"
+          className="mb-4 inline-flex items-center text-muted-foreground text-sm hover:text-foreground"
           href="/cart"
         >
           <ArrowLeft className="mr-1 h-4 w-4" />
           Back to cart
         </Link>
-        <h1 className="font-bold text-3xl text-gray-900">Checkout</h1>
+        <h1 className="font-bold text-3xl text-foreground">Checkout</h1>
       </div>
 
       {clientSecret && paymentIntentId && orderData && (

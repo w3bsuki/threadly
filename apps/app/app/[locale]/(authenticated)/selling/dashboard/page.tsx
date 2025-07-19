@@ -313,7 +313,7 @@ const SellerDashboardPage = async ({
             <Card key={stat.title}>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
-                  <div className={`p-2 rounded-md ${stat.bgColor}`}>
+                  <div className={`p-2 rounded-[var(--radius-md)] ${stat.bgColor}`}>
                     <stat.icon className={`h-4 w-4 ${stat.color}`} />
                   </div>
                   <Badge variant={stat.trendUp ? 'default' : 'secondary'} className="text-xs">
@@ -339,7 +339,7 @@ const SellerDashboardPage = async ({
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-yellow-50 rounded-md">
+                <div className="p-2 bg-yellow-50 rounded-[var(--radius-md)]">
                   <Star className="h-4 w-4 text-yellow-600" />
                 </div>
                 <div>
@@ -355,7 +355,7 @@ const SellerDashboardPage = async ({
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-indigo-50 rounded-md">
+                <div className="p-2 bg-indigo-50 rounded-[var(--radius-md)]">
                   <TrendingUp className="h-4 w-4 text-indigo-600" />
                 </div>
                 <div>
@@ -369,7 +369,7 @@ const SellerDashboardPage = async ({
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-pink-50 rounded-md">
+                <div className="p-2 bg-pink-50 rounded-[var(--radius-md)]">
                   <Package className="h-4 w-4 text-pink-600" />
                 </div>
                 <div>

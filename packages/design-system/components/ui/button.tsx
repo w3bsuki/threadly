@@ -7,14 +7,14 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@repo/design-system/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-md)] text-sm font-medium transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
     variants: {
       variant: {
         default:
           "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
         destructive:
-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+          "bg-destructive text-background shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
           "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
         secondary:
@@ -30,7 +30,7 @@ const buttonVariants = cva(
         "brand-accent":
           "bg-[oklch(var(--brand-accent))] text-[oklch(var(--brand-accent-foreground))] shadow-xs hover:bg-[oklch(var(--brand-accent)/.9)] focus-visible:ring-[oklch(var(--brand-accent)/.3)] transition-colors duration-150",
         "brand-gradient":
-          "bg-gradient-to-r from-[oklch(var(--brand-primary))] via-[oklch(var(--brand-purple))] to-[oklch(var(--brand-accent))] text-white shadow-lg hover:shadow-lg hover:opacity-90 focus-visible:ring-[oklch(var(--brand-primary)/.4)] animate-gradient bg-[length:200%_200%] font-semibold transition-all duration-150",
+          "bg-gradient-to-r from-[oklch(var(--brand-primary))] via-[oklch(var(--brand-purple))] to-[oklch(var(--brand-accent))] text-background shadow-lg hover:shadow-lg hover:opacity-90 focus-visible:ring-[oklch(var(--brand-primary)/.4)] animate-gradient bg-[length:200%_200%] font-semibold transition-all duration-150",
         "brand-outline":
           "border border-[oklch(var(--brand-primary))] text-[oklch(var(--brand-primary))] bg-background hover:bg-[oklch(var(--brand-primary))] hover:text-[oklch(var(--brand-primary-foreground))] focus-visible:ring-[oklch(var(--brand-primary)/.3)] transition-colors duration-150",
         "brand-ghost":
@@ -38,9 +38,9 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        xl: "h-12 rounded-lg px-8 has-[>svg]:px-6 text-base",
+        sm: "h-8 rounded-[var(--radius-md)] gap-1.5 px-3 has-[>svg]:px-2.5",
+        lg: "h-10 rounded-[var(--radius-md)] px-6 has-[>svg]:px-4",
+        xl: "h-12 rounded-[var(--radius-lg)] px-8 has-[>svg]:px-6 text-base",
         icon: "size-9",
         "icon-sm": "size-8",
         "icon-lg": "size-10", 

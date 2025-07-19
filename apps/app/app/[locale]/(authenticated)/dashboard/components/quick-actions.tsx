@@ -30,18 +30,18 @@ interface ActionButtonProps {
 
 function ActionButton({ href, icon: Icon, label, description, external, variant = 'default' }: ActionButtonProps) {
   const className = cn(
-    "flex items-center gap-3 p-3 rounded-lg border transition-all active:scale-95",
+    "flex items-center gap-3 p-3 rounded-[var(--radius-lg)] border transition-all active:scale-95",
     "touch-manipulation",
     variant === 'primary' 
-      ? "bg-white text-black border-white hover:bg-gray-100"
-      : "bg-black/50 text-white border-gray-800 hover:bg-black/70 hover:border-gray-700"
+      ? "bg-background text-foreground border-background hover:bg-secondary"
+      : "bg-foreground/50 text-background border-gray-800 hover:bg-foreground/70 hover:border-gray-700"
   );
 
   const content = (
     <>
       <div className={cn(
-        "rounded-full p-2",
-        variant === 'primary' ? "bg-black/10" : "bg-white/10"
+        "rounded-[var(--radius-full)] p-2",
+        variant === 'primary' ? "bg-foreground/10" : "bg-background/10"
       )}>
         <Icon className="h-4 w-4" />
       </div>
@@ -106,9 +106,9 @@ export function QuickActions({ dictionary }: QuickActionsProps) {
   ];
 
   return (
-    <Card className="overflow-hidden bg-gray-950 border-gray-800">
+    <Card className="overflow-hidden bg-foreground border-gray-800">
       <CardHeader className="pb-3 px-4 border-b border-gray-800">
-        <CardTitle className="text-base font-medium text-white">{dictionary.dashboard.dashboard.quickActions}</CardTitle>
+        <CardTitle className="text-base font-medium text-background">{dictionary.dashboard.dashboard.quickActions}</CardTitle>
       </CardHeader>
       <CardContent className="px-4 pb-4 pt-4">
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
