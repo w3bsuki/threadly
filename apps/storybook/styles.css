@@ -1,0 +1,4 @@
+@import "@repo/design-system/styles/globals.css";
+
+/* Source paths for Storybook stories */
+@source "./stories/**/*.{ts,tsx}";

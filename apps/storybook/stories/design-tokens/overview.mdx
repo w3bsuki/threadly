@@ -1,0 +1,294 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Design Tokens/Overview" />
+
+# Design Tokens
+
+Design tokens are the foundational building blocks of our design system. They represent the smallest pieces of our design language - colors, typography, spacing, and more.
+
+## What are Design Tokens?
+
+Design tokens are named entities that store design decisions. Instead of hard-coding values throughout your code, you reference tokens that can be updated globally. This ensures consistency and makes design changes easier to implement.
+
+### Benefits
+
+- **Consistency**: Same values used everywhere
+- **Maintainability**: Update once, change everywhere
+- **Theming**: Easy to create variations (light/dark modes)
+- **Cross-platform**: Share design decisions across platforms
+- **Documentation**: Self-documenting design decisions
+
+## Token Architecture
+
+Our tokens follow a three-tier architecture:
+
+### 1. Primitive Tokens
+Raw values that form the foundation:
+```css
+--color-gray-500: oklch(0.708 0 0);
+--space-4: 1rem;
+--font-size-base: 1rem;
+```
+
+### 2. Semantic Tokens
+Purpose-driven tokens that reference primitives:
+```css
+--color-background: var(--color-white);
+--color-foreground: var(--color-gray-950);
+--space-section: var(--space-16);
+```
+
+### 3. Component Tokens
+Component-specific tokens for fine control:
+```css
+--button-height-md: 2.5rem;
+--input-border-width: 1px;
+--card-padding: var(--space-6);
+```
+
+## Token Categories
+
+### [Colors](/story/design-tokens-colors--docs)
+Our color system using OKLCH for perceptual uniformity:
+- Primitive gray scale
+- Functional colors (success, warning, error)
+- Semantic color mappings
+- Theme variations
+
+### [Typography](/story/design-tokens-typography--docs)
+Complete typographic scale:
+- Font families (Geist Sans & Mono)
+- Font sizes (modular scale)
+- Line heights
+- Font weights
+- Letter spacing
+
+### [Spacing](/story/design-tokens-spacing--docs)
+Consistent spacing system based on 4px grid:
+- Margin and padding values
+- Gap utilities
+- Component spacing
+
+### [Shadows](/story/design-tokens-shadows--docs)
+Elevation system for depth:
+- Multiple shadow levels
+- Inner shadows
+- Focus rings
+
+### [Animations](/story/design-tokens-animations--docs)
+Motion tokens for consistent animations:
+- Duration values
+- Easing functions
+- Keyframe animations
+
+### [Borders](/story/design-tokens-borders--docs)
+Border system tokens:
+- Border widths
+- Border radius scale
+- Border colors
+
+## Using Design Tokens
+
+### In CSS
+
+Reference tokens using CSS custom properties:
+
+```css
+.my-component {
+  /* Colors */
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  
+  /* Spacing */
+  padding: var(--space-4);
+  gap: var(--space-2);
+  
+  /* Typography */
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  
+  /* Borders */
+  border: var(--border-width-1) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  
+  /* Shadows */
+  box-shadow: var(--shadow-md);
+  
+  /* Animation */
+  transition: all var(--duration-fast) var(--easing-ease-out);
+}
+```
+
+### In Tailwind Classes
+
+Our tokens are integrated with Tailwind:
+
+```tsx
+<div className="bg-background text-foreground p-4 rounded-lg shadow-md">
+  <h2 className="text-2xl font-semibold mb-2">
+    Hello World
+  </h2>
+  <p className="text-muted-foreground">
+    Using design tokens with Tailwind
+  </p>
+</div>
+```
+
+### In JavaScript/TypeScript
+
+Access tokens programmatically:
+
+```tsx
+// Get computed styles
+const styles = getComputedStyle(document.documentElement);
+const primaryColor = styles.getPropertyValue('--color-primary');
+
+// Set token values
+document.documentElement.style.setProperty('--color-primary', 'oklch(0.7 0.2 250)');
+```
+
+## Theming
+
+Our token system supports multiple themes through CSS custom property overrides:
+
+```css
+/* Light theme (default) */
+:root {
+  --color-background: var(--color-white);
+  --color-foreground: var(--color-gray-950);
+}
+
+/* Dark theme */
+.dark {
+  --color-background: var(--color-gray-950);
+  --color-foreground: var(--color-gray-50);
+}
+
+/* Custom brand theme */
+.theme-brand {
+  --color-primary: var(--color-brand-primary);
+  --color-primary-foreground: var(--color-brand-primary-foreground);
+}
+```
+
+## Best Practices
+
+### 1. Use Semantic Tokens
+Always prefer semantic tokens over primitive tokens:
+
+```css
+/* ✅ Good - Semantic token */
+color: var(--color-foreground);
+
+/* ❌ Avoid - Primitive token */
+color: var(--color-gray-950);
+```
+
+### 2. Don't Override Primitives
+Primitive tokens should remain constant. Override semantic tokens for theming:
+
+```css
+/* ✅ Good - Override semantic token */
+.my-theme {
+  --color-primary: var(--color-blue-500);
+}
+
+/* ❌ Avoid - Override primitive */
+.my-theme {
+  --color-blue-500: #0000ff;
+}
+```
+
+### 3. Create Component Tokens When Needed
+For frequently customized values, create component-specific tokens:
+
+```css
+:root {
+  /* Component token references semantic token */
+  --card-background: var(--color-background);
+  --card-border: var(--color-border);
+  --card-shadow: var(--shadow-sm);
+}
+
+.card {
+  background: var(--card-background);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+}
+```
+
+### 4. Document Custom Tokens
+When creating new tokens, document their purpose:
+
+```css
+:root {
+  /* Controls the height of the main navigation bar */
+  --nav-height: 4rem;
+  
+  /* Maximum width for content containers */
+  --content-max-width: 1280px;
+}
+```
+
+## Token Naming Convention
+
+We follow a consistent naming pattern:
+
+```
+--[category]-[property]-[variant]-[state]
+```
+
+Examples:
+- `--color-primary` (category: color, property: primary)
+- `--color-primary-hover` (with state)
+- `--space-4` (category: space, property: 4)
+- `--font-size-lg` (category: font, property: size, variant: lg)
+
+## Migration Guide
+
+When updating token values:
+
+1. **Announce changes**: Communicate updates to the team
+2. **Deprecate first**: Mark old tokens as deprecated
+3. **Provide migration path**: Document how to update
+4. **Remove after grace period**: Clean up old tokens
+
+Example:
+```css
+:root {
+  /* @deprecated Use --color-muted-foreground instead */
+  --text-secondary: var(--color-muted-foreground);
+  
+  /* New token */
+  --color-muted-foreground: var(--color-gray-600);
+}
+```
+
+## Tools and Resources
+
+### Browser DevTools
+Inspect and modify token values in real-time:
+1. Open DevTools
+2. Select an element
+3. View computed styles
+4. Search for CSS custom properties
+
+### VS Code Extensions
+- **CSS Variable Autocomplete**: IntelliSense for CSS variables
+- **Color Highlight**: Preview color values inline
+
+### Design Token Validation
+Use our validation script to ensure token consistency:
+```bash
+pnpm run validate:tokens
+```
+
+## Next Steps
+
+Explore each token category in detail:
+- [Colors](/story/design-tokens-colors--docs)
+- [Typography](/story/design-tokens-typography--docs)
+- [Spacing](/story/design-tokens-spacing--docs)
+- [Shadows](/story/design-tokens-shadows--docs)
+- [Animations](/story/design-tokens-animations--docs)
+- [Borders](/story/design-tokens-borders--docs)

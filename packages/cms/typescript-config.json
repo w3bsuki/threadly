@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "CMS",
+  "extends": "../typescript-config/base.json",
+  "compilerOptions": {
+    "jsx": "preserve"
+  }
+}

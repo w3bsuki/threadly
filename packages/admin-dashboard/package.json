@@ -1,0 +1,52 @@
+{
+  "name": "@repo/admin-dashboard",
+  "version": "0.1.0",
+  "description": "Admin dashboard components for content moderation and platform management",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "node scripts/conditional-build.js",
+    "dev": "tsup --watch",
+    "lint": "biome lint src/",
+    "format": "biome format src/",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@repo/analytics": "workspace:*",
+    "@repo/auth": "workspace:*",
+    "@repo/database": "workspace:*",
+    "@repo/design-system": "workspace:*",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.525.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "recharts": "^3.1.0",
+    "zod": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./components": {
+      "import": "./dist/components/index.js",
+      "types": "./dist/components/index.d.ts"
+    },
+    "./hooks": {
+      "import": "./dist/hooks/index.js",
+      "types": "./dist/hooks/index.d.ts"
+    },
+    "./utils": {
+      "import": "./dist/utils/index.js",
+      "types": "./dist/utils/index.d.ts"
+    }
+  }
+}

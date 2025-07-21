@@ -1,0 +1,110 @@
+@import "@repo/design-system/styles/globals.css";
+
+/* Source paths for web app - be specific to avoid scanning unnecessary files */
+@source "../**/*.{ts,tsx}";
+@source "../../components/**/*.{ts,tsx}";
+@source "../../lib/**/*.{ts,tsx}";
+
+/* Mobile-first optimizations */
+@media (max-width: 767px) {
+  /* Smooth scrolling for mobile */
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Enhanced touch targets */
+  button,
+  a,
+  input,
+  textarea,
+  select {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Better touch feedback */
+  button:active,
+  a:active {
+    background-color: var(--color-foreground/10);
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+
+  /* Prevent text selection on interactive elements */
+  button,
+  a[role="button"] {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: var(--color-foreground/10);
+  }
+
+  /* Improve scrolling performance */
+  .overflow-y-auto,
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  /* Prevent layout shift during loading */
+  img {
+    content-visibility: auto;
+  }
+
+  /* Optimize animations for 60fps */
+  * {
+    will-change: auto;
+  }
+  
+  .animate-pulse {
+    will-change: opacity;
+  }
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.shiki {
+  background-color: var(--shiki-light-bg);
+  color: var(--shiki-light);
+  @apply border-border;
+}
+
+.shiki span {
+  color: var(--shiki-light);
+}
+
+.dark .shiki {
+  background-color: var(--shiki-dark-bg);
+  color: var(--shiki-dark);
+}
+
+.dark .shiki span {
+  color: var(--shiki-dark);
+}
+
+.shiki code {
+  display: grid;
+  font-size: 13px;
+  counter-reset: line;
+}
+
+.shiki .line:before {
+  content: counter(line);
+  counter-increment: line;
+
+  @apply inline-block w-4 mr-8 text-muted-foreground text-right;
+}
+
+.shiki[title]:before {
+  content: attr(title);
+  @apply inline-block text-muted-foreground text-right mb-6 text-sm;
+}

@@ -1,0 +1,248 @@
+name: Deployment Recovery & Rollback
+
+on:
+  workflow_run:
+    workflows: ["Threadly CI/CD Pipeline"]
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      recovery_type:
+        description: 'Type of recovery action'
+        required: true
+        default: 'health-check'
+        type: choice
+        options:
+          - health-check
+          - rollback
+          - redeploy
+          - emergency-fix
+
+permissions:
+  contents: write
+  deployments: write
+  actions: write
+
+jobs:
+  deployment-status:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'failure' || github.event_name == 'workflow_dispatch'
+    timeout-minutes: 15
+    
+    outputs:
+      needs_recovery: ${{ steps.health-check.outputs.needs_recovery }}
+      failed_apps: ${{ steps.health-check.outputs.failed_apps }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Health check all deployments
+        id: health-check
+        run: |
+          echo "🏥 Checking deployment health..."
+          
+          declare -A apps=(
+            ["web"]="https://threadly.vercel.app"
+            ["app"]="https://app.threadly.vercel.app"
+            ["api"]="https://api.threadly.vercel.app/health"
+          )
+          
+          failed_apps=()
+          
+          for app in "${!apps[@]}"; do
+            url="${apps[$app]}"
+            echo "Checking $app at $url..."
+            
+            if ! curl -f -s --max-time 30 "$url" > /dev/null; then
+              echo "❌ $app is unhealthy"
+              failed_apps+=("$app")
+            else
+              echo "✅ $app is healthy"
+            fi
+          done
+          
+          if [ ${#failed_apps[@]} -gt 0 ]; then
+            echo "needs_recovery=true" >> $GITHUB_OUTPUT
+            echo "failed_apps=$(IFS=,; echo "${failed_apps[*]}")" >> $GITHUB_OUTPUT
+          else
+            echo "needs_recovery=false" >> $GITHUB_OUTPUT
+            echo "failed_apps=" >> $GITHUB_OUTPUT
+          fi
+
+  auto-recovery:
+    runs-on: ubuntu-latest
+    needs: deployment-status
+    if: needs.deployment-status.outputs.needs_recovery == 'true'
+    timeout-minutes: 20
+    
+    strategy:
+      matrix:
+        app: ${{ fromJson(format('["{0}"]', needs.deployment-status.outputs.failed_apps)) }}
+      fail-fast: false
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '10.13.1'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        env:
+          DATABASE_URL: postgresql://localhost:5432/mock
+        run: pnpm db:generate
+
+      - name: Attempt recovery build
+        run: |
+          echo "🔄 Attempting recovery build for ${{ matrix.app }}..."
+          pnpm build --filter=${{ matrix.app }}
+        env:
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          DATABASE_URL: postgresql://localhost:5432/mock
+          REDIS_URL: redis://localhost:6379
+          UPSTASH_REDIS_REST_URL: https://mock-redis.upstash.io
+          UPSTASH_REDIS_REST_TOKEN: mock-token
+          NEXTAUTH_SECRET: mock-secret
+
+      - name: Recovery deployment
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_${{ matrix.app }} }}
+          vercel-args: '--prod'
+          working-directory: apps/${{ matrix.app }}
+
+      - name: Verify recovery
+        run: |
+          echo "🔍 Verifying recovery for ${{ matrix.app }}..."
+          sleep 30
+          
+          case "${{ matrix.app }}" in
+            web) URL="https://threadly.vercel.app" ;;
+            app) URL="https://app.threadly.vercel.app" ;;
+            api) URL="https://api.threadly.vercel.app/health" ;;
+          esac
+          
+          for i in {1..5}; do
+            if curl -f -s --max-time 30 "$URL" > /dev/null; then
+              echo "✅ Recovery successful for ${{ matrix.app }}"
+              exit 0
+            fi
+            echo "⏳ Recovery verification attempt $i/5..."
+            sleep 15
+          done
+          
+          echo "❌ Recovery failed for ${{ matrix.app }}"
+          exit 1
+
+  rollback:
+    runs-on: ubuntu-latest
+    needs: [deployment-status, auto-recovery]
+    if: |
+      always() && 
+      needs.deployment-status.outputs.needs_recovery == 'true' &&
+      needs.auto-recovery.result == 'failure' &&
+      github.event.inputs.recovery_type == 'rollback'
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Rollback deployment
+        run: |
+          echo "🔄 Initiating rollback procedure..."
+          
+          # Get the last successful deployment
+          last_successful=$(git log --oneline -n 10 --grep="fix:\|feat:\|chore:" | head -1 | cut -d' ' -f1)
+          
+          if [ -n "$last_successful" ]; then
+            echo "Rolling back to commit: $last_successful"
+            git checkout $last_successful
+          else
+            echo "No suitable rollback target found"
+            exit 1
+          fi
+
+      - name: Emergency deployment
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_web }}
+          vercel-args: '--prod'
+          working-directory: apps/web
+
+  notification:
+    runs-on: ubuntu-latest
+    needs: [deployment-status, auto-recovery, rollback]
+    if: always()
+    
+    steps:
+      - name: Send recovery notification
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deploymentStatus = '${{ needs.deployment-status.outputs.needs_recovery }}';
+            const recoveryResult = '${{ needs.auto-recovery.result }}';
+            const rollbackResult = '${{ needs.rollback.result }}';
+            
+            let title, body, labels;
+            
+            if (deploymentStatus === 'false') {
+              title = '✅ All deployments healthy';
+              body = 'Deployment health check passed. All applications are running normally.';
+              labels = ['deployment', 'healthy'];
+            } else if (recoveryResult === 'success') {
+              title = '🔄 Deployment recovery successful';
+              body = 'Failed deployments have been automatically recovered and are now healthy.';
+              labels = ['deployment', 'recovery', 'success'];
+            } else if (rollbackResult === 'success') {
+              title = '↩️ Deployment rollback completed';
+              body = 'Automatic recovery failed. Rollback to previous stable version completed.';
+              labels = ['deployment', 'rollback', 'success'];
+            } else {
+              title = '🚨 Deployment recovery failed';
+              body = `
+              ## Critical Deployment Issues
+              
+              Automatic recovery and rollback procedures have failed.
+              
+              **Failed Apps:** ${{ needs.deployment-status.outputs.failed_apps }}
+              **Recovery Result:** ${recoveryResult}
+              **Rollback Result:** ${rollbackResult}
+              
+              **Immediate Actions Required:**
+              1. Check application logs
+              2. Verify environment variables
+              3. Check external service dependencies
+              4. Consider manual deployment
+              
+              This requires immediate attention from the development team.
+              `;
+              labels = ['deployment', 'critical', 'manual-intervention'];
+            }
+            
+            if (deploymentStatus === 'true') {
+              github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: labels
+              });
+            }

@@ -1,0 +1,11 @@
+{
+  "locale": {
+    "source": "en",
+    "targets": ["bg", "uk"]
+  },
+  "files": {
+    "json": {
+      "include": ["dictionaries/[locale].json"]
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "name": "@repo/auth",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@clerk/nextjs": "^6.24.0",
+    "@clerk/themes": "^2.2.55",
+    "@repo/observability": "workspace:*",
+    "@t3-oss/env-nextjs": "^0.13.8",
+    "next-themes": "^0.4.6",
+    "react": "19.1.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.0.2"
+  },
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "default": "./index.ts"
+    },
+    "./server": {
+      "types": "./server.ts",
+      "default": "./server.ts"
+    },
+    "./client": {
+      "types": "./client.tsx",
+      "default": "./client.tsx"
+    },
+    "./keys": {
+      "types": "./keys.ts",
+      "default": "./keys.ts"
+    },
+    "./middleware": {
+      "types": "./middleware.ts",
+      "default": "./middleware.ts"
+    },
+    "./db": {
+      "types": "./db.ts",
+      "default": "./db.ts"
+    },
+    "./sync": {
+      "types": "./src/sync.ts",
+      "default": "./src/sync.ts"
+    }
+  },
+  "devDependencies": {
+    "@clerk/types": "^4.64.0",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "24.0.12",
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
+    "typescript": "^5.8.3"
+  }
+}

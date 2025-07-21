@@ -1,0 +1,7 @@
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="192" height="192" rx="24" fill="black"/>
+  <circle cx="96" cy="64" r="16" fill="white"/>
+  <path d="M64 96 C64 96, 80 112, 96 112 C112 112, 128 96, 128 96" stroke="white" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M48 128 C48 128, 64 144, 96 144 C128 144, 144 128, 144 128" stroke="white" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <text x="96" y="168" font-family="Arial, sans-serif" font-size="12" fill="white" text-anchor="middle">T</text>
+</svg>

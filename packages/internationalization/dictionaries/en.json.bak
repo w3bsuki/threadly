@@ -1,0 +1,189 @@
+{
+  "web": {
+    "global": {
+      "primaryCta": "Start Shopping",
+      "secondaryCta": "Join Threadly"
+    },
+    "header": {
+      "home": "Home",
+      "product": {
+        "title": "Shop",
+        "description": "Discover unique fashion finds and sustainable style.",
+        "pricing": "Sell"
+      },
+      "blog": "Blog",
+      "docs": "Help",
+      "contact": "Contact",
+      "signIn": "Sign in",
+      "signUp": "Join Threadly"
+    },
+    "home": {
+      "meta": {
+        "title": "Threadly - Sustainable Fashion Marketplace",
+        "description": "Discover unique fashion finds, sell your pre-loved treasures, and join a community that believes in sustainable style. Shop vintage, designer, and one-of-a-kind pieces on Threadly."
+      },
+      "hero": {
+        "announcement": "New: Verified Designer Authentication"
+      },
+      "cases": {
+        "title": "Trusted by Fashion Lovers Everywhere"
+      },
+      "features": {
+        "title": "Fashion Forward, Planet Friendly",
+        "description": "Discover why Threadly is the future of sustainable fashion shopping.",
+        "items": [
+          {
+            "title": "Authenticity Verified",
+            "description": "Every designer item goes through our rigorous authentication process to ensure you get genuine pieces every time."
+          },
+          {
+            "title": "Sustainable Fashion",
+            "description": "Give clothes a second life and reduce fashion waste. Every purchase contributes to a more sustainable future."
+          },
+          {
+            "title": "Curated Selection",
+            "description": "Our team curates the best vintage, designer, and unique pieces so you can find treasures you won't see anywhere else."
+          },
+          {
+            "title": "Secure Shopping",
+            "description": "Shop with confidence knowing every transaction is protected and your personal information is secure."
+          }
+        ]
+      },
+      "stats": {
+        "title": "Fashion with Impact",
+        "description": "Join a growing community of fashion lovers who choose sustainability without compromising on style. Together, we're making fashion more conscious and accessible.",
+        "items": [
+          {
+            "title": "Items given new life",
+            "metric": "Growing daily",
+            "delta": "0",
+            "type": "text"
+          },
+          {
+            "title": "CO2 emissions saved",
+            "metric": "Every purchase counts",
+            "delta": "0",
+            "type": "text"
+          },
+          {
+            "title": "Unique pieces found",
+            "metric": "One-of-a-kind",
+            "delta": "0",
+            "type": "text"
+          },
+          {
+            "title": "Community members",
+            "metric": "Growing",
+            "delta": "0",
+            "type": "text"
+          }
+        ]
+      },
+      "testimonials": {
+        "title": "Why Choose Threadly?",
+        "items": [
+          {
+            "title": "Sustainable Choice",
+            "description": "Give clothes a second life and reduce fashion waste with every purchase.",
+            "author": {
+              "name": "Sustainability",
+              "image": ""
+            }
+          },
+          {
+            "title": "Unique Finds",
+            "description": "Discover one-of-a-kind pieces you won't find in traditional retail stores.",
+            "author": {
+              "name": "Curation",
+              "image": ""
+            }
+          },
+          {
+            "title": "Quality Verified",
+            "description": "Every item is quality checked and designer pieces are authenticated.",
+            "author": {
+              "name": "Authentication",
+              "image": ""
+            }
+          },
+          {
+            "title": "Community Driven",
+            "description": "Connect with fellow fashion enthusiasts who share your passion for style.",
+            "author": {
+              "name": "Community",
+              "image": ""
+            }
+          }
+        ]
+      },
+      "faq": {
+        "title": "Frequently Asked Questions",
+        "description": "Everything you need to know about buying and selling on Threadly. From sizing guides to authenticity verification, we've got you covered.",
+        "cta": "Still have questions? Contact us",
+        "items": [
+          {
+            "question": "How does Threadly work?",
+            "answer": "Threadly is a peer-to-peer fashion marketplace where you can buy and sell pre-loved clothing. Sellers list their items, buyers discover unique pieces, and we facilitate secure transactions with buyer protection."
+          },
+          {
+            "question": "How do you verify authenticity?",
+            "answer": "Our expert authentication team verifies all designer items over a certain value. We check materials, craftsmanship, serial numbers, and use advanced authentication techniques to ensure authenticity."
+          },
+          {
+            "question": "What if an item doesn't fit?",
+            "answer": "We offer a 3-day return window for sizing issues. Items must be returned in the same condition they were received. Check our return policy for full details."
+          },
+          {
+            "question": "How much does it cost to sell?",
+            "answer": "Listing items is free. We take a small commission only when your item sells, which covers payment processing, buyer protection, and platform maintenance."
+          },
+          {
+            "question": "Is my purchase protected?",
+            "answer": "Yes! All purchases are covered by our buyer protection policy. If an item doesn't match the description or doesn't arrive, we'll work with you to resolve the issue."
+          }
+        ]
+      },
+      "cta": {
+        "title": "Start Your Sustainable Fashion Journey",
+        "description": "Join a community that believes fashion can be both stylish and sustainable. Discover unique pieces, sell your pre-loved items, and make a positive impact on the planet with every purchase."
+      }
+    },
+    "blog": {
+      "meta": {
+        "title": "Threadly Blog",
+        "description": "Fashion tips, sustainability insights, and style inspiration."
+      }
+    },
+    "contact": {
+      "meta": {
+        "title": "Get in Touch",
+        "description": "Have questions about buying or selling on Threadly? Our team is here to help you make the most of sustainable fashion."
+      },
+      "hero": {
+        "benefits": [
+          {
+            "title": "Expert Support",
+            "description": "Get help with buying, selling, authentication, and everything in between."
+          },
+          {
+            "title": "Fast Response",
+            "description": "We typically respond to all inquiries within 24 hours."
+          },
+          {
+            "title": "Fashion Guidance",
+            "description": "Need styling advice or help finding specific pieces? Our team loves to help."
+          }
+        ],
+        "form": {
+          "title": "Send us a message",
+          "date": "Date",
+          "firstName": "First name",
+          "lastName": "Last name",
+          "resume": "Upload images",
+          "cta": "Send message"
+        }
+      }
+    }
+  }
+}

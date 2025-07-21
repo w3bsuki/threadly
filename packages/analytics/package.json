@@ -1,0 +1,43 @@
+{
+  "name": "@repo/analytics",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./index.tsx",
+      "default": "./index.tsx"
+    },
+    "./keys": {
+      "types": "./keys.ts",
+      "default": "./keys.ts"
+    },
+    "./posthog/server": {
+      "types": "./posthog/server.ts",
+      "default": "./posthog/server.ts"
+    },
+    "./posthog/client": {
+      "types": "./posthog/client.tsx",
+      "default": "./posthog/client.tsx"
+    }
+  },
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@next/third-parties": "15.3.5",
+    "@t3-oss/env-nextjs": "^0.13.8",
+    "@vercel/analytics": "^1.5.0",
+    "posthog-js": "^1.257.0",
+    "posthog-node": "^5.4.0",
+    "react": "19.1.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.0.2"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "24.0.12",
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6"
+  }
+}

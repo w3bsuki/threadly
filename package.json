@@ -1,0 +1,79 @@
+{
+  "name": "threadly",
+  "version": "5.0.1",
+  "bin": {
+    "threadly": "dist/index.js"
+  },
+  "files": [
+    "dist/index.js"
+  ],
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "ultracite lint",
+    "format": "ultracite format",
+    "test": "turbo test",
+    "test:a11y": "turbo test -- --grep=\"a11y|accessibility\"",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:security": "turbo test -- --grep=\"security\"",
+    "analyze": "turbo analyze",
+    "translate": "turbo translate",
+    "boundaries": "turbo boundaries",
+    "bump-deps": "npx npm-check-updates --deep -u -x react-day-picker",
+    "bump-ui": "npx shadcn@latest add --all --overwrite -c packages/design-system",
+    "migrate": "cd packages/database && npx prisma format && npx prisma generate && npx prisma db push --accept-data-loss",
+    "migrate:prod": "tsx scripts/migrate-production.ts",
+    "migrate:postgres": "tsx scripts/migrate-sqlite-to-postgres.ts",
+    "db:push": "cd packages/database && npx prisma db push",
+    "db:generate": "cd packages/database && npx prisma generate --no-hints",
+    "db:migrate:deploy": "cd packages/database && npx prisma migrate deploy",
+    "db:studio": "cd packages/database && npx prisma studio",
+    "seed": "tsx scripts/seed-all.ts",
+    "seed:categories": "tsx scripts/seed-categories.ts",
+    "seed:products": "tsx scripts/seed-products.ts",
+    "check:monitoring": "tsx scripts/check-monitoring.ts",
+    "clean": "git clean -xdf node_modules",
+    "typecheck": "turbo typecheck",
+    "design-system:audit": "tsx scripts/design-system-audit.ts",
+    "design-system:migrate": "tsx scripts/migrate-to-design-system.ts",
+    "design-system:migrate:dry": "tsx scripts/migrate-to-design-system.ts --dry-run --verbose"
+  },
+  "devDependencies": {
+    "@auto-it/first-time-contributor": "^11.3.0",
+    "@axe-core/react": "^4.10.2",
+    "@biomejs/biome": "2.1.1",
+    "@playwright/test": "^1.54.1",
+    "@prisma/nextjs-monorepo-workaround-plugin": "^6.11.1",
+    "@repo/typescript-config": "workspace:*",
+    "@turbo/gen": "^2.5.4",
+    "@types/node": "^24.0.12",
+    "axe-core": "^4.10.3",
+    "dotenv": "^17.2.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "glob": "^11.0.3",
+    "tsup": "^8.5.0",
+    "tsx": "^4.20.3",
+    "turbo": "^2.5.4",
+    "typescript": "^5.8.3",
+    "ultracite": "^5.0.32",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "pnpm@10.13.1",
+  "dependencies": {
+    "@clack/prompts": "^0.11.0",
+    "commander": "^14.0.0",
+    "cross-env": "^7.0.3",
+    "next": "15.3.5"
+  },
+  "type": "module",
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.1.8",
+      "@types/react-dom": "19.1.6"
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "globalDependencies": ["**/.env.*local"],
+  "ui": "tui",
+  "envMode": "loose",
+  "globalPassThroughEnv": ["CI", "VERCEL", "NODE_ENV"],
+  "concurrency": "20",
+  "remoteCache": {
+    "enabled": true
+  },
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "env": ["CI", "VERCEL", "NODE_ENV"],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        ".basehub/**",
+        "**/generated/**",
+        "storybook-static/**",
+        ".react-email/**",
+        "dist/**"
+      ],
+      "cache": true
+    },
+    "build:production": {
+      "dependsOn": ["^build"],
+      "env": ["CI", "VERCEL", "NODE_ENV"],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        ".basehub/**",
+        "**/generated/**",
+        "dist/**"
+      ],
+      "cache": true
+    },
+    "test": {
+      "dependsOn": ["^test"],
+      "cache": true,
+      "outputs": ["coverage/**"]
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"],
+      "cache": true,
+      "outputs": ["**/*.tsbuildinfo"]
+    },
+    "analyze": {
+      "dependsOn": ["^analyze"],
+      "cache": true
+    },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "cache": true
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "translate": {
+      "dependsOn": ["^translate"],
+      "cache": false
+    },
+    "clean": {
+      "cache": false
+    },
+    "//#clean": {
+      "cache": false
+    }
+  }
+}

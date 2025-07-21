@@ -1,0 +1,35 @@
+{
+  "name": "@repo/cache",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./keys": {
+      "types": "./keys.ts",
+      "default": "./keys.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "clean": "git clean -xdf .turbo dist node_modules",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@repo/error-handling": "workspace:*",
+    "@t3-oss/env-nextjs": "^0.13.8",
+    "@upstash/redis": "^1.35.1",
+    "next": "^15.3.5",
+    "zod": "^4.0.2"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "24.0.12",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3"
+  }
+}
