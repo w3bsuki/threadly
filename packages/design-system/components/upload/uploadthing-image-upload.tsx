@@ -53,6 +53,9 @@ export function UploadthingImageUpload({
         }
         
         const uploadResult = result[0];
+        if (!uploadResult) {
+          throw new Error('Upload result is empty');
+        }
         return {
           url: uploadResult.url,
           id: uploadResult.key,
@@ -66,6 +69,9 @@ export function UploadthingImageUpload({
         }
         
         const uploadResult = result[0];
+        if (!uploadResult) {
+          throw new Error('Upload result is empty');
+        }
         return {
           url: uploadResult.url,
           id: uploadResult.key,

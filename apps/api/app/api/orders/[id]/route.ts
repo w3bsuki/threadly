@@ -60,7 +60,7 @@ export async function GET(
             },
           },
         },
-        User_Order_buyerIdToUser: {
+        buyer: {
           select: {
             id: true,
             firstName: true,
@@ -69,7 +69,7 @@ export async function GET(
             email: true,
           },
         },
-        User_Order_sellerIdToUser: {
+        seller: {
           select: {
             id: true,
             firstName: true,
@@ -195,8 +195,8 @@ export async function PUT(
             category: true,
           },
         },
-        User_Order_buyerIdToUser: true,
-        User_Order_sellerIdToUser: true,
+        buyer: true,
+        seller: true,
         Payment: true,
         Review: true,
       },

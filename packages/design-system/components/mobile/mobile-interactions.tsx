@@ -152,7 +152,7 @@ const usePullToRefresh = ({
   const handleTouchStart = useCallback((e: TouchEvent) => {
     if (disabled || isRefreshing || window.scrollY > 0) return;
     
-    startY.current = e.touches[0].clientY;
+    startY.current = e.touches[0]?.clientY || 0;
     setIsPulling(true);
     hasAnnouncedThreshold.current = false;
   }, [disabled, isRefreshing]);
@@ -160,7 +160,7 @@ const usePullToRefresh = ({
   const handleTouchMove = useCallback((e: TouchEvent) => {
     if (!isPulling || disabled || isRefreshing || window.scrollY > 0) return;
 
-    currentY.current = e.touches[0].clientY;
+    currentY.current = e.touches[0]?.clientY || 0;
     const distance = Math.max(0, currentY.current - startY.current);
 
     if (distance > 0) {
@@ -337,8 +337,8 @@ const useSwipeGesture = ({
   }, [onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown]);
 
   const handlers = {
-    onTouchStart: (e: React.TouchEvent) => handleStart(e.touches[0].clientX, e.touches[0].clientY),
-    onTouchEnd: (e: React.TouchEvent) => handleEnd(e.changedTouches[0].clientX, e.changedTouches[0].clientY),
+    onTouchStart: (e: React.TouchEvent) => handleStart(e.touches[0]?.clientX || 0, e.touches[0]?.clientY || 0),
+    onTouchEnd: (e: React.TouchEvent) => handleEnd(e.changedTouches[0]?.clientX || 0, e.changedTouches[0]?.clientY || 0),
     onKeyDown: handleKeyDown,
     ...(allowMouseEvents && {
       onMouseDown: (e: React.MouseEvent) => handleStart(e.clientX, e.clientY),

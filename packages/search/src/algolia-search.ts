@@ -253,8 +253,9 @@ export class AlgoliaSearchService implements SearchEngine, SearchIndexable {
       }
 
       // Add category suggestions
-      if (result.facets?.[SEARCH_FACETS.CATEGORIES]) {
-        Object.entries(result.facets[SEARCH_FACETS.CATEGORIES])
+      const categoryFacets = result.facets?.[SEARCH_FACETS.CATEGORIES];
+      if (categoryFacets) {
+        Object.entries(categoryFacets)
           .slice(0, limit - 1)
           .forEach(([category, count]) => {
             suggestions.push({

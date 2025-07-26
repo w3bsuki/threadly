@@ -4,7 +4,7 @@ export {
   WizardNavigation,
   WizardStepIndicator,
   useWizard,
-  type WizardStep,
+  type WizardStep as WizardStepType,
   type MultiStepWizardProps,
 } from './multi-step-wizard';
 

@@ -285,7 +285,7 @@ export class DataGenerators {
     return {
       id: `prod_${this.randomString(12)}`,
       title: titles[Math.floor(Math.random() * titles.length)],
-      description: `High quality ${titles[Math.floor(Math.random() * titles.length)].toLowerCase()} in excellent condition.`,
+      description: `High quality ${titles[Math.floor(Math.random() * titles.length)]?.toLowerCase() || 'item'} in excellent condition.`,
       price: this.randomPrice(),
       condition: conditions[Math.floor(Math.random() * conditions.length)],
       status: 'AVAILABLE',

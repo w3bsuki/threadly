@@ -244,7 +244,7 @@ export {
   WizardProgress,
   WizardNavigation,
   WizardStepIndicator,
-  WizardStep,
+  // WizardStep, // Commenting out due to type conflict
   WizardStepContainer,
   WizardFormStep,
   WizardReviewStep,

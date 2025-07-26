@@ -14,8 +14,8 @@ async function checkConversationAccess(conversationId: string, userId: string) {
   const conversation = await database.conversation.findUnique({
     where: { id: conversationId },
     include: {
-      User_Conversation_buyerIdToUser: true,
-      User_Conversation_sellerIdToUser: true,
+      buyer: true,
+      seller: true,
     },
   });
 
@@ -84,7 +84,7 @@ export async function GET(
     const conversation = await database.conversation.findUnique({
       where: { id: resolvedParams.conversationId },
       include: {
-        User_Conversation_buyerIdToUser: {
+        buyer: {
           select: {
             id: true,
             firstName: true,
@@ -98,7 +98,7 @@ export async function GET(
             joinedAt: true,
           },
         },
-        User_Conversation_sellerIdToUser: {
+        seller: {
           select: {
             id: true,
             firstName: true,
@@ -213,7 +213,7 @@ export async function PATCH(
         status: validatedData.status,
       },
       include: {
-        User_Conversation_buyerIdToUser: {
+        buyer: {
           select: {
             id: true,
             firstName: true,
@@ -221,7 +221,7 @@ export async function PATCH(
             imageUrl: true,
           },
         },
-        User_Conversation_sellerIdToUser: {
+        seller: {
           select: {
             id: true,
             firstName: true,

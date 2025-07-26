@@ -10,7 +10,12 @@ export default defineConfig({
   ],
   format: ['esm'],
   dts: {
-    tsconfig: './tsconfig.build.json'
+    compilerOptions: {
+      incremental: false,
+      composite: false,
+      tsBuildInfoFile: undefined
+    },
+    resolve: true
   },
   splitting: true,
   sourcemap: true,
@@ -30,7 +35,9 @@ export default defineConfig({
     'supertest',
     '@repo/cache',
     '@repo/database',
-    '@repo/error-handling'
+    '@repo/error-handling',
+    '@prisma/client',
+    '.prisma/client'
   ],
   loader: {
     '.tsx': 'tsx',

@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
         skip,
         take: limit,
         include: {
-          User_Conversation_buyerIdToUser: {
+          buyer: {
             select: {
               id: true,
               firstName: true,
@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
               imageUrl: true,
             },
           },
-          User_Conversation_sellerIdToUser: {
+          seller: {
             select: {
               id: true,
               firstName: true,
@@ -146,8 +146,8 @@ export async function GET(request: NextRequest) {
       createdAt: conv.createdAt,
       updatedAt: conv.updatedAt,
       isUserBuyer: conv.buyerId === user.id,
-      buyer: conv.User_Conversation_buyerIdToUser,
-      seller: conv.User_Conversation_sellerIdToUser,
+      buyer: conv.buyer,
+      seller: conv.seller,
       product: conv.Product,
       lastMessage: conv.Message[0] || null,
       unreadCount: conv._count.Message,
@@ -317,7 +317,7 @@ export async function POST(request: NextRequest) {
         },
       },
       include: {
-        User_Conversation_buyerIdToUser: {
+        buyer: {
           select: {
             id: true,
             firstName: true,
@@ -325,7 +325,7 @@ export async function POST(request: NextRequest) {
             imageUrl: true,
           },
         },
-        User_Conversation_sellerIdToUser: {
+        seller: {
           select: {
             id: true,
             firstName: true,

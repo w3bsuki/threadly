@@ -163,7 +163,7 @@ const handlePaymentIntentSucceeded = async (
                 orderId: order.id,
                 stripePaymentId: paymentIntent.id,
                 amount: order.amount.toNumber(),
-                status: 'completed',
+                status: 'SUCCEEDED',
               },
             })
           )
@@ -220,7 +220,7 @@ const handlePaymentIntentSucceeded = async (
             orderId: order.id,
             stripePaymentId: paymentIntent.id,
             amount: paymentIntent.amount / 100, // Convert from cents
-            status: 'completed',
+            status: 'SUCCEEDED',
           },
         });
 

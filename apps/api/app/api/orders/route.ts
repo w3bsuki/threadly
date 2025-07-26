@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
               category: true,
             },
           },
-          User_Order_buyerIdToUser: {
+          buyer: {
             select: {
               id: true,
               firstName: true,
@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
               imageUrl: true,
             },
           },
-          User_Order_sellerIdToUser: {
+          seller: {
             select: {
               id: true,
               firstName: true,
@@ -181,6 +181,7 @@ export async function POST(request: NextRequest) {
           sellerId: product.sellerId,
           productId: product.id,
           amount: validatedData.amount,
+          totalAmount: validatedData.amount, // Will be updated with shipping and tax when payment is processed
           shippingAddressId: validatedData.shippingAddressId,
           status: 'PENDING', // Will be updated to PAID by payment webhook
         },
@@ -191,8 +192,8 @@ export async function POST(request: NextRequest) {
               category: true,
             },
           },
-          User_Order_buyerIdToUser: true,
-          User_Order_sellerIdToUser: true,
+          buyer: true,
+          seller: true,
         },
       });
 

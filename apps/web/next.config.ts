@@ -28,8 +28,6 @@ nextConfig.experimental = {
   ],
   webpackBuildWorker: true,
   optimizeCss: true,
-  // Enable server components external packages regex
-  serverComponentsExternalPackages: ['@prisma/client', '@neondatabase/serverless'],
 };
 
 // Override images config to include all needed domains
@@ -68,6 +66,30 @@ nextConfig.images = {
 
 // Fix webpack issues and Prisma bundling
 nextConfig.webpack = (config, { isServer, dev }) => {
+  // Exclude Windows system directories from webpack scanning
+  config.watchOptions = {
+    ...config.watchOptions,
+    ignored: [
+      '**/node_modules',
+      '**/.git',
+      '**/.next',
+      'C:\\Users\\**\\AppData\\**',
+      'C:\\Windows\\**',
+      'C:\\Program Files\\**',
+      'C:\\Program Files (x86)\\**'
+    ]
+  };
+
+  // Add resolve fallbacks for browser environment
+  if (!isServer) {
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      path: false,
+      os: false,
+    };
+  }
+
   if (isServer) {
     config.ignoreWarnings = [
       { module: /require-in-the-middle/ },
@@ -142,9 +164,6 @@ nextConfig.webpack = (config, { isServer, dev }) => {
 // Fix Prisma bundling for Vercel with binary engine
 nextConfig.serverExternalPackages = ['@prisma/engines', '@prisma/client', '@neondatabase/serverless', 'ws'];
 
-// Enable output tracing for better performance
-nextConfig.outputFileTracing = true;
-
 // Optimize production builds
 nextConfig.productionBrowserSourceMaps = false;
 nextConfig.poweredByHeader = false;
@@ -157,8 +176,6 @@ nextConfig.compiler = {
   } : false,
 };
 
-// Enable SWC minification
-nextConfig.swcMinify = true;
 
 // Performance and security headers
 nextConfig.headers = async () => {

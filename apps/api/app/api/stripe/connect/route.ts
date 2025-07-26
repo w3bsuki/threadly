@@ -3,12 +3,8 @@ import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
 import { checkRateLimit, paymentRateLimit } from '@repo/security';
 import { type NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
+import { stripe } from '@repo/payments';
 import { env } from '../../../../env';
-
-const stripe = new Stripe(env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-06-30.basil',
-});
 
 // POST /api/stripe/connect - Create Stripe Connect onboarding link
 export async function POST(request: NextRequest) {

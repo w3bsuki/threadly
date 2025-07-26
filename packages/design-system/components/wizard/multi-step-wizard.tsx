@@ -153,6 +153,11 @@ export function MultiStepWizard({
     try {
       const currentStepConfig = steps[currentStep];
       
+      if (!currentStepConfig) {
+        setIsLoading(false);
+        return;
+      }
+      
       if (currentStepConfig.validate) {
         const isValid = await currentStepConfig.validate();
         if (!isValid) {
@@ -174,7 +179,9 @@ export function MultiStepWizard({
     setIsLoading(true);
     try {
       const currentStepConfig = steps[currentStep];
-      await currentStepConfig.onBeforePrevious?.();
+      if (currentStepConfig) {
+        await currentStepConfig.onBeforePrevious?.();
+      }
       setStep(currentStep - 1);
     } finally {
       setIsLoading(false);

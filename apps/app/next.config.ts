@@ -47,7 +47,6 @@ nextConfig = {
     ],
     webpackBuildWorker: true,
     optimizeCss: true,
-    serverComponentsExternalPackages: ['@prisma/client', '@neondatabase/serverless'],
   },
   serverExternalPackages: ['@prisma/client', '@prisma/engines', '@neondatabase/serverless', 'ws'],
   // Webpack configuration
@@ -110,11 +109,9 @@ nextConfig = {
     return config;
   },
   // Performance optimizations
-  outputFileTracing: true,
   productionBrowserSourceMaps: false,
   poweredByHeader: false,
   compress: true,
-  swcMinify: true,
   
   // Compiler options
   compiler: {

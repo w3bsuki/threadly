@@ -116,13 +116,13 @@ export async function GET(request: NextRequest) {
                     status: 'AVAILABLE',
                   },
                 },
-                Follow_Follow_followerIdToUser: true,
-                Review_Review_reviewedIdToUser: true,
+                followers: true,
+                reviewsReceived: true,
               },
             },
           },
           orderBy: [
-            { Follow_Follow_followerIdToUser: { _count: 'desc' } }, // Popular users first
+            { followers: { _count: 'desc' } }, // Popular users first
             { averageRating: 'desc' },
             { totalSales: 'desc' },
           ],

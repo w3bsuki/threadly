@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
       database.review.findMany({
         where,
         include: {
-          User_Review_reviewerIdToUser: {
+          reviewer: {
             select: {
               id: true,
               firstName: true,
@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
               imageUrl: true,
             },
           },
-          User_Review_reviewedIdToUser: {
+          reviewedUser: {
             select: {
               id: true,
               firstName: true,
@@ -205,7 +205,7 @@ export async function POST(request: NextRequest) {
           comment,
         },
         include: {
-          User_Review_reviewerIdToUser: {
+          reviewer: {
             select: {
               id: true,
               firstName: true,
@@ -213,7 +213,7 @@ export async function POST(request: NextRequest) {
               imageUrl: true,
             },
           },
-          User_Review_reviewedIdToUser: {
+          reviewedUser: {
             select: {
               id: true,
               firstName: true,

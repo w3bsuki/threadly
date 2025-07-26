@@ -200,7 +200,9 @@ export function ImageUpload({
     
     const updatedImages = [...value];
     const [movedImage] = updatedImages.splice(fromIndex, 1);
-    updatedImages.splice(toIndex, 0, movedImage);
+    if (movedImage) {
+      updatedImages.splice(toIndex, 0, movedImage);
+    }
     
     const reorderedImages = updatedImages.map((img, index) => ({
       ...img,

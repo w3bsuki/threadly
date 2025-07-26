@@ -164,14 +164,15 @@ export const createPriceRangeFilter = (
   return filter
 }
 
-export const excludeSoftDeleted = <T extends { deletedAt?: Date | null }>(
-  where: Prisma.Args<T, 'findMany'>['where'] = {}
-): Prisma.Args<T, 'findMany'>['where'] => {
-  return {
-    ...where,
-    deletedAt: null,
-  }
-}
+// TODO: Fix TypeScript generics issue
+// export const excludeSoftDeleted = <T extends { deletedAt?: Date | null }>(
+//   where: Prisma.Args<T, 'findMany'>['where'] = {}
+// ): Prisma.Args<T, 'findMany'>['where'] => {
+//   return {
+//     ...where,
+//     deletedAt: null,
+//   }
+// }
 
 export const softDelete = async <T extends { id: string }>(
   model: any,

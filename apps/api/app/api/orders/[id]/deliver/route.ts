@@ -76,7 +76,7 @@ export async function POST(
     const order = await database.order.findUnique({
       where: { id: orderId },
       include: {
-        User_Order_buyerIdToUser: {
+        buyer: {
           select: {
             id: true,
             firstName: true,
@@ -132,7 +132,7 @@ export async function POST(
         deliveredAt: new Date(),
       },
       include: {
-        User_Order_buyerIdToUser: {
+        buyer: {
           select: {
             id: true,
             firstName: true,
@@ -150,7 +150,7 @@ export async function POST(
     // Create notification for buyer
     await database.notification.create({
       data: {
-        userId: order.User_Order_buyerIdToUser.id,
+        userId: order.buyer.id,
         title: 'Order Delivered',
         message: `Your order for "${order.Product.title}" has been marked as delivered. You can now leave a review.`,
         type: 'ORDER',

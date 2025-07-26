@@ -63,7 +63,7 @@ export const LazyImage = ({
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;
-        if (entry.isIntersecting) {
+        if (entry?.isIntersecting) {
           setIsInView(true);
           observer.disconnect();
         }
@@ -209,7 +209,7 @@ export const LazyAvatar = ({
     return alt
       .split(' ')
       .slice(0, 2)
-      .map(name => name[0])
+      .map(name => name[0] || '')
       .join('')
       .toUpperCase();
   }, [alt, fallbackInitials]);

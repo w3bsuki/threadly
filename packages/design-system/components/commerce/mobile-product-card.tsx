@@ -63,7 +63,7 @@ export const MobileProductCard = React.memo(function MobileProductCard({
   const [isDragging, setIsDragging] = React.useState(false)
   const [isKeyboardMode, setIsKeyboardMode] = React.useState(false)
   
-  const longPressTimer = React.useRef<NodeJS.Timeout>()
+  const longPressTimer = React.useRef<NodeJS.Timeout | null>(null)
   const cardRef = React.useRef<HTMLDivElement>(null)
   const wishlistButtonRef = React.useRef<HTMLButtonElement>(null)
 

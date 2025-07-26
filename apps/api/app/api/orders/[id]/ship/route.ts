@@ -71,7 +71,7 @@ export async function POST(
     const order = await database.order.findUnique({
       where: { id: orderId },
       include: {
-        User_Order_buyerIdToUser: {
+        buyer: {
           select: {
             id: true,
             firstName: true,
@@ -128,7 +128,7 @@ export async function POST(
         trackingNumber: validatedData.trackingNumber || null,
       },
       include: {
-        User_Order_buyerIdToUser: {
+        buyer: {
           select: {
             id: true,
             firstName: true,
@@ -146,7 +146,7 @@ export async function POST(
     // Create notification for buyer
     await database.notification.create({
       data: {
-        userId: order.User_Order_buyerIdToUser.id,
+        userId: order.buyer.id,
         title: 'Order Shipped',
         message: `Your order for "${order.Product.title}" has been shipped${validatedData.trackingNumber ? ` (Tracking: ${validatedData.trackingNumber})` : ''}`,
         type: 'ORDER',

@@ -4,7 +4,7 @@
 
 import { Resend } from 'resend';
 import { database } from '@repo/database';
-import { log } from '@repo/observability/log';
+import { log } from '@repo/observability';
 import { OrderConfirmationEmail } from './templates/order-confirmation';
 import { NewMessageEmail } from './templates/new-message';
 import { PaymentReceivedEmail } from './templates/payment-received';

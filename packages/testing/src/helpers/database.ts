@@ -122,6 +122,7 @@ export class TestDatabase {
         sellerId,
         productId,
         amount: 2999,
+        totalAmount: 2999, // Default totalAmount same as amount
         status: 'PENDING',
         shippingAddressId: shippingAddressId!, // We know this is defined after the check above
         ...data,
@@ -287,8 +288,8 @@ export class TestDatabase {
     // Create products
     const products = await Promise.all(
       Array.from({ length: productCount }, async (_, i) => {
-        const sellerId = users[Math.floor(Math.random() * users.length)].id;
-        const categoryId = categories[Math.floor(Math.random() * categories.length)].id;
+        const sellerId = users[Math.floor(Math.random() * users.length)]?.id || users[0]!.id;
+        const categoryId = categories[Math.floor(Math.random() * categories.length)]?.id || categories[0]!.id;
         
         return this.createProductWithImages(sellerId, categoryId, 2, {
           title: `Product ${i}`,
@@ -303,20 +304,28 @@ export class TestDatabase {
     // Create orders
     const orders = await Promise.all(
       Array.from({ length: orderCount }, async (_, i) => {
-        const product = products[Math.floor(Math.random() * products.length)];
-        const buyerId = users[Math.floor(Math.random() * users.length)].id;
+        const productWithImages = products[Math.floor(Math.random() * products.length)];
+        const buyer = users[Math.floor(Math.random() * users.length)];
+        
+        if (!productWithImages || !buyer) {
+          return null;
+        }
+        
+        const buyerId = buyer.id;
+        const product = productWithImages.product;
         
         // Make sure buyer is not the seller
-        if (buyerId === product.product.sellerId) {
+        if (buyerId === product.sellerId) {
           return null;
         }
 
         return this.createOrder(
           buyerId,
-          product.product.sellerId,
-          product.product.id,
+          product.sellerId,
+          product.id,
           {
-            amount: product.product.price,
+            amount: product.price,
+            totalAmount: product.price,
             status: ['PENDING', 'PAID', 'SHIPPED', 'DELIVERED'][
               Math.floor(Math.random() * 4)
             ] as any,

@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { UseFormReturn, FieldValues, Path } from 'react-hook-form';
+import { UseFormReturn, FieldValues, Path, Controller, ControllerRenderProps } from 'react-hook-form';
 import { MultiStepWizard, MultiStepWizardProps, WizardStep } from './multi-step-wizard';
 import { WizardFormStep } from './wizard-step';
 import { Form } from '../ui/form';
@@ -86,6 +86,7 @@ export function useFormWizard<T extends FieldValues>({
 
   const validateCurrentStep = React.useCallback(async () => {
     const step = steps[currentStep];
+    if (!step) return true;
     if (step.fields) {
       return await form.trigger(step.fields);
     }
@@ -138,7 +139,7 @@ export function useFormWizard<T extends FieldValues>({
 export interface FormWizardFieldProps<T extends FieldValues> {
   form: UseFormReturn<T>;
   name: Path<T>;
-  render: (field: any) => React.ReactNode;
+  render: (field: ControllerRenderProps<T, Path<T>>) => React.ReactElement;
 }
 
 export function FormWizardField<T extends FieldValues>({
@@ -147,7 +148,8 @@ export function FormWizardField<T extends FieldValues>({
   render,
 }: FormWizardFieldProps<T>) {
   return (
-    <form.control
+    <Controller
+      control={form.control}
       name={name}
       render={({ field }) => render(field)}
     />
