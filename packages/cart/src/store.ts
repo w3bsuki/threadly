@@ -136,7 +136,10 @@ export const createCartStore = (config?: CartConfig) => {
             });
             
             if (response.ok) {
-              const serverState = await response.json();
+              const serverState = await response.json() as { 
+                items: CartItem[]; 
+                timestamp: number; 
+              };
               if (serverState.timestamp > get().lastSyncTimestamp) {
                 set({
                   items: serverState.items,
@@ -179,13 +182,18 @@ export const createCartStore = (config?: CartConfig) => {
           if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
             try {
               const channel = new BroadcastChannel(BROADCAST_CHANNEL);
-              channel.onmessage = (event) => {
-                if (event.data.type === 'CART_UPDATED') {
+              channel.onmessage = (event: MessageEvent) => {
+                const data = event.data as { 
+                  type: string; 
+                  items: CartItem[]; 
+                  timestamp: number; 
+                };
+                if (data.type === 'CART_UPDATED') {
                   // Only update if the external change is newer
-                  if (event.data.timestamp > get().lastSyncTimestamp) {
+                  if (data.timestamp > get().lastSyncTimestamp) {
                     set({ 
-                      items: event.data.items,
-                      lastSyncTimestamp: event.data.timestamp 
+                      items: data.items,
+                      lastSyncTimestamp: data.timestamp 
                     });
                   }
                 }

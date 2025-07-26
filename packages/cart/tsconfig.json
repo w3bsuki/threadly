@@ -5,7 +5,8 @@
     "rootDir": "./src",
     "noEmit": false,
     "incremental": false,
-    "composite": false
+    "composite": false,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
