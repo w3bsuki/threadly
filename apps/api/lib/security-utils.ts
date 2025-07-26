@@ -6,7 +6,7 @@ import { sanitizeForDisplay } from '@repo/validation/sanitize';
 export interface SecurityValidationResult {
   isValid: boolean;
   error?: string;
-  sanitizedData?: any;
+  sanitizedData?: Record<string, unknown>;
 }
 
 // Rate limiting tracking for enhanced security
@@ -19,11 +19,11 @@ export interface SecurityMetrics {
 
 // Enhanced input validation with security checks
 export const validateAndSanitizeInput = (
-  data: Record<string, any>,
+  data: Record<string, unknown>,
   allowedFields: string[]
 ): SecurityValidationResult => {
   try {
-    const sanitizedData: Record<string, any> = {};
+    const sanitizedData: Record<string, unknown> = {};
     
     // Check for potential injection attempts
     const dangerousPatterns = [
@@ -210,7 +210,7 @@ export const validateAPIRequest = (
     
     // Validate Content-Type for POST/PUT requests
     const hasBody = ['POST', 'PUT', 'PATCH'].includes(
-      (request as any).method?.toUpperCase()
+      request.method?.toUpperCase() || ''
     );
     
     if (hasBody && contentType && !contentType.includes('application/json')) {
@@ -233,7 +233,7 @@ export const validateAPIRequest = (
 // Create a security audit log entry
 export const logSecurityEvent = (
   event: string,
-  details: Record<string, any>,
+  details: Record<string, unknown>,
   severity: 'low' | 'medium' | 'high' | 'critical' = 'medium'
 ) => {
   logError(`Security Event: ${event}`, {

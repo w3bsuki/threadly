@@ -13,7 +13,6 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error('Global error:', error);
   }, [error]);
 
   return (

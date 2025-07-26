@@ -197,7 +197,7 @@ export async function ProductsContent({
       parentId: null, // Only top-level categories
     },
     include: {
-      other_Category: true,
+      children: true,
     },
   });
 

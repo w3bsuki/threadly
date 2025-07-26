@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import { formatCurrency } from '@/lib/utils/currency';
 import { ProductImage } from '../../components/optimized-image';
 import { ProductQuickView } from '../../components/product-quick-view';
-import { ProductGridSkeleton } from '../../../../components/skeleton-loader';
+import { ProductGridSkeleton } from '@repo/design-system/components';
 
 // Inline ProductPlaceholder for loading states
 const ProductPlaceholder = ({
@@ -190,7 +190,7 @@ const ProductCard = ({
     : false;
 
   const uploadedAgo = product.createdAt
-    ? getTimeAgo(product.createdAt, dictionary)
+    ? getTimeAgo(new Date(product.createdAt), dictionary)
     : dictionary.web?.global?.time?.recently || 'recently';
 
   // Map condition labels from dictionary
@@ -281,7 +281,7 @@ const ProductCard = ({
               <div className="absolute top-2 left-2">
                 <ConditionBadge
                   className="bg-white/95 shadow-sm"
-                  condition={product.condition as any}
+                  condition={product.condition as 'NEW_WITH_TAGS' | 'NEW_WITHOUT_TAGS' | 'VERY_GOOD' | 'GOOD' | 'SATISFACTORY' | 'FAIR'}
                 />
               </div>
 
@@ -365,7 +365,7 @@ export function ProductGrid({
 
   // Show loading skeleton
   if (isLoading) {
-    return <ProductGridSkeleton count={12} isCompact={isCompact} />;
+    return <ProductGridSkeleton count={12} />;
   }
 
   // Non-virtualized version for small lists or when disabled

@@ -5,10 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/co
 import { Badge } from '@repo/design-system/components';
 import { Button } from '@repo/design-system/components';
 import { Edit2, Image as ImageIcon, DollarSign, Tag, Package, Palette } from 'lucide-react';
+import type { CreateProductInput } from '@repo/validation/schemas';
+import type { Category } from '@repo/validation/schemas';
 
 interface StepReviewProps {
-  form: UseFormReturn<any>;
-  categories: any[];
+  form: UseFormReturn<CreateProductInput>;
+  categories: Category[];
 }
 
 const CONDITION_LABELS = {

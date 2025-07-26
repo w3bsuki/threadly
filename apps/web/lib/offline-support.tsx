@@ -39,7 +39,7 @@ interface OfflineQueueItem {
   id: string;
   type: 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   url: string;
-  data?: any;
+  data?: unknown;
   headers?: Record<string, string>;
   timestamp: number;
   retryCount: number;
@@ -125,10 +125,7 @@ class OfflineQueue {
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
         }
-
-        console.log(`Successfully processed queued request: ${item.type} ${item.url}`);
       } catch (error) {
-        console.error(`Failed to process queued request:`, error);
         
         if (item.retryCount < 3) {
           failedItems.push({

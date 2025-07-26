@@ -74,11 +74,11 @@ export function EditProductForm({ product, userId }: EditProductFormProps) {
       description: product.description,
       price: product.price,
       categoryId: product.categoryId.toString(),
-      condition: product.condition as any,
+      condition: product.condition as 'NEW_WITH_TAGS' | 'NEW_WITHOUT_TAGS' | 'VERY_GOOD' | 'GOOD' | 'SATISFACTORY',
       brand: product.brand || '',
       size: product.size || '',
       color: product.color || '',
-      status: product.status as any,
+      status: product.status as 'AVAILABLE' | 'SOLD' | 'RESERVED' | 'REMOVED',
       images: product.images.map(img => img.imageUrl),
     },
   });

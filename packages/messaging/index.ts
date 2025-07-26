@@ -3,6 +3,12 @@
  * Core functionality for Threadly's messaging system
  */
 
+// Components (client-side)
+export * from './components';
+
+// Hooks (client-side)
+export * from './hooks';
+
 // Types and schemas  
 export type * from './types';
 export { 

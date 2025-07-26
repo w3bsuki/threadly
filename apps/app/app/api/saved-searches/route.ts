@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
       where: {
         userId: dbUser.id,
         query: sanitizedData.query,
-        filters: sanitizedData.filters as any,
+        filters: sanitizedData.filters,
       }
     });
 

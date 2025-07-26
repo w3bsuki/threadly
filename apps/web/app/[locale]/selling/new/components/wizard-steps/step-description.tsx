@@ -23,25 +23,25 @@ export function StepDescription({ form, categories }: StepDescriptionProps) {
   const maxChars = 2000;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <FormField
         control={form.control}
         name="description"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-base font-medium">Description</FormLabel>
+            <FormLabel className="text-sm sm:text-base font-medium">Description</FormLabel>
             <FormControl>
               <Textarea
                 placeholder="Describe your item's condition, fit, styling tips, and any details buyers should know..."
-                className="min-h-32 text-base resize-none"
+                className="min-h-[120px] sm:min-h-32 text-base resize-none"
                 {...field}
                 maxLength={maxChars}
               />
             </FormControl>
             <div className="flex justify-between items-center">
               <FormMessage />
-              <span className="text-xs text-muted-foreground">
-                {charCount}/{maxChars} characters
+              <span className="text-[10px] sm:text-xs text-muted-foreground">
+                {charCount}/{maxChars}
               </span>
             </div>
           </FormItem>
@@ -53,10 +53,10 @@ export function StepDescription({ form, categories }: StepDescriptionProps) {
         name="category"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-base font-medium">Category</FormLabel>
+            <FormLabel className="text-sm sm:text-base font-medium">Category</FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
-                <SelectTrigger>
+                <SelectTrigger className="h-12 sm:h-10">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
               </FormControl>
@@ -73,14 +73,14 @@ export function StepDescription({ form, categories }: StepDescriptionProps) {
         )}
       />
 
-      <div className="bg-muted/50 p-4 rounded-[var(--radius-lg)] space-y-2">
-        <p className="text-sm font-medium">💡 Writing Tips:</p>
-        <ul className="text-sm text-muted-foreground space-y-1">
+      <div className="bg-muted/50 p-3 sm:p-4 rounded-[var(--radius-lg)] space-y-1.5 sm:space-y-2">
+        <p className="text-xs sm:text-sm font-medium">💡 Writing Tips:</p>
+        <ul className="text-xs sm:text-sm text-muted-foreground space-y-0.5 sm:space-y-1">
           <li>• Mention brand, size, and condition upfront</li>
           <li>• Describe fit (runs small/large, oversized, etc.)</li>
           <li>• Note any flaws or signs of wear honestly</li>
-          <li>• Include styling suggestions or occasions</li>
-          <li>• Add measurements if helpful (length, bust, etc.)</li>
+          <li className="hidden sm:list-item">• Include styling suggestions or occasions</li>
+          <li className="hidden sm:list-item">• Add measurements if helpful (length, bust, etc.)</li>
         </ul>
       </div>
     </div>

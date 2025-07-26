@@ -28,8 +28,16 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('q') || '';
     const statusFilter = searchParams.get('status') || 'all';
 
-    // Build where clause
-    const where: any = {};
+    // Build where clause with proper types
+    interface WhereClause {
+      OR?: Array<{
+        title?: { contains: string; mode: 'insensitive' };
+        description?: { contains: string; mode: 'insensitive' };
+      }>;
+      status?: string;
+    }
+    
+    const where: WhereClause = {};
     
     if (search) {
       where.OR = [

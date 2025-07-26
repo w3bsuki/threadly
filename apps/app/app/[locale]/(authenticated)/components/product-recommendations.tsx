@@ -46,7 +46,6 @@ export function ProductRecommendations({
         setRecommendations(data.recommendations);
       }
     } catch (error) {
-      console.error('Failed to fetch recommendations:', error);
     } finally {
       setLoading(false);
     }

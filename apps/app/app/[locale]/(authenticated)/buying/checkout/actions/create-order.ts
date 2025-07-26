@@ -138,14 +138,12 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
       }
     }
 
-    // Create separate orders for each product (current schema limitation)
-    const orders = [];
-    
-    for (const item of validatedInput.items) {
-      const product = products.find(p => p.id === item.productId)!;
+    // Use transaction to ensure all orders are created successfully
+    const result = await database.$transaction(async (tx) => {
+      const orders = [];
       
-      // Get or create the shipping address
-      let shippingAddress = await database.address.findFirst({
+      // Get or create the shipping address first
+      let shippingAddress = await tx.address.findFirst({
         where: {
           userId: dbUser.id,
           firstName: validatedInput.shippingAddress.firstName,
@@ -159,7 +157,7 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
       });
 
       if (!shippingAddress) {
-        shippingAddress = await database.address.create({
+        shippingAddress = await tx.address.create({
           data: {
             userId: dbUser.id,
             firstName: validatedInput.shippingAddress.firstName,
@@ -174,35 +172,56 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
           },
         });
       }
-
-      // Create individual order for each product
-      const order = await database.order.create({
-        data: {
-          buyerId: dbUser.id, // Use database user ID, not Clerk ID
-          sellerId: product.sellerId,
-          productId: item.productId,
-          amount: item.price * item.quantity,
-          status: 'PENDING',
-          shippingAddressId: shippingAddress.id,
-        },
-        include: {
-          Product: {
-            include: {
-              images: {
-                take: 1,
-                orderBy: {
-                  displayOrder: 'asc',
-                },
-              },
-              seller: true,
-            },
-          },
-          User_Order_sellerIdToUser: true,
-        },
-      });
       
-      orders.push(order);
-    }
+      // Create separate orders for each product (current schema limitation)
+      for (const item of validatedInput.items) {
+        const product = products.find(p => p.id === item.productId)!;
+        
+        // Create individual order for each product
+        const order = await tx.order.create({
+          data: {
+            buyerId: dbUser.id, // Use database user ID, not Clerk ID
+            sellerId: product.sellerId,
+            productId: item.productId,
+            amount: item.price * item.quantity,
+            shippingCost: validatedInput.shippingCost,
+            tax: validatedInput.tax,
+            totalAmount: item.price * item.quantity + validatedInput.shippingCost + validatedInput.tax,
+            status: 'PENDING',
+            shippingAddressId: shippingAddress.id,
+          },
+          include: {
+            Product: {
+              include: {
+                images: {
+                  take: 1,
+                  orderBy: {
+                    displayOrder: 'asc',
+                  },
+                },
+                seller: true,
+              },
+            },
+            shippingAddress: true,
+            seller: true,
+          },
+        });
+        
+        orders.push(order);
+        
+        // Remove item from cart after order creation
+        await tx.cartItem.deleteMany({
+          where: {
+            userId: dbUser.id,
+            productId: item.productId,
+          },
+        });
+      }
+      
+      return orders;
+    });
+
+    const orders = result;
 
     // NOTE: Product status will be updated to SOLD by the payment webhook
     // This prevents race conditions where products are marked sold before payment confirmation
@@ -220,7 +239,7 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
             productTitle: primaryOrder.Product.title,
             productImage: primaryOrder.Product.images[0]?.imageUrl,
             price: decimalToNumber(primaryOrder.amount),
-            sellerName: primaryOrder.User_Order_sellerIdToUser.firstName || 'Seller',
+            sellerName: primaryOrder.seller.firstName || 'Seller',
             orderUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'}/buying/orders/${primaryOrder.id}`,
           }
         );
@@ -229,18 +248,7 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
       logError('Failed to send confirmation email:', error);
     }
 
-    // Send notifications to sellers
-    // TODO: Implement real-time notifications
-    // try {
-    //   const { getNotificationService } = await import('@repo/real-time/server');
-    //   const notificationService = getNotificationService();
-    //   
-    //   for (const order of orders) {
-    //     await notificationService.notifyNewOrder(order);
-    //   }
-    // } catch (error) {
-    //   logError('Failed to send seller notifications:', error);
-    // }
+    // TODO: Implement real-time notifications to sellers
 
     // Return the first order with virtual properties to match expected format
     const primaryOrder = orders[0];

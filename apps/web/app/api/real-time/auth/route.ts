@@ -32,7 +32,6 @@ export async function POST(request: NextRequest): Promise<Response> {
     
     return NextResponse.json(auth);
   } catch (error) {
-    console.error('Pusher auth error:', error);
     return NextResponse.json(
       { error: 'Failed to authenticate' },
       { status: 500 }

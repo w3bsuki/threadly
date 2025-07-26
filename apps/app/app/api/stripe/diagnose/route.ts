@@ -10,7 +10,19 @@ const stripe = env.STRIPE_SECRET_KEY ? new Stripe(env.STRIPE_SECRET_KEY, {
 }) : null;
 
 export async function GET(request: NextRequest) {
-  const diagnostics: any = {
+  interface Diagnostics {
+    timestamp: string;
+    environment: Record<string, string | undefined>;
+    configuration: Record<string, boolean | string>;
+    errors: string[];
+    auth?: Record<string, unknown>;
+    database?: Record<string, unknown>;
+    stripe?: Record<string, unknown>;
+    account_link?: Record<string, unknown>;
+    unexpected_error?: Record<string, unknown>;
+  }
+
+  const diagnostics: Diagnostics = {
     timestamp: new Date().toISOString(),
     environment: {
       node_env: process.env.NODE_ENV,
@@ -93,17 +105,17 @@ export async function GET(request: NextRequest) {
             created_timestamp: account.created,
             created_date: account.created ? new Date(account.created * 1000).toISOString() : 'N/A',
           };
-        } catch (stripeError: any) {
+        } catch (stripeError) {
           diagnostics.stripe = {
             account_retrieved: false,
             error: {
-              message: stripeError.message,
-              type: stripeError.type,
-              code: stripeError.code,
-              statusCode: stripeError.statusCode,
+              message: stripeError instanceof Error ? stripeError.message : 'Unknown error',
+              type: (stripeError as { type?: string }).type,
+              code: (stripeError as { code?: string }).code,
+              statusCode: (stripeError as { statusCode?: number }).statusCode,
             },
           };
-          diagnostics.errors.push(`Stripe account error: ${stripeError.message}`);
+          diagnostics.errors.push(`Stripe account error: ${stripeError instanceof Error ? stripeError.message : 'Unknown error'}`);
         }
       } else if (!stripe) {
         diagnostics.stripe = { error: 'Stripe not configured' };
@@ -129,32 +141,32 @@ export async function GET(request: NextRequest) {
             url_length: accountLink.url.length,
             expires_at: accountLink.expires_at,
           };
-        } catch (linkError: any) {
+        } catch (linkError) {
           diagnostics.account_link = {
             created: false,
             error: {
-              message: linkError.message,
-              type: linkError.type,
-              code: linkError.code,
+              message: linkError instanceof Error ? linkError.message : 'Unknown error',
+              type: (linkError as { type?: string }).type,
+              code: (linkError as { code?: string }).code,
             },
           };
-          diagnostics.errors.push(`Account link error: ${linkError.message}`);
+          diagnostics.errors.push(`Account link error: ${linkError instanceof Error ? linkError.message : 'Unknown error'}`);
         }
       }
 
-    } catch (dbError: any) {
+    } catch (dbError) {
       diagnostics.database = {
         connected: false,
-        error: dbError.message || 'Database connection failed',
+        error: dbError instanceof Error ? dbError.message : 'Database connection failed',
       };
-      diagnostics.errors.push(`Database error: ${dbError.message}`);
+      diagnostics.errors.push(`Database error: ${dbError instanceof Error ? dbError.message : 'Unknown error'}`);
     }
 
-  } catch (error: any) {
-    diagnostics.errors.push(`Unexpected error: ${error.message}`);
+  } catch (error) {
+    diagnostics.errors.push(`Unexpected error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     diagnostics.unexpected_error = {
-      message: error.message,
-      stack: error.stack?.split('\n').slice(0, 5),
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack?.split('\n').slice(0, 5) : undefined,
     };
   }
 

@@ -1,6 +1,16 @@
+import { auth } from '@clerk/nextjs';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
+  const { userId } = auth();
+  
+  if (!userId) {
+    return NextResponse.json(
+      { error: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
   // Get geo data from headers
   const country =
     req.headers.get('x-vercel-ip-country') ||

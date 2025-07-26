@@ -6,6 +6,30 @@ import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+type TransformedCategory = {
+  id: string;
+  name: string;
+  description: string;
+  image: string | null;
+  href: string;
+  color: string;
+  count: string;
+};
+
+type CategoryWithRelations = {
+  id: string;
+  name: string;
+  slug: string | null;
+  _count: {
+    Product: number;
+  };
+  Product: {
+    images: {
+      imageUrl: string | null;
+    }[];
+  }[];
+};
+
 const colorSchemes = [
   'from-pink-500 to-rose-500',
   'from-blue-500 to-indigo-500',
@@ -63,13 +87,13 @@ export const FeaturedCategories = async () => {
           take: 6, // Limit to 6 featured categories
         });
 
-        return categories.map((category, index) => ({
+        return categories.map((category: CategoryWithRelations, index: number): TransformedCategory => ({
           id: category.id,
           name: category.name,
           description: `Discover ${category.name.toLowerCase()}`,
           image: category.Product[0]?.images[0]?.imageUrl || null,
-          href: `/${category.slug}`,
-          color: colorSchemes[index % colorSchemes.length],
+          href: `/${category.slug || category.name.toLowerCase().replace(/\s+/g, '-')}`,
+          color: colorSchemes[index % colorSchemes.length] || 'from-gray-500 to-gray-600',
           count: `${category._count.Product.toLocaleString()} items`,
         }));
       },
@@ -102,7 +126,7 @@ export const FeaturedCategories = async () => {
 
           {/* Categories Grid */}
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {transformedCategories.map((category: any) => (
+            {transformedCategories.map((category: TransformedCategory) => (
               <Link
                 className="group hover:-translate-y-1 relative overflow-hidden rounded-2xl bg-background shadow-lg transition-all duration-300 hover:shadow-xl"
                 href={category.href}

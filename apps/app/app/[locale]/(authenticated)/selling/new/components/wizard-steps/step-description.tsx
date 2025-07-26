@@ -4,10 +4,12 @@ import { Textarea } from '@repo/design-system/components';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components';
 import { UseFormReturn } from 'react-hook-form';
 import { CategorySelector } from '../category-selector';
+import type { CreateProductInput } from '@repo/validation/schemas';
+import type { Category } from '@repo/validation/schemas';
 
 interface StepDescriptionProps {
-  form: UseFormReturn<any>;
-  categories: any[];
+  form: UseFormReturn<CreateProductInput>;
+  categories: Category[];
 }
 
 export function StepDescription({ form, categories }: StepDescriptionProps) {

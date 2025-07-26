@@ -9,7 +9,7 @@ type CategoryWithCount = {
   _count: {
     Product: number;
   };
-  other_Category: {
+  children: {
     id: string;
     name: string;
     slug: string;

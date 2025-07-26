@@ -37,10 +37,17 @@ const baseConfig: NextConfig = {
     ];
   },
 
-  webpack(config, { isServer }) {
+  webpack(config, { isServer, dev }) {
     if (isServer) {
       config.plugins = config.plugins || [];
       config.plugins.push(new PrismaPlugin());
+      
+      // External packages for server
+      config.externals = config.externals || [];
+      if (Array.isArray(config.externals)) {
+        config.externals.push('@prisma/client');
+        config.externals.push('@prisma/engines');
+      }
     }
 
     // Externalize Node.js modules for client-side bundles
@@ -61,6 +68,17 @@ const baseConfig: NextConfig = {
       };
     }
 
+    // Configure Prisma for monorepo
+    config.resolve = config.resolve || {};
+    config.resolve.alias = config.resolve.alias || {};
+    
+    // Point to the correct Prisma client location
+    const path = require('path');
+    const databasePackagePath = path.resolve(__dirname, '../database');
+    config.resolve.alias['@prisma/client'] = path.join(databasePackagePath, 'generated/client');
+    config.resolve.alias['.prisma/client'] = path.join(databasePackagePath, 'generated/client');
+
+    // Ignore warnings for OpenTelemetry
     config.ignoreWarnings = [{ module: otelRegex }];
 
     return config;

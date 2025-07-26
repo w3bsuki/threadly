@@ -130,7 +130,7 @@ export function AnalyticsCharts({
                 <Recharts.CartesianGrid strokeDasharray="3 3" />
                 <ChartTooltip
                   cursor={false}
-                  content={<ChartTooltipContent indicator="line" formatter={(value: any) => [formatCurrency(Number(value)), "Revenue"]} />}
+                  content={<ChartTooltipContent indicator="line" formatter={(value) => [formatCurrency(Number(value)), "Revenue"]} />}
                 />
                 <Recharts.Area
                   dataKey="revenue"
@@ -180,7 +180,7 @@ export function AnalyticsCharts({
                 <Recharts.CartesianGrid strokeDasharray="3 3" />
                 <ChartTooltip
                   cursor={false}
-                  content={<ChartTooltipContent indicator="dashed" formatter={(value: any) => [formatNumber(Number(value)), "Sales"]} />}
+                  content={<ChartTooltipContent indicator="dashed" formatter={(value) => [formatNumber(Number(value)), "Sales"]} />}
                 />
                 <Recharts.Bar
                   dataKey="sales"
@@ -227,7 +227,7 @@ export function AnalyticsCharts({
                 <Recharts.CartesianGrid strokeDasharray="3 3" />
                 <ChartTooltip
                   cursor={false}
-                  content={<ChartTooltipContent indicator="dot" formatter={(value: any) => [formatNumber(Number(value)), "Views"]} />}
+                  content={<ChartTooltipContent indicator="dot" formatter={(value) => [formatNumber(Number(value)), "Views"]} />}
                 />
                 <Recharts.Line
                   dataKey="views"

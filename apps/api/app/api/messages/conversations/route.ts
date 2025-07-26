@@ -1,5 +1,5 @@
 import { auth } from '@repo/auth/server';
-import { database } from '@repo/database';
+import { database, type Prisma } from '@repo/database';
 import { logError } from '@repo/observability/server';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     // Build where clause
-    const where: any = {
+    const where: Prisma.ConversationWhereInput = {
       OR: [{ buyerId: user.id }, { sellerId: user.id }],
     };
 

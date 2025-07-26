@@ -1,16 +1,35 @@
-import { currentUser } from '@repo/auth/server';
+import { auth } from '@clerk/nextjs';
+import { z } from '@repo/validation';
 import { NextResponse } from 'next/server';
+
+const notificationQuerySchema = z.object({
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().positive().max(100).default(50),
+});
 
 export async function GET(request: Request) {
   try {
-    const user = await currentUser();
-    if (!user) {
+    const { userId } = auth();
+    
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const page = Number.parseInt(searchParams.get('page') || '1', 10);
-    const limit = Number.parseInt(searchParams.get('limit') || '50', 10);
+    
+    const validation = notificationQuerySchema.safeParse({
+      page: searchParams.get('page') || '1',
+      limit: searchParams.get('limit') || '50',
+    });
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Invalid query parameters' },
+        { status: 400 }
+      );
+    }
+
+    const { page, limit } = validation.data;
 
     // For now, return empty notifications until we implement the full system
     return NextResponse.json({

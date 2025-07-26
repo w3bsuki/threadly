@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       pathname: data.pathname,
       timestamp: data.timestamp,
       userAgent: data.userAgent.substring(0, 100), // Truncate for logging
-    } as Record<string, any>);
+    } as Record<string, unknown>);
 
     // Store in database for analytics (optional)
     // You could save this to a metrics table for trend analysis
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    log.error('Web Vitals API error:', error as Record<string, any>);
+    log.error('Web Vitals API error:', error as Record<string, unknown>);
     return NextResponse.json(
       { error: 'Failed to process web vitals data' },
       { status: 500 }
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(mockData);
   } catch (error) {
-    log.error('Web Vitals aggregation error:', error as Record<string, any>);
+    log.error('Web Vitals aggregation error:', error as Record<string, unknown>);
     return NextResponse.json(
       { error: 'Failed to fetch web vitals data' },
       { status: 500 }

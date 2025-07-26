@@ -56,7 +56,6 @@ export async function POST(request: Request) {
       redirectTo: returnTo || '/selling/dashboard'
     });
   } catch (error) {
-    console.error('Error creating quick seller profile:', error);
     return NextResponse.json(
       { error: 'Failed to create seller profile' },
       { status: 500 }

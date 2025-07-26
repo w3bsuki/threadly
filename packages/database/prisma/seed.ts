@@ -293,7 +293,7 @@ async function main() {
   async function createCategory(categoryData: any, parentId?: string) {
     const { children, ...categoryInfo } = categoryData;
     
-    // Check if category already exists
+    // Check if category already exists by slug
     const existingCategory = await prisma.category.findUnique({
       where: { slug: categoryInfo.slug }
     });
@@ -302,12 +302,22 @@ async function main() {
     if (existingCategory) {
       category = existingCategory;
     } else {
-      category = await prisma.category.create({
-        data: {
-          ...categoryInfo,
-          parentId: parentId || null,
-        },
+      // Also check if a category with the same name exists
+      const existingByName = await prisma.category.findUnique({
+        where: { name: categoryInfo.name }
       });
+      
+      if (existingByName) {
+        console.log(`Category with name "${categoryInfo.name}" already exists, skipping...`);
+        category = existingByName;
+      } else {
+        category = await prisma.category.create({
+          data: {
+            ...categoryInfo,
+            parentId: parentId || null,
+          },
+        });
+      }
     }
 
     if (children) {
@@ -555,6 +565,7 @@ async function main() {
 
 main()
   .catch((e) => {
+    console.error('Error during seeding:', e);
     process.exit(1);
   })
   .finally(async () => {

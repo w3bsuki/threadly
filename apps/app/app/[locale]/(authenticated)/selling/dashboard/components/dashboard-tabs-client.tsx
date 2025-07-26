@@ -26,7 +26,7 @@ const AnalyticsCharts = dynamic(
 );
 
 interface DashboardTabsClientProps {
-  dictionary: any;
+  dictionary: Record<string, string>;
   recentRevenue: number;
   totalSales: number;
   totalViews: number;
@@ -42,10 +42,10 @@ interface DashboardTabsClientProps {
   listings: Array<{
     id: string;
     title: string;
-    price: any;
+    price: number;
     views: number;
     status: string;
-    favorites: Array<any>;
+    favorites: Array<{ id: string }>;
   }>;
   locale: string;
 }

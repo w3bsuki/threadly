@@ -12,6 +12,14 @@ export * from './schemas/user';
 export * from './schemas/message';
 export * from './schemas/common';
 
+// Export new comprehensive schemas
+export * from './src/schemas/index';
+export * from './src/schemas/env';
+
+// Export environment validation utilities
+export * from './src/lib/validate-env';
+export * from './src/lib/feature-flags';
+
 // Export sanitization utilities
 export * from './sanitize';
 

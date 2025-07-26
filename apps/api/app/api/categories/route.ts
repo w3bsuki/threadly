@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
             { name: 'asc' },
           ],
           include: {
-            other_Category: {
+            children: {
               orderBy: { name: 'asc' },
               include: {
                 _count: {

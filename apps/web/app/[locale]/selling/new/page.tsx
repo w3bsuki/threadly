@@ -112,28 +112,31 @@ const SellNewItemPage = async ({
 
     // User has seller profile, show product form
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="space-y-6">
-          <div className="flex items-center gap-4">
-            <Link href={`/${locale}`}>
-              <Button size="icon" variant="ghost">
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="font-bold text-2xl">List New Item</h1>
-              <p className="text-muted-foreground">
-                Fill out the details below to list your fashion item for sale
-              </p>
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 pt-4 pb-0 sm:py-8">
+          <div className="space-y-4 sm:space-y-6">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <Link href={`/${locale}`}>
+                <Button size="icon" variant="ghost" className="h-8 w-8 sm:h-10 sm:w-10">
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+              </Link>
+              <div className="flex-1">
+                <h1 className="font-bold text-xl sm:text-2xl">List New Item</h1>
+                <p className="text-muted-foreground text-sm sm:text-base">
+                  <span className="hidden sm:inline">Fill out the details below to list your fashion item for sale</span>
+                  <span className="sm:hidden">List your fashion item</span>
+                </p>
+              </div>
             </div>
-          </div>
 
-          <div className="mx-auto w-full max-w-4xl">
-            <MultiStepWizardLazy
-              categories={categories}
-              locale={locale}
-              userId={dbUser.id}
-            />
+            <div className="mx-auto w-full max-w-4xl">
+              <MultiStepWizardLazy
+                categories={categories}
+                locale={locale}
+                userId={dbUser.id}
+              />
+            </div>
           </div>
         </div>
       </div>

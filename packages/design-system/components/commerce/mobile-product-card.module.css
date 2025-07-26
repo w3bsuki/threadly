@@ -1,0 +1,148 @@
+/* Mobile Product Card Optimizations */
+
+/* Ensure smooth scrolling performance */
+.mobile-product-grid {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  will-change: scroll-position;
+}
+
+/* Optimize for 60fps scrolling */
+.mobile-product-card {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  perspective: 1000px;
+  -webkit-perspective: 1000px;
+}
+
+/* Prevent layout shifts during image loading */
+.mobile-product-card-image {
+  aspect-ratio: 4/5;
+  contain: layout style paint;
+  content-visibility: auto;
+}
+
+/* Touch feedback for better UX */
+.mobile-product-card-touchable {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+
+/* Ensure 36px minimum touch targets */
+.mobile-product-card-action {
+  min-height: 36px;
+  min-width: 36px;
+  position: relative;
+}
+
+/* Extend touch target without affecting layout */
+.mobile-product-card-action::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  bottom: -6px;
+  left: -6px;
+}
+
+/* Optimize font rendering on mobile */
+.mobile-product-card-text {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Prevent text selection during swipe */
+.mobile-product-card-swipeable {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hardware acceleration for animations */
+.mobile-product-card-animated {
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  will-change: transform, opacity;
+}
+
+/* Optimize skeleton loading animation */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.mobile-product-card-skeleton {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%
+  );
+  background-size: 1000px 100%;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-product-card-animated {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .mobile-product-card-skeleton {
+    animation: none;
+    background: #f0f0f0;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .mobile-product-card {
+    border: 2px solid currentColor;
+  }
+  
+  .mobile-product-card-action {
+    border: 1px solid currentColor;
+  }
+}
+
+/* Dark mode optimizations */
+@media (prefers-color-scheme: dark) {
+  .mobile-product-card-skeleton {
+    background: linear-gradient(
+      90deg,
+      #2a2a2a 25%,
+      #3a3a3a 50%,
+      #2a2a2a 75%
+    );
+  }
+}
+
+/* Safe area insets for modern phones */
+.mobile-product-grid-container {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Optimize for foldable devices */
+@media (screen-spanning: single-fold-vertical) {
+  .mobile-product-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Performance hints for the browser */
+.mobile-product-card img {
+  content-visibility: auto;
+  contain-intrinsic-size: 200px 250px;
+}

@@ -5,6 +5,35 @@ import { Skeleton } from '@repo/design-system/components';
 
 const MessagesContent = lazy(() => import('./messages-content').then(module => ({ default: module.MessagesContent })));
 
+interface User {
+  id: string;
+  clerkId: string;
+  email: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  imageUrl?: string | null;
+}
+
+interface Product {
+  id: string;
+  title: string;
+  price: number;
+  status: string;
+  images: Array<{
+    id: string;
+    imageUrl: string;
+    alt?: string | null;
+  }>;
+}
+
+interface Message {
+  id: string;
+  content: string;
+  senderId: string;
+  createdAt: Date;
+  read: boolean;
+}
+
 interface Conversation {
   id: string;
   productId: string;
@@ -13,10 +42,10 @@ interface Conversation {
   status: string;
   createdAt: Date;
   updatedAt: Date;
-  buyer: any;
-  seller: any;
-  product: any;
-  messages: any[];
+  buyer: User;
+  seller: User;
+  product: Product;
+  messages: Message[];
   _count: {
     messages: number;
   };

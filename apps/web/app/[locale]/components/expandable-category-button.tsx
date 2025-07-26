@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { CATEGORIES } from './navigation/categories';
 import { useI18n } from './providers/i18n-provider';
 
+
 interface ExpandableCategoryButtonProps {
   categoryName: string;
   isActive: boolean;
@@ -87,7 +88,7 @@ export const ExpandableCategoryButton = ({
               {category.subcategories.slice(0, 4).map((sub) => (
                 <Link
                   className={`flex min-h-[44px] touch-manipulation items-center gap-3 rounded-lg px-4 py-3 text-sm transition-colors hover:bg-gray-50 ${
-                    (sub as any).popular ? 'bg-blue-50/50 font-medium' : ''
+                    sub.popular ? 'bg-blue-50/50 font-medium' : ''
                   }`}
                   href={`/${locale}${sub.href}`}
                   key={sub.name}
@@ -95,7 +96,7 @@ export const ExpandableCategoryButton = ({
                 >
                   <span className="text-lg">{sub.icon}</span>
                   <span className="flex-1">{sub.name}</span>
-                  {(sub as any).popular && (
+                  {sub.popular && (
                     <span className="font-bold text-blue-600 text-xs">HOT</span>
                   )}
                 </Link>

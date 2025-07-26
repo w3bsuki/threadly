@@ -1,8 +1,28 @@
 {
   "permissions": {
     "allow": [
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "mcp__sequential-thinking__sequentialthinking",
+      "mcp__filesystem__read_multiple_files",
+      "mcp__filesystem__move_file",
+      "mcp__memory__read_graph",
+      "Bash(pnpm typecheck:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(echo $env:USERPROFILE)"
     ],
     "deny": []
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "postgres",
+    "filesystem",
+    "git",
+    "github",
+    "brave-search",
+    "memory",
+    "sequential-thinking",
+    "vercel",
+    "puppeteer"
+  ]
 }

@@ -71,7 +71,7 @@ export function useCSRF() {
 /**
  * Higher-order function to wrap an API client with CSRF protection
  */
-export function withCSRFProtection<T extends (...args: any[]) => Promise<Response>>(
+export function withCSRFProtection<T extends (...args: unknown[]) => Promise<Response>>(
   apiFunction: T
 ): T {
   return (async (...args: Parameters<T>) => {
@@ -85,9 +85,11 @@ export function withCSRFProtection<T extends (...args: any[]) => Promise<Respons
       options.headers = addCSRFHeader(options.headers);
     } else {
       // Add options with CSRF headers
-      args.push({
+      const typedArgs = args as unknown[];
+      typedArgs.push({
         headers: addCSRFHeader(),
       });
+      return apiFunction(...(typedArgs as Parameters<T>));
     }
 
     return apiFunction(...args);

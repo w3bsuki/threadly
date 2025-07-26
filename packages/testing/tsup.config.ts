@@ -1,9 +1,17 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/index.ts', 'src/helpers/index.ts', 'src/mocks/index.ts'],
+  entry: [
+    'src/index.ts',
+    'src/setup.ts',
+    'src/helpers/index.ts',
+    'src/mocks/index.ts',
+    'src/a11y/index.ts'
+  ],
   format: ['esm'],
-  dts: true,
+  dts: {
+    tsconfig: './tsconfig.build.json'
+  },
   splitting: true,
   sourcemap: true,
   clean: true,
@@ -16,7 +24,13 @@ export default defineConfig({
     '@testing-library/jest-dom',
     '@testing-library/user-event',
     'axe-core',
-    '@axe-core/react'
+    '@axe-core/react',
+    'jsdom',
+    'msw',
+    'supertest',
+    '@repo/cache',
+    '@repo/database',
+    '@repo/error-handling'
   ],
   loader: {
     '.tsx': 'tsx',

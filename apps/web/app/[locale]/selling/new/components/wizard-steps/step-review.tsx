@@ -14,6 +14,12 @@ interface Category {
   slug: string;
 }
 
+interface ProductImage {
+  id?: string;
+  url: string;
+  alt?: string;
+}
+
 interface StepReviewProps {
   form: UseFormReturn<CreateProductInput>;
   categories: Category[];
@@ -39,34 +45,34 @@ export function StepReview({ form, categories }: StepReviewProps) {
   const formData = form.getValues();
 
   return (
-    <div className="space-y-6">
-      <div className="text-center space-y-2">
-        <h3 className="text-lg font-semibold">Review Your Listing</h3>
-        <p className="text-muted-foreground">
-          Review all details before publishing your item
+    <div className="space-y-4 sm:space-y-6">
+      <div className="text-center space-y-1 sm:space-y-2">
+        <h3 className="text-base sm:text-lg font-semibold">Review Your Listing</h3>
+        <p className="text-xs sm:text-sm text-muted-foreground">
+          Check all details before publishing
         </p>
       </div>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div className="flex items-center gap-2">
-            <ImageIcon className="h-5 w-5" />
-            <CardTitle className="text-base">Photos</CardTitle>
+      <Card className="border-0 sm:border shadow-none sm:shadow-sm">
+        <CardHeader className="flex flex-row items-center justify-between p-3 sm:p-6">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <ImageIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+            <CardTitle className="text-sm sm:text-base">Photos</CardTitle>
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
-            {formData.images?.map((image: any, index: number) => (
+        <CardContent className="p-3 sm:p-6 pt-0 sm:pt-0">
+          <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
+            {formData.images?.map((image: ProductImage, index: number) => (
               <div key={index} className="aspect-square relative">
                 <Image
                   src={image.url}
                   alt={image.alt || `Product ${index + 1}`}
                   fill
-                  className="object-cover rounded-[var(--radius-md)]"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="object-cover rounded-[var(--radius-sm)] sm:rounded-[var(--radius-md)]"
+                  sizes="(max-width: 640px) 25vw, 20vw"
                 />
                 {index === 0 && (
-                  <Badge className="absolute top-1 left-1 text-xs">Main</Badge>
+                  <Badge className="absolute top-0.5 left-0.5 sm:top-1 sm:left-1 text-[10px] sm:text-xs h-4 sm:h-5 px-1 sm:px-2">Main</Badge>
                 )}
               </div>
             ))}
@@ -74,81 +80,81 @@ export function StepReview({ form, categories }: StepReviewProps) {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div className="flex items-center gap-2">
-            <DollarSign className="h-5 w-5" />
-            <CardTitle className="text-base">Basic Information</CardTitle>
+      <Card className="border-0 sm:border shadow-none sm:shadow-sm">
+        <CardHeader className="flex flex-row items-center justify-between p-3 sm:p-6">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <DollarSign className="h-4 w-4 sm:h-5 sm:w-5" />
+            <CardTitle className="text-sm sm:text-base">Basic Information</CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-2 sm:space-y-3 p-3 sm:p-6 pt-0 sm:pt-0">
           <div>
-            <h4 className="font-medium">{formData.title}</h4>
-            <p className="text-xl font-bold text-green-600">${formData.price?.toFixed(2)}</p>
+            <h4 className="font-medium text-sm sm:text-base">{formData.title}</h4>
+            <p className="text-lg sm:text-xl font-bold text-green-600">${formData.price?.toFixed(2)}</p>
           </div>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Tag className="h-5 w-5" />
-            <CardTitle className="text-base">Description & Category</CardTitle>
+      <Card className="border-0 sm:border shadow-none sm:shadow-sm">
+        <CardHeader className="flex flex-row items-center justify-between p-3 sm:p-6">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <Tag className="h-4 w-4 sm:h-5 sm:w-5" />
+            <CardTitle className="text-sm sm:text-base">Description & Category</CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-3 p-3 sm:p-6 pt-0 sm:pt-0">
           <div>
-            <p className="text-sm font-medium text-muted-foreground mb-1">Category</p>
-            <Badge variant="secondary">
+            <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">Category</p>
+            <Badge variant="secondary" className="text-xs">
               {CATEGORY_LABELS[formData.category as keyof typeof CATEGORY_LABELS] || 'Not selected'}
             </Badge>
           </div>
           <div>
-            <p className="text-sm font-medium text-muted-foreground mb-1">Description</p>
-            <p className="text-sm leading-relaxed">{formData.description}</p>
+            <p className="text-xs sm:text-sm font-medium text-muted-foreground mb-1">Description</p>
+            <p className="text-xs sm:text-sm leading-relaxed line-clamp-3 sm:line-clamp-none">{formData.description}</p>
           </div>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Package className="h-5 w-5" />
-            <CardTitle className="text-base">Item Details</CardTitle>
+      <Card className="border-0 sm:border shadow-none sm:shadow-sm">
+        <CardHeader className="flex flex-row items-center justify-between p-3 sm:p-6">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <Package className="h-4 w-4 sm:h-5 sm:w-5" />
+            <CardTitle className="text-sm sm:text-base">Item Details</CardTitle>
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-4">
+        <CardContent className="p-3 sm:p-6 pt-0 sm:pt-0">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Condition</p>
-              <p className="text-sm">{CONDITION_LABELS[formData.condition as keyof typeof CONDITION_LABELS]}</p>
+              <p className="text-xs sm:text-sm font-medium text-muted-foreground">Condition</p>
+              <p className="text-xs sm:text-sm mt-0.5">{CONDITION_LABELS[formData.condition as keyof typeof CONDITION_LABELS]}</p>
             </div>
             {formData.brand && (
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Brand</p>
-                <p className="text-sm">{formData.brand}</p>
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground">Brand</p>
+                <p className="text-xs sm:text-sm mt-0.5">{formData.brand}</p>
               </div>
             )}
             {formData.size && (
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Size</p>
-                <p className="text-sm">{formData.size}</p>
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground">Size</p>
+                <p className="text-xs sm:text-sm mt-0.5">{formData.size}</p>
               </div>
             )}
             {formData.color && (
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Color</p>
-                <p className="text-sm">{formData.color}</p>
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground">Color</p>
+                <p className="text-xs sm:text-sm mt-0.5">{formData.color}</p>
               </div>
             )}
           </div>
         </CardContent>
       </Card>
 
-      <div className="bg-green-50 border border-green-200 p-4 rounded-[var(--radius-lg)]">
-        <p className="text-sm text-green-800">
+      <div className="bg-green-50 border border-green-200 p-3 sm:p-4 rounded-[var(--radius-lg)]">
+        <p className="text-xs sm:text-sm text-green-800">
           🎉 <strong>Ready to go!</strong> Your listing looks great and is ready to publish. 
-          Click "Publish Listing" to make it live for buyers to see.
+          <span className="hidden sm:inline">Click "Publish Listing" to make it live for buyers to see.</span>
         </p>
       </div>
     </div>

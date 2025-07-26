@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     // Generate new recommendations
     const recommendations = await getRecommendations({
       userId: dbUser.id,
-      type: type as any,
+      type: type as 'PERSONALIZED' | 'TRENDING' | 'SIMILAR_ITEMS' | 'FREQUENTLY_BOUGHT_TOGETHER' | 'BASED_ON_HISTORY' | 'NEW_FOR_YOU',
       productId,
       limit,
     });

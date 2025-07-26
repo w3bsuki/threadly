@@ -1,4 +1,5 @@
 import { database } from '@repo/database';
+import type { Category, Product, ProductImage, User } from '@repo/database';
 import { Badge, Card, CardContent } from '@repo/design-system/components';
 import { getDictionary } from '@repo/internationalization';
 import { Package, Star, TrendingUp, Users } from 'lucide-react';
@@ -149,7 +150,7 @@ export default async function BrowsePage({
           </div>
 
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 lg:gap-4">
-            {popularCategories.map((category) => (
+            {popularCategories.map((category: Category & { _count: { Product: number } }) => (
               <Link
                 href={`/products?category=${category.slug}`}
                 key={category.id}
@@ -194,12 +195,17 @@ export default async function BrowsePage({
 
           <ProductGrid
             dictionary={dictionary}
-            products={trendingProducts.map((product) => ({
+            products={trendingProducts.map((product: Product & {
+              images: ProductImage[];
+              seller: Pick<User, 'firstName' | 'lastName' | 'id'>;
+              category: { name: string } | null;
+              _count: { favorites: number };
+            }) => ({
               ...product,
               price: Number(product.price),
               category: product.category?.name || 'Other',
               brand: product.brand || undefined,
-              images: product.images.map((img) => ({
+              images: product.images.map((img: ProductImage) => ({
                 ...img,
                 alt: img.alt || undefined,
               })),
@@ -218,7 +224,12 @@ export default async function BrowsePage({
           </h2>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-            {topSellers.map((seller) => (
+            {topSellers.map((seller: User & {
+              _count: {
+                Product: number;
+                Review_Review_reviewedIdToUser: number;
+              };
+            }) => (
               <Link href={`/profile/${seller.id}`} key={seller.id}>
                 <Card className="border-0 bg-background shadow-sm transition-all duration-200 hover:scale-[1.02] hover:shadow-md">
                   <CardContent className="p-4 lg:p-6">

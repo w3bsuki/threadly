@@ -12,6 +12,15 @@ const isPublicRoute = createRouteMatcher([
   '/api/health(.*)',
 ]);
 
+// Security headers configuration
+const securityHeaders = {
+  'X-Frame-Options': 'DENY',
+  'X-Content-Type-Options': 'nosniff',
+  'X-XSS-Protection': '1; mode=block',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+};
+
 const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
   const pathname = request.nextUrl.pathname;
   
@@ -22,7 +31,16 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
     pathname.startsWith('/ingest') ||
     pathname.includes('.') // Any file with extension
   ) {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    
+    // Add security headers to API routes
+    if (pathname.startsWith('/api/')) {
+      Object.entries(securityHeaders).forEach(([key, value]) => {
+        response.headers.set(key, value);
+      });
+    }
+    
+    return response;
   }
   
   // Apply rate limiting for all pages
@@ -35,7 +53,14 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
   const rateLimitResult = await rateLimiter.limit(ip);
   
   if (!rateLimitResult.success) {
-    return new NextResponse('Rate limit exceeded', { status: 429 });
+    const response = new NextResponse('Rate limit exceeded', { status: 429 });
+    
+    // Add security headers to rate limit response
+    Object.entries(securityHeaders).forEach(([key, value]) => {
+      response.headers.set(key, value);
+    });
+    
+    return response;
   }
   
   // Add performance headers
@@ -46,6 +71,11 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
   // Handle internationalization for non-API routes
   const i18nResponse = internationalizationMiddleware(request);
   if (i18nResponse) {
+    // Add security headers to i18n response
+    Object.entries(securityHeaders).forEach(([key, value]) => {
+      i18nResponse.headers.set(key, value);
+    });
+    
     return i18nResponse;
   }
 
@@ -79,9 +109,16 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
               <body>Redirecting to ${returnTo}...</body>
             </html>
           `;
+          const htmlHeaders = { 'Content-Type': 'text/html' };
+          
+          // Add security headers
+          Object.entries(securityHeaders).forEach(([key, value]) => {
+            htmlHeaders[key] = value;
+          });
+          
           return new NextResponse(html, {
             status: 200,
-            headers: { 'Content-Type': 'text/html' },
+            headers: htmlHeaders,
           });
         }
       } catch (e) {
@@ -91,7 +128,14 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
     // Otherwise redirect to dashboard
     const localeMatch = pathname.match(/^\/([a-z]{2})\//);
     const locale = localeMatch ? localeMatch[1] : 'en';
-    return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url));
+    const dashboardRedirect = NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url));
+    
+    // Add security headers to redirect response
+    Object.entries(securityHeaders).forEach(([key, value]) => {
+      dashboardRedirect.headers.set(key, value);
+    });
+    
+    return dashboardRedirect;
   }
   
   // Redirect authenticated route to dashboard
@@ -115,20 +159,41 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
           ].filter(Boolean);
           
           if (allowedOrigins.includes(returnUrl.origin)) {
-            return NextResponse.redirect(returnUrl);
+            const redirectResponse = NextResponse.redirect(returnUrl);
+            
+            // Add security headers to redirect response
+            Object.entries(securityHeaders).forEach(([key, value]) => {
+              redirectResponse.headers.set(key, value);
+            });
+            
+            return redirectResponse;
           }
         } catch (e) {
           // Invalid URL, fall through to default redirect
         }
       }
-      return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url));
+      const dashboardRedirect = NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url));
+    
+    // Add security headers to redirect response
+    Object.entries(securityHeaders).forEach(([key, value]) => {
+      dashboardRedirect.headers.set(key, value);
+    });
+    
+    return dashboardRedirect;
     } else {
       // Preserve returnTo when redirecting to sign-in
       const signInUrl = new URL(`/${locale}/sign-in`, request.url);
       if (returnTo) {
         signInUrl.searchParams.set('returnTo', returnTo);
       }
-      return NextResponse.redirect(signInUrl);
+      const signInRedirect = NextResponse.redirect(signInUrl);
+      
+      // Add security headers to redirect response
+      Object.entries(securityHeaders).forEach(([key, value]) => {
+        signInRedirect.headers.set(key, value);
+      });
+      
+      return signInRedirect;
     }
   }
   
@@ -136,7 +201,14 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
   if (!isPublicRoute(request)) {
     const { userId } = await auth();
     if (!userId) {
-      return NextResponse.redirect(new URL('/sign-in', request.url));
+      const signInRedirect = NextResponse.redirect(new URL('/sign-in', request.url));
+      
+      // Add security headers to redirect response
+      Object.entries(securityHeaders).forEach(([key, value]) => {
+        signInRedirect.headers.set(key, value);
+      });
+      
+      return signInRedirect;
     }
   }
   
@@ -144,6 +216,11 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
     request: {
       headers,
     },
+  });
+  
+  // Add security headers to all responses
+  Object.entries(securityHeaders).forEach(([key, value]) => {
+    response.headers.set(key, value);
   });
   
   // Add cache headers for static assets

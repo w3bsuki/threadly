@@ -1,8 +1,5 @@
 {
-  "extends": [
-    "@repo/typescript-config/nextjs.json",
-    "../../packages/cms/typescript-config.json"
-  ],
+  "extends": "@repo/typescript-config/nextjs.json",
   "compilerOptions": {
     "baseUrl": ".",
     "module": "ESNext",
@@ -17,7 +14,11 @@
     "next.config.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "../../packages/*/src/**/*.ts",
+    "../../packages/*/src/**/*.tsx",
+    "../../packages/*/*.ts",
+    "../../packages/*/*.tsx"
   ],
   "exclude": [
     "node_modules",

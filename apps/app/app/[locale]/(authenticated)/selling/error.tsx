@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import { Button } from '@repo/design-system/components';
 import { AlertCircle } from 'lucide-react';
 
@@ -11,12 +10,6 @@ export default function SellingError({
   error: Error & { digest?: string };
   reset: () => void;
 }): React.JSX.Element {
-  useEffect(() => {
-    // Log the error to console in development
-    if (process.env.NODE_ENV === 'development') {
-    }
-  }, [error]);
-
   return (
     <div className="flex min-h-[400px] items-center justify-center p-4">
       <div className="text-center space-y-4 max-w-md">

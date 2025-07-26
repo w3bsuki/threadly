@@ -20,7 +20,6 @@ export async function GET() {
       }
     });
   } catch (error) {
-    console.error('Auth check error:', error);
     return NextResponse.json({ authenticated: false });
   }
 }

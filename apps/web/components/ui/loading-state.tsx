@@ -2,7 +2,7 @@
 
 import { cn } from '@repo/design-system/lib/utils';
 import { Loader2 } from 'lucide-react';
-import { Skeleton } from '../skeleton-loader';
+import { Skeleton } from '@repo/design-system/components';
 
 interface LoadingStateProps {
   type?: 'spinner' | 'skeleton' | 'overlay';

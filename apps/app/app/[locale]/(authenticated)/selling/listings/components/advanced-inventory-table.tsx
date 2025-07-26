@@ -238,7 +238,6 @@ export function AdvancedInventoryTable({
         window.location.reload(); // Simple approach - could be optimized
       }
     } catch (error) {
-      console.error('Bulk operation failed:', error);
     } finally {
       setIsLoading(false);
       setSelectedProducts(new Set());

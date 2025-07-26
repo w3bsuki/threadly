@@ -43,16 +43,16 @@ export function StepDetails({ form }: StepDetailsProps) {
   const selectedCondition = form.watch('condition');
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <FormField
         control={form.control}
         name="condition"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-base font-medium">Condition</FormLabel>
+            <FormLabel className="text-sm sm:text-base font-medium">Condition</FormLabel>
             <Select onValueChange={field.onChange} value={field.value || ""}>
               <FormControl>
-                <SelectTrigger className="text-base">
+                <SelectTrigger className="text-base h-12 sm:h-10">
                   <SelectValue />
                 </SelectTrigger>
               </FormControl>
@@ -65,7 +65,7 @@ export function StepDetails({ form }: StepDetailsProps) {
               </SelectContent>
             </Select>
             {selectedCondition && CONDITION_INFO[selectedCondition as keyof typeof CONDITION_INFO] && (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                 {CONDITION_INFO[selectedCondition as keyof typeof CONDITION_INFO].description}
               </p>
             )}
@@ -74,18 +74,18 @@ export function StepDetails({ form }: StepDetailsProps) {
         )}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         <FormField
           control={form.control}
           name="brand"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-base font-medium">Brand (Optional)</FormLabel>
+              <FormLabel className="text-sm sm:text-base font-medium">Brand (Optional)</FormLabel>
               <FormControl>
                 <Input 
                   placeholder="e.g. Nike, Zara" 
                   {...field} 
-                  className="text-base"
+                  className="text-base h-12 sm:h-10"
                 />
               </FormControl>
               <FormMessage />
@@ -98,12 +98,12 @@ export function StepDetails({ form }: StepDetailsProps) {
           name="size"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-base font-medium">Size (Optional)</FormLabel>
+              <FormLabel className="text-sm sm:text-base font-medium">Size (Optional)</FormLabel>
               <FormControl>
                 <Input 
                   placeholder="e.g. M, 32, 8.5" 
                   {...field} 
-                  className="text-base"
+                  className="text-base h-12 sm:h-10"
                 />
               </FormControl>
               <FormMessage />
@@ -116,12 +116,12 @@ export function StepDetails({ form }: StepDetailsProps) {
           name="color"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-base font-medium">Color (Optional)</FormLabel>
+              <FormLabel className="text-sm sm:text-base font-medium">Color (Optional)</FormLabel>
               <FormControl>
                 <Input 
                   placeholder="e.g. Black, Blue" 
                   {...field} 
-                  className="text-base"
+                  className="text-base h-12 sm:h-10"
                 />
               </FormControl>
               <FormMessage />
@@ -130,10 +130,10 @@ export function StepDetails({ form }: StepDetailsProps) {
         />
       </div>
 
-      <div className="bg-muted/50 p-4 rounded-[var(--radius-lg)]">
-        <p className="text-sm text-muted-foreground">
+      <div className="bg-muted/50 p-3 sm:p-4 rounded-[var(--radius-lg)]">
+        <p className="text-xs sm:text-sm text-muted-foreground">
           ✨ <strong>Pro Tip:</strong> Accurate details help buyers find your item and reduce returns. 
-          Include brand and size for better search visibility.
+          <span className="hidden sm:inline">Include brand and size for better search visibility.</span>
         </p>
       </div>
     </div>

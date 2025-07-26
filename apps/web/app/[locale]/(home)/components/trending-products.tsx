@@ -8,6 +8,48 @@ import Link from 'next/link';
 
 import { formatCurrency } from '@/lib/utils/currency';
 
+type TransformedProduct = {
+  id: string;
+  title: string;
+  brand: string;
+  price: string;
+  originalPrice: null;
+  condition: string;
+  size: string;
+  images: string[];
+  seller: {
+    name: string;
+    rating: number;
+    location: string;
+  };
+  likes: number;
+  views: number;
+  timeAgo: string;
+};
+
+type ProductWithRelations = {
+  id: string;
+  title: string;
+  brand: string | null;
+  price: string;
+  condition: string;
+  size: string | null;
+  views: number;
+  images: {
+    imageUrl: string | null;
+  }[];
+  seller: {
+    id: string;
+    firstName: string | null;
+    lastName: string | null;
+    location: string | null;
+    averageRating: number | null;
+  } | null;
+  _count: {
+    favorites: number;
+  };
+};
+
 export const TrendingProducts = async () => {
   try {
     const cacheService = getCacheService({
@@ -52,7 +94,7 @@ export const TrendingProducts = async () => {
         take: 6,
       });
 
-      transformedProducts = trendingProducts.map((product) => ({
+      transformedProducts = trendingProducts.map((product: ProductWithRelations): TransformedProduct => ({
         id: product.id,
         title: product.title,
         brand: product.brand || 'Unknown',
@@ -60,7 +102,7 @@ export const TrendingProducts = async () => {
         originalPrice: null, // We don't have this in our schema
         condition: product.condition,
         size: product.size || 'One Size',
-        images: product.images.map((img) => img.imageUrl).filter(Boolean),
+        images: product.images.map((img) => img.imageUrl).filter((url): url is string => Boolean(url)),
         seller: {
           name: product.seller
             ? `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() ||
@@ -75,10 +117,12 @@ export const TrendingProducts = async () => {
       }));
 
       // Cache the transformed products
-      await cacheService.cacheTrendingProducts(transformedProducts);
+      if (transformedProducts) {
+        await cacheService.cacheTrendingProducts(transformedProducts);
+      }
     }
 
-    if (transformedProducts.length === 0) {
+    if (!transformedProducts || transformedProducts.length === 0) {
       return (
         <section className="w-full bg-gray-50 py-16 lg:py-24">
           <div className="container mx-auto px-4 text-center">
@@ -103,7 +147,7 @@ export const TrendingProducts = async () => {
 
           {/* Trending Products Grid */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {transformedProducts.map((product: any) => (
+            {transformedProducts.map((product) => (
               <Link
                 className="group hover:-translate-y-1 relative overflow-hidden rounded-2xl bg-white shadow-lg transition-all duration-300 hover:shadow-2xl"
                 href={`/product/${product.id}`}

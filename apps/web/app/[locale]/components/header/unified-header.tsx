@@ -13,8 +13,8 @@ import { ModeToggle } from '@repo/design-system/components/mode-toggle';
 import { UserButton, useUser } from '@repo/auth/client';
 import { ShoppingCart, Heart, Bell, Home, Search as SearchIcon, User, ShoppingBag, Sparkles, MessageSquare, Settings, Package } from 'lucide-react';
 import { useI18n } from '../providers/i18n-provider';
-import { CATEGORIES } from '@repo/navigation';
 import Link from 'next/link';
+import { CATEGORIES } from '../navigation/categories';
 
 export function UnifiedHeader() {
   const { dictionary, locale } = useI18n();
@@ -119,16 +119,6 @@ export function UnifiedHeader() {
   const headerActions = (
     <>
       <ModeToggle />
-      <Link href={`/${locale}/cart`}>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-10 w-10"
-        >
-          <ShoppingCart className="h-5 w-5" />
-          <span className="sr-only">{dictionary.web.global.navigation.cart}</span>
-        </Button>
-      </Link>
       {isLoaded && (
         isSignedIn ? (
           <UserButton />

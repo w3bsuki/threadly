@@ -18,7 +18,7 @@ const hapticFeedback = {
     }
     // iOS haptic feedback
     if ('webkitVibrate' in navigator) {
-      (navigator as any).webkitVibrate(10);
+      (navigator as unknown as { webkitVibrate: (duration: number) => void }).webkitVibrate(10);
     }
   },
   medium: () => {
@@ -26,7 +26,7 @@ const hapticFeedback = {
       navigator.vibrate(20);
     }
     if ('webkitVibrate' in navigator) {
-      (navigator as any).webkitVibrate(20);
+      (navigator as unknown as { webkitVibrate: (duration: number) => void }).webkitVibrate(20);
     }
   },
   heavy: () => {
@@ -34,7 +34,7 @@ const hapticFeedback = {
       navigator.vibrate([30, 10, 30]);
     }
     if ('webkitVibrate' in navigator) {
-      (navigator as any).webkitVibrate([30, 10, 30]);
+      (navigator as unknown as { webkitVibrate: (pattern: number[]) => void }).webkitVibrate([30, 10, 30]);
     }
   },
   success: () => {

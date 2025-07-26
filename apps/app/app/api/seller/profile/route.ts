@@ -86,10 +86,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       success: true,
       sellerProfile: sellerProfile,
     });
-  } catch (error: any) {
-    
-    // logError('Failed to create seller profile', error);
-    
+  } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid data', details: error.issues },
@@ -98,7 +95,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
     
     // Prisma errors
-    if (error?.code === 'P2002') {
+    if ((error as { code?: string })?.code === 'P2002') {
       return NextResponse.json(
         { error: 'A seller profile already exists for this user' },
         { status: 409 }

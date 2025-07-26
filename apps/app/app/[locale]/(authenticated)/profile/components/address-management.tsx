@@ -13,7 +13,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@repo/design-system/components';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@repo/design-system/components';
 import { MapPin, Plus, Edit, Trash2, Star } from 'lucide-react';
-// import { toast } from 'sonner';
 
 const addressSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
@@ -83,6 +82,7 @@ export function AddressManagement() {
         setAddresses(data.addresses);
       }
     } catch (error) {
+      // Ignore fetch errors
     } finally {
       setIsLoading(false);
     }
@@ -114,6 +114,7 @@ export function AddressManagement() {
       form.reset();
       fetchAddresses();
     } catch (error) {
+      // Handle save error silently
     } finally {
       setIsSubmitting(false);
     }
@@ -134,6 +135,7 @@ export function AddressManagement() {
 
       fetchAddresses();
     } catch (error) {
+      // Handle delete error silently
     }
   };
 

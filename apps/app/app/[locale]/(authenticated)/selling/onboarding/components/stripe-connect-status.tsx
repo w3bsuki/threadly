@@ -14,7 +14,11 @@ type AccountStatus = {
     eventuallyDue: string[];
     pastDue: string[];
     pendingVerification: string[];
-    errors: any[];
+    errors: Array<{
+      requirement: string;
+      code: string;
+      reason: string;
+    }>;
     disabled_reason?: string;
   };
   requirementsCount?: number;

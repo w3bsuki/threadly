@@ -4,12 +4,13 @@ import { Button } from '@repo/design-system/components';
 import { Grid3x3, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import { CATEGORIES } from './navigation/categories';
+import { CATEGORIES, type Subcategory } from './navigation/categories';
 import { useI18n } from './providers/i18n-provider';
 
 interface UnifiedSearchFiltersProps {
   totalCount?: number;
 }
+
 
 export const UnifiedSearchFilters = ({
   totalCount,
@@ -20,18 +21,26 @@ export const UnifiedSearchFilters = ({
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const categories = CATEGORIES.map((category) => ({
-    ...category,
-    name:
-      dictionary.web.global.categories?.[
+  const categories = CATEGORIES.map((category) => {
+    const translatedName = 
+      dictionary?.web?.global?.categories?.[
         category.name.toLowerCase() as keyof typeof dictionary.web.global.categories
-      ] || category.name,
-    href: `/${locale}${category.href}`,
-    subcategories: category.subcategories.map((sub) => ({
-      ...sub,
-      href: `/${locale}${sub.href}`,
-    })),
-  }));
+      ] || 
+      dictionary?.web?.global?.collections?.[
+        category.name.toLowerCase() as keyof typeof dictionary.web.global.collections
+      ] || 
+      category.name;
+    
+    return {
+      ...category,
+      name: translatedName,
+      href: `/${locale}${category.href}`,
+      subcategories: category.subcategories.map((sub) => ({
+        ...sub,
+        href: `/${locale}${sub.href}`,
+      })),
+    };
+  });
 
   const toggleCategoryExpansion = (categoryName: string) => {
     setExpandedCategories((prev) =>
@@ -117,7 +126,7 @@ export const UnifiedSearchFilters = ({
                             onClick={() => setShowCategories(false)}
                           >
                             <span aria-hidden="true" className="text-lg">
-                              {category.icon}
+                              🛍️
                             </span>
                             <span className="font-medium text-foreground text-sm">
                               {category.name}
@@ -153,9 +162,9 @@ export const UnifiedSearchFilters = ({
                                   .slice(0, 4)
                                   .map((sub) => (
                                     <Link
-                                      aria-label={`Browse ${sub.name} in ${category.name}${(sub as any).popular ? ' - Popular' : ''}`}
+                                      aria-label={`Browse ${sub.name} in ${category.name}${sub.popular ? ' - Popular' : ''}`}
                                       className={`flex items-center gap-1.5 rounded-[var(--radius-md)] bg-background px-2 py-2 transition-colors hover:bg-muted active:scale-95 ${
-                                        (sub as any).popular
+                                        sub.popular
                                           ? 'ring-1 ring-blue-200'
                                           : ''
                                       }`}
@@ -167,12 +176,12 @@ export const UnifiedSearchFilters = ({
                                         aria-hidden="true"
                                         className="text-sm"
                                       >
-                                        {sub.icon}
+                                        ✨
                                       </span>
                                       <span className="font-medium text-secondary-foreground text-xs">
                                         {sub.name}
                                       </span>
-                                      {(sub as any).popular && (
+                                      {sub.popular && (
                                         <span
                                           aria-label="Popular"
                                           className="text-blue-600 text-xs"

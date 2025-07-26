@@ -87,7 +87,16 @@ export async function POST(request: NextRequest) {
     const bulkOperation = { id: 'mock-bulk-op' };
 
     try {
-      let updateData: any = {};
+      interface UpdateData {
+        price?: number;
+        status?: string;
+        categoryId?: string;
+        condition?: string;
+        brand?: string;
+        size?: string;
+        color?: string;
+      }
+      let updateData: UpdateData = {};
       let results = { success: 0, errors: 0, skipped: 0 };
 
       // Prepare update data based on operation type
@@ -138,7 +147,7 @@ export async function POST(request: NextRequest) {
           });
           results.success++;
         } catch (error) {
-          log.error(`Failed to update product ${product.id}:`, error as any);
+          log.error(`Failed to update product ${product.id}:`, error);
           results.errors++;
         }
       }
@@ -173,7 +182,7 @@ export async function POST(request: NextRequest) {
       //   }
       // });
       
-      log.error('Bulk operation failed:', error as any);
+      log.error('Bulk operation failed:', error);
       return NextResponse.json(
         { error: 'Failed to perform bulk update' },
         { status: 500 }
@@ -181,7 +190,7 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    log.error('Bulk operation API error:', error as any);
+    log.error('Bulk operation API error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -225,7 +234,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Operation tracking not implemented' }, { status: 501 });
 
   } catch (error) {
-    log.error('Get bulk operations API error:', error as any);
+    log.error('Get bulk operations API error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

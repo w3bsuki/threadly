@@ -139,3 +139,77 @@ export interface ProductQueryResult {
   totalPages: number;
   hasMore: boolean;
 }
+
+// Product detail types from @repo/products
+export interface ProductImage {
+  imageUrl: string;
+  alt?: string | null;
+}
+
+export interface ProductSeller {
+  id: string;
+  firstName: string | null;
+  lastName: string | null;
+  imageUrl: string | null;
+  joinedAt: Date;
+  _count: {
+    listings: number;
+    followers: number;
+  };
+}
+
+export interface ProductCategory {
+  id: string;
+  name: string;
+  slug: string;
+  parent?: {
+    name: string;
+    slug: string;
+  } | null;
+}
+
+export interface Product {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  condition: string;
+  size?: string | null;
+  brand?: string | null;
+  color?: string | null;
+  views: number;
+  createdAt: Date;
+  images: ProductImage[];
+  seller: ProductSeller;
+  category: ProductCategory;
+  _count: {
+    favorites: number;
+  };
+}
+
+export interface SimilarProduct {
+  id: string;
+  title: string;
+  price: number;
+  images: ProductImage[];
+  seller: {
+    firstName: string | null;
+    lastName: string | null;
+  };
+}
+
+export const conditionLabels = {
+  NEW_WITH_TAGS: 'New with tags',
+  NEW_WITHOUT_TAGS: 'New without tags',
+  VERY_GOOD: 'Very good',
+  GOOD: 'Good',
+  SATISFACTORY: 'Satisfactory',
+} as const;
+
+export const conditionColors = {
+  NEW_WITH_TAGS: 'bg-green-100 text-green-800',
+  NEW_WITHOUT_TAGS: 'bg-blue-100 text-blue-800',
+  VERY_GOOD: 'bg-purple-100 text-purple-800',
+  GOOD: 'bg-yellow-100 text-yellow-800',
+  SATISFACTORY: 'bg-secondary text-foreground/90',
+} as const;

@@ -1,5 +1,7 @@
 'use client';
 
+import { useCallback, useState } from 'react';
+
 interface RetryOptions {
   maxAttempts?: number;
   delay?: number;
@@ -116,8 +118,8 @@ export function retryConditions() {
     },
     
     serverError: (error: Error) => {
-      if ('status' in error) {
-        const status = (error as any).status;
+      if ('status' in error && typeof (error as Record<string, unknown>).status === 'number') {
+        const status = (error as Record<string, unknown>).status as number;
         return status >= 500 && status < 600;
       }
       return false;
@@ -135,9 +137,7 @@ export function retryConditions() {
   };
 }
 
-import { useCallback, useState } from 'react';
-
-export function withRetry<T extends (...args: any[]) => Promise<any>>(
+export function withRetry<T extends (...args: never[]) => Promise<unknown>>(
   fn: T,
   options: RetryOptions = {}
 ): T {

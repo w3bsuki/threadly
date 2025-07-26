@@ -1,9 +1,11 @@
 'use client';
 
 import { Button } from '@repo/design-system/components';
+import { cn } from '@repo/design-system/lib/utils';
+import { motion, useAnimation, useMotionValue } from 'framer-motion';
 import { Filter, Search, X } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { CATEGORIES } from '../navigation/categories';
 import { useI18n } from '../providers/i18n-provider';
 
@@ -17,6 +19,8 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
   const [showCategories, setShowCategories] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const controls = useAnimation();
+  const y = useMotionValue(0);
 
   const categories = CATEGORIES.map((category) => ({
     ...category,
@@ -33,6 +37,45 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
 
   useEffect(() => {
     searchInputRef.current?.focus();
+    controls.start({ y: 0 });
+  }, [controls]);
+
+  // Swipe up gesture detection
+  useEffect(() => {
+    let startY = 0;
+    let startX = 0;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      startY = touch.clientY;
+      startX = touch.clientX;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      const deltaY = startY - touch.clientY;
+      const deltaX = Math.abs(touch.clientX - startX);
+      
+      // Swipe up detection
+      if (deltaY > 50 && deltaX < 30 && startY > window.innerHeight - 100) {
+        triggerHapticFeedback();
+        // Expand search functionality here if needed
+      }
+    };
+
+    document.addEventListener('touchstart', handleTouchStart, { passive: true });
+    document.addEventListener('touchmove', handleTouchMove, { passive: true });
+
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, []);
+
+  const triggerHapticFeedback = useCallback(() => {
+    if ('vibrate' in navigator) {
+      navigator.vibrate(10);
+    }
   }, []);
 
   const toggleCategoryExpansion = (categoryName: string) => {
@@ -51,15 +94,29 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-background">
+    <motion.div 
+      animate={controls}
+      className="fixed inset-0 z-50 flex flex-col bg-background"
+      drag="y"
+      dragConstraints={{ top: 0, bottom: 0 }}
+      dragElastic={0.2}
+      initial={{ y: '100%' }}
+      onDragEnd={(event, info) => {
+        if (info.offset.y > 100) {
+          onClose();
+        }
+      }}
+      style={{ y }}
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+    >
       {/* Search Header */}
-      <div className="flex items-center gap-3 border-gray-200 border-b p-4">
+      <div className="flex items-center gap-3 border-gray-200 border-b p-4 pt-[calc(1rem+env(safe-area-inset-top))]">
         <form className="flex flex-1 items-center" onSubmit={handleSearch}>
           <div className="relative flex-1">
             <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-5 w-5 text-muted-foreground/70" />
             <input
               aria-label="Search products"
-              className="w-full rounded-[var(--radius-lg)] border border-gray-200 bg-muted py-3 pr-4 pl-10 text-base focus:border-transparent focus:outline-none focus:ring-2 focus:ring-black"
+              className="h-11 w-full rounded-[var(--radius-lg)] border border-gray-200 bg-muted pr-4 pl-10 text-base focus:border-transparent focus:outline-none focus:ring-2 focus:ring-black"
               onChange={(e) => setSearchValue(e.target.value)}
               placeholder={
                 dictionary.web.global.navigation?.searchPlaceholder ||
@@ -75,10 +132,14 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
         <Button
           aria-expanded={showCategories}
           aria-label="Toggle categories"
-          className={`h-11 w-11 rounded-[var(--radius-lg)] transition-all ${
+          className={cn(
+            "h-11 w-11 rounded-[var(--radius-lg)] transition-all",
             showCategories ? 'bg-secondary' : 'hover:bg-muted'
-          }`}
-          onClick={() => setShowCategories(!showCategories)}
+          )}
+          onClick={() => {
+            triggerHapticFeedback();
+            setShowCategories(!showCategories);
+          }}
           size="icon"
           variant="ghost"
         >
@@ -88,7 +149,10 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
         <Button
           aria-label="Close search"
           className="h-11 w-11 rounded-[var(--radius-lg)] hover:bg-muted"
-          onClick={onClose}
+          onClick={() => {
+            triggerHapticFeedback();
+            onClose();
+          }}
           size="icon"
           variant="ghost"
         >
@@ -130,8 +194,11 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
                           category.name
                         )}
                         aria-label={`${expandedCategories.includes(category.name) ? 'Hide' : 'Show'} ${category.name} subcategories`}
-                        className="m-2 h-10 min-w-[44px] px-3 font-medium text-muted-foreground text-xs hover:text-foreground"
-                        onClick={() => toggleCategoryExpansion(category.name)}
+                        className="m-2 h-11 min-w-[44px] px-3 font-medium text-muted-foreground text-xs hover:text-foreground"
+                        onClick={() => {
+                          triggerHapticFeedback();
+                          toggleCategoryExpansion(category.name);
+                        }}
                         size="sm"
                         variant="ghost"
                       >
@@ -148,9 +215,9 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
                         <div className="grid grid-cols-2 gap-px bg-accent">
                           {category.subcategories.map((sub) => (
                             <Link
-                              aria-label={`Browse ${sub.name} in ${category.name}${(sub as any).popular ? ' - Popular' : ''}`}
+                              aria-label={`Browse ${sub.name} in ${category.name}${sub.popular ? ' - Popular' : ''}`}
                               className={`flex min-h-[44px] items-center gap-2 bg-muted p-3 transition-colors hover:bg-background ${
-                                (sub as any).popular
+                                sub.popular
                                   ? 'ring-1 ring-blue-200'
                                   : ''
                               }`}
@@ -164,7 +231,7 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
                               <span className="font-medium text-secondary-foreground text-sm">
                                 {sub.name}
                               </span>
-                              {(sub as any).popular && (
+                              {sub.popular && (
                                 <span
                                   aria-label="Popular"
                                   className="text-blue-600 text-xs"
@@ -219,6 +286,6 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };

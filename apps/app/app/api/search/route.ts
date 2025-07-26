@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { auth } from '@clerk/nextjs';
 import { getSearchService } from '@repo/search';
 import { z } from 'zod';
 import { generalApiLimit, checkRateLimit } from '@repo/security';
@@ -34,7 +35,16 @@ const searchRequestSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
-  // Check rate limit first
+  // Check authentication
+  const { userId } = auth();
+  if (!userId) {
+    return createErrorResponse(
+      new Error('Unauthorized'),
+      { status: 401, errorCode: ErrorCode.UNAUTHORIZED }
+    );
+  }
+
+  // Check rate limit
   const rateLimitResult = await checkRateLimit(generalApiLimit, request);
   if (!rateLimitResult.allowed) {
     return createErrorResponse(
@@ -93,7 +103,16 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  // Check rate limit first
+  // Check authentication
+  const { userId } = auth();
+  if (!userId) {
+    return createErrorResponse(
+      new Error('Unauthorized'),
+      { status: 401, errorCode: ErrorCode.UNAUTHORIZED }
+    );
+  }
+
+  // Check rate limit
   const rateLimitResult = await checkRateLimit(generalApiLimit, request);
   if (!rateLimitResult.allowed) {
     return createErrorResponse(
@@ -135,9 +154,17 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category');
     const brand = searchParams.get('brand');
     const condition = searchParams.get('condition');
-    const sortBy = searchParams.get('sortBy') as any;
+    const sortBy = searchParams.get('sortBy') as 'relevance' | 'price_asc' | 'price_desc' | 'newest' | 'most_viewed' | 'most_favorited' | null;
 
-    const filters: any = { query };
+    interface SearchFilters {
+      query: string;
+      categories?: string[];
+      brands?: string[];
+      conditions?: string[];
+      sortBy?: string;
+    }
+
+    const filters: SearchFilters = { query };
     
     if (category) filters.categories = [category];
     if (brand) filters.brands = [brand];

@@ -1,13 +1,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
+import { Card, CardContent, CardHeader, CardTitle, ErrorBoundary, LoadingSkeleton } from '@repo/design-system/components';
 import { Button } from '@repo/design-system/components';
 import { Package, Plus, Eye, ExternalLink } from 'lucide-react';
 import type { Dictionary } from '@repo/internationalization';
 import { getCacheService } from '@repo/cache';
 import { database } from '@repo/database';
 import { decimalToNumber } from '@repo/utils';
-import { ErrorBoundary } from '@/components/error-boundary';
 
 interface ActiveListingsProps {
   userId: string;
@@ -76,12 +75,11 @@ async function getActiveListings(userId: string): Promise<Product[]> {
   );
 }
 
-export async function ActiveListings({ userId, dictionary }: ActiveListingsProps) {
+async function ActiveListingsInner({ userId, dictionary }: ActiveListingsProps) {
   const listings = await getActiveListings(userId);
 
   if (listings.length === 0) {
     return (
-      <ErrorBoundary>
         <Card className="overflow-hidden bg-background border-border">
         <CardHeader className="pb-3 px-4 border-b border-border">
           <CardTitle className="text-base font-medium text-foreground">
@@ -102,7 +100,7 @@ export async function ActiveListings({ userId, dictionary }: ActiveListingsProps
               </p>
             </div>
             <Link href="/selling/new" className="w-full sm:w-auto">
-              <Button className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto touch-target-lg">
                 <Plus className="h-4 w-4 mr-2" />
                 Create listing
               </Button>
@@ -110,12 +108,10 @@ export async function ActiveListings({ userId, dictionary }: ActiveListingsProps
           </div>
         </CardContent>
       </Card>
-      </ErrorBoundary>
     );
   }
 
   return (
-    <ErrorBoundary>
       <Card className="overflow-hidden bg-background border-border">
         <CardHeader className="flex flex-row items-center justify-between pb-3 px-4 border-b border-border">
           <CardTitle className="text-base font-medium text-foreground">
@@ -129,7 +125,7 @@ export async function ActiveListings({ userId, dictionary }: ActiveListingsProps
               View all
             </Link>
             <Link href="/selling/new">
-              <Button size="sm" variant="outline" className="h-7 px-2">
+              <Button size="sm" variant="outline" className="h-7 px-2 touch-target">
                 <Plus className="h-3 w-3" />
               </Button>
             </Link>
@@ -184,6 +180,13 @@ export async function ActiveListings({ userId, dictionary }: ActiveListingsProps
           </div>
         </CardContent>
       </Card>
+  );
+}
+
+export function ActiveListings(props: ActiveListingsProps) {
+  return (
+    <ErrorBoundary>
+      <ActiveListingsInner {...props} />
     </ErrorBoundary>
   );
 }

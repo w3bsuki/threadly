@@ -8,13 +8,13 @@ import { useEffect } from 'react';
 interface Order {
   id: string;
   orderNumber: string;
-  totalAmount: any;
+  totalAmount: number;
   createdAt: Date;
   status: string;
   product: {
     id: string;
     title: string;
-    price: any;
+    price: number;
     images: Array<{
       imageUrl: string;
       alt?: string | null;

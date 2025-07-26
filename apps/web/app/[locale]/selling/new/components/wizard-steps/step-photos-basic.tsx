@@ -12,13 +12,13 @@ interface StepPhotosBasicProps {
 
 export function StepPhotosBasic({ form }: StepPhotosBasicProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <FormField
         control={form.control}
         name="images"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-base font-medium">Product Photos</FormLabel>
+            <FormLabel className="text-sm sm:text-base font-medium">Product Photos</FormLabel>
             <FormControl>
               <ImageUploadLazy
                 value={field.value}
@@ -31,18 +31,18 @@ export function StepPhotosBasic({ form }: StepPhotosBasicProps) {
         )}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         <FormField
           control={form.control}
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-base font-medium">Item Title</FormLabel>
+              <FormLabel className="text-sm sm:text-base font-medium">Item Title</FormLabel>
               <FormControl>
                 <Input 
                   placeholder="e.g. Vintage Denim Jacket" 
                   {...field}
-                  className="text-base"
+                  className="text-base h-12 sm:h-10"
                 />
               </FormControl>
               <FormMessage />
@@ -55,7 +55,7 @@ export function StepPhotosBasic({ form }: StepPhotosBasicProps) {
           name="price"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-base font-medium">Price ($)</FormLabel>
+              <FormLabel className="text-sm sm:text-base font-medium">Price ($)</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -63,7 +63,8 @@ export function StepPhotosBasic({ form }: StepPhotosBasicProps) {
                   placeholder="0.00"
                   {...field}
                   onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                  className="text-base"
+                  className="text-base h-12 sm:h-10"
+                  inputMode="decimal"
                 />
               </FormControl>
               <FormMessage />
@@ -72,8 +73,8 @@ export function StepPhotosBasic({ form }: StepPhotosBasicProps) {
         />
       </div>
 
-      <div className="bg-muted/50 p-4 rounded-[var(--radius-lg)]">
-        <p className="text-sm text-muted-foreground">
+      <div className="bg-muted/50 p-3 sm:p-4 rounded-[var(--radius-lg)]">
+        <p className="text-xs sm:text-sm text-muted-foreground">
           📸 <strong>Photo Tips:</strong> Use natural lighting, show all angles, and include any flaws or wear. 
           First photo will be your main listing image.
         </p>

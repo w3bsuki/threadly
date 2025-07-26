@@ -144,7 +144,7 @@ const ProductListItem = ({ product }: { product: Product }) => {
     : false;
 
   const uploadedAgo = product.createdAt
-    ? getTimeAgo(product.createdAt)
+    ? getTimeAgo(new Date(product.createdAt))
     : 'recently';
 
   // Transform product data to match ProductQuickView interface

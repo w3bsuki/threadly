@@ -12,7 +12,6 @@ import { keys as payments } from '@repo/payments/keys';
 import { keys as realTime } from '@repo/real-time/keys';
 import { keys as search } from '@repo/search/keys';
 import { keys as security } from '@repo/security/keys';
-import { keys as storage } from '@repo/storage/keys';
 import { keys as webhooks } from '@repo/webhooks/keys';
 import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
@@ -39,7 +38,6 @@ export const env = createEnv({
     realTime(),
     search(),
     security(),
-    storage(),
     webhooks(),
   ],
   server: {

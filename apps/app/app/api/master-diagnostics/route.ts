@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import Stripe from 'stripe';
@@ -8,13 +9,29 @@ import Stripe from 'stripe';
  * Tests all critical components for production readiness
  */
 export async function GET() {
+  // Check authentication - only allow admin access to master diagnostics
+  const { userId } = auth();
+  if (!userId) {
+    return NextResponse.json(
+      { error: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+  interface DiagnosticsSection {
+    [key: string]: unknown;
+  }
+
+  interface DeploymentChecklist {
+    [key: string]: boolean;
+  }
+
   const diagnostics = {
     timestamp: new Date().toISOString(),
     success: true,
-    sections: {} as any,
+    sections: {} as DiagnosticsSection,
     errors: [] as string[],
     warnings: [] as string[],
-    deploymentChecklist: {} as any,
+    deploymentChecklist: {} as DeploymentChecklist,
   };
 
   // 1. Environment Check
@@ -42,12 +59,12 @@ export async function GET() {
       hasUser: !!user,
       userId: user?.id || null,
     };
-  } catch (error: any) {
+  } catch (error) {
     diagnostics.sections.auth.test = {
       canGetUser: false,
-      error: error.message,
+      error: error instanceof Error ? error.message : 'Unknown error',
     };
-    diagnostics.errors.push(`Auth test failed: ${error.message}`);
+    diagnostics.errors.push(`Auth test failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 
   // 3. Database Configuration
@@ -63,12 +80,12 @@ export async function GET() {
       connected: true,
       userCount,
     };
-  } catch (error: any) {
+  } catch (error) {
     diagnostics.sections.database.test = {
       connected: false,
-      error: error.message,
+      error: error instanceof Error ? error.message : 'Unknown error',
     };
-    diagnostics.errors.push(`Database test failed: ${error.message}`);
+    diagnostics.errors.push(`Database test failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 
   // 4. Stripe Configuration
@@ -98,13 +115,13 @@ export async function GET() {
         country: account.country,
         chargesEnabled: account.charges_enabled,
       };
-    } catch (error: any) {
+    } catch (error) {
       diagnostics.sections.stripe.test = {
         connected: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : 'Unknown error',
         code: error.code,
       };
-      diagnostics.errors.push(`Stripe test failed: ${error.message}`);
+      diagnostics.errors.push(`Stripe test failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   } else {
     diagnostics.sections.stripe.test = {
@@ -159,9 +176,15 @@ export async function GET() {
   }
 
   // 8. Test env object loading
-  let envLoadTest = {
+  let envLoadTest: {
+    success: boolean;
+    error: {
+      message: string;
+      invalidVars: unknown[];
+    } | null;
+  } = {
     success: false,
-    error: null as any,
+    error: null,
   };
 
   try {
@@ -174,12 +197,12 @@ export async function GET() {
       hasPublicStripeKey: !!env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
       hasAppUrl: !!env.NEXT_PUBLIC_APP_URL,
     };
-  } catch (error: any) {
+  } catch (error) {
     envLoadTest.error = {
-      message: error.message,
-      invalidVars: error.issues || [],
+      message: error instanceof Error ? error.message : 'Unknown error',
+      invalidVars: (error as { issues?: unknown[] }).issues || [],
     };
-    diagnostics.errors.push(`Env validation failed: ${error.message}`);
+    diagnostics.errors.push(`Env validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 
   diagnostics.sections.envLoadTest = envLoadTest;

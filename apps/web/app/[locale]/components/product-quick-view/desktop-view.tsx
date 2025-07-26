@@ -166,9 +166,10 @@ export function ProductQuickViewDesktop({
     toast.success('Link copied to clipboard');
   };
 
-  const formatTimeAgo = (date: Date) => {
+  const formatTimeAgo = (date: Date | string) => {
     const now = new Date();
-    const diff = now.getTime() - date.getTime();
+    const dateObj = date instanceof Date ? date : new Date(date);
+    const diff = now.getTime() - dateObj.getTime();
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(hours / 24);
 

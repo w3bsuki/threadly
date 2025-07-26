@@ -9,3 +9,4 @@ export * from './menu-button';
 export * from './mobile-nav';
 export * from './sticky-header';
 export * from './mobile-drawer-nav';
+export * from './account-dropdown';

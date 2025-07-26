@@ -31,5 +31,8 @@ export { formatPrice as formatPriceUtility } from './utils/price';
 // Export all hooks from central location
 export * from './hooks';
 
+// Export product components
+export * from './components/products';
+
 // Version info
 export const COMMERCE_VERSION = '1.0.0';

@@ -75,7 +75,13 @@ export async function GET(request: NextRequest) {
     });
 
     // TODO: Add UserInteraction model to database schema
-    const interactions: any[] = [];
+    interface UserInteraction {
+      userId: string;
+      productId: string;
+      type: string;
+      createdAt: Date;
+    }
+    const interactions: UserInteraction[] = [];
 
     // Create CSV content
     const csvHeaders = [
@@ -120,10 +126,10 @@ export async function GET(request: NextRequest) {
 
     const csvRows = Array.from(customerData.values()).map(customer => {
       const firstPurchase = customer.orders.length > 0 
-        ? new Date(Math.min(...customer.orders.map((o: any) => o.createdAt.getTime()))).toISOString().split('T')[0]
+        ? new Date(Math.min(...customer.orders.map((o) => o.createdAt.getTime()))).toISOString().split('T')[0]
         : '';
       const lastPurchase = customer.orders.length > 0
-        ? new Date(Math.max(...customer.orders.map((o: any) => o.createdAt.getTime()))).toISOString().split('T')[0]
+        ? new Date(Math.max(...customer.orders.map((o) => o.createdAt.getTime()))).toISOString().split('T')[0]
         : '';
       const avgOrderValue = customer.orders.length > 0 ? customer.totalSpent / customer.orders.length : 0;
       
@@ -159,7 +165,6 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Customer analytics export error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

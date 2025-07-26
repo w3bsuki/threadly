@@ -1,3 +1,4 @@
+import { auth } from '@clerk/nextjs';
 import {
   createErrorResponse,
   createPaginationMeta,
@@ -7,8 +8,8 @@ import { getCacheService } from '@repo/cache';
 import type { Prisma } from '@repo/database';
 import { database } from '@repo/database';
 import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { z } from '@repo/validation';
 import type { NextRequest } from 'next/server';
-import { z } from 'zod';
 
 // Input validation schema
 const GetProductsSchema = z.object({
@@ -29,6 +30,15 @@ const GetProductsSchema = z.object({
 
 export async function GET(request: NextRequest) {
   try {
+    const { userId } = auth();
+    
+    if (!userId) {
+      return createErrorResponse(
+        new Error('Unauthorized'),
+        { status: 401 }
+      );
+    }
+
     // Check rate limit
     const rateLimitResult = await checkRateLimit(generalApiLimit, request);
     if (!rateLimitResult.allowed) {

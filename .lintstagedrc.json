@@ -1,0 +1,12 @@
+{
+  "*.{ts,tsx,js,jsx}": [
+    "biome check --apply",
+    "biome format --write"
+  ],
+  "*.{json,md,mdx,css,scss}": [
+    "biome format --write"
+  ],
+  "packages/database/prisma/schema.prisma": [
+    "prisma format"
+  ]
+}

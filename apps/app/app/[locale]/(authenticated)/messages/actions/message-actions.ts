@@ -61,34 +61,40 @@ export async function sendMessage(input: z.infer<typeof sendMessageSchema>) {
       throw new Error('You are not authorized to send messages in this conversation');
     }
 
-    // Create the message with sanitized content
-    const message = await database.message.create({
-      data: {
-        conversationId: validatedInput.conversationId,
-        senderId: dbUser.id,
-        content: sanitizeForDisplay(validatedInput.content),
-        read: false,
-      },
-      include: {
-        User: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            imageUrl: true,
+    // Use transaction to ensure message creation and conversation update are atomic
+    const message = await database.$transaction(async (tx) => {
+      // Create the message with sanitized content
+      const newMessage = await tx.message.create({
+        data: {
+          conversationId: validatedInput.conversationId,
+          senderId: dbUser.id,
+          content: sanitizeForDisplay(validatedInput.content),
+          read: false,
+        },
+        include: {
+          User: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              imageUrl: true,
+            },
           },
         },
-      },
-    });
+      });
 
-    // Update conversation's updatedAt timestamp
-    await database.conversation.update({
-      where: {
-        id: validatedInput.conversationId,
-      },
-      data: {
-        updatedAt: new Date(),
-      },
+      // Update conversation's lastMessageAt timestamp
+      await tx.conversation.update({
+        where: {
+          id: validatedInput.conversationId,
+        },
+        data: {
+          lastMessageAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
+      
+      return newMessage;
     });
 
     // Send real-time message notification
@@ -123,16 +129,7 @@ export async function sendMessage(input: z.infer<typeof sendMessageSchema>) {
       logError('Failed to send in-app notification:', error);
     }
 
-    // Send email notification
-    try {
-      // Note: Email notification for new messages can be implemented here
-      // For now, we're relying on real-time notifications only
-      // To add email notifications, you would:
-      // const { sendMessageNotificationEmail } = await import('@repo/email');
-      // await sendMessageNotificationEmail(recipientEmail, messageData);
-    } catch (error) {
-      logError('Failed to send email notification:', error);
-    }
+    // TODO: Implement email notifications for new messages
 
     return {
       success: true,
@@ -206,24 +203,27 @@ export async function createConversation(input: z.infer<typeof createConversatio
     });
 
     if (existingConversation) {
-      // Add the initial message to existing conversation
-      await database.message.create({
-        data: {
-          conversationId: existingConversation.id,
-          senderId: dbUser.id,
-          content: validatedInput.initialMessage,
-          read: false,
-        },
-      });
+      // Use transaction to add the initial message to existing conversation
+      await database.$transaction(async (tx) => {
+        await tx.message.create({
+          data: {
+            conversationId: existingConversation.id,
+            senderId: dbUser.id,
+            content: sanitizeForDisplay(validatedInput.initialMessage),
+            read: false,
+          },
+        });
 
-      // Update conversation timestamp
-      await database.conversation.update({
-        where: {
-          id: existingConversation.id,
-        },
-        data: {
-          updatedAt: new Date(),
-        },
+        // Update conversation timestamps
+        await tx.conversation.update({
+          where: {
+            id: existingConversation.id,
+          },
+          data: {
+            lastMessageAt: new Date(),
+            updatedAt: new Date(),
+          },
+        });
       });
 
       return {
@@ -239,17 +239,18 @@ export async function createConversation(input: z.infer<typeof createConversatio
         buyerId: dbUser.id,
         sellerId: product.sellerId,
         status: 'ACTIVE',
+        lastMessageAt: new Date(),
         Message: {
           create: {
             senderId: dbUser.id,
-            content: validatedInput.initialMessage,
+            content: sanitizeForDisplay(validatedInput.initialMessage),
             read: false,
           },
         },
       },
       include: {
-        User_Conversation_buyerIdToUser: true,
-        User_Conversation_sellerIdToUser: true,
+        buyer: true,
+        seller: true,
         Product: true,
       },
     });

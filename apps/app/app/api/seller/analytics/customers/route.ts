@@ -88,7 +88,13 @@ export async function GET(request: NextRequest) {
     });
 
     // TODO: Add UserInteraction model to database schema
-    const interactions: any[] = [];
+    interface UserInteraction {
+      userId: string;
+      productId: string;
+      type: string;
+      createdAt: Date;
+    }
+    const interactions: UserInteraction[] = [];
 
     // Get favorites
     const favorites = await database.favorite.findMany({
@@ -244,7 +250,6 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Customer analytics error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

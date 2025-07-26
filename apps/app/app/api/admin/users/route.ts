@@ -41,8 +41,17 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('q') || '';
     const roleFilter = searchParams.get('role') || 'all';
 
-    // Build where clause
-    const where: any = {};
+    // Build where clause with proper types
+    interface WhereClause {
+      OR?: Array<{
+        email?: { contains: string };
+        firstName?: { contains: string };
+        lastName?: { contains: string };
+      }>;
+      role?: string;
+    }
+    
+    const where: WhereClause = {};
     
     if (search) {
       where.OR = [

@@ -13,7 +13,7 @@ import { ErrorBoundary } from '@repo/utils/src/error-boundary';
 import type { ReactNode } from 'react';
 import { Footer } from './components/footer';
 import { Header } from './components/header';
-import { UnifiedBottomNav } from '../../components/navigation/unified-bottom-nav';
+import { MobileBottomNav } from './components/mobile-bottom-nav';
 import { PerformanceMonitor } from './components/performance-monitor';
 import { CurrencyProvider } from './components/providers/currency-provider';
 import { I18nProvider } from './components/providers/i18n-provider';
@@ -67,7 +67,7 @@ const RootLayout = async ({ children, params }: RootLayoutProperties) => {
                     <ErrorBoundary>{children}</ErrorBoundary>
                   </main>
                   <Footer dictionary={dictionary} />
-                  <UnifiedBottomNav />
+                  <MobileBottomNav />
                 </CurrencyProvider>
               </I18nProvider>
             </AnalyticsProvider>

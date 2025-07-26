@@ -79,9 +79,9 @@ export const CategoriesDropdown = memo(({ categories, onClose }: CategoriesDropd
                       <div className="grid grid-cols-2 gap-px bg-accent p-2">
                         {category.subcategories.map((sub) => (
                           <Link
-                            aria-label={`Browse ${sub.name} in ${category.name}${(sub as any).popular ? ' - Popular' : ''}`}
+                            aria-label={`Browse ${sub.name} in ${category.name}${sub.popular ? ' - Popular' : ''}`}
                             className={`flex items-center gap-2 rounded-[var(--radius-md)] bg-background px-3 py-2 transition-colors hover:bg-muted ${
-                              (sub as any).popular ? 'ring-1 ring-blue-200' : ''
+                              sub.popular ? 'ring-1 ring-blue-200' : ''
                             }`}
                             href={sub.href}
                             key={sub.name}
@@ -94,7 +94,7 @@ export const CategoriesDropdown = memo(({ categories, onClose }: CategoriesDropd
                             <span className="font-medium text-secondary-foreground text-sm">
                               {sub.name}
                             </span>
-                            {(sub as any).popular && (
+                            {sub.popular && (
                               <span aria-label="Popular" className="text-blue-600 text-xs">
                                 •
                               </span>

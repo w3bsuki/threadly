@@ -72,7 +72,7 @@ export function ProductForm({ userId }: ProductFormProps) {
       } else {
         if (result.details) {
           // Show specific validation errors
-          result.details.forEach((detail: any) => {
+          result.details.forEach((detail: { path?: (string | number)[]; message: string }) => {
             toast.error(`${detail.path?.join('.')}: ${detail.message}`);
           });
         } else {

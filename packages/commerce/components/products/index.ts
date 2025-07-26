@@ -1,0 +1,10 @@
+export { ProductDetailContainer } from './product-detail-container';
+export { ProductImageGallery } from './product-image-gallery';
+export { ProductHeader } from './product-header';
+export { SellerInfoCard } from './seller-info-card';
+export { ProductDetailsCard } from './product-details-card';
+export { ProductActions } from './product-actions';
+export { ProductDescription } from './product-description';
+export { SimilarProducts } from './similar-products';
+export { MobileStickyActions } from './mobile-sticky-actions';
+export { ProductBreadcrumb } from './product-breadcrumb';

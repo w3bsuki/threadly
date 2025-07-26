@@ -65,7 +65,17 @@ export async function POST(request: NextRequest) {
     };
 
     // Create the report
-    const reportData: any = {
+    type ReportData = {
+      reporterId: string;
+      type: string;
+      reason: string;
+      description?: string;
+      status: string;
+      productId?: string;
+      reportedUserId?: string;
+    };
+
+    const reportData: ReportData = {
       reporterId: dbUser.id,
       type,
       reason: sanitizedData.reason,
@@ -161,7 +171,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    const where: any = {};
+    interface WhereClause {
+      status?: string;
+    }
+
+    const where: WhereClause = {};
     if (status) {
       where.status = status;
     }

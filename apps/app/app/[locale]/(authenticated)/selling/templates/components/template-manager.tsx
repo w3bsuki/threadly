@@ -44,7 +44,7 @@ interface Template {
   brand: string | null;
   size: string | null;
   color: string | null;
-  basePrice: any | null;
+  basePrice: number | null;
   tags: string[];
   isDefault: boolean;
   usageCount: number;
@@ -61,7 +61,7 @@ interface TemplateManagerProps {
   initialTemplates: Template[];
   categories: Category[];
   locale: string;
-  dictionary: any;
+  dictionary: Record<string, string>;
 }
 
 export function TemplateManager({
@@ -75,7 +75,7 @@ export function TemplateManager({
   const [editingTemplate, setEditingTemplate] = useState<Template | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleCreateTemplate = async (templateData: any) => {
+  const handleCreateTemplate = async (templateData: Partial<Template>) => {
     setIsLoading(true);
     try {
       const response = await fetch('/api/seller/templates', {
@@ -90,13 +90,12 @@ export function TemplateManager({
         setIsCreateOpen(false);
       }
     } catch (error) {
-      console.error('Failed to create template:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleUpdateTemplate = async (id: string, templateData: any) => {
+  const handleUpdateTemplate = async (id: string, templateData: Partial<Template>) => {
     setIsLoading(true);
     try {
       const response = await fetch(`/api/seller/templates/${id}`, {
@@ -111,7 +110,6 @@ export function TemplateManager({
         setEditingTemplate(null);
       }
     } catch (error) {
-      console.error('Failed to update template:', error);
     } finally {
       setIsLoading(false);
     }
@@ -130,7 +128,6 @@ export function TemplateManager({
         setTemplates(prev => prev.filter(t => t.id !== id));
       }
     } catch (error) {
-      console.error('Failed to delete template:', error);
     } finally {
       setIsLoading(false);
     }
@@ -165,7 +162,6 @@ export function TemplateManager({
           : t
       ));
     } catch (error) {
-      console.error('Failed to track template usage:', error);
     }
   };
 

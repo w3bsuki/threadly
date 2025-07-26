@@ -10,11 +10,13 @@ import { Plus, Edit, MoreHorizontal, Eye } from 'lucide-react';
 import { decimalToNumber } from '@repo/utils';
 import { CursorPagination, useCursorPagination } from '@repo/design-system/components/marketplace';
 import type { CursorPaginationResult } from '@repo/design-system/lib/pagination';
+import type { Decimal } from '@prisma/client/runtime/library';
+import type { Dictionary } from '@repo/validation/schemas';
 
 interface Product {
   id: string;
   title: string;
-  price: any; // Decimal from Prisma
+  price: Decimal;
   condition: string;
   status: string;
   brand: string | null;
@@ -28,7 +30,7 @@ interface ListingsWithPaginationProps {
   initialData: CursorPaginationResult<Product>;
   userId: string;
   locale: string;
-  dictionary: any;
+  dictionary: Dictionary;
 }
 
 export function ListingsWithPagination({

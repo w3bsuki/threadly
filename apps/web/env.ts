@@ -41,8 +41,12 @@ export const env = createEnv({
   },
   client: {
     // Client-side variables for customer marketplace
-    NEXT_PUBLIC_APP_URL: z.string().url().optional(),
-    NEXT_PUBLIC_API_URL: z.string().url().optional(),
+    NEXT_PUBLIC_APP_URL: process.env.NODE_ENV === 'production' 
+      ? z.string().url()
+      : z.string().url().optional(),
+    NEXT_PUBLIC_API_URL: process.env.NODE_ENV === 'production'
+      ? z.string().url()
+      : z.string().url().optional(),
   },
   runtimeEnv: {
     PORT: process.env.PORT || '3001',

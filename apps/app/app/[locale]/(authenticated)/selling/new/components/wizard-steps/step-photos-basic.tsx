@@ -8,11 +8,13 @@ import { UseFormReturn } from 'react-hook-form';
 import { ImageUpload } from '../image-upload';
 import { Badge } from '@repo/design-system/components';
 import { FileText as Template } from 'lucide-react';
+import type { CreateProductInput } from '@repo/validation/schemas';
+import type { SellerTemplate } from '@repo/validation/schemas';
 
 interface StepPhotosBasicProps {
-  form: UseFormReturn<any>;
-  templates: any[];
-  onTemplateSelect: (template: any) => void;
+  form: UseFormReturn<CreateProductInput>;
+  templates: SellerTemplate[];
+  onTemplateSelect: (template: SellerTemplate) => void;
 }
 
 export function StepPhotosBasic({ form, templates, onTemplateSelect }: StepPhotosBasicProps) {
@@ -45,7 +47,7 @@ export function StepPhotosBasic({ form, templates, onTemplateSelect }: StepPhoto
                       )}
                     </div>
                     <span className="text-xs text-muted-foreground">
-                      Used {template.usageCount} times
+                      Template #{template.id.slice(0, 8)}
                     </span>
                   </div>
                 </Button>

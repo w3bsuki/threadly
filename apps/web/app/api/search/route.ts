@@ -1,12 +1,35 @@
+import { auth } from '@clerk/nextjs';
 import { getCacheService } from '@repo/cache';
 import type { Prisma } from '@repo/database';
 import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
 import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { z } from '@repo/validation';
 import { type NextRequest, NextResponse } from 'next/server';
+
+const searchQuerySchema = z.object({
+  q: z.string().trim().max(100)
+    .refine((text) => !/<[^>]*>/.test(text), {
+      message: 'HTML tags are not allowed',
+    }).optional(),
+  refresh: z.enum(['true', 'false']).optional(),
+  category: z.string().trim().max(50)
+    .refine((text) => !/<[^>]*>/.test(text), {
+      message: 'HTML tags are not allowed',
+    }).optional(),
+});
 
 export async function GET(request: NextRequest) {
   try {
+    const { userId } = auth();
+    
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     // Check rate limit
     const rateLimitResult = await checkRateLimit(generalApiLimit, request);
     if (!rateLimitResult.allowed) {
@@ -20,9 +43,21 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const query = searchParams.get('q');
-    const refresh = searchParams.get('refresh');
-    const category = searchParams.get('category');
+    
+    const validation = searchQuerySchema.safeParse({
+      q: searchParams.get('q') || undefined,
+      refresh: searchParams.get('refresh') || undefined,
+      category: searchParams.get('category') || undefined,
+    });
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Invalid search parameters' },
+        { status: 400 }
+      );
+    }
+
+    const { q: query, refresh, category } = validation.data;
 
     // Handle refresh requests (pull-to-refresh)
     if (refresh === 'true') {

@@ -1,10 +1,20 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs';
 
 /**
  * Master environment validation endpoint
  * Checks all required environment variables for production
  */
 export async function GET() {
+  // Check authentication - only allow admin access to env diagnostics
+  const { userId } = auth();
+  if (!userId) {
+    return NextResponse.json(
+      { error: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
   const isProduction = process.env.NODE_ENV === 'production';
   const vercelEnv = process.env.VERCEL_ENV;
   
@@ -135,9 +145,15 @@ export async function GET() {
   }
   
   // Test environment loading
-  let envLoadTest = {
+  let envLoadTest: {
+    canLoadEnv: boolean;
+    error: {
+      message: string;
+      invalidEnvVars: unknown[];
+    } | null;
+  } = {
     canLoadEnv: false,
-    error: null as any,
+    error: null,
   };
   
   try {
@@ -147,12 +163,12 @@ export async function GET() {
       canLoadEnv: true,
       error: null,
     };
-  } catch (error: any) {
+  } catch (error) {
     envLoadTest = {
       canLoadEnv: false,
       error: {
-        message: error.message,
-        invalidEnvVars: error.issues || [],
+        message: error instanceof Error ? error.message : 'Unknown error',
+        invalidEnvVars: (error as { issues?: unknown[] }).issues || [],
       },
     };
   }

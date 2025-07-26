@@ -38,13 +38,29 @@ import {
   DropdownMenuTrigger,
 } from '@repo/design-system/components';
 import { cn } from '@repo/design-system/lib/utils';
+import type { Product, ProductImage, User, Category } from '@repo/database';
+
+interface ProductWithRelations extends Product {
+  images: ProductImage[];
+  seller: User & {
+    profileImage?: string | null;
+    averageRating?: number;
+    _count: {
+      productsAsseller: number;
+    };
+  };
+  category: Category;
+  _count: {
+    favorites: number;
+  };
+}
 
 interface ProductDetailContentProps {
-  product: any;
-  currentUser: any;
+  product: ProductWithRelations;
+  currentUser: User;
   isFavorited: boolean;
-  similarProducts: any[];
-  sellerProducts: any[];
+  similarProducts: ProductWithRelations[];
+  sellerProducts: ProductWithRelations[];
 }
 
 export const ProductDetailContent = ({
@@ -66,14 +82,14 @@ export const ProductDetailContent = ({
     }).format(amount); // Price is already in dollars
   };
 
-  const getSellerName = (seller: any) => {
+  const getSellerName = (seller: User) => {
     if (seller.firstName && seller.lastName) {
       return `${seller.firstName} ${seller.lastName}`;
     }
     return 'Unknown Seller';
   };
 
-  const getSellerInitials = (seller: any) => {
+  const getSellerInitials = (seller: User) => {
     if (seller.firstName && seller.lastName) {
       return `${seller.firstName[0]}${seller.lastName[0]}`;
     }

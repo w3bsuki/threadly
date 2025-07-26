@@ -1,0 +1,416 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Source paths for design system components */
+@source "../components/**/*.{ts,tsx}";
+@source "../lib/**/*.{ts,tsx}";
+@source "../hooks/**/*.{ts,tsx}";
+@source "../providers/**/*.{ts,tsx}";
+
+@plugin "@tailwindcss/typography";
+
+/* Tailwind v4 Theme Configuration */
+@theme {
+  /* Modern 2025 Design Tokens - Inspired by Vercel, Stripe, Linear, Arc */
+  
+  /* Colors - Using OKLCH for perceptual uniformity */
+  --color-black: oklch(0% 0 0);
+  --color-white: oklch(100% 0 0);
+  
+  /* Gray scale - Refined neutrals */
+  --color-gray-50: oklch(98.5% 0 0);
+  --color-gray-100: oklch(97% 0 0);
+  --color-gray-200: oklch(95% 0 0);
+  --color-gray-300: oklch(92.2% 0 0);
+  --color-gray-400: oklch(85% 0 0);
+  --color-gray-500: oklch(70.8% 0 0);
+  --color-gray-600: oklch(55.6% 0 0);
+  --color-gray-700: oklch(43.9% 0 0);
+  --color-gray-800: oklch(26.9% 0 0);
+  --color-gray-900: oklch(20.5% 0 0);
+  --color-gray-950: oklch(14.5% 0 0);
+  
+  /* Functional colors */
+  --color-red-500: oklch(57.7% 0.245 27.325);
+  --color-green-500: oklch(50.8% 0.118 165.612);
+  --color-blue-500: oklch(60% 0.118 184.704);
+  --color-yellow-500: oklch(82.8% 0.189 84.429);
+  --color-purple-500: oklch(48.8% 0.243 264.376);
+  --color-orange-500: oklch(64.6% 0.222 41.116);
+  
+  /* Semantic color mappings */
+  --color-background: var(--color-white);
+  --color-foreground: var(--color-gray-950);
+  --color-card: var(--color-white);
+  --color-card-foreground: var(--color-gray-950);
+  --color-popover: var(--color-white);
+  --color-popover-foreground: var(--color-gray-950);
+  --color-primary: var(--color-gray-900);
+  --color-primary-foreground: var(--color-gray-50);
+  --color-secondary: var(--color-gray-100);
+  --color-secondary-foreground: var(--color-gray-900);
+  --color-muted: var(--color-gray-100);
+  --color-muted-foreground: var(--color-gray-500);
+  --color-accent: var(--color-gray-100);
+  --color-accent-foreground: var(--color-gray-900);
+  --color-destructive: var(--color-red-500);
+  --color-destructive-foreground: var(--color-gray-50);
+  --color-success: var(--color-green-500);
+  --color-success-foreground: var(--color-gray-50);
+  --color-warning: var(--color-yellow-500);
+  --color-warning-foreground: var(--color-gray-950);
+  --color-border: var(--color-gray-200);
+  --color-input: var(--color-gray-200);
+  --color-ring: var(--color-gray-400);
+  
+  /* Brand colors */
+  --color-brand-primary: oklch(51.5% 0.183 264.376);
+  --color-brand-secondary: oklch(52.2% 0.243 293.556);
+  --color-brand-accent: oklch(50.1% 0.281 314.765);
+  --color-brand-purple: oklch(48.8% 0.243 264.376);
+  
+  /* Font families */
+  --font-family-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+  
+  /* Modern font sizes - Tighter scale */
+  --font-size-2xs: 0.625rem;    /* 10px */
+  --font-size-xs: 0.6875rem;    /* 11px */
+  --font-size-sm: 0.8125rem;    /* 13px */
+  --font-size-base: 0.875rem;   /* 14px */
+  --font-size-lg: 1rem;         /* 16px */
+  --font-size-xl: 1.125rem;     /* 18px */
+  --font-size-2xl: 1.375rem;    /* 22px */
+  --font-size-3xl: 1.75rem;     /* 28px */
+  --font-size-4xl: 2rem;        /* 32px */
+  --font-size-5xl: 2.5rem;      /* 40px */
+  --font-size-6xl: 3rem;        /* 48px */
+  --font-size-7xl: 3.5rem;      /* 56px */
+  
+  /* Font weights */
+  --font-weight-thin: 100;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-black: 900;
+  
+  /* Line heights - Tighter for modern look */
+  --line-height-none: 1;
+  --line-height-tight: 1.2;
+  --line-height-snug: 1.325;
+  --line-height-normal: 1.45;
+  --line-height-relaxed: 1.6;
+  --line-height-loose: 1.75;
+  
+  /* Letter spacing - Tighter tracking */
+  --letter-spacing-tighter: -0.04em;
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-normal: -0.01em;
+  --letter-spacing-wide: 0.01em;
+  --letter-spacing-wider: 0.02em;
+  --letter-spacing-widest: 0.08em;
+  
+  /* Modern spacing scale - Based on 4px grid */
+  --spacing-0: 0;
+  --spacing-px: 1px;
+  --spacing-0_5: 0.125rem;   /* 2px */
+  --spacing-1: 0.25rem;      /* 4px */
+  --spacing-1_5: 0.375rem;   /* 6px */
+  --spacing-2: 0.5rem;       /* 8px */
+  --spacing-2_5: 0.625rem;   /* 10px */
+  --spacing-3: 0.75rem;      /* 12px */
+  --spacing-3_5: 0.875rem;   /* 14px */
+  --spacing-4: 1rem;         /* 16px */
+  --spacing-5: 1.25rem;      /* 20px */
+  --spacing-6: 1.5rem;       /* 24px */
+  --spacing-7: 1.75rem;      /* 28px */
+  --spacing-8: 2rem;         /* 32px */
+  --spacing-9: 2.25rem;      /* 36px */
+  --spacing-10: 2.5rem;      /* 40px */
+  --spacing-11: 2.75rem;     /* 44px */
+  --spacing-12: 3rem;        /* 48px */
+  --spacing-14: 3.5rem;      /* 56px */
+  --spacing-16: 4rem;        /* 64px */
+  --spacing-20: 5rem;        /* 80px */
+  --spacing-24: 6rem;        /* 96px */
+  
+  /* Border radius - Modern, refined */
+  --radius-none: 0;
+  --radius-xs: 0.125rem;     /* 2px */
+  --radius-sm: 0.1875rem;    /* 3px */
+  --radius-md: 0.375rem;     /* 6px */
+  --radius-lg: 0.5rem;       /* 8px */
+  --radius-xl: 0.625rem;     /* 10px */
+  --radius-2xl: 0.75rem;     /* 12px */
+  --radius-3xl: 1rem;        /* 16px */
+  --radius-full: 9999px;
+  
+  /* Shadows - Subtle and refined */
+  --shadow-xs: 0 0 0 1px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+  --shadow-none: 0 0 #0000;
+  
+  /* Animation durations */
+  --duration-instant: 0ms;
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --duration-slower: 400ms;
+  
+  /* Z-index scale */
+  --z-0: 0;
+  --z-10: 10;
+  --z-20: 20;
+  --z-30: 30;
+  --z-40: 40;
+  --z-50: 50;
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+}
+
+/* Custom variant for dark mode */
+@variant dark (&:is(.dark *));
+
+/* Keyframe animations */
+@keyframes scroll {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes slide-in-from-top {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes slide-in-from-bottom {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes slide-in-from-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slide-in-from-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes scale-in {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes scale-out {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(0.95); opacity: 0; }
+}
+
+/* Root and dark mode color scheme */
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+  
+  /* Dark mode color overrides */
+  --color-background: var(--color-gray-950);
+  --color-foreground: var(--color-gray-50);
+  --color-card: var(--color-gray-900);
+  --color-card-foreground: var(--color-gray-50);
+  --color-popover: var(--color-gray-900);
+  --color-popover-foreground: var(--color-gray-50);
+  --color-primary: var(--color-gray-50);
+  --color-primary-foreground: var(--color-gray-900);
+  --color-secondary: var(--color-gray-800);
+  --color-secondary-foreground: var(--color-gray-50);
+  --color-muted: var(--color-gray-800);
+  --color-muted-foreground: var(--color-gray-400);
+  --color-accent: var(--color-gray-800);
+  --color-accent-foreground: var(--color-gray-50);
+  --color-border: var(--color-gray-800);
+  --color-input: var(--color-gray-800);
+  --color-ring: var(--color-gray-600);
+}
+
+/* Base layer styles */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  /* Modern base font size - 14px default */
+  html {
+    font-size: 14px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  @media (min-width: 640px) {
+    html {
+      font-size: 15px;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    html {
+      font-size: 16px;
+    }
+  }
+}
+
+/* Component layer styles */
+@layer components {
+  /* Modern button base styles */
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 whitespace-nowrap 
+           rounded-md font-medium transition-all duration-fast
+           disabled:pointer-events-none disabled:opacity-50
+           outline-none focus-visible:ring-2 focus-visible:ring-ring/20 
+           focus-visible:ring-offset-1 active:scale-[0.98];
+  }
+  
+  /* Modern input base styles */
+  .input {
+    @apply flex h-9 w-full rounded-md border border-input bg-background 
+           px-3 py-1 text-sm shadow-xs transition-colors
+           file:border-0 file:bg-transparent file:text-sm file:font-medium
+           placeholder:text-muted-foreground
+           focus-visible:outline-none focus-visible:ring-1 
+           focus-visible:ring-ring/20 focus-visible:border-ring
+           disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  
+  /* Modern card styles */
+  .card {
+    @apply rounded-lg border bg-card text-card-foreground shadow-xs;
+  }
+  
+  /* Modern badge styles */
+  .badge {
+    @apply inline-flex items-center rounded-md px-2 py-0.5 
+           text-xs font-medium transition-colors;
+  }
+}
+
+/* Utility layer styles */
+@layer utilities {
+  /* Modern touch targets - 36px minimum, 40px comfortable */
+  .touch-min {
+    min-height: 36px;
+    min-width: 36px;
+    touch-action: manipulation;
+  }
+  
+  .touch-comfortable {
+    min-height: 40px;
+    min-width: 40px;
+    touch-action: manipulation;
+  }
+  
+  .touch-large {
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation;
+  }
+  
+  /* Mobile-first touch target enforcement */
+  @media (max-width: 640px) {
+    /* Interactive elements get automatic touch targets */
+    button:not(.no-touch),
+    [role="button"]:not(.no-touch),
+    a:not(.inline):not(.no-touch),
+    input:not([type="hidden"]):not(.no-touch),
+    select:not(.no-touch),
+    textarea:not(.no-touch),
+    [tabindex]:not([tabindex="-1"]):not(.no-touch) {
+      @apply touch-min;
+    }
+    
+    /* Inline links don't need touch targets */
+    a.inline,
+    .prose a,
+    .text a {
+      min-height: unset;
+      min-width: unset;
+    }
+  }
+  
+  /* Text utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .text-pretty {
+    text-wrap: pretty;
+  }
+  
+  /* Animation utilities */
+  .animate-in {
+    animation-duration: var(--duration-normal);
+    animation-fill-mode: both;
+  }
+  
+  .animate-out {
+    animation-duration: var(--duration-fast);
+    animation-fill-mode: both;
+  }
+  
+  /* Modern gradient utilities */
+  .gradient-brand {
+    background: linear-gradient(135deg, 
+      var(--color-brand-primary) 0%, 
+      var(--color-brand-secondary) 50%, 
+      var(--color-brand-accent) 100%
+    );
+  }
+  
+  .gradient-mesh {
+    background-image: 
+      radial-gradient(at 40% 20%, var(--color-brand-primary) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, var(--color-brand-secondary) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, var(--color-brand-accent) 0px, transparent 50%);
+  }
+  
+  /* Focus ring utilities */
+  .focus-ring {
+    @apply outline-none focus:ring-2 focus:ring-ring/20 
+           focus:ring-offset-1 focus:ring-offset-background;
+  }
+  
+  .focus-ring-subtle {
+    @apply outline-none focus:ring-1 focus:ring-ring/10 
+           focus:ring-offset-0;
+  }
+}

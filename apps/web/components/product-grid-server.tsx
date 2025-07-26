@@ -1,8 +1,16 @@
 import { getCacheService } from '@repo/cache';
 import type { Prisma, Product, ProductImage } from '@repo/database';
-import { database, ProductStatus } from '@repo/database';
+import { database } from '@repo/database';
 import { logError, parseError } from '@repo/observability/server';
 import { ProductGridClient } from './product-grid-client';
+
+// Define ProductStatus enum values
+const ProductStatus = {
+  AVAILABLE: 'AVAILABLE',
+  SOLD: 'SOLD',
+  RESERVED: 'RESERVED',
+  REMOVED: 'REMOVED'
+} as const;
 
 // Type for our transformed product data
 interface TransformedProduct {
@@ -109,7 +117,7 @@ function transformProduct(
           'VALENTINO',
         ].some((brand) => product.brand?.toUpperCase().includes(brand))
       : false,
-    uploadedAgo: getTimeAgo(product.createdAt),
+    uploadedAgo: getTimeAgo(new Date(product.createdAt)),
     _count: product._count || { favorites: 0 },
   };
 }
@@ -132,55 +140,68 @@ export async function ProductGridServer({
   // Fetching products with filters
 
   try {
-    const _cache = getCacheService({
+    const cache = getCacheService({
       url:
         process.env.UPSTASH_REDIS_REST_URL ||
         process.env.REDIS_URL ||
         'redis://localhost:6379',
       token: process.env.UPSTASH_REDIS_REST_TOKEN || undefined,
     });
-    // Build the where clause based on category - SIMPLIFIED TO AVOID HANGING
-    const _whereClause: Prisma.ProductWhereInput = {
+    
+    // Build the where clause based on filters
+    const whereClause: Prisma.ProductWhereInput = {
       status: ProductStatus.AVAILABLE,
+      ...(category && { category: { slug: category } }),
+      ...(brand && { brand: { contains: brand, mode: 'insensitive' } }),
+      ...(condition && { condition }),
     };
 
     // Add sorting
-    let _orderBy: Prisma.ProductOrderByWithRelationInput = {
+    let orderBy: Prisma.ProductOrderByWithRelationInput = {
       createdAt: 'desc',
     }; // default newest
     if (sort === 'price-asc') {
-      _orderBy = { price: 'asc' };
+      orderBy = { price: 'asc' };
     } else if (sort === 'price-desc') {
-      _orderBy = { price: 'desc' };
+      orderBy = { price: 'desc' };
     } else if (sort === 'popular') {
-      _orderBy = { views: 'desc' };
+      orderBy = { views: 'desc' };
     }
 
     // Create cache key based on filters
-    const _cacheKey = `products:${category || 'all'}:${brand || 'all'}:${condition || 'all'}:${sort || 'newest'}:${limit}`;
+    const cacheKey = `products:${category || 'all'}:${brand || 'all'}:${condition || 'all'}:${sort || 'newest'}:${limit}`;
 
-    // Fetch real products from database with caching
-    // Executing product query
-
-    // TEMPORARY FIX: Direct query without cache to get products loading
-    const products = await database.product.findMany({
-      where: { status: ProductStatus.AVAILABLE },
-      include: {
-        images: { orderBy: { displayOrder: 'asc' }, take: 1 },
-        seller: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            location: true,
-            averageRating: true,
+    // Try to get from cache first
+    const cachedProducts = await cache.get(cacheKey);
+    
+    let products;
+    if (cachedProducts && Array.isArray(cachedProducts)) {
+      products = cachedProducts;
+    } else {
+      // Fetch from database if not in cache
+      products = await database.product.findMany({
+        where: whereClause,
+        include: {
+          images: { orderBy: { displayOrder: 'asc' }, take: 1 },
+          seller: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              location: true,
+              averageRating: true,
+            },
           },
+          category: { select: { name: true, slug: true } },
+          _count: { select: { favorites: true } },
         },
-        category: { select: { name: true, slug: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 24,
-    });
+        orderBy,
+        take: limit,
+      });
+      
+      // Cache the results for 5 minutes
+      await cache.set(cacheKey, products, 300);
+    }
 
     // Query completed successfully
 

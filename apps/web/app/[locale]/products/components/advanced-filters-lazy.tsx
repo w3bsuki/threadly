@@ -20,7 +20,15 @@ interface AdvancedFiltersLazyProps {
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
   };
-  onFiltersChange: (filters: any) => void;
+  onFiltersChange: (filters: {
+    category?: string;
+    condition?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    size?: string;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  }) => void;
 }
 
 function AdvancedFiltersSkeleton() {

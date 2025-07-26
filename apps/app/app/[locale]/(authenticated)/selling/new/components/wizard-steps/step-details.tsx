@@ -5,9 +5,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components';
 import { UseFormReturn } from 'react-hook-form';
 import { Badge } from '@repo/design-system/components';
+import type { CreateProductInput } from '@repo/validation/schemas';
 
 interface StepDetailsProps {
-  form: UseFormReturn<any>;
+  form: UseFormReturn<CreateProductInput>;
 }
 
 const CONDITION_INFO = {

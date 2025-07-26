@@ -38,7 +38,6 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
     onUploadError: (error: Error) => {
       setIsUploading(false);
       
-      console.error('Upload error:', error);
       
       if (error.message.includes('auth') || error.message.includes('Authentication')) {
         alert('Authentication required. Please log in to upload images.');
@@ -72,7 +71,6 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
     try {
       await startUpload(validFiles);
     } catch (error) {
-      console.error('Upload failed:', error);
       if (error instanceof Error) {
         alert(`Upload failed: ${error.message}`);
       } else {
@@ -99,7 +97,7 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       <Card
         className={cn(
           "border-2 border-dashed border-muted-foreground/25 hover:border-muted-foreground/50 transition-colors",
@@ -108,7 +106,7 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
         onDrop={handleDrop}
         onDragOver={handleDragOver}
       >
-        <div className="p-6 text-center">
+        <div className="p-4 sm:p-6 text-center">
           <input
             type="file"
             multiple
@@ -119,19 +117,19 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
             disabled={isUploading || isUploadThingUploading || value.length >= maxFiles}
           />
           
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[var(--radius-lg)] bg-muted">
-            <Upload className="h-6 w-6 text-muted-foreground" />
+          <div className="mx-auto flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-[var(--radius-lg)] bg-muted">
+            <Upload className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground" />
           </div>
           
-          <div className="mt-4">
+          <div className="mt-3 sm:mt-4">
             <label
               htmlFor="image-upload"
               className={cn(
-                "cursor-pointer text-sm font-medium text-primary hover:text-primary/80",
+                "cursor-pointer text-sm font-medium text-primary hover:text-primary/80 touch-manipulation",
                 (isUploading || isUploadThingUploading || value.length >= maxFiles) && "cursor-not-allowed opacity-50"
               )}
             >
-              {(isUploading || isUploadThingUploading) ? 'Uploading...' : 'Click to upload or drag and drop'}
+              {(isUploading || isUploadThingUploading) ? 'Uploading...' : 'Tap to add photos'}
             </label>
             <p className="text-xs text-muted-foreground mt-1">
               PNG, JPG, GIF up to 8MB ({value.length}/{maxFiles} images)
@@ -141,41 +139,52 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
       </Card>
 
       {value.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {value.map((image, index) => (
-            <Card key={index} className="relative overflow-hidden">
+            <Card key={index} className="relative overflow-hidden group">
               <div className="aspect-square relative">
                 <Image
                   src={image.url}
                   alt={image.alt || `Product image ${index + 1}`}
                   fill
                   className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  sizes="(max-width: 640px) 33vw, (max-width: 768px) 25vw, 20vw"
                 />
                 <Button
                   type="button"
                   variant="destructive"
                   size="icon"
-                  className="absolute top-2 right-2 h-6 w-6"
+                  className="absolute top-1 right-1 h-7 w-7 sm:h-6 sm:w-6 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                   onClick={() => removeImage(index)}
                 >
-                  <X className="h-3 w-3" />
+                  <X className="h-3.5 w-3.5 sm:h-3 sm:w-3" />
                 </Button>
                 {index === 0 && (
-                  <div className="absolute bottom-2 left-2 bg-foreground/70 text-background text-xs px-2 py-1 rounded">
+                  <div className="absolute bottom-1 left-1 bg-foreground/80 text-background text-[10px] sm:text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-sm">
                     Main
                   </div>
                 )}
               </div>
             </Card>
           ))}
+          {value.length < maxFiles && (
+            <label
+              htmlFor="image-upload"
+              className={cn(
+                "aspect-square border-2 border-dashed border-muted-foreground/25 rounded-[var(--radius-md)] flex items-center justify-center cursor-pointer hover:border-muted-foreground/50 transition-colors touch-manipulation",
+                (isUploading || isUploadThingUploading) && "cursor-not-allowed opacity-50"
+              )}
+            >
+              <Upload className="h-5 w-5 text-muted-foreground/50" />
+            </label>
+          )}
         </div>
       )}
 
       {value.length === 0 && (
-        <div className="text-center py-8">
-          <ImageIcon className="mx-auto h-12 w-12 text-muted-foreground/50" />
-          <p className="mt-2 text-sm text-muted-foreground">
+        <div className="text-center py-6 sm:py-8">
+          <ImageIcon className="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground/50" />
+          <p className="mt-2 text-xs sm:text-sm text-muted-foreground">
             Add photos to help buyers see your item
           </p>
         </div>

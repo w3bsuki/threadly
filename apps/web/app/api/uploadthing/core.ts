@@ -37,20 +37,9 @@ export const ourFileRouter = {
   })
     .middleware(async ({ req }) => {
       try {
-        console.log('=== UPLOADTHING MIDDLEWARE START ===');
-        console.log('Request headers:', Object.fromEntries(req.headers.entries()));
-        console.log('Checking authentication for upload');
-        
         const user = await currentUser();
-        console.log('Current user result:', user ? { 
-          id: user.id, 
-          email: user.emailAddresses[0]?.emailAddress,
-          firstName: user.firstName,
-          lastName: user.lastName
-        } : 'Not authenticated');
         
         if (!user) {
-          console.error('No user found - authentication failed');
           log.warn("Unauthorized upload attempt", { 
             ip: req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip"),
             userAgent: req.headers.get("user-agent")
@@ -65,19 +54,12 @@ export const ourFileRouter = {
           userAgent: req.headers.get("user-agent")
         });
 
-        console.log('=== UPLOADTHING MIDDLEWARE SUCCESS ===');
         return { 
           userId: user.id,
           userEmail: user.emailAddresses[0]?.emailAddress,
           uploadTime: now.getTime()
         };
       } catch (error) {
-        console.error('=== UPLOADTHING MIDDLEWARE ERROR ===');
-        console.error('Middleware error details:', {
-          message: error instanceof Error ? error.message : 'Unknown error',
-          stack: error instanceof Error ? error.stack : undefined,
-          error
-        });
         throw error;
       }
     })

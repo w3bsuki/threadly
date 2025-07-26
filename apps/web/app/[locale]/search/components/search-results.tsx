@@ -121,7 +121,7 @@ export function SearchResults({
     'most_viewed',
     'most_favorited',
   ] as const;
-  const sortBy = validSortOptions.includes(sort as any)
+  const sortBy = validSortOptions.includes(sort as typeof validSortOptions[number])
     ? (sort as (typeof validSortOptions)[number])
     : 'relevance';
 

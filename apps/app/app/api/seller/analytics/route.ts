@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
     }
 
   } catch (error) {
-    log.error('Analytics API error:', error as any);
+    log.error('Analytics API error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    log.error('Analytics tracking error:', error as any);
+    log.error('Analytics tracking error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

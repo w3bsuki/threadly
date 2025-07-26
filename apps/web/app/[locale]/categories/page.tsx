@@ -27,7 +27,7 @@ const getCategoriesWithCounts = cache(async (search?: string) => {
           }
         }
       },
-      other_Category: {
+      children: {
         include: {
           _count: {
             select: {

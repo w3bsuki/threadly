@@ -20,14 +20,13 @@
       "types": "./dist/mocks/index.d.ts",
       "default": "./dist/mocks/index.js"
     },
-    "./a11y/axe-matchers": {
-      "types": "./src/a11y/axe-matchers.ts",
-      "default": "./dist/index.js"
+    "./a11y": {
+      "types": "./dist/a11y/index.d.ts",
+      "default": "./dist/a11y/index.js"
     }
   },
   "scripts": {
-    "build": "echo 'Skipping testing package build in production' && exit 0",
-    "build:dev": "tsup",
+    "build": "tsup",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"

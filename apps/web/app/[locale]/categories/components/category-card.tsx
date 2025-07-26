@@ -10,7 +10,7 @@ type CategoryWithCount = {
   _count: {
     Product: number;
   };
-  other_Category: {
+  children: {
     id: string;
     name: string;
     slug: string;
@@ -26,7 +26,7 @@ type CategoryCardProps = {
 
 export const CategoryCard = ({ category }: CategoryCardProps) => {
   const totalProducts = category._count.Product + 
-    category.other_Category.reduce((sum, sub) => sum + sub._count.Product, 0);
+    category.children.reduce((sum, sub) => sum + sub._count.Product, 0);
 
   return (
     <div className="group relative overflow-hidden rounded-[var(--radius-lg)] bg-background shadow-md hover:shadow-lg transition-shadow">
@@ -56,11 +56,11 @@ export const CategoryCard = ({ category }: CategoryCardProps) => {
         </div>
       </Link>
       
-      {category.other_Category.length > 0 && (
+      {category.children.length > 0 && (
         <div className="p-4 border-t border-border">
           <h4 className="font-medium text-foreground text-sm mb-2">Subcategories</h4>
           <div className="grid grid-cols-1 gap-1">
-            {category.other_Category.slice(0, 3).map((sub) => (
+            {category.children.slice(0, 3).map((sub) => (
               <Link
                 key={sub.id}
                 href={`/products?category=${sub.slug}`}
@@ -73,12 +73,12 @@ export const CategoryCard = ({ category }: CategoryCardProps) => {
                 </span>
               </Link>
             ))}
-            {category.other_Category.length > 3 && (
+            {category.children.length > 3 && (
               <Link
                 href={`/products?category=${category.slug}`}
                 className="text-blue-600 hover:text-blue-800 text-sm font-medium py-1 px-2"
               >
-                +{category.other_Category.length - 3} more
+                +{category.children.length - 3} more
               </Link>
             )}
           </div>

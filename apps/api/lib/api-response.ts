@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { logError } from '@repo/observability/server';
 import { getSecureResponseHeaders } from './security-utils';
 
-export interface APIResponse<T = any> {
+export interface APIResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
@@ -27,7 +27,7 @@ export interface APIErrorResponse {
   success: false;
   error: string;
   code?: string;
-  details?: any;
+  details?: unknown;
   meta: {
     version: string;
     timestamp: string;
@@ -69,7 +69,7 @@ export class APIResponseBuilder {
     error: string,
     statusCode: number = 400,
     code?: string,
-    details?: any,
+    details?: unknown,
     logToConsole: boolean = true
   ): NextResponse<APIErrorResponse> {
     const response: APIErrorResponse = {
@@ -113,7 +113,7 @@ export class APIResponseBuilder {
     return this.error(message, 403, 'FORBIDDEN');
   }
 
-  static badRequest(message: string = 'Invalid request', details?: any): NextResponse<APIErrorResponse> {
+  static badRequest(message: string = 'Invalid request', details?: unknown): NextResponse<APIErrorResponse> {
     return this.error(message, 400, 'BAD_REQUEST', details);
   }
 
@@ -125,7 +125,7 @@ export class APIResponseBuilder {
     return this.error(message, 500, 'INTERNAL_ERROR');
   }
 
-  static validationError(details: any): NextResponse<APIErrorResponse> {
+  static validationError(details: unknown): NextResponse<APIErrorResponse> {
     return this.error('Validation failed', 422, 'VALIDATION_ERROR', details);
   }
 }

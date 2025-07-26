@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import { CATEGORIES } from '@repo/navigation';
+import { CATEGORIES } from '../navigation/categories';
 import { useI18n } from '../providers/i18n-provider';
 import { ActionButtons } from './action-buttons';
 import { CategoriesDropdown } from './categories-dropdown';

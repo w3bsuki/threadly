@@ -32,7 +32,11 @@ export default async function AccountPage({ params }: AccountPageProps) {
         take: 5,
         orderBy: { createdAt: 'desc' },
       },
-      Order_Order_sellerIdToUser: {
+      ordersAsBuyer: {
+        take: 5,
+        orderBy: { createdAt: 'desc' },
+      },
+      ordersAsSeller: {
         take: 5,
         orderBy: { createdAt: 'desc' },
       },
@@ -114,14 +118,28 @@ export default async function AccountPage({ params }: AccountPageProps) {
           {/* Recent Activity */}
           <div className="bg-card rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
-            {dbUser?.Order_Order_sellerIdToUser && dbUser.Order_Order_sellerIdToUser.length > 0 ? (
-              <div className="space-y-2">
-                <p className="text-sm font-medium">Recent Orders:</p>
-                {dbUser.Order_Order_sellerIdToUser.map((order) => (
-                  <div key={order.id} className="text-sm text-muted-foreground">
-                    Order #{order.id.slice(-8)} - {order.status}
+            {dbUser && (dbUser.ordersAsBuyer.length > 0 || dbUser.ordersAsSeller.length > 0) ? (
+              <div className="space-y-3">
+                {dbUser.ordersAsBuyer.length > 0 && (
+                  <div>
+                    <p className="text-sm font-medium mb-2">Recent Purchases:</p>
+                    {dbUser.ordersAsBuyer.slice(0, 3).map((order) => (
+                      <div key={order.id} className="text-sm text-muted-foreground">
+                        Order #{order.orderNumber} - {order.status}
+                      </div>
+                    ))}
                   </div>
-                ))}
+                )}
+                {dbUser.ordersAsSeller.length > 0 && (
+                  <div>
+                    <p className="text-sm font-medium mb-2">Recent Sales:</p>
+                    {dbUser.ordersAsSeller.slice(0, 3).map((order) => (
+                      <div key={order.id} className="text-sm text-muted-foreground">
+                        Sale #{order.orderNumber} - {order.status}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ) : (
               <p className="text-sm text-muted-foreground">No recent activity</p>
@@ -134,7 +152,7 @@ export default async function AccountPage({ params }: AccountPageProps) {
           <h2 className="text-xl font-semibold mb-4">Account Management</h2>
           <div className="flex flex-wrap gap-4">
             <Button variant="outline" asChild>
-              <Link href={`/${locale}/profile/${user.id}`}>
+              <Link href={`/${locale}/profile/${dbUser?.id || user.id}`}>
                 View Public Profile
               </Link>
             </Button>

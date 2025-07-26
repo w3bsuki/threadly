@@ -30,40 +30,20 @@ export async function OPTIONS(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('Uploadthing POST request received');
-    console.log('Headers:', Object.fromEntries(request.headers.entries()));
-    console.log('URL:', request.url);
-    console.log('Method:', request.method);
-    
-    // Temporarily skip rate limiting to debug
-    // const rateLimitResult = await checkRateLimit(uploadRateLimit, request);
-    // if (!rateLimitResult.allowed) {
-    //   console.error('Rate limit exceeded');
-    //   return NextResponse.json(
-    //     { error: rateLimitResult.error?.message || 'Rate limit exceeded' },
-    //     { 
-    //       status: 429,
-    //       headers: rateLimitResult.headers,
-    //     }
-    //   );
-    // }
-
-    console.log('Forwarding to uploadthing handler (rate limit skipped for debug)');
-    const response = await uploadthingHandler.POST(request);
-    console.log('Uploadthing handler response status:', response.status);
-    
-    if (!response.ok) {
-      const responseText = await response.text();
-      console.error('Uploadthing handler error response:', responseText);
+    const rateLimitResult = await checkRateLimit(uploadRateLimit, request);
+    if (!rateLimitResult.allowed) {
+      return NextResponse.json(
+        { error: rateLimitResult.error?.message || 'Rate limit exceeded' },
+        { 
+          status: 429,
+          headers: rateLimitResult.headers,
+        }
+      );
     }
-    
+
+    const response = await uploadthingHandler.POST(request);
     return response;
   } catch (error) {
-    console.error('Uploadthing POST error details:', {
-      message: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-      error
-    });
     return NextResponse.json(
       { error: 'Internal server error during upload' },
       { status: 500 }

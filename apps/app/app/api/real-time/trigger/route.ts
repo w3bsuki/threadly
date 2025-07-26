@@ -8,7 +8,7 @@ import { logError } from '@repo/observability/server';
 const triggerSchema = z.object({
   channel: z.string(),
   event: z.string(),
-  data: z.any(),
+  data: z.unknown(),
 });
 
 export async function POST(request: NextRequest) {

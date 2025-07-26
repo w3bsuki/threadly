@@ -14,9 +14,22 @@ nextConfig.experimental = {
     '@repo/design-system',
     '@repo/database',
     'lucide-react',
+    '@tanstack/react-query',
+    'react-hook-form',
+    '@hookform/resolvers',
+    'date-fns',
+    'zustand',
+    '@radix-ui/react-accordion',
+    '@radix-ui/react-dialog',
+    '@radix-ui/react-dropdown-menu',
+    '@radix-ui/react-tooltip',
+    '@stripe/react-stripe-js',
+    '@stripe/stripe-js',
   ],
   webpackBuildWorker: true,
   optimizeCss: true,
+  // Enable server components external packages regex
+  serverComponentsExternalPackages: ['@prisma/client', '@neondatabase/serverless'],
 };
 
 // Override images config to include all needed domains
@@ -54,7 +67,7 @@ nextConfig.images = {
 };
 
 // Fix webpack issues and Prisma bundling
-nextConfig.webpack = (config, { isServer }) => {
+nextConfig.webpack = (config, { isServer, dev }) => {
   if (isServer) {
     config.ignoreWarnings = [
       { module: /require-in-the-middle/ },
@@ -68,11 +81,84 @@ nextConfig.webpack = (config, { isServer }) => {
     config.plugins = [...config.plugins, new PrismaPlugin()];
   }
 
+  // Production optimizations
+  if (!dev) {
+    // Enable module concatenation for better tree shaking
+    config.optimization.concatenateModules = true;
+    
+    // Split chunks more aggressively
+    config.optimization.splitChunks = {
+      chunks: 'all',
+      cacheGroups: {
+        default: false,
+        vendors: false,
+        framework: {
+          name: 'framework',
+          chunks: 'all',
+          test: /[\\/]node_modules[\\/](react|react-dom|scheduler|prop-types|use-sync-external-store|next)[\\/]/,
+          priority: 40,
+          enforce: true,
+        },
+        lib: {
+          test(module) {
+            return module.size() > 160000 &&
+              /node_modules[\\/]/.test(module.identifier());
+          },
+          name(module) {
+            const hash = require('crypto').createHash('sha1');
+            hash.update(module.identifier());
+            return hash.digest('hex').substring(0, 8);
+          },
+          priority: 30,
+          minChunks: 1,
+          reuseExistingChunk: true,
+        },
+        commons: {
+          name: 'commons',
+          minChunks: 2,
+          priority: 20,
+        },
+        shared: {
+          name(module, chunks) {
+            const hash = require('crypto')
+              .createHash('sha1')
+              .update(chunks.reduce((acc, chunk) => acc + chunk.name, ''))
+              .digest('hex');
+            return hash;
+          },
+          priority: 10,
+          minChunks: 2,
+          reuseExistingChunk: true,
+        },
+      },
+      maxAsyncRequests: 30,
+      maxInitialRequests: 25,
+    };
+  }
+
   return config;
 };
 
 // Fix Prisma bundling for Vercel with binary engine
-nextConfig.serverExternalPackages = ['@prisma/engines'];
+nextConfig.serverExternalPackages = ['@prisma/engines', '@prisma/client', '@neondatabase/serverless', 'ws'];
+
+// Enable output tracing for better performance
+nextConfig.outputFileTracing = true;
+
+// Optimize production builds
+nextConfig.productionBrowserSourceMaps = false;
+nextConfig.poweredByHeader = false;
+nextConfig.compress = true;
+
+// Compiler options
+nextConfig.compiler = {
+  removeConsole: process.env.NODE_ENV === 'production' ? {
+    exclude: ['error', 'warn'],
+  } : false,
+};
+
+// Enable SWC minification
+nextConfig.swcMinify = true;
 
 // Performance and security headers
 nextConfig.headers = async () => {

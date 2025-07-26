@@ -107,6 +107,7 @@ export {
 export type { BrandButtonVariant } from './components/brand';
 
 // Error boundaries
+export { ErrorBoundary, withErrorBoundary } from './components/ui/error-boundary';
 export { AppErrorBoundary, PaymentErrorBoundary, ProductErrorBoundary, APIErrorBoundary } from './components/error-boundaries';
 
 // Marketplace components - Production-ready marketplace features
@@ -135,9 +136,21 @@ export type {
   SellerStats
 } from './components/marketplace';
 
+// Mobile components - Touch interactions and gestures
+export { 
+  MobileInteractions,
+  ReachabilityZone,
+  hapticFeedback,
+  usePullToRefresh,
+  useSwipeGesture,
+  useLongPress,
+  useDoubleTap
+} from './components/mobile/mobile-interactions';
+
 // Hooks
 export { useIsMobile } from './hooks/use-mobile';
-export { usePullToRefresh } from './hooks/use-pull-to-refresh';
+export { usePullToRefresh as usePullToRefreshLegacy } from './hooks/use-pull-to-refresh';
+export { useTokens, usePrefersReducedMotion, useSafeAnimation } from './hooks/use-tokens';
 
 // Feedback components - Loading states and skeletons
 export { 
@@ -151,6 +164,14 @@ export {
   NotificationSkeleton
 } from './components/feedback';
 
+// Unified loading skeletons
+export { 
+  LoadingSkeleton,
+  ProductListingSkeleton,
+  MessagesSkeleton,
+  DashboardSkeleton as UnifiedDashboardSkeleton
+} from './components/ui/loading-skeleton';
+
 // Commerce components - E-commerce specific skeletons
 export {
   ProductCardSkeleton,
@@ -163,6 +184,14 @@ export {
   TrendingProductsSkeleton,
   HeroSkeleton
 } from './components/commerce';
+
+// Mobile commerce components
+export {
+  MobileProductCard,
+  MobileProductCardSkeleton,
+  MobileProductGrid
+} from './components/commerce/mobile-product-card';
+export type { MobileProductCardProps } from './components/commerce/mobile-product-card';
 
 // Messaging components - Chat and communication skeletons
 export {
@@ -182,3 +211,109 @@ export {
 
 // Utils
 export { cn } from './lib/utils';
+
+// Cart components - Shopping cart UI components
+export {
+  CartItem,
+  CartSummary,
+  CartEmpty,
+  CartQuantitySelector
+} from './components/cart';
+export type {
+  CartItemProps,
+  CartSummaryProps,
+  CartEmptyProps,
+  CartQuantitySelectorProps
+} from './components/cart';
+
+// Navigation utilities
+export { 
+  CATEGORIES,
+  mainNavigationLinks,
+  quickLinks,
+  footerLinks,
+  type Category,
+  type Subcategory,
+  type NavigationLink,
+  type NavigationSection
+} from './lib/navigation-utils';
+
+// Wizard components - Multi-step form wizards
+export {
+  MultiStepWizard,
+  WizardProgress,
+  WizardNavigation,
+  WizardStepIndicator,
+  WizardStep,
+  WizardStepContainer,
+  WizardFormStep,
+  WizardReviewStep,
+  WizardStepGroup,
+  ConditionalWizardStep,
+  FormWizard,
+  WizardCard,
+  WizardSummary,
+  WizardInfo,
+  WizardSuccess,
+  WizardError,
+  WizardFieldGroup,
+  WizardMobileNavigation,
+  useWizard,
+  useFormWizard,
+  useWizardKeyboardNavigation,
+  FormWizardField,
+} from './components/wizard';
+export type {
+  WizardStep as WizardStepConfig,
+  MultiStepWizardProps,
+  WizardStepProps,
+  FormWizardStep,
+  FormWizardProps,
+} from './components/wizard';
+
+// Upload components - Image upload with drag & drop
+export {
+  ImageUpload,
+  ImagePreview,
+  ImageGallery,
+  UploadProgress,
+} from './components/upload';
+export { UploadthingImageUpload } from './components/upload/uploadthing-image-upload';
+export type {
+  ImageData,
+  UploadResult,
+  UploadFile,
+  ImageUploadProps,
+  ImagePreviewProps,
+  ImageGalleryProps,
+  UploadProgressProps,
+} from './components/upload';
+export type { UploadthingImageUploadProps } from './components/upload/uploadthing-image-upload';
+
+// Design Tokens
+export {
+  touchTargets,
+  spacing,
+  mobileInteractions,
+  typography,
+  borderRadius,
+  shadows,
+  animations,
+  breakpoints,
+  zIndex,
+  generateCSSVariables,
+  applyTokens,
+  tailwindTokens,
+  default as tokens
+} from './lib/tokens';
+export type {
+  TouchTargetSize,
+  SpacingSize,
+  FontSize,
+  ShadowSize,
+  BorderRadiusSize,
+  AnimationDuration,
+  AnimationEasing,
+  Breakpoint,
+  ZIndexLayer
+} from './lib/tokens';

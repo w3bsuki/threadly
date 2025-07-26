@@ -1,28 +1,42 @@
 {
   "name": "@repo/database",
   "version": "0.0.0",
-  "main": "./index.ts",
-  "types": "./index.ts",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
     ".": {
-      "types": "./index.ts",
-      "default": "./index.ts"
-    },
-    "./client": {
-      "types": "./index.ts",
-      "default": "./index.ts"
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
     },
     "./keys": {
       "types": "./keys.ts",
       "default": "./keys.ts"
+    },
+    "./prisma": {
+      "types": "./src/lib/prisma.ts",
+      "default": "./src/lib/prisma.ts"
+    },
+    "./utils": {
+      "types": "./src/lib/query-utils.ts",
+      "default": "./src/lib/query-utils.ts"
+    },
+    "./monitoring": {
+      "types": "./src/lib/monitoring.ts",
+      "default": "./src/lib/monitoring.ts"
+    },
+    "./backup": {
+      "types": "./src/lib/backup-strategy.ts",
+      "default": "./src/lib/backup-strategy.ts"
     }
   },
   "scripts": {
     "analyze": "prisma generate --no-hints --schema=./prisma/schema.prisma",
     "build": "prisma generate --no-hints --schema=./prisma/schema.prisma",
-    "postinstall": "prisma generate --no-hints --schema=./prisma/schema.prisma",
-    "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+    "postinstall": "node -e \"if (process.env.SKIP_PRISMA_GENERATE !== 'true') { require('child_process').execSync('prisma generate --no-hints --schema=./prisma/schema.prisma', { stdio: 'inherit' }); }\"",
+    "clean": "git clean -xdf .cache .turbo dist node_modules generated",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "seed": "tsx prisma/seed.ts",
+    "generate": "prisma generate --no-hints --schema=./prisma/schema.prisma"
   },
   "dependencies": {
     "@prisma/client": "6.11.1",
@@ -37,6 +51,7 @@
     "@types/ws": "^8.18.1",
     "bufferutil": "^4.0.9",
     "prisma": "6.11.1",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   },
   "prisma": {

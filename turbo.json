@@ -1,17 +1,35 @@
 {
   "$schema": "https://turborepo.com/schema.json",
-  "globalDependencies": ["**/.env.*local"],
+  "globalDependencies": ["**/.env.*local", "tsconfig.json"],
   "ui": "tui",
-  "envMode": "loose",
-  "globalPassThroughEnv": ["CI", "VERCEL", "NODE_ENV"],
+  "envMode": "strict",
+  "globalPassThroughEnv": [
+    "CI",
+    "VERCEL",
+    "VERCEL_ENV", 
+    "VERCEL_URL",
+    "VERCEL_PROJECT_PRODUCTION_URL",
+    "NODE_ENV",
+    "ANALYZE",
+    "PORT"
+  ],
   "concurrency": "20",
   "remoteCache": {
-    "enabled": true
+    "enabled": true,
+    "signature": true
   },
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "env": ["CI", "VERCEL", "NODE_ENV"],
+      "dependsOn": ["^build", "^db:generate"],
+      "env": [
+        "CI",
+        "VERCEL",
+        "VERCEL_ENV",
+        "NODE_ENV",
+        "NEXT_PUBLIC_*",
+        "DATABASE_URL",
+        "ANALYZE"
+      ],
       "outputs": [
         ".next/**",
         "!.next/cache/**",
@@ -19,13 +37,21 @@
         "**/generated/**",
         "storybook-static/**",
         ".react-email/**",
-        "dist/**"
+        "dist/**",
+        ".turbo/**"
       ],
-      "cache": true
+      "cache": true,
+      "outputLogs": "new-only"
     },
     "build:production": {
-      "dependsOn": ["^build"],
-      "env": ["CI", "VERCEL", "NODE_ENV"],
+      "dependsOn": ["^build", "^db:generate"],
+      "env": [
+        "CI",
+        "VERCEL",
+        "VERCEL_ENV", 
+        "NODE_ENV",
+        "NEXT_PUBLIC_*"
+      ],
       "outputs": [
         ".next/**",
         "!.next/cache/**",
@@ -33,39 +59,123 @@
         "**/generated/**",
         "dist/**"
       ],
-      "cache": true
+      "cache": true,
+      "outputLogs": "errors-only"
     },
     "test": {
-      "dependsOn": ["^test"],
+      "dependsOn": ["^build"],
       "cache": true,
-      "outputs": ["coverage/**"]
+      "outputs": ["coverage/**", "test-results/**"],
+      "inputs": [
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.spec.ts",
+        "**/*.spec.tsx",
+        "jest.config.*",
+        "vitest.config.*"
+      ]
+    },
+    "test:e2e": {
+      "dependsOn": ["build"],
+      "cache": false,
+      "env": ["PLAYWRIGHT_BASE_URL"]
     },
     "typecheck": {
-      "dependsOn": ["^typecheck"],
+      "dependsOn": ["^typecheck", "^db:generate"],
       "cache": true,
-      "outputs": ["**/*.tsbuildinfo"]
+      "outputs": ["**/*.tsbuildinfo"],
+      "inputs": [
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.mts",
+        "**/*.cts",
+        "**/tsconfig.json",
+        "**/tsconfig.*.json"
+      ]
     },
     "analyze": {
-      "dependsOn": ["^analyze"],
-      "cache": true
+      "dependsOn": ["^build"],
+      "cache": true,
+      "env": ["ANALYZE"],
+      "outputs": [".next/analyze/**"]
     },
     "lint": {
       "dependsOn": ["^lint"],
-      "cache": true
+      "cache": true,
+      "outputs": [],
+      "inputs": [
+        "**/*.js",
+        "**/*.jsx", 
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.mjs",
+        "**/*.cjs",
+        ".eslintrc.*",
+        "biome.json"
+      ]
+    },
+    "format": {
+      "cache": false,
+      "outputs": []
     },
     "dev": {
+      "dependsOn": ["^db:generate"],
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": [
+        "NODE_ENV",
+        "NEXT_PUBLIC_*",
+        "DATABASE_URL",
+        "CLERK_SECRET_KEY",
+        "STRIPE_SECRET_KEY",
+        "UPLOADTHING_SECRET",
+        "RESEND_API_KEY",
+        "PUSHER_*",
+        "UPSTASH_*"
+      ]
     },
     "translate": {
       "dependsOn": ["^translate"],
-      "cache": false
+      "cache": false,
+      "env": ["LANGUINE_PROJECT_ID"]
     },
     "clean": {
       "cache": false
     },
     "//#clean": {
       "cache": false
+    },
+    "db:generate": {
+      "cache": true,
+      "inputs": ["**/prisma/schema.prisma"],
+      "outputs": ["**/generated/client/**", "node_modules/.prisma/**"]
+    },
+    "db:push": {
+      "cache": false,
+      "env": ["DATABASE_URL"]
+    },
+    "db:migrate": {
+      "cache": false,
+      "env": ["DATABASE_URL"],
+      "outputs": ["**/prisma/migrations/**"]
+    },
+    "db:seed": {
+      "dependsOn": ["db:generate"],
+      "cache": false,
+      "env": ["DATABASE_URL"]
+    },
+    "storybook": {
+      "cache": false,
+      "persistent": true
+    },
+    "storybook:build": {
+      "dependsOn": ["^build"],
+      "cache": true,
+      "outputs": ["storybook-static/**"]
+    },
+    "email:dev": {
+      "cache": false,
+      "persistent": true
     }
   }
 }

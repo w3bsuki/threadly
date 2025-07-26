@@ -8,10 +8,42 @@ import Link from 'next/link';
 
 import { formatCurrency } from '@/lib/utils/currency';
 
-const formatTimeAgo = (date: Date) => {
+type TransformedArrival = {
+  id: string;
+  title: string;
+  brand: string;
+  price: string;
+  condition: string;
+  size: string;
+  images: string[];
+  seller: string;
+  timeAgo: string;
+  isNew: boolean;
+};
+
+type ProductWithRelations = {
+  id: string;
+  title: string;
+  brand: string | null;
+  price: string;
+  condition: string;
+  size: string | null;
+  createdAt: Date;
+  images: {
+    imageUrl: string | null;
+  }[];
+  seller: {
+    id: string;
+    firstName: string | null;
+    lastName: string | null;
+  } | null;
+};
+
+const formatTimeAgo = (date: Date | string) => {
   const now = new Date();
+  const dateObj = date instanceof Date ? date : new Date(date);
   const diffInMinutes = Math.floor(
-    (now.getTime() - date.getTime()) / (1000 * 60)
+    (now.getTime() - dateObj.getTime()) / (1000 * 60)
   );
 
   if (diffInMinutes < 60) {
@@ -64,20 +96,20 @@ export const NewArrivals = async () => {
           take: 4,
         });
 
-        return newArrivals.map((product) => ({
+        return newArrivals.map((product: ProductWithRelations): TransformedArrival => ({
           id: product.id,
           title: product.title,
           brand: product.brand || 'Unknown',
           price: product.price,
           condition: product.condition,
           size: product.size || 'One Size',
-          images: product.images.map((img) => img.imageUrl).filter(Boolean),
+          images: product.images.map((img) => img.imageUrl).filter((url): url is string => Boolean(url)),
           seller: product.seller
             ? `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() ||
               'Anonymous'
             : 'Anonymous',
           timeAgo: formatTimeAgo(product.createdAt),
-          isNew: Date.now() - product.createdAt.getTime() < 24 * 60 * 60 * 1000, // Less than 24 hours old
+          isNew: Date.now() - new Date(product.createdAt).getTime() < 24 * 60 * 60 * 1000, // Less than 24 hours old
         }));
       },
       300, // Cache for 5 minutes
@@ -116,7 +148,7 @@ export const NewArrivals = async () => {
 
           {/* New Arrivals Grid */}
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {transformedArrivals.map((item: any) => (
+            {transformedArrivals.map((item: TransformedArrival) => (
               <Link
                 className="group hover:-translate-y-2 relative overflow-hidden rounded-2xl bg-white shadow-lg transition-all duration-300 hover:shadow-xl"
                 href={`/product/${item.id}`}

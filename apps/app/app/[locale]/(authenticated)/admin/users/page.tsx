@@ -12,7 +12,16 @@ const AdminUsersPage: React.FC<PageProps> = async ({ searchParams }) => {
   const roleFilter = params.role || 'all';
 
   // Build where clause
-  const where: any = {};
+  interface WhereClause {
+    OR?: Array<{
+      email?: { contains: string };
+      firstName?: { contains: string };
+      lastName?: { contains: string };
+    }>;
+    role?: string;
+  }
+  
+  const where: WhereClause = {};
   
   if (search) {
     where.OR = [

@@ -1,12 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs';
 import { getSearchService } from '@repo/search';
 import { log } from '@repo/observability/server';
 import { logError } from '@repo/observability/server';
+import { z } from '@repo/validation';
+import { AlgoliaSearchService } from '@repo/search';
 
-let searchService: any;
+let searchService: AlgoliaSearchService;
+
+const popularProductsSchema = z.object({
+  limit: z.coerce.number().int().min(1).max(50).default(10),
+});
 
 export async function GET(request: NextRequest) {
   try {
+    // Check authentication
+    const { userId } = auth();
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     // Initialize search service on first request
     if (!searchService) {
       if (!process.env.ALGOLIA_APP_ID || !process.env.ALGOLIA_ADMIN_API_KEY) {
@@ -23,8 +39,21 @@ export async function GET(request: NextRequest) {
         indexName: process.env.ALGOLIA_INDEX_NAME!,
       });
     }
+    
+    // Validate query parameters
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit') || '10');
+    const validation = popularProductsSchema.safeParse({
+      limit: searchParams.get('limit'),
+    });
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Invalid query parameters', details: validation.error.errors },
+        { status: 400 }
+      );
+    }
+
+    const { limit } = validation.data;
 
     const products = await searchService.getPopularProducts(limit);
     return NextResponse.json(products);

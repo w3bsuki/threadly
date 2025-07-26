@@ -35,7 +35,7 @@ export function UserActions({ user }: UserActionsProps): React.JSX.Element {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleAction = async (action: () => Promise<any>) => {
+  const handleAction = async (action: () => Promise<void>) => {
     setIsLoading(true);
     try {
       await action();

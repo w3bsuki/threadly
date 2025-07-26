@@ -29,12 +29,13 @@ export function RecentlyViewed({ className }: RecentlyViewedProps) {
     const saved = localStorage.getItem('recentlyViewed');
     if (saved) {
       try {
-        const parsed = JSON.parse(saved);
-        setViewedProducts(parsed.map((item: any) => ({
+        const parsed = JSON.parse(saved) as ViewedProduct[];
+        setViewedProducts(parsed.map((item) => ({
           ...item,
           viewedAt: new Date(item.viewedAt)
         })));
       } catch (error) {
+        // Ignore parse errors from invalid localStorage data
       }
     }
   }, []);
@@ -71,7 +72,10 @@ export function RecentlyViewed({ className }: RecentlyViewedProps) {
 
   // Expose addProduct function globally for use in product pages
   useEffect(() => {
-    (window as any).addToRecentlyViewed = addProduct;
+    interface WindowWithRecentlyViewed extends Window {
+      addToRecentlyViewed: typeof addProduct;
+    }
+    (window as unknown as WindowWithRecentlyViewed).addToRecentlyViewed = addProduct;
   }, []);
 
   if (viewedProducts.length === 0) {

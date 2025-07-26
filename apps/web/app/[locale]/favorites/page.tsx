@@ -101,7 +101,14 @@ const FavoritesPage = async ({ params }: FavoritesProps) => {
     },
   });
 
-  const getSellerName = (seller: any) => {
+  interface Seller {
+    id: string;
+    firstName: string | null;
+    lastName: string | null;
+    email: string | null;
+  }
+
+  const getSellerName = (seller: Seller) => {
     if (seller.firstName && seller.lastName) {
       return `${seller.firstName} ${seller.lastName}`;
     }

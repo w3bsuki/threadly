@@ -6,18 +6,29 @@
  */
 
 import { cleanup, fireEvent, render, screen } from '@repo/testing';
-import React from 'react';
+import React, { ReactNode, HTMLAttributes, ButtonHTMLAttributes, InputHTMLAttributes } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+// Type definitions for mocks
+interface MockImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+  src: string;
+  alt: string;
+}
+
+interface MockLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+  href: string;
+  children: ReactNode;
+}
 
 // Mock Next.js components
 vi.mock('next/image', () => ({
-  default: ({ src, alt, ...props }: any) => (
+  default: ({ src, alt, ...props }: MockImageProps) => (
     <img alt={alt} src={src} {...props} />
   ),
 }));
 
 vi.mock('next/link', () => ({
-  default: ({ href, children, ...props }: any) => (
+  default: ({ href, children, ...props }: MockLinkProps) => (
     <a href={href} {...props}>
       {children}
     </a>
@@ -26,7 +37,7 @@ vi.mock('next/link', () => ({
 
 // Mock UI components
 vi.mock('@repo/design-system/components', () => ({
-  Button: ({ children, onClick, disabled, variant, ...props }: any) => (
+  Button: ({ children, onClick, disabled, variant = 'default', ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: string; children: ReactNode }) => (
     <button
       className={`btn btn-${variant}`}
       disabled={disabled}
@@ -36,27 +47,27 @@ vi.mock('@repo/design-system/components', () => ({
       {children}
     </button>
   ),
-  Card: ({ children, className, ...props }: any) => (
+  Card: ({ children, className = '', ...props }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
     <div className={`card ${className}`} {...props}>
       {children}
     </div>
   ),
-  CardHeader: ({ children, ...props }: any) => (
+  CardHeader: ({ children, ...props }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
     <div className="card-header" {...props}>
       {children}
     </div>
   ),
-  CardContent: ({ children, ...props }: any) => (
+  CardContent: ({ children, ...props }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
     <div className="card-content" {...props}>
       {children}
     </div>
   ),
-  CardFooter: ({ children, ...props }: any) => (
+  CardFooter: ({ children, ...props }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
     <div className="card-footer" {...props}>
       {children}
     </div>
   ),
-  Input: ({ value, onChange, placeholder, type = 'text', ...props }: any) => (
+  Input: ({ value, onChange, placeholder, type = 'text', ...props }: InputHTMLAttributes<HTMLInputElement>) => (
     <input
       onChange={onChange}
       placeholder={placeholder}
@@ -65,37 +76,37 @@ vi.mock('@repo/design-system/components', () => ({
       {...props}
     />
   ),
-  Label: ({ children, ...props }: any) => <label {...props}>{children}</label>,
-  Badge: ({ children, variant, ...props }: any) => (
+  Label: ({ children, ...props }: HTMLAttributes<HTMLLabelElement> & { children: ReactNode }) => <label {...props}>{children}</label>,
+  Badge: ({ children, variant = 'default', ...props }: HTMLAttributes<HTMLSpanElement> & { children: ReactNode; variant?: string }) => (
     <span className={`badge badge-${variant}`} {...props}>
       {children}
     </span>
   ),
-  Skeleton: ({ className, ...props }: any) => (
+  Skeleton: ({ className = '', ...props }: HTMLAttributes<HTMLDivElement>) => (
     <div className={`skeleton ${className}`} {...props} />
   ),
-  Dialog: ({ open, onOpenChange, children }: any) =>
+  Dialog: ({ open, onOpenChange, children }: { open?: boolean; onOpenChange?: (open: boolean) => void; children: ReactNode }) =>
     open ? (
       <div className="dialog" data-testid="dialog">
         {children}
       </div>
     ) : null,
-  DialogContent: ({ children, ...props }: any) => (
+  DialogContent: ({ children, ...props }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
     <div className="dialog-content" {...props}>
       {children}
     </div>
   ),
-  DialogHeader: ({ children, ...props }: any) => (
+  DialogHeader: ({ children, ...props }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
     <div className="dialog-header" {...props}>
       {children}
     </div>
   ),
-  DialogTitle: ({ children, ...props }: any) => (
+  DialogTitle: ({ children, ...props }: HTMLAttributes<HTMLHeadingElement> & { children: ReactNode }) => (
     <h2 className="dialog-title" {...props}>
       {children}
     </h2>
   ),
-  DialogFooter: ({ children, ...props }: any) => (
+  DialogFooter: ({ children, ...props }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
     <div className="dialog-footer" {...props}>
       {children}
     </div>
@@ -150,7 +161,22 @@ describe('Critical UI Components Tests', () => {
       createdAt: new Date().toISOString(),
     };
 
-    const ProductCard = ({ product, onFavorite, onAddToCart }: any) => {
+    interface ProductCardProps {
+      product: {
+        id: string;
+        title: string;
+        price: number;
+        imageUrl: string;
+        seller: { id: string; name: string };
+        condition: string;
+        size?: string;
+        brand?: string;
+      };
+      onFavorite?: (id: string) => void;
+      onAddToCart?: (id: string) => void;
+    }
+
+    const ProductCard = ({ product, onFavorite, onAddToCart }: ProductCardProps) => {
       const [isFavorited, setIsFavorited] = React.useState(false);
 
       return (
@@ -314,7 +340,19 @@ describe('Critical UI Components Tests', () => {
       },
     ];
 
-    const CheckoutForm = ({ items, onSubmit, loading }: any) => {
+    interface CheckoutFormProps {
+      items: Array<{
+        id: string;
+        title: string;
+        price: number;
+        quantity: number;
+        imageUrl: string;
+      }>;
+      onSubmit: (data: { email: string; shipping: string; payment: string }) => void;
+      loading: boolean;
+    }
+
+    const CheckoutForm = ({ items, onSubmit, loading }: CheckoutFormProps) => {
       const [formData, setFormData] = React.useState({
         email: '',
         firstName: '',
@@ -326,7 +364,7 @@ describe('Critical UI Components Tests', () => {
       });
 
       const subtotal = items.reduce(
-        (sum: number, item: any) => sum + item.price * item.quantity,
+        (sum, item) => sum + item.price * item.quantity,
         0
       );
       const tax = subtotal * 0.08;
@@ -342,7 +380,7 @@ describe('Critical UI Components Tests', () => {
         <div className="checkout-form" data-testid="checkout-form">
           <div className="order-summary">
             <h2>Order Summary</h2>
-            {items.map((item: any) => (
+            {items.map((item) => (
               <div className="order-item" key={item.id}>
                 <img alt={item.title} src={item.imageUrl} />
                 <div className="item-details">
@@ -602,7 +640,17 @@ describe('Critical UI Components Tests', () => {
       onFilterChange,
       onClose,
       isOpen,
-    }: any) => {
+    }: {
+      filters: {
+        categories: string[];
+        priceRange: [number, number];
+        conditions: string[];
+        sizes: string[];
+      };
+      onFilterChange: (filterType: string, value: string | [number, number]) => void;
+      onClose: () => void;
+      isOpen: boolean;
+    }) => {
       if (!isOpen) {
         return null;
       }
@@ -903,7 +951,7 @@ describe('Critical UI Components Tests', () => {
   });
 
   describe('Error Boundaries', () => {
-    const ErrorBoundary = ({ children, fallback }: any) => {
+    const ErrorBoundary = ({ children, fallback }: { children: ReactNode; fallback: ReactNode }) => {
       const [hasError, setHasError] = React.useState(false);
 
       React.useEffect(() => {
@@ -966,7 +1014,7 @@ describe('Critical UI Components Tests', () => {
 
   describe('Accessibility Features', () => {
     it('should have proper ARIA labels', () => {
-      const AccessibleButton = ({ children, ariaLabel, ...props }: any) => (
+      const AccessibleButton = ({ children, ariaLabel, ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { children: ReactNode; ariaLabel: string }) => (
         <button aria-label={ariaLabel} {...props}>
           {children}
         </button>

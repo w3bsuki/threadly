@@ -1,18 +1,50 @@
+import { auth } from '@clerk/nextjs';
 import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
+import { z } from '@repo/validation';
 import { type NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const query = searchParams.get('q');
+const searchSuggestionsSchema = z.object({
+  q: z.string().trim().min(2, 'Query must be at least 2 characters').max(100)
+    .refine((text) => !/<[^>]*>/.test(text), {
+      message: 'HTML tags are not allowed',
+    }),
+});
 
-  if (!query || query.trim().length < 2) {
+export async function GET(request: NextRequest) {
+  const { userId } = auth();
+  
+  if (!userId) {
+    return NextResponse.json(
+      { error: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
+  const { searchParams } = new URL(request.url);
+  
+  const validation = searchSuggestionsSchema.safeParse({
+    q: searchParams.get('q') || '',
+  });
+
+  if (!validation.success) {
     return NextResponse.json([]);
   }
 
+  const { q: query } = validation.data;
+
   try {
     const searchTerm = query.toLowerCase().trim();
-    const suggestions: any[] = [];
+    
+    interface Suggestion {
+      id: string;
+      title: string;
+      type: 'product' | 'brand' | 'category';
+      brand?: string | null;
+      category?: string;
+    }
+    
+    const suggestions: Suggestion[] = [];
 
     // Get product suggestions (top 3)
     const products = await database.product.findMany({

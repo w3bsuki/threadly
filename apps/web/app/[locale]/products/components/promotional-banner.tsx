@@ -62,6 +62,10 @@ export function PromotionalBanner({ className }: PromotionalBannerProps) {
 
   const handleDismiss = () => {
     setIsVisible(false);
+    // Add haptic feedback for mobile devices
+    if ('vibrate' in navigator) {
+      navigator.vibrate(10);
+    }
     // Dismiss for 7 days
     const dismissUntil = new Date();
     dismissUntil.setDate(dismissUntil.getDate() + 7);
@@ -74,6 +78,10 @@ export function PromotionalBanner({ className }: PromotionalBannerProps) {
   const goToOffer = (index: number) => {
     setCurrentOffer(index);
     setIsPaused(true);
+    // Add haptic feedback for mobile interactions
+    if ('vibrate' in navigator) {
+      navigator.vibrate(5);
+    }
     // Resume auto-rotation after 10 seconds
     setTimeout(() => setIsPaused(false), 10_000);
   };
@@ -83,27 +91,39 @@ export function PromotionalBanner({ className }: PromotionalBannerProps) {
   }
 
   return (
-    <div className={cn('relative bg-primary text-primary-foreground', className)}>
-      <div className="mx-auto max-w-7xl px-3 py-2 sm:px-4 sm:py-3">
-        <div className="flex items-center justify-between">
+    <div 
+      className={cn(
+        'relative bg-primary text-primary-foreground',
+        'transform transition-all duration-300 ease-out',
+        'animate-in slide-in-from-top-1',
+        className
+      )}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={() => setIsPaused(true)}
+      onTouchEnd={() => setIsPaused(false)}
+    >
+      {/* Add safe area support for notched devices */}
+      <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 sm:py-4 pl-safe pr-safe">
+        <div className="flex items-center justify-between gap-2 sm:gap-4">
           {/* Offer content */}
-          <div className="flex flex-1 items-center justify-center space-x-3">
+          <div className="flex flex-1 items-center justify-center min-h-[44px]">
 
-            {/* Offer text with fade transition */}
-            <div className="relative flex items-center justify-center w-full">
+            {/* Offer text with fade transition and mobile optimization */}
+            <div className="relative flex items-center justify-center w-full px-2 sm:px-4">
               {offers.map((offer, index) => (
                 <div
                   className={cn(
-                    'absolute inset-0 flex items-center justify-center transition-opacity duration-500',
+                    'absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out will-change-auto',
                     index === currentOffer
                       ? 'opacity-100'
                       : 'pointer-events-none opacity-0'
                   )}
                   key={offer.id}
                 >
-                  <span className="flex items-center text-xs sm:text-sm md:text-base font-medium">
-                    <span className="mr-1.5 sm:mr-2 text-base sm:text-lg">{offer.icon}</span>
-                    <span className="truncate">{offer.text}</span>
+                  <span className="flex items-center text-sm sm:text-base md:text-lg font-medium">
+                    <span className="mr-2 sm:mr-3 text-lg sm:text-xl" role="img" aria-hidden="true">{offer.icon}</span>
+                    <span className="truncate leading-relaxed">{offer.text}</span>
                   </span>
                 </div>
               ))}
@@ -112,14 +132,15 @@ export function PromotionalBanner({ className }: PromotionalBannerProps) {
           </div>
 
 
-          {/* Close button */}
+          {/* Close button with mobile-optimized touch target */}
           <Button
-            className="ml-2 h-6 w-6 hover:opacity-80"
+            className="ml-3 min-h-[44px] min-w-[44px] p-2 hover:opacity-80 transition-opacity duration-200"
             onClick={handleDismiss}
             size="icon"
             variant="ghost"
+            aria-label="Dismiss promotional banner"
           >
-            <X className="h-3 w-3" />
+            <X className="h-4 w-4 sm:h-5 sm:w-5" />
             <span className="sr-only">Dismiss banner</span>
           </Button>
         </div>

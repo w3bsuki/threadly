@@ -3,18 +3,18 @@
 import { useState } from 'react';
 import { Save, Bell, BellOff } from 'lucide-react';
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Input,
+  Label,
+  Switch,
+  toast,
 } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
-import { Input } from '@repo/design-system/components';
-import { Label } from '@repo/design-system/components';
-import { Switch } from '@repo/design-system/components';
-import { toast } from '@repo/design-system/components';
 
 interface SearchFilters {
   query?: string;
