@@ -121,8 +121,8 @@ export class PusherServer {
       where: {
         id: conversationId,
         OR: [
-          { User_Conversation_buyerIdToUser: { clerkId: userId } },
-          { User_Conversation_sellerIdToUser: { clerkId: userId } },
+          { buyer: { clerkId: userId } },
+          { seller: { clerkId: userId } },
         ],
       },
     });
