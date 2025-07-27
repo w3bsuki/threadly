@@ -94,11 +94,11 @@ export const TrendingProducts = async () => {
         take: 6,
       });
 
-      transformedProducts = trendingProducts.map((product: ProductWithRelations): TransformedProduct => ({
+      transformedProducts = trendingProducts.map((product): TransformedProduct => ({
         id: product.id,
         title: product.title,
         brand: product.brand || 'Unknown',
-        price: product.price,
+        price: product.price.toString(),
         originalPrice: null, // We don't have this in our schema
         condition: product.condition,
         size: product.size || 'One Size',
