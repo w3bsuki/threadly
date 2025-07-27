@@ -70,7 +70,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
     where: { buyerId: user.id },
     orderBy: { createdAt: 'desc' },
     include: {
-      Address: true,
+      shippingAddress: true,
     },
   });
 
@@ -89,7 +89,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
 
           <SingleProductCheckout
             product={product}
-            savedAddress={lastOrder?.Address || null}
+            savedAddress={lastOrder?.shippingAddress || null}
             user={user}
           />
         </div>
