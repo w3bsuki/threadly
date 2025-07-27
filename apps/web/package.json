@@ -21,6 +21,7 @@
   "dependencies": {
     "@arcjet/next": "1.0.0-beta.9",
     "@clerk/nextjs": "^6.24.0",
+    "@radix-ui/react-icons": "^1.3.2",
     "@hookform/resolvers": "^5.1.1",
     "@repo/analytics": "workspace:*",
     "@repo/api-utils": "workspace:*",
