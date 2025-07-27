@@ -104,7 +104,7 @@ export const noseconeOptions: NoseconeOptions = {
 // Enhanced options with CSP for production
 export const noseconeOptionsWithCSP: NoseconeOptions = {
   ...defaults,
-  contentSecurityPolicy: createCSPConfig(),
+  contentSecurityPolicy: createCSPConfig() as any,
 };
 
 // Development options with relaxed CSP
@@ -113,7 +113,7 @@ export const noseconeOptionsForDev: NoseconeOptions = {
   contentSecurityPolicy: createCSPConfig({
     allowInlineStyles: true,
     allowVercelToolbar: true,
-  }),
+  }) as any,
 };
 
 export const noseconeOptionsWithToolbar: NoseconeOptions =

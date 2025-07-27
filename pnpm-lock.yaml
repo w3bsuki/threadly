@@ -1669,6 +1669,15 @@ importers:
       '@nosecone/next':
         specifier: 1.0.0-beta.9
         version: 1.0.0-beta.9(next@15.3.5(@opentelemetry/api@1.9.0)(@playwright/test@1.54.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))
+      '@repo/auth':
+        specifier: workspace:*
+        version: link:../auth
+      '@repo/database':
+        specifier: workspace:*
+        version: link:../database
+      '@repo/observability':
+        specifier: workspace:*
+        version: link:../observability
       '@t3-oss/env-nextjs':
         specifier: ^0.13.8
         version: 0.13.8(typescript@5.8.3)(zod@4.0.2)
@@ -1822,6 +1831,9 @@ importers:
 
   packages/utils:
     dependencies:
+      '@repo/database':
+        specifier: workspace:*
+        version: link:../database
       react:
         specifier: 19.1.0
         version: 19.1.0

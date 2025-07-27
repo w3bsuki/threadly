@@ -165,7 +165,7 @@ export function getCSRFTokenFromCookie(): string | null {
   }
   
   const match = document.cookie.match(new RegExp(`(^| )${CSRF_COOKIE_NAME}=([^;]+)`));
-  return match ? match[2] : null;
+  return match?.[2] ?? null;
 }
 
 /**

@@ -4,16 +4,16 @@ import { z } from 'zod';
 export const keys = () =>
   createEnv({
     server: {
-      CLERK_SECRET_KEY: process.env.NODE_ENV === 'production' 
+      CLERK_SECRET_KEY: process.env.NODE_ENV === 'production' && !process.env.SKIP_ENV_VALIDATION
         ? z.string().startsWith('sk_')
         : z.string().startsWith('sk_').optional(),
-      CLERK_WEBHOOK_SECRET: process.env.NODE_ENV === 'production'
+      CLERK_WEBHOOK_SECRET: process.env.NODE_ENV === 'production' && !process.env.SKIP_ENV_VALIDATION
         ? z.string().min(1).startsWith('whsec_')
         : z.string().min(1).startsWith('whsec_').optional(),
       CLERK_ENCRYPTION_KEY: z.string().optional(),
     },
     client: {
-      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NODE_ENV === 'production'
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NODE_ENV === 'production' && !process.env.SKIP_ENV_VALIDATION
         ? z.string().startsWith('pk_')
         : z.string().startsWith('pk_').optional(),
       NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string().default('/sign-in'),

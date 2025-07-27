@@ -33,6 +33,7 @@
     }
   },
   "dependencies": {
+    "@repo/database": "workspace:*",
     "react": "19.1.0"
   },
   "devDependencies": {

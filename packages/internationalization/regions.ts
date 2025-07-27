@@ -192,7 +192,7 @@ export const getRegionByCountryCode = (code: string): Region | undefined => {
 };
 
 export const getDefaultRegion = (): Region => {
-  return regions.BG;
+  return regions.BG as Region;
 };
 
 export const detectRegionFromLocale = (locale: string): Region => {
@@ -209,9 +209,12 @@ export const detectRegionFromLocale = (locale: string): Region => {
   };
 
   const normalizedLocale = locale.split('-')[0];
-  const regionCode = localeToRegion[normalizedLocale];
+  const regionCode = normalizedLocale ? localeToRegion[normalizedLocale] : undefined;
   
-  return regionCode ? regions[regionCode] : getDefaultRegion();
+  if (regionCode && regions[regionCode]) {
+    return regions[regionCode] as Region;
+  }
+  return getDefaultRegion();
 };
 
 export const getCurrencySymbol = (currency: Currency): string => {

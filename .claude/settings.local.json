@@ -9,7 +9,13 @@
       "mcp__memory__read_graph",
       "Bash(pnpm typecheck:*)",
       "Bash(npm run typecheck:*)",
-      "Bash(echo $env:USERPROFILE)"
+      "Bash(echo $env:USERPROFILE)",
+      "Bash(echo $SHELL)",
+      "Bash(cmd /c \"pnpm typecheck\")",
+      "Bash(npx turbo:*)",
+      "Bash(pnpm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   },

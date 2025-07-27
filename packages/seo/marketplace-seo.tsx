@@ -35,7 +35,7 @@ export function createProductMetadata({
     description,
     image: images[0]?.imageUrl,
     openGraph: {
-      type: 'product',
+      type: 'website',
       title,
       description,
       images: images.slice(0, 4).map(img => ({
@@ -273,7 +273,7 @@ export function generateHomepageStructuredData(): WithContext<WebPage> {
       description: 'Premium C2C fashion marketplace',
     },
     mainEntity: {
-      '@type': 'Marketplace',
+      '@type': 'Organization',
       name: 'Threadly Fashion Marketplace',
       description: 'Curated marketplace for pre-loved fashion',
     },
