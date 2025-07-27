@@ -28,7 +28,7 @@ export const isDisposableEmail = (email: string): boolean => {
   ];
   
   const domain = email.split('@')[1]?.toLowerCase();
-  return disposableDomains.includes(domain);
+  return domain ? disposableDomains.includes(domain) : false;
 };
 
 /**

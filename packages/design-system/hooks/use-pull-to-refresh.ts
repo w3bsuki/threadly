@@ -40,8 +40,8 @@ export function usePullToRefresh({
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     if (scrollTop > 0) return;
 
-    touchStartY.current = e.touches[0].clientY;
-    touchCurrentY.current = e.touches[0].clientY;
+    touchStartY.current = e.touches[0]?.clientY ?? 0;
+    touchCurrentY.current = e.touches[0]?.clientY ?? 0;
   }, [disabled, state.isRefreshing]);
 
   const handleTouchMove = useCallback((e: TouchEvent) => {
@@ -50,7 +50,7 @@ export function usePullToRefresh({
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     if (scrollTop > 0) return;
 
-    touchCurrentY.current = e.touches[0].clientY;
+    touchCurrentY.current = e.touches[0]?.clientY ?? 0;
     const pullDistance = Math.max(0, touchCurrentY.current - touchStartY.current);
 
     if (pullDistance > 0) {
