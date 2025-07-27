@@ -38,8 +38,8 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
           },
         },
       },
-      User_Order_buyerIdToUser: true,
-      User_Order_sellerIdToUser: true,
+      buyer: true,
+      seller: true,
     },
   });
 
@@ -53,8 +53,8 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
     orderNumber: `ORD-${order.id.slice(-8).toUpperCase()}`,
     totalAmount: order.amount,
     product: order.Product,
-    buyer: order.User_Order_buyerIdToUser,
-    seller: order.User_Order_sellerIdToUser,
+    buyer: order.buyer,
+    seller: order.seller,
   };
 
   return (
