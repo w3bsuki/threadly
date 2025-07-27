@@ -96,11 +96,11 @@ export const NewArrivals = async () => {
           take: 4,
         });
 
-        return newArrivals.map((product: ProductWithRelations): TransformedArrival => ({
+        return newArrivals.map((product): TransformedArrival => ({
           id: product.id,
           title: product.title,
           brand: product.brand || 'Unknown',
-          price: product.price,
+          price: product.price.toString(),
           condition: product.condition,
           size: product.size || 'One Size',
           images: product.images.map((img) => img.imageUrl).filter((url): url is string => Boolean(url)),

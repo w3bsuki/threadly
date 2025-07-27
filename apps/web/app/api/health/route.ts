@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { cache } from '@repo/cache';
 import { database } from '@repo/database';
 import { NextResponse } from 'next/server';

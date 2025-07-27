@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { z } from '@repo/validation';
 import { NextResponse } from 'next/server';
 

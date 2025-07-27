@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
 import { z } from '@repo/validation';

@@ -97,3 +97,46 @@ export class ResponseBuilder {
     return NextResponse.json(data, init)
   }
 }
+
+// Helper functions for easier usage
+export const createSuccessResponse = <T>(
+  data: T,
+  statusCode = 200,
+  meta?: ApiSuccessResponse['meta']
+): NextResponse<ApiSuccessResponse<T>> => {
+  return ResponseBuilder.success(data, statusCode, meta)
+}
+
+export const createErrorResponse = (
+  message: string,
+  statusCode = 400,
+  code = 'BAD_REQUEST',
+  details?: ApiErrorResponse['error']['details']
+): NextResponse<ApiErrorResponse> => {
+  return NextResponse.json(
+    {
+      success: false,
+      error: {
+        code,
+        message,
+        statusCode,
+        details,
+        timestamp: new Date().toISOString(),
+      },
+    },
+    { status: statusCode }
+  )
+}
+
+export const createPaginationMeta = (
+  page: number,
+  limit: number,
+  total: number
+): ApiSuccessResponse['meta'] => {
+  return {
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit),
+  }
+}

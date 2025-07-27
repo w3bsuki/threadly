@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { getCacheService } from '@repo/cache';
 import type { Prisma } from '@repo/database';
 import { database } from '@repo/database';
