@@ -46,7 +46,7 @@ const getTopSellers = cache(async () => {
       _count: {
         select: {
           Product: { where: { status: 'AVAILABLE' } },
-          Review_Review_reviewedIdToUser: true,
+          reviewsReceived: true,
         },
       },
     },
@@ -227,7 +227,7 @@ export default async function BrowsePage({
             {topSellers.map((seller: User & {
               _count: {
                 Product: number;
-                Review_Review_reviewedIdToUser: number;
+                reviewsReceived: number;
               };
             }) => (
               <Link href={`/profile/${seller.id}`} key={seller.id}>
@@ -271,7 +271,7 @@ export default async function BrowsePage({
 
                     <div className="text-center">
                       <Badge className="text-xs" variant="secondary">
-                        {seller._count.Review_Review_reviewedIdToUser} reviews
+                        {seller._count.reviewsReceived} reviews
                       </Badge>
                     </div>
                   </CardContent>
