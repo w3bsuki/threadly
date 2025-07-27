@@ -51,7 +51,7 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   const orderData = {
     ...order,
     orderNumber: `ORD-${order.id.slice(-8).toUpperCase()}`,
-    totalAmount: order.amount,
+    totalAmount: Number(order.totalAmount),
     product: order.Product,
     buyer: order.buyer,
     seller: order.seller,
