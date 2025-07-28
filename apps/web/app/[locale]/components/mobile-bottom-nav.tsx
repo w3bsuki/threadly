@@ -102,7 +102,7 @@ export const MobileBottomNav = memo(
       },
       {
         icon: Search,
-        label: dictionary.web?.global?.actions?.search || 'Search',
+        label: dictionary.web?.global?.navigation?.search || 'Search',
         onClick: () => {
           triggerHapticFeedback();
           if (onSearchOpen) {
@@ -128,7 +128,7 @@ export const MobileBottomNav = memo(
       },
       {
         icon: User,
-        label: dictionary.web?.settings?.account || 'Account',
+        label: dictionary.web?.global?.navigation?.account || 'Account',
         href: isSignedIn ? `/${locale}/account` : `/${locale}/sign-in`,
         shortcutKey: 'a',
       },
@@ -405,7 +405,7 @@ export const MobileBottomNav = memo(
                     </h2>
                     <button
                       aria-label={
-                        dictionary.web?.global?.actions?.close || 'Close'
+                        dictionary.web?.global?.navigation?.close || 'Close'
                       }
                       className="rounded-full p-2 transition-colors hover:bg-muted"
                       onClick={() => {
@@ -517,7 +517,7 @@ export const MobileBottomNav = memo(
                         type="submit"
                       >
                         <Search className="h-5 w-5" />
-                        {dictionary.web?.global?.actions?.search || 'Search'}
+                        {dictionary.web?.global?.navigation?.search || 'Search'}
                       </button>
                       <button
                         className="h-14 rounded-2xl border-2 border-muted px-6 font-medium transition-colors hover:bg-muted"
@@ -528,7 +528,7 @@ export const MobileBottomNav = memo(
                         }}
                         type="button"
                       >
-                        {dictionary.web?.global?.actions?.cancel || 'Cancel'}
+                        {dictionary.web?.global?.navigation?.cancel || 'Cancel'}
                       </button>
                     </div>
                   </form>
