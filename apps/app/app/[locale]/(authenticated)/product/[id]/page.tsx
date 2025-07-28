@@ -1,16 +1,16 @@
 import { currentUser } from '@repo/auth/server';
+import { cache } from '@repo/cache';
 import { database } from '@repo/database';
-import { redirect, notFound } from 'next/navigation';
+import { getDictionary } from '@repo/internationalization';
 import type { Metadata } from 'next';
+import { notFound, redirect } from 'next/navigation';
+import { z } from 'zod';
 import { Header } from '../../components/header';
 import { ProductDetailContent } from './components/product-detail-content';
-import { getDictionary } from '@repo/internationalization';
-import { z } from 'zod';
-import { cache } from '@repo/cache';
 
 const paramsSchema = z.object({
   locale: z.string(),
-  id: z.string().uuid()
+  id: z.string().uuid(),
 });
 
 interface ProductPageProps {
@@ -67,7 +67,7 @@ const ProductPage = async ({ params }: ProductPageProps) => {
   const { locale, id } = paramsSchema.parse(rawParams);
   const dictionary = await getDictionary(locale);
   const user = await currentUser();
-  
+
   if (!user) {
     redirect('/sign-in');
   }
@@ -77,7 +77,7 @@ const ProductPage = async ({ params }: ProductPageProps) => {
     `user:${user.id}:product-view`,
     async () => {
       return database.user.findUnique({
-        where: { clerkId: user.id }
+        where: { clerkId: user.id },
       });
     },
     300
@@ -86,7 +86,7 @@ const ProductPage = async ({ params }: ProductPageProps) => {
   if (!dbUser) {
     redirect('/sign-in');
   }
-  
+
   // Fetch product with all necessary details
   const product = await cache.remember(
     `product:${id}:details`,
@@ -154,16 +154,18 @@ const ProductPage = async ({ params }: ProductPageProps) => {
   });
 
   // Increment view count (don't wait for it)
-  database.product.update({
-    where: { id },
-    data: {
-      views: {
-        increment: 1,
+  database.product
+    .update({
+      where: { id },
+      data: {
+        views: {
+          increment: 1,
+        },
       },
-    },
-  }).catch(() => {
-    // Ignore errors for view count
-  });
+    })
+    .catch(() => {
+      // Ignore errors for view count
+    });
 
   // Fetch similar products
   const similarProducts = await cache.remember(
@@ -227,18 +229,18 @@ const ProductPage = async ({ params }: ProductPageProps) => {
 
   return (
     <>
-      <Header 
-        pages={['Dashboard', 'Browse', 'Product']} 
-        page={product.title}
+      <Header
         dictionary={dictionary}
+        page={product.title}
+        pages={['Dashboard', 'Browse', 'Product']}
       />
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <ProductDetailContent
-          product={product}
           currentUser={dbUser}
           isFavorited={!!isFavorited}
-          similarProducts={similarProducts}
+          product={product}
           sellerProducts={sellerProducts}
+          similarProducts={similarProducts}
         />
       </div>
     </>

@@ -1,9 +1,5 @@
-import * as React from 'react';
-import {
-  Button,
-  Section,
-  Text,
-} from '@react-email/components';
+import { Button, Section, Text } from '@react-email/components';
+import type * as React from 'react';
 import { BaseTemplate } from './base-template';
 
 interface PaymentReceivedEmailProps {
@@ -23,8 +19,8 @@ export function PaymentReceivedEmail({
 }: PaymentReceivedEmailProps): React.ReactElement {
   return (
     <BaseTemplate
-      preview={`Payment received: $${amount}`}
       heading={`Great news ${sellerName}! You've received a payment`}
+      preview={`Payment received: $${amount}`}
     >
       <Section style={content}>
         <Text style={text}>
@@ -35,14 +31,16 @@ export function PaymentReceivedEmail({
           <Text style={paymentHeader}>Payment Details</Text>
           <Text style={paymentAmount}>${amount}</Text>
           <Text style={paymentDetails}>
-            Order #{orderId}<br />
+            Order #{orderId}
+            <br />
             Product: {productName}
           </Text>
         </Section>
 
         <Section style={payoutSection}>
           <Text style={payoutText}>
-            <strong>Payout Information</strong><br />
+            <strong>Payout Information</strong>
+            <br />
             Your earnings will be transferred to your connected account on{' '}
             {payoutDate.toLocaleDateString()}. You can track all your earnings
             in your seller dashboard.
@@ -50,15 +48,15 @@ export function PaymentReceivedEmail({
         </Section>
 
         <Button
-          href={`https://app.threadly.com/selling/history`}
+          href={'https://app.threadly.com/selling/history'}
           style={button}
         >
           View Earnings
         </Button>
 
         <Text style={tipText}>
-          💡 <strong>Tip:</strong> Keep up the great work! Respond quickly to messages
-          and maintain great photos to increase your sales.
+          💡 <strong>Tip:</strong> Keep up the great work! Respond quickly to
+          messages and maintain great photos to increase your sales.
         </Text>
       </Section>
     </BaseTemplate>

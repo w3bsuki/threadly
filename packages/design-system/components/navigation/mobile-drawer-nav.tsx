@@ -1,12 +1,12 @@
 'use client';
 
-import { cn } from '../../lib/utils';
-import { SheetHeader, SheetTitle } from '../ui/sheet';
-import { ScrollArea } from '../ui/scroll-area';
-import { Button } from '../ui/button';
+import { ChevronRight, type LucideIcon } from 'lucide-react';
 import Link from 'next/link';
-import { LucideIcon, ChevronRight } from 'lucide-react';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import { cn } from '../../lib/utils';
+import { Button } from '../ui/button';
+import { ScrollArea } from '../ui/scroll-area';
+import { SheetHeader, SheetTitle } from '../ui/sheet';
 
 interface DrawerNavItem {
   label: string;
@@ -45,7 +45,7 @@ export function MobileDrawerNav({
     const content = (
       <div
         className={cn(
-          'flex items-center justify-between w-full',
+          'flex w-full items-center justify-between',
           'px-[var(--space-4)] py-[var(--space-3)]',
           'min-h-[48px]',
           depth > 0 && 'pl-[var(--space-12)]',
@@ -63,7 +63,9 @@ export function MobileDrawerNav({
                 {item.badge}
               </span>
             )}
-            {hasChildren && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+            {hasChildren && (
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            )}
           </div>
         )}
       </div>
@@ -72,10 +74,10 @@ export function MobileDrawerNav({
     if (item.href) {
       return (
         <Link
-          key={item.label}
-          href={item.href}
-          onClick={onItemClick}
           className="block"
+          href={item.href}
+          key={item.label}
+          onClick={onItemClick}
         >
           {content}
         </Link>
@@ -85,12 +87,12 @@ export function MobileDrawerNav({
     if (item.onClick) {
       return (
         <button
+          className="block w-full text-left"
           key={item.label}
           onClick={() => {
             item.onClick?.();
             onItemClick?.();
           }}
-          className="block w-full text-left"
         >
           {content}
         </button>
@@ -98,7 +100,7 @@ export function MobileDrawerNav({
     }
 
     return (
-      <div key={item.label} className="block">
+      <div className="block" key={item.label}>
         {content}
         {hasChildren && (
           <div className="mt-[var(--space-1)]">
@@ -112,13 +114,13 @@ export function MobileDrawerNav({
   return (
     <>
       {header && header}
-      
+
       <ScrollArea className="flex-1">
         <div className="py-[var(--space-4)]">
           {sections.map((section, index) => (
-            <div key={index} className="mb-[var(--space-4)]">
+            <div className="mb-[var(--space-4)]" key={index}>
               {section.title && (
-                <h3 className="px-[var(--space-4)] py-[var(--space-2)] text-[var(--font-size-xs)] font-medium text-muted-foreground">
+                <h3 className="px-[var(--space-4)] py-[var(--space-2)] font-medium text-[var(--font-size-xs)] text-muted-foreground">
                   {section.title}
                 </h3>
               )}
@@ -129,7 +131,7 @@ export function MobileDrawerNav({
       </ScrollArea>
 
       {footer && (
-        <div className="p-[var(--space-4)] border-t border-border">
+        <div className="border-border border-t p-[var(--space-4)]">
           {footer}
         </div>
       )}

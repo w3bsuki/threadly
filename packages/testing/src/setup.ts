@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import '@testing-library/jest-dom/vitest';
-import { beforeAll, afterAll, afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
+import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 import { server } from './mocks/server';
 import './a11y/axe-matchers';
 
@@ -9,13 +9,13 @@ import './a11y/axe-matchers';
 beforeAll(() => {
   // Start MSW server
   server.listen({ onUnhandledRequest: 'error' });
-  
+
   vi.spyOn(console, 'error').mockImplementation(() => {});
-  
+
   // Mock window.matchMedia
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
-    value: vi.fn().mockImplementation(query => ({
+    value: vi.fn().mockImplementation((query) => ({
       matches: false,
       media: query,
       onchange: null,
@@ -67,10 +67,10 @@ beforeAll(() => {
 afterEach(() => {
   // Reset MSW handlers
   server.resetHandlers();
-  
+
   // Cleanup React Testing Library
   cleanup();
-  
+
   // Clear all mocks
   vi.clearAllMocks();
 });
@@ -78,7 +78,7 @@ afterEach(() => {
 afterAll(() => {
   // Stop MSW server
   server.close();
-  
+
   // Restore all mocks
   vi.restoreAllMocks();
 });
@@ -89,14 +89,15 @@ expect.extend({
     const pass = received >= floor && received <= ceiling;
     if (pass) {
       return {
-        message: () => `expected ${received} not to be within range ${floor} - ${ceiling}`,
+        message: () =>
+          `expected ${received} not to be within range ${floor} - ${ceiling}`,
         pass: true,
       };
-    } else {
-      return {
-        message: () => `expected ${received} to be within range ${floor} - ${ceiling}`,
-        pass: false,
-      };
     }
+    return {
+      message: () =>
+        `expected ${received} to be within range ${floor} - ${ceiling}`,
+      pass: false,
+    };
   },
 });

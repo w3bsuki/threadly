@@ -1,48 +1,43 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { ZodError } from 'zod'
-import { ApiError } from './api-error'
+import { logError } from '@repo/observability/error';
+import { type NextRequest, NextResponse } from 'next/server';
+import { ZodError } from 'zod';
+import { ApiError } from './api-error';
 
 export interface ErrorLogContext {
-  userId?: string
-  requestId?: string
-  path?: string
-  method?: string
-  ip?: string
-  userAgent?: string
+  userId?: string;
+  requestId?: string;
+  path?: string;
+  method?: string;
+  ip?: string;
+  userAgent?: string;
 }
 
 export class ErrorHandler {
-  private static isDevelopment = process.env.NODE_ENV === 'development'
+  private static isDevelopment = process.env.NODE_ENV === 'development';
 
-  static handle(
-    error: unknown,
-    context?: ErrorLogContext
-  ): NextResponse {
+  static handle(error: unknown, context?: ErrorLogContext): NextResponse {
     if (error instanceof ApiError) {
-      return this.handleApiError(error, context)
+      return ErrorHandler.handleApiError(error, context);
     }
 
     if (error instanceof ZodError) {
-      return this.handleZodError(error, context)
+      return ErrorHandler.handleZodError(error, context);
     }
 
     if (error instanceof Error) {
-      return this.handleGenericError(error, context)
+      return ErrorHandler.handleGenericError(error, context);
     }
 
-    return this.handleUnknownError(error, context)
+    return ErrorHandler.handleUnknownError(error, context);
   }
 
   private static handleApiError(
     error: ApiError,
     context?: ErrorLogContext
   ): NextResponse {
-    this.logError(error, context)
+    ErrorHandler.logError(error, context);
 
-    return NextResponse.json(
-      error.toJSON(),
-      { status: error.statusCode }
-    )
+    return NextResponse.json(error.toJSON(), { status: error.statusCode });
   }
 
   private static handleZodError(
@@ -50,19 +45,18 @@ export class ErrorHandler {
     context?: ErrorLogContext
   ): NextResponse {
     const apiError = ApiError.validationError(
-      error.errors.map(err => ({
+      error.errors.map((err) => ({
         field: err.path.join('.'),
         message: err.message,
         code: err.code,
       }))
-    )
+    );
 
-    this.logError(apiError, context)
+    ErrorHandler.logError(apiError, context);
 
-    return NextResponse.json(
-      apiError.toJSON(),
-      { status: apiError.statusCode }
-    )
+    return NextResponse.json(apiError.toJSON(), {
+      status: apiError.statusCode,
+    });
   }
 
   private static handleGenericError(
@@ -70,29 +64,31 @@ export class ErrorHandler {
     context?: ErrorLogContext
   ): NextResponse {
     const apiError = ApiError.internalServerError(
-      this.isDevelopment ? error.message : 'An unexpected error occurred'
-    )
+      ErrorHandler.isDevelopment
+        ? error.message
+        : 'An unexpected error occurred'
+    );
 
-    this.logError(error, context, 'error')
+    ErrorHandler.logError(error, context, 'error');
 
-    return NextResponse.json(
-      apiError.toJSON(),
-      { status: apiError.statusCode }
-    )
+    return NextResponse.json(apiError.toJSON(), {
+      status: apiError.statusCode,
+    });
   }
 
   private static handleUnknownError(
     error: unknown,
     context?: ErrorLogContext
   ): NextResponse {
-    const apiError = ApiError.internalServerError('An unexpected error occurred')
+    const apiError = ApiError.internalServerError(
+      'An unexpected error occurred'
+    );
 
-    this.logError(new Error(String(error)), context, 'error')
+    ErrorHandler.logError(new Error(String(error)), context, 'error');
 
-    return NextResponse.json(
-      apiError.toJSON(),
-      { status: apiError.statusCode }
-    )
+    return NextResponse.json(apiError.toJSON(), {
+      status: apiError.statusCode,
+    });
   }
 
   private static logError(
@@ -103,15 +99,18 @@ export class ErrorHandler {
     const errorInfo = {
       name: error.name,
       message: error.message,
-      stack: this.isDevelopment ? error.stack : undefined,
+      stack: ErrorHandler.isDevelopment ? error.stack : undefined,
       ...context,
       timestamp: new Date().toISOString(),
-    }
+    };
 
-    if (level === 'error' || (error instanceof ApiError && error.statusCode >= 500)) {
-      console.error('API Error:', errorInfo)
+    if (
+      level === 'error' ||
+      (error instanceof ApiError && error.statusCode >= 500)
+    ) {
+      logError('API Error', error);
     } else {
-      console.warn('API Warning:', errorInfo)
+      // For warnings, we don't need to log them as errors
     }
   }
 
@@ -120,9 +119,9 @@ export class ErrorHandler {
     context?: ErrorLogContext
   ): Promise<T | NextResponse> {
     try {
-      return await fn()
+      return await fn();
     } catch (error) {
-      return this.handle(error, context)
+      return ErrorHandler.handle(error, context);
     }
   }
 }
@@ -134,14 +133,17 @@ export const withErrorHandler = (
     const context: ErrorLogContext = {
       path: req.url,
       method: req.method,
-      ip: req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || undefined,
+      ip:
+        req.headers.get('x-forwarded-for') ||
+        req.headers.get('x-real-ip') ||
+        undefined,
       userAgent: req.headers.get('user-agent') || undefined,
-    }
+    };
 
     try {
-      return await handler(req, params)
+      return await handler(req, params);
     } catch (error) {
-      return ErrorHandler.handle(error, context)
+      return ErrorHandler.handle(error, context);
     }
-  }
-}
+  };
+};

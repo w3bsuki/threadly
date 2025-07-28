@@ -29,7 +29,7 @@ export function ProductActions({
     <div className="space-y-3">
       {isInCart ? (
         <Button
-          className="h-12 w-full bg-primary/90 font-medium text-base text-background hover:bg-secondary-foreground"
+          className="h-12 w-full bg-primary/90 font-medium text-background text-base hover:bg-secondary-foreground"
           onClick={() => router.push('/cart')}
           size="lg"
         >
@@ -39,7 +39,7 @@ export function ProductActions({
       ) : (
         <>
           <Button
-            className="h-12 w-full bg-primary font-medium text-base text-background hover:bg-primary/90"
+            className="h-12 w-full bg-primary font-medium text-background text-base hover:bg-primary/90"
             onClick={onBuyNow}
             size="lg"
           >
@@ -66,10 +66,7 @@ export function ProductActions({
           variant="outline"
         >
           <Heart
-            className={cn(
-              'mr-2 h-4 w-4',
-              isFavorited && 'fill-current'
-            )}
+            className={cn('mr-2 h-4 w-4', isFavorited && 'fill-current')}
           />
           {isFavorited ? 'Saved' : 'Save'}
         </Button>

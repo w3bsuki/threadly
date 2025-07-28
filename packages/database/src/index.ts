@@ -1,15 +1,31 @@
 // Export Prisma client and types
-export { PrismaClient, Prisma, ProductStatus } from '../generated/client'
-export type { 
-  User, Product, ProductImage, Order, Category, Review, Message, Conversation,
-  Address, CartItem, Favorite, Notification, SellerProfile
-} from '../generated/client'
 
+export type {
+  Address,
+  CartItem,
+  Category,
+  Conversation,
+  Favorite,
+  Message,
+  Notification,
+  Order,
+  Product,
+  ProductImage,
+  Review,
+  SellerProfile,
+  User,
+} from '../generated/client';
+export { Prisma, PrismaClient, ProductStatus } from '../generated/client';
+export * from './lib/backup-strategy';
+export * from './lib/monitoring';
 // Export database utilities
-export * from './lib/prisma'
-export * from './lib/query-utils'
-export * from './lib/monitoring'
-export * from './lib/backup-strategy'
-
+export * from './lib/prisma';
 // Re-export the main database instance
-export { prisma as database } from './lib/prisma'
+export { prisma as database } from './lib/prisma';
+export * from './lib/query-utils';
+// Export connection pool monitoring
+export { poolMonitor } from './lib/pool-monitor';
+export type { PoolStats, PoolMetrics } from './lib/pool-monitor';
+// Export health check utilities
+export { checkDatabaseHealth, formatHealthCheckForLogging } from './lib/health-check';
+export type { DatabaseHealthCheck } from './lib/health-check';

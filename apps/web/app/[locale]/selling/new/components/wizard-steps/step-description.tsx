@@ -1,10 +1,20 @@
 'use client';
 
-import { Textarea } from '@repo/design-system/components';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/design-system/components';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components';
-import { UseFormReturn } from 'react-hook-form';
-import { CreateProductInput } from '@repo/validation/schemas';
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Textarea,
+} from '@repo/design-system/components';
+import type { CreateProductInput } from '@repo/validation/schemas';
+import type { UseFormReturn } from 'react-hook-form';
 
 interface Category {
   id: string;
@@ -29,18 +39,20 @@ export function StepDescription({ form, categories }: StepDescriptionProps) {
         name="description"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-sm sm:text-base font-medium">Description</FormLabel>
+            <FormLabel className="font-medium text-sm sm:text-base">
+              Description
+            </FormLabel>
             <FormControl>
               <Textarea
+                className="min-h-[120px] resize-none text-base sm:min-h-32"
                 placeholder="Describe your item's condition, fit, styling tips, and any details buyers should know..."
-                className="min-h-[120px] sm:min-h-32 text-base resize-none"
                 {...field}
                 maxLength={maxChars}
               />
             </FormControl>
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <FormMessage />
-              <span className="text-[10px] sm:text-xs text-muted-foreground">
+              <span className="text-[10px] text-muted-foreground sm:text-xs">
                 {charCount}/{maxChars}
               </span>
             </div>
@@ -53,8 +65,10 @@ export function StepDescription({ form, categories }: StepDescriptionProps) {
         name="category"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-sm sm:text-base font-medium">Category</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <FormLabel className="font-medium text-sm sm:text-base">
+              Category
+            </FormLabel>
+            <Select defaultValue={field.value} onValueChange={field.onChange}>
               <FormControl>
                 <SelectTrigger className="h-12 sm:h-10">
                   <SelectValue placeholder="Select a category" />
@@ -73,14 +87,18 @@ export function StepDescription({ form, categories }: StepDescriptionProps) {
         )}
       />
 
-      <div className="bg-muted/50 p-3 sm:p-4 rounded-[var(--radius-lg)] space-y-1.5 sm:space-y-2">
-        <p className="text-xs sm:text-sm font-medium">💡 Writing Tips:</p>
-        <ul className="text-xs sm:text-sm text-muted-foreground space-y-0.5 sm:space-y-1">
+      <div className="space-y-1.5 rounded-[var(--radius-lg)] bg-muted/50 p-3 sm:space-y-2 sm:p-4">
+        <p className="font-medium text-xs sm:text-sm">💡 Writing Tips:</p>
+        <ul className="space-y-0.5 text-muted-foreground text-xs sm:space-y-1 sm:text-sm">
           <li>• Mention brand, size, and condition upfront</li>
           <li>• Describe fit (runs small/large, oversized, etc.)</li>
           <li>• Note any flaws or signs of wear honestly</li>
-          <li className="hidden sm:list-item">• Include styling suggestions or occasions</li>
-          <li className="hidden sm:list-item">• Add measurements if helpful (length, bust, etc.)</li>
+          <li className="hidden sm:list-item">
+            • Include styling suggestions or occasions
+          </li>
+          <li className="hidden sm:list-item">
+            • Add measurements if helpful (length, bust, etc.)
+          </li>
         </ul>
       </div>
     </div>

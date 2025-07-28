@@ -1,5 +1,5 @@
-import { vi } from 'vitest';
 import { HttpResponse, http } from 'msw';
+import { vi } from 'vitest';
 import { server } from '../mocks/server';
 
 // API testing utilities
@@ -14,7 +14,7 @@ export class ApiTestHelper {
     const handler = http[method](url, () => {
       return HttpResponse.json(data as any, { status });
     });
-    
+
     server.use(handler);
     return handler;
   }
@@ -29,7 +29,7 @@ export class ApiTestHelper {
     const handler = http[method](url, () => {
       return HttpResponse.json({ error: message }, { status });
     });
-    
+
     server.use(handler);
     return handler;
   }
@@ -43,10 +43,10 @@ export class ApiTestHelper {
     status = 200
   ) {
     const handler = http[method](url, async () => {
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
       return HttpResponse.json(data as any, { status });
     });
-    
+
     server.use(handler);
     return handler;
   }
@@ -61,13 +61,17 @@ export class ApiTestHelper {
   ) {
     const handler = http[method](url, ({ request }) => {
       const url = new URL(request.url);
-      const requestedPage = parseInt(url.searchParams.get('page') || '0');
-      const requestedLimit = parseInt(url.searchParams.get('limit') || '20');
-      
+      const requestedPage = Number.parseInt(
+        url.searchParams.get('page') || '0'
+      );
+      const requestedLimit = Number.parseInt(
+        url.searchParams.get('limit') || '20'
+      );
+
       const start = requestedPage * requestedLimit;
       const end = start + requestedLimit;
       const paginatedItems = items.slice(start, end);
-      
+
       return HttpResponse.json({
         data: paginatedItems,
         pagination: {
@@ -80,7 +84,7 @@ export class ApiTestHelper {
         },
       });
     });
-    
+
     server.use(handler);
     return handler;
   }
@@ -95,13 +99,13 @@ export class ApiTestHelper {
     return (req: Request) => {
       if (req.method.toLowerCase() !== method.toLowerCase()) return false;
       if (!req.url.includes(url)) return false;
-      
+
       if (headers) {
         for (const [key, value] of Object.entries(headers)) {
           if (req.headers.get(key) !== value) return false;
         }
       }
-      
+
       // Body matching would require parsing - simplified for now
       return true;
     };
@@ -131,9 +135,9 @@ export class ApiTestHelper {
 // Mock fetch for direct API testing
 export function mockFetch() {
   const fetchMock = vi.fn();
-  
+
   global.fetch = fetchMock;
-  
+
   const helpers = {
     // Mock successful response
     mockResolve: (data: any, status = 200) => {
@@ -146,39 +150,40 @@ export function mockFetch() {
         headers: new Headers(),
       } as Response);
     },
-    
+
     // Mock error response
     mockReject: (error: Error) => {
       fetchMock.mockRejectedValueOnce(error);
     },
-    
+
     // Mock network error
     mockNetworkError: () => {
       fetchMock.mockRejectedValueOnce(new TypeError('Network request failed'));
     },
-    
+
     // Mock timeout
     mockTimeout: () => {
-      fetchMock.mockImplementationOnce(() => 
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Request timeout')), 100)
-        )
+      fetchMock.mockImplementationOnce(
+        () =>
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Request timeout')), 100)
+          )
       );
     },
-    
+
     // Get call history
     getCalls: () => fetchMock.mock.calls,
-    
+
     // Clear mock
     clear: () => fetchMock.mockClear(),
-    
+
     // Restore original fetch
     restore: () => {
       fetchMock.mockRestore();
       global.fetch = originalFetch;
     },
   };
-  
+
   return { fetchMock, ...helpers };
 }
 
@@ -189,94 +194,132 @@ const originalFetch = global.fetch;
 export class FeatureApiMocks {
   // Products API
   static products = {
-    list: (products: any[]) => 
+    list: (products: any[]) =>
       ApiTestHelper.mockApiSuccess('get', '/api/products', { products }),
-    
-    get: (product: any) => 
-      ApiTestHelper.mockApiSuccess('get', `/api/products/${product.id}`, product),
-    
-    create: (product: any) => 
+
+    get: (product: any) =>
+      ApiTestHelper.mockApiSuccess(
+        'get',
+        `/api/products/${product.id}`,
+        product
+      ),
+
+    create: (product: any) =>
       ApiTestHelper.mockApiSuccess('post', '/api/products', product, 201),
-    
-    update: (product: any) => 
-      ApiTestHelper.mockApiSuccess('put', `/api/products/${product.id}`, product),
-    
-    delete: (productId: string) => 
-      ApiTestHelper.mockApiSuccess('delete', `/api/products/${productId}`, { success: true }),
+
+    update: (product: any) =>
+      ApiTestHelper.mockApiSuccess(
+        'put',
+        `/api/products/${product.id}`,
+        product
+      ),
+
+    delete: (productId: string) =>
+      ApiTestHelper.mockApiSuccess('delete', `/api/products/${productId}`, {
+        success: true,
+      }),
   };
 
   // Orders API
   static orders = {
-    list: (orders: any[]) => 
+    list: (orders: any[]) =>
       ApiTestHelper.mockApiSuccess('get', '/api/orders', { orders }),
-    
-    get: (order: any) => 
+
+    get: (order: any) =>
       ApiTestHelper.mockApiSuccess('get', `/api/orders/${order.id}`, order),
-    
-    create: (order: any) => 
+
+    create: (order: any) =>
       ApiTestHelper.mockApiSuccess('post', '/api/orders', order, 201),
-    
-    update: (order: any) => 
+
+    update: (order: any) =>
       ApiTestHelper.mockApiSuccess('put', `/api/orders/${order.id}`, order),
   };
 
   // Messages API
   static messages = {
-    conversations: (conversations: any[]) => 
-      ApiTestHelper.mockApiSuccess('get', '/api/conversations', { conversations }),
-    
-    messages: (conversationId: string, messages: any[]) => 
-      ApiTestHelper.mockApiSuccess('get', `/api/conversations/${conversationId}/messages`, { messages }),
-    
-    send: (message: any) => 
-      ApiTestHelper.mockApiSuccess('post', `/api/conversations/${message.conversationId}/messages`, message, 201),
+    conversations: (conversations: any[]) =>
+      ApiTestHelper.mockApiSuccess('get', '/api/conversations', {
+        conversations,
+      }),
+
+    messages: (conversationId: string, messages: any[]) =>
+      ApiTestHelper.mockApiSuccess(
+        'get',
+        `/api/conversations/${conversationId}/messages`,
+        { messages }
+      ),
+
+    send: (message: any) =>
+      ApiTestHelper.mockApiSuccess(
+        'post',
+        `/api/conversations/${message.conversationId}/messages`,
+        message,
+        201
+      ),
   };
 
   // Search API
   static search = {
-    products: (results: any[]) => 
+    products: (results: any[]) =>
       ApiTestHelper.mockApiSuccess('post', '/api/search', {
         hits: results,
         totalHits: results.length,
         page: 0,
         totalPages: 1,
       }),
-    
-    suggestions: (suggestions: string[]) => 
-      ApiTestHelper.mockApiSuccess('get', '/api/search/suggestions', suggestions),
-    
-    autocomplete: (results: any[]) => 
+
+    suggestions: (suggestions: string[]) =>
+      ApiTestHelper.mockApiSuccess(
+        'get',
+        '/api/search/suggestions',
+        suggestions
+      ),
+
+    autocomplete: (results: any[]) =>
       ApiTestHelper.mockApiSuccess('get', '/api/search/autocomplete', results),
   };
 
   // Notifications API
   static notifications = {
-    list: (notifications: any[]) => 
+    list: (notifications: any[]) =>
       ApiTestHelper.mockApiSuccess('get', '/api/notifications', {
         notifications,
         unreadCount: notifications.filter((n: any) => !n.read).length,
       }),
-    
-    markRead: (notificationId: string) => 
-      ApiTestHelper.mockApiSuccess('patch', `/api/notifications/${notificationId}/read`, { success: true }),
+
+    markRead: (notificationId: string) =>
+      ApiTestHelper.mockApiSuccess(
+        'patch',
+        `/api/notifications/${notificationId}/read`,
+        { success: true }
+      ),
   };
 
   // Payment API
   static payments = {
-    createIntent: (clientSecret: string) => 
-      ApiTestHelper.mockApiSuccess('post', '/api/stripe/create-payment-intent', {
-        clientSecret,
-        paymentIntentId: 'pi_test_123',
-      }),
+    createIntent: (clientSecret: string) =>
+      ApiTestHelper.mockApiSuccess(
+        'post',
+        '/api/stripe/create-payment-intent',
+        {
+          clientSecret,
+          paymentIntentId: 'pi_test_123',
+        }
+      ),
   };
 }
 
 // Request validation helpers
 export class RequestValidator {
-  static validateHeaders(request: Request, expectedHeaders: Record<string, string>) {
+  static validateHeaders(
+    request: Request,
+    expectedHeaders: Record<string, string>
+  ) {
     for (const [key, value] of Object.entries(expectedHeaders)) {
       if (request.headers.get(key) !== value) {
-        throw new Error(`Expected header ${key}: ${value}, got: ${request.headers.get(key)}`);
+        throw new Error(
+          `Expected header ${key}: ${value}, got: ${request.headers.get(key)}`
+        );
       }
     }
   }
@@ -293,15 +336,22 @@ export class RequestValidator {
   static validateUrl(request: Request, expectedPath: string) {
     const url = new URL(request.url);
     if (!url.pathname.includes(expectedPath)) {
-      throw new Error(`Expected path to include ${expectedPath}, got: ${url.pathname}`);
+      throw new Error(
+        `Expected path to include ${expectedPath}, got: ${url.pathname}`
+      );
     }
   }
 
-  static validateQueryParams(request: Request, expectedParams: Record<string, string>) {
+  static validateQueryParams(
+    request: Request,
+    expectedParams: Record<string, string>
+  ) {
     const url = new URL(request.url);
     for (const [key, value] of Object.entries(expectedParams)) {
       if (url.searchParams.get(key) !== value) {
-        throw new Error(`Expected query param ${key}: ${value}, got: ${url.searchParams.get(key)}`);
+        throw new Error(
+          `Expected query param ${key}: ${value}, got: ${url.searchParams.get(key)}`
+        );
       }
     }
   }
@@ -330,12 +380,7 @@ export class ApiResponseBuilder {
     };
   }
 
-  static paginated<T>(
-    items: T[],
-    page: number,
-    limit: number,
-    total: number
-  ) {
+  static paginated<T>(items: T[], page: number, limit: number, total: number) {
     return {
       success: true,
       data: items,
@@ -363,7 +408,7 @@ export async function testApiEndpoint(
   }
 ) {
   const { body, headers, expectedStatus = 200, expectedData } = options || {};
-  
+
   const response = await fetch(endpoint, {
     method,
     headers: {
@@ -372,14 +417,14 @@ export async function testApiEndpoint(
     },
     body: body ? JSON.stringify(body) : undefined,
   });
-  
+
   expect(response.status).toBe(expectedStatus);
-  
+
   if (expectedData) {
     const data = await response.json();
     expect(data).toEqual(expectedData);
   }
-  
+
   return response;
 }
 

@@ -30,17 +30,17 @@ export const logError = (message: string, error: unknown): void => {
   try {
     // Convert unknown error to a format the logger expects
     if (error instanceof Error) {
-      log.error(message, { 
-        message: error.message, 
-        stack: error.stack, 
-        name: error.name 
+      log.error(message, {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
       });
     } else if (error && typeof error === 'object') {
-      log.error(message, { error: error });
+      log.error(message, { error });
     } else {
       log.error(message, { error: String(error) });
     }
-    
+
     // Also capture for external error tracking
     Sentry.captureException(error);
   } catch (loggingError) {

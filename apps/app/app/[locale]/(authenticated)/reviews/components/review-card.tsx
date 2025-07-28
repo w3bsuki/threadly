@@ -1,11 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import Image from 'next/image';
-import { Star, Camera, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@repo/design-system/components';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@repo/design-system/components';
 import { cn } from '@repo/design-system/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
+import { Camera, ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import Image from 'next/image';
+import { useState } from 'react';
 import { HelpfulButton } from './helpful-button';
 
 interface ReviewCardProps {
@@ -30,14 +34,16 @@ export function ReviewCard({ review, variant = 'default' }: ReviewCardProps) {
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
 
-  const reviewerName = [review.reviewer.firstName, review.reviewer.lastName]
-    .filter(Boolean)
-    .join(' ') || 'Anonymous';
+  const reviewerName =
+    [review.reviewer.firstName, review.reviewer.lastName]
+      .filter(Boolean)
+      .join(' ') || 'Anonymous';
 
-  const initials = [review.reviewer.firstName?.[0], review.reviewer.lastName?.[0]]
-    .filter(Boolean)
-    .join('')
-    .toUpperCase() || 'A';
+  const initials =
+    [review.reviewer.firstName?.[0], review.reviewer.lastName?.[0]]
+      .filter(Boolean)
+      .join('')
+      .toUpperCase() || 'A';
 
   const nextPhoto = () => {
     if (review.photos && currentPhotoIndex < review.photos.length - 1) {
@@ -52,48 +58,54 @@ export function ReviewCard({ review, variant = 'default' }: ReviewCardProps) {
   };
 
   return (
-    <div className={cn(
-      "bg-card rounded-[var(--radius-lg)] border",
-      variant === 'compact' ? 'p-3' : 'p-4'
-    )}>
+    <div
+      className={cn(
+        'rounded-[var(--radius-lg)] border bg-card',
+        variant === 'compact' ? 'p-3' : 'p-4'
+      )}
+    >
       {/* Header */}
-      <div className="flex items-start gap-3 mb-3">
+      <div className="mb-3 flex items-start gap-3">
         <Avatar className={variant === 'compact' ? 'h-8 w-8' : 'h-10 w-10'}>
           <AvatarImage src={review.reviewer.imageUrl || undefined} />
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
-        
+
         <div className="flex-1">
           <div className="flex items-center justify-between">
-            <h4 className={cn(
-              "font-medium",
-              variant === 'compact' ? 'text-sm' : 'text-base'
-            )}>
+            <h4
+              className={cn(
+                'font-medium',
+                variant === 'compact' ? 'text-sm' : 'text-base'
+              )}
+            >
               {reviewerName}
             </h4>
-            <span className="text-xs text-muted-foreground">
+            <span className="text-muted-foreground text-xs">
               {formatDistanceToNow(review.createdAt, { addSuffix: true })}
             </span>
           </div>
-          
+
           {/* Rating */}
-          <div className="flex items-center gap-1 mt-1">
+          <div className="mt-1 flex items-center gap-1">
             {[...Array(5)].map((_, i) => (
               <Star
-                key={i}
                 className={cn(
-                  "transition-colors",
+                  'transition-colors',
                   variant === 'compact' ? 'h-3 w-3' : 'h-4 w-4',
                   i < review.rating
                     ? 'fill-yellow-400 text-yellow-400'
                     : 'text-muted-foreground/30'
                 )}
+                key={i}
               />
             ))}
-            <span className={cn(
-              "text-muted-foreground ml-1",
-              variant === 'compact' ? 'text-xs' : 'text-sm'
-            )}>
+            <span
+              className={cn(
+                'ml-1 text-muted-foreground',
+                variant === 'compact' ? 'text-xs' : 'text-sm'
+              )}
+            >
               {review.rating}.0
             </span>
           </div>
@@ -102,10 +114,12 @@ export function ReviewCard({ review, variant = 'default' }: ReviewCardProps) {
 
       {/* Comment */}
       {review.comment && (
-        <p className={cn(
-          "text-foreground mb-3",
-          variant === 'compact' ? 'text-sm line-clamp-3' : 'text-base'
-        )}>
+        <p
+          className={cn(
+            'mb-3 text-foreground',
+            variant === 'compact' ? 'line-clamp-3 text-sm' : 'text-base'
+          )}
+        >
           {review.comment}
         </p>
       )}
@@ -117,79 +131,81 @@ export function ReviewCard({ review, variant = 'default' }: ReviewCardProps) {
             <div className="grid grid-cols-3 gap-2">
               {review.photos.map((photo, index) => (
                 <div
+                  className="relative aspect-square cursor-pointer overflow-hidden rounded-[var(--radius-lg)]"
                   key={index}
-                  className="relative aspect-square rounded-[var(--radius-lg)] overflow-hidden cursor-pointer"
                   onClick={() => {
                     setCurrentPhotoIndex(index);
                     setShowAllPhotos(false);
                   }}
                 >
                   <Image
-                    src={photo}
                     alt={`Review photo ${index + 1}`}
-                    fill
                     className="object-cover"
+                    fill
+                    src={photo}
                   />
                 </div>
               ))}
             </div>
           ) : (
             <div className="relative">
-              <div className="relative aspect-video rounded-[var(--radius-lg)] overflow-hidden bg-muted">
+              <div className="relative aspect-video overflow-hidden rounded-[var(--radius-lg)] bg-muted">
                 <Image
-                  src={review.photos[currentPhotoIndex]}
                   alt={`Review photo ${currentPhotoIndex + 1}`}
-                  fill
                   className="object-cover"
+                  fill
+                  src={review.photos[currentPhotoIndex]}
                 />
-                
+
                 {/* Photo navigation */}
                 {review.photos.length > 1 && (
                   <>
                     <button
-                      onClick={prevPhoto}
                       className={cn(
-                        "absolute left-2 top-1/2 -translate-y-1/2 bg-foreground/50 text-background rounded-[var(--radius-full)] p-1",
-                        currentPhotoIndex === 0 && "opacity-50 cursor-not-allowed"
+                        '-translate-y-1/2 absolute top-1/2 left-2 rounded-[var(--radius-full)] bg-foreground/50 p-1 text-background',
+                        currentPhotoIndex === 0 &&
+                          'cursor-not-allowed opacity-50'
                       )}
                       disabled={currentPhotoIndex === 0}
+                      onClick={prevPhoto}
                     >
                       <ChevronLeft className="h-4 w-4" />
                     </button>
-                    
+
                     <button
-                      onClick={nextPhoto}
                       className={cn(
-                        "absolute right-2 top-1/2 -translate-y-1/2 bg-foreground/50 text-background rounded-[var(--radius-full)] p-1",
-                        currentPhotoIndex === review.photos.length - 1 && "opacity-50 cursor-not-allowed"
+                        '-translate-y-1/2 absolute top-1/2 right-2 rounded-[var(--radius-full)] bg-foreground/50 p-1 text-background',
+                        currentPhotoIndex === review.photos.length - 1 &&
+                          'cursor-not-allowed opacity-50'
                       )}
                       disabled={currentPhotoIndex === review.photos.length - 1}
+                      onClick={nextPhoto}
                     >
                       <ChevronRight className="h-4 w-4" />
                     </button>
-                    
+
                     {/* Photo indicators */}
-                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+                    <div className="-translate-x-1/2 absolute bottom-2 left-1/2 flex gap-1">
                       {review.photos.map((_, index) => (
                         <div
-                          key={index}
                           className={cn(
-                            "w-1.5 h-1.5 rounded-[var(--radius-full)] transition-colors",
+                            'h-1.5 w-1.5 rounded-[var(--radius-full)] transition-colors',
                             index === currentPhotoIndex
-                              ? "bg-background"
-                              : "bg-background/50"
+                              ? 'bg-background'
+                              : 'bg-background/50'
                           )}
+                          key={index}
                         />
                       ))}
                     </div>
                   </>
                 )}
-                
+
                 {/* View all photos button */}
                 {variant === 'default' && review.photos.length > 1 && (
                   <button
+                    className="absolute top-2 right-2 flex items-center gap-1 rounded-[var(--radius-md)] bg-foreground/50 px-2 py-1 text-background text-xs"
                     onClick={() => setShowAllPhotos(true)}
-                    className="absolute top-2 right-2 bg-foreground/50 text-background rounded-[var(--radius-md)] px-2 py-1 text-xs flex items-center gap-1"
                   >
                     <Camera className="h-3 w-3" />
                     {review.photos.length}
@@ -203,11 +219,11 @@ export function ReviewCard({ review, variant = 'default' }: ReviewCardProps) {
 
       {/* Actions */}
       {variant === 'default' && (
-        <div className="flex items-center gap-4 pt-3 border-t">
+        <div className="flex items-center gap-4 border-t pt-3">
           <HelpfulButton
-            reviewId={review.id}
             helpfulCount={review.helpfulCount || 0}
             isHelpful={review.isHelpful}
+            reviewId={review.id}
           />
         </div>
       )}

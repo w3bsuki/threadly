@@ -1,15 +1,15 @@
 'use client';
 
-import { createContext, useContext, type ReactNode } from 'react';
 import type { Dictionary } from '@repo/internationalization';
+import { createContext, type ReactNode, useContext } from 'react';
 
 const TranslationContext = createContext<Dictionary | null>(null);
 
-export function TranslationProvider({ 
-  children, 
-  dictionary 
-}: { 
-  children: ReactNode; 
+export function TranslationProvider({
+  children,
+  dictionary,
+}: {
+  children: ReactNode;
   dictionary: Dictionary;
 }) {
   return (
@@ -21,10 +21,10 @@ export function TranslationProvider({
 
 export function useTranslation() {
   const dictionary = useContext(TranslationContext);
-  
+
   if (!dictionary) {
     throw new Error('useTranslation must be used within a TranslationProvider');
   }
-  
+
   return dictionary;
 }

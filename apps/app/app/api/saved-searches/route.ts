@@ -1,9 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
-import { savedSearchSchema, queryParamsSchema, sanitizeForDisplay } from '@repo/validation';
+import { log, logError } from '@repo/observability/server';
+import {
+  queryParamsSchema,
+  sanitizeForDisplay,
+  savedSearchSchema,
+} from '@repo/validation';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,7 +18,7 @@ export async function GET(request: NextRequest) {
     // Get user's database ID
     const dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!dbUser) {
@@ -30,7 +33,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ savedSearches });
   } catch (error) {
     logError('Error fetching saved searches:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -42,18 +48,18 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    
+
     // Validate input with Zod schema
     const validationResult = savedSearchSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid input', 
-          details: validationResult.error.issues.map(e => ({
+        {
+          error: 'Invalid input',
+          details: validationResult.error.issues.map((e) => ({
             field: e.path.join('.'),
-            message: e.message
-          }))
-        }, 
+            message: e.message,
+          })),
+        },
         { status: 400 }
       );
     }
@@ -63,7 +69,7 @@ export async function POST(request: NextRequest) {
     // Get user's database ID
     const dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!dbUser) {
@@ -84,11 +90,14 @@ export async function POST(request: NextRequest) {
         userId: dbUser.id,
         query: sanitizedData.query,
         filters: sanitizedData.filters,
-      }
+      },
     });
 
     if (existingSearch) {
-      return NextResponse.json({ error: 'You already have this search saved' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'You already have this search saved' },
+        { status: 400 }
+      );
     }
 
     // Create saved search with sanitized data
@@ -102,7 +111,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ savedSearch });
   } catch (error) {
     logError('Error creating saved search:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -118,15 +130,15 @@ export async function DELETE(request: NextRequest) {
 
     // Validate query parameters
     const queryValidation = queryParamsSchema.safeParse({ id });
-    if (!queryValidation.success || !id) {
+    if (!(queryValidation.success && id)) {
       return NextResponse.json(
-        { 
-          error: 'Invalid search ID', 
-          details: queryValidation.error?.issues.map(e => ({
+        {
+          error: 'Invalid search ID',
+          details: queryValidation.error?.issues.map((e) => ({
             field: e.path.join('.'),
-            message: e.message
-          })) || [{ field: 'id', message: 'Search ID is required' }]
-        }, 
+            message: e.message,
+          })) || [{ field: 'id', message: 'Search ID is required' }],
+        },
         { status: 400 }
       );
     }
@@ -134,7 +146,7 @@ export async function DELETE(request: NextRequest) {
     // Get user's database ID
     const dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!dbUser) {
@@ -146,16 +158,22 @@ export async function DELETE(request: NextRequest) {
       where: {
         id,
         userId: dbUser.id,
-      }
+      },
     });
 
     if (result.count === 0) {
-      return NextResponse.json({ error: 'Saved search not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Saved search not found' },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     logError('Error deleting saved search:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

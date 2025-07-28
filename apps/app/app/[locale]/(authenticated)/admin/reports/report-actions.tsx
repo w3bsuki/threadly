@@ -1,23 +1,17 @@
 'use client';
 
-import { 
-  MoreVertical, 
-  Check,
-  X,
-  AlertTriangle,
-  Eye
-} from 'lucide-react';
 import {
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
-import { resolveReport, dismissReport, escalateReport } from './actions';
-import { useState } from 'react';
+import { AlertTriangle, Check, Eye, MoreVertical, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { dismissReport, escalateReport, resolveReport } from './actions';
 
 interface ReportActionsProps {
   report: {
@@ -44,7 +38,9 @@ interface ReportActionsProps {
   };
 }
 
-export function ReportActions({ report }: ReportActionsProps): React.JSX.Element {
+export function ReportActions({
+  report,
+}: ReportActionsProps): React.JSX.Element {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -64,63 +60,67 @@ export function ReportActions({ report }: ReportActionsProps): React.JSX.Element
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" disabled={isLoading}>
+        <Button disabled={isLoading} size="icon" variant="ghost">
           <MoreVertical className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>
           <a href={`/admin/reports/${report.id}`}>
-            <Eye className="h-4 w-4 mr-2" />
+            <Eye className="mr-2 h-4 w-4" />
             View Details
           </a>
         </DropdownMenuItem>
-        
+
         <DropdownMenuSeparator />
-        
+
         {report.status === 'PENDING' && (
           <>
             <DropdownMenuItem
-              onClick={() => handleAction(() => resolveReport(report.id, 'APPROVED'))}
               className="text-green-600"
+              onClick={() =>
+                handleAction(() => resolveReport(report.id, 'APPROVED'))
+              }
             >
-              <Check className="h-4 w-4 mr-2" />
+              <Check className="mr-2 h-4 w-4" />
               Approve & Take Action
             </DropdownMenuItem>
-            
+
             <DropdownMenuItem
-              onClick={() => handleAction(() => dismissReport(report.id))}
               className="text-muted-foreground"
+              onClick={() => handleAction(() => dismissReport(report.id))}
             >
-              <X className="h-4 w-4 mr-2" />
+              <X className="mr-2 h-4 w-4" />
               Dismiss Report
             </DropdownMenuItem>
-            
+
             <DropdownMenuItem
-              onClick={() => handleAction(() => escalateReport(report.id))}
               className="text-orange-600"
+              onClick={() => handleAction(() => escalateReport(report.id))}
             >
-              <AlertTriangle className="h-4 w-4 mr-2" />
+              <AlertTriangle className="mr-2 h-4 w-4" />
               Escalate to Admin
             </DropdownMenuItem>
           </>
         )}
-        
+
         {report.status === 'UNDER_REVIEW' && (
           <>
             <DropdownMenuItem
-              onClick={() => handleAction(() => resolveReport(report.id, 'RESOLVED'))}
               className="text-green-600"
+              onClick={() =>
+                handleAction(() => resolveReport(report.id, 'RESOLVED'))
+              }
             >
-              <Check className="h-4 w-4 mr-2" />
+              <Check className="mr-2 h-4 w-4" />
               Mark Resolved
             </DropdownMenuItem>
-            
+
             <DropdownMenuItem
-              onClick={() => handleAction(() => dismissReport(report.id))}
               className="text-muted-foreground"
+              onClick={() => handleAction(() => dismissReport(report.id))}
             >
-              <X className="h-4 w-4 mr-2" />
+              <X className="mr-2 h-4 w-4" />
               Dismiss Report
             </DropdownMenuItem>
           </>

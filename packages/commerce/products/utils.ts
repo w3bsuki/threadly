@@ -1,12 +1,12 @@
 import type { CommerceProduct } from '../types';
 
 // Client-safe price formatting utility to avoid Prisma client issues
-function formatPrice(cents: number, currency: string = 'USD'): string {
+function formatPrice(cents: number, currency = 'USD'): string {
   const dollars = cents / 100;
-  
+
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: currency,
+    currency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(dollars);
@@ -55,7 +55,7 @@ export function generateProductSlug(product: CommerceProduct): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
-  
+
   return `${titleSlug}-${product.id}`;
 }
 
@@ -68,11 +68,12 @@ export function parseProductIdFromSlug(slug: string): string | null {
 // Check if product is new (listed within X days)
 export function isNewProduct(
   product: CommerceProduct,
-  daysThreshold: number = 7
+  daysThreshold = 7
 ): boolean {
   const createdDate = new Date(product.createdAt);
   const now = new Date();
-  const daysDiff = (now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24);
+  const daysDiff =
+    (now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24);
   return daysDiff <= daysThreshold;
 }
 
@@ -84,19 +85,19 @@ export function getProductBadge(product: CommerceProduct): {
   if (product.status === 'SOLD') {
     return { text: 'Sold', color: 'red' };
   }
-  
+
   if (product.status === 'RESERVED') {
     return { text: 'Reserved', color: 'yellow' };
   }
-  
+
   if (isNewProduct(product)) {
     return { text: 'New', color: 'green' };
   }
-  
+
   if (product.condition === 'NEW') {
     return { text: 'Brand New', color: 'blue' };
   }
-  
+
   return null;
 }
 
@@ -113,7 +114,9 @@ export function sortProducts(
       case 'title':
         return a.title.localeCompare(b.title);
       case 'createdAt':
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
       default:
         return 0;
     }
@@ -128,7 +131,7 @@ export function filterByPriceRange(
   minPrice?: number,
   maxPrice?: number
 ): CommerceProduct[] {
-  return products.filter(product => {
+  return products.filter((product) => {
     if (minPrice !== undefined && product.price < minPrice) return false;
     if (maxPrice !== undefined && product.price > maxPrice) return false;
     return true;
@@ -139,20 +142,21 @@ export function filterByPriceRange(
 export function groupProductsByCategory(
   products: CommerceProduct[]
 ): Record<string, CommerceProduct[]> {
-  return products.reduce((groups, product) => {
-    const category = product.category || 'Other';
-    if (!groups[category]) {
-      groups[category] = [];
-    }
-    groups[category].push(product);
-    return groups;
-  }, {} as Record<string, CommerceProduct[]>);
+  return products.reduce(
+    (groups, product) => {
+      const category = product.category || 'Other';
+      if (!groups[category]) {
+        groups[category] = [];
+      }
+      groups[category].push(product);
+      return groups;
+    },
+    {} as Record<string, CommerceProduct[]>
+  );
 }
 
 // Get unique values for filters
-export function getUniqueFilterValues(
-  products: CommerceProduct[]
-): {
+export function getUniqueFilterValues(products: CommerceProduct[]): {
   conditions: string[];
   sizes: string[];
   colors: string[];
@@ -165,7 +169,7 @@ export function getUniqueFilterValues(
   const brands = new Set<string>();
   const categories = new Set<string>();
 
-  products.forEach(product => {
+  products.forEach((product) => {
     if (product.condition) conditions.add(product.condition);
     if (product.size) sizes.add(product.size);
     if (product.color) colors.add(product.color);
@@ -222,7 +226,7 @@ export function validateProduct(product: Partial<CommerceProduct>): {
 // Get share URL for product
 export function getProductShareUrl(
   product: CommerceProduct,
-  baseUrl: string = ''
+  baseUrl = ''
 ): string {
   const slug = generateProductSlug(product);
   return `${baseUrl}/product/${slug}`;

@@ -35,11 +35,15 @@ export class SearchHistoryService {
   /**
    * Add search to local history
    */
-  static addToLocalHistory(query: string, filters?: Record<string, unknown>, resultCount = 0): void {
+  static addToLocalHistory(
+    query: string,
+    filters?: Record<string, unknown>,
+    resultCount = 0
+  ): void {
     if (typeof window === 'undefined') return;
 
     try {
-      const history = this.getLocalHistory();
+      const history = SearchHistoryService.getLocalHistory();
       const item: SearchHistoryItem = {
         id: `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         query: query.trim(),
@@ -49,10 +53,16 @@ export class SearchHistoryService {
       };
 
       // Remove duplicates and add new item
-      const filtered = history.filter(h => h.query !== item.query);
-      const updated = [item, ...filtered].slice(0, this.MAX_LOCAL_HISTORY);
+      const filtered = history.filter((h) => h.query !== item.query);
+      const updated = [item, ...filtered].slice(
+        0,
+        SearchHistoryService.MAX_LOCAL_HISTORY
+      );
 
-      localStorage.setItem(this.LOCAL_STORAGE_KEY, JSON.stringify(updated));
+      localStorage.setItem(
+        SearchHistoryService.LOCAL_STORAGE_KEY,
+        JSON.stringify(updated)
+      );
     } catch (error) {
       console.warn('Failed to save search history:', error);
     }
@@ -65,14 +75,18 @@ export class SearchHistoryService {
     if (typeof window === 'undefined') return [];
 
     try {
-      const stored = localStorage.getItem(this.LOCAL_STORAGE_KEY);
+      const stored = localStorage.getItem(
+        SearchHistoryService.LOCAL_STORAGE_KEY
+      );
       if (!stored) return [];
 
       const parsed = JSON.parse(stored);
-      return Array.isArray(parsed) ? parsed.map(item => ({
-        ...item,
-        createdAt: new Date(item.createdAt),
-      })) : [];
+      return Array.isArray(parsed)
+        ? parsed.map((item) => ({
+            ...item,
+            createdAt: new Date(item.createdAt),
+          }))
+        : [];
     } catch (error) {
       console.warn('Failed to load search history:', error);
       return [];
@@ -84,9 +98,9 @@ export class SearchHistoryService {
    */
   static clearLocalHistory(): void {
     if (typeof window === 'undefined') return;
-    
+
     try {
-      localStorage.removeItem(this.LOCAL_STORAGE_KEY);
+      localStorage.removeItem(SearchHistoryService.LOCAL_STORAGE_KEY);
     } catch (error) {
       console.warn('Failed to clear search history:', error);
     }
@@ -99,9 +113,12 @@ export class SearchHistoryService {
     if (typeof window === 'undefined') return;
 
     try {
-      const history = this.getLocalHistory();
-      const filtered = history.filter(item => item.query !== query);
-      localStorage.setItem(this.LOCAL_STORAGE_KEY, JSON.stringify(filtered));
+      const history = SearchHistoryService.getLocalHistory();
+      const filtered = history.filter((item) => item.query !== query);
+      localStorage.setItem(
+        SearchHistoryService.LOCAL_STORAGE_KEY,
+        JSON.stringify(filtered)
+      );
     } catch (error) {
       console.warn('Failed to remove from search history:', error);
     }
@@ -138,32 +155,31 @@ export class SearchHistoryService {
         return {
           id: updated.id,
           query: updated.query,
-          filters: updated.filters as Record<string, unknown> || undefined,
+          filters: (updated.filters as Record<string, unknown>) || undefined,
           resultCount: updated.resultCount,
           createdAt: updated.createdAt,
           userId: updated.userId,
         };
-      } else {
-        // Create new search history item
-        const created = await database.searchHistory.create({
-          data: {
-            id: crypto.randomUUID(),
-            userId,
-            query: query.trim(),
-            filters: filters as any,
-            resultCount,
-          },
-        });
-
-        return {
-          id: created.id,
-          query: created.query,
-          filters: created.filters as Record<string, unknown> || undefined,
-          resultCount: created.resultCount,
-          createdAt: created.createdAt,
-          userId: created.userId,
-        };
       }
+      // Create new search history item
+      const created = await database.searchHistory.create({
+        data: {
+          id: crypto.randomUUID(),
+          userId,
+          query: query.trim(),
+          filters: filters as any,
+          resultCount,
+        },
+      });
+
+      return {
+        id: created.id,
+        query: created.query,
+        filters: (created.filters as Record<string, unknown>) || undefined,
+        resultCount: created.resultCount,
+        createdAt: created.createdAt,
+        userId: created.userId,
+      };
     } catch (error) {
       console.error('Failed to save search to database:', error);
       return null;
@@ -173,7 +189,10 @@ export class SearchHistoryService {
   /**
    * Get user's search history from database
    */
-  static async getDatabaseHistory(userId: string, limit = 50): Promise<SearchHistoryItem[]> {
+  static async getDatabaseHistory(
+    userId: string,
+    limit = 50
+  ): Promise<SearchHistoryItem[]> {
     try {
       const history = await database.searchHistory.findMany({
         where: { userId },
@@ -181,10 +200,10 @@ export class SearchHistoryService {
         take: limit,
       });
 
-      return history.map(item => ({
+      return history.map((item) => ({
         id: item.id,
         query: item.query,
-        filters: item.filters as Record<string, unknown> || undefined,
+        filters: (item.filters as Record<string, unknown>) || undefined,
         resultCount: item.resultCount,
         createdAt: item.createdAt,
         userId: item.userId,
@@ -242,7 +261,7 @@ export class SavedSearchService {
         id: saved.id,
         name: saved.name,
         query: saved.query,
-        filters: saved.filters as Record<string, unknown> || undefined,
+        filters: (saved.filters as Record<string, unknown>) || undefined,
         alertEnabled: saved.alertEnabled,
         userId: saved.userId,
         createdAt: saved.createdAt,
@@ -264,11 +283,11 @@ export class SavedSearchService {
         orderBy: { updatedAt: 'desc' },
       });
 
-      return saved.map(item => ({
+      return saved.map((item) => ({
         id: item.id,
         name: item.name,
         query: item.query,
-        filters: item.filters as Record<string, unknown> || undefined,
+        filters: (item.filters as Record<string, unknown>) || undefined,
         alertEnabled: item.alertEnabled,
         userId: item.userId,
         createdAt: item.createdAt,
@@ -286,7 +305,9 @@ export class SavedSearchService {
   static async updateSavedSearch(
     id: string,
     userId: string,
-    updates: Partial<Omit<SavedSearch, 'id' | 'userId' | 'createdAt' | 'updatedAt'>>
+    updates: Partial<
+      Omit<SavedSearch, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
+    >
   ): Promise<SavedSearch | null> {
     try {
       const updated = await database.savedSearch.update({
@@ -301,7 +322,7 @@ export class SavedSearchService {
         id: updated.id,
         name: updated.name,
         query: updated.query,
-        filters: updated.filters as Record<string, unknown> || undefined,
+        filters: (updated.filters as Record<string, unknown>) || undefined,
         alertEnabled: updated.alertEnabled,
         userId: updated.userId,
         createdAt: updated.createdAt,
@@ -331,7 +352,11 @@ export class SavedSearchService {
   /**
    * Toggle alerts for saved search
    */
-  static async toggleAlerts(id: string, userId: string, enabled: boolean): Promise<boolean> {
+  static async toggleAlerts(
+    id: string,
+    userId: string,
+    enabled: boolean
+  ): Promise<boolean> {
     try {
       await database.savedSearch.update({
         where: { id, userId },

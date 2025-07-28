@@ -2,8 +2,8 @@ import {
   Card,
   CardContent,
   CardHeader,
+  Skeleton,
 } from '@repo/design-system/components';
-import { Skeleton } from '@repo/design-system/components';
 
 export function CheckoutSkeleton() {
   return (

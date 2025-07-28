@@ -1,12 +1,12 @@
 'use client';
 
 import { useCartStore } from '@repo/commerce';
-import { 
-  Button, 
-  CartItem, 
-  CartSummary, 
+import {
+  Button,
   CartEmpty,
-  Trash2 
+  CartItem,
+  CartSummary,
+  Trash2,
 } from '@repo/design-system/components';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -18,15 +18,15 @@ interface CartContentProps {
 
 export function CartContent({ userId }: CartContentProps): React.JSX.Element {
   const router = useRouter();
-  const { 
-    items, 
-    removeItem, 
-    updateQuantity, 
-    clearCart, 
-    getTotalItems, 
-    getTotalPrice 
+  const {
+    items,
+    removeItem,
+    updateQuantity,
+    clearCart,
+    getTotalItems,
+    getTotalPrice,
   } = useCartStore();
-  
+
   const [isLoading, setIsLoading] = useState(false);
 
   const totalItems = getTotalItems();
@@ -54,12 +54,12 @@ export function CartContent({ userId }: CartContentProps): React.JSX.Element {
   if (items.length === 0) {
     return (
       <CartEmpty
-        title="Your cart is empty"
-        description="Discover amazing fashion finds and add them to your cart"
         actionText="Continue Shopping"
-        onAction={handleContinueShopping}
-        variant="default"
+        description="Discover amazing fashion finds and add them to your cart"
         enableAnimations={false}
+        onAction={handleContinueShopping}
+        title="Your cart is empty"
+        variant="default"
       />
     );
   }
@@ -67,38 +67,38 @@ export function CartContent({ userId }: CartContentProps): React.JSX.Element {
   return (
     <div className="grid gap-6 lg:grid-cols-3">
       {/* Cart Items */}
-      <div className="lg:col-span-2 space-y-4">
+      <div className="space-y-4 lg:col-span-2">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">
+          <h2 className="font-semibold text-lg">
             Cart Items ({totalItems} {totalItems === 1 ? 'item' : 'items'})
           </h2>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={clearCart}
+          <Button
             className="text-destructive hover:text-destructive"
+            onClick={clearCart}
+            size="sm"
+            variant="ghost"
           >
-            <Trash2 className="h-4 w-4 mr-2" />
+            <Trash2 className="mr-2 h-4 w-4" />
             Clear Cart
           </Button>
         </div>
 
         {items.map((item) => (
           <CartItem
-            key={item.id}
-            id={item.productId}
-            title={item.title}
-            price={item.price}
-            quantity={item.quantity}
-            imageUrl={item.imageUrl}
-            imageAlt={item.title}
-            size={item.size}
             color={item.color}
             condition={item.condition}
-            seller={item.sellerName}
+            enableAnimations={false}
+            id={item.productId}
+            imageAlt={item.title}
+            imageUrl={item.imageUrl}
+            key={item.id}
             onQuantityChange={handleQuantityChange}
             onRemove={handleRemoveItem}
-            enableAnimations={false}
+            price={item.price}
+            quantity={item.quantity}
+            seller={item.sellerName}
+            size={item.size}
+            title={item.title}
             variant="default"
           />
         ))}
@@ -107,16 +107,16 @@ export function CartContent({ userId }: CartContentProps): React.JSX.Element {
       {/* Order Summary */}
       <div className="lg:col-span-1">
         <CartSummary
-          subtotal={totalPrice}
-          shipping={shippingFee}
-          total={finalTotal}
+          className="sticky top-4"
+          enableAnimations={false}
+          estimatedDelivery="3-5 business days"
+          isCheckoutLoading={isLoading}
           itemCount={totalItems}
           onCheckout={handleCheckout}
-          isCheckoutLoading={isLoading}
-          estimatedDelivery="3-5 business days"
+          shipping={shippingFee}
+          subtotal={totalPrice}
+          total={finalTotal}
           variant="sidebar"
-          enableAnimations={false}
-          className="sticky top-4"
         />
       </div>
     </div>

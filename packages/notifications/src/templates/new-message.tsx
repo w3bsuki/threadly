@@ -1,9 +1,5 @@
-import * as React from 'react';
-import {
-  Button,
-  Section,
-  Text,
-} from '@react-email/components';
+import { Button, Section, Text } from '@react-email/components';
+import type * as React from 'react';
 import { BaseTemplate } from './base-template';
 
 interface NewMessageEmailProps {
@@ -21,17 +17,16 @@ export function NewMessageEmail({
 }: NewMessageEmailProps): React.ReactElement {
   return (
     <BaseTemplate
-      preview={`New message from ${senderName}`}
       heading={`Hi ${recipientName}, you have a new message!`}
+      preview={`New message from ${senderName}`}
     >
       <Section style={content}>
-        <Text style={text}>
-          {senderName} sent you a message on Threadly:
-        </Text>
+        <Text style={text}>{senderName} sent you a message on Threadly:</Text>
 
         <Section style={messagePreviewSection}>
           <Text style={messagePreviewText}>
-            "{messagePreview}{messagePreview.length >= 100 ? '...' : ''}"
+            "{messagePreview}
+            {messagePreview.length >= 100 ? '...' : ''}"
           </Text>
         </Section>
 
@@ -39,10 +34,7 @@ export function NewMessageEmail({
           Reply quickly to keep the conversation going and close the deal!
         </Text>
 
-        <Button
-          href={conversationUrl}
-          style={button}
-        >
+        <Button href={conversationUrl} style={button}>
           Reply to Message
         </Button>
 

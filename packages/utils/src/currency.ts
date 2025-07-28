@@ -12,12 +12,12 @@
  */
 export function formatCurrency(
   amount: number,
-  currency: string = 'USD',
-  locale: string = 'en-US'
+  currency = 'USD',
+  locale = 'en-US'
 ): string {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: currency,
+    currency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(amount);
@@ -32,8 +32,8 @@ export function formatCurrency(
  */
 export function formatCentsAsCurrency(
   cents: number,
-  currency: string = 'USD',
-  locale: string = 'en-US'
+  currency = 'USD',
+  locale = 'en-US'
 ): string {
   return formatCurrency(cents / 100, currency, locale);
 }
@@ -46,12 +46,12 @@ export function formatCentsAsCurrency(
 export function parseCurrency(value: string): number {
   // Remove currency symbols, commas, and spaces
   const cleaned = value.replace(/[^0-9.-]/g, '');
-  const parsed = parseFloat(cleaned);
-  
+  const parsed = Number.parseFloat(cleaned);
+
   if (isNaN(parsed)) {
     throw new Error(`Invalid currency format: ${value}`);
   }
-  
+
   return parsed;
 }
 
@@ -61,9 +61,6 @@ export function parseCurrency(value: string): number {
  * @param locale - The locale to use for formatting (default: 'en-US')
  * @returns Formatted number string
  */
-export function formatNumber(
-  value: number,
-  locale: string = 'en-US'
-): string {
+export function formatNumber(value: number, locale = 'en-US'): string {
   return new Intl.NumberFormat(locale).format(value);
 }

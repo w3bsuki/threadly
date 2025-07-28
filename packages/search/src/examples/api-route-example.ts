@@ -3,10 +3,10 @@
  * Copy these into your app's API routes for consistent search functionality
  */
 
-// app/api/search/route.ts
-import { NextRequest } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { createSearchHandler } from '@repo/search';
+// app/api/search/route.ts
+import type { NextRequest } from 'next/server';
 
 const searchHandler = createSearchHandler({
   useAlgolia: true,

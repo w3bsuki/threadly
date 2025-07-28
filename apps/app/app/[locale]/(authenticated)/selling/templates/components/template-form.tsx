@@ -1,11 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import {
+  Badge,
   Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Checkbox,
   Input,
   Label,
   Select,
@@ -14,20 +17,28 @@ import {
   SelectTrigger,
   SelectValue,
   Textarea,
-  Checkbox,
-  Badge,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
 } from '@repo/design-system/components';
 import { Plus, X } from 'lucide-react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 const templateSchema = z.object({
-  name: z.string().min(1, 'Template name is required').max(100, 'Name too long'),
+  name: z
+    .string()
+    .min(1, 'Template name is required')
+    .max(100, 'Name too long'),
   description: z.string().optional(),
   category: z.string().optional(),
-  condition: z.enum(['NEW_WITH_TAGS', 'NEW_WITHOUT_TAGS', 'VERY_GOOD', 'GOOD', 'SATISFACTORY']).optional(),
+  condition: z
+    .enum([
+      'NEW_WITH_TAGS',
+      'NEW_WITHOUT_TAGS',
+      'VERY_GOOD',
+      'GOOD',
+      'SATISFACTORY',
+    ])
+    .optional(),
   brand: z.string().optional(),
   size: z.string().optional(),
   color: z.string().optional(),
@@ -60,7 +71,9 @@ interface Category {
 interface TemplateFormProps {
   categories: Category[];
   initialData?: Template | null;
-  onSubmit: (data: TemplateFormData & { basePrice?: string; tags: string[] }) => void;
+  onSubmit: (
+    data: TemplateFormData & { basePrice?: string; tags: string[] }
+  ) => void;
   onCancel: () => void;
   isLoading: boolean;
 }
@@ -87,14 +100,29 @@ export function TemplateForm({
       name: initialData?.name || '',
       description: initialData?.description || '',
       category: initialData?.category || '',
-      condition: initialData?.condition && ['NEW_WITH_TAGS', 'NEW_WITHOUT_TAGS', 'VERY_GOOD', 'GOOD', 'SATISFACTORY'].includes(initialData.condition) 
-        ? initialData.condition as "NEW_WITH_TAGS" | "NEW_WITHOUT_TAGS" | "VERY_GOOD" | "GOOD" | "SATISFACTORY" 
-        : undefined,
+      condition:
+        initialData?.condition &&
+        [
+          'NEW_WITH_TAGS',
+          'NEW_WITHOUT_TAGS',
+          'VERY_GOOD',
+          'GOOD',
+          'SATISFACTORY',
+        ].includes(initialData.condition)
+          ? (initialData.condition as
+              | 'NEW_WITH_TAGS'
+              | 'NEW_WITHOUT_TAGS'
+              | 'VERY_GOOD'
+              | 'GOOD'
+              | 'SATISFACTORY')
+          : undefined,
       brand: initialData?.brand || '',
       size: initialData?.size || '',
       color: initialData?.color || '',
-      basePrice: initialData?.basePrice ? (Number(initialData.basePrice) / 100).toString() : '',
-      isDefault: initialData?.isDefault || false,
+      basePrice: initialData?.basePrice
+        ? (Number(initialData.basePrice) / 100).toString()
+        : '',
+      isDefault: initialData?.isDefault,
     },
   });
 
@@ -107,7 +135,7 @@ export function TemplateForm({
   };
 
   const handleRemoveTag = (tagToRemove: string) => {
-    setTags(tags.filter(tag => tag !== tagToRemove));
+    setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
   const handleFormSubmit = (data: TemplateFormData) => {
@@ -120,7 +148,7 @@ export function TemplateForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+    <form className="space-y-6" onSubmit={handleSubmit(handleFormSubmit)}>
       <div className="space-y-4">
         {/* Template Name */}
         <div>
@@ -128,11 +156,11 @@ export function TemplateForm({
           <Input
             id="name"
             {...register('name')}
-            placeholder="e.g., Men's Designer Jeans"
             className="mt-1"
+            placeholder="e.g., Men's Designer Jeans"
           />
           {errors.name && (
-            <p className="text-sm text-red-600 mt-1">{errors.name.message}</p>
+            <p className="mt-1 text-red-600 text-sm">{errors.name.message}</p>
           )}
         </div>
 
@@ -142,8 +170,8 @@ export function TemplateForm({
           <Textarea
             id="description"
             {...register('description')}
-            placeholder="Optional description for this template..."
             className="mt-1"
+            placeholder="Optional description for this template..."
             rows={3}
           />
         </div>
@@ -152,8 +180,8 @@ export function TemplateForm({
         <div>
           <Label htmlFor="category">Category</Label>
           <Select
-            value={watch('category') || ''}
             onValueChange={(value) => setValue('category', value)}
+            value={watch('category') || ''}
           >
             <SelectTrigger className="mt-1">
               <SelectValue placeholder="Select a category" />
@@ -173,8 +201,18 @@ export function TemplateForm({
         <div>
           <Label htmlFor="condition">Condition</Label>
           <Select
+            onValueChange={(value) =>
+              setValue(
+                'condition',
+                value as
+                  | 'NEW_WITH_TAGS'
+                  | 'NEW_WITHOUT_TAGS'
+                  | 'VERY_GOOD'
+                  | 'GOOD'
+                  | 'SATISFACTORY'
+              )
+            }
             value={watch('condition') || ''}
-            onValueChange={(value) => setValue('condition', value as 'NEW_WITH_TAGS' | 'NEW_WITHOUT_TAGS' | 'VERY_GOOD' | 'GOOD' | 'SATISFACTORY')}
           >
             <SelectTrigger className="mt-1">
               <SelectValue placeholder="Select condition" />
@@ -196,20 +234,20 @@ export function TemplateForm({
           <Input
             id="brand"
             {...register('brand')}
-            placeholder="e.g., Nike, Adidas, Zara..."
             className="mt-1"
+            placeholder="e.g., Nike, Adidas, Zara..."
           />
         </div>
 
         {/* Size and Color */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <Label htmlFor="size">Size</Label>
             <Input
               id="size"
               {...register('size')}
-              placeholder="e.g., M, 32W 34L, 8.5..."
               className="mt-1"
+              placeholder="e.g., M, 32W 34L, 8.5..."
             />
           </div>
           <div>
@@ -217,8 +255,8 @@ export function TemplateForm({
             <Input
               id="color"
               {...register('color')}
-              placeholder="e.g., Blue, Black, Red..."
               className="mt-1"
+              placeholder="e.g., Blue, Black, Red..."
             />
           </div>
         </div>
@@ -228,14 +266,14 @@ export function TemplateForm({
           <Label htmlFor="basePrice">Base Price ($)</Label>
           <Input
             id="basePrice"
-            type="number"
-            step="0.01"
             min="0"
+            step="0.01"
+            type="number"
             {...register('basePrice')}
-            placeholder="0.00"
             className="mt-1"
+            placeholder="0.00"
           />
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="mt-1 text-muted-foreground text-sm">
             Optional starting price for listings using this template
           </p>
         </div>
@@ -246,31 +284,35 @@ export function TemplateForm({
           <div className="mt-1 space-y-2">
             <div className="flex gap-2">
               <Input
-                value={newTag}
                 onChange={(e) => setNewTag(e.target.value)}
-                placeholder="Add a tag..."
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
                     handleAddTag();
                   }
                 }}
+                placeholder="Add a tag..."
+                value={newTag}
               />
-              <Button type="button" onClick={handleAddTag} variant="outline">
+              <Button onClick={handleAddTag} type="button" variant="outline">
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
             {tags.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag) => (
-                  <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+                  <Badge
+                    className="flex items-center gap-1"
+                    key={tag}
+                    variant="secondary"
+                  >
                     {tag}
                     <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
                       className="h-4 w-4 p-0 hover:bg-transparent"
                       onClick={() => handleRemoveTag(tag)}
+                      size="sm"
+                      type="button"
+                      variant="ghost"
                     >
                       <X className="h-3 w-3" />
                     </Button>
@@ -284,17 +326,18 @@ export function TemplateForm({
         {/* Default Template */}
         <div className="flex items-center space-x-2">
           <Checkbox
-            id="isDefault"
             checked={watch('isDefault')}
+            id="isDefault"
             onCheckedChange={(checked) => setValue('isDefault', !!checked)}
           />
-          <Label htmlFor="isDefault" className="text-sm">
+          <Label className="text-sm" htmlFor="isDefault">
             Set as default template
           </Label>
         </div>
         {watch('isDefault') && (
-          <p className="text-sm text-muted-foreground">
-            This template will be automatically selected when creating new listings
+          <p className="text-muted-foreground text-sm">
+            This template will be automatically selected when creating new
+            listings
           </p>
         )}
       </div>
@@ -306,23 +349,28 @@ export function TemplateForm({
         </CardHeader>
         <CardContent className="space-y-2">
           <div>
-            <span className="font-medium">Name:</span> {watch('name') || 'Template name'}
+            <span className="font-medium">Name:</span>{' '}
+            {watch('name') || 'Template name'}
           </div>
           {watch('description') && (
             <div>
-              <span className="font-medium">Description:</span> {watch('description')}
+              <span className="font-medium">Description:</span>{' '}
+              {watch('description')}
             </div>
           )}
           {watch('category') && (
             <div>
               <span className="font-medium">Category:</span>{' '}
-              {categories.find(c => c.id === watch('category'))?.name}
+              {categories.find((c) => c.id === watch('category'))?.name}
             </div>
           )}
           {watch('condition') && (
             <div>
               <span className="font-medium">Condition:</span>{' '}
-              {watch('condition')?.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
+              {watch('condition')
+                ?.replace(/_/g, ' ')
+                .toLowerCase()
+                .replace(/\b\w/g, (l) => l.toUpperCase())}
             </div>
           )}
           {watch('brand') && (
@@ -352,9 +400,9 @@ export function TemplateForm({
           {tags.length > 0 && (
             <div>
               <span className="font-medium">Tags:</span>{' '}
-              <div className="flex flex-wrap gap-1 mt-1">
+              <div className="mt-1 flex flex-wrap gap-1">
                 {tags.map((tag) => (
-                  <Badge key={tag} variant="outline" className="text-xs">
+                  <Badge className="text-xs" key={tag} variant="outline">
                     {tag}
                   </Badge>
                 ))}
@@ -366,11 +414,11 @@ export function TemplateForm({
 
       {/* Actions */}
       <div className="flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={onCancel}>
+        <Button onClick={onCancel} type="button" variant="outline">
           Cancel
         </Button>
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? 'Saving...' : (initialData ? 'Update' : 'Create')} Template
+        <Button disabled={isLoading} type="submit">
+          {isLoading ? 'Saving...' : initialData ? 'Update' : 'Create'} Template
         </Button>
       </div>
     </form>

@@ -48,11 +48,11 @@ const ProductPlaceholder = ({
 };
 
 import { toast } from '@repo/design-system';
+import type { FilterValue } from '@repo/validation/schemas';
 import { ProductQuickView } from '../app/[locale]/components/product-quick-view';
 import { useFavorites } from '../lib/hooks/use-favorites';
 import { useCartStore } from '../lib/stores/cart-store';
 import { formatCurrency } from '../lib/utils/currency';
-import { FilterValue } from '@repo/validation/schemas';
 
 // TypeScript interfaces - REAL data structures
 export interface Product {
@@ -349,9 +349,12 @@ const useProductFilters = (products: Product[], defaultCategory?: string) => {
     return filtered;
   }, [products, filters, defaultCategory]);
 
-  const updateFilter = useCallback((key: keyof FilterState, value: FilterValue) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-  }, []);
+  const updateFilter = useCallback(
+    (key: keyof FilterState, value: FilterValue) => {
+      setFilters((prev) => ({ ...prev, [key]: value }));
+    },
+    []
+  );
 
   const clearFilters = useCallback(() => {
     setFilters({
@@ -639,7 +642,9 @@ export function ProductGridClient({
         {/* Empty state */}
         {filteredProducts.length === 0 && (
           <div className="py-12 text-center">
-            <p className="mb-4 text-muted-foreground text-lg">No products found</p>
+            <p className="mb-4 text-lg text-muted-foreground">
+              No products found
+            </p>
             <Button onClick={clearFilters} variant="outline">
               Clear all filters
             </Button>

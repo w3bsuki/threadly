@@ -8,14 +8,14 @@ interface TypingIndicatorProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-export function TypingIndicator({ 
-  typingText = 'is typing...', 
+export function TypingIndicator({
+  typingText = 'is typing...',
   className,
-  size = 'md' 
+  size = 'md',
 }: TypingIndicatorProps) {
   const dotSizes = {
     sm: 'w-1 h-1',
-    md: 'w-1.5 h-1.5', 
+    md: 'w-1.5 h-1.5',
     lg: 'w-2 h-2',
   };
 
@@ -28,7 +28,7 @@ export function TypingIndicator({
   return (
     <div
       className={cn(
-        'inline-flex items-center gap-2 bg-secondary rounded-2xl rounded-bl-md',
+        'inline-flex items-center gap-2 rounded-2xl rounded-bl-md bg-secondary',
         containerSizes[size],
         className
       )}
@@ -37,7 +37,7 @@ export function TypingIndicator({
       <div className="flex gap-1">
         <div
           className={cn(
-            'bg-gray-400 rounded-[var(--radius-full)] animate-pulse',
+            'animate-pulse rounded-[var(--radius-full)] bg-gray-400',
             dotSizes[size]
           )}
           style={{
@@ -47,7 +47,7 @@ export function TypingIndicator({
         />
         <div
           className={cn(
-            'bg-gray-400 rounded-[var(--radius-full)] animate-pulse',
+            'animate-pulse rounded-[var(--radius-full)] bg-gray-400',
             dotSizes[size]
           )}
           style={{
@@ -57,7 +57,7 @@ export function TypingIndicator({
         />
         <div
           className={cn(
-            'bg-gray-400 rounded-[var(--radius-full)] animate-pulse',
+            'animate-pulse rounded-[var(--radius-full)] bg-gray-400',
             dotSizes[size]
           )}
           style={{
@@ -66,14 +66,16 @@ export function TypingIndicator({
           }}
         />
       </div>
-      
+
       {/* Typing text */}
-      <span className={cn(
-        'text-muted-foreground italic',
-        size === 'sm' && 'text-xs',
-        size === 'md' && 'text-sm',
-        size === 'lg' && 'text-base'
-      )}>
+      <span
+        className={cn(
+          'text-muted-foreground italic',
+          size === 'sm' && 'text-xs',
+          size === 'md' && 'text-sm',
+          size === 'lg' && 'text-base'
+        )}
+      >
         {typingText}
       </span>
     </div>

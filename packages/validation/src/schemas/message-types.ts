@@ -1,9 +1,19 @@
 import { z } from 'zod';
 
-export const ConversationStatusSchema = z.enum(['ACTIVE', 'ARCHIVED', 'CLOSED', 'BLOCKED']);
+export const ConversationStatusSchema = z.enum([
+  'ACTIVE',
+  'ARCHIVED',
+  'CLOSED',
+  'BLOCKED',
+]);
 export type ConversationStatus = z.infer<typeof ConversationStatusSchema>;
 
-export const MessageStatusSchema = z.enum(['SENT', 'DELIVERED', 'READ', 'DELETED']);
+export const MessageStatusSchema = z.enum([
+  'SENT',
+  'DELIVERED',
+  'READ',
+  'DELETED',
+]);
 export type MessageStatus = z.infer<typeof MessageStatusSchema>;
 
 export const MessageTypeSchema = z.enum(['TEXT', 'IMAGE', 'OFFER', 'SYSTEM']);
@@ -48,18 +58,22 @@ export const ConversationParticipantSchema = z.object({
   email: z.string().email(),
 });
 
-export type ConversationParticipant = z.infer<typeof ConversationParticipantSchema>;
+export type ConversationParticipant = z.infer<
+  typeof ConversationParticipantSchema
+>;
 
 export const ConversationProductSchema = z.object({
   id: z.string(),
   title: z.string(),
   price: z.number().positive(),
   status: z.string(),
-  images: z.array(z.object({
-    id: z.string(),
-    imageUrl: z.string().url(),
-    alt: z.string().nullable().optional(),
-  })),
+  images: z.array(
+    z.object({
+      id: z.string(),
+      imageUrl: z.string().url(),
+      alt: z.string().nullable().optional(),
+    })
+  ),
 });
 
 export type ConversationProduct = z.infer<typeof ConversationProductSchema>;
@@ -87,12 +101,16 @@ export const CreateMessageSchema = z.object({
   conversationId: z.string(),
   content: z.string().min(1).max(5000),
   type: MessageTypeSchema.optional(),
-  attachments: z.array(z.object({
-    url: z.string().url(),
-    fileName: z.string(),
-    fileSize: z.number().int().positive(),
-    mimeType: z.string(),
-  })).optional(),
+  attachments: z
+    .array(
+      z.object({
+        url: z.string().url(),
+        fileName: z.string(),
+        fileSize: z.number().int().positive(),
+        mimeType: z.string(),
+      })
+    )
+    .optional(),
   metadata: z.record(z.unknown()).optional(),
 });
 

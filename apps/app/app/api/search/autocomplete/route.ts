@@ -1,15 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs';
-import { getSearchService } from '@repo/search';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
+import { log, logError } from '@repo/observability/server';
+import { type AlgoliaSearchService, getSearchService } from '@repo/search';
 import { z } from '@repo/validation';
-import { AlgoliaSearchService } from '@repo/search';
+import { type NextRequest, NextResponse } from 'next/server';
 
 let searchService: AlgoliaSearchService;
 
 const autocompleteSchema = z.object({
-  q: z.string().trim().min(2, 'Query must be at least 2 characters').max(100, 'Query too long'),
+  q: z
+    .string()
+    .trim()
+    .min(2, 'Query must be at least 2 characters')
+    .max(100, 'Query too long'),
   limit: z.coerce.number().int().min(1).max(20).default(8),
 });
 
@@ -18,21 +20,18 @@ export async function GET(request: NextRequest) {
     // Check authentication
     const { userId } = auth();
     if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Initialize search service on first request
     if (!searchService) {
-      if (!process.env.ALGOLIA_APP_ID || !process.env.ALGOLIA_ADMIN_API_KEY) {
+      if (!(process.env.ALGOLIA_APP_ID && process.env.ALGOLIA_ADMIN_API_KEY)) {
         return NextResponse.json(
           { error: 'Search service not configured' },
           { status: 503 }
         );
       }
-      
+
       searchService = getSearchService({
         appId: process.env.ALGOLIA_APP_ID!,
         apiKey: process.env.ALGOLIA_ADMIN_API_KEY!,
@@ -40,7 +39,7 @@ export async function GET(request: NextRequest) {
         indexName: process.env.ALGOLIA_INDEX_NAME!,
       });
     }
-    
+
     // Validate query parameters
     const { searchParams } = new URL(request.url);
     const validation = autocompleteSchema.safeParse({

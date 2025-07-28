@@ -1,5 +1,5 @@
+import { createErrorResponse, createSuccessResponse } from '@repo/api-utils';
 import { database } from '@repo/database';
-import { createSuccessResponse, createErrorResponse } from '@repo/api-utils';
 
 export async function GET() {
   try {
@@ -15,7 +15,7 @@ export async function GET() {
     });
 
     return createSuccessResponse(categories, {
-      meta: { count: categories.length }
+      meta: { count: categories.length },
     });
   } catch (error) {
     return createErrorResponse(error);

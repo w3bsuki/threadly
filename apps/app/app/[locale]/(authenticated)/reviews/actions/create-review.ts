@@ -2,15 +2,20 @@
 
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
+import { log, logError } from '@repo/observability/server';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
 
 const createReviewSchema = z.object({
   orderId: z.string().min(1, 'Order ID is required'),
-  rating: z.number().min(1, 'Rating must be at least 1').max(5, 'Rating must be at most 5'),
-  comment: z.string().min(1, 'Comment is required').max(1000, 'Comment must be less than 1000 characters'),
+  rating: z
+    .number()
+    .min(1, 'Rating must be at least 1')
+    .max(5, 'Rating must be at most 5'),
+  comment: z
+    .string()
+    .min(1, 'Comment is required')
+    .max(1000, 'Comment must be less than 1000 characters'),
   photoUrls: z.array(z.string().url()).max(5).optional(),
 });
 
@@ -24,7 +29,7 @@ export async function createReview(input: z.infer<typeof createReviewSchema>) {
 
     // Get database user
     const dbUser = await database.user.findUnique({
-      where: { clerkId: user.id }
+      where: { clerkId: user.id },
     });
 
     if (!dbUser) {
@@ -121,7 +126,9 @@ export async function createReview(input: z.infer<typeof createReviewSchema>) {
       },
     });
 
-    const averageRating = sellerReviews.reduce((sum, review) => sum + review.rating, 0) / sellerReviews.length;
+    const averageRating =
+      sellerReviews.reduce((sum, review) => sum + review.rating, 0) /
+      sellerReviews.length;
 
     await database.user.update({
       where: {
@@ -136,10 +143,9 @@ export async function createReview(input: z.infer<typeof createReviewSchema>) {
       success: true,
       review,
     };
-
   } catch (error) {
     logError('Failed to create review:', error);
-    
+
     if (error instanceof z.ZodError) {
       return {
         success: false,

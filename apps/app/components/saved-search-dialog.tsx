@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-import { Save, Bell, BellOff } from 'lucide-react';
 import {
   Button,
   Dialog,
@@ -15,6 +13,8 @@ import {
   Switch,
   toast,
 } from '@repo/design-system/components';
+import { Bell, BellOff, Save } from 'lucide-react';
+import { useState } from 'react';
 
 interface SearchFilters {
   query?: string;
@@ -25,7 +25,13 @@ interface SearchFilters {
   colors?: string[];
   priceMin?: number;
   priceMax?: number;
-  sortBy?: 'relevance' | 'price_asc' | 'price_desc' | 'newest' | 'most_viewed' | 'most_favorited';
+  sortBy?:
+    | 'relevance'
+    | 'price_asc'
+    | 'price_desc'
+    | 'newest'
+    | 'most_viewed'
+    | 'most_favorited';
   [key: string]: string | number | boolean | string[] | undefined;
 }
 
@@ -35,7 +41,11 @@ interface SavedSearchDialogProps {
   onSave?: () => void;
 }
 
-export function SavedSearchDialog({ query, filters, onSave }: SavedSearchDialogProps): React.JSX.Element {
+export function SavedSearchDialog({
+  query,
+  filters,
+  onSave,
+}: SavedSearchDialogProps): React.JSX.Element {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(query);
   const [alertEnabled, setAlertEnabled] = useState(true);
@@ -69,17 +79,19 @@ export function SavedSearchDialog({ query, filters, onSave }: SavedSearchDialogP
       setOpen(false);
       onSave?.();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to save search');
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to save search'
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Save className="h-4 w-4 mr-2" />
+        <Button size="sm" variant="outline">
+          <Save className="mr-2 h-4 w-4" />
           Save Search
         </Button>
       </DialogTrigger>
@@ -87,45 +99,53 @@ export function SavedSearchDialog({ query, filters, onSave }: SavedSearchDialogP
         <DialogHeader>
           <DialogTitle>Save Search</DialogTitle>
           <DialogDescription>
-            Save this search to quickly access it later and get alerts for new matches
+            Save this search to quickly access it later and get alerts for new
+            matches
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-4 py-4">
           <div className="space-y-2">
             <Label htmlFor="name">Search Name</Label>
             <Input
               id="name"
+              onChange={(e) => setName(e.target.value)}
               placeholder="e.g., Vintage Denim Jackets"
               value={name}
-              onChange={(e) => setName(e.target.value)}
             />
           </div>
 
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label htmlFor="alerts" className="text-base">
+              <Label className="text-base" htmlFor="alerts">
                 Enable Alerts
               </Label>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Get notified when new items match this search
               </p>
             </div>
             <Switch
-              id="alerts"
               checked={alertEnabled}
+              id="alerts"
               onCheckedChange={setAlertEnabled}
             />
           </div>
 
-          <div className="rounded-[var(--radius-lg)] bg-muted p-3 space-y-1">
-            <p className="text-sm font-medium">Search Details</p>
-            <p className="text-xs text-muted-foreground">Query: "{query}"</p>
+          <div className="space-y-1 rounded-[var(--radius-lg)] bg-muted p-3">
+            <p className="font-medium text-sm">Search Details</p>
+            <p className="text-muted-foreground text-xs">Query: "{query}"</p>
             {filters && Object.keys(filters).length > 0 && (
-              <p className="text-xs text-muted-foreground">
-                Filters: {Object.entries(filters)
-                  .filter(([_, value]) => value && (Array.isArray(value) ? value.length > 0 : true))
-                  .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
+              <p className="text-muted-foreground text-xs">
+                Filters:{' '}
+                {Object.entries(filters)
+                  .filter(
+                    ([_, value]) =>
+                      value && (Array.isArray(value) ? value.length > 0 : true)
+                  )
+                  .map(
+                    ([key, value]) =>
+                      `${key}: ${Array.isArray(value) ? value.join(', ') : value}`
+                  )
                   .join(', ')}
               </p>
             )}
@@ -134,16 +154,22 @@ export function SavedSearchDialog({ query, filters, onSave }: SavedSearchDialogP
 
         <div className="flex justify-end gap-2">
           <Button
-            variant="outline"
-            onClick={() => setOpen(false)}
             disabled={isSubmitting}
+            onClick={() => setOpen(false)}
+            variant="outline"
           >
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={isSubmitting}>
-            {isSubmitting ? 'Saving...' : (
+          <Button disabled={isSubmitting} onClick={handleSubmit}>
+            {isSubmitting ? (
+              'Saving...'
+            ) : (
               <>
-                {alertEnabled ? <Bell className="h-4 w-4 mr-2" /> : <BellOff className="h-4 w-4 mr-2" />}
+                {alertEnabled ? (
+                  <Bell className="mr-2 h-4 w-4" />
+                ) : (
+                  <BellOff className="mr-2 h-4 w-4" />
+                )}
                 Save Search
               </>
             )}

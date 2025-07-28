@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@repo/design-system/components';
-import { UseFormReturn } from 'react-hook-form';
+import type { UseFormReturn } from 'react-hook-form';
 import type { CheckoutFormData } from '../types';
 
 interface ShippingAddressFormProps {
@@ -84,11 +84,11 @@ export function ShippingAddressForm({ form }: ShippingAddressFormProps) {
           <FormItem>
             <FormLabel className="text-base lg:text-sm">Address</FormLabel>
             <FormControl>
-              <Input 
-                placeholder="123 Main St" 
-                {...field} 
-                className="h-12 text-base lg:h-10 lg:text-sm"
+              <Input
+                placeholder="123 Main St"
+                {...field}
                 autoComplete="street-address"
+                className="h-12 text-base lg:h-10 lg:text-sm"
               />
             </FormControl>
             <FormMessage />
@@ -96,7 +96,7 @@ export function ShippingAddressForm({ form }: ShippingAddressFormProps) {
         )}
       />
 
-      <div className="grid gap-4 lg:gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 lg:gap-4">
         <FormField
           control={form.control}
           name="city"
@@ -104,10 +104,10 @@ export function ShippingAddressForm({ form }: ShippingAddressFormProps) {
             <FormItem>
               <FormLabel className="text-base lg:text-sm">City</FormLabel>
               <FormControl>
-                <Input 
-                  {...field} 
-                  className="h-12 text-base lg:h-10 lg:text-sm"
+                <Input
+                  {...field}
                   autoComplete="address-level2"
+                  className="h-12 text-base lg:h-10 lg:text-sm"
                 />
               </FormControl>
               <FormMessage />
@@ -121,7 +121,7 @@ export function ShippingAddressForm({ form }: ShippingAddressFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-base lg:text-sm">State</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select defaultValue={field.value} onValueChange={field.onChange}>
                 <FormControl>
                   <SelectTrigger className="h-12 text-base lg:h-10 lg:text-sm">
                     <SelectValue placeholder="Select a state" />
@@ -129,7 +129,11 @@ export function ShippingAddressForm({ form }: ShippingAddressFormProps) {
                 </FormControl>
                 <SelectContent>
                   {US_STATES.map((state) => (
-                    <SelectItem key={state.value} value={state.value} className="text-base lg:text-sm py-3 lg:py-2">
+                    <SelectItem
+                      className="py-3 text-base lg:py-2 lg:text-sm"
+                      key={state.value}
+                      value={state.value}
+                    >
                       {state.label}
                     </SelectItem>
                   ))}
@@ -141,19 +145,21 @@ export function ShippingAddressForm({ form }: ShippingAddressFormProps) {
         />
       </div>
 
-      <div className="grid gap-4 lg:gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 lg:gap-4">
         <FormField
           control={form.control}
           name="postalCode"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-base lg:text-sm">Postal Code</FormLabel>
+              <FormLabel className="text-base lg:text-sm">
+                Postal Code
+              </FormLabel>
               <FormControl>
-                <Input 
-                  placeholder="12345" 
-                  {...field} 
-                  className="h-12 text-base lg:h-10 lg:text-sm"
+                <Input
+                  placeholder="12345"
+                  {...field}
                   autoComplete="postal-code"
+                  className="h-12 text-base lg:h-10 lg:text-sm"
                   inputMode="numeric"
                 />
               </FormControl>
@@ -169,11 +175,11 @@ export function ShippingAddressForm({ form }: ShippingAddressFormProps) {
             <FormItem>
               <FormLabel className="text-base lg:text-sm">Country</FormLabel>
               <FormControl>
-                <Input 
-                  {...field} 
-                  disabled 
-                  className="h-12 text-base lg:h-10 lg:text-sm"
+                <Input
+                  {...field}
                   autoComplete="country"
+                  className="h-12 text-base lg:h-10 lg:text-sm"
+                  disabled
                 />
               </FormControl>
               <FormMessage />

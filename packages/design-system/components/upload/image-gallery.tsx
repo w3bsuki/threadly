@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { cn } from '../../lib/utils';
-import { ImagePreview } from './image-preview';
-import { Button } from '../ui/button';
 import { Upload } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import { cn } from '../../lib/utils';
+import { Button } from '../ui/button';
+import { ImagePreview } from './image-preview';
 import type { ImageGalleryProps } from './types';
 
 export function ImageGallery({
@@ -32,18 +32,21 @@ export function ImageGallery({
     setDragOverIndex(index);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent, dropIndex: number) => {
-    e.preventDefault();
-    
-    if (draggedIndex === null || !onReorder) return;
-    
-    if (draggedIndex !== dropIndex) {
-      onReorder(draggedIndex, dropIndex);
-    }
-    
-    setDraggedIndex(null);
-    setDragOverIndex(null);
-  }, [draggedIndex, onReorder]);
+  const handleDrop = useCallback(
+    (e: React.DragEvent, dropIndex: number) => {
+      e.preventDefault();
+
+      if (draggedIndex === null || !onReorder) return;
+
+      if (draggedIndex !== dropIndex) {
+        onReorder(draggedIndex, dropIndex);
+      }
+
+      setDraggedIndex(null);
+      setDragOverIndex(null);
+    },
+    [draggedIndex, onReorder]
+  );
 
   const sortedImages = [...images].sort((a, b) => a.order - b.order);
 
@@ -51,21 +54,23 @@ export function ImageGallery({
     <div className={cn('space-y-4', className)}>
       <div
         className={cn(
-          'grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 sm:gap-3',
+          'grid grid-cols-3 gap-2 sm:grid-cols-4 sm:gap-3 md:grid-cols-5',
           gridClassName
         )}
       >
         {sortedImages.map((image, index) => (
           <div
-            key={image.id || index}
             className={cn(
               'relative transition-all',
               dragOverIndex === index && draggedIndex !== index && 'scale-105',
               itemClassName
             )}
+            key={image.id || index}
           >
             <ImagePreview
               image={image}
+              isDragging={draggedIndex === index}
+              isMain={index === 0}
               onRemove={onRemove ? () => onRemove(index) : undefined}
               onReorder={
                 onReorder
@@ -77,15 +82,13 @@ export function ImageGallery({
                     }
                   : undefined
               }
-              isMain={index === 0}
-              isDragging={draggedIndex === index}
             />
           </div>
         ))}
       </div>
-      
+
       {onReorder && images.length > 1 && (
-        <p className="text-xs text-muted-foreground text-center">
+        <p className="text-center text-muted-foreground text-xs">
           Drag and drop to reorder images
         </p>
       )}

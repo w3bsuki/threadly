@@ -1,33 +1,65 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+  Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Textarea,
+  toast,
+} from '@repo/design-system/components';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Button } from '@repo/design-system/components';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Input } from '@repo/design-system/components';
-import { Label } from '@repo/design-system/components';
-import { Textarea } from '@repo/design-system/components';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/design-system/components';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components';
-import { createProduct } from '../actions/create-product';
-import { ImageUpload } from './image-upload';
-import { CategorySelector } from './category-selector';
-import { toast } from '@repo/design-system/components';
 import { FormErrorBoundary } from '@/components/error-boundaries';
+import { createProduct } from '../actions/create-product';
+import { CategorySelector } from './category-selector';
+import { ImageUpload } from './image-upload';
 
 const productSchema = z.object({
-  title: z.string().min(1, 'Title is required').max(100, 'Title must be less than 100 characters'),
-  description: z.string().min(1, 'Description is required').max(1000, 'Description must be less than 1000 characters'),
-  price: z.number().min(0.01, 'Price must be at least $0.01').max(10000, 'Price must be less than $10,000'),
+  title: z
+    .string()
+    .min(1, 'Title is required')
+    .max(100, 'Title must be less than 100 characters'),
+  description: z
+    .string()
+    .min(1, 'Description is required')
+    .max(1000, 'Description must be less than 1000 characters'),
+  price: z
+    .number()
+    .min(0.01, 'Price must be at least $0.01')
+    .max(10_000, 'Price must be less than $10,000'),
   categoryId: z.string().min(1, 'Category is required'),
-  condition: z.enum(['NEW_WITH_TAGS', 'NEW_WITHOUT_TAGS', 'VERY_GOOD', 'GOOD', 'SATISFACTORY']),
+  condition: z.enum([
+    'NEW_WITH_TAGS',
+    'NEW_WITHOUT_TAGS',
+    'VERY_GOOD',
+    'GOOD',
+    'SATISFACTORY',
+  ]),
   brand: z.string().optional(),
   size: z.string().optional(),
   color: z.string().optional(),
-  images: z.array(z.string()).min(1, 'At least one image is required').max(5, 'Maximum 5 images allowed'),
+  images: z
+    .array(z.string())
+    .min(1, 'At least one image is required')
+    .max(5, 'Maximum 5 images allowed'),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
@@ -59,7 +91,7 @@ export function ProductForm({ userId }: ProductFormProps) {
   const onSubmit = async (data: ProductFormData) => {
     try {
       setIsSubmitting(true);
-      
+
       const result = await createProduct({
         ...data,
         price: Math.round(data.price * 100), // Convert dollars to cents
@@ -68,19 +100,21 @@ export function ProductForm({ userId }: ProductFormProps) {
 
       if (result && result.success) {
         toast.success('Product created successfully!');
-        router.push(`/selling/listings`);
-      } else {
-        if (result.details) {
-          // Show specific validation errors
-          result.details.forEach((detail: { path?: (string | number)[]; message: string }) => {
+        router.push('/selling/listings');
+      } else if (result.details) {
+        // Show specific validation errors
+        result.details.forEach(
+          (detail: { path?: (string | number)[]; message: string }) => {
             toast.error(`${detail.path?.join('.')}: ${detail.message}`);
-          });
-        } else {
-          toast.error(result.error || 'Failed to create product');
-        }
+          }
+        );
+      } else {
+        toast.error(result.error || 'Failed to create product');
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to create product');
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to create product'
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -93,7 +127,7 @@ export function ProductForm({ userId }: ProductFormProps) {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
             {/* Image Upload */}
             <FormField
               control={form.control}
@@ -103,9 +137,9 @@ export function ProductForm({ userId }: ProductFormProps) {
                   <FormLabel>Product Images</FormLabel>
                   <FormControl>
                     <ImageUpload
-                      value={field.value}
-                      onChange={field.onChange}
                       maxFiles={5}
+                      onChange={field.onChange}
+                      value={field.value}
                     />
                   </FormControl>
                   <FormMessage />
@@ -114,7 +148,7 @@ export function ProductForm({ userId }: ProductFormProps) {
             />
 
             {/* Basic Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="title"
@@ -122,7 +156,10 @@ export function ProductForm({ userId }: ProductFormProps) {
                   <FormItem>
                     <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g. Vintage Denim Jacket" {...field} />
+                      <Input
+                        placeholder="e.g. Vintage Denim Jacket"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -137,11 +174,13 @@ export function ProductForm({ userId }: ProductFormProps) {
                     <FormLabel>Price ($)</FormLabel>
                     <FormControl>
                       <Input
-                        type="number"
-                        step="0.01"
                         placeholder="0.00"
+                        step="0.01"
+                        type="number"
                         {...field}
-                        onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                        onChange={(e) =>
+                          field.onChange(Number.parseFloat(e.target.value) || 0)
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -158,8 +197,8 @@ export function ProductForm({ userId }: ProductFormProps) {
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Describe your item's condition, fit, and any details buyers should know..."
                       className="min-h-24"
+                      placeholder="Describe your item's condition, fit, and any details buyers should know..."
                       {...field}
                     />
                   </FormControl>
@@ -169,7 +208,7 @@ export function ProductForm({ userId }: ProductFormProps) {
             />
 
             {/* Category and Condition */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="categoryId"
@@ -178,9 +217,9 @@ export function ProductForm({ userId }: ProductFormProps) {
                     <FormLabel>Category</FormLabel>
                     <FormControl>
                       <CategorySelector
-                        value={field.value}
                         onValueChange={field.onChange}
                         placeholder="Select a category"
+                        value={field.value}
                       />
                     </FormControl>
                     <FormMessage />
@@ -194,18 +233,27 @@ export function ProductForm({ userId }: ProductFormProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Condition</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value || ""}>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value || ''}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="NEW_WITH_TAGS">New with tags</SelectItem>
-                        <SelectItem value="NEW_WITHOUT_TAGS">New without tags</SelectItem>
+                        <SelectItem value="NEW_WITH_TAGS">
+                          New with tags
+                        </SelectItem>
+                        <SelectItem value="NEW_WITHOUT_TAGS">
+                          New without tags
+                        </SelectItem>
                         <SelectItem value="VERY_GOOD">Very good</SelectItem>
                         <SelectItem value="GOOD">Good</SelectItem>
-                        <SelectItem value="SATISFACTORY">Satisfactory</SelectItem>
+                        <SelectItem value="SATISFACTORY">
+                          Satisfactory
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -215,7 +263,7 @@ export function ProductForm({ userId }: ProductFormProps) {
             </div>
 
             {/* Additional Details */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <FormField
                 control={form.control}
                 name="brand"
@@ -262,14 +310,14 @@ export function ProductForm({ userId }: ProductFormProps) {
             {/* Submit Button */}
             <div className="flex justify-end space-x-4">
               <Button
+                disabled={isSubmitting}
+                onClick={() => router.back()}
                 type="button"
                 variant="outline"
-                onClick={() => router.back()}
-                disabled={isSubmitting}
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button disabled={isSubmitting} type="submit">
                 {isSubmitting ? 'Creating...' : 'List Item'}
               </Button>
             </div>

@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useCallback, useRef } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useChannel } from '@repo/real-time/client';
+import { useCallback, useEffect, useRef } from 'react';
 import type { MessageEvent, TypingEvent } from '../types';
 
 interface UseRealTimeMessagesOptions {
@@ -44,20 +44,26 @@ export function useRealTimeMessages({
   }, [onMessageReceived, onTypingEvent, onUserOnline, onUserOffline]);
 
   // Message event handler
-  const handleMessage = useCallback((data: MessageEvent) => {
-    // Don't process own messages
-    if (data.senderId === user?.id) return;
-    
-    callbacksRef.current.onMessageReceived?.(data);
-  }, [user?.id]);
+  const handleMessage = useCallback(
+    (data: MessageEvent) => {
+      // Don't process own messages
+      if (data.senderId === user?.id) return;
+
+      callbacksRef.current.onMessageReceived?.(data);
+    },
+    [user?.id]
+  );
 
   // Typing event handler
-  const handleTyping = useCallback((data: TypingEvent) => {
-    // Don't process own typing events
-    if (data.userId === user?.id) return;
-    
-    callbacksRef.current.onTypingEvent?.(data);
-  }, [user?.id]);
+  const handleTyping = useCallback(
+    (data: TypingEvent) => {
+      // Don't process own typing events
+      if (data.userId === user?.id) return;
+
+      callbacksRef.current.onTypingEvent?.(data);
+    },
+    [user?.id]
+  );
 
   // User presence handlers
   const handleUserOnline = useCallback((data: { userId: string }) => {
@@ -80,71 +86,102 @@ export function useRealTimeMessages({
 
   useEffect(() => {
     if (!conversationChannel) return;
-    
-    const unsubscribeMessage = conversationChannelHook.bind('new-message', handleMessage);
-    const unsubscribeTyping = conversationChannelHook.bind('user-typing', handleTyping);
-    const unsubscribeRead = conversationChannelHook.bind('message-read', (data: any) => {
-      console.log('Message read:', data);
-    });
+
+    const unsubscribeMessage = conversationChannelHook.bind(
+      'new-message',
+      handleMessage
+    );
+    const unsubscribeTyping = conversationChannelHook.bind(
+      'user-typing',
+      handleTyping
+    );
+    const unsubscribeRead = conversationChannelHook.bind(
+      'message-read',
+      (data: any) => {
+        console.log('Message read:', data);
+      }
+    );
 
     return () => {
       unsubscribeMessage();
       unsubscribeTyping();
       unsubscribeRead();
     };
-  }, [conversationChannel, conversationChannelHook, handleMessage, handleTyping]);
+  }, [
+    conversationChannel,
+    conversationChannelHook,
+    handleMessage,
+    handleTyping,
+  ]);
 
   useEffect(() => {
     if (!presenceChannel) return;
-    
-    const unsubscribeOnline = presenceChannelHook.bind('user-online', handleUserOnline);
-    const unsubscribeOffline = presenceChannelHook.bind('user-offline', handleUserOffline);
+
+    const unsubscribeOnline = presenceChannelHook.bind(
+      'user-online',
+      handleUserOnline
+    );
+    const unsubscribeOffline = presenceChannelHook.bind(
+      'user-offline',
+      handleUserOffline
+    );
 
     return () => {
       unsubscribeOnline();
       unsubscribeOffline();
     };
-  }, [presenceChannel, presenceChannelHook, handleUserOnline, handleUserOffline]);
+  }, [
+    presenceChannel,
+    presenceChannelHook,
+    handleUserOnline,
+    handleUserOffline,
+  ]);
 
   // Send typing indicator
-  const sendTypingIndicator = useCallback(async (isTyping: boolean) => {
-    if (!enabled || !user) return;
+  const sendTypingIndicator = useCallback(
+    async (isTyping: boolean) => {
+      if (!(enabled && user)) return;
 
-    try {
-      await fetch('/api/real-time/typing', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          conversationId,
-          isTyping,
-        }),
-      });
-    } catch (error) {
-      console.error('Failed to send typing indicator:', error);
-    }
-  }, [conversationId, enabled, user]);
+      try {
+        await fetch('/api/real-time/typing', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            conversationId,
+            isTyping,
+          }),
+        });
+      } catch (error) {
+        console.error('Failed to send typing indicator:', error);
+      }
+    },
+    [conversationId, enabled, user]
+  );
 
   // Send message read receipt
-  const sendReadReceipt = useCallback(async (messageIds: string[]) => {
-    if (!enabled || !user || messageIds.length === 0) return;
+  const sendReadReceipt = useCallback(
+    async (messageIds: string[]) => {
+      if (!(enabled && user) || messageIds.length === 0) return;
 
-    try {
-      await fetch('/api/real-time/read-receipt', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          conversationId,
-          messageIds,
-        }),
-      });
-    } catch (error) {
-      console.error('Failed to send read receipt:', error);
-    }
-  }, [conversationId, enabled, user]);
+      try {
+        await fetch('/api/real-time/read-receipt', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            conversationId,
+            messageIds,
+          }),
+        });
+      } catch (error) {
+        console.error('Failed to send read receipt:', error);
+      }
+    },
+    [conversationId, enabled, user]
+  );
 
   // Join conversation room (for presence)
   const joinConversationRoom = useCallback(async () => {
-    if (!enabled || !user) return;
+    if (!(enabled && user)) return;
 
     try {
       await fetch('/api/real-time/join-conversation', {
@@ -161,7 +198,7 @@ export function useRealTimeMessages({
 
   // Leave conversation room
   const leaveConversationRoom = useCallback(async () => {
-    if (!enabled || !user) return;
+    if (!(enabled && user)) return;
 
     try {
       await fetch('/api/real-time/leave-conversation', {
@@ -180,7 +217,7 @@ export function useRealTimeMessages({
   useEffect(() => {
     if (enabled && conversationId) {
       joinConversationRoom();
-      
+
       return () => {
         leaveConversationRoom();
       };

@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
 import { ErrorPage } from '@repo/error-handling/error-pages';
 import * as Sentry from '@sentry/nextjs';
+import { useEffect } from 'react';
 
 export default function OrdersError({
   error,
@@ -17,12 +17,12 @@ export default function OrdersError({
 
   return (
     <ErrorPage
+      description="Unable to load your orders. Please refresh the page or try again later."
       error={error}
       errorId={error.digest || null}
       level="section"
       onReset={reset}
       title="Orders Error"
-      description="Unable to load your orders. Please refresh the page or try again later."
     />
   );
 }

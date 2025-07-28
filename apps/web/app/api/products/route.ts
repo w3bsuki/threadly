@@ -31,12 +31,9 @@ const GetProductsSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     const { userId } = auth();
-    
+
     if (!userId) {
-      return createErrorResponse(
-        new Error('Unauthorized'),
-        { status: 401 }
-      );
+      return createErrorResponse(new Error('Unauthorized'), { status: 401 });
     }
 
     // Check rate limit

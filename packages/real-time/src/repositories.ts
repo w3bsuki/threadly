@@ -36,7 +36,10 @@ export interface Order {
 
 export interface ConversationRepository {
   findById(id: string): Promise<Conversation | null>;
-  findByUserAccess(conversationId: string, userId: string): Promise<Conversation | null>;
+  findByUserAccess(
+    conversationId: string,
+    userId: string
+  ): Promise<Conversation | null>;
 }
 
 export interface UserRepository {
@@ -54,11 +57,18 @@ export interface NotificationRepository {
     metadata: string;
     read: boolean;
   }): Promise<Notification>;
-  
-  update(id: string, userId: string, data: { read: boolean; readAt?: Date }): Promise<Notification>;
-  
-  updateMany(userId: string, data: { read: boolean; readAt?: Date }): Promise<{ count: number }>;
-  
+
+  update(
+    id: string,
+    userId: string,
+    data: { read: boolean; readAt?: Date }
+  ): Promise<Notification>;
+
+  updateMany(
+    userId: string,
+    data: { read: boolean; readAt?: Date }
+  ): Promise<{ count: number }>;
+
   countUnread(userId: string): Promise<number>;
 }
 

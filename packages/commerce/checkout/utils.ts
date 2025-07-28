@@ -1,6 +1,10 @@
 import type { CartItem } from '@repo/cart';
+import {
+  calculateShippingRate as calculateRegionalShipping,
+  getRegionByCountryCode,
+  type Region,
+} from '@repo/internationalization/regions';
 import type { CheckoutItem, CheckoutSession, ShippingAddress } from '../types';
-import { getRegionByCountryCode, calculateShippingRate as calculateRegionalShipping, type Region } from '@repo/internationalization/regions';
 
 // Legacy constants for backward compatibility
 export const TAX_RATE = 0.0875; // 8.75% default tax rate (US)
@@ -12,7 +16,7 @@ export const SHIPPING_RATES = {
 
 // Convert cart items to checkout items
 export function cartToCheckoutItems(cartItems: CartItem[]): CheckoutItem[] {
-  return cartItems.map(item => ({
+  return cartItems.map((item) => ({
     productId: item.productId,
     title: item.title,
     price: item.price,
@@ -30,16 +34,21 @@ export function calculateCheckoutTotals(
   taxRate?: number,
   shippingAddress?: ShippingAddress
 ): Pick<CheckoutSession, 'subtotal' | 'tax' | 'shipping' | 'total'> {
-  const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  
+  const subtotal = items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+
   // Get region-specific rates
-  const region = shippingAddress?.country ? getRegionByCountryCode(shippingAddress.country) : undefined;
-  
+  const region = shippingAddress?.country
+    ? getRegionByCountryCode(shippingAddress.country)
+    : undefined;
+
   // Calculate shipping with regional rules
-  const shipping = region 
+  const shipping = region
     ? calculateRegionalShipping(subtotal, region, shippingMethod)
     : SHIPPING_RATES[shippingMethod];
-  
+
   // Use regional tax rate if available
   const effectiveTaxRate = region ? region.taxRate : (taxRate ?? TAX_RATE);
   const tax = subtotal * effectiveTaxRate;
@@ -56,13 +65,15 @@ export function calculateCheckoutTotals(
 // Validate checkout items availability
 export async function validateItemsAvailability(
   items: CheckoutItem[],
-  checkAvailability: (productId: string) => Promise<{ available: boolean; quantity: number }>
+  checkAvailability: (
+    productId: string
+  ) => Promise<{ available: boolean; quantity: number }>
 ): Promise<{ valid: boolean; errors: string[] }> {
   const errors: string[] = [];
 
   for (const item of items) {
     const availability = await checkAvailability(item.productId);
-    
+
     if (!availability.available) {
       errors.push(`${item.title} is no longer available`);
     } else if (availability.quantity < item.quantity) {
@@ -116,30 +127,37 @@ export function createCheckoutSession(
 export function sanitizePhoneNumber(phone: string): string {
   // Remove all non-numeric characters
   const cleaned = phone.replace(/\D/g, '');
-  
+
   // Add US country code if not present
   if (cleaned.length === 10) {
     return `+1${cleaned}`;
   }
-  
+
   // Return with + prefix if not present
   return cleaned.startsWith('1') ? `+${cleaned}` : cleaned;
 }
 
 // Group items by seller for split shipments
-export function groupItemsBySeller(items: CheckoutItem[]): Record<string, CheckoutItem[]> {
-  return items.reduce((groups, item) => {
-    const sellerId = item.sellerId;
-    if (!groups[sellerId]) {
-      groups[sellerId] = [];
-    }
-    groups[sellerId].push(item);
-    return groups;
-  }, {} as Record<string, CheckoutItem[]>);
+export function groupItemsBySeller(
+  items: CheckoutItem[]
+): Record<string, CheckoutItem[]> {
+  return items.reduce(
+    (groups, item) => {
+      const sellerId = item.sellerId;
+      if (!groups[sellerId]) {
+        groups[sellerId] = [];
+      }
+      groups[sellerId].push(item);
+      return groups;
+    },
+    {} as Record<string, CheckoutItem[]>
+  );
 }
 
 // Calculate estimated delivery date
-export function estimateDeliveryDate(shippingMethod: keyof typeof SHIPPING_RATES): Date {
+export function estimateDeliveryDate(
+  shippingMethod: keyof typeof SHIPPING_RATES
+): Date {
   const today = new Date();
   const businessDays = {
     standard: 5,
@@ -149,7 +167,7 @@ export function estimateDeliveryDate(shippingMethod: keyof typeof SHIPPING_RATES
 
   const days = businessDays[shippingMethod];
   const deliveryDate = new Date(today);
-  
+
   // Add business days (skip weekends)
   let daysAdded = 0;
   while (daysAdded < days) {
@@ -169,17 +187,19 @@ export function calculateShipping(
   shippingMethod: keyof typeof SHIPPING_RATES = 'standard',
   subtotal?: number
 ): number {
-  const region = shippingAddress?.country ? getRegionByCountryCode(shippingAddress.country) : undefined;
-  
+  const region = shippingAddress?.country
+    ? getRegionByCountryCode(shippingAddress.country)
+    : undefined;
+
   if (region && subtotal !== undefined) {
     return calculateRegionalShipping(subtotal, region, shippingMethod);
   }
-  
+
   // Fallback to legacy logic
   if (subtotal && subtotal >= 75) {
     return 0;
   }
-  
+
   return SHIPPING_RATES[shippingMethod];
 }
 
@@ -188,13 +208,15 @@ export function calculateTax(
   shippingAddress?: ShippingAddress,
   taxRate?: number
 ): number {
-  const region = shippingAddress?.country ? getRegionByCountryCode(shippingAddress.country) : undefined;
-  
+  const region = shippingAddress?.country
+    ? getRegionByCountryCode(shippingAddress.country)
+    : undefined;
+
   if (region) {
     // Use regional tax rate
     return Math.round(subtotal * region.taxRate * 100) / 100;
   }
-  
+
   // Fallback to provided rate or default
   const effectiveTaxRate = taxRate ?? TAX_RATE;
   return Math.round(subtotal * effectiveTaxRate * 100) / 100;

@@ -1,26 +1,24 @@
 import 'server-only';
 
-export { log } from './log';
-export { logError, parseError } from './error';
-
-// Marketplace-specific server-side observability
+// API monitoring utilities
 export {
-  setUserContext,
-  setProductContext,
-  setOrderContext,
-  trackSearchOperation,
-  trackApiPerformance,
-  trackPaymentOperation,
-  trackImageOperation,
-  clearMarketplaceContext
-} from './marketplace-context';
-
-// API monitoring utilities  
-export {
-  withAPIMonitoring,
+  trackBusinessOperation,
+  trackCacheOperation,
   trackDatabaseOperation,
   trackStripeOperation,
-  trackCacheOperation,
   trackUploadOperation,
-  trackBusinessOperation
+  withAPIMonitoring,
 } from './api-monitoring';
+export { logError, parseError } from './error';
+export { log } from './log';
+// Marketplace-specific server-side observability
+export {
+  clearMarketplaceContext,
+  setOrderContext,
+  setProductContext,
+  setUserContext,
+  trackApiPerformance,
+  trackImageOperation,
+  trackPaymentOperation,
+  trackSearchOperation,
+} from './marketplace-context';

@@ -1,35 +1,54 @@
-import { database } from '@repo/database';
 import type { ProductStatus } from '@repo/database';
-import { AdminProductsClient } from './admin-products-client';
-import { validatePaginationParams, buildCursorWhere, processPaginationResult } from '@repo/design-system/lib/pagination';
+import { database } from '@repo/database';
+import {
+  buildCursorWhere,
+  processPaginationResult,
+  validatePaginationParams,
+} from '@repo/design-system/lib/pagination';
 import type { ReactElement } from 'react';
+import { AdminProductsClient } from './admin-products-client';
 
 interface PageProps {
-  searchParams: Promise<{ q?: string; status?: string; cursor?: string; limit?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    status?: string;
+    cursor?: string;
+    limit?: string;
+  }>;
 }
 
 // Server Component - handles data fetching
-const AdminProductsPage = async ({ searchParams }: PageProps): Promise<React.JSX.Element> => {
+const AdminProductsPage = async ({
+  searchParams,
+}: PageProps): Promise<React.JSX.Element> => {
   const params = await searchParams;
   const search = params.q || '';
   const statusFilter = params.status || 'all';
 
   // Build where clause
   const where: {
-    OR?: Array<{ title?: { contains: string; mode: 'insensitive' } } | { description?: { contains: string; mode: 'insensitive' } }>;
+    OR?: Array<
+      | { title?: { contains: string; mode: 'insensitive' } }
+      | { description?: { contains: string; mode: 'insensitive' } }
+    >;
     status?: ProductStatus;
   } = {};
-  
+
   if (search) {
     where.OR = [
       { title: { contains: search, mode: 'insensitive' } },
-      { description: { contains: search, mode: 'insensitive' } }
+      { description: { contains: search, mode: 'insensitive' } },
     ];
   }
-  
+
   if (statusFilter !== 'all') {
     const upperStatus = statusFilter.toUpperCase() as ProductStatus;
-    if (upperStatus === 'AVAILABLE' || upperStatus === 'SOLD' || upperStatus === 'RESERVED' || upperStatus === 'REMOVED') {
+    if (
+      upperStatus === 'AVAILABLE' ||
+      upperStatus === 'SOLD' ||
+      upperStatus === 'RESERVED' ||
+      upperStatus === 'REMOVED'
+    ) {
       where.status = upperStatus;
     }
   }
@@ -59,34 +78,44 @@ const AdminProductsPage = async ({ searchParams }: PageProps): Promise<React.JSX
           id: true,
           firstName: true,
           lastName: true,
-          email: true
-        }
+          email: true,
+        },
       },
       category: true,
       images: {
         orderBy: { displayOrder: 'asc' },
-        take: 1
+        take: 1,
       },
       _count: {
         select: {
           favorites: true,
-          orders: true
-        }
-      }
+          orders: true,
+        },
+      },
     },
-    take: pagination.limit
+    take: pagination.limit,
   });
 
   // Convert Decimal price to number for client component
-  const formattedProducts = products.map(product => ({
+  const formattedProducts = products.map((product) => ({
     ...product,
-    price: Number(product.price)
+    price: Number(product.price),
   }));
 
   // Process pagination result
-  const paginationResult = processPaginationResult(formattedProducts, pagination.limit, totalCount);
+  const paginationResult = processPaginationResult(
+    formattedProducts,
+    pagination.limit,
+    totalCount
+  );
 
-  return <AdminProductsClient paginatedData={paginationResult} search={search} statusFilter={statusFilter} />;
+  return (
+    <AdminProductsClient
+      paginatedData={paginationResult}
+      search={search}
+      statusFilter={statusFilter}
+    />
+  );
 };
 
 export default AdminProductsPage;

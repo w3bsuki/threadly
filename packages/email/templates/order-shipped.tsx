@@ -41,59 +41,61 @@ export const OrderShippedTemplate = ({
       <Head />
       <Preview>Your order #{orderId} is on its way!</Preview>
       <Body className="bg-gray-50 font-sans">
-        <Container className="mx-auto py-12 px-4">
+        <Container className="mx-auto px-4 py-12">
           {/* Header */}
-          <Section className="text-center mb-8">
-            <Text className="text-3xl font-bold text-gray-900 mb-2">
+          <Section className="mb-8 text-center">
+            <Text className="mb-2 font-bold text-3xl text-gray-900">
               📦 Your Order Has Shipped!
             </Text>
-            <Text className="text-lg text-gray-600">
+            <Text className="text-gray-600 text-lg">
               Your Threadly purchase is on its way
             </Text>
           </Section>
 
           {/* Main Content */}
-          <Section className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-            <Text className="text-xl font-semibold text-gray-900 mb-4">
+          <Section className="rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
+            <Text className="mb-4 font-semibold text-gray-900 text-xl">
               Hi {firstName}!
             </Text>
-            
-            <Text className="text-gray-700 mb-6">
-              Great news! Your order has shipped and is on its way to you. 
-              Use the tracking information below to follow your package's journey.
+
+            <Text className="mb-6 text-gray-700">
+              Great news! Your order has shipped and is on its way to you. Use
+              the tracking information below to follow your package's journey.
             </Text>
 
             {/* Order Summary */}
-            <Section className="border border-gray-200 rounded-lg p-6 mb-6">
-              <div className="flex flex-col md:flex-row gap-4">
+            <Section className="mb-6 rounded-lg border border-gray-200 p-6">
+              <div className="flex flex-col gap-4 md:flex-row">
                 {productImage && (
                   <div className="flex-shrink-0">
                     <Img
-                      src={productImage}
                       alt={productTitle}
-                      width={120}
-                      height={120}
                       className="rounded-lg object-cover"
+                      height={120}
+                      src={productImage}
+                      width={120}
                     />
                   </div>
                 )}
-                
+
                 <div className="flex-1">
-                  <Text className="font-semibold text-gray-900 mb-2">
+                  <Text className="mb-2 font-semibold text-gray-900">
                     {productTitle}
                   </Text>
-                  <Text className="text-gray-600 mb-4">
+                  <Text className="mb-4 text-gray-600">
                     Sold by: {sellerName}
                   </Text>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+
+                  <div className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
                     <div>
-                      <Text className="font-medium text-gray-900">Order ID:</Text>
+                      <Text className="font-medium text-gray-900">
+                        Order ID:
+                      </Text>
                       <Text className="text-gray-600">#{orderId}</Text>
                     </div>
                     <div>
                       <Text className="font-medium text-gray-900">Status:</Text>
-                      <Text className="text-blue-600 font-medium">Shipped</Text>
+                      <Text className="font-medium text-blue-600">Shipped</Text>
                     </div>
                   </div>
                 </div>
@@ -101,32 +103,34 @@ export const OrderShippedTemplate = ({
             </Section>
 
             {/* Tracking Information */}
-            <Section className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-              <Text className="text-lg font-semibold text-blue-900 mb-4">
+            <Section className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-6">
+              <Text className="mb-4 font-semibold text-blue-900 text-lg">
                 📍 Tracking Information
               </Text>
-              
+
               <div className="space-y-3">
                 <div>
-                  <Text className="font-medium text-blue-900">Tracking Number:</Text>
+                  <Text className="font-medium text-blue-900">
+                    Tracking Number:
+                  </Text>
                   <Text className="font-mono text-blue-800 text-lg">
                     {trackingNumber}
                   </Text>
                 </div>
-                
+
                 <div>
-                  <Text className="font-medium text-blue-900">Estimated Delivery:</Text>
-                  <Text className="text-blue-800">
-                    {estimatedDelivery}
+                  <Text className="font-medium text-blue-900">
+                    Estimated Delivery:
                   </Text>
+                  <Text className="text-blue-800">{estimatedDelivery}</Text>
                 </div>
               </div>
-              
+
               {trackingUrl && (
                 <Section className="mt-4">
                   <Button
+                    className="rounded-lg bg-blue-600 px-6 py-3 text-center font-medium text-white"
                     href={trackingUrl}
-                    className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium text-center"
                   >
                     Track Your Package
                   </Button>
@@ -136,49 +140,55 @@ export const OrderShippedTemplate = ({
 
             {/* Shipping Progress */}
             <Section className="mb-6">
-              <Text className="text-lg font-semibold text-gray-900 mb-4">
+              <Text className="mb-4 font-semibold text-gray-900 text-lg">
                 Shipping Progress
               </Text>
-              
+
               <div className="space-y-3">
                 <div className="flex items-start">
-                  <div className="w-6 h-6 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-sm font-bold mr-3 mt-0.5">
+                  <div className="mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full bg-green-100 font-bold text-green-600 text-sm">
                     ✓
                   </div>
                   <div>
-                    <Text className="font-medium text-gray-900">Order Confirmed</Text>
+                    <Text className="font-medium text-gray-900">
+                      Order Confirmed
+                    </Text>
                     <Text className="text-gray-600 text-sm">
                       Your payment was processed successfully
                     </Text>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start">
-                  <div className="w-6 h-6 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-sm font-bold mr-3 mt-0.5">
+                  <div className="mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full bg-green-100 font-bold text-green-600 text-sm">
                     ✓
                   </div>
                   <div>
-                    <Text className="font-medium text-gray-900">Prepared for Shipping</Text>
+                    <Text className="font-medium text-gray-900">
+                      Prepared for Shipping
+                    </Text>
                     <Text className="text-gray-600 text-sm">
                       The seller packaged your item with care
                     </Text>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start">
-                  <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold mr-3 mt-0.5">
+                  <div className="mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-600 text-sm">
                     📦
                   </div>
                   <div>
-                    <Text className="font-medium text-gray-900">In Transit</Text>
+                    <Text className="font-medium text-gray-900">
+                      In Transit
+                    </Text>
                     <Text className="text-gray-600 text-sm">
                       Your package is on its way to you
                     </Text>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start">
-                  <div className="w-6 h-6 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center text-sm font-bold mr-3 mt-0.5">
+                  <div className="mt-0.5 mr-3 flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 font-bold text-gray-600 text-sm">
                     🏠
                   </div>
                   <div>
@@ -193,18 +203,18 @@ export const OrderShippedTemplate = ({
 
             {/* Action Buttons */}
             <Section className="text-center">
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col justify-center gap-4 sm:flex-row">
                 <Button
+                  className="rounded-lg bg-black px-6 py-3 text-center font-medium text-white"
                   href={orderUrl}
-                  className="bg-black text-white px-6 py-3 rounded-lg font-medium text-center"
                 >
                   View Order Details
                 </Button>
-                
+
                 {trackingUrl && (
                   <Button
+                    className="rounded-lg border border-gray-300 bg-gray-100 px-6 py-3 text-center font-medium text-gray-900"
                     href={trackingUrl}
-                    className="bg-gray-100 text-gray-900 px-6 py-3 rounded-lg font-medium text-center border border-gray-300"
                   >
                     Track Package
                   </Button>
@@ -213,11 +223,11 @@ export const OrderShippedTemplate = ({
             </Section>
 
             {/* Tips Section */}
-            <Section className="mt-8 p-4 bg-yellow-50 rounded-lg">
-              <Text className="font-semibold text-yellow-900 mb-2">
+            <Section className="mt-8 rounded-lg bg-yellow-50 p-4">
+              <Text className="mb-2 font-semibold text-yellow-900">
                 📋 Delivery Tips:
               </Text>
-              <ul className="text-yellow-800 text-sm space-y-1">
+              <ul className="space-y-1 text-sm text-yellow-800">
                 <li>• Make sure someone is available to receive the package</li>
                 <li>• Check the tracking link for real-time updates</li>
                 <li>• Contact the seller if you have delivery concerns</li>
@@ -227,24 +237,25 @@ export const OrderShippedTemplate = ({
           </Section>
 
           {/* Footer */}
-          <Section className="text-center mt-8">
+          <Section className="mt-8 text-center">
             <Text className="text-gray-500 text-sm">
               Questions about your delivery? Visit your{' '}
-              <Link href={orderUrl} className="text-black underline">
+              <Link className="text-black underline" href={orderUrl}>
                 order page
               </Link>{' '}
               or message the seller directly.
             </Text>
-            
-            <Text className="text-gray-500 text-sm mt-4">
+
+            <Text className="mt-4 text-gray-500 text-sm">
               We can't wait for you to receive your order! 📦<br />
               The Threadly Team
             </Text>
-            
+
             <Hr className="my-4" />
-            
+
             <Text className="text-gray-400 text-xs">
-              Threadly - Premium Fashion Marketplace<br />
+              Threadly - Premium Fashion Marketplace
+              <br />
               Order #{orderId} • Tracking: {trackingNumber}
             </Text>
           </Section>
@@ -258,7 +269,8 @@ OrderShippedTemplate.PreviewProps = {
   firstName: 'Sarah',
   orderId: 'ORD-2025-001',
   productTitle: 'Vintage Chanel Quilted Bag - Black Leather',
-  productImage: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=300&h=300&fit=crop',
+  productImage:
+    'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=300&h=300&fit=crop',
   sellerName: 'Emma Fashion',
   trackingNumber: '1Z999AA1234567890',
   trackingUrl: 'https://www.ups.com/track?loc=en_US&tracknum=1Z999AA1234567890',

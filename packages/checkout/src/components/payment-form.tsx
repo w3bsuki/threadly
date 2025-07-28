@@ -7,9 +7,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@repo/design-system/components';
-import { PaymentElement, ExpressCheckoutElement } from '@stripe/react-stripe-js';
+import {
+  ExpressCheckoutElement,
+  PaymentElement,
+} from '@stripe/react-stripe-js';
 import { CreditCard, Loader2, Smartphone } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface PaymentFormProps {
   error?: string | null;
@@ -41,17 +44,17 @@ export function PaymentForm({ error }: PaymentFormProps) {
           <CardContent>
             <div className="space-y-3">
               <ExpressCheckoutElement
+                onConfirm={async (event) => {
+                  if ('vibrate' in navigator) {
+                    navigator.vibrate(10);
+                  }
+                }}
                 options={{
                   buttonTheme: {
                     applePay: 'black',
                     googlePay: 'black',
                   },
                   buttonHeight: 48,
-                }}
-                onConfirm={async (event) => {
-                  if ('vibrate' in navigator) {
-                    navigator.vibrate(10);
-                  }
                 }}
               />
             </div>
@@ -74,14 +77,18 @@ export function PaymentForm({ error }: PaymentFormProps) {
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-              <span className="ml-2 text-muted-foreground">Loading payment form...</span>
+              <span className="ml-2 text-muted-foreground">
+                Loading payment form...
+              </span>
             </div>
           ) : (
             <>
               {showExpressCheckout && (
                 <div className="mb-4 flex items-center gap-4">
                   <div className="flex-1 border-t" />
-                  <span className="text-sm text-muted-foreground">Or pay with card</span>
+                  <span className="text-muted-foreground text-sm">
+                    Or pay with card
+                  </span>
                   <div className="flex-1 border-t" />
                 </div>
               )}
@@ -99,7 +106,7 @@ export function PaymentForm({ error }: PaymentFormProps) {
             </>
           )}
           {error && (
-            <div className="mt-4 rounded-md bg-red-50 dark:bg-red-950 p-4 text-base lg:text-sm text-red-600 dark:text-red-400">
+            <div className="mt-4 rounded-md bg-red-50 p-4 text-base text-red-600 lg:text-sm dark:bg-red-950 dark:text-red-400">
               {error}
             </div>
           )}

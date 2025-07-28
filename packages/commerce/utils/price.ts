@@ -1,23 +1,28 @@
 /**
  * Commerce Price Utilities
- * 
+ *
  * This module provides safe, consistent price handling utilities that work
  * in both server and client environments. It handles Prisma Decimal conversion
  * issues and provides standardized price formatting for the marketplace.
- * 
+ *
  * Following Threadly best practices for type safety and environment compatibility.
  */
 
 // Type definitions for safe Decimal handling
-export type PriceInput = number | string | null | undefined | {
-  toNumber?: () => number;
-  toString?: () => string;
-};
+export type PriceInput =
+  | number
+  | string
+  | null
+  | undefined
+  | {
+      toNumber?: () => number;
+      toString?: () => string;
+    };
 
 /**
  * Safely converts any price input to a JavaScript number
  * Handles Prisma Decimal, strings, numbers, and null/undefined values
- * 
+ *
  * @param value - The price value to convert (Decimal, number, string, etc.)
  * @returns Safe number representation, defaults to 0 for invalid inputs
  */
@@ -35,7 +40,7 @@ export function toNumber(value: PriceInput): number {
 
     // Handle string values
     if (typeof value === 'string') {
-      const parsed = parseFloat(value);
+      const parsed = Number.parseFloat(value);
       return isNaN(parsed) ? 0 : parsed;
     }
 
@@ -49,26 +54,24 @@ export function toNumber(value: PriceInput): number {
       // Fallback to toString
       if ('toString' in value && typeof value.toString === 'function') {
         const stringValue = value.toString();
-        const parsed = parseFloat(stringValue);
+        const parsed = Number.parseFloat(stringValue);
         return isNaN(parsed) ? 0 : parsed;
       }
     }
 
     // Last resort: try to convert to string then number
     const stringValue = String(value);
-    const parsed = parseFloat(stringValue);
+    const parsed = Number.parseFloat(stringValue);
     return isNaN(parsed) ? 0 : parsed;
-
   } catch (error) {
     // Safe fallback for any conversion errors
-    console.warn('Price conversion failed:', error);
     return 0;
   }
 }
 
 /**
  * Formats a price value as a currency string
- * 
+ *
  * @param value - The price value to format
  * @param currency - Currency code (default: 'USD')
  * @param locale - Locale for formatting (default: 'en-US')
@@ -76,11 +79,11 @@ export function toNumber(value: PriceInput): number {
  */
 export function formatPrice(
   value: PriceInput,
-  currency: string = 'USD',
-  locale: string = 'en-US'
+  currency = 'USD',
+  locale = 'en-US'
 ): string {
   const numericValue = toNumber(value);
-  
+
   try {
     return new Intl.NumberFormat(locale, {
       style: 'currency',
@@ -90,26 +93,25 @@ export function formatPrice(
     }).format(numericValue);
   } catch (error) {
     // Fallback formatting if Intl fails
-    console.warn('Currency formatting failed, using fallback:', error);
-    return `${currency} ${numericValue.toFixed(2)}`;
+    return `$${numericValue.toFixed(2)}`;
   }
 }
 
 /**
  * Formats a price value as a simple decimal string
- * 
+ *
  * @param value - The price value to format
  * @param decimals - Number of decimal places (default: 2)
  * @returns Formatted decimal string (e.g., "19.99")
  */
-export function formatDecimal(value: PriceInput, decimals: number = 2): string {
+export function formatDecimal(value: PriceInput, decimals = 2): string {
   const numericValue = toNumber(value);
   return numericValue.toFixed(decimals);
 }
 
 /**
  * Converts dollars to cents for payment processing
- * 
+ *
  * @param value - Dollar amount
  * @returns Amount in cents (integer)
  */
@@ -120,7 +122,7 @@ export function toCents(value: PriceInput): number {
 
 /**
  * Converts cents to dollars
- * 
+ *
  * @param cents - Amount in cents
  * @returns Amount in dollars
  */
@@ -130,7 +132,7 @@ export function toDollars(cents: number): number {
 
 /**
  * Validates if a price value is valid for commerce
- * 
+ *
  * @param value - Price value to validate
  * @param min - Minimum allowed value (default: 0.01)
  * @param max - Maximum allowed value (default: 999999.99)
@@ -138,8 +140,8 @@ export function toDollars(cents: number): number {
  */
 export function isValidPrice(
   value: PriceInput,
-  min: number = 0.01,
-  max: number = 999999.99
+  min = 0.01,
+  max = 999_999.99
 ): boolean {
   const numericValue = toNumber(value);
   return numericValue >= min && numericValue <= max && !isNaN(numericValue);
@@ -147,19 +149,22 @@ export function isValidPrice(
 
 /**
  * Calculates percentage of a price value
- * 
+ *
  * @param value - Base price value
  * @param percentage - Percentage to calculate (e.g., 5 for 5%)
  * @returns Calculated percentage amount
  */
-export function calculatePercentage(value: PriceInput, percentage: number): number {
+export function calculatePercentage(
+  value: PriceInput,
+  percentage: number
+): number {
   const numericValue = toNumber(value);
   return numericValue * (percentage / 100);
 }
 
 /**
  * Adds tax to a price value
- * 
+ *
  * @param value - Base price value
  * @param taxRate - Tax rate as percentage (e.g., 8.75 for 8.75%)
  * @returns Price with tax added
@@ -172,7 +177,7 @@ export function addTax(value: PriceInput, taxRate: number): number {
 
 /**
  * Calculates discount amount
- * 
+ *
  * @param originalPrice - Original price
  * @param discountedPrice - Discounted price
  * @returns Discount percentage (0-100)
@@ -183,17 +188,17 @@ export function calculateDiscountPercentage(
 ): number {
   const original = toNumber(originalPrice);
   const discounted = toNumber(discountedPrice);
-  
+
   if (original <= 0 || discounted >= original) {
     return 0;
   }
-  
+
   return Math.round(((original - discounted) / original) * 100);
 }
 
 /**
  * Safely compares two price values
- * 
+ *
  * @param a - First price value
  * @param b - Second price value
  * @returns Comparison result (-1, 0, 1)
@@ -201,7 +206,7 @@ export function calculateDiscountPercentage(
 export function comparePrice(a: PriceInput, b: PriceInput): number {
   const numA = toNumber(a);
   const numB = toNumber(b);
-  
+
   if (numA < numB) return -1;
   if (numA > numB) return 1;
   return 0;
@@ -209,7 +214,7 @@ export function comparePrice(a: PriceInput, b: PriceInput): number {
 
 /**
  * Rounds a price to the nearest cent
- * 
+ *
  * @param value - Price value to round
  * @returns Rounded price value
  */

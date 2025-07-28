@@ -17,20 +17,20 @@ async function debugProductFlow() {
       include: {
         images: true,
         seller: true,
-        category: true
-      }
+        category: true,
+      },
     });
     console.log(`   Found ${directProducts.length} products directly from DB`);
 
     // 2. Check if issue is with specific conditions
     console.log('\n2️⃣ Testing various query conditions:');
-    
+
     // Products with images
     const withImages = await prisma.product.count({
       where: {
         status: 'AVAILABLE',
-        images: { some: {} }
-      }
+        images: { some: {} },
+      },
     });
     console.log(`   Products with images: ${withImages}`);
 
@@ -38,8 +38,8 @@ async function debugProductFlow() {
     const withoutImages = await prisma.product.count({
       where: {
         status: 'AVAILABLE',
-        images: { none: {} }
-      }
+        images: { none: {} },
+      },
     });
     console.log(`   Products without images: ${withoutImages}`);
 
@@ -47,38 +47,40 @@ async function debugProductFlow() {
     console.log('\n3️⃣ Testing ProductGridServer query:');
     const serverQuery = await prisma.product.findMany({
       where: {
-        status: 'AVAILABLE'
+        status: 'AVAILABLE',
       },
       include: {
         images: {
-          orderBy: { displayOrder: 'asc' }
+          orderBy: { displayOrder: 'asc' },
         },
         seller: true,
         category: true,
         _count: {
-          select: { favorites: true }
-        }
+          select: { favorites: true },
+        },
       },
       orderBy: { createdAt: 'desc' },
       take: 24,
     });
-    console.log(`   ProductGridServer query returned: ${serverQuery.length} products`);
+    console.log(
+      `   ProductGridServer query returned: ${serverQuery.length} products`
+    );
 
     // 4. Check for any data issues
     console.log('\n4️⃣ Checking for data issues:');
     const nullCategories = await prisma.product.count({
       where: {
         status: 'AVAILABLE',
-        category: null
-      }
+        category: null,
+      },
     });
     console.log(`   Products with null category: ${nullCategories}`);
 
     const nullSellers = await prisma.product.count({
       where: {
         status: 'AVAILABLE',
-        seller: null
-      }
+        seller: null,
+      },
     });
     console.log(`   Products with null seller: ${nullSellers}`);
 
@@ -96,8 +98,9 @@ async function debugProductFlow() {
     // 6. Check environment
     console.log('\n6️⃣ Environment check:');
     console.log(`   NODE_ENV: ${process.env.NODE_ENV}`);
-    console.log(`   Database URL starts with: ${process.env.DATABASE_URL?.substring(0, 30)}...`);
-
+    console.log(
+      `   Database URL starts with: ${process.env.DATABASE_URL?.substring(0, 30)}...`
+    );
   } catch (error) {
     console.error('❌ Error in debug:', error);
   } finally {

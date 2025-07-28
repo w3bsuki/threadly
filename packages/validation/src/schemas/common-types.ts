@@ -29,7 +29,10 @@ export const APIResponseSchema = z.object({
   timestamp: z.string().datetime().optional(),
 });
 
-export type APIResponse<T = unknown> = Omit<z.infer<typeof APIResponseSchema>, 'data'> & {
+export type APIResponse<T = unknown> = Omit<
+  z.infer<typeof APIResponseSchema>,
+  'data'
+> & {
   data?: T;
 };
 
@@ -160,6 +163,9 @@ export const ActionResultSchema = z.object({
   validationErrors: z.array(ValidationErrorSchema).optional(),
 });
 
-export type ActionResult<T = unknown> = Omit<z.infer<typeof ActionResultSchema>, 'data'> & {
+export type ActionResult<T = unknown> = Omit<
+  z.infer<typeof ActionResultSchema>,
+  'data'
+> & {
   data?: T;
 };

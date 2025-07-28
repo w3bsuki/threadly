@@ -1,13 +1,13 @@
-import { database } from '@repo/database';
 import type { Category, Product, ProductImage, User } from '@repo/database';
+import { database } from '@repo/database';
 import { Badge, Card, CardContent } from '@repo/design-system/components';
 import { getDictionary } from '@repo/internationalization';
 import { Package, Star, TrendingUp, Users } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ProductGrid } from '../products/components/product-grid';
-import { AvatarImage } from '../components/optimized-image';
 import { cache } from 'react';
+import { AvatarImage } from '../components/optimized-image';
+import { ProductGrid } from '../products/components/product-grid';
 
 export const revalidate = 300; // 5 minutes
 
@@ -70,7 +70,7 @@ export default async function BrowsePage({
 }) {
   const { locale } = await params;
   const dictionary = await getDictionary(locale);
-  
+
   // Fetch data using cached functions for better performance
   const [trendingProducts, popularCategories, topSellers] = await Promise.all([
     getTrendingProducts(),
@@ -95,7 +95,7 @@ export default async function BrowsePage({
           <h1 className="mb-3 font-bold text-3xl text-foreground lg:mb-4 lg:text-4xl">
             Browse Threadly
           </h1>
-          <p className="mx-auto max-w-2xl px-4 text-muted-foreground text-lg lg:text-xl">
+          <p className="mx-auto max-w-2xl px-4 text-lg text-muted-foreground lg:text-xl">
             Discover unique fashion finds from trusted sellers in our community
             marketplace
           </p>
@@ -150,29 +150,31 @@ export default async function BrowsePage({
           </div>
 
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 lg:gap-4">
-            {popularCategories.map((category: Category & { _count: { Product: number } }) => (
-              <Link
-                href={`/products?category=${category.slug}`}
-                key={category.id}
-              >
-                <Card className="border-0 bg-background shadow-sm transition-all duration-200 hover:scale-[1.02] hover:shadow-md">
-                  <CardContent className="p-3 text-center lg:p-4">
-                    <h3 className="font-medium text-foreground text-sm lg:text-base">
-                      {category.name}
-                    </h3>
-                    <p className="mt-1 text-muted-foreground text-xs lg:text-sm">
-                      {category._count.Product} items
-                    </p>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
+            {popularCategories.map(
+              (category: Category & { _count: { Product: number } }) => (
+                <Link
+                  href={`/products?category=${category.slug}`}
+                  key={category.id}
+                >
+                  <Card className="border-0 bg-background shadow-sm transition-all duration-200 hover:scale-[1.02] hover:shadow-md">
+                    <CardContent className="p-3 text-center lg:p-4">
+                      <h3 className="font-medium text-foreground text-sm lg:text-base">
+                        {category.name}
+                      </h3>
+                      <p className="mt-1 text-muted-foreground text-xs lg:text-sm">
+                        {category._count.Product} items
+                      </p>
+                    </CardContent>
+                  </Card>
+                </Link>
+              )
+            )}
           </div>
-          
+
           <div className="mt-6 text-center">
             <Link
-              href="/categories"
               className="inline-flex items-center justify-center font-medium text-blue-600 text-sm transition-colors hover:text-blue-700"
+              href="/categories"
             >
               Browse All Categories →
             </Link>
@@ -195,25 +197,29 @@ export default async function BrowsePage({
 
           <ProductGrid
             dictionary={dictionary}
-            products={trendingProducts.map((product: Product & {
-              images: ProductImage[];
-              seller: Pick<User, 'firstName' | 'lastName' | 'id'>;
-              category: { name: string } | null;
-              _count: { favorites: number };
-            }) => ({
-              ...product,
-              price: Number(product.price),
-              category: product.category?.name || 'Other',
-              brand: product.brand || undefined,
-              images: product.images.map((img: ProductImage) => ({
-                ...img,
-                alt: img.alt || undefined,
-              })),
-              seller: {
-                ...product.seller,
-                firstName: product.seller.firstName || '',
-              },
-            }))}
+            products={trendingProducts.map(
+              (
+                product: Product & {
+                  images: ProductImage[];
+                  seller: Pick<User, 'firstName' | 'lastName' | 'id'>;
+                  category: { name: string } | null;
+                  _count: { favorites: number };
+                }
+              ) => ({
+                ...product,
+                price: Number(product.price),
+                category: product.category?.name || 'Other',
+                brand: product.brand || undefined,
+                images: product.images.map((img: ProductImage) => ({
+                  ...img,
+                  alt: img.alt || undefined,
+                })),
+                seller: {
+                  ...product.seller,
+                  firstName: product.seller.firstName || '',
+                },
+              })
+            )}
           />
         </section>
 
@@ -224,60 +230,64 @@ export default async function BrowsePage({
           </h2>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-            {topSellers.map((seller: User & {
-              _count: {
-                Product: number;
-                reviewsReceived: number;
-              };
-            }) => (
-              <Link href={`/profile/${seller.id}`} key={seller.id}>
-                <Card className="border-0 bg-background shadow-sm transition-all duration-200 hover:scale-[1.02] hover:shadow-md">
-                  <CardContent className="p-4 lg:p-6">
-                    <div className="mb-3 flex items-center gap-3 lg:mb-4 lg:gap-4">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-full)] bg-accent lg:h-12 lg:w-12">
-                        {seller.imageUrl ? (
-                          <AvatarImage
-                            alt={`${seller.firstName} ${seller.lastName}`}
-                            className="h-10 w-10 lg:h-12 lg:w-12"
-                            src={seller.imageUrl}
-                            size={40}
-                          />
-                        ) : (
-                          <span className="font-semibold text-muted-foreground text-sm lg:text-lg">
-                            {(
-                              seller.firstName?.[0] ||
-                              seller.lastName?.[0] ||
-                              'U'
-                            ).toUpperCase()}
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="min-w-0 flex-1">
-                        <h3 className="truncate font-medium text-foreground text-sm lg:text-base">
-                          {seller.firstName} {seller.lastName}
-                        </h3>
-                        <div className="mt-1 flex items-center gap-3 text-muted-foreground text-xs lg:gap-4 lg:text-sm">
-                          <span>{seller._count.Product} items</span>
-                          {seller.averageRating && (
-                            <div className="flex items-center gap-1">
-                              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                              <span>{seller.averageRating.toFixed(1)}</span>
-                            </div>
+            {topSellers.map(
+              (
+                seller: User & {
+                  _count: {
+                    Product: number;
+                    reviewsReceived: number;
+                  };
+                }
+              ) => (
+                <Link href={`/profile/${seller.id}`} key={seller.id}>
+                  <Card className="border-0 bg-background shadow-sm transition-all duration-200 hover:scale-[1.02] hover:shadow-md">
+                    <CardContent className="p-4 lg:p-6">
+                      <div className="mb-3 flex items-center gap-3 lg:mb-4 lg:gap-4">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-full)] bg-accent lg:h-12 lg:w-12">
+                          {seller.imageUrl ? (
+                            <AvatarImage
+                              alt={`${seller.firstName} ${seller.lastName}`}
+                              className="h-10 w-10 lg:h-12 lg:w-12"
+                              size={40}
+                              src={seller.imageUrl}
+                            />
+                          ) : (
+                            <span className="font-semibold text-muted-foreground text-sm lg:text-lg">
+                              {(
+                                seller.firstName?.[0] ||
+                                seller.lastName?.[0] ||
+                                'U'
+                              ).toUpperCase()}
+                            </span>
                           )}
                         </div>
-                      </div>
-                    </div>
 
-                    <div className="text-center">
-                      <Badge className="text-xs" variant="secondary">
-                        {seller._count.reviewsReceived} reviews
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
+                        <div className="min-w-0 flex-1">
+                          <h3 className="truncate font-medium text-foreground text-sm lg:text-base">
+                            {seller.firstName} {seller.lastName}
+                          </h3>
+                          <div className="mt-1 flex items-center gap-3 text-muted-foreground text-xs lg:gap-4 lg:text-sm">
+                            <span>{seller._count.Product} items</span>
+                            {seller.averageRating && (
+                              <div className="flex items-center gap-1">
+                                <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                <span>{seller.averageRating.toFixed(1)}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-center">
+                        <Badge className="text-xs" variant="secondary">
+                          {seller._count.reviewsReceived} reviews
+                        </Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              )
+            )}
           </div>
         </section>
       </div>

@@ -51,11 +51,11 @@ export function setUserContext(user: MarketplaceUser): void {
     });
 
     Sentry.setTag('user.role', user.role);
-    
+
     if (user.stripeCustomerId) {
       Sentry.setTag('stripe.customer_id', user.stripeCustomerId);
     }
-    
+
     if (user.stripeConnectAccountId) {
       Sentry.setTag('stripe.connect_account_id', user.stripeConnectAccountId);
     }
@@ -114,7 +114,7 @@ export function setOrderContext(order: OrderContext): void {
     Sentry.setTag('order.seller_id', order.sellerId);
     Sentry.setTag('order.product_id', order.productId);
     Sentry.setTag('order.status', order.status);
-    
+
     if (order.paymentIntentId) {
       Sentry.setTag('stripe.payment_intent_id', order.paymentIntentId);
     }
@@ -142,7 +142,7 @@ export function trackSearchOperation(search: SearchContext): void {
 
     Sentry.setTag('search.query', search.query);
     Sentry.setTag('search.result_count', search.resultCount.toString());
-    
+
     if (search.userId) {
       Sentry.setTag('search.user_id', search.userId);
     }
@@ -218,7 +218,12 @@ export function trackApiPerformance(operation: {
  * Track payment-related operations
  */
 export function trackPaymentOperation(operation: {
-  type: 'payment_intent_created' | 'payment_succeeded' | 'payment_failed' | 'payout_created' | 'connect_account_created';
+  type:
+    | 'payment_intent_created'
+    | 'payment_succeeded'
+    | 'payment_failed'
+    | 'payout_created'
+    | 'connect_account_created';
   orderId?: string;
   sellerId?: string;
   buyerId?: string;
@@ -236,11 +241,11 @@ export function trackPaymentOperation(operation: {
     });
 
     Sentry.setTag('payment.operation', operation.type);
-    
+
     if (operation.orderId) {
       Sentry.setTag('payment.order_id', operation.orderId);
     }
-    
+
     if (operation.stripeId) {
       Sentry.setTag('payment.stripe_id', operation.stripeId);
     }
@@ -260,7 +265,12 @@ export function trackPaymentOperation(operation: {
  * Track image upload and processing operations
  */
 export function trackImageOperation(operation: {
-  type: 'upload_started' | 'upload_completed' | 'upload_failed' | 'processing_started' | 'processing_completed';
+  type:
+    | 'upload_started'
+    | 'upload_completed'
+    | 'upload_failed'
+    | 'processing_started'
+    | 'processing_completed';
   productId?: string;
   userId: string;
   fileSize?: number;
@@ -278,7 +288,7 @@ export function trackImageOperation(operation: {
 
     Sentry.setTag('image.operation', operation.type);
     Sentry.setTag('image.user_id', operation.userId);
-    
+
     if (operation.productId) {
       Sentry.setTag('image.product_id', operation.productId);
     }
@@ -311,7 +321,7 @@ export function clearMarketplaceContext(): void {
     Sentry.setUser(null);
     Sentry.setContext('product', null);
     Sentry.setContext('order', null);
-    
+
     log.info('Marketplace context cleared');
   } catch (error) {
     log.error('Failed to clear marketplace context', { error });

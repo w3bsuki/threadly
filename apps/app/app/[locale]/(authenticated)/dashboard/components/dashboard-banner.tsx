@@ -1,8 +1,20 @@
-import type { Dictionary } from '@repo/internationalization';
-import { currentUser } from '@repo/auth/server';
-import { DollarSign, ShoppingBag, Package, MessageSquare, ShoppingCart, TrendingUp } from 'lucide-react';
+import type { currentUser } from '@repo/auth/server';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@repo/design-system/components/ui/tabs';
 import { cn } from '@repo/design-system/lib/utils';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/design-system/components/ui/tabs';
+import type { Dictionary } from '@repo/internationalization';
+import {
+  DollarSign,
+  MessageSquare,
+  Package,
+  ShoppingBag,
+  ShoppingCart,
+  TrendingUp,
+} from 'lucide-react';
 
 interface DashboardBannerProps {
   user: Awaited<ReturnType<typeof currentUser>>;
@@ -17,7 +29,11 @@ interface DashboardBannerProps {
   };
 }
 
-export function DashboardBanner({ user, dictionary, metrics }: DashboardBannerProps) {
+export function DashboardBanner({
+  user,
+  dictionary,
+  metrics,
+}: DashboardBannerProps) {
   if (!user) return null;
 
   const getGreeting = () => {
@@ -72,22 +88,26 @@ export function DashboardBanner({ user, dictionary, metrics }: DashboardBannerPr
     },
   ];
 
-  const renderStatCard = (stat: typeof sellingStats[0] & { highlight?: boolean }, index: number) => (
+  const renderStatCard = (
+    stat: (typeof sellingStats)[0] & { highlight?: boolean },
+    index: number
+  ) => (
     <div
-      key={index}
       className={cn(
-        "flex items-center space-x-4 rounded-lg p-4 transition-all",
-        "bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10",
-        "hover:bg-gray-50 dark:hover:bg-white/10",
-        stat.highlight && "ring-2 ring-orange-500 dark:ring-orange-400 ring-opacity-50"
+        'flex items-center space-x-4 rounded-lg p-4 transition-all',
+        'border border-gray-200 bg-white dark:border-white/10 dark:bg-white/5',
+        'hover:bg-gray-50 dark:hover:bg-white/10',
+        stat.highlight &&
+          'ring-2 ring-orange-500 ring-opacity-50 dark:ring-orange-400'
       )}
+      key={index}
     >
-      <div className="rounded-full p-3 bg-gray-100 dark:bg-white/10">
-        <stat.icon className={cn("h-5 w-5", stat.iconColor)} />
+      <div className="rounded-full bg-gray-100 p-3 dark:bg-white/10">
+        <stat.icon className={cn('h-5 w-5', stat.iconColor)} />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-sm text-gray-600 dark:text-gray-400">{stat.label}</p>
-        <p className="text-lg font-semibold text-gray-900 dark:text-white truncate">
+        <p className="text-gray-600 text-sm dark:text-gray-400">{stat.label}</p>
+        <p className="truncate font-semibold text-gray-900 text-lg dark:text-white">
           {stat.value}
         </p>
       </div>
@@ -95,29 +115,29 @@ export function DashboardBanner({ user, dictionary, metrics }: DashboardBannerPr
   );
 
   return (
-    <div className="relative rounded-xl overflow-hidden bg-gray-100 dark:bg-black border border-gray-200 dark:border-gray-800">
+    <div className="relative overflow-hidden rounded-xl border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-black">
       <div className="px-4 py-6 sm:px-6 sm:py-8">
         <div className="space-y-6">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">
+            <h1 className="font-semibold text-gray-900 text-xl sm:text-2xl dark:text-white">
               {getGreeting()}, {firstName}
             </h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            <p className="mt-1 text-gray-600 text-sm dark:text-gray-400">
               Your buying and selling overview
             </p>
           </div>
-          
-          <Tabs defaultValue="selling" className="w-full">
+
+          <Tabs className="w-full" defaultValue="selling">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="selling">Selling</TabsTrigger>
               <TabsTrigger value="buying">Buying</TabsTrigger>
             </TabsList>
-            <TabsContent value="selling" className="mt-4">
+            <TabsContent className="mt-4" value="selling">
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 {sellingStats.map(renderStatCard)}
               </div>
             </TabsContent>
-            <TabsContent value="buying" className="mt-4">
+            <TabsContent className="mt-4" value="buying">
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 {buyingStats.map(renderStatCard)}
               </div>

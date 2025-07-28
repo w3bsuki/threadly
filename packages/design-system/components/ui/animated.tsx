@@ -1,8 +1,18 @@
 'use client';
 
-import { HTMLAttributes, forwardRef, useEffect, useRef, useState } from 'react';
+import {
+  animationDelays,
+  animations,
+  staggerAnimation,
+} from '@repo/design-system/lib/animations';
 import { cn } from '@repo/design-system/lib/utils';
-import { animations, animationDelays, staggerAnimation } from '@repo/design-system/lib/animations';
+import {
+  forwardRef,
+  type HTMLAttributes,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 interface AnimatedProps extends HTMLAttributes<HTMLDivElement> {
   animation?: keyof typeof animations;
@@ -90,17 +100,20 @@ export const Animated = forwardRef<HTMLDivElement, AnimatedProps>(
 
     const animationClass = isAnimating ? animations[animation] : '';
     const delayClass = delay ? animationDelays[delay] : '';
-    const staggerStyle = stagger !== undefined ? staggerAnimation(stagger, staggerDelay) : {};
-    const durationStyle = duration ? { animationDuration: `${duration}ms` } : {};
+    const staggerStyle =
+      stagger !== undefined ? staggerAnimation(stagger, staggerDelay) : {};
+    const durationStyle = duration
+      ? { animationDuration: `${duration}ms` }
+      : {};
 
     return (
       <div
-        ref={ref || elementRef}
         className={cn(animationClass, delayClass, className)}
-        style={{ ...style, ...staggerStyle, ...durationStyle }}
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        ref={ref || elementRef}
+        style={{ ...style, ...staggerStyle, ...durationStyle }}
         {...props}
       >
         {children}
@@ -119,8 +132,22 @@ interface StaggerContainerProps extends HTMLAttributes<HTMLDivElement> {
   threshold?: number;
 }
 
-export const StaggerContainer = forwardRef<HTMLDivElement, StaggerContainerProps>(
-  ({ children, staggerDelay = 50, animation = 'fadeInUp', trigger = 'mount', threshold = 0.1, className, ...props }, ref) => {
+export const StaggerContainer = forwardRef<
+  HTMLDivElement,
+  StaggerContainerProps
+>(
+  (
+    {
+      children,
+      staggerDelay = 50,
+      animation = 'fadeInUp',
+      trigger = 'mount',
+      threshold = 0.1,
+      className,
+      ...props
+    },
+    ref
+  ) => {
     const [isVisible, setIsVisible] = useState(trigger === 'mount');
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -151,23 +178,21 @@ export const StaggerContainer = forwardRef<HTMLDivElement, StaggerContainerProps
     }, [trigger, threshold]);
 
     return (
-      <div ref={ref || containerRef} className={className} {...props}>
-        {Array.isArray(children) ? (
-          children.map((child, index) => (
-            <Animated
-              key={index}
-              animation={animation}
-              stagger={index}
-              staggerDelay={staggerDelay}
-              trigger="mount"
-              className={!isVisible ? 'opacity-0' : ''}
-            >
-              {child}
-            </Animated>
-          ))
-        ) : (
-          children
-        )}
+      <div className={className} ref={ref || containerRef} {...props}>
+        {Array.isArray(children)
+          ? children.map((child, index) => (
+              <Animated
+                animation={animation}
+                className={isVisible ? '' : 'opacity-0'}
+                key={index}
+                stagger={index}
+                staggerDelay={staggerDelay}
+                trigger="mount"
+              >
+                {child}
+              </Animated>
+            ))
+          : children}
       </div>
     );
   }
@@ -177,7 +202,13 @@ StaggerContainer.displayName = 'StaggerContainer';
 
 // Page transition wrapper
 interface PageTransitionProps extends HTMLAttributes<HTMLDivElement> {
-  animation?: 'fade' | 'slideUp' | 'slideDown' | 'slideLeft' | 'slideRight' | 'zoom';
+  animation?:
+    | 'fade'
+    | 'slideUp'
+    | 'slideDown'
+    | 'slideLeft'
+    | 'slideRight'
+    | 'zoom';
 }
 
 export const PageTransition = forwardRef<HTMLDivElement, PageTransitionProps>(
@@ -193,10 +224,10 @@ export const PageTransition = forwardRef<HTMLDivElement, PageTransitionProps>(
 
     return (
       <Animated
-        ref={ref}
         animation={animationMap[animation]}
-        trigger="mount"
         className={className}
+        ref={ref}
+        trigger="mount"
         {...props}
       >
         {children}
@@ -208,23 +239,24 @@ export const PageTransition = forwardRef<HTMLDivElement, PageTransitionProps>(
 PageTransition.displayName = 'PageTransition';
 
 // Hover card animation wrapper
-export const HoverCard = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
-  ({ children, className, ...props }, ref) => {
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          'transition-all duration-300',
-          'hover:scale-[1.02] hover:shadow-lg',
-          'active:scale-[0.98]',
-          className
-        )}
-        {...props}
-      >
-        {children}
-      </div>
-    );
-  }
-);
+export const HoverCard = forwardRef<
+  HTMLDivElement,
+  HTMLAttributes<HTMLDivElement>
+>(({ children, className, ...props }, ref) => {
+  return (
+    <div
+      className={cn(
+        'transition-all duration-300',
+        'hover:scale-[1.02] hover:shadow-lg',
+        'active:scale-[0.98]',
+        className
+      )}
+      ref={ref}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+});
 
 HoverCard.displayName = 'HoverCard';

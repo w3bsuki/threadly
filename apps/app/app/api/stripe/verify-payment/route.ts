@@ -1,12 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import Stripe from 'stripe';
-import { env } from '@/env';
-import { z } from 'zod';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
+import { log, logError } from '@repo/observability/server';
 import { decimalToNumber } from '@repo/utils';
+import { type NextRequest, NextResponse } from 'next/server';
+import Stripe from 'stripe';
+import { z } from 'zod';
+import { env } from '@/env';
 
 // Initialize Stripe with proper error handling
 let stripe: Stripe | null = null;
@@ -24,7 +23,13 @@ const verifyPaymentSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     if (!stripe) {
-      return NextResponse.json({ error: 'Payment verification is not available. Stripe not configured.' }, { status: 503 });
+      return NextResponse.json(
+        {
+          error:
+            'Payment verification is not available. Stripe not configured.',
+        },
+        { status: 503 }
+      );
     }
 
     const user = await currentUser();
@@ -48,7 +53,10 @@ export async function POST(request: NextRequest) {
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
 
     if (!paymentIntent) {
-      return NextResponse.json({ error: 'Payment intent not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Payment intent not found' },
+        { status: 404 }
+      );
     }
 
     // Verify the payment belongs to the current user
@@ -58,15 +66,18 @@ export async function POST(request: NextRequest) {
 
     // Check payment status
     if (paymentIntent.status !== 'succeeded') {
-      return NextResponse.json({
-        status: paymentIntent.status,
-        error: 'Payment not successful',
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          status: paymentIntent.status,
+          error: 'Payment not successful',
+        },
+        { status: 400 }
+      );
     }
 
     // Get the order ID from payment metadata
     const orderId = paymentIntent.metadata.orderId;
-    
+
     if (!orderId) {
       // For cart purchases, we need to find orders by the payment intent
       // Since we're using single product orders, there might be multiple orders for one payment
@@ -76,8 +87,8 @@ export async function POST(request: NextRequest) {
           status: 'PENDING',
           // Orders created around the same time as the payment
           createdAt: {
-            gte: new Date(paymentIntent.created * 1000 - 60000), // 1 minute before payment
-            lte: new Date(paymentIntent.created * 1000 + 60000), // 1 minute after payment
+            gte: new Date(paymentIntent.created * 1000 - 60_000), // 1 minute before payment
+            lte: new Date(paymentIntent.created * 1000 + 60_000), // 1 minute after payment
           },
         },
         include: {
@@ -97,13 +108,16 @@ export async function POST(request: NextRequest) {
       });
 
       if (orders.length === 0) {
-        return NextResponse.json({ error: 'Orders not found' }, { status: 404 });
+        return NextResponse.json(
+          { error: 'Orders not found' },
+          { status: 404 }
+        );
       }
 
       // Update all orders to PAID status
       await database.order.updateMany({
         where: {
-          id: { in: orders.map(o => o.id) },
+          id: { in: orders.map((o) => o.id) },
           status: 'PENDING',
         },
         data: { status: 'PAID' },
@@ -128,9 +142,14 @@ export async function POST(request: NextRequest) {
         order: {
           ...primaryOrder,
           // Virtual properties to match the expected format
-          subtotal: orders.reduce((sum, o) => sum + decimalToNumber(o.amount), 0),
+          subtotal: orders.reduce(
+            (sum, o) => sum + decimalToNumber(o.amount),
+            0
+          ),
           shippingCost: 9.99, // Default shipping
-          tax: orders.reduce((sum, o) => sum + decimalToNumber(o.amount), 0) * 0.08,
+          tax:
+            orders.reduce((sum, o) => sum + decimalToNumber(o.amount), 0) *
+            0.08,
           total: paymentIntent.amount / 100,
           shippingMethod: 'standard',
           shippingFirstName: user.firstName || '',
@@ -141,7 +160,7 @@ export async function POST(request: NextRequest) {
           shippingZipCode: '12345',
           shippingCountry: 'United States',
           // Transform orders into orderItems format
-          orderItems: orders.map(o => ({
+          orderItems: orders.map((o) => ({
             id: o.id,
             productId: o.productId,
             title: o.Product.title,
@@ -185,7 +204,7 @@ export async function POST(request: NextRequest) {
     if (order.status === 'PENDING') {
       await database.order.update({
         where: { id: order.id },
-        data: { 
+        data: {
           status: 'PAID',
           // Store the payment confirmation
           Payment: {
@@ -217,26 +236,27 @@ export async function POST(request: NextRequest) {
       shippingState: 'State',
       shippingZipCode: '12345',
       shippingCountry: 'United States',
-      orderItems: [{
-        id: order.id,
-        productId: order.productId,
-        title: order.Product.title,
-        description: order.Product.description || '',
-        price: order.Product.price,
-        quantity: 1,
-        condition: order.Product.condition,
-        product: order.Product,
-      }],
+      orderItems: [
+        {
+          id: order.id,
+          productId: order.productId,
+          title: order.Product.title,
+          description: order.Product.description || '',
+          price: order.Product.price,
+          quantity: 1,
+          condition: order.Product.condition,
+          product: order.Product,
+        },
+      ],
     };
 
     return NextResponse.json({
       status: paymentIntent.status,
       order: transformedOrder,
     });
-
   } catch (error) {
     logError('Payment verification error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.issues },

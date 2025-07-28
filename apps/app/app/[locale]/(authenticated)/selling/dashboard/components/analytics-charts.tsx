@@ -1,15 +1,18 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { 
-  ChartContainer, 
-  ChartTooltip, 
-  ChartTooltipContent
-} from '@repo/design-system/components';
-import * as Recharts from 'recharts';
-import { BarChart3, TrendingUp, Activity } from 'lucide-react';
 import { formatPrice } from '@repo/commerce/utils';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@repo/design-system/components';
+import { Activity, BarChart3, TrendingUp } from 'lucide-react';
 import { useMemo } from 'react';
+import * as Recharts from 'recharts';
 
 interface AnalyticsChartsProps {
   revenueData: number;
@@ -26,46 +29,57 @@ interface AnalyticsChartsProps {
   viewsTrend: string;
 }
 
-export function AnalyticsCharts({ 
-  revenueData, 
-  salesData, 
-  viewsData, 
-  dailyAnalytics, 
-  revenueTrend, 
-  salesTrend, 
-  viewsTrend 
+export function AnalyticsCharts({
+  revenueData,
+  salesData,
+  viewsData,
+  dailyAnalytics,
+  revenueTrend,
+  salesTrend,
+  viewsTrend,
 }: AnalyticsChartsProps) {
   // Chart configurations
-  const revenueChartConfig = useMemo(() => ({
-    revenue: {
-      label: "Revenue",
-      color: "hsl(var(--primary))",
-    },
-  }), []);
+  const revenueChartConfig = useMemo(
+    () => ({
+      revenue: {
+        label: 'Revenue',
+        color: 'hsl(var(--primary))',
+      },
+    }),
+    []
+  );
 
-  const salesChartConfig = useMemo(() => ({
-    sales: {
-      label: "Sales",
-      color: "hsl(142, 76%, 36%)", // Green
-    },
-  }), []);
+  const salesChartConfig = useMemo(
+    () => ({
+      sales: {
+        label: 'Sales',
+        color: 'hsl(142, 76%, 36%)', // Green
+      },
+    }),
+    []
+  );
 
-  const viewsChartConfig = useMemo(() => ({
-    views: {
-      label: "Views",
-      color: "hsl(221, 83%, 53%)", // Blue
-    },
-  }), []);
+  const viewsChartConfig = useMemo(
+    () => ({
+      views: {
+        label: 'Views',
+        color: 'hsl(221, 83%, 53%)', // Blue
+      },
+    }),
+    []
+  );
 
   // Format data for recharts
-  const chartData = useMemo(() => 
-    dailyAnalytics.map(day => ({
-      day: day.day,
-      revenue: day.revenue / 100, // Convert cents to dollars
-      sales: day.sales,
-      views: day.views
-    }))
-  , [dailyAnalytics]);
+  const chartData = useMemo(
+    () =>
+      dailyAnalytics.map((day) => ({
+        day: day.day,
+        revenue: day.revenue / 100, // Convert cents to dollars
+        sales: day.sales,
+        views: day.views,
+      })),
+    [dailyAnalytics]
+  );
 
   // Custom tooltip formatters
   const formatCurrency = (value: number) => {
@@ -79,18 +93,19 @@ export function AnalyticsCharts({
     return new Intl.NumberFormat('en-US').format(value);
   };
 
-
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {/* Revenue Chart - Area Chart with Gradient */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Revenue (7 days)</CardTitle>
+          <CardTitle className="font-medium text-sm">
+            Revenue (7 days)
+          </CardTitle>
           <BarChart3 className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{formatPrice(revenueData)}</div>
-          <p className="text-xs text-muted-foreground">
+          <div className="font-bold text-2xl">{formatPrice(revenueData)}</div>
+          <p className="text-muted-foreground text-xs">
             {revenueTrend} from last week
           </p>
           <div className="mt-4 h-[120px]">
@@ -106,7 +121,7 @@ export function AnalyticsCharts({
                 }}
               >
                 <defs>
-                  <linearGradient id="fillRevenue" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient id="fillRevenue" x1="0" x2="0" y1="0" y2="1">
                     <stop
                       offset="5%"
                       stopColor="var(--color-revenue)"
@@ -120,25 +135,33 @@ export function AnalyticsCharts({
                   </linearGradient>
                 </defs>
                 <Recharts.XAxis
-                  dataKey="day"
-                  tickLine={false}
                   axisLine={false}
-                  tickMargin={8}
+                  dataKey="day"
                   tickFormatter={(value: string) => value.slice(0, 3)}
+                  tickLine={false}
+                  tickMargin={8}
                 />
                 <Recharts.YAxis hide />
                 <Recharts.CartesianGrid strokeDasharray="3 3" />
                 <ChartTooltip
+                  content={
+                    <ChartTooltipContent
+                      formatter={(value) => [
+                        formatCurrency(Number(value)),
+                        'Revenue',
+                      ]}
+                      indicator="line"
+                    />
+                  }
                   cursor={false}
-                  content={<ChartTooltipContent indicator="line" formatter={(value) => [formatCurrency(Number(value)), "Revenue"]} />}
                 />
                 <Recharts.Area
                   dataKey="revenue"
-                  type="natural"
                   fill="url(#fillRevenue)"
                   fillOpacity={0.4}
                   stroke="var(--color-revenue)"
                   strokeWidth={2}
+                  type="natural"
                 />
               </Recharts.AreaChart>
             </ChartContainer>
@@ -149,12 +172,12 @@ export function AnalyticsCharts({
       {/* Sales Chart - Bar Chart */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Sales (7 days)</CardTitle>
+          <CardTitle className="font-medium text-sm">Sales (7 days)</CardTitle>
           <TrendingUp className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{salesData}</div>
-          <p className="text-xs text-muted-foreground">
+          <div className="font-bold text-2xl">{salesData}</div>
+          <p className="text-muted-foreground text-xs">
             {salesTrend} from last week
           </p>
           <div className="mt-4 h-[120px]">
@@ -170,17 +193,25 @@ export function AnalyticsCharts({
                 }}
               >
                 <Recharts.XAxis
-                  dataKey="day"
-                  tickLine={false}
                   axisLine={false}
-                  tickMargin={8}
+                  dataKey="day"
                   tickFormatter={(value: string) => value.slice(0, 3)}
+                  tickLine={false}
+                  tickMargin={8}
                 />
                 <Recharts.YAxis hide />
                 <Recharts.CartesianGrid strokeDasharray="3 3" />
                 <ChartTooltip
+                  content={
+                    <ChartTooltipContent
+                      formatter={(value) => [
+                        formatNumber(Number(value)),
+                        'Sales',
+                      ]}
+                      indicator="dashed"
+                    />
+                  }
                   cursor={false}
-                  content={<ChartTooltipContent indicator="dashed" formatter={(value) => [formatNumber(Number(value)), "Sales"]} />}
                 />
                 <Recharts.Bar
                   dataKey="sales"
@@ -196,12 +227,12 @@ export function AnalyticsCharts({
       {/* Views Chart - Line Chart */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Views (7 days)</CardTitle>
+          <CardTitle className="font-medium text-sm">Views (7 days)</CardTitle>
           <Activity className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{viewsData.toLocaleString()}</div>
-          <p className="text-xs text-muted-foreground">
+          <div className="font-bold text-2xl">{viewsData.toLocaleString()}</div>
+          <p className="text-muted-foreground text-xs">
             {viewsTrend} from last week
           </p>
           <div className="mt-4 h-[120px]">
@@ -217,31 +248,39 @@ export function AnalyticsCharts({
                 }}
               >
                 <Recharts.XAxis
-                  dataKey="day"
-                  tickLine={false}
                   axisLine={false}
-                  tickMargin={8}
+                  dataKey="day"
                   tickFormatter={(value: string) => value.slice(0, 3)}
+                  tickLine={false}
+                  tickMargin={8}
                 />
                 <Recharts.YAxis hide />
                 <Recharts.CartesianGrid strokeDasharray="3 3" />
                 <ChartTooltip
+                  content={
+                    <ChartTooltipContent
+                      formatter={(value) => [
+                        formatNumber(Number(value)),
+                        'Views',
+                      ]}
+                      indicator="dot"
+                    />
+                  }
                   cursor={false}
-                  content={<ChartTooltipContent indicator="dot" formatter={(value) => [formatNumber(Number(value)), "Views"]} />}
                 />
                 <Recharts.Line
-                  dataKey="views"
-                  type="natural"
-                  stroke="var(--color-views)"
-                  strokeWidth={2}
-                  dot={{
-                    fill: "var(--color-views)",
-                    strokeWidth: 2,
-                    r: 4,
-                  }}
                   activeDot={{
                     r: 6,
                   }}
+                  dataKey="views"
+                  dot={{
+                    fill: 'var(--color-views)',
+                    strokeWidth: 2,
+                    r: 4,
+                  }}
+                  stroke="var(--color-views)"
+                  strokeWidth={2}
+                  type="natural"
                 />
               </Recharts.LineChart>
             </ChartContainer>

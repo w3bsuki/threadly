@@ -1,22 +1,36 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/design-system/components';
-import { AnalyticsErrorBoundary } from '@/components/error-boundaries';
-import { formatCurrency, formatNumber } from '@/lib/locale-format';
+import {
+  Badge,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@repo/design-system/components';
 import { decimalToNumber } from '@repo/utils/decimal';
 import dynamic from 'next/dynamic';
+import { AnalyticsErrorBoundary } from '@/components/error-boundaries';
+import { formatCurrency, formatNumber } from '@/lib/locale-format';
 
 // Dynamic import for charts (heavy recharts library) - Next-Forge pattern with ssr: false
 const AnalyticsCharts = dynamic(
-  () => import('./analytics-charts').then(mod => ({ default: mod.AnalyticsCharts })),
+  () =>
+    import('./analytics-charts').then((mod) => ({
+      default: mod.AnalyticsCharts,
+    })),
   {
     loading: () => (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="rounded-[var(--radius-lg)] border bg-card p-6">
-            <div className="animate-pulse bg-accent h-32 rounded" />
+          <div
+            className="rounded-[var(--radius-lg)] border bg-card p-6"
+            key={i}
+          >
+            <div className="h-32 animate-pulse rounded bg-accent" />
           </div>
         ))}
       </div>
@@ -63,31 +77,37 @@ export function DashboardTabsClient({
   locale,
 }: DashboardTabsClientProps) {
   return (
-    <Tabs defaultValue="overview" className="space-y-4">
+    <Tabs className="space-y-4" defaultValue="overview">
       <TabsList>
-        <TabsTrigger value="overview">{dictionary.dashboard.dashboard.overview}</TabsTrigger>
+        <TabsTrigger value="overview">
+          {dictionary.dashboard.dashboard.overview}
+        </TabsTrigger>
         <TabsTrigger value="products">Products</TabsTrigger>
-        <TabsTrigger value="performance">{dictionary.dashboard.dashboard.performance}</TabsTrigger>
+        <TabsTrigger value="performance">
+          {dictionary.dashboard.dashboard.performance}
+        </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="overview" className="space-y-4">
+      <TabsContent className="space-y-4" value="overview">
         <AnalyticsErrorBoundary>
-          <AnalyticsCharts 
-            revenueData={recentRevenue}
-            salesData={totalSales}
-            viewsData={totalViews}
+          <AnalyticsCharts
             dailyAnalytics={dailyAnalytics}
+            revenueData={recentRevenue}
             revenueTrend={revenueTrend}
+            salesData={totalSales}
             salesTrend={salesTrend}
+            viewsData={totalViews}
             viewsTrend={viewsTrend}
           />
         </AnalyticsErrorBoundary>
       </TabsContent>
 
-      <TabsContent value="products" className="space-y-4">
+      <TabsContent className="space-y-4" value="products">
         <Card>
           <CardHeader>
-            <CardTitle>{dictionary.dashboard.dashboard.charts.topProducts}</CardTitle>
+            <CardTitle>
+              {dictionary.dashboard.dashboard.charts.topProducts}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -95,16 +115,26 @@ export function DashboardTabsClient({
                 .sort((a, b) => b.views - a.views)
                 .slice(0, 5)
                 .map((product) => (
-                  <div key={product.id} className="flex items-center justify-between p-3 rounded-[var(--radius-lg)] border">
+                  <div
+                    className="flex items-center justify-between rounded-[var(--radius-lg)] border p-3"
+                    key={product.id}
+                  >
                     <div>
                       <h3 className="font-medium">{product.title}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {product.views} views • {product.favorites.length} favorites
+                      <p className="text-muted-foreground text-sm">
+                        {product.views} views • {product.favorites.length}{' '}
+                        favorites
                       </p>
                     </div>
                     <div className="text-right">
-                      <div className="font-semibold">{formatCurrency(decimalToNumber(product.price), locale)}</div>
-                      <Badge variant={product.status === 'SOLD' ? 'default' : 'secondary'}>
+                      <div className="font-semibold">
+                        {formatCurrency(decimalToNumber(product.price), locale)}
+                      </div>
+                      <Badge
+                        variant={
+                          product.status === 'SOLD' ? 'default' : 'secondary'
+                        }
+                      >
                         {product.status}
                       </Badge>
                     </div>
@@ -115,17 +145,17 @@ export function DashboardTabsClient({
         </Card>
       </TabsContent>
 
-      <TabsContent value="performance" className="space-y-4">
+      <TabsContent className="space-y-4" value="performance">
         <div className="grid gap-4 md:grid-cols-2">
           <Card>
             <CardHeader>
               <CardTitle>Sales by Month</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="mb-4 text-muted-foreground text-sm">
                 Last 6 months performance
               </p>
-              <div className="text-center py-8 text-muted-foreground">
+              <div className="py-8 text-center text-muted-foreground">
                 Charts coming soon...
                 <br />
                 <small>Connect PostHog for detailed analytics</small>
@@ -138,10 +168,10 @@ export function DashboardTabsClient({
               <CardTitle>Revenue Growth</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="mb-4 text-muted-foreground text-sm">
                 Monthly revenue trends
               </p>
-              <div className="text-center py-8 text-muted-foreground">
+              <div className="py-8 text-center text-muted-foreground">
                 Charts coming soon...
                 <br />
                 <small>Advanced analytics in development</small>

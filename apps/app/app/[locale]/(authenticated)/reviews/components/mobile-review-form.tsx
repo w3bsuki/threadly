@@ -1,30 +1,42 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@repo/design-system/components';
-import { Textarea } from '@repo/design-system/components';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components';
-import { Alert, AlertDescription } from '@repo/design-system/components';
-import { Star, Camera, X, AlertCircle } from 'lucide-react';
+import {
+  Alert,
+  AlertDescription,
+  Button,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Textarea,
+} from '@repo/design-system/components';
+import { cn } from '@repo/design-system/lib/utils';
+import { AlertCircle, Camera, Star, X } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import { createReview } from '../actions/create-review';
 import { uploadReviewPhotos } from '../actions/upload-review-photos';
-import { cn } from '@repo/design-system/lib/utils';
 
 const MAX_PHOTOS = 5;
 const MAX_PHOTO_SIZE = 5 * 1024 * 1024; // 5MB
 
 const reviewSchema = z.object({
-  rating: z.number().min(1, 'Please select a rating').max(5, 'Rating cannot exceed 5 stars'),
-  comment: z.string()
+  rating: z
+    .number()
+    .min(1, 'Please select a rating')
+    .max(5, 'Rating cannot exceed 5 stars'),
+  comment: z
+    .string()
     .min(10, 'Review must be at least 10 characters')
     .max(1000, 'Review must be less than 1000 characters')
     .refine((comment) => comment.trim().length >= 10, {
-      message: 'Review cannot be empty or contain only spaces'
+      message: 'Review cannot be empty or contain only spaces',
     }),
   photos: z.array(z.instanceof(File)).max(MAX_PHOTOS).optional(),
 });
@@ -39,12 +51,12 @@ interface MobileReviewFormProps {
   onSuccess?: () => void;
 }
 
-export function MobileReviewForm({ 
-  orderId, 
-  productTitle, 
-  productImage, 
-  sellerName, 
-  onSuccess 
+export function MobileReviewForm({
+  orderId,
+  productTitle,
+  productImage,
+  sellerName,
+  onSuccess,
 }: MobileReviewFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -64,13 +76,13 @@ export function MobileReviewForm({
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    
+
     if (photoFiles.length + files.length > MAX_PHOTOS) {
       setError(`Maximum ${MAX_PHOTOS} photos allowed`);
       return;
     }
 
-    const validFiles = files.filter(file => {
+    const validFiles = files.filter((file) => {
       if (file.size > MAX_PHOTO_SIZE) {
         setError('Photos must be less than 5MB');
         return false;
@@ -87,10 +99,10 @@ export function MobileReviewForm({
     form.setValue('photos', newPhotoFiles);
 
     // Create previews
-    validFiles.forEach(file => {
+    validFiles.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPhotoPreviews(prev => [...prev, reader.result as string]);
+        setPhotoPreviews((prev) => [...prev, reader.result as string]);
       };
       reader.readAsDataURL(file);
     });
@@ -110,24 +122,24 @@ export function MobileReviewForm({
 
     try {
       let photoUrls: string[] = [];
-      
+
       // Upload photos if any
       if (photoFiles.length > 0) {
         const formData = new FormData();
-        photoFiles.forEach(file => {
+        photoFiles.forEach((file) => {
           formData.append('photo', file);
         });
 
         const uploadResult = await uploadReviewPhotos(formData);
-        
+
         if (!uploadResult.success) {
           setError(uploadResult.error || 'Failed to upload photos');
           return;
         }
-        
+
         photoUrls = uploadResult.urls || [];
       }
-      
+
       const result = await createReview({
         orderId,
         rating: data.rating,
@@ -153,48 +165,52 @@ export function MobileReviewForm({
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header with Product Info */}
-      <div className="sticky top-0 z-10 bg-background border-b">
+      <div className="sticky top-0 z-10 border-b bg-background">
         <div className="p-4">
           <div className="flex items-center gap-3">
             {productImage && (
-              <div className="relative w-16 h-16 rounded-[var(--radius-lg)] overflow-hidden">
+              <div className="relative h-16 w-16 overflow-hidden rounded-[var(--radius-lg)]">
                 <Image
-                  src={productImage}
                   alt={productTitle}
-                  fill
                   className="object-cover"
+                  fill
+                  src={productImage}
                 />
               </div>
             )}
             <div className="flex-1">
-              <h2 className="font-semibold line-clamp-1">{productTitle}</h2>
-              <p className="text-sm text-muted-foreground">Sold by {sellerName}</p>
+              <h2 className="line-clamp-1 font-semibold">{productTitle}</h2>
+              <p className="text-muted-foreground text-sm">
+                Sold by {sellerName}
+              </p>
             </div>
           </div>
         </div>
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="p-4 space-y-6">
+        <form className="space-y-6 p-4" onSubmit={form.handleSubmit(onSubmit)}>
           {/* Rating Section - Large touch targets for mobile */}
           <FormField
             control={form.control}
             name="rating"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-lg font-semibold">How was your experience?</FormLabel>
+                <FormLabel className="font-semibold text-lg">
+                  How was your experience?
+                </FormLabel>
                 <FormControl>
                   <div className="flex justify-center gap-2 py-4">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
+                        className="transform rounded-[var(--radius-full)] p-2 transition-all hover:bg-muted active:scale-95"
                         key={star}
-                        type="button"
                         onClick={() => field.onChange(star)}
-                        className="p-2 hover:bg-muted rounded-[var(--radius-full)] transition-all transform active:scale-95"
+                        type="button"
                       >
                         <Star
                           className={cn(
-                            "h-10 w-10 transition-colors",
+                            'h-10 w-10 transition-colors',
                             star <= field.value
                               ? 'fill-yellow-400 text-yellow-400'
                               : 'text-muted-foreground'
@@ -205,7 +221,7 @@ export function MobileReviewForm({
                   </div>
                 </FormControl>
                 {field.value > 0 && (
-                  <p className="text-center text-sm text-muted-foreground">
+                  <p className="text-center text-muted-foreground text-sm">
                     {getRatingText(field.value)}
                   </p>
                 )}
@@ -216,42 +232,44 @@ export function MobileReviewForm({
 
           {/* Photo Upload Section */}
           <div className="space-y-2">
-            <label className="text-lg font-semibold">Add Photos (Optional)</label>
+            <label className="font-semibold text-lg">
+              Add Photos (Optional)
+            </label>
             <div className="flex gap-2 overflow-x-auto pb-2">
               {photoPreviews.map((preview, index) => (
-                <div key={index} className="relative flex-shrink-0">
-                  <div className="relative w-20 h-20 rounded-[var(--radius-lg)] overflow-hidden">
+                <div className="relative flex-shrink-0" key={index}>
+                  <div className="relative h-20 w-20 overflow-hidden rounded-[var(--radius-lg)]">
                     <Image
-                      src={preview}
                       alt={`Review photo ${index + 1}`}
-                      fill
                       className="object-cover"
+                      fill
+                      src={preview}
                     />
                   </div>
                   <button
-                    type="button"
+                    className="-top-2 -right-2 absolute rounded-[var(--radius-full)] bg-destructive p-1 text-destructive-foreground"
                     onClick={() => removePhoto(index)}
-                    className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-[var(--radius-full)] p-1"
+                    type="button"
                   >
                     <X className="h-3 w-3" />
                   </button>
                 </div>
               ))}
-              
+
               {photoFiles.length < MAX_PHOTOS && (
-                <label className="flex-shrink-0 w-20 h-20 border-2 border-dashed border-muted-foreground/25 rounded-[var(--radius-lg)] flex items-center justify-center cursor-pointer hover:border-muted-foreground/50 transition-colors">
+                <label className="flex h-20 w-20 flex-shrink-0 cursor-pointer items-center justify-center rounded-[var(--radius-lg)] border-2 border-muted-foreground/25 border-dashed transition-colors hover:border-muted-foreground/50">
                   <input
-                    type="file"
                     accept="image/*"
+                    className="hidden"
                     multiple
                     onChange={handlePhotoUpload}
-                    className="hidden"
+                    type="file"
                   />
                   <Camera className="h-6 w-6 text-muted-foreground" />
                 </label>
               )}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               {photoFiles.length}/{MAX_PHOTOS} photos
             </p>
           </div>
@@ -262,16 +280,18 @@ export function MobileReviewForm({
             name="comment"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-lg font-semibold">Tell us more</FormLabel>
+                <FormLabel className="font-semibold text-lg">
+                  Tell us more
+                </FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="What did you like or dislike? How was the quality?"
-                    maxLength={1000}
                     className="min-h-[120px] text-base"
+                    maxLength={1000}
+                    placeholder="What did you like or dislike? How was the quality?"
                     {...field}
                   />
                 </FormControl>
-                <p className="text-sm text-muted-foreground text-right">
+                <p className="text-right text-muted-foreground text-sm">
                   {field.value.length}/1000
                 </p>
                 <FormMessage />
@@ -290,20 +310,20 @@ export function MobileReviewForm({
       </Form>
 
       {/* Fixed Bottom Actions */}
-      <div className="fixed bottom-0 left-0 right-0 bg-background border-t p-4">
+      <div className="fixed right-0 bottom-0 left-0 border-t bg-background p-4">
         <div className="flex gap-3">
           <Button
+            className="flex-1"
+            onClick={() => router.back()}
             type="button"
             variant="outline"
-            onClick={() => router.back()}
-            className="flex-1"
           >
             Cancel
           </Button>
           <Button
-            onClick={form.handleSubmit(onSubmit)}
-            disabled={isSubmitting || !form.formState.isValid}
             className="flex-1"
+            disabled={isSubmitting || !form.formState.isValid}
+            onClick={form.handleSubmit(onSubmit)}
           >
             {isSubmitting ? 'Submitting...' : 'Submit Review'}
           </Button>
@@ -315,11 +335,17 @@ export function MobileReviewForm({
 
 function getRatingText(rating: number): string {
   switch (rating) {
-    case 1: return 'Poor experience';
-    case 2: return 'Below average';
-    case 3: return 'Average';
-    case 4: return 'Good experience';
-    case 5: return 'Excellent!';
-    default: return '';
+    case 1:
+      return 'Poor experience';
+    case 2:
+      return 'Below average';
+    case 3:
+      return 'Average';
+    case 4:
+      return 'Good experience';
+    case 5:
+      return 'Excellent!';
+    default:
+      return '';
   }
 }

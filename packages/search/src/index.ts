@@ -1,36 +1,37 @@
 // Core types and interfaces
-export * from './types';
 
 // Search engines
 export * from './algolia-search';
-export { UnifiedSearchService } from './unified-search';
-
+// API route handlers
+export {
+  createSearchHandler,
+  SearchApiHandler,
+} from './api-routes';
 // History and saved searches
-export { 
-  SearchHistoryService, 
+export {
+  type SavedSearch,
   SavedSearchService,
   type SearchHistoryItem,
-  type SavedSearch 
+  SearchHistoryService,
 } from './history';
-
-// API route handlers
-export { 
-  SearchApiHandler, 
-  createSearchHandler 
-} from './api-routes';
-
+export type { Product, ProductRepository } from './repositories';
 // Legacy export - deprecated
 export * from './search-service';
-
 // New exports - use these
-export { createSearchService, type SearchServiceClient } from './search-service-client';
-export type { Product, ProductRepository } from './repositories';
-
+export {
+  createSearchService,
+  type SearchServiceClient,
+} from './search-service-client';
+// Search webhook client
+export {
+  getSearchWebhookClient,
+  SearchWebhookClient,
+  searchIndexing,
+} from './search-webhook-client';
 // Algolia sync service
 export { AlgoliaSyncService, getAlgoliaSyncService } from './sync';
-
-// Search webhook client
-export { SearchWebhookClient, getSearchWebhookClient, searchIndexing } from './search-webhook-client';
+export * from './types';
+export { UnifiedSearchService } from './unified-search';
 
 // UI Components - moved to client export to avoid server-side import issues
 // Use @repo/search/client for client components

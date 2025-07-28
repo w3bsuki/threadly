@@ -1,16 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from '../ui/sheet';
-import { cn } from '../../lib/utils';
-import { ReactNode } from 'react';
-import { MenuButton } from './menu-button';
-import { Button } from '../ui/button';
 import { X } from 'lucide-react';
+import { type ReactNode, useState } from 'react';
+import { cn } from '../../lib/utils';
+import { Button } from '../ui/button';
+import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
+import { MenuButton } from './menu-button';
 
 interface MobileMenuProps {
   children: ReactNode;
@@ -39,21 +34,15 @@ export function MobileMenu({
   };
 
   return (
-    <Sheet open={controlledOpen} onOpenChange={handleOpenChange}>
+    <Sheet onOpenChange={handleOpenChange} open={controlledOpen}>
       {showTrigger && (
         <SheetTrigger asChild>
-          <MenuButton
-            isOpen={controlledOpen}
-            className={triggerClassName}
-          />
+          <MenuButton className={triggerClassName} isOpen={controlledOpen} />
         </SheetTrigger>
       )}
       <SheetContent
+        className={cn('w-full max-w-sm p-0', contentClassName)}
         side={side}
-        className={cn(
-          'w-full max-w-sm p-0',
-          contentClassName
-        )}
       >
         {children}
       </SheetContent>

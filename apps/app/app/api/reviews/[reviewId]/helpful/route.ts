@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function POST(
   request: NextRequest,
@@ -17,14 +17,11 @@ export async function POST(
     }
 
     const dbUser = await database.user.findUnique({
-      where: { clerkId: user.id }
+      where: { clerkId: user.id },
     });
 
     if (!dbUser) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     const { reviewId } = await params;
@@ -36,10 +33,7 @@ export async function POST(
     });
 
     if (!review) {
-      return NextResponse.json(
-        { error: 'Review not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Review not found' }, { status: 404 });
     }
 
     // Check if user is voting on their own review
@@ -51,8 +45,10 @@ export async function POST(
     }
 
     // TODO: Add ReviewVote model to database schema
-    return NextResponse.json({ error: 'Review voting not implemented' }, { status: 501 });
-
+    return NextResponse.json(
+      { error: 'Review voting not implemented' },
+      { status: 501 }
+    );
   } catch (error) {
     logError('Failed to vote on review:', error);
     return NextResponse.json(

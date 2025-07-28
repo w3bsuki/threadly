@@ -1,5 +1,5 @@
+import type { Condition, Prisma } from './generated/client';
 import { database } from './index';
-import type { Prisma, Condition } from './generated/client';
 
 export class DatabaseOptimizer {
   // Optimized product queries
@@ -43,37 +43,35 @@ export class DatabaseOptimizer {
 
   // Optimized trending products query
   static async getTrendingProducts(limit = 6) {
-    return this.getProductsWithCaching({
+    return DatabaseOptimizer.getProductsWithCaching({
       where: {
         status: 'AVAILABLE',
       },
-      orderBy: [
-        { views: 'desc' },
-        { createdAt: 'desc' },
-      ],
+      orderBy: [{ views: 'desc' }, { createdAt: 'desc' }],
       take: limit,
     });
   }
 
   // Optimized new arrivals query
   static async getNewArrivals(limit = 8) {
-    return this.getProductsWithCaching({
+    return DatabaseOptimizer.getProductsWithCaching({
       where: {
         status: 'AVAILABLE',
       },
-      orderBy: [
-        { createdAt: 'desc' },
-      ],
+      orderBy: [{ createdAt: 'desc' }],
       take: limit,
     });
   }
 
   // Optimized category products query
-  static async getProductsByCategory(categoryId: string, options: {
-    limit?: number;
-    skip?: number;
-    sortBy?: 'newest' | 'oldest' | 'price_low' | 'price_high' | 'most_viewed';
-  } = {}) {
+  static async getProductsByCategory(
+    categoryId: string,
+    options: {
+      limit?: number;
+      skip?: number;
+      sortBy?: 'newest' | 'oldest' | 'price_low' | 'price_high' | 'most_viewed';
+    } = {}
+  ) {
     const { limit = 20, skip = 0, sortBy = 'newest' } = options;
 
     const orderBy: Prisma.ProductOrderByWithRelationInput[] = (() => {
@@ -91,7 +89,7 @@ export class DatabaseOptimizer {
       }
     })();
 
-    return this.getProductsWithCaching({
+    return DatabaseOptimizer.getProductsWithCaching({
       where: {
         categoryId,
         status: 'AVAILABLE',
@@ -103,15 +101,25 @@ export class DatabaseOptimizer {
   }
 
   // Optimized search query
-  static async searchProducts(query: string, options: {
-    categoryId?: string;
-    minPrice?: number;
-    maxPrice?: number;
-    condition?: Condition;
-    limit?: number;
-    skip?: number;
-  } = {}) {
-    const { categoryId, minPrice, maxPrice, condition, limit = 20, skip = 0 } = options;
+  static async searchProducts(
+    query: string,
+    options: {
+      categoryId?: string;
+      minPrice?: number;
+      maxPrice?: number;
+      condition?: Condition;
+      limit?: number;
+      skip?: number;
+    } = {}
+  ) {
+    const {
+      categoryId,
+      minPrice,
+      maxPrice,
+      condition,
+      limit = 20,
+      skip = 0,
+    } = options;
 
     const where: Prisma.ProductWhereInput = {
       status: 'AVAILABLE',
@@ -126,29 +134,27 @@ export class DatabaseOptimizer {
       ...(condition && { condition }),
     };
 
-    return this.getProductsWithCaching({
+    return DatabaseOptimizer.getProductsWithCaching({
       where,
-      orderBy: [
-        { views: 'desc' },
-        { createdAt: 'desc' },
-      ],
+      orderBy: [{ views: 'desc' }, { createdAt: 'desc' }],
       take: limit,
       skip,
     });
   }
 
   // Optimized user conversations query
-  static async getUserConversations(userId: string, type?: 'buying' | 'selling') {
-    const where: Prisma.ConversationWhereInput = type === 'buying'
-      ? { buyerId: userId }
-      : type === 'selling'
-      ? { sellerId: userId }
-      : {
-          OR: [
-            { buyerId: userId },
-            { sellerId: userId },
-          ],
-        };
+  static async getUserConversations(
+    userId: string,
+    type?: 'buying' | 'selling'
+  ) {
+    const where: Prisma.ConversationWhereInput =
+      type === 'buying'
+        ? { buyerId: userId }
+        : type === 'selling'
+          ? { sellerId: userId }
+          : {
+              OR: [{ buyerId: userId }, { sellerId: userId }],
+            };
 
     return database.conversation.findMany({
       where,
@@ -198,9 +204,8 @@ export class DatabaseOptimizer {
 
   // Optimized user orders query
   static async getUserOrders(userId: string, type: 'buying' | 'selling') {
-    const where: Prisma.OrderWhereInput = type === 'buying'
-      ? { buyerId: userId }
-      : { sellerId: userId };
+    const where: Prisma.OrderWhereInput =
+      type === 'buying' ? { buyerId: userId } : { sellerId: userId };
 
     return database.order.findMany({
       where,
@@ -237,7 +242,11 @@ export class DatabaseOptimizer {
   }
 
   // Optimized user notifications query
-  static async getUserNotifications(userId: string, limit = 20, unreadOnly = false) {
+  static async getUserNotifications(
+    userId: string,
+    limit = 20,
+    unreadOnly = false
+  ) {
     return database.notification.findMany({
       where: {
         userId,

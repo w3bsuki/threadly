@@ -16,41 +16,47 @@ export class RetryMechanism {
     maxAttempts: 3,
     delay: 1000,
     backoff: 'exponential',
-    maxDelay: 10000,
+    maxDelay: 10_000,
     retryCondition: (error: Error) => true,
-    onRetry: () => {}
+    onRetry: () => {},
   };
 
   static async execute<T>(
     operation: () => Promise<T>,
     options: RetryOptions = {}
   ): Promise<T> {
-    const config = { ...this.defaultOptions, ...options };
+    const config = { ...RetryMechanism.defaultOptions, ...options };
     let lastError: Error;
-    
+
     for (let attempt = 1; attempt <= config.maxAttempts; attempt++) {
       try {
         return await operation();
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
-        
-        if (attempt === config.maxAttempts || !config.retryCondition(lastError)) {
+
+        if (
+          attempt === config.maxAttempts ||
+          !config.retryCondition(lastError)
+        ) {
           throw lastError;
         }
-        
+
         config.onRetry(attempt, lastError);
-        
-        const delay = this.calculateDelay(attempt, config);
-        await this.sleep(delay);
+
+        const delay = RetryMechanism.calculateDelay(attempt, config);
+        await RetryMechanism.sleep(delay);
       }
     }
-    
+
     throw lastError!;
   }
 
-  private static calculateDelay(attempt: number, config: Required<RetryOptions>): number {
+  private static calculateDelay(
+    attempt: number,
+    config: Required<RetryOptions>
+  ): number {
     let delay: number;
-    
+
     switch (config.backoff) {
       case 'fixed':
         delay = config.delay;
@@ -60,15 +66,15 @@ export class RetryMechanism {
         break;
       case 'exponential':
       default:
-        delay = config.delay * Math.pow(2, attempt - 1);
+        delay = config.delay * 2 ** (attempt - 1);
         break;
     }
-    
+
     return Math.min(delay, config.maxDelay);
   }
 
   private static sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 
@@ -91,7 +97,7 @@ export function useRetry<T>(
         onRetry: (attempt, error) => {
           setAttemptCount(attempt);
           options.onRetry?.(attempt, error);
-        }
+        },
       });
       return result;
     } catch (err) {
@@ -106,7 +112,7 @@ export function useRetry<T>(
     execute,
     isRetrying,
     attemptCount,
-    error
+    error,
   };
 }
 
@@ -114,26 +120,29 @@ export function retryConditions() {
   return {
     networkError: (error: Error) => {
       const networkErrorMessages = ['NetworkError', 'Failed to fetch', 'fetch'];
-      return networkErrorMessages.some(msg => error.message.includes(msg));
+      return networkErrorMessages.some((msg) => error.message.includes(msg));
     },
-    
+
     serverError: (error: Error) => {
-      if ('status' in error && typeof (error as Record<string, unknown>).status === 'number') {
+      if (
+        'status' in error &&
+        typeof (error as Record<string, unknown>).status === 'number'
+      ) {
         const status = (error as Record<string, unknown>).status as number;
         return status >= 500 && status < 600;
       }
       return false;
     },
-    
+
     timeoutError: (error: Error) => {
       return error.name === 'TimeoutError' || error.message.includes('timeout');
     },
-    
+
     custom: (errorTypes: string[]) => (error: Error) => {
-      return errorTypes.some(type => 
-        error.name === type || error.message.includes(type)
+      return errorTypes.some(
+        (type) => error.name === type || error.message.includes(type)
       );
-    }
+    },
   };
 }
 

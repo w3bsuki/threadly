@@ -1,12 +1,17 @@
-import { database } from '@repo/database';
 import { cache } from '@repo/cache';
-import Link from 'next/link';
-import { Button } from '@repo/design-system/components';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { Package, Eye, ShoppingCart, Star, ExternalLink } from 'lucide-react';
-import Image from 'next/image';
+import { database } from '@repo/database';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@repo/design-system/components';
 import { decimalToNumber } from '@repo/utils';
+import { ExternalLink, Eye, Package, ShoppingCart, Star } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 interface OrdersListProps {
   userId: string;
@@ -71,8 +76,8 @@ export async function OrdersList({ userId }: OrdersListProps) {
                   displayOrder: 'asc',
                 },
                 select: {
-                  imageUrl: true
-                }
+                  imageUrl: true,
+                },
               },
             },
           },
@@ -81,20 +86,20 @@ export async function OrdersList({ userId }: OrdersListProps) {
               id: true,
               firstName: true,
               lastName: true,
-              email: true
-            }
+              email: true,
+            },
           },
           Payment: {
             select: {
               id: true,
-              status: true
-            }
+              status: true,
+            },
           },
           Review: {
             select: {
-              id: true
-            }
-          }
+              id: true,
+            },
+          },
         },
         orderBy: {
           createdAt: 'desc',
@@ -108,17 +113,21 @@ export async function OrdersList({ userId }: OrdersListProps) {
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-8">
-          <div className="rounded-[var(--radius-full)] bg-secondary dark:bg-secondary-foreground p-3 mb-4">
+          <div className="mb-4 rounded-[var(--radius-full)] bg-secondary p-3 dark:bg-secondary-foreground">
             <Package className="h-8 w-8 text-muted-foreground dark:text-muted-foreground" />
           </div>
-          <h3 className="text-base font-medium mb-1">No orders yet</h3>
-          <p className="text-sm text-muted-foreground mb-4 text-center max-w-sm">
+          <h3 className="mb-1 font-medium text-base">No orders yet</h3>
+          <p className="mb-4 max-w-sm text-center text-muted-foreground text-sm">
             Start shopping to see your orders here
           </p>
-          <Button size="sm" asChild>
-            <a href={process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3001'} target="_blank" rel="noopener noreferrer">
+          <Button asChild size="sm">
+            <a
+              href={process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3001'}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
               Start Shopping
-              <ExternalLink className="h-3 w-3 ml-1.5" />
+              <ExternalLink className="ml-1.5 h-3 w-3" />
             </a>
           </Button>
         </CardContent>
@@ -129,14 +138,14 @@ export async function OrdersList({ userId }: OrdersListProps) {
   return (
     <div className="space-y-3">
       {orders.map((order) => (
-        <Card key={order.id} className="overflow-hidden">
+        <Card className="overflow-hidden" key={order.id}>
           <div className="p-4">
-            <div className="flex items-start justify-between mb-3">
+            <div className="mb-3 flex items-start justify-between">
               <div>
-                <h3 className="text-sm font-semibold">
+                <h3 className="font-semibold text-sm">
                   Order #{order.id.slice(-8).toUpperCase()}
                 </h3>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   {new Date(order.createdAt).toLocaleDateString('en-US', {
                     month: 'short',
                     day: 'numeric',
@@ -145,80 +154,98 @@ export async function OrdersList({ userId }: OrdersListProps) {
                 </p>
               </div>
               <div className="text-right">
-                <Badge className={`${getStatusColor(order.status)} text-[10px] px-1.5 py-0.5`}>
+                <Badge
+                  className={`${getStatusColor(order.status)} px-1.5 py-0.5 text-[10px]`}
+                >
                   {getStatusText(order.status)}
                 </Badge>
-                <p className="text-sm font-semibold mt-1">
+                <p className="mt-1 font-semibold text-sm">
                   ${(decimalToNumber(order.amount) / 100).toFixed(2)}
                 </p>
               </div>
             </div>
-          
+
             {/* Product Info */}
             <div className="flex gap-3">
-              <div className="relative w-14 h-14 flex-shrink-0">
+              <div className="relative h-14 w-14 flex-shrink-0">
                 {order.Product?.images[0] ? (
                   <Image
-                    src={order.Product.images[0].imageUrl}
                     alt={order.Product.title}
+                    className="rounded-[var(--radius-lg)] object-cover"
                     fill
-                    className="object-cover rounded-[var(--radius-lg)]"
+                    src={order.Product.images[0].imageUrl}
                   />
                 ) : (
-                  <div className="w-full h-full bg-muted rounded-[var(--radius-lg)] flex items-center justify-center">
+                  <div className="flex h-full w-full items-center justify-center rounded-[var(--radius-lg)] bg-muted">
                     <Package className="h-5 w-5 text-muted-foreground" />
                   </div>
                 )}
               </div>
 
-              <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-medium line-clamp-1">{order.Product.title}</h4>
-                <p className="text-xs text-muted-foreground">
+              <div className="min-w-0 flex-1">
+                <h4 className="line-clamp-1 font-medium text-sm">
+                  {order.Product.title}
+                </h4>
+                <p className="text-muted-foreground text-xs">
                   {order.Product.condition.replace(/_/g, ' ').toLowerCase()}
                 </p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Seller: {order.User_Order_sellerIdToUser.firstName || 'Anonymous'}
+                <p className="mt-0.5 text-muted-foreground text-xs">
+                  Seller:{' '}
+                  {order.User_Order_sellerIdToUser.firstName || 'Anonymous'}
                 </p>
               </div>
             </div>
 
             {/* Order Information */}
             {order.trackingNumber && (
-              <div className="mt-2 pt-2 border-t">
-                <p className="text-xs text-muted-foreground">
-                  Tracking: <span className="font-medium">{order.trackingNumber}</span>
+              <div className="mt-2 border-t pt-2">
+                <p className="text-muted-foreground text-xs">
+                  Tracking:{' '}
+                  <span className="font-medium">{order.trackingNumber}</span>
                 </p>
               </div>
             )}
 
             {/* Actions */}
-            <div className="flex items-center justify-between gap-2 mt-3 pt-3 border-t">
-              <Button variant="ghost" size="sm" className="h-7 text-xs" asChild>
+            <div className="mt-3 flex items-center justify-between gap-2 border-t pt-3">
+              <Button asChild className="h-7 text-xs" size="sm" variant="ghost">
                 <Link href={`/buying/orders/${order.id}`}>
-                  <Eye className="h-3 w-3 mr-1" />
+                  <Eye className="mr-1 h-3 w-3" />
                   Details
                 </Link>
               </Button>
-              
+
               <div className="flex gap-1.5">
                 {order.status === 'DELIVERED' && !order.Review && (
-                  <Button variant="outline" size="sm" className="h-7 text-xs" asChild>
+                  <Button
+                    asChild
+                    className="h-7 text-xs"
+                    size="sm"
+                    variant="outline"
+                  >
                     <Link href="/reviews/mobile?tab=write&orderId={order.id}">
-                      <Star className="h-3 w-3 mr-1" />
+                      <Star className="mr-1 h-3 w-3" />
                       Review
                     </Link>
                   </Button>
                 )}
-                
+
                 {order.status === 'DELIVERED' && order.Review && (
-                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5">
-                    <Star className="h-2.5 w-2.5 mr-0.5 fill-yellow-400 text-yellow-400" />
+                  <Badge
+                    className="px-1.5 py-0.5 text-[10px]"
+                    variant="secondary"
+                  >
+                    <Star className="mr-0.5 h-2.5 w-2.5 fill-yellow-400 text-yellow-400" />
                     Reviewed
                   </Badge>
                 )}
-                
+
                 {order.status === 'PENDING' && (
-                  <Button variant="destructive" size="sm" className="h-7 text-xs">
+                  <Button
+                    className="h-7 text-xs"
+                    size="sm"
+                    variant="destructive"
+                  >
                     Cancel
                   </Button>
                 )}

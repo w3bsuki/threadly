@@ -4,8 +4,8 @@ import { useUser } from '@repo/auth/client';
 import { Button } from '@repo/design-system/components';
 import { User } from 'lucide-react';
 import Link from 'next/link';
-import { memo } from 'react';
 import { usePathname } from 'next/navigation';
+import { memo } from 'react';
 import { SafeUserButton } from './safe-user-button';
 
 export const MobileActions = memo(() => {
@@ -15,34 +15,34 @@ export const MobileActions = memo(() => {
 
   return (
     <div className="flex items-center gap-2">
-      {!isLoaded ? (
-        <div className="h-8 w-8 animate-pulse rounded-full bg-accent" />
-      ) : isSignedIn ? (
-        <>
+      {isLoaded ? (
+        isSignedIn ? (
+          <>
+            <Button
+              asChild
+              className="text-background hover:bg-background/10"
+              size="sm"
+              variant="ghost"
+            >
+              <Link href={`/${locale}/account`}>
+                <User className="mr-1 h-5 w-5" />
+                <span className="text-sm">Account</span>
+              </Link>
+            </Button>
+            <SafeUserButton />
+          </>
+        ) : (
           <Button
             asChild
+            className="bg-background text-foreground hover:bg-background/90"
             size="sm"
-            variant="ghost"
-            className="text-background hover:bg-background/10"
+            variant="default"
           >
-            <Link href={`/${locale}/account`}>
-              <User className="h-5 w-5 mr-1" />
-              <span className="text-sm">Account</span>
-            </Link>
+            <Link href={`/${locale}/sign-in`}>Sign In</Link>
           </Button>
-          <SafeUserButton />
-        </>
+        )
       ) : (
-        <Button
-          asChild
-          size="sm"
-          variant="default"
-          className="bg-background text-foreground hover:bg-background/90"
-        >
-          <Link href={`/${locale}/sign-in`}>
-            Sign In
-          </Link>
-        </Button>
+        <div className="h-8 w-8 animate-pulse rounded-full bg-accent" />
       )}
     </div>
   );

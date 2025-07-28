@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
   Body,
   Container,
@@ -12,6 +11,7 @@ import {
   Section,
   Text,
 } from '@react-email/components';
+import type * as React from 'react';
 
 interface BaseTemplateProps {
   preview: string;
@@ -19,7 +19,11 @@ interface BaseTemplateProps {
   children: React.ReactNode;
 }
 
-export function BaseTemplate({ preview, heading, children }: BaseTemplateProps): React.ReactElement {
+export function BaseTemplate({
+  preview,
+  heading,
+  children,
+}: BaseTemplateProps): React.ReactElement {
   return (
     <Html>
       <Head />
@@ -28,19 +32,19 @@ export function BaseTemplate({ preview, heading, children }: BaseTemplateProps):
         <Container style={container}>
           <Section style={header}>
             <Img
+              alt="Threadly"
+              height="50"
               src="https://threadly.com/logo.png"
               width="150"
-              height="50"
-              alt="Threadly"
             />
           </Section>
-          
+
           <Heading style={h1}>{heading}</Heading>
-          
+
           {children as any}
-          
+
           <Hr style={hr} />
-          
+
           <Section style={footer}>
             <Text style={footerText}>
               © {new Date().getFullYear()} Threadly. All rights reserved.

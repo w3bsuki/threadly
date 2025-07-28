@@ -1,25 +1,31 @@
 import { database } from '@repo/database';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { Progress } from '@repo/design-system/components';
-import { 
-  Activity, 
-  Users, 
-  Package, 
-  ShoppingCart,
-  DollarSign,
-  TrendingUp,
+import {
+  Badge,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Progress,
+} from '@repo/design-system/components';
+import {
+  Activity,
   AlertTriangle,
+  ArrowDown,
+  ArrowUp,
   CheckCircle,
   Clock,
-  ArrowUp,
-  ArrowDown,
-  Zap,
   Database,
+  DollarSign,
+  Eye,
   Globe,
-  Shield,
+  Package,
   Server,
-  Eye
+  Shield,
+  ShoppingCart,
+  TrendingUp,
+  Users,
+  Zap,
 } from 'lucide-react';
 
 const PlatformHealthPage: React.FC = async () => {
@@ -38,7 +44,7 @@ const PlatformHealthPage: React.FC = async () => {
     newUsersWeek,
     suspendedUsers,
     verifiedUsers,
-    
+
     // Product metrics
     totalProducts,
     activeListings,
@@ -46,7 +52,7 @@ const PlatformHealthPage: React.FC = async () => {
     productsAddedWeek,
     soldProducts,
     removedProducts,
-    
+
     // Order metrics
     totalOrders,
     ordersToday,
@@ -55,53 +61,69 @@ const PlatformHealthPage: React.FC = async () => {
     shippedOrders,
     deliveredOrders,
     cancelledOrders,
-    
+
     // Financial metrics
     totalRevenue,
     revenueToday,
     revenueWeek,
     averageOrderValue,
-    
+
     // Engagement metrics
     totalFavorites,
     totalReviews,
     totalMessages,
     totalReports,
     pendingReports,
-    
+
     // Performance metrics
     averageProductViews,
     mostViewedProducts,
     mostFavoritedProducts,
     topCategories,
-    
+
     // Search metrics
     totalSearches,
     popularSearchTerms,
   ] = await Promise.all([
     // User metrics
     database.user.count(),
-    database.user.count({ 
-      where: { 
+    database.user.count({
+      where: {
         OR: [
-          { Order_Order_sellerIdToUser: { some: { createdAt: { gte: startOfDay } } } },
-          { Order_Order_buyerIdToUser: { some: { createdAt: { gte: startOfDay } } } }
-        ]
-      } 
+          {
+            Order_Order_sellerIdToUser: {
+              some: { createdAt: { gte: startOfDay } },
+            },
+          },
+          {
+            Order_Order_buyerIdToUser: {
+              some: { createdAt: { gte: startOfDay } },
+            },
+          },
+        ],
+      },
     }),
-    database.user.count({ 
-      where: { 
+    database.user.count({
+      where: {
         OR: [
-          { Order_Order_sellerIdToUser: { some: { createdAt: { gte: startOfWeek } } } },
-          { Order_Order_buyerIdToUser: { some: { createdAt: { gte: startOfWeek } } } }
-        ]
-      } 
+          {
+            Order_Order_sellerIdToUser: {
+              some: { createdAt: { gte: startOfWeek } },
+            },
+          },
+          {
+            Order_Order_buyerIdToUser: {
+              some: { createdAt: { gte: startOfWeek } },
+            },
+          },
+        ],
+      },
     }),
     database.user.count({ where: { joinedAt: { gte: startOfDay } } }),
     database.user.count({ where: { joinedAt: { gte: startOfWeek } } }),
     database.user.count({ where: { suspended: true } }),
     database.user.count({ where: { verified: true } }),
-    
+
     // Product metrics
     database.product.count(),
     database.product.count({ where: { status: 'AVAILABLE' } }),
@@ -109,7 +131,7 @@ const PlatformHealthPage: React.FC = async () => {
     database.product.count({ where: { createdAt: { gte: startOfWeek } } }),
     database.product.count({ where: { status: 'SOLD' } }),
     database.product.count({ where: { status: 'REMOVED' } }),
-    
+
     // Order metrics
     database.order.count(),
     database.order.count({ where: { createdAt: { gte: startOfDay } } }),
@@ -118,68 +140,97 @@ const PlatformHealthPage: React.FC = async () => {
     database.order.count({ where: { status: 'SHIPPED' } }),
     database.order.count({ where: { status: 'DELIVERED' } }),
     database.order.count({ where: { status: 'CANCELLED' } }),
-    
+
     // Financial metrics
-    database.order.aggregate({ _sum: { amount: true }, where: { status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] } } }),
-    database.order.aggregate({ _sum: { amount: true }, where: { status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] }, createdAt: { gte: startOfDay } } }),
-    database.order.aggregate({ _sum: { amount: true }, where: { status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] }, createdAt: { gte: startOfWeek } } }),
-    database.order.aggregate({ _avg: { amount: true }, where: { status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] } } }),
-    
+    database.order.aggregate({
+      _sum: { amount: true },
+      where: { status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] } },
+    }),
+    database.order.aggregate({
+      _sum: { amount: true },
+      where: {
+        status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] },
+        createdAt: { gte: startOfDay },
+      },
+    }),
+    database.order.aggregate({
+      _sum: { amount: true },
+      where: {
+        status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] },
+        createdAt: { gte: startOfWeek },
+      },
+    }),
+    database.order.aggregate({
+      _avg: { amount: true },
+      where: { status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] } },
+    }),
+
     // Engagement metrics
     database.favorite.count(),
     database.review.count(),
     database.message.count(),
     database.report.count(),
     database.report.count({ where: { status: 'PENDING' } }),
-    
+
     // Performance metrics
     database.product.aggregate({ _avg: { views: true } }),
-    database.product.findMany({ 
-      orderBy: { views: 'desc' }, 
+    database.product.findMany({
+      orderBy: { views: 'desc' },
       take: 5,
-      select: { id: true, title: true, views: true }
+      select: { id: true, title: true, views: true },
     }),
-    database.product.findMany({ 
+    database.product.findMany({
       take: 5,
-      include: { 
+      include: {
         _count: { select: { favorites: true } },
-        favorites: { take: 1 }
+        favorites: { take: 1 },
       },
-      orderBy: { favorites: { _count: 'desc' } }
+      orderBy: { favorites: { _count: 'desc' } },
     }),
     database.product.groupBy({
       by: ['categoryId'],
       _count: true,
       orderBy: { _count: { categoryId: 'desc' } },
-      take: 5
+      take: 5,
     }),
-    
+
     // Search metrics
     database.searchHistory.count(),
     database.searchHistory.groupBy({
       by: ['query'],
       _count: true,
       orderBy: { _count: { query: 'desc' } },
-      take: 10
+      take: 10,
     }),
   ]);
 
   // Calculate growth rates
-  const userGrowthRate = newUsersWeek > 0 ? ((newUsersWeek / totalUsers) * 100).toFixed(1) : '0';
-  const productGrowthRate = productsAddedWeek > 0 ? ((productsAddedWeek / totalProducts) * 100).toFixed(1) : '0';
-  const orderGrowthRate = ordersWeek > 0 ? ((ordersWeek / totalOrders) * 100).toFixed(1) : '0';
+  const userGrowthRate =
+    newUsersWeek > 0 ? ((newUsersWeek / totalUsers) * 100).toFixed(1) : '0';
+  const productGrowthRate =
+    productsAddedWeek > 0
+      ? ((productsAddedWeek / totalProducts) * 100).toFixed(1)
+      : '0';
+  const orderGrowthRate =
+    ordersWeek > 0 ? ((ordersWeek / totalOrders) * 100).toFixed(1) : '0';
 
   // Calculate health scores
-  const userHealthScore = Math.round(((totalUsers - suspendedUsers) / totalUsers) * 100);
-  const productHealthScore = Math.round(((activeListings) / totalProducts) * 100);
-  const orderHealthScore = Math.round(((deliveredOrders) / (totalOrders - pendingOrders)) * 100);
-  const overallHealthScore = Math.round((userHealthScore + productHealthScore + orderHealthScore) / 3);
+  const userHealthScore = Math.round(
+    ((totalUsers - suspendedUsers) / totalUsers) * 100
+  );
+  const productHealthScore = Math.round((activeListings / totalProducts) * 100);
+  const orderHealthScore = Math.round(
+    (deliveredOrders / (totalOrders - pendingOrders)) * 100
+  );
+  const overallHealthScore = Math.round(
+    (userHealthScore + productHealthScore + orderHealthScore) / 3
+  );
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Platform Health Dashboard</h1>
-        <p className="text-muted-foreground mt-2">
+        <h1 className="font-bold text-3xl">Platform Health Dashboard</h1>
+        <p className="mt-2 text-muted-foreground">
           Real-time platform metrics and performance indicators
         </p>
       </div>
@@ -191,40 +242,62 @@ const PlatformHealthPage: React.FC = async () => {
             <Activity className="h-5 w-5" />
             Overall Platform Health
           </CardTitle>
-          <CardDescription>System performance and stability metrics</CardDescription>
+          <CardDescription>
+            System performance and stability metrics
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-2xl font-bold">{overallHealthScore}%</span>
-                <Badge variant={overallHealthScore > 80 ? 'default' : overallHealthScore > 60 ? 'secondary' : 'destructive'}>
-                  {overallHealthScore > 80 ? 'Excellent' : overallHealthScore > 60 ? 'Good' : 'Needs Attention'}
+              <div className="mb-2 flex items-center justify-between">
+                <span className="font-bold text-2xl">
+                  {overallHealthScore}%
+                </span>
+                <Badge
+                  variant={
+                    overallHealthScore > 80
+                      ? 'default'
+                      : overallHealthScore > 60
+                        ? 'secondary'
+                        : 'destructive'
+                  }
+                >
+                  {overallHealthScore > 80
+                    ? 'Excellent'
+                    : overallHealthScore > 60
+                      ? 'Good'
+                      : 'Needs Attention'}
                 </Badge>
               </div>
-              <Progress value={overallHealthScore} className="h-3" />
+              <Progress className="h-3" value={overallHealthScore} />
             </div>
-            
-            <div className="grid grid-cols-3 gap-4 mt-4">
+
+            <div className="mt-4 grid grid-cols-3 gap-4">
               <div>
-                <p className="text-sm text-muted-foreground">User Health</p>
+                <p className="text-muted-foreground text-sm">User Health</p>
                 <div className="flex items-center gap-2">
-                  <Progress value={userHealthScore} className="h-2 flex-1" />
-                  <span className="text-sm font-medium">{userHealthScore}%</span>
+                  <Progress className="h-2 flex-1" value={userHealthScore} />
+                  <span className="font-medium text-sm">
+                    {userHealthScore}%
+                  </span>
                 </div>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Product Health</p>
+                <p className="text-muted-foreground text-sm">Product Health</p>
                 <div className="flex items-center gap-2">
-                  <Progress value={productHealthScore} className="h-2 flex-1" />
-                  <span className="text-sm font-medium">{productHealthScore}%</span>
+                  <Progress className="h-2 flex-1" value={productHealthScore} />
+                  <span className="font-medium text-sm">
+                    {productHealthScore}%
+                  </span>
                 </div>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Order Health</p>
+                <p className="text-muted-foreground text-sm">Order Health</p>
                 <div className="flex items-center gap-2">
-                  <Progress value={orderHealthScore} className="h-2 flex-1" />
-                  <span className="text-sm font-medium">{orderHealthScore}%</span>
+                  <Progress className="h-2 flex-1" value={orderHealthScore} />
+                  <span className="font-medium text-sm">
+                    {orderHealthScore}%
+                  </span>
                 </div>
               </div>
             </div>
@@ -233,17 +306,19 @@ const PlatformHealthPage: React.FC = async () => {
       </Card>
 
       {/* Key Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center justify-between">
+            <CardTitle className="flex items-center justify-between font-medium text-sm">
               <span>Active Users Today</span>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{activeUsersToday.toLocaleString()}</div>
-            <div className="flex items-center text-xs text-muted-foreground mt-1">
+            <div className="font-bold text-2xl">
+              {activeUsersToday.toLocaleString()}
+            </div>
+            <div className="mt-1 flex items-center text-muted-foreground text-xs">
               <span>{activeUsersWeek.toLocaleString()} this week</span>
             </div>
           </CardContent>
@@ -251,14 +326,16 @@ const PlatformHealthPage: React.FC = async () => {
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center justify-between">
+            <CardTitle className="flex items-center justify-between font-medium text-sm">
               <span>Orders Today</span>
               <ShoppingCart className="h-4 w-4 text-muted-foreground" />
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{ordersToday.toLocaleString()}</div>
-            <div className="flex items-center text-xs text-muted-foreground mt-1">
+            <div className="font-bold text-2xl">
+              {ordersToday.toLocaleString()}
+            </div>
+            <div className="mt-1 flex items-center text-muted-foreground text-xs">
               <span>{ordersWeek.toLocaleString()} this week</span>
             </div>
           </CardContent>
@@ -266,29 +343,35 @@ const PlatformHealthPage: React.FC = async () => {
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center justify-between">
+            <CardTitle className="flex items-center justify-between font-medium text-sm">
               <span>Revenue Today</span>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${(revenueToday._sum?.amount || 0).toFixed(2)}</div>
-            <div className="flex items-center text-xs text-muted-foreground mt-1">
-              <span>${(revenueWeek._sum?.amount || 0).toFixed(2)} this week</span>
+            <div className="font-bold text-2xl">
+              ${(revenueToday._sum?.amount || 0).toFixed(2)}
+            </div>
+            <div className="mt-1 flex items-center text-muted-foreground text-xs">
+              <span>
+                ${(revenueWeek._sum?.amount || 0).toFixed(2)} this week
+              </span>
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium flex items-center justify-between">
+            <CardTitle className="flex items-center justify-between font-medium text-sm">
               <span>New Listings Today</span>
               <Package className="h-4 w-4 text-muted-foreground" />
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{productsAddedToday.toLocaleString()}</div>
-            <div className="flex items-center text-xs text-muted-foreground mt-1">
+            <div className="font-bold text-2xl">
+              {productsAddedToday.toLocaleString()}
+            </div>
+            <div className="mt-1 flex items-center text-muted-foreground text-xs">
               <span>{productsAddedWeek.toLocaleString()} this week</span>
             </div>
           </CardContent>
@@ -305,36 +388,36 @@ const PlatformHealthPage: React.FC = async () => {
           <CardDescription>Weekly growth rates and trends</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <div>
-              <p className="text-sm text-muted-foreground">User Growth</p>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-2xl font-bold">{userGrowthRate}%</span>
+              <p className="text-muted-foreground text-sm">User Growth</p>
+              <div className="mt-1 flex items-center gap-2">
+                <span className="font-bold text-2xl">{userGrowthRate}%</span>
                 <ArrowUp className="h-4 w-4 text-green-500" />
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="mt-1 text-muted-foreground text-xs">
                 {newUsersWeek} new users this week
               </p>
             </div>
-            
+
             <div>
-              <p className="text-sm text-muted-foreground">Product Growth</p>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-2xl font-bold">{productGrowthRate}%</span>
+              <p className="text-muted-foreground text-sm">Product Growth</p>
+              <div className="mt-1 flex items-center gap-2">
+                <span className="font-bold text-2xl">{productGrowthRate}%</span>
                 <ArrowUp className="h-4 w-4 text-green-500" />
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="mt-1 text-muted-foreground text-xs">
                 {productsAddedWeek} new products this week
               </p>
             </div>
-            
+
             <div>
-              <p className="text-sm text-muted-foreground">Order Growth</p>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-2xl font-bold">{orderGrowthRate}%</span>
+              <p className="text-muted-foreground text-sm">Order Growth</p>
+              <div className="mt-1 flex items-center gap-2">
+                <span className="font-bold text-2xl">{orderGrowthRate}%</span>
                 <ArrowUp className="h-4 w-4 text-green-500" />
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="mt-1 text-muted-foreground text-xs">
                 {ordersWeek} orders this week
               </p>
             </div>
@@ -343,7 +426,7 @@ const PlatformHealthPage: React.FC = async () => {
       </Card>
 
       {/* User Metrics */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -355,23 +438,33 @@ const PlatformHealthPage: React.FC = async () => {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm">Total Users</span>
-                <span className="font-medium">{totalUsers.toLocaleString()}</span>
+                <span className="font-medium">
+                  {totalUsers.toLocaleString()}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">Verified Users</span>
-                <span className="font-medium">{verifiedUsers.toLocaleString()}</span>
+                <span className="font-medium">
+                  {verifiedUsers.toLocaleString()}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">Suspended Users</span>
-                <span className="font-medium text-destructive">{suspendedUsers.toLocaleString()}</span>
+                <span className="font-medium text-destructive">
+                  {suspendedUsers.toLocaleString()}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">Active Today</span>
-                <span className="font-medium">{activeUsersToday.toLocaleString()}</span>
+                <span className="font-medium">
+                  {activeUsersToday.toLocaleString()}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">Active This Week</span>
-                <span className="font-medium">{activeUsersWeek.toLocaleString()}</span>
+                <span className="font-medium">
+                  {activeUsersWeek.toLocaleString()}
+                </span>
               </div>
             </div>
           </CardContent>
@@ -388,23 +481,35 @@ const PlatformHealthPage: React.FC = async () => {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm">Total Products</span>
-                <span className="font-medium">{totalProducts.toLocaleString()}</span>
+                <span className="font-medium">
+                  {totalProducts.toLocaleString()}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">Active Listings</span>
-                <span className="font-medium">{activeListings.toLocaleString()}</span>
+                <span className="font-medium">
+                  {activeListings.toLocaleString()}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">Sold Products</span>
-                <span className="font-medium">{soldProducts.toLocaleString()}</span>
+                <span className="font-medium">
+                  {soldProducts.toLocaleString()}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">Removed Products</span>
-                <span className="font-medium text-destructive">{removedProducts.toLocaleString()}</span>
+                <span className="font-medium text-destructive">
+                  {removedProducts.toLocaleString()}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">Average Views</span>
-                <span className="font-medium">{Math.round(averageProductViews._avg?.views || 0).toLocaleString()}</span>
+                <span className="font-medium">
+                  {Math.round(
+                    averageProductViews._avg?.views || 0
+                  ).toLocaleString()}
+                </span>
               </div>
             </div>
           </CardContent>
@@ -420,26 +525,26 @@ const PlatformHealthPage: React.FC = async () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             <div className="text-center">
-              <Clock className="h-8 w-8 mx-auto mb-2 text-yellow-500" />
-              <p className="text-2xl font-bold">{pendingOrders}</p>
-              <p className="text-sm text-muted-foreground">Pending</p>
+              <Clock className="mx-auto mb-2 h-8 w-8 text-yellow-500" />
+              <p className="font-bold text-2xl">{pendingOrders}</p>
+              <p className="text-muted-foreground text-sm">Pending</p>
             </div>
             <div className="text-center">
-              <Zap className="h-8 w-8 mx-auto mb-2 text-blue-500" />
-              <p className="text-2xl font-bold">{shippedOrders}</p>
-              <p className="text-sm text-muted-foreground">Shipped</p>
+              <Zap className="mx-auto mb-2 h-8 w-8 text-blue-500" />
+              <p className="font-bold text-2xl">{shippedOrders}</p>
+              <p className="text-muted-foreground text-sm">Shipped</p>
             </div>
             <div className="text-center">
-              <CheckCircle className="h-8 w-8 mx-auto mb-2 text-green-500" />
-              <p className="text-2xl font-bold">{deliveredOrders}</p>
-              <p className="text-sm text-muted-foreground">Delivered</p>
+              <CheckCircle className="mx-auto mb-2 h-8 w-8 text-green-500" />
+              <p className="font-bold text-2xl">{deliveredOrders}</p>
+              <p className="text-muted-foreground text-sm">Delivered</p>
             </div>
             <div className="text-center">
-              <AlertTriangle className="h-8 w-8 mx-auto mb-2 text-red-500" />
-              <p className="text-2xl font-bold">{cancelledOrders}</p>
-              <p className="text-sm text-muted-foreground">Cancelled</p>
+              <AlertTriangle className="mx-auto mb-2 h-8 w-8 text-red-500" />
+              <p className="font-bold text-2xl">{cancelledOrders}</p>
+              <p className="text-muted-foreground text-sm">Cancelled</p>
             </div>
           </div>
         </CardContent>
@@ -452,12 +557,17 @@ const PlatformHealthPage: React.FC = async () => {
             <Eye className="h-5 w-5" />
             Popular Search Terms
           </CardTitle>
-          <CardDescription>Most searched keywords in the platform</CardDescription>
+          <CardDescription>
+            Most searched keywords in the platform
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
             {popularSearchTerms.map((term, index) => (
-              <div key={term.query} className="flex items-center justify-between">
+              <div
+                className="flex items-center justify-between"
+                key={term.query}
+              >
                 <span className="text-sm">
                   {index + 1}. {term.query}
                 </span>
@@ -475,7 +585,9 @@ const PlatformHealthPage: React.FC = async () => {
             <Server className="h-5 w-5" />
             System Status
           </CardTitle>
-          <CardDescription>Service availability and performance</CardDescription>
+          <CardDescription>
+            Service availability and performance
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">

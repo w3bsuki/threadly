@@ -58,6 +58,6 @@ export interface ProductRepository {
       };
     };
   }): Promise<Product[]>;
-  
+
   findById(id: string): Promise<Product | null>;
 }

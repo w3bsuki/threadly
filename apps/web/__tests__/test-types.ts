@@ -1,4 +1,11 @@
-import { ReactNode, HTMLAttributes, ButtonHTMLAttributes, InputHTMLAttributes, ImgHTMLAttributes, AnchorHTMLAttributes } from 'react';
+import type {
+  AnchorHTMLAttributes,
+  ButtonHTMLAttributes,
+  HTMLAttributes,
+  ImgHTMLAttributes,
+  InputHTMLAttributes,
+  ReactNode,
+} from 'react';
 
 // Image component props
 export interface MockImageProps extends ImgHTMLAttributes<HTMLImageElement> {
@@ -13,7 +20,8 @@ export interface MockLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
 }
 
 // Button component props
-export interface MockButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface MockButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   variant?: 'default' | 'outline' | 'ghost' | 'destructive';
   size?: 'sm' | 'md' | 'lg';

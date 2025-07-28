@@ -1,5 +1,5 @@
 // Re-export cart types from @repo/cart
-export type { CartItem, CartState, CartConfig } from '@repo/cart';
+export type { CartConfig, CartItem, CartState } from '@repo/cart';
 
 // Additional commerce-specific cart types
 export interface CartSummary {

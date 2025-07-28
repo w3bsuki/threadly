@@ -89,10 +89,10 @@ export async function ProductsContent({
           { name: { contains: searchParams.category, mode: 'insensitive' } },
           { slug: { contains: searchParams.category, mode: 'insensitive' } },
           // Also match parent categories
-          { 
-            Category: { 
-              slug: searchParams.category 
-            } 
+          {
+            Category: {
+              slug: searchParams.category,
+            },
           },
         ],
       };
@@ -204,11 +204,8 @@ export async function ProductsContent({
   return (
     <div className="min-h-screen bg-background">
       {/* Search Header */}
-      <SearchHeader 
-        totalCount={totalCount} 
-        searchQuery={searchParams.q}
-      />
-      
+      <SearchHeader searchQuery={searchParams.q} totalCount={totalCount} />
+
       {/* Unified Search Filters - Mobile Only */}
       <div className="border-0 lg:hidden">
         <UnifiedSearchFilters totalCount={totalCount} />

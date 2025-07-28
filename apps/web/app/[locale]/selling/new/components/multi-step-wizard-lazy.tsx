@@ -1,9 +1,13 @@
 'use client';
 
-import { lazy, Suspense } from 'react';
 import { Skeleton } from '@repo/design-system/components';
+import { lazy, Suspense } from 'react';
 
-const MultiStepWizard = lazy(() => import('./multi-step-wizard').then(module => ({ default: module.MultiStepWizard })));
+const MultiStepWizard = lazy(() =>
+  import('./multi-step-wizard').then((module) => ({
+    default: module.MultiStepWizard,
+  }))
+);
 
 interface Category {
   id: string;

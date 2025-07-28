@@ -1,10 +1,10 @@
 'use client';
 
+import type { Product, SimilarProduct } from '@repo/commerce';
 import { ProductDetailContainer } from '@repo/commerce';
+import type { Dictionary } from '@repo/internationalization';
 import { useFavorites } from '../../../../../lib/hooks/use-favorites';
 import { useCartStore } from '../../../../../lib/stores/cart-store';
-import type { Product, SimilarProduct } from '@repo/commerce';
-import type { Dictionary } from '@repo/internationalization';
 
 interface ProductDetailProps {
   product: Product;
@@ -23,15 +23,15 @@ export function ProductDetail({
 
   return (
     <ProductDetailContainer
-      product={product}
-      similarProducts={similarProducts}
-      dictionary={dictionary}
-      isInCart={isInCart(product.id)}
       addToCart={addItem}
       checkFavorite={checkFavorite}
-      toggleFavorite={toggleFavorite}
+      dictionary={dictionary}
       isFavorited={isFavorited}
+      isInCart={isInCart(product.id)}
       isPending={isPending}
+      product={product}
+      similarProducts={similarProducts}
+      toggleFavorite={toggleFavorite}
     />
   );
 }

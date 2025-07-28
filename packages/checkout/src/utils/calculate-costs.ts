@@ -25,7 +25,7 @@ export const SHIPPING_OPTIONS: ShippingOption[] = [
 export function calculateOrderCosts(
   items: CartItem[],
   shippingMethod: 'standard' | 'express' | 'overnight',
-  taxRate: number = 0.08
+  taxRate = 0.08
 ): OrderCosts {
   const subtotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -39,7 +39,10 @@ export function calculateOrderCosts(
   let shippingCost = selectedShipping?.price || 0;
 
   // Apply free shipping threshold if applicable
-  if (selectedShipping?.freeThreshold && subtotal >= selectedShipping.freeThreshold) {
+  if (
+    selectedShipping?.freeThreshold &&
+    subtotal >= selectedShipping.freeThreshold
+  ) {
     shippingCost = 0;
   }
 

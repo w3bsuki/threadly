@@ -6,7 +6,12 @@
  */
 
 import { cleanup, fireEvent, render, screen } from '@repo/testing';
-import React, { ReactNode, HTMLAttributes, ButtonHTMLAttributes, InputHTMLAttributes } from 'react';
+import React, {
+  type ButtonHTMLAttributes,
+  type HTMLAttributes,
+  type InputHTMLAttributes,
+  type ReactNode,
+} from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Type definitions for mocks
@@ -37,7 +42,16 @@ vi.mock('next/link', () => ({
 
 // Mock UI components
 vi.mock('@repo/design-system/components', () => ({
-  Button: ({ children, onClick, disabled, variant = 'default', ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: string; children: ReactNode }) => (
+  Button: ({
+    children,
+    onClick,
+    disabled,
+    variant = 'default',
+    ...props
+  }: ButtonHTMLAttributes<HTMLButtonElement> & {
+    variant?: string;
+    children: ReactNode;
+  }) => (
     <button
       className={`btn btn-${variant}`}
       disabled={disabled}
@@ -47,27 +61,46 @@ vi.mock('@repo/design-system/components', () => ({
       {children}
     </button>
   ),
-  Card: ({ children, className = '', ...props }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
+  Card: ({
+    children,
+    className = '',
+    ...props
+  }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
     <div className={`card ${className}`} {...props}>
       {children}
     </div>
   ),
-  CardHeader: ({ children, ...props }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
+  CardHeader: ({
+    children,
+    ...props
+  }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
     <div className="card-header" {...props}>
       {children}
     </div>
   ),
-  CardContent: ({ children, ...props }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
+  CardContent: ({
+    children,
+    ...props
+  }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
     <div className="card-content" {...props}>
       {children}
     </div>
   ),
-  CardFooter: ({ children, ...props }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
+  CardFooter: ({
+    children,
+    ...props
+  }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
     <div className="card-footer" {...props}>
       {children}
     </div>
   ),
-  Input: ({ value, onChange, placeholder, type = 'text', ...props }: InputHTMLAttributes<HTMLInputElement>) => (
+  Input: ({
+    value,
+    onChange,
+    placeholder,
+    type = 'text',
+    ...props
+  }: InputHTMLAttributes<HTMLInputElement>) => (
     <input
       onChange={onChange}
       placeholder={placeholder}
@@ -76,8 +109,20 @@ vi.mock('@repo/design-system/components', () => ({
       {...props}
     />
   ),
-  Label: ({ children, ...props }: HTMLAttributes<HTMLLabelElement> & { children: ReactNode }) => <label {...props}>{children}</label>,
-  Badge: ({ children, variant = 'default', ...props }: HTMLAttributes<HTMLSpanElement> & { children: ReactNode; variant?: string }) => (
+  Label: ({
+    children,
+    ...props
+  }: HTMLAttributes<HTMLLabelElement> & { children: ReactNode }) => (
+    <label {...props}>{children}</label>
+  ),
+  Badge: ({
+    children,
+    variant = 'default',
+    ...props
+  }: HTMLAttributes<HTMLSpanElement> & {
+    children: ReactNode;
+    variant?: string;
+  }) => (
     <span className={`badge badge-${variant}`} {...props}>
       {children}
     </span>
@@ -85,28 +130,48 @@ vi.mock('@repo/design-system/components', () => ({
   Skeleton: ({ className = '', ...props }: HTMLAttributes<HTMLDivElement>) => (
     <div className={`skeleton ${className}`} {...props} />
   ),
-  Dialog: ({ open, onOpenChange, children }: { open?: boolean; onOpenChange?: (open: boolean) => void; children: ReactNode }) =>
+  Dialog: ({
+    open,
+    onOpenChange,
+    children,
+  }: {
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    children: ReactNode;
+  }) =>
     open ? (
       <div className="dialog" data-testid="dialog">
         {children}
       </div>
     ) : null,
-  DialogContent: ({ children, ...props }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
+  DialogContent: ({
+    children,
+    ...props
+  }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
     <div className="dialog-content" {...props}>
       {children}
     </div>
   ),
-  DialogHeader: ({ children, ...props }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
+  DialogHeader: ({
+    children,
+    ...props
+  }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
     <div className="dialog-header" {...props}>
       {children}
     </div>
   ),
-  DialogTitle: ({ children, ...props }: HTMLAttributes<HTMLHeadingElement> & { children: ReactNode }) => (
+  DialogTitle: ({
+    children,
+    ...props
+  }: HTMLAttributes<HTMLHeadingElement> & { children: ReactNode }) => (
     <h2 className="dialog-title" {...props}>
       {children}
     </h2>
   ),
-  DialogFooter: ({ children, ...props }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
+  DialogFooter: ({
+    children,
+    ...props
+  }: HTMLAttributes<HTMLDivElement> & { children: ReactNode }) => (
     <div className="dialog-footer" {...props}>
       {children}
     </div>
@@ -176,7 +241,11 @@ describe('Critical UI Components Tests', () => {
       onAddToCart?: (id: string) => void;
     }
 
-    const ProductCard = ({ product, onFavorite, onAddToCart }: ProductCardProps) => {
+    const ProductCard = ({
+      product,
+      onFavorite,
+      onAddToCart,
+    }: ProductCardProps) => {
       const [isFavorited, setIsFavorited] = React.useState(false);
 
       return (
@@ -348,7 +417,11 @@ describe('Critical UI Components Tests', () => {
         quantity: number;
         imageUrl: string;
       }>;
-      onSubmit: (data: { email: string; shipping: string; payment: string }) => void;
+      onSubmit: (data: {
+        email: string;
+        shipping: string;
+        payment: string;
+      }) => void;
       loading: boolean;
     }
 
@@ -647,7 +720,10 @@ describe('Critical UI Components Tests', () => {
         conditions: string[];
         sizes: string[];
       };
-      onFilterChange: (filterType: string, value: string | [number, number]) => void;
+      onFilterChange: (
+        filterType: string,
+        value: string | [number, number]
+      ) => void;
       onClose: () => void;
       isOpen: boolean;
     }) => {
@@ -951,7 +1027,13 @@ describe('Critical UI Components Tests', () => {
   });
 
   describe('Error Boundaries', () => {
-    const ErrorBoundary = ({ children, fallback }: { children: ReactNode; fallback: ReactNode }) => {
+    const ErrorBoundary = ({
+      children,
+      fallback,
+    }: {
+      children: ReactNode;
+      fallback: ReactNode;
+    }) => {
       const [hasError, setHasError] = React.useState(false);
 
       React.useEffect(() => {
@@ -1014,7 +1096,14 @@ describe('Critical UI Components Tests', () => {
 
   describe('Accessibility Features', () => {
     it('should have proper ARIA labels', () => {
-      const AccessibleButton = ({ children, ariaLabel, ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { children: ReactNode; ariaLabel: string }) => (
+      const AccessibleButton = ({
+        children,
+        ariaLabel,
+        ...props
+      }: ButtonHTMLAttributes<HTMLButtonElement> & {
+        children: ReactNode;
+        ariaLabel: string;
+      }) => (
         <button aria-label={ariaLabel} {...props}>
           {children}
         </button>

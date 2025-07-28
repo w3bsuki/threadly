@@ -1,17 +1,23 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { Button } from '@repo/design-system/components';
-import { Card, CardContent } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { Plus, Edit, MoreHorizontal, Eye } from 'lucide-react';
-import { decimalToNumber } from '@repo/utils';
-import { CursorPagination, useCursorPagination } from '@repo/design-system/components/marketplace';
-import type { CursorPaginationResult } from '@repo/design-system/lib/pagination';
 import type { Decimal } from '@prisma/client/runtime/library';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+} from '@repo/design-system/components';
+import {
+  CursorPagination,
+  useCursorPagination,
+} from '@repo/design-system/components/marketplace';
+import type { CursorPaginationResult } from '@repo/design-system/lib/pagination';
+import { decimalToNumber } from '@repo/utils';
 import type { Dictionary } from '@repo/validation/schemas';
+import { Edit, Eye, MoreHorizontal, Plus } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useCallback, useState } from 'react';
 
 interface Product {
   id: string;
@@ -60,7 +66,7 @@ export function ListingsWithPagination({
       const response = await fetch(`/api/users/${userId}/products?${params}`);
       const data = await response.json();
 
-      setProducts(prev => [...prev, ...data.items]);
+      setProducts((prev) => [...prev, ...data.items]);
       updateState({
         cursor: data.nextCursor,
         hasNextPage: data.hasNextPage,
@@ -108,13 +114,13 @@ export function ListingsWithPagination({
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
           <div className="text-center">
-            <h3 className="text-lg font-semibold mb-2">No listings yet</h3>
-            <p className="text-muted-foreground mb-4">
+            <h3 className="mb-2 font-semibold text-lg">No listings yet</h3>
+            <p className="mb-4 text-muted-foreground">
               Start selling by creating your first product listing
             </p>
             <Button asChild>
               <Link href="/selling/new">
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className="mr-2 h-4 w-4" />
                 Create First Listing
               </Link>
             </Button>
@@ -126,60 +132,70 @@ export function ListingsWithPagination({
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {products.map((product, index) => (
-          <Link key={product.id} href={`/selling/listings/${product.id}`} className="block no-touch-target group">
+          <Link
+            className="no-touch-target group block"
+            href={`/selling/listings/${product.id}`}
+            key={product.id}
+          >
             <div className="space-y-1.5">
-              <div className="aspect-[3/4] relative rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-900">
+              <div className="relative aspect-[3/4] overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-900">
                 {product.images[0] ? (
                   <Image
-                    src={product.images[0].imageUrl}
                     alt={product.title}
+                    className="object-cover transition-transform duration-200 group-hover:scale-105"
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-200"
-                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
                     priority={index < 10}
+                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                    src={product.images[0].imageUrl}
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <span className="text-gray-400 dark:text-gray-600 text-xs">No image</span>
+                  <div className="flex h-full w-full items-center justify-center">
+                    <span className="text-gray-400 text-xs dark:text-gray-600">
+                      No image
+                    </span>
                   </div>
                 )}
-                
+
                 <div className="absolute top-1.5 left-1.5">
-                  <div className={`px-1 py-0.5 rounded text-[10px] font-semibold ${getStatusColor(product.status)}`}>
+                  <div
+                    className={`rounded px-1 py-0.5 font-semibold text-[10px] ${getStatusColor(product.status)}`}
+                  >
                     {product.status === 'AVAILABLE' ? 'Live' : product.status}
                   </div>
                 </div>
-                
+
                 <div className="absolute top-1.5 right-1.5">
-                  <div className="bg-black/80 dark:bg-white/90 text-white dark:text-black rounded px-1 py-0.5 text-[11px] font-semibold">
+                  <div className="rounded bg-black/80 px-1 py-0.5 font-semibold text-[11px] text-white dark:bg-white/90 dark:text-black">
                     ${decimalToNumber(product.price)}
                   </div>
                 </div>
 
-                <div className="absolute bottom-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-6 w-6 bg-white/90 hover:bg-white text-gray-700 hover:text-gray-900"
+                <div className="absolute right-1.5 bottom-1.5 opacity-0 transition-opacity group-hover:opacity-100">
+                  <Button
+                    className="h-6 w-6 bg-white/90 text-gray-700 hover:bg-white hover:text-gray-900"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
                     }}
+                    size="icon"
+                    variant="ghost"
                   >
                     <MoreHorizontal className="h-3 w-3" />
                   </Button>
                 </div>
               </div>
-              
+
               <div className="min-w-0 px-0.5">
-                <p className="text-[11px] font-medium text-gray-900 dark:text-white truncate">
+                <p className="truncate font-medium text-[11px] text-gray-900 dark:text-white">
                   {product.title}
                 </p>
                 <div className="flex items-center justify-between text-[10px] text-gray-600 dark:text-gray-400">
-                  <span className="truncate">{getConditionText(product.condition)}</span>
-                  <span className="flex items-center gap-0.5 flex-shrink-0 ml-1">
+                  <span className="truncate">
+                    {getConditionText(product.condition)}
+                  </span>
+                  <span className="ml-1 flex flex-shrink-0 items-center gap-0.5">
                     <Eye className="h-2 w-2" />
                     {product._count.favorites}
                   </span>
@@ -191,11 +207,11 @@ export function ListingsWithPagination({
       </div>
 
       <CursorPagination
-        state={state}
-        onLoadMore={loadMore}
-        loadMoreText="Load More Listings"
         currentCount={products.length}
+        loadMoreText="Load More Listings"
+        onLoadMore={loadMore}
         showStats={true}
+        state={state}
       />
     </div>
   );

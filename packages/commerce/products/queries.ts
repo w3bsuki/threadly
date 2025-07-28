@@ -1,4 +1,8 @@
-import type { CommerceProduct, ProductQuery, ProductQueryResult } from '../types';
+import type {
+  CommerceProduct,
+  ProductQuery,
+  ProductQueryResult,
+} from '../types';
 
 // Build query string from ProductQuery object
 function buildQueryString(query: ProductQuery): string {
@@ -7,8 +11,10 @@ function buildQueryString(query: ProductQuery): string {
   if (query.search) params.append('search', query.search);
   if (query.category) params.append('category', query.category);
   if (query.subcategory) params.append('subcategory', query.subcategory);
-  if (query.minPrice !== undefined) params.append('minPrice', query.minPrice.toString());
-  if (query.maxPrice !== undefined) params.append('maxPrice', query.maxPrice.toString());
+  if (query.minPrice !== undefined)
+    params.append('minPrice', query.minPrice.toString());
+  if (query.maxPrice !== undefined)
+    params.append('maxPrice', query.maxPrice.toString());
   if (query.sellerId) params.append('sellerId', query.sellerId);
   if (query.status) params.append('status', query.status);
   if (query.sortBy) params.append('sortBy', query.sortBy);
@@ -18,16 +24,16 @@ function buildQueryString(query: ProductQuery): string {
 
   // Handle array parameters
   if (query.condition?.length) {
-    query.condition.forEach(c => params.append('condition', c));
+    query.condition.forEach((c) => params.append('condition', c));
   }
   if (query.size?.length) {
-    query.size.forEach(s => params.append('size', s));
+    query.size.forEach((s) => params.append('size', s));
   }
   if (query.color?.length) {
-    query.color.forEach(c => params.append('color', c));
+    query.color.forEach((c) => params.append('color', c));
   }
   if (query.brand?.length) {
-    query.brand.forEach(b => params.append('brand', b));
+    query.brand.forEach((b) => params.append('brand', b));
   }
 
   return params.toString();
@@ -38,7 +44,9 @@ export async function searchProducts(
   query: ProductQuery = {}
 ): Promise<ProductQueryResult> {
   const queryString = buildQueryString(query);
-  const response = await fetch(`/api/products${queryString ? `?${queryString}` : ''}`);
+  const response = await fetch(
+    `/api/products${queryString ? `?${queryString}` : ''}`
+  );
 
   if (!response.ok) {
     throw new Error('Failed to fetch products');
@@ -48,7 +56,9 @@ export async function searchProducts(
 }
 
 // Get single product
-export async function getProduct(productId: string): Promise<CommerceProduct | null> {
+export async function getProduct(
+  productId: string
+): Promise<CommerceProduct | null> {
   const response = await fetch(`/api/products/${productId}`);
 
   if (!response.ok) {
@@ -70,9 +80,11 @@ export async function getSellerProducts(
 // Get related products
 export async function getRelatedProducts(
   productId: string,
-  limit: number = 8
+  limit = 8
 ): Promise<CommerceProduct[]> {
-  const response = await fetch(`/api/products/${productId}/related?limit=${limit}`);
+  const response = await fetch(
+    `/api/products/${productId}/related?limit=${limit}`
+  );
 
   if (!response.ok) {
     throw new Error('Failed to fetch related products');
@@ -84,7 +96,7 @@ export async function getRelatedProducts(
 // Get trending products
 export async function getTrendingProducts(
   category?: string,
-  limit: number = 12
+  limit = 12
 ): Promise<CommerceProduct[]> {
   const params = new URLSearchParams();
   if (category) params.append('category', category);
@@ -101,7 +113,7 @@ export async function getTrendingProducts(
 
 // Get recently viewed products
 export async function getRecentlyViewedProducts(
-  limit: number = 8
+  limit = 8
 ): Promise<CommerceProduct[]> {
   const response = await fetch(`/api/products/recently-viewed?limit=${limit}`, {
     credentials: 'include',
@@ -123,9 +135,7 @@ export async function trackProductView(productId: string): Promise<void> {
 }
 
 // Check product availability
-export async function checkProductAvailability(
-  productId: string
-): Promise<{
+export async function checkProductAvailability(productId: string): Promise<{
   available: boolean;
   quantity: number;
   message?: string;
@@ -140,12 +150,15 @@ export async function checkProductAvailability(
 }
 
 // Batch check availability
-export async function checkBatchAvailability(
-  productIds: string[]
-): Promise<Record<string, {
-  available: boolean;
-  quantity: number;
-}>> {
+export async function checkBatchAvailability(productIds: string[]): Promise<
+  Record<
+    string,
+    {
+      available: boolean;
+      quantity: number;
+    }
+  >
+> {
   const response = await fetch('/api/products/availability', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -162,7 +175,7 @@ export async function checkBatchAvailability(
 // Get product recommendations
 export async function getProductRecommendations(
   userId?: string,
-  limit: number = 12
+  limit = 12
 ): Promise<CommerceProduct[]> {
   const params = new URLSearchParams();
   params.append('limit', limit.toString());
@@ -180,12 +193,14 @@ export async function getProductRecommendations(
 }
 
 // Get categories
-export async function getCategories(): Promise<{
-  id: string;
-  name: string;
-  slug: string;
-  subcategories?: { id: string; name: string; slug: string }[];
-}[]> {
+export async function getCategories(): Promise<
+  {
+    id: string;
+    name: string;
+    slug: string;
+    subcategories?: { id: string; name: string; slug: string }[];
+  }[]
+> {
   const response = await fetch('/api/categories');
 
   if (!response.ok) {
@@ -196,9 +211,7 @@ export async function getCategories(): Promise<{
 }
 
 // Get product filters
-export async function getProductFilters(
-  category?: string
-): Promise<{
+export async function getProductFilters(category?: string): Promise<{
   conditions: string[];
   sizes: string[];
   colors: string[];

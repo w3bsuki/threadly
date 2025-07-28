@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
+import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
 /**
@@ -12,10 +12,7 @@ export async function GET() {
   // Check authentication - only allow admin access to master diagnostics
   const { userId } = auth();
   if (!userId) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   interface DiagnosticsSection {
     [key: string]: unknown;
@@ -64,7 +61,9 @@ export async function GET() {
       canGetUser: false,
       error: error instanceof Error ? error.message : 'Unknown error',
     };
-    diagnostics.errors.push(`Auth test failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    diagnostics.errors.push(
+      `Auth test failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
   }
 
   // 3. Database Configuration
@@ -85,18 +84,23 @@ export async function GET() {
       connected: false,
       error: error instanceof Error ? error.message : 'Unknown error',
     };
-    diagnostics.errors.push(`Database test failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    diagnostics.errors.push(
+      `Database test failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
   }
 
   // 4. Stripe Configuration
   diagnostics.sections.stripe = {
     config: {
       secretKey: !!process.env.STRIPE_SECRET_KEY,
-      secretKeyPrefix: process.env.STRIPE_SECRET_KEY?.substring(0, 7) || 'not set',
+      secretKeyPrefix:
+        process.env.STRIPE_SECRET_KEY?.substring(0, 7) || 'not set',
       publicKey: !!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-      publicKeyPrefix: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.substring(0, 7) || 'not set',
+      publicKeyPrefix:
+        process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.substring(0, 7) ||
+        'not set',
       webhookSecret: !!process.env.STRIPE_WEBHOOK_SECRET,
-      isTestMode: process.env.STRIPE_SECRET_KEY?.includes('_test_') || false,
+      isTestMode: process.env.STRIPE_SECRET_KEY?.includes('_test_'),
     },
   };
 
@@ -106,7 +110,7 @@ export async function GET() {
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
         apiVersion: '2025-06-30.basil',
       });
-      
+
       // Try to retrieve account info
       const account = await stripe.accounts.retrieve();
       diagnostics.sections.stripe.test = {
@@ -121,7 +125,9 @@ export async function GET() {
         error: error instanceof Error ? error.message : 'Unknown error',
         code: error.code,
       };
-      diagnostics.errors.push(`Stripe test failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      diagnostics.errors.push(
+        `Stripe test failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   } else {
     diagnostics.sections.stripe.test = {
@@ -162,13 +168,19 @@ export async function GET() {
   if (process.env.NODE_ENV === 'production') {
     // Production-specific checks
     if (!process.env.STRIPE_SECRET_KEY) {
-      diagnostics.warnings.push('Stripe is not configured in production - payments will not work');
+      diagnostics.warnings.push(
+        'Stripe is not configured in production - payments will not work'
+      );
     }
     if (process.env.STRIPE_SECRET_KEY?.includes('_test_')) {
-      diagnostics.warnings.push('Using TEST Stripe keys in production environment');
+      diagnostics.warnings.push(
+        'Using TEST Stripe keys in production environment'
+      );
     }
     if (!process.env.NEXT_PUBLIC_APP_URL) {
-      diagnostics.warnings.push('NEXT_PUBLIC_APP_URL not set - may cause redirect issues');
+      diagnostics.warnings.push(
+        'NEXT_PUBLIC_APP_URL not set - may cause redirect issues'
+      );
     }
     if (!process.env.DATABASE_URL) {
       diagnostics.errors.push('DATABASE_URL not set in production');
@@ -176,7 +188,7 @@ export async function GET() {
   }
 
   // 8. Test env object loading
-  let envLoadTest: {
+  const envLoadTest: {
     success: boolean;
     error: {
       message: string;
@@ -190,7 +202,7 @@ export async function GET() {
   try {
     const { env } = await import('@/env');
     envLoadTest.success = true;
-    
+
     // Check if Stripe keys are available through env object
     diagnostics.sections.envObject = {
       hasStripeKey: !!env.STRIPE_SECRET_KEY,
@@ -202,7 +214,9 @@ export async function GET() {
       message: error instanceof Error ? error.message : 'Unknown error',
       invalidVars: (error as { issues?: unknown[] }).issues || [],
     };
-    diagnostics.errors.push(`Env validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    diagnostics.errors.push(
+      `Env validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
   }
 
   diagnostics.sections.envLoadTest = envLoadTest;
@@ -212,9 +226,9 @@ export async function GET() {
 
   // Add deployment checklist
   diagnostics.deploymentChecklist = {
-    database: diagnostics.sections.database.test?.connected || false,
-    auth: diagnostics.sections.auth.test?.canGetUser || false,
-    stripe: diagnostics.sections.stripe.test?.connected || false,
+    database: diagnostics.sections.database.test?.connected,
+    auth: diagnostics.sections.auth.test?.canGetUser,
+    stripe: diagnostics.sections.stripe.test?.connected,
     envValidation: envLoadTest.success,
     noErrors: diagnostics.errors.length === 0,
   };

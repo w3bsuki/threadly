@@ -17,13 +17,13 @@ export const SearchBar = memo(
       return (
         <div ref={ref}>
           <UnifiedSearch
+            categoriesExpanded={showCategories}
+            onCategoriesToggle={onToggleCategories}
             placeholder={
               dictionary.web.global.navigation?.searchPlaceholder ||
               'Search for items, brands, or members'
             }
             showCategoriesButton={true}
-            onCategoriesToggle={onToggleCategories}
-            categoriesExpanded={showCategories}
           />
         </div>
       );

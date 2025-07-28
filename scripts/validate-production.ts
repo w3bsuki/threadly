@@ -1,7 +1,7 @@
 #!/usr/bin/env node
+import chalk from 'chalk';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import chalk from 'chalk';
 
 const execAsync = promisify(exec);
 
@@ -14,7 +14,9 @@ interface ValidationResult {
 
 const validations: ValidationResult[] = [];
 
-async function runCommand(command: string): Promise<{ stdout: string; stderr: string; code: number }> {
+async function runCommand(
+  command: string
+): Promise<{ stdout: string; stderr: string; code: number }> {
   try {
     const { stdout, stderr } = await execAsync(command);
     return { stdout, stderr, code: 0 };
@@ -30,7 +32,7 @@ async function runCommand(command: string): Promise<{ stdout: string; stderr: st
 async function validateTypeScript() {
   console.log(chalk.blue('🔍 Checking TypeScript...'));
   const result = await runCommand('pnpm typecheck');
-  
+
   if (result.code === 0) {
     validations.push({
       name: 'TypeScript',
@@ -50,7 +52,7 @@ async function validateTypeScript() {
 async function validateLint() {
   console.log(chalk.blue('🔍 Running linter...'));
   const result = await runCommand('pnpm lint');
-  
+
   if (result.code === 0) {
     validations.push({
       name: 'Linting',
@@ -58,7 +60,8 @@ async function validateLint() {
       message: 'No linting errors found',
     });
   } else {
-    const errorCount = result.stderr.match(/Found (\d+) errors/)?.[1] || 'unknown';
+    const errorCount =
+      result.stderr.match(/Found (\d+) errors/)?.[1] || 'unknown';
     validations.push({
       name: 'Linting',
       status: 'fail',
@@ -71,7 +74,7 @@ async function validateLint() {
 async function validateTests() {
   console.log(chalk.blue('🔍 Running tests...'));
   const result = await runCommand('pnpm test');
-  
+
   if (result.code === 0) {
     validations.push({
       name: 'Unit Tests',
@@ -91,7 +94,7 @@ async function validateTests() {
 async function validateBuild() {
   console.log(chalk.blue('🔍 Testing build process...'));
   const result = await runCommand('pnpm build:packages');
-  
+
   if (result.code === 0) {
     validations.push({
       name: 'Build',
@@ -110,7 +113,7 @@ async function validateBuild() {
 
 async function validateEnvironment() {
   console.log(chalk.blue('🔍 Checking environment variables...'));
-  
+
   const requiredEnvVars = [
     'DATABASE_URL',
     'CLERK_SECRET_KEY',
@@ -121,9 +124,11 @@ async function validateEnvironment() {
     'UPSTASH_REDIS_REST_URL',
     'UPSTASH_REDIS_REST_TOKEN',
   ];
-  
-  const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
-  
+
+  const missingEnvVars = requiredEnvVars.filter(
+    (envVar) => !process.env[envVar]
+  );
+
   if (missingEnvVars.length === 0) {
     validations.push({
       name: 'Environment Variables',
@@ -142,12 +147,12 @@ async function validateEnvironment() {
 
 async function validateDatabase() {
   console.log(chalk.blue('🔍 Checking database connection...'));
-  
+
   try {
     const { database } = await import('@repo/database');
     await database.$queryRaw`SELECT 1`;
     await database.$disconnect();
-    
+
     validations.push({
       name: 'Database Connection',
       status: 'pass',
@@ -165,19 +170,24 @@ async function validateDatabase() {
 
 async function validateSecurity() {
   console.log(chalk.blue('🔍 Checking for security issues...'));
-  
+
   // Check for any types
-  const anyResult = await runCommand('grep -r "any" apps/ packages/ --include="*.ts" --include="*.tsx" | grep -v node_modules | grep -v ".next" | grep -v "dist" | wc -l');
-  const anyCount = parseInt(anyResult.stdout.trim()) || 0;
-  
+  const anyResult = await runCommand(
+    'grep -r "any" apps/ packages/ --include="*.ts" --include="*.tsx" | grep -v node_modules | grep -v ".next" | grep -v "dist" | wc -l'
+  );
+  const anyCount = Number.parseInt(anyResult.stdout.trim()) || 0;
+
   // Check for console.log
-  const consoleResult = await runCommand('grep -r "console.log" apps/ packages/ --include="*.ts" --include="*.tsx" | grep -v node_modules | grep -v ".next" | grep -v "dist" | wc -l');
-  const consoleCount = parseInt(consoleResult.stdout.trim()) || 0;
-  
+  const consoleResult = await runCommand(
+    'grep -r "console.log" apps/ packages/ --include="*.ts" --include="*.tsx" | grep -v node_modules | grep -v ".next" | grep -v "dist" | wc -l'
+  );
+  const consoleCount = Number.parseInt(consoleResult.stdout.trim()) || 0;
+
   const issues = [];
   if (anyCount > 0) issues.push(`${anyCount} 'any' types found`);
-  if (consoleCount > 0) issues.push(`${consoleCount} console.log statements found`);
-  
+  if (consoleCount > 0)
+    issues.push(`${consoleCount} console.log statements found`);
+
   if (issues.length === 0) {
     validations.push({
       name: 'Security Check',
@@ -196,16 +206,16 @@ async function validateSecurity() {
 
 async function printReport() {
   console.log('\n' + chalk.bold('📊 Production Validation Report'));
-  console.log('=' .repeat(50));
-  
+  console.log('='.repeat(50));
+
   let passCount = 0;
   let failCount = 0;
   let warnCount = 0;
-  
-  validations.forEach(validation => {
+
+  validations.forEach((validation) => {
     let icon = '';
     let color = chalk.white;
-    
+
     switch (validation.status) {
       case 'pass':
         icon = '✅';
@@ -223,36 +233,42 @@ async function printReport() {
         warnCount++;
         break;
     }
-    
+
     console.log(`${icon} ${color(validation.name)}: ${validation.message}`);
     if (validation.details) {
       console.log(chalk.gray(`   ${validation.details}`));
     }
   });
-  
-  console.log('\n' + '=' .repeat(50));
+
+  console.log('\n' + '='.repeat(50));
   console.log(chalk.bold('Summary:'));
   console.log(chalk.green(`✅ Passed: ${passCount}`));
   console.log(chalk.yellow(`⚠️  Warnings: ${warnCount}`));
   console.log(chalk.red(`❌ Failed: ${failCount}`));
-  
+
   if (failCount > 0) {
     console.log('\n' + chalk.red.bold('❌ Production validation FAILED'));
-    console.log(chalk.red('Please fix all errors before deploying to production.'));
+    console.log(
+      chalk.red('Please fix all errors before deploying to production.')
+    );
     process.exit(1);
   } else if (warnCount > 0) {
-    console.log('\n' + chalk.yellow.bold('⚠️  Production validation passed with warnings'));
+    console.log(
+      '\n' + chalk.yellow.bold('⚠️  Production validation passed with warnings')
+    );
     console.log(chalk.yellow('Consider addressing warnings before deploying.'));
   } else {
     console.log('\n' + chalk.green.bold('✅ Production validation PASSED'));
-    console.log(chalk.green('Your application is ready for production deployment!'));
+    console.log(
+      chalk.green('Your application is ready for production deployment!')
+    );
   }
 }
 
 async function main() {
   console.log(chalk.bold.blue('🚀 Threadly Production Validation'));
   console.log(chalk.gray('Running comprehensive checks...\n'));
-  
+
   await validateEnvironment();
   await validateTypeScript();
   await validateLint();
@@ -260,7 +276,7 @@ async function main() {
   await validateBuild();
   await validateDatabase();
   await validateSecurity();
-  
+
   await printReport();
 }
 

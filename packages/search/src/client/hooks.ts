@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { SearchFilters, SearchResult, SearchSuggestion } from '../types';
 
 // Debounce hook
@@ -28,40 +28,43 @@ export function useSearch() {
 
   const debouncedQuery = useDebounce(filters.query || '', 300);
 
-  const search = useCallback(async (newFilters?: Partial<SearchFilters>, newPage = 0) => {
-    setLoading(true);
-    setError(null);
+  const search = useCallback(
+    async (newFilters?: Partial<SearchFilters>, newPage = 0) => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const searchFilters = { ...filters, ...newFilters };
-      const response = await fetch('/api/search', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          filters: searchFilters,
-          page: newPage,
-          hitsPerPage: 20,
-        }),
-      });
+      try {
+        const searchFilters = { ...filters, ...newFilters };
+        const response = await fetch('/api/search', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            filters: searchFilters,
+            page: newPage,
+            hitsPerPage: 20,
+          }),
+        });
 
-      if (!response.ok) {
-        throw new Error('Search failed');
+        if (!response.ok) {
+          throw new Error('Search failed');
+        }
+
+        const result: SearchResult = await response.json();
+        setResults(result);
+        setPage(newPage);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Search failed');
+      } finally {
+        setLoading(false);
       }
-
-      const result: SearchResult = await response.json();
-      setResults(result);
-      setPage(newPage);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Search failed');
-    } finally {
-      setLoading(false);
-    }
-  }, [filters]);
+    },
+    [filters]
+  );
 
   const updateFilters = useCallback((newFilters: Partial<SearchFilters>) => {
-    setFilters(prev => ({ ...prev, ...newFilters }));
+    setFilters((prev) => ({ ...prev, ...newFilters }));
     setPage(0);
   }, []);
 
@@ -114,7 +117,7 @@ export function useSearchSuggestions(query: string, enabled = true) {
   const debouncedQuery = useDebounce(query, 200);
 
   useEffect(() => {
-    if (!enabled || !debouncedQuery || debouncedQuery.length < 2) {
+    if (!(enabled && debouncedQuery) || debouncedQuery.length < 2) {
       setSuggestions([]);
       return;
     }
@@ -122,7 +125,9 @@ export function useSearchSuggestions(query: string, enabled = true) {
     const fetchSuggestions = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/search/suggestions?q=${encodeURIComponent(debouncedQuery)}`);
+        const response = await fetch(
+          `/api/search/suggestions?q=${encodeURIComponent(debouncedQuery)}`
+        );
         if (response.ok) {
           const data = await response.json();
           setSuggestions(data);
@@ -147,7 +152,7 @@ export function useAutocomplete(query: string, enabled = true) {
   const debouncedQuery = useDebounce(query, 150);
 
   useEffect(() => {
-    if (!enabled || !debouncedQuery || debouncedQuery.length < 2) {
+    if (!(enabled && debouncedQuery) || debouncedQuery.length < 2) {
       setSuggestions([]);
       return;
     }
@@ -155,7 +160,9 @@ export function useAutocomplete(query: string, enabled = true) {
     const fetchAutocomplete = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/search/autocomplete?q=${encodeURIComponent(debouncedQuery)}`);
+        const response = await fetch(
+          `/api/search/autocomplete?q=${encodeURIComponent(debouncedQuery)}`
+        );
         if (response.ok) {
           const data = await response.json();
           setSuggestions(data);
@@ -174,17 +181,19 @@ export function useAutocomplete(query: string, enabled = true) {
 
 // Search facets hook
 export function useSearchFacets(query?: string) {
-  const [facets, setFacets] = useState<Record<string, Record<string, number>>>({});
+  const [facets, setFacets] = useState<Record<string, Record<string, number>>>(
+    {}
+  );
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchFacets = async () => {
       setLoading(true);
       try {
-        const url = query 
+        const url = query
           ? `/api/search/facets?q=${encodeURIComponent(query)}`
           : '/api/search/facets';
-        
+
         const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
@@ -241,7 +250,9 @@ export function useSimilarProducts(productId: string, limit = 6) {
 
     const fetchSimilarProducts = async () => {
       try {
-        const response = await fetch(`/api/search/similar/${productId}?limit=${limit}`);
+        const response = await fetch(
+          `/api/search/similar/${productId}?limit=${limit}`
+        );
         if (response.ok) {
           const data = await response.json();
           setProducts(data);
@@ -260,31 +271,35 @@ export function useSimilarProducts(productId: string, limit = 6) {
 
 // Search analytics hook
 export function useSearchAnalytics() {
-  const trackClick = useCallback(async (productId: string, query: string, position: number) => {
-    try {
-      await fetch('/api/search/analytics/click', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ productId, query, position }),
-      });
-    } catch (error) {
-    }
-  }, []);
+  const trackClick = useCallback(
+    async (productId: string, query: string, position: number) => {
+      try {
+        await fetch('/api/search/analytics/click', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ productId, query, position }),
+        });
+      } catch (error) {}
+    },
+    []
+  );
 
-  const trackConversion = useCallback(async (productId: string, query: string) => {
-    try {
-      await fetch('/api/search/analytics/conversion', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ productId, query }),
-      });
-    } catch (error) {
-    }
-  }, []);
+  const trackConversion = useCallback(
+    async (productId: string, query: string) => {
+      try {
+        await fetch('/api/search/analytics/conversion', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ productId, query }),
+        });
+      } catch (error) {}
+    },
+    []
+  );
 
   return { trackClick, trackConversion };
 }
@@ -299,16 +314,18 @@ export function useSearchHistory() {
     if (saved) {
       try {
         setHistory(JSON.parse(saved));
-      } catch (error) {
-      }
+      } catch (error) {}
     }
   }, []);
 
   const addToHistory = useCallback((query: string) => {
     if (!query.trim()) return;
 
-    setHistory(prev => {
-      const newHistory = [query, ...prev.filter(q => q !== query)].slice(0, 10);
+    setHistory((prev) => {
+      const newHistory = [query, ...prev.filter((q) => q !== query)].slice(
+        0,
+        10
+      );
       localStorage.setItem('search-history', JSON.stringify(newHistory));
       return newHistory;
     });
@@ -320,8 +337,8 @@ export function useSearchHistory() {
   }, []);
 
   const removeFromHistory = useCallback((query: string) => {
-    setHistory(prev => {
-      const newHistory = prev.filter(q => q !== query);
+    setHistory((prev) => {
+      const newHistory = prev.filter((q) => q !== query);
       localStorage.setItem('search-history', JSON.stringify(newHistory));
       return newHistory;
     });

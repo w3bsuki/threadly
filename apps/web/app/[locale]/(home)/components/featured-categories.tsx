@@ -87,15 +87,22 @@ export const FeaturedCategories = async () => {
           take: 6, // Limit to 6 featured categories
         });
 
-        return categories.map((category: CategoryWithRelations, index: number): TransformedCategory => ({
-          id: category.id,
-          name: category.name,
-          description: `Discover ${category.name.toLowerCase()}`,
-          image: category.Product[0]?.images[0]?.imageUrl || null,
-          href: `/${category.slug || category.name.toLowerCase().replace(/\s+/g, '-')}`,
-          color: colorSchemes[index % colorSchemes.length] || 'from-gray-500 to-gray-600',
-          count: `${category._count.Product.toLocaleString()} items`,
-        }));
+        return categories.map(
+          (
+            category: CategoryWithRelations,
+            index: number
+          ): TransformedCategory => ({
+            id: category.id,
+            name: category.name,
+            description: `Discover ${category.name.toLowerCase()}`,
+            image: category.Product[0]?.images[0]?.imageUrl || null,
+            href: `/${category.slug || category.name.toLowerCase().replace(/\s+/g, '-')}`,
+            color:
+              colorSchemes[index % colorSchemes.length] ||
+              'from-gray-500 to-gray-600',
+            count: `${category._count.Product.toLocaleString()} items`,
+          })
+        );
       },
       600, // Cache for 10 minutes
       ['categories'] // Cache tags
@@ -118,7 +125,7 @@ export const FeaturedCategories = async () => {
             <h2 className="mb-4 font-bold text-3xl tracking-tight md:text-5xl">
               Shop by Category
             </h2>
-            <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
               Find exactly what you're looking for in our curated fashion
               categories
             </p>
@@ -170,7 +177,7 @@ export const FeaturedCategories = async () => {
                       <h3 className="mb-1 font-bold text-xl">
                         {category.name}
                       </h3>
-                      <p className="mb-2 text-sm text-background/80">
+                      <p className="mb-2 text-background/80 text-sm">
                         {category.description}
                       </p>
                       <span className="text-background/60 text-xs">

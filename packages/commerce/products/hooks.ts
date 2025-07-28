@@ -1,14 +1,18 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import type { CommerceProduct, ProductQuery, ProductQueryResult } from '../types';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import type {
+  CommerceProduct,
+  ProductQuery,
+  ProductQueryResult,
+} from '../types';
 import {
-  searchProducts,
+  checkProductAvailability,
   getProduct,
   getRelatedProducts,
   getTrendingProducts,
+  searchProducts,
   trackProductView,
-  checkProductAvailability,
 } from './queries';
 
 // Hook for product search with pagination
@@ -24,28 +28,33 @@ export function useProductSearch(initialQuery?: ProductQuery) {
     hasMore: false,
   });
 
-  const search = useCallback(async (newQuery?: ProductQuery) => {
-    setLoading(true);
-    setError(null);
+  const search = useCallback(
+    async (newQuery?: ProductQuery) => {
+      setLoading(true);
+      setError(null);
 
-    const searchQuery = { ...query, ...newQuery };
-    setQuery(searchQuery);
+      const searchQuery = { ...query, ...newQuery };
+      setQuery(searchQuery);
 
-    try {
-      const result = await searchProducts(searchQuery);
-      setProducts(result.products);
-      setPagination({
-        page: result.page,
-        totalPages: result.totalPages,
-        total: result.total,
-        hasMore: result.hasMore,
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to search products');
-    } finally {
-      setLoading(false);
-    }
-  }, [query]);
+      try {
+        const result = await searchProducts(searchQuery);
+        setProducts(result.products);
+        setPagination({
+          page: result.page,
+          totalPages: result.totalPages,
+          total: result.total,
+          hasMore: result.hasMore,
+        });
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Failed to search products'
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [query]
+  );
 
   // Initial search
   useEffect(() => {
@@ -58,12 +67,12 @@ export function useProductSearch(initialQuery?: ProductQuery) {
 
     setLoading(true);
     try {
-      const result = await searchProducts({ 
-        ...query, 
-        page: pagination.page + 1 
+      const result = await searchProducts({
+        ...query,
+        page: pagination.page + 1,
       });
-      
-      setProducts(prev => [...prev, ...result.products]);
+
+      setProducts((prev) => [...prev, ...result.products]);
       setPagination({
         page: result.page,
         totalPages: result.totalPages,
@@ -71,16 +80,21 @@ export function useProductSearch(initialQuery?: ProductQuery) {
         hasMore: result.hasMore,
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load more products');
+      setError(
+        err instanceof Error ? err.message : 'Failed to load more products'
+      );
     } finally {
       setLoading(false);
     }
   }, [query, pagination, loading]);
 
   // Update filters
-  const updateFilters = useCallback((filters: Partial<ProductQuery>) => {
-    search({ ...query, ...filters, page: 1 });
-  }, [query, search]);
+  const updateFilters = useCallback(
+    (filters: Partial<ProductQuery>) => {
+      search({ ...query, ...filters, page: 1 });
+    },
+    [query, search]
+  );
 
   // Clear filters
   const clearFilters = useCallback(() => {
@@ -124,11 +138,13 @@ export function useProduct(productId: string | null) {
         if (!cancelled) {
           setProduct(data);
           // Track view
-          trackProductView(productId).catch(console.error);
+          trackProductView(productId).catch(() => {});
         }
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : 'Failed to fetch product');
+          setError(
+            err instanceof Error ? err.message : 'Failed to fetch product'
+          );
         }
       } finally {
         if (!cancelled) {
@@ -148,7 +164,7 @@ export function useProduct(productId: string | null) {
 }
 
 // Hook for related products
-export function useRelatedProducts(productId: string | null, limit: number = 8) {
+export function useRelatedProducts(productId: string | null, limit = 8) {
   const [products, setProducts] = useState<CommerceProduct[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -165,7 +181,6 @@ export function useRelatedProducts(productId: string | null, limit: number = 8) 
           setProducts(related);
         }
       } catch (error) {
-        console.error('Failed to fetch related products:', error);
       } finally {
         if (!cancelled) {
           setLoading(false);
@@ -184,7 +199,7 @@ export function useRelatedProducts(productId: string | null, limit: number = 8) 
 }
 
 // Hook for trending products
-export function useTrendingProducts(category?: string, limit: number = 12) {
+export function useTrendingProducts(category?: string, limit = 12) {
   const [products, setProducts] = useState<CommerceProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -203,7 +218,9 @@ export function useTrendingProducts(category?: string, limit: number = 12) {
         }
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : 'Failed to fetch trending');
+          setError(
+            err instanceof Error ? err.message : 'Failed to fetch trending'
+          );
         }
       } finally {
         if (!cancelled) {
@@ -239,8 +256,11 @@ export function useProductAvailability(productId: string | null) {
       const result = await checkProductAvailability(productId);
       setAvailability(result);
     } catch (error) {
-      console.error('Failed to check availability:', error);
-      setAvailability({ available: false, quantity: 0, message: 'Error checking availability' });
+      setAvailability({
+        available: false,
+        quantity: 0,
+        message: 'Error checking availability',
+      });
     } finally {
       setLoading(false);
     }
@@ -250,10 +270,10 @@ export function useProductAvailability(productId: string | null) {
     checkAvailability();
   }, [checkAvailability]);
 
-  return { 
-    ...availability, 
+  return {
+    ...availability,
     loading,
-    refresh: checkAvailability 
+    refresh: checkAvailability,
   };
 }
 
@@ -264,10 +284,10 @@ export function useProductFilters(products: CommerceProduct[]) {
     const sizes = new Set<string>();
     const colors = new Set<string>();
     const brands = new Set<string>();
-    let minPrice = Infinity;
-    let maxPrice = -Infinity;
+    let minPrice = Number.POSITIVE_INFINITY;
+    let maxPrice = Number.NEGATIVE_INFINITY;
 
-    products.forEach(product => {
+    products.forEach((product) => {
       if (product.condition) conditions.add(product.condition);
       if (product.size) sizes.add(product.size);
       if (product.color) colors.add(product.color);
@@ -282,8 +302,8 @@ export function useProductFilters(products: CommerceProduct[]) {
       colors: Array.from(colors).sort(),
       brands: Array.from(brands).sort(),
       priceRange: {
-        min: minPrice === Infinity ? 0 : minPrice,
-        max: maxPrice === -Infinity ? 0 : maxPrice,
+        min: minPrice === Number.POSITIVE_INFINITY ? 0 : minPrice,
+        max: maxPrice === Number.NEGATIVE_INFINITY ? 0 : maxPrice,
       },
     };
   }, [products]);

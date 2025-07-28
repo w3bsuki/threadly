@@ -1,8 +1,14 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { PusherClient } from './pusher-client';
+import {
+  createContext,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import type { RealTimeClient, RealTimeConfig } from '../types';
+import { PusherClient } from './pusher-client';
 
 interface RealTimeContextValue {
   client: RealTimeClient | null;
@@ -20,12 +26,16 @@ interface RealTimeProviderProps {
   userId?: string;
 }
 
-export function RealTimeProvider({ children, config, userId }: RealTimeProviderProps) {
+export function RealTimeProvider({
+  children,
+  config,
+  userId,
+}: RealTimeProviderProps) {
   const [client, setClient] = useState<RealTimeClient | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    if (!config.pusherKey || !config.pusherCluster) {
+    if (!(config.pusherKey && config.pusherCluster)) {
       return;
     }
 
@@ -45,11 +55,10 @@ export function RealTimeProvider({ children, config, userId }: RealTimeProviderP
 
   // Subscribe to user-specific channels when userId changes
   useEffect(() => {
-    if (!client || !userId) return;
+    if (!(client && userId)) return;
 
     const userChannel = `private-user-${userId}`;
-    const subscription = client.subscribe(userChannel, 'connected', () => {
-    });
+    const subscription = client.subscribe(userChannel, 'connected', () => {});
 
     return () => {
       subscription.unsubscribe();

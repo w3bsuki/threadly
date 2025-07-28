@@ -1,11 +1,8 @@
 'use client';
 
-import {
-  Button,
-  Input,
-} from '@repo/design-system/components';
+import { Button, Input } from '@repo/design-system/components';
 import { Send } from 'lucide-react';
-import { useState, useRef } from 'react';
+import { useRef, useState } from 'react';
 
 interface MessageInputEnhancedProps {
   onSend: (message: string) => void;
@@ -18,7 +15,7 @@ export function MessageInputEnhanced({
   onSend,
   onTyping,
   disabled = false,
-  placeholder = "Type a message..."
+  placeholder = 'Type a message...',
 }: MessageInputEnhancedProps) {
   const [message, setMessage] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -44,22 +41,22 @@ export function MessageInputEnhanced({
   };
 
   return (
-    <div className="border-t p-3 sm:p-4 safe-area-pb">
+    <div className="safe-area-pb border-t p-3 sm:p-4">
       <div className="flex items-center gap-2">
         <Input
-          ref={inputRef}
           className="flex-1"
+          disabled={disabled}
           onChange={handleChange}
           onKeyPress={handleKeyPress}
           placeholder={placeholder}
+          ref={inputRef}
           value={message}
-          disabled={disabled}
         />
         <Button
+          className="touch-target"
           disabled={!message.trim() || disabled}
           onClick={handleSend}
           size="icon"
-          className="touch-target"
         >
           <Send className="h-4 w-4" />
         </Button>

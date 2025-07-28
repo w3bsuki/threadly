@@ -1,14 +1,13 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
+import { log, logError } from '@repo/observability/server';
 import { getNotificationService } from '@repo/real-time/server';
-import { NextRequest, NextResponse } from 'next/server';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function PATCH(request: NextRequest) {
   try {
     const user = await currentUser();
-    
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

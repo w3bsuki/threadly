@@ -3,7 +3,7 @@
  */
 
 import { z } from 'zod';
-import { Price } from './common-types';
+import type { Price } from './common-types';
 
 // Bulk operation types enum
 export enum BulkOperationType {
@@ -66,17 +66,22 @@ export interface BulkOperationError {
 
 // Bulk operation request schema
 export const bulkOperationRequestSchema = z.object({
-  productIds: z.array(z.string()).min(1, 'At least one product ID is required').max(100, 'Maximum 100 products can be updated at once'),
+  productIds: z
+    .array(z.string())
+    .min(1, 'At least one product ID is required')
+    .max(100, 'Maximum 100 products can be updated at once'),
   operation: z.nativeEnum(BulkOperationType),
-  data: z.object({
-    price: z.number().positive().optional(),
-    status: z.string().optional(),
-    categoryId: z.string().optional(),
-    condition: z.string().optional(),
-    brand: z.string().optional(),
-    size: z.string().optional(),
-    color: z.string().optional(),
-  }).optional(),
+  data: z
+    .object({
+      price: z.number().positive().optional(),
+      status: z.string().optional(),
+      categoryId: z.string().optional(),
+      condition: z.string().optional(),
+      brand: z.string().optional(),
+      size: z.string().optional(),
+      color: z.string().optional(),
+    })
+    .optional(),
 });
 
 export type BulkOperationRequest = z.infer<typeof bulkOperationRequestSchema>;

@@ -1,10 +1,16 @@
 'use client';
 
-import { memo, useState } from 'react';
-import { Card, CardContent, CardHeader } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
-import { Avatar, AvatarFallback, AvatarImage } from '@repo/design-system/components';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+} from '@repo/design-system/components';
 import Image from 'next/image';
+import { memo, useState } from 'react';
 
 interface NewConversationCardProps {
   targetUser: {
@@ -24,105 +30,116 @@ interface NewConversationCardProps {
   onCancel: () => void;
 }
 
-export const NewConversationCard = memo(({ 
-  targetUser, 
-  targetProduct, 
-  onCreateConversation, 
-  isCreating,
-  onCancel 
-}: NewConversationCardProps) => {
-  const [message, setMessage] = useState('');
+export const NewConversationCard = memo(
+  ({
+    targetUser,
+    targetProduct,
+    onCreateConversation,
+    isCreating,
+    onCancel,
+  }: NewConversationCardProps) => {
+    const [message, setMessage] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (message.trim()) {
-      await onCreateConversation(message);
-      setMessage('');
-    }
-  };
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (message.trim()) {
+        await onCreateConversation(message);
+        setMessage('');
+      }
+    };
 
-  return (
-    <Card className="h-full flex flex-col">
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={targetUser.imageUrl || undefined} />
-              <AvatarFallback>
-                {targetUser.firstName?.[0]}
-                {targetUser.lastName?.[0]}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <h3 className="font-semibold">
-                {targetUser.firstName} {targetUser.lastName}
-              </h3>
-              <p className="text-sm text-muted-foreground">Start a new conversation</p>
-            </div>
-          </div>
-          <Button variant="ghost" size="sm" onClick={onCancel}>
-            Cancel
-          </Button>
-        </div>
-      </CardHeader>
-
-      <CardContent className="flex-1 flex flex-col">
-        <div className="mb-4 p-3 bg-muted rounded-[var(--radius-lg)]">
-          <div className="flex gap-3">
-            {targetProduct.images[0] && (
-              <div className="relative w-16 h-16 rounded-[var(--radius-md)] overflow-hidden">
-                <Image
-                  src={targetProduct.images[0].imageUrl}
-                  alt={targetProduct.title}
-                  fill
-                  className="object-cover"
-                />
+    return (
+      <Card className="flex h-full flex-col">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Avatar className="h-10 w-10">
+                <AvatarImage src={targetUser.imageUrl || undefined} />
+                <AvatarFallback>
+                  {targetUser.firstName?.[0]}
+                  {targetUser.lastName?.[0]}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <h3 className="font-semibold">
+                  {targetUser.firstName} {targetUser.lastName}
+                </h3>
+                <p className="text-muted-foreground text-sm">
+                  Start a new conversation
+                </p>
               </div>
-            )}
-            <div className="flex-1">
-              <h4 className="font-medium line-clamp-1">{targetProduct.title}</h4>
-              <p className="text-lg font-bold">${targetProduct.price.toFixed(2)}</p>
             </div>
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
-          <div className="flex-1 mb-4">
-            <label htmlFor="message" className="block text-sm font-medium mb-2">
-              Your message
-            </label>
-            <textarea
-              id="message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Hi! I'm interested in your item..."
-              className="w-full h-32 p-3 border rounded-[var(--radius-md)] resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={isCreating}
-              required
-            />
-          </div>
-          
-          <div className="flex gap-2">
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={onCancel}
-              disabled={isCreating}
-            >
+            <Button onClick={onCancel} size="sm" variant="ghost">
               Cancel
             </Button>
-            <Button 
-              type="submit" 
-              disabled={isCreating || !message.trim()}
-              className="flex-1"
-            >
-              {isCreating ? 'Starting conversation...' : 'Send Message'}
-            </Button>
           </div>
-        </form>
-      </CardContent>
-    </Card>
-  );
-});
+        </CardHeader>
+
+        <CardContent className="flex flex-1 flex-col">
+          <div className="mb-4 rounded-[var(--radius-lg)] bg-muted p-3">
+            <div className="flex gap-3">
+              {targetProduct.images[0] && (
+                <div className="relative h-16 w-16 overflow-hidden rounded-[var(--radius-md)]">
+                  <Image
+                    alt={targetProduct.title}
+                    className="object-cover"
+                    fill
+                    src={targetProduct.images[0].imageUrl}
+                  />
+                </div>
+              )}
+              <div className="flex-1">
+                <h4 className="line-clamp-1 font-medium">
+                  {targetProduct.title}
+                </h4>
+                <p className="font-bold text-lg">
+                  ${targetProduct.price.toFixed(2)}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <form className="flex flex-1 flex-col" onSubmit={handleSubmit}>
+            <div className="mb-4 flex-1">
+              <label
+                className="mb-2 block font-medium text-sm"
+                htmlFor="message"
+              >
+                Your message
+              </label>
+              <textarea
+                className="h-32 w-full resize-none rounded-[var(--radius-md)] border p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={isCreating}
+                id="message"
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Hi! I'm interested in your item..."
+                required
+                value={message}
+              />
+            </div>
+
+            <div className="flex gap-2">
+              <Button
+                disabled={isCreating}
+                onClick={onCancel}
+                type="button"
+                variant="outline"
+              >
+                Cancel
+              </Button>
+              <Button
+                className="flex-1"
+                disabled={isCreating || !message.trim()}
+                type="submit"
+              >
+                {isCreating ? 'Starting conversation...' : 'Send Message'}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    );
+  }
+);
 
 NewConversationCard.displayName = 'NewConversationCard';

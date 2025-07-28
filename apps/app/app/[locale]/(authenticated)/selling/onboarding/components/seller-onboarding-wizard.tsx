@@ -1,14 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { StepIndicator } from '../../../onboarding/components/step-indicator';
-import { SellerProfileForm } from './seller-profile-form';
-import { PaymentInfoForm } from './payment-info-form';
-import { ShippingSettingsForm } from './shipping-settings-form';
-import { OnboardingComplete } from './onboarding-complete';
-import { Loader2 } from 'lucide-react';
 import { toast } from '@repo/design-system/components';
+import { Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { StepIndicator } from '../../../onboarding/components/step-indicator';
+import { OnboardingComplete } from './onboarding-complete';
+import { PaymentInfoForm } from './payment-info-form';
+import { SellerProfileForm } from './seller-profile-form';
+import { ShippingSettingsForm } from './shipping-settings-form';
 
 interface SellerOnboardingWizardProps {
   userId: string;
@@ -16,23 +16,27 @@ interface SellerOnboardingWizardProps {
   locale: string;
 }
 
-export function SellerOnboardingWizard({ userId, returnTo, locale }: SellerOnboardingWizardProps) {
+export function SellerOnboardingWizard({
+  userId,
+  returnTo,
+  locale,
+}: SellerOnboardingWizardProps) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     // Profile
     displayName: '',
     bio: '',
     profilePhoto: '',
-    
+
     // Payment
     bankAccountNumber: '',
     bankRoutingNumber: '',
     accountHolderName: '',
     payoutMethod: 'bank_transfer',
-    
+
     // Shipping
     shippingFrom: '',
     processingTime: '3',
@@ -69,14 +73,14 @@ export function SellerOnboardingWizard({ userId, returnTo, locale }: SellerOnboa
       });
 
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.error || 'Failed to save seller profile');
       }
 
       // Show completion
       toast.success('Seller profile created successfully!');
-      
+
       // If returnTo is provided, redirect there
       if (returnTo) {
         window.location.href = returnTo;
@@ -95,9 +99,9 @@ export function SellerOnboardingWizard({ userId, returnTo, locale }: SellerOnboa
   }
 
   return (
-    <div className="container max-w-3xl mx-auto py-8 px-4">
+    <div className="container mx-auto max-w-3xl px-4 py-8">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold mb-2">Seller Setup</h1>
+        <h1 className="mb-2 font-bold text-3xl">Seller Setup</h1>
         <p className="text-muted-foreground">
           Complete your seller profile to start listing items
         </p>
@@ -113,12 +117,12 @@ export function SellerOnboardingWizard({ userId, returnTo, locale }: SellerOnboa
               bio: formData.bio,
               profilePhoto: formData.profilePhoto,
             }}
-            onUpdate={updateFormData}
-            onNext={handleNext}
             onBack={() => router.push('/onboarding')}
+            onNext={handleNext}
+            onUpdate={updateFormData}
           />
         )}
-        
+
         {currentStep === 2 && (
           <PaymentInfoForm
             data={{
@@ -127,12 +131,12 @@ export function SellerOnboardingWizard({ userId, returnTo, locale }: SellerOnboa
               accountHolderName: formData.accountHolderName,
               payoutMethod: formData.payoutMethod,
             }}
-            onUpdate={updateFormData}
-            onNext={handleNext}
             onBack={handleBack}
+            onNext={handleNext}
+            onUpdate={updateFormData}
           />
         )}
-        
+
         {currentStep === 3 && (
           <ShippingSettingsForm
             data={{
@@ -141,21 +145,23 @@ export function SellerOnboardingWizard({ userId, returnTo, locale }: SellerOnboa
               defaultShippingCost: formData.defaultShippingCost,
               shippingNotes: formData.shippingNotes,
             }}
+            onBack={handleBack}
+            onNext={handleComplete}
             onUpdate={(data) => {
               updateFormData(data);
               handleComplete();
             }}
-            onNext={handleComplete}
-            onBack={handleBack}
           />
         )}
       </div>
 
       {isSubmitting && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="h-8 w-8 animate-spin" />
-            <p className="text-sm text-muted-foreground">Creating your seller profile...</p>
+            <p className="text-muted-foreground text-sm">
+              Creating your seller profile...
+            </p>
           </div>
         </div>
       )}

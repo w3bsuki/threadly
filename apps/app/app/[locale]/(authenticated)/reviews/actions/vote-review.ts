@@ -2,9 +2,9 @@
 
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
+import { logError } from '@repo/observability/server';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { logError } from '@repo/observability/server';
 
 const voteReviewSchema = z.object({
   reviewId: z.string().min(1, 'Review ID is required'),
@@ -21,7 +21,7 @@ export async function voteReview(input: z.infer<typeof voteReviewSchema>) {
 
     // Get database user
     const dbUser = await database.user.findUnique({
-      where: { clerkId: user.id }
+      where: { clerkId: user.id },
     });
 
     if (!dbUser) {
@@ -64,10 +64,9 @@ export async function voteReview(input: z.infer<typeof voteReviewSchema>) {
       success: false,
       error: 'Review voting not implemented',
     };
-
   } catch (error) {
     logError('Failed to vote on review:', error);
-    
+
     if (error instanceof z.ZodError) {
       return {
         success: false,
@@ -78,7 +77,8 @@ export async function voteReview(input: z.infer<typeof voteReviewSchema>) {
 
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to vote on review',
+      error:
+        error instanceof Error ? error.message : 'Failed to vote on review',
     };
   }
 }

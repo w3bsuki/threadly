@@ -6,7 +6,6 @@ import { useEffect, useRef, useState } from 'react';
 import { CATEGORIES } from './navigation/categories';
 import { useI18n } from './providers/i18n-provider';
 
-
 interface ExpandableCategoryButtonProps {
   categoryName: string;
   isActive: boolean;

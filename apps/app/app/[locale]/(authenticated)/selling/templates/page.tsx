@@ -1,18 +1,18 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { redirect } from 'next/navigation';
-import type { Metadata } from 'next';
 import { getDictionary } from '@repo/internationalization';
+import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 import { TemplateManager } from './components/template-manager';
 
-export async function generateMetadata({ 
-  params 
-}: { 
-  params: Promise<{ locale: string }> 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
   const dictionary = await getDictionary(locale);
-  
+
   return {
     title: 'Product Templates',
     description: 'Manage your product listing templates',
@@ -24,16 +24,16 @@ async function getTemplatesData(userId: string) {
     // TODO: Add ProductTemplate model to database schema
     Promise.resolve([]),
     database.category.findMany({
-      orderBy: { name: 'asc' }
-    })
+      orderBy: { name: 'asc' },
+    }),
   ]);
 
   return { templates, categories };
 }
 
-const TemplatesPage = async ({ 
-  params 
-}: { 
+const TemplatesPage = async ({
+  params,
+}: {
   params: Promise<{ locale: string }>;
 }) => {
   const { locale } = await params;
@@ -46,7 +46,7 @@ const TemplatesPage = async ({
 
   const dbUser = await database.user.findUnique({
     where: { clerkId: user.id },
-    select: { id: true }
+    select: { id: true },
   });
 
   if (!dbUser) {
@@ -59,18 +59,20 @@ const TemplatesPage = async ({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Product Templates</h1>
+          <h1 className="font-bold text-3xl tracking-tight">
+            Product Templates
+          </h1>
           <p className="text-muted-foreground">
             Create reusable templates to speed up your listing process
           </p>
         </div>
       </div>
 
-      <TemplateManager 
-        initialTemplates={templates}
+      <TemplateManager
         categories={categories}
-        locale={locale}
         dictionary={dictionary}
+        initialTemplates={templates}
+        locale={locale}
       />
     </div>
   );

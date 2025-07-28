@@ -1,7 +1,7 @@
 import { clerkMiddleware, createRouteMatcher } from '@repo/auth/server';
 import { internationalizationMiddleware } from '@repo/internationalization/middleware';
-import { NextResponse, type NextRequest } from 'next/server';
 import { createRateLimiter, slidingWindow } from '@repo/rate-limit';
+import { type NextRequest, NextResponse } from 'next/server';
 
 const isPublicRoute = createRouteMatcher([
   '/:locale/sign-in(.*)',
@@ -23,51 +23,54 @@ const securityHeaders = {
 
 const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
   const pathname = request.nextUrl.pathname;
-  
+
   // Early return for static assets and API routes - performance optimization
   if (
-    pathname.startsWith('/api/') || 
-    pathname.startsWith('/_next/') || 
+    pathname.startsWith('/api/') ||
+    pathname.startsWith('/_next/') ||
     pathname.startsWith('/ingest') ||
     pathname.includes('.') // Any file with extension
   ) {
     const response = NextResponse.next();
-    
+
     // Add security headers to API routes
     if (pathname.startsWith('/api/')) {
       Object.entries(securityHeaders).forEach(([key, value]) => {
         response.headers.set(key, value);
       });
     }
-    
+
     return response;
   }
-  
+
   // Apply rate limiting for all pages
   const rateLimiter = createRateLimiter({
     limiter: slidingWindow(100, '1 m'),
     prefix: 'page-requests',
   });
-  
-  const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'anonymous';
+
+  const ip =
+    request.headers.get('x-forwarded-for') ||
+    request.headers.get('x-real-ip') ||
+    'anonymous';
   const rateLimitResult = await rateLimiter.limit(ip);
-  
+
   if (!rateLimitResult.success) {
     const response = new NextResponse('Rate limit exceeded', { status: 429 });
-    
+
     // Add security headers to rate limit response
     Object.entries(securityHeaders).forEach(([key, value]) => {
       response.headers.set(key, value);
     });
-    
+
     return response;
   }
-  
+
   // Add performance headers
   const headers = new Headers(request.headers);
   headers.set('X-DNS-Prefetch-Control', 'on');
   headers.set('Connection', 'keep-alive');
-  
+
   // Handle internationalization for non-API routes
   const i18nResponse = internationalizationMiddleware(request);
   if (i18nResponse) {
@@ -75,17 +78,19 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
     Object.entries(securityHeaders).forEach(([key, value]) => {
       i18nResponse.headers.set(key, value);
     });
-    
+
     return i18nResponse;
   }
 
-  
   // Handle returnTo parameter for cross-app redirects after authentication
   const returnTo = request.nextUrl.searchParams.get('returnTo');
   const { userId } = await auth();
-  
+
   // Check if we're on a sign-in or sign-up page and user is already authenticated
-  if (userId && (pathname.includes('/sign-in') || pathname.includes('/sign-up'))) {
+  if (
+    userId &&
+    (pathname.includes('/sign-in') || pathname.includes('/sign-up'))
+  ) {
     // If there's a returnTo parameter, redirect there immediately
     if (returnTo) {
       try {
@@ -95,9 +100,9 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
           process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3001',
           process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
           'http://localhost:3001',
-          'http://localhost:3000'
+          'http://localhost:3000',
         ].filter(Boolean);
-        
+
         if (allowedOrigins.includes(returnUrl.origin)) {
           // Use a client-side redirect to ensure cookies are set properly
           const html = `
@@ -110,12 +115,12 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
             </html>
           `;
           const htmlHeaders = { 'Content-Type': 'text/html' };
-          
+
           // Add security headers
           Object.entries(securityHeaders).forEach(([key, value]) => {
             htmlHeaders[key] = value;
           });
-          
+
           return new NextResponse(html, {
             status: 200,
             headers: htmlHeaders,
@@ -128,16 +133,18 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
     // Otherwise redirect to dashboard
     const localeMatch = pathname.match(/^\/([a-z]{2})\//);
     const locale = localeMatch ? localeMatch[1] : 'en';
-    const dashboardRedirect = NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url));
-    
+    const dashboardRedirect = NextResponse.redirect(
+      new URL(`/${locale}/dashboard`, request.url)
+    );
+
     // Add security headers to redirect response
     Object.entries(securityHeaders).forEach(([key, value]) => {
       dashboardRedirect.headers.set(key, value);
     });
-    
+
     return dashboardRedirect;
   }
-  
+
   // Redirect authenticated route to dashboard
   const urlPath = request.nextUrl.pathname;
   const localeMatch = urlPath.match(/^\/([a-z]{2})$/);
@@ -155,79 +162,85 @@ const middleware = clerkMiddleware(async (auth, request: NextRequest) => {
             process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3001',
             process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
             'http://localhost:3001',
-            'http://localhost:3000'
+            'http://localhost:3000',
           ].filter(Boolean);
-          
+
           if (allowedOrigins.includes(returnUrl.origin)) {
             const redirectResponse = NextResponse.redirect(returnUrl);
-            
+
             // Add security headers to redirect response
             Object.entries(securityHeaders).forEach(([key, value]) => {
               redirectResponse.headers.set(key, value);
             });
-            
+
             return redirectResponse;
           }
         } catch (e) {
           // Invalid URL, fall through to default redirect
         }
       }
-      const dashboardRedirect = NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url));
-    
-    // Add security headers to redirect response
-    Object.entries(securityHeaders).forEach(([key, value]) => {
-      dashboardRedirect.headers.set(key, value);
-    });
-    
-    return dashboardRedirect;
-    } else {
-      // Preserve returnTo when redirecting to sign-in
-      const signInUrl = new URL(`/${locale}/sign-in`, request.url);
-      if (returnTo) {
-        signInUrl.searchParams.set('returnTo', returnTo);
-      }
-      const signInRedirect = NextResponse.redirect(signInUrl);
-      
+      const dashboardRedirect = NextResponse.redirect(
+        new URL(`/${locale}/dashboard`, request.url)
+      );
+
       // Add security headers to redirect response
       Object.entries(securityHeaders).forEach(([key, value]) => {
-        signInRedirect.headers.set(key, value);
+        dashboardRedirect.headers.set(key, value);
       });
-      
-      return signInRedirect;
+
+      return dashboardRedirect;
     }
+    // Preserve returnTo when redirecting to sign-in
+    const signInUrl = new URL(`/${locale}/sign-in`, request.url);
+    if (returnTo) {
+      signInUrl.searchParams.set('returnTo', returnTo);
+    }
+    const signInRedirect = NextResponse.redirect(signInUrl);
+
+    // Add security headers to redirect response
+    Object.entries(securityHeaders).forEach(([key, value]) => {
+      signInRedirect.headers.set(key, value);
+    });
+
+    return signInRedirect;
   }
-  
+
   // Protect authenticated routes
   if (!isPublicRoute(request)) {
     const { userId } = await auth();
     if (!userId) {
-      const signInRedirect = NextResponse.redirect(new URL('/sign-in', request.url));
-      
+      const signInRedirect = NextResponse.redirect(
+        new URL('/sign-in', request.url)
+      );
+
       // Add security headers to redirect response
       Object.entries(securityHeaders).forEach(([key, value]) => {
         signInRedirect.headers.set(key, value);
       });
-      
+
       return signInRedirect;
     }
   }
-  
+
   const response = NextResponse.next({
     request: {
       headers,
     },
   });
-  
+
   // Add security headers to all responses
   Object.entries(securityHeaders).forEach(([key, value]) => {
     response.headers.set(key, value);
   });
-  
+
   // Add cache headers for static assets
   if (pathname.match(/\.(js|css|woff|woff2|ttf|otf)$/)) {
-    response.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+    response.headers.set(
+      'Cache-Control',
+      'public, max-age=31536000, immutable'
+    );
   }
-  
+
   return response;
 });
 

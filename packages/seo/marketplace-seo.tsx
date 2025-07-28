@@ -1,6 +1,12 @@
 import type { Metadata } from 'next';
+import type {
+  FAQPage,
+  ItemList,
+  Product,
+  WebPage,
+  WithContext,
+} from 'schema-dts';
 import { createMetadata } from './metadata';
-import type { WithContext, Product, ItemList, FAQPage, WebPage } from 'schema-dts';
 
 // Enhanced product page metadata
 export function createProductMetadata({
@@ -24,9 +30,10 @@ export function createProductMetadata({
   };
   images: Array<{ imageUrl: string }>;
 }): Metadata {
-  const sellerName = `${seller.firstName || ''} ${seller.lastName || ''}`.trim() || 'Seller';
+  const sellerName =
+    `${seller.firstName || ''} ${seller.lastName || ''}`.trim() || 'Seller';
   const priceFormatted = (product.price / 100).toFixed(2);
-  
+
   const title = `${product.title} - ${product.brand ? `${product.brand} ` : ''}$${priceFormatted}`;
   const description = `${product.condition} ${product.brand ? `${product.brand} ` : ''}${product.title}${product.size ? ` in size ${product.size}` : ''} for $${priceFormatted}. Sold by ${sellerName} on Threadly marketplace.`;
 
@@ -38,7 +45,7 @@ export function createProductMetadata({
       type: 'website',
       title,
       description,
-      images: images.slice(0, 4).map(img => ({
+      images: images.slice(0, 4).map((img) => ({
         url: img.imageUrl,
         width: 800,
         height: 800,
@@ -74,10 +81,15 @@ export function createCategoryMetadata({
     slug: string;
   };
   productCount: number;
-  featuredProducts?: Array<{ title: string; price: number; images: Array<{ imageUrl: string }> }>;
+  featuredProducts?: Array<{
+    title: string;
+    price: number;
+    images: Array<{ imageUrl: string }>;
+  }>;
 }): Metadata {
   const title = `${category.name} - Pre-loved Fashion on Threadly`;
-  const description = category.description || 
+  const description =
+    category.description ||
     `Shop ${productCount.toLocaleString()} pre-loved ${category.name.toLowerCase()} items on Threadly. Discover unique pieces from trusted sellers with fast shipping and secure payments.`;
 
   return createMetadata({
@@ -112,10 +124,10 @@ export function createSearchMetadata({
     priceMax?: number;
   };
 }): Metadata {
-  const title = query 
+  const title = query
     ? `"${query}" - ${resultCount.toLocaleString()} results on Threadly`
     : `Shop Pre-loved Fashion - ${resultCount.toLocaleString()} items on Threadly`;
-    
+
   const description = query
     ? `Found ${resultCount.toLocaleString()} pre-loved fashion items matching "${query}" on Threadly marketplace. Discover unique pieces from trusted sellers.`
     : `Browse ${resultCount.toLocaleString()} pre-loved fashion items on Threadly. Find unique pieces from brands you love with fast shipping and secure payments.`;
@@ -150,9 +162,10 @@ export function createSellerMetadata({
     followerCount: number;
   };
 }): Metadata {
-  const sellerName = `${seller.firstName || ''} ${seller.lastName || ''}`.trim() || 'Seller';
+  const sellerName =
+    `${seller.firstName || ''} ${seller.lastName || ''}`.trim() || 'Seller';
   const joinDate = seller.createdAt.getFullYear();
-  
+
   const title = `${sellerName} - Trusted Seller on Threadly`;
   const description = `Shop from ${sellerName}, a trusted seller on Threadly since ${joinDate}. ${stats.productCount} items listed with ${seller.averageRating ? `${seller.averageRating.toFixed(1)}/5 stars` : 'great reviews'} from ${stats.reviewCount} customers.`;
 
@@ -174,13 +187,15 @@ export function createSellerMetadata({
 }
 
 // Product listing structured data
-export function generateProductListingStructuredData(products: Array<{
-  id: string;
-  title: string;
-  price: number;
-  images: Array<{ imageUrl: string }>;
-  brand?: string;
-}>): WithContext<ItemList> {
+export function generateProductListingStructuredData(
+  products: Array<{
+    id: string;
+    title: string;
+    price: number;
+    images: Array<{ imageUrl: string }>;
+    brand?: string;
+  }>
+): WithContext<ItemList> {
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -190,10 +205,12 @@ export function generateProductListingStructuredData(products: Array<{
       position: index + 1,
       name: product.title,
       image: product.images[0]?.imageUrl,
-      brand: product.brand ? {
-        '@type': 'Brand',
-        name: product.brand,
-      } : undefined,
+      brand: product.brand
+        ? {
+            '@type': 'Brand',
+            name: product.brand,
+          }
+        : undefined,
       offers: {
         '@type': 'Offer',
         price: (product.price / 100).toFixed(2),
@@ -260,7 +277,8 @@ export function generateHomepageStructuredData(): WithContext<WebPage> {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
     name: 'Threadly - Premium C2C Fashion Marketplace',
-    description: 'Buy and sell pre-loved fashion from brands you love. Discover unique pieces with fast shipping, secure payments, and buyer protection.',
+    description:
+      'Buy and sell pre-loved fashion from brands you love. Discover unique pieces with fast shipping, secure payments, and buyer protection.',
     url: 'https://threadly.com',
     isPartOf: {
       '@type': 'WebSite',
@@ -284,8 +302,8 @@ export function generateHomepageStructuredData(): WithContext<WebPage> {
 export function StructuredDataScript({ data }: { data: WithContext<any> }) {
   return (
     <script
-      type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      type="application/ld+json"
     />
   );
 }

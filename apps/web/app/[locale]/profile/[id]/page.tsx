@@ -89,8 +89,8 @@ export default async function UserProfilePage({ params }: Props) {
                   <AvatarImage
                     alt={fullName}
                     className="h-16 w-16"
-                    src={user.imageUrl}
                     size={64}
+                    src={user.imageUrl}
                   />
                 ) : (
                   <span className="font-semibold text-gray-600 text-xl">

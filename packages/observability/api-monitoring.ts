@@ -2,8 +2,8 @@
  * API monitoring middleware and utilities for Threadly marketplace
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import * as Sentry from '@sentry/nextjs';
+import { type NextRequest, NextResponse } from 'next/server';
 import { log } from './log';
 import { trackApiPerformance } from './marketplace-context';
 
@@ -37,7 +37,7 @@ export function withAPIMonitoring<T extends any[]>(
     const method = request.method;
 
     // Skip monitoring for excluded paths
-    if (finalConfig.excludePaths.some(path => endpoint.startsWith(path))) {
+    if (finalConfig.excludePaths.some((path) => endpoint.startsWith(path))) {
       return handler(...args);
     }
 
@@ -53,7 +53,7 @@ export function withAPIMonitoring<T extends any[]>(
         scope.setTag('api.endpoint', endpoint);
         scope.setTag('api.method', method);
         scope.setTag('api.app', 'marketplace');
-        
+
         // Extract user ID from auth if available
         const authHeader = request.headers.get('authorization');
         if (authHeader) {
@@ -62,7 +62,7 @@ export function withAPIMonitoring<T extends any[]>(
 
         // Track the actual API call
         const result = await handler(...args);
-        
+
         // Extract additional context from response headers
         hasDatabase = result.headers.get('x-database-used') === 'true';
         hasStripe = result.headers.get('x-stripe-used') === 'true';
@@ -73,27 +73,26 @@ export function withAPIMonitoring<T extends any[]>(
 
         return result;
       });
-
     } catch (err) {
       error = err instanceof Error ? err : new Error(String(err));
-      
+
       if (finalConfig.enableErrorTracking) {
         Sentry.withScope((scope) => {
           scope.setTag('api.endpoint', endpoint);
           scope.setTag('api.method', method);
           scope.setTag('api.error', 'true');
           scope.setLevel('error');
-          
+
           Sentry.captureException(error);
         });
       }
 
       // Create error response
       response = NextResponse.json(
-        { 
+        {
           error: 'Internal server error',
           timestamp: new Date().toISOString(),
-          path: endpoint 
+          path: endpoint,
         },
         { status: 500 }
       );
@@ -118,7 +117,7 @@ export function withAPIMonitoring<T extends any[]>(
     // Log the operation
     const logLevel = error ? 'error' : statusCode >= 400 ? 'warn' : 'info';
     const logMessage = `${method} ${endpoint} - ${statusCode} - ${duration}ms`;
-    
+
     log[logLevel](logMessage, {
       endpoint,
       method,
@@ -135,7 +134,8 @@ export function withAPIMonitoring<T extends any[]>(
     response.headers.set('x-response-time', duration.toString());
     if (hasDatabase) response.headers.set('x-database-used', 'true');
     if (hasStripe) response.headers.set('x-stripe-used', 'true');
-    if (cacheHit !== undefined) response.headers.set('x-cache-status', cacheHit ? 'hit' : 'miss');
+    if (cacheHit !== undefined)
+      response.headers.set('x-cache-status', cacheHit ? 'hit' : 'miss');
 
     return response;
   };
@@ -151,17 +151,17 @@ export function trackDatabaseOperation<T>(
 ): Promise<T> {
   return Sentry.withScope(async (scope) => {
     const startTime = Date.now();
-    
+
     scope.setTag('db.operation', operation);
     scope.setTag('db.table', table);
-    
+
     try {
       const result = await fn();
       const duration = Date.now() - startTime;
-      
+
       scope.setTag('db.success', 'true');
       scope.setTag('db.duration', duration.toString());
-      
+
       if (duration > 500) {
         scope.setTag('db.slow', 'true');
       }
@@ -176,18 +176,18 @@ export function trackDatabaseOperation<T>(
       return result;
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       scope.setTag('db.success', 'false');
       scope.setTag('db.duration', duration.toString());
       scope.setLevel('error');
-      
+
       log.error(`Database operation failed: ${operation} on ${table}`, {
         operation,
         table,
         duration,
         error: error instanceof Error ? error.message : String(error),
       });
-      
+
       Sentry.captureException(error);
       throw error;
     }
@@ -203,14 +203,14 @@ export function trackStripeOperation<T>(
 ): Promise<T> {
   return Sentry.withScope(async (scope) => {
     const startTime = Date.now();
-    
+
     scope.setTag('stripe.operation', operation);
     scope.setTag('external.service', 'stripe');
-    
+
     try {
       const result = await fn();
       const duration = Date.now() - startTime;
-      
+
       scope.setTag('stripe.success', 'true');
       scope.setTag('stripe.duration', duration.toString());
 
@@ -223,17 +223,17 @@ export function trackStripeOperation<T>(
       return result;
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       scope.setTag('stripe.success', 'false');
       scope.setTag('stripe.duration', duration.toString());
       scope.setLevel('error');
-      
+
       log.error(`Stripe operation failed: ${operation}`, {
         operation,
         duration,
         error: error instanceof Error ? error.message : String(error),
       });
-      
+
       Sentry.captureException(error);
       throw error;
     }
@@ -250,14 +250,14 @@ export function trackCacheOperation<T>(
 ): Promise<T> {
   return Sentry.withScope(async (scope) => {
     const startTime = Date.now();
-    
+
     scope.setTag('cache.operation', operation);
     scope.setTag('cache.key', key);
-    
+
     try {
       const result = await fn();
       const duration = Date.now() - startTime;
-      
+
       scope.setTag('cache.success', 'true');
       scope.setTag('cache.duration', duration.toString());
 
@@ -271,17 +271,17 @@ export function trackCacheOperation<T>(
       return result;
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       scope.setTag('cache.success', 'false');
       scope.setTag('cache.duration', duration.toString());
-      
+
       log.error(`Cache operation failed: ${operation}`, {
         operation,
         key,
         duration,
         error: error instanceof Error ? error.message : String(error),
       });
-      
+
       Sentry.captureException(error);
       throw error;
     }
@@ -299,19 +299,19 @@ export function trackUploadOperation<T>(
 ): Promise<T> {
   return Sentry.withScope(async (scope) => {
     const startTime = Date.now();
-    
+
     scope.setTag('upload.file_name', fileName);
     scope.setTag('upload.file_size', fileSize.toString());
     scope.setTag('upload.file_type', fileType);
-    
+
     try {
       const result = await fn();
       const duration = Date.now() - startTime;
-      
+
       scope.setTag('upload.success', 'true');
       scope.setTag('upload.duration', duration.toString());
 
-      log.info(`Upload operation completed`, {
+      log.info('Upload operation completed', {
         fileName,
         fileSize,
         fileType,
@@ -322,19 +322,19 @@ export function trackUploadOperation<T>(
       return result;
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       scope.setTag('upload.success', 'false');
       scope.setTag('upload.duration', duration.toString());
       scope.setLevel('error');
-      
-      log.error(`Upload operation failed`, {
+
+      log.error('Upload operation failed', {
         fileName,
         fileSize,
         fileType,
         duration,
         error: error instanceof Error ? error.message : String(error),
       });
-      
+
       Sentry.captureException(error);
       throw error;
     }
@@ -351,20 +351,24 @@ export function trackBusinessOperation<T>(
 ): Promise<T> {
   return Sentry.withScope(async (scope) => {
     const startTime = Date.now();
-    
+
     scope.setTag('business.operation', operation);
-    
+
     // Add context as tags (limited to simple values)
     Object.entries(context).forEach(([key, value]) => {
-      if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+      if (
+        typeof value === 'string' ||
+        typeof value === 'number' ||
+        typeof value === 'boolean'
+      ) {
         scope.setTag(`business.${key}`, String(value));
       }
     });
-    
+
     try {
       const result = await fn();
       const duration = Date.now() - startTime;
-      
+
       scope.setTag('business.success', 'true');
       scope.setTag('business.duration', duration.toString());
 
@@ -378,18 +382,18 @@ export function trackBusinessOperation<T>(
       return result;
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       scope.setTag('business.success', 'false');
       scope.setTag('business.duration', duration.toString());
       scope.setLevel('error');
-      
+
       log.error(`Business operation failed: ${operation}`, {
         operation,
         duration,
         context,
         error: error instanceof Error ? error.message : String(error),
       });
-      
+
       Sentry.captureException(error);
       throw error;
     }

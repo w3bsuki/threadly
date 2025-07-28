@@ -33,7 +33,7 @@ export interface Order {
   sellerId: string;
   total: number;
   items: Array<{
-    product: { 
+    product: {
       title: string;
       price: number;
       images: Array<{ url: string }>;
@@ -66,7 +66,7 @@ export interface WeeklyReportData {
   totalRevenue: number;
   totalViews: number;
   totalMessages: number;
-  topProducts: Array<{ 
+  topProducts: Array<{
     title: string;
     views: number;
     sales: number;

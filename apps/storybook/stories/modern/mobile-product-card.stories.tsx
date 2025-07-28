@@ -1,6 +1,10 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { MobileProductCard, MobileProductCardSkeleton, MobileProductGrid } from '@repo/design-system/components'
-import * as React from 'react'
+import {
+  MobileProductCard,
+  MobileProductCardSkeleton,
+  MobileProductGrid,
+} from '@repo/design-system/components';
+import type { Meta, StoryObj } from '@storybook/react';
+import * as React from 'react';
 
 const meta = {
   title: 'Commerce/MobileProductCard',
@@ -12,7 +16,8 @@ const meta = {
     },
     docs: {
       description: {
-        component: 'Mobile-optimized product card with swipe gestures, quick actions, and 36px touch targets.',
+        component:
+          'Mobile-optimized product card with swipe gestures, quick actions, and 36px touch targets.',
       },
     },
   },
@@ -34,10 +39,10 @@ const meta = {
       control: 'object',
     },
   },
-} satisfies Meta<typeof MobileProductCard>
+} satisfies Meta<typeof MobileProductCard>;
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof meta>;
 
 // Base story
 export const Default: Story = {
@@ -45,10 +50,11 @@ export const Default: Story = {
     id: '1',
     title: 'Premium Cotton T-Shirt',
     price: 29.99,
-    imageUrl: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop',
+    imageUrl:
+      'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop',
     inStock: true,
   },
-}
+};
 
 // With discount
 export const WithDiscount: Story = {
@@ -56,7 +62,7 @@ export const WithDiscount: Story = {
     ...Default.args,
     originalPrice: 49.99,
   },
-}
+};
 
 // With sizes
 export const WithSizes: Story = {
@@ -64,7 +70,7 @@ export const WithSizes: Story = {
     ...Default.args,
     sizes: ['XS', 'S', 'M', 'L', 'XL'],
   },
-}
+};
 
 // With saved size (shows quick buy)
 export const WithQuickBuy: Story = {
@@ -73,7 +79,7 @@ export const WithQuickBuy: Story = {
     sizes: ['XS', 'S', 'M', 'L', 'XL'],
     savedSize: 'M',
   },
-}
+};
 
 // Wishlisted state
 export const Wishlisted: Story = {
@@ -81,7 +87,7 @@ export const Wishlisted: Story = {
     ...Default.args,
     isWishlisted: true,
   },
-}
+};
 
 // Out of stock
 export const OutOfStock: Story = {
@@ -89,20 +95,21 @@ export const OutOfStock: Story = {
     ...Default.args,
     inStock: false,
   },
-}
+};
 
 // Long product name
 export const LongProductName: Story = {
   args: {
     ...Default.args,
-    title: 'Premium Organic Cotton T-Shirt with Sustainable Materials and Eco-Friendly Production Process',
+    title:
+      'Premium Organic Cotton T-Shirt with Sustainable Materials and Eco-Friendly Production Process',
   },
-}
+};
 
 // Loading skeleton
 export const Loading: Story = {
   render: () => <MobileProductCardSkeleton />,
-}
+};
 
 // Grid layout
 export const GridLayout: Story = {
@@ -113,7 +120,8 @@ export const GridLayout: Story = {
         title: 'Cotton T-Shirt',
         price: 29.99,
         originalPrice: 49.99,
-        imageUrl: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop',
+        imageUrl:
+          'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop',
         inStock: true,
         sizes: ['S', 'M', 'L'],
         savedSize: 'M',
@@ -122,7 +130,8 @@ export const GridLayout: Story = {
         id: '2',
         title: 'Denim Jacket',
         price: 89.99,
-        imageUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=500&fit=crop',
+        imageUrl:
+          'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=500&fit=crop',
         inStock: true,
         isWishlisted: true,
       },
@@ -130,7 +139,8 @@ export const GridLayout: Story = {
         id: '3',
         title: 'Linen Dress',
         price: 149.99,
-        imageUrl: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=500&fit=crop',
+        imageUrl:
+          'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=500&fit=crop',
         inStock: false,
       },
       {
@@ -138,66 +148,67 @@ export const GridLayout: Story = {
         title: 'Wool Sweater',
         price: 79.99,
         originalPrice: 99.99,
-        imageUrl: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400&h=500&fit=crop',
+        imageUrl:
+          'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400&h=500&fit=crop',
         inStock: true,
       },
-    ]
+    ];
 
     return (
-      <div className="bg-gray-50 min-h-screen p-3">
+      <div className="min-h-screen bg-gray-50 p-3">
         <MobileProductGrid products={products} />
       </div>
-    )
+    );
   },
-}
+};
 
 // Interactive demo
 export const InteractiveDemo: Story = {
   render: () => {
-    const [isWishlisted, setIsWishlisted] = React.useState(false)
-    const [addedItems, setAddedItems] = React.useState<string[]>([])
+    const [isWishlisted, setIsWishlisted] = React.useState(false);
+    const [addedItems, setAddedItems] = React.useState<string[]>([]);
 
     return (
-      <div className="bg-gray-50 min-h-screen p-4">
-        <div className="mb-4 p-3 bg-white rounded-lg shadow-sm">
-          <h3 className="font-semibold mb-2">Interactive Features:</h3>
-          <ul className="text-sm text-gray-600 space-y-1">
+      <div className="min-h-screen bg-gray-50 p-4">
+        <div className="mb-4 rounded-lg bg-white p-3 shadow-sm">
+          <h3 className="mb-2 font-semibold">Interactive Features:</h3>
+          <ul className="space-y-1 text-gray-600 text-sm">
             <li>• Swipe left/right for wishlist</li>
             <li>• Long press image for sizes</li>
             <li>• Click heart to toggle wishlist</li>
             <li>• Add to cart with size selection</li>
           </ul>
           {addedItems.length > 0 && (
-            <div className="mt-3 p-2 bg-green-100 rounded">
-              <p className="text-sm text-green-800">
+            <div className="mt-3 rounded bg-green-100 p-2">
+              <p className="text-green-800 text-sm">
                 Added to cart: {addedItems.join(', ')}
               </p>
             </div>
           )}
         </div>
-        
+
         <MobileProductCard
           id="demo-1"
-          title="Interactive Demo Product"
-          price={59.99}
-          originalPrice={79.99}
           imageUrl="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&h=500&fit=crop"
           inStock={true}
-          sizes={['XS', 'S', 'M', 'L', 'XL']}
-          savedSize="M"
           isWishlisted={isWishlisted}
-          onToggleWishlist={() => setIsWishlisted(!isWishlisted)}
           onAddToCart={(id, size) => {
-            setAddedItems([...addedItems, `${id} (${size})`])
+            setAddedItems([...addedItems, `${id} (${size})`]);
           }}
           onQuickBuy={(id, size) => {
-            alert(`Quick buy: ${id} - Size ${size}`)
+            alert(`Quick buy: ${id} - Size ${size}`);
           }}
+          onToggleWishlist={() => setIsWishlisted(!isWishlisted)}
+          originalPrice={79.99}
+          price={59.99}
+          savedSize="M"
+          sizes={['XS', 'S', 'M', 'L', 'XL']}
+          title="Interactive Demo Product"
         />
       </div>
-    )
+    );
   },
-}
+};
 
 // Performance test with many cards
 export const PerformanceTest: Story = {
@@ -210,10 +221,10 @@ export const PerformanceTest: Story = {
       inStock: i % 3 !== 0,
       sizes: ['S', 'M', 'L'],
       isWishlisted: i % 4 === 0,
-    }))
+    }));
 
     return (
-      <div className="bg-gray-50 min-h-screen">
+      <div className="min-h-screen bg-gray-50">
         <div className="grid grid-cols-2 gap-3 p-3">
           {products.map((product) => (
             <MobileProductCard
@@ -225,6 +236,6 @@ export const PerformanceTest: Story = {
           ))}
         </div>
       </div>
-    )
+    );
   },
-}
+};

@@ -4,11 +4,11 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   try {
     const user = await currentUser();
-    
+
     if (!user) {
       return NextResponse.json({ authenticated: false });
     }
-    
+
     return NextResponse.json({
       authenticated: true,
       user: {
@@ -17,7 +17,7 @@ export async function GET() {
         firstName: user.firstName,
         lastName: user.lastName,
         imageUrl: user.imageUrl,
-      }
+      },
     });
   } catch (error) {
     return NextResponse.json({ authenticated: false });

@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@repo/design-system/components';
-import { DollarSign, ShoppingBag, Package, MessageSquare } from 'lucide-react';
 import { cn } from '@repo/design-system/lib/utils';
 import type { Dictionary } from '@repo/internationalization';
+import { DollarSign, MessageSquare, Package, ShoppingBag } from 'lucide-react';
 
 interface MetricCardProps {
   title: string;
@@ -11,20 +11,29 @@ interface MetricCardProps {
   iconBg: string;
 }
 
-function MetricCard({ title, value, icon: Icon, iconColor, iconBg }: MetricCardProps) {
+function MetricCard({
+  title,
+  value,
+  icon: Icon,
+  iconColor,
+  iconBg,
+}: MetricCardProps) {
   return (
-    <Card className="relative overflow-hidden transition-all hover:shadow-md min-h-[80px] sm:min-h-[100px] lg:min-h-[120px] touch-manipulation">
-      <CardContent className="p-3 sm:p-4 lg:p-6 h-full flex flex-col justify-between">
+    <Card className="relative min-h-[80px] touch-manipulation overflow-hidden transition-all hover:shadow-md sm:min-h-[100px] lg:min-h-[120px]">
+      <CardContent className="flex h-full flex-col justify-between p-3 sm:p-4 lg:p-6">
         <div className="flex items-start justify-between gap-2">
-          <div className="flex-1 min-w-0">
-            <p className="text-xl font-bold tracking-tight sm:text-2xl lg:text-3xl">{value}</p>
-            <p className="text-xs text-muted-foreground mt-1 sm:text-sm">{title}</p>
+          <div className="min-w-0 flex-1">
+            <p className="font-bold text-xl tracking-tight sm:text-2xl lg:text-3xl">
+              {value}
+            </p>
+            <p className="mt-1 text-muted-foreground text-xs sm:text-sm">
+              {title}
+            </p>
           </div>
-          <div className={cn(
-            "p-2 rounded-[var(--radius-lg)] shrink-0",
-            iconBg
-          )}>
-            <Icon className={cn("h-4 w-4 sm:h-5 sm:w-5", iconColor)} />
+          <div
+            className={cn('shrink-0 rounded-[var(--radius-lg)] p-2', iconBg)}
+          >
+            <Icon className={cn('h-4 w-4 sm:h-5 sm:w-5', iconColor)} />
           </div>
         </div>
       </CardContent>
@@ -42,7 +51,10 @@ interface ModernDashboardStatsProps {
   dictionary: Dictionary;
 }
 
-export function ModernDashboardStats({ metrics, dictionary }: ModernDashboardStatsProps) {
+export function ModernDashboardStats({
+  metrics,
+  dictionary,
+}: ModernDashboardStatsProps) {
   const stats = [
     {
       title: dictionary.dashboard.dashboard.metrics.totalRevenue,
@@ -75,12 +87,9 @@ export function ModernDashboardStats({ metrics, dictionary }: ModernDashboardSta
   ];
 
   return (
-    <div className="grid gap-3 grid-cols-2 lg:gap-4 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
       {stats.map((stat, index) => (
-        <MetricCard 
-          key={index} 
-          {...stat} 
-        />
+        <MetricCard key={index} {...stat} />
       ))}
     </div>
   );

@@ -3,7 +3,12 @@
 import { SignInButton, useUser } from '@repo/auth/client';
 import { Button } from '@repo/design-system/components';
 import { cn } from '@repo/design-system/lib/utils';
-import { motion, useAnimation, useDragControls, useMotionValue } from 'framer-motion';
+import {
+  motion,
+  useAnimation,
+  useDragControls,
+  useMotionValue,
+} from 'framer-motion';
 import { Heart, Plus, ShoppingBag, User, X } from 'lucide-react';
 import Link from 'next/link';
 import { memo, useCallback, useEffect, useState } from 'react';
@@ -62,11 +67,11 @@ export const MobileMenu = memo(({ isOpen, onClose }: MobileMenuProps) => {
 
     const handleTouchMove = (e: TouchEvent) => {
       if (!isSwipeDetected || isOpen) return;
-      
+
       const touch = e.touches[0];
       const deltaX = touch.clientX - startX;
       const deltaY = Math.abs(touch.clientY - startY);
-      
+
       // Horizontal swipe detection
       if (deltaX > 50 && deltaY < 30) {
         triggerHapticFeedback();
@@ -75,7 +80,9 @@ export const MobileMenu = memo(({ isOpen, onClose }: MobileMenuProps) => {
       }
     };
 
-    document.addEventListener('touchstart', handleTouchStart, { passive: true });
+    document.addEventListener('touchstart', handleTouchStart, {
+      passive: true,
+    });
     document.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     return () => {
@@ -95,9 +102,9 @@ export const MobileMenu = memo(({ isOpen, onClose }: MobileMenuProps) => {
       />
 
       <motion.div
+        animate={controls}
         aria-label="Navigation menu"
         aria-modal="true"
-        animate={controls}
         className="relative flex h-full flex-col bg-background"
         drag="x"
         dragConstraints={{ left: -300, right: 0 }}
@@ -115,10 +122,13 @@ export const MobileMenu = memo(({ isOpen, onClose }: MobileMenuProps) => {
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       >
         <div className="flex items-center justify-between border-b p-4">
-          <Link href="/" onClick={() => {
-            triggerHapticFeedback();
-            onClose();
-          }}>
+          <Link
+            href="/"
+            onClick={() => {
+              triggerHapticFeedback();
+              onClose();
+            }}
+          >
             <span className="font-bold text-xl">Threadly</span>
           </Link>
           <Button
@@ -144,7 +154,9 @@ export const MobileMenu = memo(({ isOpen, onClose }: MobileMenuProps) => {
                   <p className="font-semibold text-lg">
                     {user?.firstName} {user?.lastName}
                   </p>
-                  <p className="text-muted-foreground text-sm">View your profile</p>
+                  <p className="text-muted-foreground text-sm">
+                    View your profile
+                  </p>
                 </div>
               </div>
             ) : (
@@ -196,7 +208,9 @@ export const MobileMenu = memo(({ isOpen, onClose }: MobileMenuProps) => {
               </div>
               <div>
                 <p className="font-medium">Browse All</p>
-                <p className="text-muted-foreground text-sm">Explore everything</p>
+                <p className="text-muted-foreground text-sm">
+                  Explore everything
+                </p>
               </div>
             </Link>
           </div>
@@ -206,7 +220,7 @@ export const MobileMenu = memo(({ isOpen, onClose }: MobileMenuProps) => {
           {isSignedIn ? (
             <Button
               asChild
-              className="h-14 w-full bg-foreground font-medium text-base text-background hover:bg-secondary-foreground"
+              className="h-14 w-full bg-foreground font-medium text-background text-base hover:bg-secondary-foreground"
             >
               <Link
                 href={`/${locale}/selling/new`}
@@ -222,7 +236,7 @@ export const MobileMenu = memo(({ isOpen, onClose }: MobileMenuProps) => {
           ) : (
             <Button
               asChild
-              className="h-14 w-full bg-foreground font-medium text-base text-background hover:bg-secondary-foreground"
+              className="h-14 w-full bg-foreground font-medium text-background text-base hover:bg-secondary-foreground"
             >
               <Link
                 href={`${env.NEXT_PUBLIC_APP_URL}/${locale}/sign-in?returnTo=${encodeURIComponent(`${env.NEXT_PUBLIC_WEB_URL}/${locale}/selling/new`)}`}

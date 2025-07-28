@@ -1,16 +1,16 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { Order, OrderStatus } from '../types';
 import type { OrderQueryParams, OrdersResponse } from './queries';
 import {
-  fetchUserOrders,
-  fetchSellerOrders,
-  fetchOrder,
-  updateOrderStatus,
   cancelOrder,
-  markOrderShipped,
+  fetchOrder,
+  fetchSellerOrders,
+  fetchUserOrders,
   markOrderDelivered,
+  markOrderShipped,
+  updateOrderStatus,
 } from './queries';
 
 // Hook for managing orders list
@@ -28,27 +28,30 @@ export function useOrders(
     total: 0,
   });
 
-  const fetchOrders = useCallback(async (params?: OrderQueryParams) => {
-    setLoading(true);
-    setError(null);
+  const fetchOrders = useCallback(
+    async (params?: OrderQueryParams) => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const fetchFn = type === 'seller' ? fetchSellerOrders : fetchUserOrders;
-      const response = await fetchFn({ ...initialParams, ...params });
-      
-      setOrders(response.orders);
-      setPagination({
-        page: response.page,
-        totalPages: response.totalPages,
-        hasMore: response.hasMore,
-        total: response.total,
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch orders');
-    } finally {
-      setLoading(false);
-    }
-  }, [type, initialParams]);
+      try {
+        const fetchFn = type === 'seller' ? fetchSellerOrders : fetchUserOrders;
+        const response = await fetchFn({ ...initialParams, ...params });
+
+        setOrders(response.orders);
+        setPagination({
+          page: response.page,
+          totalPages: response.totalPages,
+          hasMore: response.hasMore,
+          total: response.total,
+        });
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch orders');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [type, initialParams]
+  );
 
   // Initial fetch
   useEffect(() => {
@@ -67,12 +70,12 @@ export function useOrders(
     setLoading(true);
     try {
       const fetchFn = type === 'seller' ? fetchSellerOrders : fetchUserOrders;
-      const response = await fetchFn({ 
-        ...initialParams, 
-        page: pagination.page + 1 
+      const response = await fetchFn({
+        ...initialParams,
+        page: pagination.page + 1,
       });
-      
-      setOrders(prev => [...prev, ...response.orders]);
+
+      setOrders((prev) => [...prev, ...response.orders]);
       setPagination({
         page: response.page,
         totalPages: response.totalPages,
@@ -80,7 +83,9 @@ export function useOrders(
         total: response.total,
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load more orders');
+      setError(
+        err instanceof Error ? err.message : 'Failed to load more orders'
+      );
     } finally {
       setLoading(false);
     }
@@ -126,64 +131,82 @@ export function useOrder(orderId: string | null) {
   }, [fetchOrderDetails]);
 
   // Update status
-  const updateStatus = useCallback(async (
-    status: OrderStatus,
-    trackingNumber?: string
-  ) => {
-    if (!orderId) return;
+  const updateStatus = useCallback(
+    async (status: OrderStatus, trackingNumber?: string) => {
+      if (!orderId) return;
 
-    setLoading(true);
-    setError(null);
+      setLoading(true);
+      setError(null);
 
-    try {
-      const updated = await updateOrderStatus(orderId, status, trackingNumber);
-      setOrder(updated);
-      return updated;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update status');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [orderId]);
+      try {
+        const updated = await updateOrderStatus(
+          orderId,
+          status,
+          trackingNumber
+        );
+        setOrder(updated);
+        return updated;
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Failed to update status'
+        );
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [orderId]
+  );
 
   // Cancel order
-  const cancel = useCallback(async (reason?: string) => {
-    if (!orderId) return;
+  const cancel = useCallback(
+    async (reason?: string) => {
+      if (!orderId) return;
 
-    setLoading(true);
-    setError(null);
+      setLoading(true);
+      setError(null);
 
-    try {
-      const updated = await cancelOrder(orderId, reason);
-      setOrder(updated);
-      return updated;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to cancel order');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [orderId]);
+      try {
+        const updated = await cancelOrder(orderId, reason);
+        setOrder(updated);
+        return updated;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to cancel order');
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [orderId]
+  );
 
   // Ship order (seller action)
-  const ship = useCallback(async (trackingNumber: string, carrier: string) => {
-    if (!orderId) return;
+  const ship = useCallback(
+    async (trackingNumber: string, carrier: string) => {
+      if (!orderId) return;
 
-    setLoading(true);
-    setError(null);
+      setLoading(true);
+      setError(null);
 
-    try {
-      const updated = await markOrderShipped(orderId, trackingNumber, carrier);
-      setOrder(updated);
-      return updated;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to mark as shipped');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [orderId]);
+      try {
+        const updated = await markOrderShipped(
+          orderId,
+          trackingNumber,
+          carrier
+        );
+        setOrder(updated);
+        return updated;
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Failed to mark as shipped'
+        );
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [orderId]
+  );
 
   // Deliver order (seller/system action)
   const deliver = useCallback(async () => {
@@ -197,7 +220,9 @@ export function useOrder(orderId: string | null) {
       setOrder(updated);
       return updated;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to mark as delivered');
+      setError(
+        err instanceof Error ? err.message : 'Failed to mark as delivered'
+      );
       throw err;
     } finally {
       setLoading(false);
@@ -234,10 +259,9 @@ export function useOrderStats(type: 'buyer' | 'seller' = 'buyer') {
       setError(null);
 
       try {
-        const endpoint = type === 'seller' 
-          ? '/api/seller/orders/stats' 
-          : '/api/orders/stats';
-        
+        const endpoint =
+          type === 'seller' ? '/api/seller/orders/stats' : '/api/orders/stats';
+
         const response = await fetch(endpoint, {
           credentials: 'include',
         });
@@ -249,7 +273,9 @@ export function useOrderStats(type: 'buyer' | 'seller' = 'buyer') {
         const data = await response.json();
         setStats(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch statistics');
+        setError(
+          err instanceof Error ? err.message : 'Failed to fetch statistics'
+        );
       } finally {
         setLoading(false);
       }

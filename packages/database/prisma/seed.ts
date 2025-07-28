@@ -3,7 +3,6 @@ import { PrismaClient } from '../generated/client';
 const prisma = new PrismaClient();
 
 async function main() {
-
   // Create comprehensive category structure inspired by Vinted/Depop best practices
   const categories = [
     {
@@ -28,7 +27,7 @@ async function main() {
             { name: 'Lingerie & Nightwear', slug: 'women-lingerie' },
             { name: 'Jumpsuits & Playsuits', slug: 'women-jumpsuits' },
             { name: 'Blazers', slug: 'women-blazers' },
-          ]
+          ],
         },
         {
           name: 'Shoes',
@@ -40,7 +39,7 @@ async function main() {
             { name: 'Flats', slug: 'women-flats' },
             { name: 'Sandals', slug: 'women-sandals' },
             { name: 'Athletic Shoes', slug: 'women-athletic-shoes' },
-          ]
+          ],
         },
         {
           name: 'Bags & Accessories',
@@ -55,7 +54,7 @@ async function main() {
             { name: 'Hats', slug: 'women-hats' },
             { name: 'Sunglasses', slug: 'women-sunglasses' },
             { name: 'Hair Accessories', slug: 'women-hair-accessories' },
-          ]
+          ],
         },
         {
           name: 'Jewelry',
@@ -67,9 +66,9 @@ async function main() {
             { name: 'Rings', slug: 'women-rings' },
             { name: 'Watches', slug: 'women-watches' },
             { name: 'Body Jewelry', slug: 'women-body-jewelry' },
-          ]
-        }
-      ]
+          ],
+        },
+      ],
     },
     {
       name: 'Men',
@@ -91,7 +90,7 @@ async function main() {
             { name: 'Swimwear', slug: 'men-swimwear' },
             { name: 'Underwear', slug: 'men-underwear' },
             { name: 'Suits', slug: 'men-suits' },
-          ]
+          ],
         },
         {
           name: 'Shoes',
@@ -103,7 +102,7 @@ async function main() {
             { name: 'Athletic Shoes', slug: 'men-athletic-shoes' },
             { name: 'Sandals', slug: 'men-sandals' },
             { name: 'Loafers', slug: 'men-loafers' },
-          ]
+          ],
         },
         {
           name: 'Accessories',
@@ -117,9 +116,9 @@ async function main() {
             { name: 'Ties', slug: 'men-ties' },
             { name: 'Watches', slug: 'men-watches' },
             { name: 'Wallets', slug: 'men-wallets' },
-          ]
-        }
-      ]
+          ],
+        },
+      ],
     },
     {
       name: 'Kids',
@@ -136,7 +135,7 @@ async function main() {
             { name: 'Outerwear', slug: 'girls-outerwear' },
             { name: 'Shoes', slug: 'girls-shoes' },
             { name: 'Accessories', slug: 'girls-accessories' },
-          ]
+          ],
         },
         {
           name: 'Boys (2-14 years)',
@@ -147,7 +146,7 @@ async function main() {
             { name: 'Outerwear', slug: 'boys-outerwear' },
             { name: 'Shoes', slug: 'boys-shoes' },
             { name: 'Accessories', slug: 'boys-accessories' },
-          ]
+          ],
         },
         {
           name: 'Baby (0-24 months)',
@@ -158,9 +157,9 @@ async function main() {
             { name: 'Unisex Baby', slug: 'baby-unisex' },
             { name: 'Baby Shoes', slug: 'baby-shoes' },
             { name: 'Baby Accessories', slug: 'baby-accessories' },
-          ]
-        }
-      ]
+          ],
+        },
+      ],
     },
     {
       name: 'Designer',
@@ -179,7 +178,7 @@ async function main() {
             { name: 'Dior', slug: 'dior' },
             { name: 'Saint Laurent', slug: 'saint-laurent' },
             { name: 'Balenciaga', slug: 'balenciaga' },
-          ]
+          ],
         },
         {
           name: 'Contemporary',
@@ -190,9 +189,9 @@ async function main() {
             { name: '& Other Stories', slug: 'other-stories' },
             { name: 'Acne Studios', slug: 'acne-studios' },
             { name: 'Ganni', slug: 'ganni' },
-          ]
-        }
-      ]
+          ],
+        },
+      ],
     },
     {
       name: 'Vintage',
@@ -208,7 +207,7 @@ async function main() {
             { name: '1980s', slug: 'vintage-1980s' },
             { name: '1970s', slug: 'vintage-1970s' },
             { name: '1960s & Earlier', slug: 'vintage-1960s' },
-          ]
+          ],
         },
         {
           name: 'By Style',
@@ -219,9 +218,9 @@ async function main() {
             { name: 'Leather Jackets', slug: 'vintage-leather' },
             { name: 'Graphic Tees', slug: 'vintage-graphic-tees' },
             { name: 'Vintage Sportswear', slug: 'vintage-sportswear' },
-          ]
-        }
-      ]
+          ],
+        },
+      ],
     },
     {
       name: 'Home & Living',
@@ -237,7 +236,7 @@ async function main() {
             { name: 'Plants & Planters', slug: 'plants-planters' },
             { name: 'Mirrors', slug: 'mirrors' },
             { name: 'Cushions & Throws', slug: 'cushions-throws' },
-          ]
+          ],
         },
         {
           name: 'Furniture',
@@ -247,9 +246,9 @@ async function main() {
             { name: 'Tables', slug: 'tables' },
             { name: 'Storage', slug: 'storage' },
             { name: 'Vintage Furniture', slug: 'vintage-furniture' },
-          ]
-        }
-      ]
+          ],
+        },
+      ],
     },
     {
       name: 'Beauty',
@@ -264,7 +263,7 @@ async function main() {
             { name: 'Lipstick', slug: 'lipstick' },
             { name: 'Eyeshadow', slug: 'eyeshadow' },
             { name: 'Mascara', slug: 'mascara' },
-          ]
+          ],
         },
         {
           name: 'Skincare',
@@ -274,7 +273,7 @@ async function main() {
             { name: 'Serums', slug: 'serums' },
             { name: 'Cleansers', slug: 'cleansers' },
             { name: 'Masks', slug: 'masks' },
-          ]
+          ],
         },
         {
           name: 'Fragrance',
@@ -283,19 +282,19 @@ async function main() {
             { name: 'Perfume', slug: 'perfume' },
             { name: 'Body Spray', slug: 'body-spray' },
             { name: 'Travel Size', slug: 'travel-fragrance' },
-          ]
-        }
-      ]
-    }
+          ],
+        },
+      ],
+    },
   ];
 
   // Create categories recursively (only if they don't exist)
   async function createCategory(categoryData: any, parentId?: string) {
     const { children, ...categoryInfo } = categoryData;
-    
+
     // Check if category already exists by slug
     const existingCategory = await prisma.category.findUnique({
-      where: { slug: categoryInfo.slug }
+      where: { slug: categoryInfo.slug },
     });
 
     let category;
@@ -304,11 +303,13 @@ async function main() {
     } else {
       // Also check if a category with the same name exists
       const existingByName = await prisma.category.findUnique({
-        where: { name: categoryInfo.name }
+        where: { name: categoryInfo.name },
       });
-      
+
       if (existingByName) {
-        console.log(`Category with name "${categoryInfo.name}" already exists, skipping...`);
+        console.log(
+          `Category with name "${categoryInfo.name}" already exists, skipping...`
+        );
         category = existingByName;
       } else {
         category = await prisma.category.create({
@@ -343,67 +344,68 @@ async function main() {
       lastName: 'Petrova',
       location: 'Sofia, Bulgaria',
       averageRating: 4.8,
-      totalSales: 25
+      totalSales: 25,
     },
     {
-      clerkId: 'user_demo2', 
+      clerkId: 'user_demo2',
       email: 'maria@example.com',
       firstName: 'Maria',
       lastName: 'Dimitrova',
       location: 'Plovdiv, Bulgaria',
       averageRating: 4.6,
-      totalSales: 18
+      totalSales: 18,
     },
     {
       clerkId: 'user_demo3',
-      email: 'ana@example.com', 
+      email: 'ana@example.com',
       firstName: 'Ana',
       lastName: 'Todorova',
       location: 'Varna, Bulgaria',
       averageRating: 4.9,
-      totalSales: 32
-    }
+      totalSales: 32,
+    },
   ];
 
   const users = [];
   for (const userData of testUsers) {
     const existingUser = await prisma.user.findUnique({
-      where: { clerkId: userData.clerkId }
+      where: { clerkId: userData.clerkId },
     });
-    
-    if (!existingUser) {
+
+    if (existingUser) {
+      users.push(existingUser);
+    } else {
       const user = await prisma.user.create({
-        data: userData
+        data: userData,
       });
       users.push(user);
-    } else {
-      users.push(existingUser);
     }
   }
 
   // Get some categories for products
   const womenClothing = await prisma.category.findFirst({
-    where: { slug: 'women-dresses' }
+    where: { slug: 'women-dresses' },
   });
   const womenShoes = await prisma.category.findFirst({
-    where: { slug: 'women-sneakers' }
+    where: { slug: 'women-sneakers' },
   });
   const womenBags = await prisma.category.findFirst({
-    where: { slug: 'women-handbags' }
+    where: { slug: 'women-handbags' },
   });
   const menClothing = await prisma.category.findFirst({
-    where: { slug: 'men-tshirts' }
+    where: { slug: 'men-tshirts' },
   });
   const menShoes = await prisma.category.findFirst({
-    where: { slug: 'men-sneakers' }
+    where: { slug: 'men-sneakers' },
   });
 
   // Sample products data
   const sampleProducts = [
     {
       title: 'Elegant Black Evening Dress',
-      description: 'Beautiful black evening dress in excellent condition. Perfect for special occasions. Size S, worn only once.',
-      price: 85.00,
+      description:
+        'Beautiful black evening dress in excellent condition. Perfect for special occasions. Size S, worn only once.',
+      price: 85.0,
       condition: 'VERY_GOOD',
       size: 'S',
       brand: 'Zara',
@@ -411,14 +413,23 @@ async function main() {
       categoryId: womenClothing?.id,
       sellerId: users[0]?.id,
       images: [
-        { imageUrl: 'https://images.unsplash.com/photo-1566479179817-c0d04e9bc8c0?w=400', displayOrder: 0 },
-        { imageUrl: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400', displayOrder: 1 }
-      ]
+        {
+          imageUrl:
+            'https://images.unsplash.com/photo-1566479179817-c0d04e9bc8c0?w=400',
+          displayOrder: 0,
+        },
+        {
+          imageUrl:
+            'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400',
+          displayOrder: 1,
+        },
+      ],
     },
     {
       title: 'White Nike Air Force 1 Sneakers',
-      description: 'Classic white Nike Air Force 1 sneakers. Lightly worn, great condition. Size 38 EU.',
-      price: 65.00,
+      description:
+        'Classic white Nike Air Force 1 sneakers. Lightly worn, great condition. Size 38 EU.',
+      price: 65.0,
       condition: 'GOOD',
       size: '38',
       brand: 'Nike',
@@ -426,13 +437,18 @@ async function main() {
       categoryId: womenShoes?.id,
       sellerId: users[1]?.id,
       images: [
-        { imageUrl: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400', displayOrder: 0 }
-      ]
+        {
+          imageUrl:
+            'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400',
+          displayOrder: 0,
+        },
+      ],
     },
     {
       title: 'Vintage Leather Handbag',
-      description: 'Authentic vintage leather handbag in brown. Classic design that never goes out of style.',
-      price: 120.00,
+      description:
+        'Authentic vintage leather handbag in brown. Classic design that never goes out of style.',
+      price: 120.0,
       condition: 'VERY_GOOD',
       size: 'One Size',
       brand: 'Coach',
@@ -440,13 +456,18 @@ async function main() {
       categoryId: womenBags?.id,
       sellerId: users[2]?.id,
       images: [
-        { imageUrl: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400', displayOrder: 0 }
-      ]
+        {
+          imageUrl:
+            'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400',
+          displayOrder: 0,
+        },
+      ],
     },
     {
       title: 'Graphic T-Shirt - Band Tee',
-      description: 'Cool vintage-style band t-shirt. Size M, 100% cotton. Great for casual wear.',
-      price: 25.00,
+      description:
+        'Cool vintage-style band t-shirt. Size M, 100% cotton. Great for casual wear.',
+      price: 25.0,
       condition: 'GOOD',
       size: 'M',
       brand: 'H&M',
@@ -454,13 +475,18 @@ async function main() {
       categoryId: menClothing?.id,
       sellerId: users[0]?.id,
       images: [
-        { imageUrl: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400', displayOrder: 0 }
-      ]
+        {
+          imageUrl:
+            'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400',
+          displayOrder: 0,
+        },
+      ],
     },
     {
       title: 'Adidas Ultraboost Running Shoes',
-      description: 'Comfortable Adidas Ultraboost running shoes. Size 42 EU, worn a few times.',
-      price: 95.00,
+      description:
+        'Comfortable Adidas Ultraboost running shoes. Size 42 EU, worn a few times.',
+      price: 95.0,
       condition: 'VERY_GOOD',
       size: '42',
       brand: 'Adidas',
@@ -468,13 +494,18 @@ async function main() {
       categoryId: menShoes?.id,
       sellerId: users[1]?.id,
       images: [
-        { imageUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400', displayOrder: 0 }
-      ]
+        {
+          imageUrl:
+            'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400',
+          displayOrder: 0,
+        },
+      ],
     },
     {
       title: 'Designer Floral Summer Dress',
-      description: 'Beautiful floral summer dress from a luxury brand. Size M, perfect condition.',
-      price: 150.00,
+      description:
+        'Beautiful floral summer dress from a luxury brand. Size M, perfect condition.',
+      price: 150.0,
       condition: 'NEW_WITH_TAGS',
       size: 'M',
       brand: 'Gucci',
@@ -482,13 +513,18 @@ async function main() {
       categoryId: womenClothing?.id,
       sellerId: users[2]?.id,
       images: [
-        { imageUrl: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400', displayOrder: 0 }
-      ]
+        {
+          imageUrl:
+            'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400',
+          displayOrder: 0,
+        },
+      ],
     },
     {
       title: 'Red High Heels',
-      description: 'Stunning red high heels, perfect for special occasions. Size 37, minimal wear.',
-      price: 75.00,
+      description:
+        'Stunning red high heels, perfect for special occasions. Size 37, minimal wear.',
+      price: 75.0,
       condition: 'VERY_GOOD',
       size: '37',
       brand: 'Zara',
@@ -496,13 +532,18 @@ async function main() {
       categoryId: womenShoes?.id,
       sellerId: users[0]?.id,
       images: [
-        { imageUrl: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400', displayOrder: 0 }
-      ]
+        {
+          imageUrl:
+            'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400',
+          displayOrder: 0,
+        },
+      ],
     },
     {
       title: 'Vintage Denim Jacket',
-      description: 'Classic vintage denim jacket. Size L, authentic 90s style. Great quality.',
-      price: 55.00,
+      description:
+        'Classic vintage denim jacket. Size L, authentic 90s style. Great quality.',
+      price: 55.0,
       condition: 'GOOD',
       size: 'L',
       brand: "Levi's",
@@ -510,22 +551,26 @@ async function main() {
       categoryId: womenClothing?.id,
       sellerId: users[1]?.id,
       images: [
-        { imageUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400', displayOrder: 0 }
-      ]
-    }
+        {
+          imageUrl:
+            'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400',
+          displayOrder: 0,
+        },
+      ],
+    },
   ];
 
   // Create products if they don't exist
   for (const productData of sampleProducts) {
-    if (!productData.categoryId || !productData.sellerId) continue;
-    
+    if (!(productData.categoryId && productData.sellerId)) continue;
+
     const { images, ...productInfo } = productData;
-    
+
     const existingProduct = await prisma.product.findFirst({
-      where: { 
+      where: {
         title: productInfo.title,
-        sellerId: productInfo.sellerId 
-      }
+        sellerId: productInfo.sellerId,
+      },
     });
 
     if (!existingProduct) {
@@ -540,8 +585,8 @@ async function main() {
           color: productInfo.color,
           categoryId: productInfo.categoryId!,
           sellerId: productInfo.sellerId,
-          status: 'AVAILABLE'
-        }
+          status: 'AVAILABLE',
+        },
       });
 
       // Add images
@@ -549,8 +594,8 @@ async function main() {
         await prisma.productImage.create({
           data: {
             ...imageData,
-            productId: product.id
-          }
+            productId: product.id,
+          },
         });
       }
     }
@@ -559,8 +604,7 @@ async function main() {
   console.log('✅ Database seeded successfully!');
   console.log(`📦 Created ${sampleProducts.length} sample products`);
   console.log(`👥 Created ${testUsers.length} test users`);
-  console.log(`🏷️ Created comprehensive category structure`);
-
+  console.log('🏷️ Created comprehensive category structure');
 }
 
 main()

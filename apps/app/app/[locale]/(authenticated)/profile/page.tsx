@@ -1,33 +1,41 @@
 import { currentUser } from '@repo/auth/server';
-import { database } from '@repo/database';
-import { redirect } from 'next/navigation';
-import type { Metadata } from 'next';
-import { ProfileContent } from './components/profile-content';
-import { decimalToNumber } from '@repo/utils';
 import { getCacheService } from '@repo/cache';
+import { database } from '@repo/database';
+import { decimalToNumber } from '@repo/utils';
+import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 import { z } from 'zod';
+import { ProfileContent } from './components/profile-content';
 
 const paramsSchema = z.object({
-  locale: z.string()
+  locale: z.string(),
 });
 
 const title = 'Profile Settings';
 const description = 'Manage your account and marketplace preferences';
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const rawParams = await params;
   paramsSchema.parse(rawParams);
-  
+
   return {
     title,
     description,
   };
 }
 
-const ProfilePage = async ({ params }: { params: Promise<{ locale: string }> }) => {
+const ProfilePage = async ({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) => {
   const rawParams = await params;
   paramsSchema.parse(rawParams);
-  
+
   const user = await currentUser();
 
   if (!user) {
@@ -55,63 +63,75 @@ const ProfilePage = async ({ params }: { params: Promise<{ locale: string }> }) 
   const stats = await cache.remember(
     `user-profile-stats:${dbUser.id}`,
     async () => {
-      const [productsSold, totalEarnings, productsBought, totalSpent, activeListings, followersCount, followingCount] = await Promise.all([
+      const [
+        productsSold,
+        totalEarnings,
+        productsBought,
+        totalSpent,
+        activeListings,
+        followersCount,
+        followingCount,
+      ] = await Promise.all([
         // Products sold count
         database.order.count({
           where: {
             sellerId: dbUser.id,
-            status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] }
-          }
+            status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] },
+          },
         }),
         // Total earnings
         database.order.aggregate({
           where: {
             sellerId: dbUser.id,
-            status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] }
+            status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] },
           },
-          _sum: { amount: true }
+          _sum: { amount: true },
         }),
         // Products bought count
         database.order.count({
           where: {
             buyerId: dbUser.id,
-            status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] }
-          }
+            status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] },
+          },
         }),
         // Total spent
         database.order.aggregate({
           where: {
             buyerId: dbUser.id,
-            status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] }
+            status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] },
           },
-          _sum: { amount: true }
+          _sum: { amount: true },
         }),
         // Active listings
         database.product.count({
           where: {
             sellerId: dbUser.id,
-            status: 'AVAILABLE'
-          }
+            status: 'AVAILABLE',
+          },
         }),
         // Followers count
         database.follow.count({
           where: {
-            followingId: dbUser.id
-          }
+            followingId: dbUser.id,
+          },
         }),
         // Following count
         database.follow.count({
           where: {
-            followerId: dbUser.id
-          }
-        })
+            followerId: dbUser.id,
+          },
+        }),
       ]);
 
       return {
         products_sold: productsSold,
-        total_earnings: totalEarnings._sum?.amount ? decimalToNumber(totalEarnings._sum.amount) : 0,
+        total_earnings: totalEarnings._sum?.amount
+          ? decimalToNumber(totalEarnings._sum.amount)
+          : 0,
         products_bought: productsBought,
-        total_spent: totalSpent._sum?.amount ? decimalToNumber(totalSpent._sum.amount) : 0,
+        total_spent: totalSpent._sum?.amount
+          ? decimalToNumber(totalSpent._sum.amount)
+          : 0,
         active_listings: activeListings,
         followers_count: followersCount,
         following_count: followingCount,
@@ -124,23 +144,25 @@ const ProfilePage = async ({ params }: { params: Promise<{ locale: string }> }) 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Profile Settings</h1>
+        <h1 className="font-bold text-3xl tracking-tight">Profile Settings</h1>
         <p className="text-muted-foreground">
           Manage your account information and marketplace preferences
         </p>
       </div>
-      
-      <ProfileContent 
+
+      <ProfileContent
+        stats={stats}
         user={{
           id: user.id,
-          emailAddresses: [{ emailAddress: user.emailAddresses[0]?.emailAddress || '' }],
+          emailAddresses: [
+            { emailAddress: user.emailAddresses[0]?.emailAddress || '' },
+          ],
           firstName: user.firstName || undefined,
           lastName: user.lastName || undefined,
           username: user.username || undefined,
           imageUrl: user.imageUrl || undefined,
           createdAt: new Date(user.createdAt),
         }}
-        stats={stats}
       />
     </div>
   );

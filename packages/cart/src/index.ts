@@ -1,5 +1,5 @@
 export { createCartStore } from './store';
-export type { CartItem, CartState, CartConfig } from './types';
+export type { CartConfig, CartItem, CartState } from './types';
 
 // Export default instance for immediate use
 import { createCartStore } from './store';

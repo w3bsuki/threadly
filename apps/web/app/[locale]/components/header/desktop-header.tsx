@@ -18,7 +18,7 @@ export const DesktopHeader = () => {
       dictionary.web.global.categories?.[
         category.name.toLowerCase() as keyof typeof dictionary.web.global.categories
       ] || category.name;
-    
+
     return {
       ...category,
       name: translatedName,
@@ -50,7 +50,7 @@ export const DesktopHeader = () => {
       {/* Left: Logo */}
       <Link className="flex items-center space-x-2" href="/">
         <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-lg)] bg-foreground">
-          <span className="font-bold text-lg text-background">T</span>
+          <span className="font-bold text-background text-lg">T</span>
         </div>
         <span className="font-bold text-foreground text-xl">Threadly</span>
       </Link>
@@ -58,9 +58,9 @@ export const DesktopHeader = () => {
       {/* Center: Search Bar with Categories Button Inside */}
       <div className="mx-4 max-w-2xl flex-1 md:mx-8">
         <SearchBar
+          onToggleCategories={() => setShowCategories(!showCategories)}
           ref={searchRef}
           showCategories={showCategories}
-          onToggleCategories={() => setShowCategories(!showCategories)}
         />
         {showCategories && (
           <CategoriesDropdown

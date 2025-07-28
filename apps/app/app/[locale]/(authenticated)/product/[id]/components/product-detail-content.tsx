@@ -1,44 +1,49 @@
 'use client';
 
-import { useState, useTransition } from 'react';
-import Link from 'next/link';
-import { ProductImageGallery } from '@repo/design-system/components/marketplace/product-image';
-import { LazyImage } from '@repo/design-system/components';
-import { useRouter } from 'next/navigation';
-import { Button } from '@repo/design-system/components';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { Avatar, AvatarFallback, AvatarImage } from '@repo/design-system/components';
-import { Separator } from '@repo/design-system/components';
-import { toast } from '@repo/design-system/components';
-import { ReportDialog } from '@/components/report-dialog';
+import type { Category, Product, ProductImage, User } from '@repo/database';
 import {
-  Heart,
-  Share2,
-  MessageCircle,
-  Package,
-  Shield,
-  Calendar,
-  ShoppingCart,
-  ChevronLeft,
-  ChevronRight,
-  Star,
-  MapPin,
-  Truck,
-  Eye,
-  User,
-  CreditCard,
-  ArrowLeft,
-  MoreVertical
-} from 'lucide-react';
-import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  LazyImage,
+  Separator,
+  toast,
 } from '@repo/design-system/components';
+import { ProductImageGallery } from '@repo/design-system/components/marketplace/product-image';
 import { cn } from '@repo/design-system/lib/utils';
-import type { Product, ProductImage, User, Category } from '@repo/database';
+import {
+  ArrowLeft,
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  CreditCard,
+  Eye,
+  Heart,
+  MapPin,
+  MessageCircle,
+  MoreVertical,
+  Package,
+  Share2,
+  Shield,
+  ShoppingCart,
+  Star,
+  Truck,
+  User,
+} from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
+import { ReportDialog } from '@/components/report-dialog';
 
 interface ProductWithRelations extends Product {
   images: ProductImage[];
@@ -109,7 +114,9 @@ export const ProductDetailContent = ({
 
         if (response.ok) {
           setFavorited(!favorited);
-          toast.success(favorited ? 'Removed from favorites' : 'Added to favorites');
+          toast.success(
+            favorited ? 'Removed from favorites' : 'Added to favorites'
+          );
         } else {
           toast.error('Failed to update favorites');
         }
@@ -133,13 +140,13 @@ export const ProductDetailContent = ({
   };
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => 
+    setCurrentImageIndex((prev) =>
       prev < product.images.length - 1 ? prev + 1 : 0
     );
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => 
+    setCurrentImageIndex((prev) =>
       prev > 0 ? prev - 1 : product.images.length - 1
     );
   };
@@ -158,18 +165,23 @@ export const ProductDetailContent = ({
   };
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="mx-auto max-w-7xl">
       {/* Back Navigation */}
       <div className="mb-6">
-        <Button variant="ghost" onClick={() => router.back()} className="mb-4">
-          <ArrowLeft className="h-4 w-4 mr-2" />
+        <Button className="mb-4" onClick={() => router.back()} variant="ghost">
+          <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Browse
         </Button>
-        
-        <div className="text-sm text-muted-foreground">
-          <Link href="/browse" className="hover:underline">Browse</Link>
+
+        <div className="text-muted-foreground text-sm">
+          <Link className="hover:underline" href="/browse">
+            Browse
+          </Link>
           {' > '}
-          <Link href={`/browse?category=${product.category.id}`} className="hover:underline">
+          <Link
+            className="hover:underline"
+            href={`/browse?category=${product.category.id}`}
+          >
             {product.category.name}
           </Link>
           {' > '}
@@ -181,12 +193,12 @@ export const ProductDetailContent = ({
         {/* Product Images */}
         <div className="space-y-4">
           <ProductImageGallery
-            images={product.images || []}
-            currentIndex={currentImageIndex}
-            onImageChange={setCurrentImageIndex}
             aspectRatio="1/1"
-            showThumbnails={true}
             className="w-full"
+            currentIndex={currentImageIndex}
+            images={product.images || []}
+            onImageChange={setCurrentImageIndex}
+            showThumbnails={true}
           />
         </div>
 
@@ -194,36 +206,36 @@ export const ProductDetailContent = ({
         <div className="space-y-6">
           {/* Title and Actions */}
           <div>
-            <div className="flex items-start justify-between mb-2">
-              <h1 className="text-2xl font-bold">{product.title}</h1>
+            <div className="mb-2 flex items-start justify-between">
+              <h1 className="font-bold text-2xl">{product.title}</h1>
               <div className="flex gap-2">
                 <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleFavoriteToggle}
                   disabled={isPending}
+                  onClick={handleFavoriteToggle}
+                  size="icon"
+                  variant="outline"
                 >
-                  <Heart 
+                  <Heart
                     className={cn(
-                      "h-4 w-4",
-                      favorited ? "fill-red-500 text-red-500" : ""
+                      'h-4 w-4',
+                      favorited ? 'fill-red-500 text-red-500' : ''
                     )}
                   />
                 </Button>
-                <Button variant="outline" size="icon" onClick={shareProduct}>
+                <Button onClick={shareProduct} size="icon" variant="outline">
                   <Share2 className="h-4 w-4" />
                 </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon">
+                    <Button size="icon" variant="outline">
                       <MoreVertical className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <ReportDialog
-                      type="PRODUCT"
                       targetId={product.id}
                       targetName={product.title}
+                      type="PRODUCT"
                     >
                       <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                         Report Product
@@ -233,8 +245,8 @@ export const ProductDetailContent = ({
                 </DropdownMenu>
               </div>
             </div>
-            
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+
+            <div className="flex items-center gap-4 text-muted-foreground text-sm">
               <div className="flex items-center gap-1">
                 <Eye className="h-4 w-4" />
                 {product.views || 0} views
@@ -248,11 +260,11 @@ export const ProductDetailContent = ({
 
           {/* Price and Status */}
           <div className="space-y-3">
-            <div className="text-3xl font-bold text-green-600">
+            <div className="font-bold text-3xl text-green-600">
               {formatCurrency(product.price)}
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="capitalize">
+              <Badge className="capitalize" variant="outline">
                 {product.condition.toLowerCase()}
               </Badge>
               <Badge>{product.category.name}</Badge>
@@ -263,21 +275,25 @@ export const ProductDetailContent = ({
           {/* Action Buttons */}
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
-              <Button onClick={handleBuyNow} className="w-full">
-                <CreditCard className="h-4 w-4 mr-2" />
+              <Button className="w-full" onClick={handleBuyNow}>
+                <CreditCard className="mr-2 h-4 w-4" />
                 Buy Now
               </Button>
-              <Button variant="outline" onClick={handleAddToCart} className="w-full">
-                <ShoppingCart className="h-4 w-4 mr-2" />
+              <Button
+                className="w-full"
+                onClick={handleAddToCart}
+                variant="outline"
+              >
+                <ShoppingCart className="mr-2 h-4 w-4" />
                 Add to Cart
               </Button>
             </div>
-            <Button 
-              variant="outline" 
-              onClick={handleMessageSeller}
+            <Button
               className="w-full"
+              onClick={handleMessageSeller}
+              variant="outline"
             >
-              <MessageCircle className="h-4 w-4 mr-2" />
+              <MessageCircle className="mr-2 h-4 w-4" />
               Message Seller
             </Button>
           </div>
@@ -288,7 +304,7 @@ export const ProductDetailContent = ({
               <CardTitle className="text-lg">Seller Information</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center gap-3 mb-4">
+              <div className="mb-4 flex items-center gap-3">
                 <Avatar>
                   <AvatarImage src={product.seller.profileImage || undefined} />
                   <AvatarFallback>
@@ -296,8 +312,10 @@ export const ProductDetailContent = ({
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h3 className="font-semibold">{getSellerName(product.seller)}</h3>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <h3 className="font-semibold">
+                    {getSellerName(product.seller)}
+                  </h3>
+                  <div className="flex items-center gap-2 text-muted-foreground text-sm">
                     {product.seller.averageRating > 0 && (
                       <div className="flex items-center gap-1">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -309,16 +327,20 @@ export const ProductDetailContent = ({
                   </div>
                 </div>
               </div>
-              
+
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" asChild className="flex-1">
+                <Button asChild className="flex-1" size="sm" variant="outline">
                   <Link href={`/seller/${product.seller.id}`}>
-                    <User className="h-4 w-4 mr-2" />
+                    <User className="mr-2 h-4 w-4" />
                     View Profile
                   </Link>
                 </Button>
-                <Button size="sm" variant="outline" onClick={handleMessageSeller}>
-                  <MessageCircle className="h-4 w-4 mr-2" />
+                <Button
+                  onClick={handleMessageSeller}
+                  size="sm"
+                  variant="outline"
+                >
+                  <MessageCircle className="mr-2 h-4 w-4" />
                   Message
                 </Button>
               </div>
@@ -332,18 +354,20 @@ export const ProductDetailContent = ({
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <h4 className="font-medium mb-2">Description</h4>
-                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                <h4 className="mb-2 font-medium">Description</h4>
+                <p className="whitespace-pre-wrap text-muted-foreground text-sm">
                   {product.description}
                 </p>
               </div>
-              
+
               <Separator />
-              
+
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="font-medium">Category:</span>
-                  <p className="text-muted-foreground">{product.category.name}</p>
+                  <p className="text-muted-foreground">
+                    {product.category.name}
+                  </p>
                 </div>
                 <div>
                   <span className="font-medium">Condition:</span>
@@ -370,12 +394,13 @@ export const ProductDetailContent = ({
           {/* Trust & Safety */}
           <Card className="border-green-200 bg-green-50">
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-green-700 mb-2">
+              <div className="mb-2 flex items-center gap-2 text-green-700">
                 <Shield className="h-4 w-4" />
                 <span className="font-medium">Protected Purchase</span>
               </div>
-              <p className="text-sm text-green-600">
-                Your payment is protected. If the item doesn't match the description, get your money back.
+              <p className="text-green-600 text-sm">
+                Your payment is protected. If the item doesn't match the
+                description, get your money back.
               </p>
             </CardContent>
           </Card>
@@ -385,26 +410,28 @@ export const ProductDetailContent = ({
       {/* Similar Products */}
       {similarProducts.length > 0 && (
         <div className="mt-12">
-          <h2 className="text-xl font-semibold mb-6">Similar Items</h2>
+          <h2 className="mb-6 font-semibold text-xl">Similar Items</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {similarProducts.map((item) => (
-              <Card key={item.id} className="hover:shadow-md transition-shadow">
+              <Card className="transition-shadow hover:shadow-md" key={item.id}>
                 <LazyImage
-                  src={item.images[0]?.imageUrl || ''}
                   alt={item.title}
                   aspectRatio="square"
-                  fill
-                  className="object-cover hover:scale-105 transition-transform duration-200 rounded-t-lg"
-                  quality={75}
                   blur={true}
+                  className="rounded-t-lg object-cover transition-transform duration-200 hover:scale-105"
+                  fill
+                  quality={75}
+                  src={item.images[0]?.imageUrl || ''}
                 />
                 <CardContent className="p-4">
-                  <h3 className="font-medium line-clamp-2 mb-2">{item.title}</h3>
+                  <h3 className="mb-2 line-clamp-2 font-medium">
+                    {item.title}
+                  </h3>
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-green-600">
                       {formatCurrency(item.price)}
                     </span>
-                    <Button size="sm" asChild>
+                    <Button asChild size="sm">
                       <Link href={`/product/${item.id}`}>View</Link>
                     </Button>
                   </div>
@@ -418,28 +445,30 @@ export const ProductDetailContent = ({
       {/* Seller's Other Items */}
       {sellerProducts.length > 0 && (
         <div className="mt-12">
-          <h2 className="text-xl font-semibold mb-6">
+          <h2 className="mb-6 font-semibold text-xl">
             More from {getSellerName(product.seller)}
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {sellerProducts.map((item) => (
-              <Card key={item.id} className="hover:shadow-md transition-shadow">
+              <Card className="transition-shadow hover:shadow-md" key={item.id}>
                 <LazyImage
-                  src={item.images[0]?.imageUrl || ''}
                   alt={item.title}
                   aspectRatio="square"
-                  fill
-                  className="object-cover hover:scale-105 transition-transform duration-200 rounded-t-lg"
-                  quality={75}
                   blur={true}
+                  className="rounded-t-lg object-cover transition-transform duration-200 hover:scale-105"
+                  fill
+                  quality={75}
+                  src={item.images[0]?.imageUrl || ''}
                 />
                 <CardContent className="p-4">
-                  <h3 className="font-medium line-clamp-2 mb-2">{item.title}</h3>
+                  <h3 className="mb-2 line-clamp-2 font-medium">
+                    {item.title}
+                  </h3>
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-green-600">
                       {formatCurrency(item.price)}
                     </span>
-                    <Button size="sm" asChild>
+                    <Button asChild size="sm">
                       <Link href={`/product/${item.id}`}>View</Link>
                     </Button>
                   </div>

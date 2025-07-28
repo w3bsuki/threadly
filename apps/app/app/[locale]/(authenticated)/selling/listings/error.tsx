@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
 import { ErrorPage } from '@repo/error-handling/error-pages';
 import * as Sentry from '@sentry/nextjs';
+import { useEffect } from 'react';
 
 export default function ListingsError({
   error,
@@ -17,12 +17,12 @@ export default function ListingsError({
 
   return (
     <ErrorPage
+      description="Failed to load your product listings. Please try refreshing the page."
       error={error}
       errorId={error.digest || null}
       level="section"
       onReset={reset}
       title="Listings Error"
-      description="Failed to load your product listings. Please try refreshing the page."
     />
   );
 }

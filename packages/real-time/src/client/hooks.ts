@@ -1,19 +1,28 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type {
+  MessageEvent,
+  NotificationEvent,
+  PresenceEvent,
+  TypingEvent,
+} from '../types';
 import { useRealTime } from './provider';
-import type { MessageEvent, TypingEvent, NotificationEvent, PresenceEvent } from '../types';
 
 export function useChannel(channelName: string) {
   const { client } = useRealTime();
   const [isSubscribed, setIsSubscribed] = useState(false);
 
   useEffect(() => {
-    if (!client || !channelName) return;
+    if (!(client && channelName)) return;
 
-    const subscription = client.subscribe(channelName, 'pusher:subscription_succeeded', () => {
-      setIsSubscribed(true);
-    });
+    const subscription = client.subscribe(
+      channelName,
+      'pusher:subscription_succeeded',
+      () => {
+        setIsSubscribed(true);
+      }
+    );
 
     return () => {
       subscription.unsubscribe();
@@ -23,7 +32,7 @@ export function useChannel(channelName: string) {
 
   const bind = useCallback(
     (event: string, callback: (data: any) => void) => {
-      if (!client || !channelName) return () => {};
+      if (!(client && channelName)) return () => {};
 
       const subscription = client.subscribe(channelName, event, callback);
       return subscription.unsubscribe;
@@ -48,13 +57,13 @@ export function usePresence(channelName: string) {
   const [myId, setMyId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!client || !channelName) return;
+    if (!(client && channelName)) return;
 
     let mounted = true;
 
     const setupPresence = async () => {
       await client.presence.subscribe(channelName);
-      
+
       if (mounted) {
         const currentMembers = client.presence.getMembers(channelName);
         setMembers(currentMembers);
@@ -78,66 +87,75 @@ export function useTypingIndicator(conversationId: string) {
   const typingTimeouts = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
   useEffect(() => {
-    if (!client || !conversationId) return;
+    if (!(client && conversationId)) return;
 
     const channel = `private-conversation-${conversationId}`;
-    const subscription = client.subscribe(channel, 'typing', (data: TypingEvent['data']) => {
-      setTypingUsers(prev => {
-        const next = new Set(prev);
-        
-        // Clear existing timeout
-        const existingTimeout = typingTimeouts.current.get(data.userId);
-        if (existingTimeout) {
-          clearTimeout(existingTimeout);
-        }
+    const subscription = client.subscribe(
+      channel,
+      'typing',
+      (data: TypingEvent['data']) => {
+        setTypingUsers((prev) => {
+          const next = new Set(prev);
 
-        if (data.isTyping) {
-          next.add(data.userId);
-          
-          // Auto-remove after 3 seconds
-          const timeout = setTimeout(() => {
-            setTypingUsers(p => {
-              const n = new Set(p);
-              n.delete(data.userId);
-              return n;
-            });
+          // Clear existing timeout
+          const existingTimeout = typingTimeouts.current.get(data.userId);
+          if (existingTimeout) {
+            clearTimeout(existingTimeout);
+          }
+
+          if (data.isTyping) {
+            next.add(data.userId);
+
+            // Auto-remove after 3 seconds
+            const timeout = setTimeout(() => {
+              setTypingUsers((p) => {
+                const n = new Set(p);
+                n.delete(data.userId);
+                return n;
+              });
+              typingTimeouts.current.delete(data.userId);
+            }, 3000);
+
+            typingTimeouts.current.set(data.userId, timeout);
+          } else {
+            next.delete(data.userId);
             typingTimeouts.current.delete(data.userId);
-          }, 3000);
-          
-          typingTimeouts.current.set(data.userId, timeout);
-        } else {
-          next.delete(data.userId);
-          typingTimeouts.current.delete(data.userId);
-        }
-        
-        return next;
-      });
-    });
+          }
+
+          return next;
+        });
+      }
+    );
 
     return () => {
       subscription.unsubscribe();
       // Clear all timeouts
-      typingTimeouts.current.forEach(timeout => clearTimeout(timeout));
+      typingTimeouts.current.forEach((timeout) => clearTimeout(timeout));
       typingTimeouts.current.clear();
     };
   }, [client, conversationId]);
 
-  const sendTyping = useCallback((isTyping: boolean) => {
-    if (!client || !conversationId) return;
-    
-    client.trigger(`private-conversation-${conversationId}`, 'typing', {
-      conversationId,
-      userId: 'current-user', // This should come from auth context
-      isTyping,
-    });
-  }, [client, conversationId]);
+  const sendTyping = useCallback(
+    (isTyping: boolean) => {
+      if (!(client && conversationId)) return;
+
+      client.trigger(`private-conversation-${conversationId}`, 'typing', {
+        conversationId,
+        userId: 'current-user', // This should come from auth context
+        isTyping,
+      });
+    },
+    [client, conversationId]
+  );
 
   return { typingUsers: Array.from(typingUsers), sendTyping };
 }
 
 export function useNotifications() {
   const { client } = useRealTime();
-  const [notifications, setNotifications] = useState<NotificationEvent['data'][]>([]);
+  const [notifications, setNotifications] = useState<
+    NotificationEvent['data'][]
+  >([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -145,9 +163,11 @@ export function useNotifications() {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await fetch(`${window.location.origin}/api/notifications?page=1&limit=50`);
+        const response = await fetch(
+          `${window.location.origin}/api/notifications?page=1&limit=50`
+        );
         const data = await response.json();
-        
+
         if (response.ok) {
           setNotifications(data.data || []);
           setUnreadCount(data.meta?.unreadCount || 0);
@@ -168,12 +188,16 @@ export function useNotifications() {
     if (!client) return;
 
     const channel = 'private-user-notifications';
-    const subscription = client.subscribe(channel, 'new-notification', (data: NotificationEvent['data']) => {
-      setNotifications(prev => [data, ...prev]);
-      if (!data.read) {
-        setUnreadCount(prev => prev + 1);
+    const subscription = client.subscribe(
+      channel,
+      'new-notification',
+      (data: NotificationEvent['data']) => {
+        setNotifications((prev) => [data, ...prev]);
+        if (!data.read) {
+          setUnreadCount((prev) => prev + 1);
+        }
       }
-    });
+    );
 
     return () => {
       subscription.unsubscribe();
@@ -182,16 +206,18 @@ export function useNotifications() {
 
   const markAsRead = useCallback(async (notificationId: string) => {
     try {
-      await fetch(`${window.location.origin}/api/notifications/${notificationId}/read`, {
-        method: 'PATCH',
-      });
-      
-      setNotifications(prev =>
-        prev.map(n => (n.id === notificationId ? { ...n, read: true } : n))
+      await fetch(
+        `${window.location.origin}/api/notifications/${notificationId}/read`,
+        {
+          method: 'PATCH',
+        }
       );
-      setUnreadCount(prev => Math.max(0, prev - 1));
-    } catch (error) {
-    }
+
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === notificationId ? { ...n, read: true } : n))
+      );
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+    } catch (error) {}
   }, []);
 
   const markAllAsRead = useCallback(async () => {
@@ -199,11 +225,10 @@ export function useNotifications() {
       await fetch(`${window.location.origin}/api/notifications/read-all`, {
         method: 'PATCH',
       });
-      
-      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
       setUnreadCount(0);
-    } catch (error) {
-    }
+    } catch (error) {}
   }, []);
 
   return {

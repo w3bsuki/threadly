@@ -1,31 +1,33 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { Input } from '@repo/design-system/components';
-import { Checkbox } from '@repo/design-system/components';
-import { 
-  Search,
-  Trash2,
-  Archive,
-  RefreshCw
-} from 'lucide-react';
 import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Checkbox,
+  Input,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@repo/design-system/components';
-import Image from 'next/image';
-import { ProductActions } from './product-actions';
-import { bulkUpdateProducts } from './actions';
-import { useRouter } from 'next/navigation';
-import { decimalToNumber } from '@repo/utils';
-import { CursorPagination, useCursorPagination } from '@repo/design-system/components/marketplace';
+import {
+  CursorPagination,
+  useCursorPagination,
+} from '@repo/design-system/components/marketplace';
 import type { CursorPaginationResult } from '@repo/design-system/lib/pagination';
+import { decimalToNumber } from '@repo/utils';
+import { Archive, RefreshCw, Search, Trash2 } from 'lucide-react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import type React from 'react';
+import { useCallback, useState } from 'react';
+import { bulkUpdateProducts } from './actions';
+import { ProductActions } from './product-actions';
 
 interface ProductWithDetails {
   id: string;
@@ -67,7 +69,7 @@ function ProductTable({ products }: { products: ProductWithDetails[] }) {
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedProducts(products.map(p => p.id));
+      setSelectedProducts(products.map((p) => p.id));
     } else {
       setSelectedProducts([]);
     }
@@ -75,15 +77,15 @@ function ProductTable({ products }: { products: ProductWithDetails[] }) {
 
   const handleSelectProduct = (productId: string, checked: boolean) => {
     if (checked) {
-      setSelectedProducts(prev => [...prev, productId]);
+      setSelectedProducts((prev) => [...prev, productId]);
     } else {
-      setSelectedProducts(prev => prev.filter(id => id !== productId));
+      setSelectedProducts((prev) => prev.filter((id) => id !== productId));
     }
   };
 
   const handleBulkAction = async (action: 'remove' | 'restore' | 'archive') => {
     if (selectedProducts.length === 0) return;
-    
+
     setIsUpdating(true);
     try {
       await bulkUpdateProducts({
@@ -103,36 +105,36 @@ function ProductTable({ products }: { products: ProductWithDetails[] }) {
     <div className="space-y-4">
       {/* Bulk Actions */}
       {selectedProducts.length > 0 && (
-        <div className="flex items-center gap-2 p-4 bg-muted/50 rounded-[var(--radius-lg)]">
-          <span className="text-sm font-medium">
+        <div className="flex items-center gap-2 rounded-[var(--radius-lg)] bg-muted/50 p-4">
+          <span className="font-medium text-sm">
             {selectedProducts.length} products selected
           </span>
           <div className="flex gap-2">
             <Button
+              disabled={isUpdating}
+              onClick={() => handleBulkAction('remove')}
               size="sm"
               variant="destructive"
-              onClick={() => handleBulkAction('remove')}
-              disabled={isUpdating}
             >
-              <Trash2 className="h-4 w-4 mr-1" />
+              <Trash2 className="mr-1 h-4 w-4" />
               Remove
             </Button>
             <Button
+              disabled={isUpdating}
+              onClick={() => handleBulkAction('archive')}
               size="sm"
               variant="outline"
-              onClick={() => handleBulkAction('archive')}
-              disabled={isUpdating}
             >
-              <Archive className="h-4 w-4 mr-1" />
+              <Archive className="mr-1 h-4 w-4" />
               Archive
             </Button>
             <Button
+              disabled={isUpdating}
+              onClick={() => handleBulkAction('restore')}
               size="sm"
               variant="outline"
-              onClick={() => handleBulkAction('restore')}
-              disabled={isUpdating}
             >
-              <RefreshCw className="h-4 w-4 mr-1" />
+              <RefreshCw className="mr-1 h-4 w-4" />
               Restore
             </Button>
           </div>
@@ -143,53 +145,60 @@ function ProductTable({ products }: { products: ProductWithDetails[] }) {
         <table className="w-full">
           <thead>
             <tr className="border-b">
-              <th className="text-left p-2 font-medium w-12">
+              <th className="w-12 p-2 text-left font-medium">
                 <Checkbox
-                  checked={selectedProducts.length === products.length && products.length > 0}
+                  checked={
+                    selectedProducts.length === products.length &&
+                    products.length > 0
+                  }
                   onCheckedChange={handleSelectAll}
                 />
               </th>
-              <th className="text-left p-2 font-medium">Product</th>
-              <th className="text-left p-2 font-medium">Seller</th>
-              <th className="text-left p-2 font-medium">Category</th>
-              <th className="text-left p-2 font-medium">Price</th>
-              <th className="text-left p-2 font-medium">Stats</th>
-              <th className="text-left p-2 font-medium">Status</th>
-              <th className="text-right p-2 font-medium">Actions</th>
+              <th className="p-2 text-left font-medium">Product</th>
+              <th className="p-2 text-left font-medium">Seller</th>
+              <th className="p-2 text-left font-medium">Category</th>
+              <th className="p-2 text-left font-medium">Price</th>
+              <th className="p-2 text-left font-medium">Stats</th>
+              <th className="p-2 text-left font-medium">Status</th>
+              <th className="p-2 text-right font-medium">Actions</th>
             </tr>
           </thead>
           <tbody>
             {products.map((product, index) => (
-              <tr key={product.id} className="border-b hover:bg-muted/50">
+              <tr className="border-b hover:bg-muted/50" key={product.id}>
                 <td className="p-2">
                   <Checkbox
                     checked={selectedProducts.includes(product.id)}
-                    onCheckedChange={(checked) => handleSelectProduct(product.id, checked as boolean)}
+                    onCheckedChange={(checked) =>
+                      handleSelectProduct(product.id, checked as boolean)
+                    }
                   />
                 </td>
                 <td className="p-2">
                   <div className="flex items-center gap-3">
                     {product.images[0] ? (
-                      <Image 
-                        src={product.images[0].imageUrl} 
+                      <Image
                         alt={product.title}
-                        width={64}
-                        height={64}
                         className="h-16 w-16 rounded-[var(--radius-lg)] object-cover"
-                        sizes="64px"
+                        height={64}
                         priority={index < 5}
+                        sizes="64px"
+                        src={product.images[0].imageUrl}
+                        width={64}
                       />
                     ) : (
-                      <div className="h-16 w-16 rounded-[var(--radius-lg)] bg-muted flex items-center justify-center">
+                      <div className="flex h-16 w-16 items-center justify-center rounded-[var(--radius-lg)] bg-muted">
                         No image
                       </div>
                     )}
                     <div>
-                      <p className="font-medium line-clamp-1">{product.title}</p>
-                      <p className="text-sm text-muted-foreground line-clamp-1">
+                      <p className="line-clamp-1 font-medium">
+                        {product.title}
+                      </p>
+                      <p className="line-clamp-1 text-muted-foreground text-sm">
                         {product.description || 'No description'}
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-muted-foreground text-xs">
                         {new Date(product.createdAt).toLocaleDateString()}
                       </p>
                     </div>
@@ -197,21 +206,22 @@ function ProductTable({ products }: { products: ProductWithDetails[] }) {
                 </td>
                 <td className="p-2">
                   <div>
-                    <p className="text-sm font-medium">
-                      {product.seller.firstName || ''} {product.seller.lastName || ''}
+                    <p className="font-medium text-sm">
+                      {product.seller.firstName || ''}{' '}
+                      {product.seller.lastName || ''}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground text-xs">
                       {product.seller.email}
                     </p>
                   </div>
                 </td>
                 <td className="p-2">
-                  <Badge variant="outline">
-                    {product.category.name}
-                  </Badge>
+                  <Badge variant="outline">{product.category.name}</Badge>
                 </td>
                 <td className="p-2">
-                  <p className="font-medium">${(decimalToNumber(product.price) / 100).toFixed(2)}</p>
+                  <p className="font-medium">
+                    ${(decimalToNumber(product.price) / 100).toFixed(2)}
+                  </p>
                 </td>
                 <td className="p-2">
                   <div className="text-sm">
@@ -222,12 +232,17 @@ function ProductTable({ products }: { products: ProductWithDetails[] }) {
                   </div>
                 </td>
                 <td className="p-2">
-                  <Badge variant={
-                    product.status === 'AVAILABLE' ? 'default' : 
-                    product.status === 'SOLD' ? 'secondary' : 
-                    product.status === 'REMOVED' ? 'destructive' :
-                    'outline'
-                  }>
+                  <Badge
+                    variant={
+                      product.status === 'AVAILABLE'
+                        ? 'default'
+                        : product.status === 'SOLD'
+                          ? 'secondary'
+                          : product.status === 'REMOVED'
+                            ? 'destructive'
+                            : 'outline'
+                    }
+                  >
                     {product.status}
                   </Badge>
                 </td>
@@ -243,7 +258,11 @@ function ProductTable({ products }: { products: ProductWithDetails[] }) {
   );
 }
 
-export function AdminProductsClient({ paginatedData, search, statusFilter }: AdminProductsClientProps): React.JSX.Element {
+export function AdminProductsClient({
+  paginatedData,
+  search,
+  statusFilter,
+}: AdminProductsClientProps): React.JSX.Element {
   const [products, setProducts] = useState(paginatedData.items);
   const { state, updateState } = useCursorPagination({
     cursor: paginatedData.nextCursor,
@@ -267,7 +286,7 @@ export function AdminProductsClient({ paginatedData, search, statusFilter }: Adm
       const response = await fetch(`/api/admin/products?${params}`);
       const data = await response.json();
 
-      setProducts(prev => [...prev, ...data.items]);
+      setProducts((prev) => [...prev, ...data.items]);
       updateState({
         cursor: data.nextCursor,
         hasNextPage: data.hasNextPage,
@@ -276,70 +295,87 @@ export function AdminProductsClient({ paginatedData, search, statusFilter }: Adm
     } catch (error) {
       updateState({ isLoading: false });
     }
-  }, [state.cursor, state.hasNextPage, state.isLoading, search, statusFilter, updateState]);
+  }, [
+    state.cursor,
+    state.hasNextPage,
+    state.isLoading,
+    search,
+    statusFilter,
+    updateState,
+  ]);
 
   // Calculate stats from current page products only (admin needs total stats in future)
   const statusStats = {
     total: paginatedData.totalCount || products.length,
-    available: products.filter(p => p.status === 'AVAILABLE').length,
-    sold: products.filter(p => p.status === 'SOLD').length,
-    removed: products.filter(p => p.status === 'REMOVED').length,
-    reserved: products.filter(p => p.status === 'RESERVED').length
+    available: products.filter((p) => p.status === 'AVAILABLE').length,
+    sold: products.filter((p) => p.status === 'SOLD').length,
+    removed: products.filter((p) => p.status === 'REMOVED').length,
+    reserved: products.filter((p) => p.status === 'RESERVED').length,
   };
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Product Management</h1>
-        <p className="text-muted-foreground mt-2">
+        <h1 className="font-bold text-3xl">Product Management</h1>
+        <p className="mt-2 text-muted-foreground">
           Review and moderate product listings
         </p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Total Products</CardTitle>
+            <CardTitle className="font-medium text-sm">
+              Total Products
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{statusStats.total}</div>
+            <div className="font-bold text-2xl">{statusStats.total}</div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Available</CardTitle>
+            <CardTitle className="font-medium text-sm">Available</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{statusStats.available}</div>
+            <div className="font-bold text-2xl text-green-600">
+              {statusStats.available}
+            </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Sold</CardTitle>
+            <CardTitle className="font-medium text-sm">Sold</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{statusStats.sold}</div>
+            <div className="font-bold text-2xl text-blue-600">
+              {statusStats.sold}
+            </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Reserved</CardTitle>
+            <CardTitle className="font-medium text-sm">Reserved</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{statusStats.reserved}</div>
+            <div className="font-bold text-2xl text-yellow-600">
+              {statusStats.reserved}
+            </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Removed</CardTitle>
+            <CardTitle className="font-medium text-sm">Removed</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{statusStats.removed}</div>
+            <div className="font-bold text-2xl text-red-600">
+              {statusStats.removed}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -351,14 +387,14 @@ export function AdminProductsClient({ paginatedData, search, statusFilter }: Adm
             <CardTitle>Products</CardTitle>
             <div className="flex items-center gap-2">
               <form className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-muted-foreground" />
                 <Input
-                  placeholder="Search products..."
+                  className="w-[300px] pl-10"
                   name="q"
-                  className="pl-10 w-[300px]"
+                  placeholder="Search products..."
                 />
               </form>
-              
+
               <form>
                 <Select name="status">
                   <SelectTrigger className="w-[150px]">
@@ -382,11 +418,11 @@ export function AdminProductsClient({ paginatedData, search, statusFilter }: Adm
       </Card>
 
       <CursorPagination
-        state={state}
-        onLoadMore={loadMore}
-        loadMoreText="Load More Products"
         currentCount={products.length}
+        loadMoreText="Load More Products"
+        onLoadMore={loadMore}
         showStats={true}
+        state={state}
       />
     </div>
   );

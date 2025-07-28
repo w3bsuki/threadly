@@ -1,7 +1,7 @@
-import { algoliasearch } from 'algoliasearch';
-import type { SearchClient } from 'algoliasearch';
 import type { Product } from '@repo/database';
 import { logError } from '@repo/observability';
+import type { SearchClient } from 'algoliasearch';
+import { algoliasearch } from 'algoliasearch';
 
 interface AlgoliaProduct extends Record<string, unknown> {
   objectID: string;
@@ -33,7 +33,7 @@ interface AlgoliaProduct extends Record<string, unknown> {
 export class AlgoliaSyncService {
   private client: SearchClient | null = null;
   private indexName: string;
-  private isConfigured: boolean = false;
+  private isConfigured = false;
 
   constructor() {
     const appId = process.env.ALGOLIA_APP_ID;
@@ -41,8 +41,8 @@ export class AlgoliaSyncService {
     const indexName = process.env.ALGOLIA_INDEX_NAME || 'products';
 
     this.indexName = indexName;
-    
-    if (!appId || !apiKey) {
+
+    if (!(appId && apiKey)) {
       console.log('Algolia sync service not configured - missing credentials');
       this.isConfigured = false;
       return;
@@ -51,7 +51,7 @@ export class AlgoliaSyncService {
     try {
       this.client = algoliasearch(appId, apiKey);
       this.isConfigured = true;
-      
+
       // TODO: Configure index settings - v5 API has changed
       // this.configureIndex();
     } catch (error) {
@@ -61,7 +61,7 @@ export class AlgoliaSyncService {
   }
 
   private async configureIndex() {
-    if (!this.isConfigured || !this.client) return;
+    if (!(this.isConfigured && this.client)) return;
 
     // TODO: Fix setSettings API for Algolia v5
     // The v5 API has changed and needs investigation
@@ -144,25 +144,26 @@ export class AlgoliaSyncService {
       size: product.size,
       color: product.color,
       sellerId: product.sellerId,
-      sellerName: product.seller ? 
-        `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() : 
-        undefined,
+      sellerName: product.seller
+        ? `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim()
+        : undefined,
       sellerImageUrl: product.seller?.imageUrl,
       status: product.status,
       views: product.views,
       favoritesCount: product._count?.favorites || 0,
-      images: product.images?.map((img: any) => ({
-        id: img.id,
-        imageUrl: img.imageUrl,
-        displayOrder: img.displayOrder,
-      })) || [],
+      images:
+        product.images?.map((img: any) => ({
+          id: img.id,
+          imageUrl: img.imageUrl,
+          displayOrder: img.displayOrder,
+        })) || [],
       createdAt: new Date(product.createdAt).getTime(),
       updatedAt: new Date(product.updatedAt).getTime(),
     };
   }
 
   async indexProduct(product: any): Promise<void> {
-    if (!this.isConfigured || !this.client) {
+    if (!(this.isConfigured && this.client)) {
       console.log('Skipping Algolia indexing - service not configured');
       return;
     }
@@ -171,7 +172,7 @@ export class AlgoliaSyncService {
       const algoliaProduct = this.transformProduct(product);
       await this.client.saveObject({
         indexName: this.indexName,
-        body: algoliaProduct
+        body: algoliaProduct,
       });
       console.log('Product indexed to Algolia', { productId: product.id });
     } catch (error) {
@@ -182,7 +183,7 @@ export class AlgoliaSyncService {
   }
 
   async updateProduct(product: any): Promise<void> {
-    if (!this.isConfigured || !this.client) {
+    if (!(this.isConfigured && this.client)) {
       console.log('Skipping Algolia update - service not configured');
       return;
     }
@@ -192,7 +193,7 @@ export class AlgoliaSyncService {
       await this.client.partialUpdateObject({
         indexName: this.indexName,
         objectID: algoliaProduct.objectID,
-        attributesToUpdate: algoliaProduct
+        attributesToUpdate: algoliaProduct,
       });
       console.log('Product updated in Algolia', { productId: product.id });
     } catch (error) {
@@ -203,7 +204,7 @@ export class AlgoliaSyncService {
   }
 
   async deleteProduct(productId: string): Promise<void> {
-    if (!this.isConfigured || !this.client) {
+    if (!(this.isConfigured && this.client)) {
       console.log('Skipping Algolia deletion - service not configured');
       return;
     }
@@ -211,7 +212,7 @@ export class AlgoliaSyncService {
     try {
       await this.client.deleteObject({
         indexName: this.indexName,
-        objectID: productId
+        objectID: productId,
       });
       console.log('Product deleted from Algolia', { productId });
     } catch (error) {
@@ -222,18 +223,20 @@ export class AlgoliaSyncService {
   }
 
   async bulkIndex(products: any[]): Promise<void> {
-    if (!this.isConfigured || !this.client) {
+    if (!(this.isConfigured && this.client)) {
       console.log('Skipping Algolia bulk indexing - service not configured');
       return;
     }
 
     try {
-      const algoliaProducts = products.map(p => this.transformProduct(p));
+      const algoliaProducts = products.map((p) => this.transformProduct(p));
       await this.client.saveObjects({
         indexName: this.indexName,
-        objects: algoliaProducts
+        objects: algoliaProducts,
       });
-      console.log('Bulk indexed products to Algolia', { count: products.length });
+      console.log('Bulk indexed products to Algolia', {
+        count: products.length,
+      });
     } catch (error) {
       logError('Failed to bulk index products to Algolia', error);
       throw error;
@@ -241,14 +244,14 @@ export class AlgoliaSyncService {
   }
 
   async clearIndex(): Promise<void> {
-    if (!this.isConfigured || !this.client) {
+    if (!(this.isConfigured && this.client)) {
       console.log('Skipping Algolia clear - service not configured');
       return;
     }
 
     try {
       await this.client.clearObjects({
-        indexName: this.indexName
+        indexName: this.indexName,
       });
       console.log('Algolia index cleared');
     } catch (error) {

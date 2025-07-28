@@ -8,39 +8,37 @@ export * from './components';
 
 // Hooks (client-side)
 export * from './hooks';
-
-// Types and schemas  
-export type * from './types';
-export { 
-  sendMessageRequestSchema,
-  fetchMessagesRequestSchema,
-  createConversationRequestSchema,
-  messageWithSenderSchema,
-  conversationWithDetailsSchema,
+export {
+  clientMessageSchema,
+  connectionStatusSchema,
   conversationListItemSchema,
-  messagesPaginationSchema,
-  messagesResponseSchema,
-  sendMessageResultSchema,
+  conversationWithDetailsSchema,
+  createConversationRequestSchema,
   createConversationResultSchema,
+  fetchMessagesRequestSchema,
   markAsReadResultSchema,
   messageEventSchema,
-  typingEventSchema,
-  connectionStatusSchema,
   messageStatusSchema,
-  clientMessageSchema,
-  quickReplyTemplateSchema,
+  messagesPaginationSchema,
+  messagesResponseSchema,
   messageThreadContextSchema,
+  messageWithSenderSchema,
+  quickReplyTemplateSchema,
+  sendMessageRequestSchema,
+  sendMessageResultSchema,
+  typingEventSchema,
 } from './schemas';
-
 // Server utilities (for API routes and server actions)
 export {
-  getMessages,
-  sendMessage,
-  createConversation,
-  markMessagesAsRead,
-  getUserConversations,
   archiveConversation,
+  createConversation,
+  getMessages,
+  getUserConversations,
+  markMessagesAsRead,
+  sendMessage,
 } from './server';
+// Types and schemas
+export type * from './types';
 
 // Constants and utilities
 export const MESSAGE_LIMITS = {
@@ -66,7 +64,7 @@ export const MESSAGE_STATUS = {
 // Quick reply templates
 export const QUICK_REPLY_TEMPLATES = {
   GREETING: [
-    'Hi! I\'m interested in this item.',
+    "Hi! I'm interested in this item.",
     'Hello! Is this still available?',
     'Hi there! Can you tell me more about this?',
   ],
@@ -80,12 +78,12 @@ export const QUICK_REPLY_TEMPLATES = {
   OFFER: [
     'Would you consider $[amount]?',
     'I can offer $[amount] for this.',
-    'What\'s the lowest you\'d accept?',
+    "What's the lowest you'd accept?",
   ],
   UNAVAILABLE: [
     'Sorry, this item is no longer available.',
     'This has been sold to someone else.',
-    'I\'ve decided not to sell this.',
+    "I've decided not to sell this.",
   ],
   SHIPPING: [
     'I can ship this within 1-2 business days.',
@@ -99,7 +97,8 @@ export const QUICK_REPLY_TEMPLATES = {
 export function formatMessageTime(date: Date): string {
   const now = new Date();
   const messageDate = new Date(date);
-  const diffInHours = (now.getTime() - messageDate.getTime()) / (1000 * 60 * 60);
+  const diffInHours =
+    (now.getTime() - messageDate.getTime()) / (1000 * 60 * 60);
 
   if (diffInHours < 24) {
     return messageDate.toLocaleTimeString('en-US', {
@@ -107,22 +106,22 @@ export function formatMessageTime(date: Date): string {
       minute: '2-digit',
       hour12: true,
     });
-  } else if (diffInHours < 7 * 24) {
+  }
+  if (diffInHours < 7 * 24) {
     return messageDate.toLocaleDateString('en-US', {
       weekday: 'short',
       hour: 'numeric',
       minute: '2-digit',
       hour12: true,
     });
-  } else {
-    return messageDate.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    });
   }
+  return messageDate.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
 }
 
 export function getMessagePreview(content: string, maxLength = 50): string {
@@ -134,7 +133,10 @@ export function generateOptimisticMessageId(): string {
   return `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
-export function isImageMessage(message: { content: string; imageUrl?: string | null }): boolean {
+export function isImageMessage(message: {
+  content: string;
+  imageUrl?: string | null;
+}): boolean {
   return Boolean(message.imageUrl) || message.content.trim() === '';
 }
 
@@ -142,7 +144,7 @@ export function getParticipantName(
   firstName?: string | null,
   lastName?: string | null
 ): string {
-  if (!firstName && !lastName) return 'Anonymous';
+  if (!(firstName || lastName)) return 'Anonymous';
   return `${firstName || ''} ${lastName || ''}`.trim();
 }
 

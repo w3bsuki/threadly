@@ -1,45 +1,51 @@
 'use client';
 
 import { useCartStore } from '@repo/commerce';
-import { Button } from '@repo/design-system/components';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { Separator } from '@repo/design-system/components';
-import { ShoppingCart, Minus, Plus, Trash2 } from 'lucide-react';
-import Link from 'next/link';
+import {
+  Badge,
+  Button,
+  Separator,
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@repo/design-system/components';
+import { Minus, Plus, ShoppingCart, Trash2 } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export function CartDropdown(): React.JSX.Element {
-  const { 
-    items, 
-    isOpen, 
-    toggleCart, 
+  const {
+    items,
+    isOpen,
+    toggleCart,
     closeCart,
     removeItem,
     updateQuantity,
-    getTotalItems, 
-    getTotalPrice 
+    getTotalItems,
+    getTotalPrice,
   } = useCartStore();
 
   const totalItems = getTotalItems();
   const totalPrice = getTotalPrice();
 
   return (
-    <Sheet open={isOpen} onOpenChange={toggleCart}>
+    <Sheet onOpenChange={toggleCart} open={isOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
+        <Button className="relative" size="icon" variant="ghost">
           <ShoppingCart className="h-5 w-5" />
           {totalItems > 0 && (
-            <Badge 
-              variant="destructive" 
-              className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center text-xs"
+            <Badge
+              className="-top-2 -right-2 absolute flex h-5 w-5 items-center justify-center text-xs"
+              variant="destructive"
             >
               {totalItems > 99 ? '99+' : totalItems}
             </Badge>
           )}
         </Button>
       </SheetTrigger>
-      
+
       <SheetContent className="w-full max-w-md">
         <SheetHeader>
           <SheetTitle>
@@ -47,67 +53,79 @@ export function CartDropdown(): React.JSX.Element {
           </SheetTitle>
         </SheetHeader>
 
-        <div className="flex flex-col h-full">
+        <div className="flex h-full flex-col">
           {items.length === 0 ? (
-            <div className="flex-1 flex items-center justify-center">
+            <div className="flex flex-1 items-center justify-center">
               <div className="text-center">
-                <ShoppingCart className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
-                <p className="text-sm text-muted-foreground">Your cart is empty</p>
+                <ShoppingCart className="mx-auto mb-4 h-12 w-12 text-muted-foreground/50" />
+                <p className="text-muted-foreground text-sm">
+                  Your cart is empty
+                </p>
               </div>
             </div>
           ) : (
             <>
               {/* Cart Items */}
-              <div className="flex-1 overflow-y-auto py-4 space-y-4">
+              <div className="flex-1 space-y-4 overflow-y-auto py-4">
                 {items.map((item) => (
-                  <div key={item.id} className="flex gap-3">
-                    <div className="relative w-16 h-16 flex-shrink-0">
+                  <div className="flex gap-3" key={item.id}>
+                    <div className="relative h-16 w-16 flex-shrink-0">
                       <Image
-                        src={item.imageUrl}
                         alt={item.title}
+                        className="rounded-[var(--radius-md)] object-cover"
                         fill
-                        className="object-cover rounded-[var(--radius-md)]"
+                        src={item.imageUrl}
                       />
                     </div>
 
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-sm line-clamp-2">{item.title}</h4>
-                      <p className="text-xs text-muted-foreground">
+                    <div className="min-w-0 flex-1">
+                      <h4 className="line-clamp-2 font-medium text-sm">
+                        {item.title}
+                      </h4>
+                      <p className="text-muted-foreground text-xs">
                         {item.sellerName}
                       </p>
-                      
-                      <div className="flex items-center justify-between mt-2">
+
+                      <div className="mt-2 flex items-center justify-between">
                         <div className="flex items-center gap-1">
                           <Button
-                            variant="outline"
-                            size="icon"
                             className="h-6 w-6"
-                            onClick={() => updateQuantity(item.productId, item.quantity - 1)}
                             disabled={item.quantity <= 1}
+                            onClick={() =>
+                              updateQuantity(item.productId, item.quantity - 1)
+                            }
+                            size="icon"
+                            variant="outline"
                           >
                             <Minus className="h-3 w-3" />
                           </Button>
-                          <span className="text-xs w-6 text-center">{item.quantity}</span>
+                          <span className="w-6 text-center text-xs">
+                            {item.quantity}
+                          </span>
                           <Button
-                            variant="outline"
-                            size="icon"
                             className="h-6 w-6"
-                            onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                            disabled={item.quantity >= (item.availableQuantity ?? 1)}
+                            disabled={
+                              item.quantity >= (item.availableQuantity ?? 1)
+                            }
+                            onClick={() =>
+                              updateQuantity(item.productId, item.quantity + 1)
+                            }
+                            size="icon"
+                            variant="outline"
                           >
                             <Plus className="h-3 w-3" />
                           </Button>
                         </div>
 
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium">
+                          <span className="font-medium text-sm">
                             ${(item.price * item.quantity).toFixed(2)}
                           </span>
                           <Button
-                            variant="ghost"
-                            size="icon"
                             className="h-6 w-6 text-destructive hover:text-destructive"
                             onClick={() => removeItem(item.productId)}
+                            size="icon"
+                            variant="ghost"
                           >
                             <Trash2 className="h-3 w-3" />
                           </Button>
@@ -121,7 +139,7 @@ export function CartDropdown(): React.JSX.Element {
               <Separator />
 
               {/* Cart Summary */}
-              <div className="py-4 space-y-4">
+              <div className="space-y-4 py-4">
                 <div className="flex justify-between font-semibold">
                   <span>Total</span>
                   <span>${totalPrice.toFixed(2)}</span>
@@ -129,15 +147,16 @@ export function CartDropdown(): React.JSX.Element {
 
                 <div className="space-y-2">
                   <Button asChild className="w-full" onClick={closeCart}>
-                    <Link href="/buying/cart">
-                      View Cart
-                    </Link>
+                    <Link href="/buying/cart">View Cart</Link>
                   </Button>
-                  
-                  <Button variant="outline" className="w-full" onClick={closeCart} asChild>
-                    <Link href="/browse">
-                      Continue Shopping
-                    </Link>
+
+                  <Button
+                    asChild
+                    className="w-full"
+                    onClick={closeCart}
+                    variant="outline"
+                  >
+                    <Link href="/browse">Continue Shopping</Link>
                   </Button>
                 </div>
               </div>

@@ -1,9 +1,9 @@
 'use client';
 
-import { useCallback, useEffect } from 'react';
-import { useCheckoutStore } from './store';
 import { useCartStore } from '@repo/cart';
+import { useCallback, useEffect } from 'react';
 import type { ShippingAddress } from '../types';
+import { useCheckoutStore } from './store';
 
 export function useCheckout() {
   const checkout = useCheckoutStore();
@@ -22,9 +22,9 @@ export function useCheckout() {
 
     switch (checkout.currentStep) {
       case 'shipping':
-        return !!(checkout.session.shippingAddress);
+        return !!checkout.session.shippingAddress;
       case 'payment':
-        return !!(checkout.session.paymentMethod);
+        return !!checkout.session.paymentMethod;
       case 'review':
         return true;
       default:
@@ -33,17 +33,20 @@ export function useCheckout() {
   }, [checkout.session, checkout.currentStep]);
 
   // Use billing same as shipping
-  const useSameAsShipping = useCallback((same: boolean) => {
-    if (same && checkout.session?.shippingAddress) {
-      checkout.setBillingAddress(checkout.session.shippingAddress);
-    } else {
-      checkout.setBillingAddress(undefined as any);
-    }
-  }, [checkout.session?.shippingAddress]);
+  const useSameAsShipping = useCallback(
+    (same: boolean) => {
+      if (same && checkout.session?.shippingAddress) {
+        checkout.setBillingAddress(checkout.session.shippingAddress);
+      } else {
+        checkout.setBillingAddress(undefined as any);
+      }
+    },
+    [checkout.session?.shippingAddress]
+  );
 
   // Complete checkout
   const completeCheckout = useCallback(async () => {
-    if (!checkout.session || !canProceed()) {
+    if (!(checkout.session && canProceed())) {
       checkout.setError('Please complete all required fields');
       return null;
     }
@@ -59,7 +62,8 @@ export function useCheckout() {
         body: JSON.stringify({
           items: checkout.session.items,
           shippingAddress: checkout.session.shippingAddress,
-          billingAddress: checkout.session.billingAddress || checkout.session.shippingAddress,
+          billingAddress:
+            checkout.session.billingAddress || checkout.session.shippingAddress,
           paymentMethod: checkout.session.paymentMethod,
           subtotal: checkout.session.subtotal,
           tax: checkout.session.tax,
@@ -81,7 +85,9 @@ export function useCheckout() {
 
       return order;
     } catch (error) {
-      checkout.setError(error instanceof Error ? error.message : 'Something went wrong');
+      checkout.setError(
+        error instanceof Error ? error.message : 'Something went wrong'
+      );
       return null;
     } finally {
       checkout.setProcessing(false);

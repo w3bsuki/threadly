@@ -1,5 +1,5 @@
-import { vi } from 'vitest';
 import React from 'react';
+import { vi } from 'vitest';
 
 // Mock user data for testing
 export const mockClerkUser = {
@@ -51,18 +51,35 @@ export function mockClerkAuth(isSignedIn = true, user = mockClerkUser) {
       currentUser: () => Promise.resolve(mockAuth.user),
       ClerkProvider: ({ children }: { children: React.ReactNode }) => children,
       SignInButton: ({ children }: { children: React.ReactNode }) => {
-        return React.createElement('button', { 'data-testid': 'sign-in-button' }, children);
+        return React.createElement(
+          'button',
+          { 'data-testid': 'sign-in-button' },
+          children
+        );
       },
       SignUpButton: ({ children }: { children: React.ReactNode }) => {
-        return React.createElement('button', { 'data-testid': 'sign-up-button' }, children);
+        return React.createElement(
+          'button',
+          { 'data-testid': 'sign-up-button' },
+          children
+        );
       },
       SignOutButton: ({ children }: { children: React.ReactNode }) => {
-        return React.createElement('button', { 
-          'data-testid': 'sign-out-button',
-          onClick: mockAuth.signOut 
-        }, children);
+        return React.createElement(
+          'button',
+          {
+            'data-testid': 'sign-out-button',
+            onClick: mockAuth.signOut,
+          },
+          children
+        );
       },
-      UserButton: () => React.createElement('div', { 'data-testid': 'user-button' }, 'User Menu'),
+      UserButton: () =>
+        React.createElement(
+          'div',
+          { 'data-testid': 'user-button' },
+          'User Menu'
+        ),
     };
   });
 
@@ -92,7 +109,9 @@ export function mockSessionToken(token = 'test_session_token') {
 }
 
 // Helper to test protected routes
-export function createAuthenticatedUser(overrides?: Partial<typeof mockDatabaseUser>) {
+export function createAuthenticatedUser(
+  overrides?: Partial<typeof mockDatabaseUser>
+) {
   return {
     ...mockDatabaseUser,
     ...overrides,
@@ -169,7 +188,9 @@ export class AuthTestHelper {
 }
 
 // Helper to test role-based access
-export function createUserWithRole(role: 'USER' | 'ADMIN' | 'MODERATOR' = 'USER') {
+export function createUserWithRole(
+  role: 'USER' | 'ADMIN' | 'MODERATOR' = 'USER'
+) {
   return {
     ...mockDatabaseUser,
     role,
@@ -205,7 +226,7 @@ export async function simulateAuthFlow(
   user = mockClerkUser
 ) {
   const helper = AuthTestHelper.getInstance();
-  
+
   switch (action) {
     case 'signIn':
       return helper.signIn(user);
@@ -227,7 +248,8 @@ export function testPermissions(userRole: string, requiredRole: string) {
   };
 
   const userLevel = roleHierarchy[userRole as keyof typeof roleHierarchy] ?? -1;
-  const requiredLevel = roleHierarchy[requiredRole as keyof typeof roleHierarchy] ?? 999;
+  const requiredLevel =
+    roleHierarchy[requiredRole as keyof typeof roleHierarchy] ?? 999;
 
   return userLevel >= requiredLevel;
 }

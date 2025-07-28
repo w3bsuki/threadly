@@ -94,27 +94,31 @@ export const TrendingProducts = async () => {
         take: 6,
       });
 
-      transformedProducts = trendingProducts.map((product): TransformedProduct => ({
-        id: product.id,
-        title: product.title,
-        brand: product.brand || 'Unknown',
-        price: product.price.toString(),
-        originalPrice: null, // We don't have this in our schema
-        condition: product.condition,
-        size: product.size || 'One Size',
-        images: product.images.map((img) => img.imageUrl).filter((url): url is string => Boolean(url)),
-        seller: {
-          name: product.seller
-            ? `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() ||
-              'Anonymous'
-            : 'Anonymous',
-          rating: product.seller?.averageRating || 0,
-          location: product.seller?.location || 'Unknown',
-        },
-        likes: product._count.favorites,
-        views: product.views,
-        timeAgo: '2 hours ago', // Simplified for now
-      }));
+      transformedProducts = trendingProducts.map(
+        (product): TransformedProduct => ({
+          id: product.id,
+          title: product.title,
+          brand: product.brand || 'Unknown',
+          price: product.price.toString(),
+          originalPrice: null, // We don't have this in our schema
+          condition: product.condition,
+          size: product.size || 'One Size',
+          images: product.images
+            .map((img) => img.imageUrl)
+            .filter((url): url is string => Boolean(url)),
+          seller: {
+            name: product.seller
+              ? `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() ||
+                'Anonymous'
+              : 'Anonymous',
+            rating: product.seller?.averageRating || 0,
+            location: product.seller?.location || 'Unknown',
+          },
+          likes: product._count.favorites,
+          views: product.views,
+          timeAgo: '2 hours ago', // Simplified for now
+        })
+      );
 
       // Cache the transformed products
       if (transformedProducts) {

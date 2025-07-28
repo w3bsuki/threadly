@@ -1,10 +1,10 @@
 'use client';
 
+import { Check, Heart, Plus, ShoppingCart, Star, X } from 'lucide-react';
 import * as React from 'react';
-import { Button } from './button';
-import { HeartAnimation } from '../brand/icons';
-import { ShoppingCart, Heart, Star, Plus, Check, X } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { HeartAnimation } from '../brand/icons';
+import { Button } from './button';
 
 // Animated Heart Button with Love Animation
 export interface AnimatedHeartButtonProps {
@@ -33,50 +33,55 @@ export const AnimatedHeartButton: React.FC<AnimatedHeartButtonProps> = ({
 
   const handleClick = () => {
     if (disabled) return;
-    
+
     setIsAnimating(true);
     const newLikedState = !liked;
     setLiked(newLikedState);
     onToggle?.(newLikedState);
-    
+
     setTimeout(() => setIsAnimating(false), 600);
   };
 
-  const buttonSize: 'sm' | 'default' | 'lg' = size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'default';
+  const buttonSize: 'sm' | 'default' | 'lg' =
+    size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'default';
   const iconSize = size === 'sm' ? 16 : size === 'lg' ? 24 : 20;
 
   return (
     <Button
-      variant={variant}
-      size={buttonSize}
-      onClick={handleClick}
-      disabled={disabled}
       className={cn(
-        'relative overflow-hidden group transition-all duration-300 active:scale-95',
+        'group relative overflow-hidden transition-all duration-300 active:scale-95',
         liked && 'text-[oklch(var(--brand-accent))]',
         className
       )}
+      disabled={disabled}
+      onClick={handleClick}
+      size={buttonSize}
+      variant={variant}
     >
       <div className="flex items-center gap-2">
-        <div className={cn(
-          'transition-all duration-300',
-          isAnimating && 'animate-bounce-in',
-        )}>
-          <HeartAnimation 
-            isLiked={liked} 
-            size={iconSize}
+        <div
+          className={cn(
+            'transition-all duration-300',
+            isAnimating && 'animate-bounce-in'
+          )}
+        >
+          <HeartAnimation
             className={cn(
               'transition-colors duration-300',
               liked && 'text-[oklch(var(--brand-accent))]'
             )}
+            isLiked={liked}
+            size={iconSize}
           />
         </div>
-        
+
         {showCount && (
-          <span className={cn(
-            'text-sm font-medium transition-all duration-200',
-            isAnimating && 'animate-bounce-in animation-delay-100'
-          )}>
+          <span
+            className={cn(
+              'font-medium text-sm transition-all duration-200',
+              isAnimating && 'animation-delay-100 animate-bounce-in'
+            )}
+          >
             {count}
           </span>
         )}
@@ -84,15 +89,15 @@ export const AnimatedHeartButton: React.FC<AnimatedHeartButtonProps> = ({
 
       {/* Love particles animation */}
       {isAnimating && liked && (
-        <div className="absolute inset-0 pointer-events-none">
+        <div className="pointer-events-none absolute inset-0">
           {[...Array(6)].map((_, i) => (
-            <Heart 
-              key={i}
+            <Heart
               className={cn(
-                'absolute h-3 w-3 text-[oklch(var(--brand-accent))] fill-current',
+                'absolute h-3 w-3 fill-current text-[oklch(var(--brand-accent))]',
                 'animate-float opacity-0',
                 `animation-delay-${i * 100}`
               )}
+              key={i}
               style={{
                 left: '50%',
                 top: '50%',
@@ -128,7 +133,9 @@ export const AnimatedCartButton: React.FC<AnimatedCartButtonProps> = ({
   disabled = false,
   className,
 }) => {
-  const [state, setState] = React.useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [state, setState] = React.useState<
+    'idle' | 'loading' | 'success' | 'error'
+  >('idle');
 
   const handleClick = async () => {
     if (disabled || state !== 'idle') return;
@@ -144,7 +151,8 @@ export const AnimatedCartButton: React.FC<AnimatedCartButtonProps> = ({
     }
   };
 
-  const buttonSize: 'sm' | 'default' | 'lg' = size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'default';
+  const buttonSize: 'sm' | 'default' | 'lg' =
+    size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'default';
 
   const getIcon = () => {
     switch (state) {
@@ -174,31 +182,34 @@ export const AnimatedCartButton: React.FC<AnimatedCartButtonProps> = ({
 
   return (
     <Button
-      variant={variant}
-      size={buttonSize}
-      onClick={handleClick}
-      disabled={disabled || state === 'loading'}
       className={cn(
         'relative overflow-hidden transition-all duration-300 active:scale-95',
-        state === 'success' && 'bg-[oklch(var(--brand-secondary))] hover:bg-[oklch(var(--brand-secondary)/.9)]',
+        state === 'success' &&
+          'bg-[oklch(var(--brand-secondary))] hover:bg-[oklch(var(--brand-secondary)/.9)]',
         state === 'error' && 'bg-destructive hover:bg-destructive/90',
         state === 'loading' && 'cursor-wait',
         className
       )}
+      disabled={disabled || state === 'loading'}
+      onClick={handleClick}
+      size={buttonSize}
+      variant={variant}
     >
       <div className="flex items-center gap-2 transition-all duration-200">
         {getIcon()}
-        <span className={cn(
-          'transition-all duration-200',
-          state !== 'idle' && 'animate-fadeIn'
-        )}>
+        <span
+          className={cn(
+            'transition-all duration-200',
+            state !== 'idle' && 'animate-fadeIn'
+          )}
+        >
           {getText()}
         </span>
       </div>
 
       {/* Success ripple effect */}
       {state === 'success' && (
-        <div className="absolute inset-0 bg-[oklch(var(--brand-secondary)/.3)] rounded-[var(--radius-md)] animate-ping opacity-0" />
+        <div className="absolute inset-0 animate-ping rounded-[var(--radius-md)] bg-[oklch(var(--brand-secondary)/.3)] opacity-0" />
       )}
     </Button>
   );
@@ -241,29 +252,29 @@ export const AnimatedRatingStars: React.FC<AnimatedRatingStarsProps> = ({
       {[...Array(maxRating)].map((_, index) => {
         const filled = (hoverRating || rating) >= index + 1;
         const shouldAnimate = showAnimation && isAnimating && filled;
-        
+
         return (
           <button
-            key={index}
             className={cn(
               'transition-all duration-200 active:scale-90',
-              !readonly && 'hover:scale-110 cursor-pointer',
+              !readonly && 'cursor-pointer hover:scale-110',
               readonly && 'cursor-default',
               shouldAnimate && 'animate-bounce-in',
               shouldAnimate && `animation-delay-${index * 50}`
             )}
+            key={index}
             onClick={() => handleClick(index + 1)}
             onMouseEnter={() => !readonly && setHoverRating(index + 1)}
             onMouseLeave={() => !readonly && setHoverRating(0)}
           >
             <Star
-              size={iconSize}
               className={cn(
                 'transition-colors duration-200',
-                filled 
-                  ? 'text-[oklch(var(--brand-accent))] fill-[oklch(var(--brand-accent))]'
+                filled
+                  ? 'fill-[oklch(var(--brand-accent))] text-[oklch(var(--brand-accent))]'
                   : 'text-muted-foreground'
               )}
+              size={iconSize}
             />
           </button>
         );
@@ -323,22 +334,22 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
       )}
     >
       <Button
-        variant={variant}
         className={cn(
-          'rounded-[var(--radius-full)] shadow-lg hover:shadow-xl transition-all duration-300 relative active:scale-95 hover:scale-105',
+          'relative rounded-[var(--radius-full)] shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl active:scale-95',
           sizeClasses[size],
           pulse && 'animate-pulse'
         )}
         onClick={onClick}
+        variant={variant}
       >
         {pulse && (
-          <div className="absolute inset-0 rounded-[var(--radius-full)] bg-current opacity-20 animate-ping" />
+          <div className="absolute inset-0 animate-ping rounded-[var(--radius-full)] bg-current opacity-20" />
         )}
-        
+
         {icon}
-        
+
         {badge && badge > 0 && (
-          <div className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground text-xs font-bold rounded-[var(--radius-full)] h-6 w-6 flex items-center justify-center animate-bounce-in">
+          <div className="-top-2 -right-2 absolute flex h-6 w-6 animate-bounce-in items-center justify-center rounded-[var(--radius-full)] bg-destructive font-bold text-destructive-foreground text-xs">
             {badge > 99 ? '99+' : badge}
           </div>
         )}
@@ -348,28 +359,25 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
 };
 
 // Loading Dots Animation
-export const LoadingDots: React.FC<{ 
-  size?: 'sm' | 'md' | 'lg'; 
+export const LoadingDots: React.FC<{
+  size?: 'sm' | 'md' | 'lg';
   className?: string;
   color?: string;
-}> = ({ 
-  size = 'md', 
-  className,
-  color = 'current'
-}) => {
-  const dotSize = size === 'sm' ? 'h-1 w-1' : size === 'lg' ? 'h-3 w-3' : 'h-2 w-2';
+}> = ({ size = 'md', className, color = 'current' }) => {
+  const dotSize =
+    size === 'sm' ? 'h-1 w-1' : size === 'lg' ? 'h-3 w-3' : 'h-2 w-2';
 
   return (
     <div className={cn('flex space-x-1', className)}>
       {[0, 1, 2].map((index) => (
         <div
-          key={index}
           className={cn(
-            'rounded-[var(--radius-full)] animate-pulse',
+            'animate-pulse rounded-[var(--radius-full)]',
             dotSize,
             color === 'current' ? 'bg-current' : color,
             `animation-delay-${index * 200}`
           )}
+          key={index}
           style={{
             animationDuration: '1s',
             animationIterationCount: 'infinite',
@@ -402,13 +410,11 @@ export const StaggerContainer: React.FC<StaggerContainerProps> = ({
     <div className={className}>
       {React.Children.map(children, (child, index) => (
         <div
-          key={index}
           className={cn(
             'transition-all duration-500 ease-out',
-            isVisible 
-              ? 'opacity-100 translate-y-0' 
-              : 'opacity-0 translate-y-4'
+            isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
           )}
+          key={index}
           style={{
             transitionDelay: `${index * staggerDelay}ms`,
           }}
@@ -436,11 +442,11 @@ export const CartFloatAnimation: React.FC<{
   if (!isActive) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-50">
+    <div className="pointer-events-none fixed inset-0 z-50">
       <div
         className={cn(
-          'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2',
-          'w-16 h-16 bg-background rounded-[var(--radius-lg)] shadow-lg border-2 border-[oklch(var(--brand-primary))]',
+          '-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 transform',
+          'h-16 w-16 rounded-[var(--radius-lg)] border-2 border-[oklch(var(--brand-primary))] bg-background shadow-lg',
           'animate-bounce-in opacity-0',
           'flex items-center justify-center'
         )}
@@ -449,13 +455,13 @@ export const CartFloatAnimation: React.FC<{
         }}
       >
         {productImage ? (
-          <img 
-            src={productImage} 
-            alt="Product" 
-            className="w-12 h-12 object-cover rounded" 
+          <img
+            alt="Product"
+            className="h-12 w-12 rounded object-cover"
+            src={productImage}
           />
         ) : (
-          <ShoppingCart className="w-8 h-8 text-[oklch(var(--brand-primary))]" />
+          <ShoppingCart className="h-8 w-8 text-[oklch(var(--brand-primary))]" />
         )}
       </div>
     </div>

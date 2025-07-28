@@ -1,11 +1,15 @@
 'use client';
 
-import { useEffect } from 'react';
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from '@repo/design-system/components/ui/alert';
 import { Button } from '@repo/design-system/components/ui/button';
-import { AlertCircle, RefreshCw, ArrowLeft } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@repo/design-system/components/ui/alert';
+import { AlertCircle, ArrowLeft, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function ProductCheckoutError({
   error,
@@ -16,56 +20,52 @@ export default function ProductCheckoutError({
 }) {
   const router = useRouter();
 
-  useEffect(() => {
-    if (error) {
-      console.error('Product checkout error:', error);
-    }
-  }, [error]);
 
-  const isProductError = error.message?.toLowerCase().includes('product') || 
-                        error.message?.toLowerCase().includes('not found');
+  const isProductError =
+    error.message?.toLowerCase().includes('product') ||
+    error.message?.toLowerCase().includes('not found');
 
   return (
-    <div className="container mx-auto min-h-[600px] flex items-center justify-center p-4">
+    <div className="container mx-auto flex min-h-[600px] items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <Alert variant="destructive" className="border-destructive/20">
+        <Alert className="border-destructive/20" variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Checkout Not Available</AlertTitle>
           <AlertDescription className="mt-2">
-            <p className="text-sm mb-2">
-              {isProductError 
+            <p className="mb-2 text-sm">
+              {isProductError
                 ? 'This product is no longer available for purchase. It may have been sold or removed.'
                 : 'We encountered an error preparing your checkout. Please try again.'}
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               If you believe this is an error, please contact support.
             </p>
           </AlertDescription>
         </Alert>
-        
-        <div className="flex flex-col sm:flex-row gap-3 mt-4">
-          <Button 
-            onClick={reset} 
-            variant="outline" 
-            size="sm" 
+
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+          <Button
             className="w-full sm:w-auto"
+            onClick={reset}
+            size="sm"
+            variant="outline"
           >
-            <RefreshCw className="h-4 w-4 mr-2" />
+            <RefreshCw className="mr-2 h-4 w-4" />
             Try Again
           </Button>
-          
-          <Button 
-            onClick={() => router.back()} 
-            variant="outline" 
-            size="sm" 
+
+          <Button
             className="w-full sm:w-auto"
+            onClick={() => router.back()}
+            size="sm"
+            variant="outline"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="mr-2 h-4 w-4" />
             Go Back
           </Button>
-          
-          <Link href="/products" className="w-full sm:w-auto">
-            <Button variant="default" size="sm" className="w-full">
+
+          <Link className="w-full sm:w-auto" href="/products">
+            <Button className="w-full" size="sm" variant="default">
               Browse Products
             </Button>
           </Link>

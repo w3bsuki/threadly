@@ -24,7 +24,7 @@ export const validateAndSanitizeInput = (
 ): SecurityValidationResult => {
   try {
     const sanitizedData: Record<string, unknown> = {};
-    
+
     // Check for potential injection attempts
     const dangerousPatterns = [
       /<script/i,
@@ -38,7 +38,7 @@ export const validateAndSanitizeInput = (
       /delete\s+from/i,
       /update\s+.*set/i,
     ];
-    
+
     for (const [key, value] of Object.entries(data)) {
       // Only allow whitelisted fields
       if (!allowedFields.includes(key)) {
@@ -48,28 +48,31 @@ export const validateAndSanitizeInput = (
           error: `Field '${key}' is not allowed`,
         };
       }
-      
+
       // Check for dangerous patterns in string values
       if (typeof value === 'string') {
-        const hasDangerousPattern = dangerousPatterns.some(pattern =>
+        const hasDangerousPattern = dangerousPatterns.some((pattern) =>
           pattern.test(value)
         );
-        
+
         if (hasDangerousPattern) {
-          logError('Dangerous pattern detected in input', { field: key, value });
+          logError('Dangerous pattern detected in input', {
+            field: key,
+            value,
+          });
           return {
             isValid: false,
             error: 'Invalid input detected',
           };
         }
-        
+
         // Sanitize the value
         sanitizedData[key] = sanitizeForDisplay(value);
       } else {
         sanitizedData[key] = value;
       }
     }
-    
+
     return {
       isValid: true,
       sanitizedData,
@@ -96,8 +99,8 @@ export const containsSQLInjection = (input: string): boolean => {
     /\bxp_cmdshell\b/i,
     /\bsp_executesql\b/i,
   ];
-  
-  return sqlPatterns.some(pattern => pattern.test(input));
+
+  return sqlPatterns.some((pattern) => pattern.test(input));
 };
 
 // Check for XSS patterns
@@ -112,8 +115,8 @@ export const containsXSS = (input: string): boolean => {
     /eval\s*\(/i,
     /expression\s*\(/i,
   ];
-  
-  return xssPatterns.some(pattern => pattern.test(input));
+
+  return xssPatterns.some((pattern) => pattern.test(input));
 };
 
 // Validate file upload security
@@ -129,9 +132,9 @@ export const validateFileUpload = (
     'image/webp',
     'image/gif',
   ];
-  
+
   const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
-  
+
   // Check file size
   if (size > maxFileSize) {
     return {
@@ -139,7 +142,7 @@ export const validateFileUpload = (
       error: 'File too large',
     };
   }
-  
+
   // Check MIME type
   if (!allowedMimeTypes.includes(mimeType.toLowerCase())) {
     return {
@@ -147,7 +150,7 @@ export const validateFileUpload = (
       error: 'Invalid file type',
     };
   }
-  
+
   // Check file extension
   const extension = filename.toLowerCase().substring(filename.lastIndexOf('.'));
   if (!allowedExtensions.includes(extension)) {
@@ -156,7 +159,7 @@ export const validateFileUpload = (
       error: 'Invalid file extension',
     };
   }
-  
+
   // Check for dangerous filenames
   const dangerousPatterns = [
     /\.exe$/i,
@@ -170,14 +173,14 @@ export const validateFileUpload = (
     /\.htm$/i,
     /\.js$/i,
   ];
-  
-  if (dangerousPatterns.some(pattern => pattern.test(filename))) {
+
+  if (dangerousPatterns.some((pattern) => pattern.test(filename))) {
     return {
       isValid: false,
       error: 'Dangerous file type',
     };
   }
-  
+
   return { isValid: true };
 };
 
@@ -189,7 +192,7 @@ export const validateAPIRequest = (
   try {
     const userAgent = request.headers.get('user-agent');
     const contentType = request.headers.get('content-type');
-    
+
     // Check for missing User-Agent (potential bot)
     if (!userAgent) {
       return {
@@ -197,7 +200,7 @@ export const validateAPIRequest = (
         error: 'Missing User-Agent header',
       };
     }
-    
+
     // Check for required headers
     for (const header of requiredHeaders) {
       if (!request.headers.get(header)) {
@@ -207,19 +210,19 @@ export const validateAPIRequest = (
         };
       }
     }
-    
+
     // Validate Content-Type for POST/PUT requests
     const hasBody = ['POST', 'PUT', 'PATCH'].includes(
       request.method?.toUpperCase() || ''
     );
-    
+
     if (hasBody && contentType && !contentType.includes('application/json')) {
       return {
         isValid: false,
         error: 'Invalid Content-Type',
       };
     }
-    
+
     return { isValid: true };
   } catch (error) {
     logError('Error in API request validation', error);
@@ -251,7 +254,7 @@ export const getSecureResponseHeaders = (): Record<string, string> => {
     'X-Frame-Options': 'DENY',
     'X-XSS-Protection': '1; mode=block',
     'Cache-Control': 'no-cache, no-store, must-revalidate',
-    'Pragma': 'no-cache',
-    'Expires': '0',
+    Pragma: 'no-cache',
+    Expires: '0',
   };
 };

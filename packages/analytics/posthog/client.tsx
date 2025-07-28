@@ -17,7 +17,7 @@ export const PostHogProvider = (
     const env = keys();
     const posthogKey = env.NEXT_PUBLIC_POSTHOG_KEY;
     const posthogHost = env.NEXT_PUBLIC_POSTHOG_HOST;
-    
+
     // Only initialize PostHog if both key and host are available
     if (posthogKey && posthogHost) {
       posthog.init(posthogKey, {

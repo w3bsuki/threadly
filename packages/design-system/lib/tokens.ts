@@ -16,13 +16,13 @@ export const touchTargets = {
 // Spacing tokens - 8-point grid system
 export const spacing = {
   0: 0,
-  1: 4,   // space-1: 4px
-  2: 8,   // space-2: 8px
-  3: 12,  // space-3: 12px
-  4: 16,  // space-4: 16px
-  5: 20,  // space-5: 20px
-  6: 24,  // space-6: 24px
-  8: 32,  // space-8: 32px
+  1: 4, // space-1: 4px
+  2: 8, // space-2: 8px
+  3: 12, // space-3: 12px
+  4: 16, // space-4: 16px
+  5: 20, // space-5: 20px
+  6: 24, // space-6: 24px
+  8: 32, // space-8: 32px
   10: 40, // space-10: 40px
   12: 48, // space-12: 48px
   16: 64, // space-16: 64px
@@ -111,9 +111,9 @@ export const animations = {
 
 // Breakpoints - mobile-first approach
 export const breakpoints = {
-  xs: 375,  // Small phones
-  sm: 640,  // Large phones
-  md: 768,  // Tablets
+  xs: 375, // Small phones
+  sm: 640, // Large phones
+  md: 768, // Tablets
   lg: 1024, // Desktop
   xl: 1280, // Large desktop
   '2xl': 1536, // Extra large screens
@@ -202,21 +202,26 @@ export const applyTokens = {
     minHeight: `${touchTargets[size]}px`,
     minWidth: `${touchTargets[size]}px`,
   }),
-  
+
   spacing: (size: keyof typeof spacing) => `${spacing[size]}px`,
-  
+
   safeArea: (side: 'top' | 'bottom' | 'left' | 'right' = 'bottom') => {
-    const key = `safeArea${side.charAt(0).toUpperCase() + side.slice(1)}` as keyof typeof mobileInteractions;
+    const key =
+      `safeArea${side.charAt(0).toUpperCase() + side.slice(1)}` as keyof typeof mobileInteractions;
     return mobileInteractions[key];
   },
-  
-  fontSize: (size: keyof typeof typography.fontSize) => `${typography.fontSize[size]}px`,
-  
+
+  fontSize: (size: keyof typeof typography.fontSize) =>
+    `${typography.fontSize[size]}px`,
+
   shadow: (size: keyof typeof shadows) => shadows[size],
-  
+
   radius: (size: keyof typeof borderRadius) => `${borderRadius[size]}px`,
-  
-  animation: (duration: keyof typeof animations.duration, easing: keyof typeof animations.easing = 'easeInOut') => ({
+
+  animation: (
+    duration: keyof typeof animations.duration,
+    easing: keyof typeof animations.easing = 'easeInOut'
+  ) => ({
     transitionDuration: `${animations.duration[duration]}ms`,
     transitionTimingFunction: animations.easing[easing],
   }),

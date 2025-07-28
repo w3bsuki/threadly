@@ -1,10 +1,11 @@
 'use client';
 
+import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import * as React from 'react';
 import { cn } from '../../lib/utils';
 import { Button } from '../ui/button';
 import { Progress } from '../ui/progress';
-import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
+
 let motion: any;
 let AnimatePresence: any;
 
@@ -67,7 +68,9 @@ interface WizardContextValue {
   updateFormData: (data: Record<string, any>) => void;
 }
 
-const WizardContext = React.createContext<WizardContextValue | undefined>(undefined);
+const WizardContext = React.createContext<WizardContextValue | undefined>(
+  undefined
+);
 
 export function useWizard() {
   const context = React.useContext(WizardContext);
@@ -98,7 +101,9 @@ export function MultiStepWizard({
   const [canGoNext, setCanGoNext] = React.useState(true);
   const [isLoading, setIsLoading] = React.useState(false);
   const [formData, setFormData] = React.useState<Record<string, any>>({});
-  const [visitedSteps, setVisitedSteps] = React.useState<Set<number>>(new Set([0]));
+  const [visitedSteps, setVisitedSteps] = React.useState<Set<number>>(
+    new Set([0])
+  );
 
   const currentStep = controlledStep ?? internalStep;
   const isControlled = controlledStep !== undefined;
@@ -137,7 +142,8 @@ export function MultiStepWizard({
   const goToStep = React.useCallback(
     (step: number) => {
       if (step < 0 || step >= steps.length) return;
-      if (!allowStepSkipping && !visitedSteps.has(step) && step > currentStep) return;
+      if (!(allowStepSkipping || visitedSteps.has(step)) && step > currentStep)
+        return;
       setStep(step);
     },
     [allowStepSkipping, currentStep, setStep, steps.length, visitedSteps]
@@ -152,12 +158,12 @@ export function MultiStepWizard({
     setIsLoading(true);
     try {
       const currentStepConfig = steps[currentStep];
-      
+
       if (!currentStepConfig) {
         setIsLoading(false);
         return;
       }
-      
+
       if (currentStepConfig.validate) {
         const isValid = await currentStepConfig.validate();
         if (!isValid) {
@@ -212,14 +218,14 @@ export function MultiStepWizard({
 
     return (
       <WizardNavigation
-        onNext={nextStep}
-        onPrevious={previousStep}
         canGoNext={canGoNext && !isLoading}
         canGoPrevious={currentStep > 0 && !isLoading}
+        currentStep={steps[currentStep]}
         isLastStep={currentStep === steps.length - 1}
         isLoading={isLoading}
         labels={labels}
-        currentStep={steps[currentStep]}
+        onNext={nextStep}
+        onPrevious={previousStep}
       />
     );
   };
@@ -227,21 +233,24 @@ export function MultiStepWizard({
   return (
     <WizardContext.Provider value={contextValue}>
       <div className={cn('space-y-6', className)}>
-        {(showProgress || showStepIndicator) && navigationPosition !== 'bottom' && (
-          <div className="space-y-4">
-            {showStepIndicator && (progressType === 'stepper' || progressType === 'both') && (
-              <WizardStepIndicator
-                steps={steps}
-                currentStep={currentStep}
-                visitedSteps={visitedSteps}
-                onStepClick={allowStepSkipping ? goToStep : undefined}
-              />
-            )}
-            {showProgress && (progressType === 'bar' || progressType === 'both') && (
-              <WizardProgress value={progressValue} />
-            )}
-          </div>
-        )}
+        {(showProgress || showStepIndicator) &&
+          navigationPosition !== 'bottom' && (
+            <div className="space-y-4">
+              {showStepIndicator &&
+                (progressType === 'stepper' || progressType === 'both') && (
+                  <WizardStepIndicator
+                    currentStep={currentStep}
+                    onStepClick={allowStepSkipping ? goToStep : undefined}
+                    steps={steps}
+                    visitedSteps={visitedSteps}
+                  />
+                )}
+              {showProgress &&
+                (progressType === 'bar' || progressType === 'both') && (
+                  <WizardProgress value={progressValue} />
+                )}
+            </div>
+          )}
 
         {navigationPosition === 'top' && renderNavigation()}
 
@@ -249,10 +258,10 @@ export function MultiStepWizard({
           {animateTransitions && motion && AnimatePresence ? (
             <AnimatePresence mode="wait">
               <motion.div
-                key={currentStep}
-                initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: 20 }}
+                key={currentStep}
                 transition={{ duration: 0.3 }}
               >
                 {children}
@@ -265,21 +274,24 @@ export function MultiStepWizard({
 
         {navigationPosition === 'bottom' && renderNavigation()}
 
-        {(showProgress || showStepIndicator) && navigationPosition === 'bottom' && (
-          <div className="space-y-4">
-            {showProgress && (progressType === 'bar' || progressType === 'both') && (
-              <WizardProgress value={progressValue} />
-            )}
-            {showStepIndicator && (progressType === 'stepper' || progressType === 'both') && (
-              <WizardStepIndicator
-                steps={steps}
-                currentStep={currentStep}
-                visitedSteps={visitedSteps}
-                onStepClick={allowStepSkipping ? goToStep : undefined}
-              />
-            )}
-          </div>
-        )}
+        {(showProgress || showStepIndicator) &&
+          navigationPosition === 'bottom' && (
+            <div className="space-y-4">
+              {showProgress &&
+                (progressType === 'bar' || progressType === 'both') && (
+                  <WizardProgress value={progressValue} />
+                )}
+              {showStepIndicator &&
+                (progressType === 'stepper' || progressType === 'both') && (
+                  <WizardStepIndicator
+                    currentStep={currentStep}
+                    onStepClick={allowStepSkipping ? goToStep : undefined}
+                    steps={steps}
+                    visitedSteps={visitedSteps}
+                  />
+                )}
+            </div>
+          )}
       </div>
     </WizardContext.Provider>
   );
@@ -293,8 +305,10 @@ interface WizardProgressProps {
 export function WizardProgress({ value, className }: WizardProgressProps) {
   return (
     <div className={cn('w-full', className)}>
-      <Progress value={value} className="h-2" />
-      <p className="text-sm text-muted-foreground mt-2">{Math.round(value)}% Complete</p>
+      <Progress className="h-2" value={value} />
+      <p className="mt-2 text-muted-foreground text-sm">
+        {Math.round(value)}% Complete
+      </p>
     </div>
   );
 }
@@ -328,13 +342,13 @@ export function WizardNavigation({
   className,
 }: WizardNavigationProps) {
   return (
-    <div className={cn('flex justify-between items-center gap-4', className)}>
+    <div className={cn('flex items-center justify-between gap-4', className)}>
       <Button
+        className="gap-2"
+        disabled={!canGoPrevious}
+        onClick={onPrevious}
         type="button"
         variant="outline"
-        onClick={onPrevious}
-        disabled={!canGoPrevious}
-        className="gap-2"
       >
         <ChevronLeft className="h-4 w-4" />
         {labels.previous || 'Previous'}
@@ -343,20 +357,20 @@ export function WizardNavigation({
       <div className="flex gap-2">
         {currentStep?.optional && !isLastStep && (
           <Button
+            disabled={isLoading}
+            onClick={onNext}
             type="button"
             variant="ghost"
-            onClick={onNext}
-            disabled={isLoading}
           >
             {labels.skip || 'Skip'}
           </Button>
         )}
-        
+
         <Button
-          type="button"
-          onClick={onNext}
-          disabled={!canGoNext}
           className="gap-2"
+          disabled={!canGoNext}
+          onClick={onNext}
+          type="button"
         >
           {isLoading ? (
             'Loading...'
@@ -393,51 +407,60 @@ export function WizardStepIndicator({
   className,
 }: WizardStepIndicatorProps) {
   return (
-    <div className={cn('flex justify-between items-center', className)}>
+    <div className={cn('flex items-center justify-between', className)}>
       {steps.map((step, index) => {
         const isActive = index === currentStep;
         const isCompleted = index < currentStep || visitedSteps.has(index);
-        const isClickable = onStepClick && (visitedSteps.has(index) || index <= currentStep);
+        const isClickable =
+          onStepClick && (visitedSteps.has(index) || index <= currentStep);
 
         return (
           <React.Fragment key={step.id}>
             <div className="flex items-center">
               <button
-                type="button"
-                onClick={() => isClickable && onStepClick(index)}
-                disabled={!isClickable}
                 className={cn(
                   'relative flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all',
-                  isActive && 'border-primary bg-primary text-primary-foreground',
-                  isCompleted && !isActive && 'border-primary bg-primary/10 text-primary',
-                  !isActive && !isCompleted && 'border-muted-foreground/30 text-muted-foreground',
+                  isActive &&
+                    'border-primary bg-primary text-primary-foreground',
+                  isCompleted &&
+                    !isActive &&
+                    'border-primary bg-primary/10 text-primary',
+                  !(isActive || isCompleted) &&
+                    'border-muted-foreground/30 text-muted-foreground',
                   isClickable && 'cursor-pointer hover:scale-110',
                   !isClickable && 'cursor-not-allowed'
                 )}
+                disabled={!isClickable}
+                onClick={() => isClickable && onStepClick(index)}
+                type="button"
               >
                 {isCompleted && !isActive ? (
                   <Check className="h-5 w-5" />
                 ) : (
-                  <span className="text-sm font-medium">{index + 1}</span>
+                  <span className="font-medium text-sm">{index + 1}</span>
                 )}
               </button>
               <div className="ml-3 hidden sm:block">
-                <p className={cn(
-                  'text-sm font-medium',
-                  isActive && 'text-foreground',
-                  !isActive && 'text-muted-foreground'
-                )}>
+                <p
+                  className={cn(
+                    'font-medium text-sm',
+                    isActive && 'text-foreground',
+                    !isActive && 'text-muted-foreground'
+                  )}
+                >
                   {step.title}
                 </p>
                 {step.description && (
-                  <p className="text-xs text-muted-foreground">{step.description}</p>
+                  <p className="text-muted-foreground text-xs">
+                    {step.description}
+                  </p>
                 )}
               </div>
             </div>
             {index < steps.length - 1 && (
               <div
                 className={cn(
-                  'h-0.5 flex-1 mx-4',
+                  'mx-4 h-0.5 flex-1',
                   isCompleted ? 'bg-primary' : 'bg-muted-foreground/30'
                 )}
               />

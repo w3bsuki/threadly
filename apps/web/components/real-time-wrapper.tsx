@@ -1,8 +1,8 @@
 'use client';
 
-import { RealTimeProvider } from '@repo/real-time/src/client/provider';
 import { useUser } from '@clerk/nextjs';
-import { ReactNode } from 'react';
+import { RealTimeProvider } from '@repo/real-time/src/client/provider';
+import type { ReactNode } from 'react';
 
 interface RealTimeWrapperProps {
   children: ReactNode;

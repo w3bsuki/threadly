@@ -1,9 +1,9 @@
 import { Button } from '@repo/design-system/components';
-import { Heart, HelpCircle, Shield, Zap } from 'lucide-react';
-import Link from 'next/link';
-import { createMetadata } from '@repo/seo/metadata';
 import { getDictionary } from '@repo/internationalization';
+import { createMetadata } from '@repo/seo/metadata';
+import { Heart, HelpCircle, Shield, Zap } from 'lucide-react';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export async function generateMetadata({
   params,
@@ -15,7 +15,8 @@ export async function generateMetadata({
 
   return createMetadata({
     title: 'Pricing - Sell on Threadly | Free to List, Only Pay When You Sell',
-    description: 'Learn about Threadly\'s transparent pricing. Free to list your items, only pay a small commission when you sell. No hidden fees, no monthly charges.',
+    description:
+      "Learn about Threadly's transparent pricing. Free to list your items, only pay a small commission when you sell. No hidden fees, no monthly charges.",
     keywords: [
       'threadly pricing',
       'sell clothes online',
@@ -28,7 +29,8 @@ export async function generateMetadata({
     ],
     openGraph: {
       title: 'Pricing - Sell on Threadly',
-      description: 'Turn your unworn clothes into cash. Free to list, only pay when you sell.',
+      description:
+        'Turn your unworn clothes into cash. Free to list, only pay when you sell.',
       type: 'website',
       images: [
         {
@@ -42,7 +44,8 @@ export async function generateMetadata({
     twitter: {
       card: 'summary_large_image',
       title: 'Pricing - Sell on Threadly',
-      description: 'Free to list your items, only pay a small commission when you sell.',
+      description:
+        'Free to list your items, only pay a small commission when you sell.',
       images: ['/images/pricing-hero.jpg'],
     },
   });
@@ -158,7 +161,7 @@ const SellingInfo = () => (
         <div className="flex flex-col gap-4 sm:flex-row">
           <Button
             asChild
-            className="gap-3 bg-gradient-to-r from-purple-600 to-pink-600 px-8 py-6 text-lg text-background hover:from-purple-700 hover:to-pink-700"
+            className="gap-3 bg-gradient-to-r from-purple-600 to-pink-600 px-8 py-6 text-background text-lg hover:from-purple-700 hover:to-pink-700"
             size="lg"
           >
             <Link href="/auth/register">Start Selling Today</Link>

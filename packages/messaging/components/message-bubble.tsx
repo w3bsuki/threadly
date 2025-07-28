@@ -1,8 +1,13 @@
 'use client';
 
-import { memo } from 'react';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Badge,
+} from '@repo/design-system/components';
 import { cn } from '@repo/design-system/lib/utils';
-import { Avatar, AvatarFallback, AvatarImage, Badge } from '@repo/design-system/components';
+import { memo } from 'react';
 import type { MessageBubbleProps } from '../types';
 
 export const MessageBubble = memo<MessageBubbleProps>(function MessageBubble({
@@ -11,7 +16,8 @@ export const MessageBubble = memo<MessageBubbleProps>(function MessageBubble({
   showTimestamp = true,
 }) {
   const isOwn = message.isOwnMessage;
-  const isDelivered = message.status === 'delivered' || message.status === 'read';
+  const isDelivered =
+    message.status === 'delivered' || message.status === 'read';
   const isFailed = message.status === 'failed';
   const isSending = message.status === 'sending';
 
@@ -32,7 +38,7 @@ export const MessageBubble = memo<MessageBubbleProps>(function MessageBubble({
   return (
     <div
       className={cn(
-        'flex gap-2 max-w-[80%]',
+        'flex max-w-[80%] gap-2',
         isOwn ? 'ml-auto flex-row-reverse' : 'mr-auto'
       )}
     >
@@ -50,41 +56,41 @@ export const MessageBubble = memo<MessageBubbleProps>(function MessageBubble({
         {/* Message content */}
         <div
           className={cn(
-            'relative rounded-2xl px-4 py-2 max-w-sm break-words',
+            'relative max-w-sm break-words rounded-2xl px-4 py-2',
             isOwn
-              ? 'bg-blue-600 text-background rounded-br-md'
-              : 'bg-secondary text-foreground rounded-bl-md',
+              ? 'rounded-br-md bg-blue-600 text-background'
+              : 'rounded-bl-md bg-secondary text-foreground',
             isSending && 'opacity-60',
-            isFailed && 'bg-red-100 border border-red-200'
+            isFailed && 'border border-red-200 bg-red-100'
           )}
         >
           {/* Image attachment */}
           {message.imageUrl && (
             <div className="mb-2">
               <img
-                src={message.imageUrl}
                 alt="Shared image"
-                className="rounded-[var(--radius-lg)] max-w-full h-auto max-h-64 object-cover"
+                className="h-auto max-h-64 max-w-full rounded-[var(--radius-lg)] object-cover"
                 loading="lazy"
+                src={message.imageUrl}
               />
             </div>
           )}
 
           {/* Text content */}
-          <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+          <p className="whitespace-pre-wrap text-sm">{message.content}</p>
 
           {/* Status indicators for own messages */}
           {isOwn && (
-            <div className="flex items-center gap-1 mt-1">
+            <div className="mt-1 flex items-center gap-1">
               {isSending && (
                 <div className="flex gap-1">
-                  <div className="w-1 h-1 bg-background/60 rounded-[var(--radius-full)] animate-pulse" />
-                  <div className="w-1 h-1 bg-background/60 rounded-[var(--radius-full)] animate-pulse delay-75" />
-                  <div className="w-1 h-1 bg-background/60 rounded-[var(--radius-full)] animate-pulse delay-150" />
+                  <div className="h-1 w-1 animate-pulse rounded-[var(--radius-full)] bg-background/60" />
+                  <div className="h-1 w-1 animate-pulse rounded-[var(--radius-full)] bg-background/60 delay-75" />
+                  <div className="h-1 w-1 animate-pulse rounded-[var(--radius-full)] bg-background/60 delay-150" />
                 </div>
               )}
               {isFailed && (
-                <Badge variant="destructive" className="text-xs">
+                <Badge className="text-xs" variant="destructive">
                   Failed
                 </Badge>
               )}
@@ -92,11 +98,11 @@ export const MessageBubble = memo<MessageBubbleProps>(function MessageBubble({
                 <div className="flex gap-0.5">
                   <div
                     className={cn(
-                      'w-3 h-3 text-background/60',
+                      'h-3 w-3 text-background/60',
                       message.read && 'text-blue-200'
                     )}
                   >
-                    <svg viewBox="0 0 16 16" fill="currentColor">
+                    <svg fill="currentColor" viewBox="0 0 16 16">
                       <path d="M12.354 4.354a.5.5 0 0 0-.708-.708L5 10.293 1.854 7.146a.5.5 0 1 0-.708.708l3.5 3.5a.5.5 0 0 0 .708 0l7-7zm-4.208 7-.896-.897.707-.707.543.543 6.646-6.647a.5.5 0 0 1 .708.708l-7 7a.5.5 0 0 1-.708 0z" />
                       <path d="m5.354 7.146.896.897-.707.707-.897-.896a.5.5 0 1 1 .708-.708z" />
                     </svg>
@@ -111,7 +117,7 @@ export const MessageBubble = memo<MessageBubbleProps>(function MessageBubble({
         {showTimestamp && (
           <span
             className={cn(
-              'text-xs text-muted-foreground px-2',
+              'px-2 text-muted-foreground text-xs',
               isOwn && 'text-right'
             )}
           >

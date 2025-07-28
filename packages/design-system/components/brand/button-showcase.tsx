@@ -1,21 +1,34 @@
 'use client';
 
+import {
+  CreditCard,
+  Heart,
+  Package,
+  ShoppingCart,
+  Star,
+  Users,
+} from 'lucide-react';
 import { Button } from '../ui/button';
-import { Heart, ShoppingCart, Star, Users, Package, CreditCard } from 'lucide-react';
 
 export function BrandButtonShowcase() {
   return (
-    <div className="space-y-8 p-6 bg-background">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold text-foreground">Threadly Brand Buttons</h2>
-        <p className="text-muted-foreground">Brand-specific button variants for the Threadly marketplace</p>
+    <div className="space-y-8 bg-background p-6">
+      <div className="space-y-2 text-center">
+        <h2 className="font-bold text-2xl text-foreground">
+          Threadly Brand Buttons
+        </h2>
+        <p className="text-muted-foreground">
+          Brand-specific button variants for the Threadly marketplace
+        </p>
       </div>
 
       {/* Primary Brand Actions */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-foreground">Primary Brand Actions</h3>
+        <h3 className="font-semibold text-foreground text-lg">
+          Primary Brand Actions
+        </h3>
         <div className="flex flex-wrap gap-4">
-          <Button variant="brand-primary" size="lg">
+          <Button size="lg" variant="brand-primary">
             <ShoppingCart className="mr-2" />
             Add to Cart
           </Button>
@@ -23,7 +36,7 @@ export function BrandButtonShowcase() {
             <Heart className="mr-2" />
             Add to Favorites
           </Button>
-          <Button variant="brand-primary" size="sm">
+          <Button size="sm" variant="brand-primary">
             Follow Seller
           </Button>
         </div>
@@ -31,9 +44,11 @@ export function BrandButtonShowcase() {
 
       {/* Secondary Brand Actions */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-foreground">Secondary Actions</h3>
+        <h3 className="font-semibold text-foreground text-lg">
+          Secondary Actions
+        </h3>
         <div className="flex flex-wrap gap-4">
-          <Button variant="brand-secondary" size="lg">
+          <Button size="lg" variant="brand-secondary">
             <Package className="mr-2" />
             List Item
           </Button>
@@ -41,7 +56,7 @@ export function BrandButtonShowcase() {
             <Users className="mr-2" />
             Join Community
           </Button>
-          <Button variant="brand-secondary" size="sm">
+          <Button size="sm" variant="brand-secondary">
             Share Product
           </Button>
         </div>
@@ -49,9 +64,11 @@ export function BrandButtonShowcase() {
 
       {/* Accent Actions */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-foreground">Accent Actions</h3>
+        <h3 className="font-semibold text-foreground text-lg">
+          Accent Actions
+        </h3>
         <div className="flex flex-wrap gap-4">
-          <Button variant="brand-accent" size="lg">
+          <Button size="lg" variant="brand-accent">
             <Star className="mr-2" />
             Rate & Review
           </Button>
@@ -59,7 +76,7 @@ export function BrandButtonShowcase() {
             <CreditCard className="mr-2" />
             Quick Buy
           </Button>
-          <Button variant="brand-accent" size="sm">
+          <Button size="sm" variant="brand-accent">
             Get Notified
           </Button>
         </div>
@@ -67,37 +84,35 @@ export function BrandButtonShowcase() {
 
       {/* Premium Gradient Action */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-foreground">Premium Actions</h3>
+        <h3 className="font-semibold text-foreground text-lg">
+          Premium Actions
+        </h3>
         <div className="flex flex-wrap gap-4">
-          <Button variant="brand-gradient" size="lg">
+          <Button size="lg" variant="brand-gradient">
             <Star className="mr-2" />
             Become Premium Seller
           </Button>
-          <Button variant="brand-gradient">
-            Unlock Premium Features
-          </Button>
+          <Button variant="brand-gradient">Unlock Premium Features</Button>
         </div>
       </div>
 
       {/* Outline & Ghost Variants */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-foreground">Subtle Brand Actions</h3>
+        <h3 className="font-semibold text-foreground text-lg">
+          Subtle Brand Actions
+        </h3>
         <div className="flex flex-wrap gap-4">
-          <Button variant="brand-outline" size="lg">
+          <Button size="lg" variant="brand-outline">
             Learn More
           </Button>
-          <Button variant="brand-outline">
-            Browse Collection
-          </Button>
-          <Button variant="brand-outline" size="sm">
+          <Button variant="brand-outline">Browse Collection</Button>
+          <Button size="sm" variant="brand-outline">
             View Details
           </Button>
         </div>
         <div className="flex flex-wrap gap-4">
-          <Button variant="brand-ghost">
-            Cancel
-          </Button>
-          <Button variant="brand-ghost" size="sm">
+          <Button variant="brand-ghost">Cancel</Button>
+          <Button size="sm" variant="brand-ghost">
             Skip
           </Button>
         </div>
@@ -105,12 +120,20 @@ export function BrandButtonShowcase() {
 
       {/* Size Variations */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-foreground">Size Variations</h3>
+        <h3 className="font-semibold text-foreground text-lg">
+          Size Variations
+        </h3>
         <div className="flex items-center gap-4">
-          <Button variant="brand-primary" size="sm">Small</Button>
-          <Button variant="brand-primary" size="default">Default</Button>
-          <Button variant="brand-primary" size="lg">Large</Button>
-          <Button variant="brand-primary" size="icon">
+          <Button size="sm" variant="brand-primary">
+            Small
+          </Button>
+          <Button size="default" variant="brand-primary">
+            Default
+          </Button>
+          <Button size="lg" variant="brand-primary">
+            Large
+          </Button>
+          <Button size="icon" variant="brand-primary">
             <Heart />
           </Button>
         </div>
@@ -118,23 +141,27 @@ export function BrandButtonShowcase() {
 
       {/* Usage Examples */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-foreground">Real-World Usage Examples</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <h3 className="font-semibold text-foreground text-lg">
+          Real-World Usage Examples
+        </h3>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {/* Product Card Example */}
-          <div className="p-4 border border-border rounded-[var(--radius-lg)] space-y-3">
-            <div className="h-32 bg-muted rounded-[var(--radius-md)]"></div>
+          <div className="space-y-3 rounded-[var(--radius-lg)] border border-border p-4">
+            <div className="h-32 rounded-[var(--radius-md)] bg-muted" />
             <h4 className="font-medium">Vintage Denim Jacket</h4>
-            <p className="text-2xl font-bold text-[oklch(var(--brand-primary))]">$89</p>
+            <p className="font-bold text-2xl text-[oklch(var(--brand-primary))]">
+              $89
+            </p>
             <div className="space-y-2">
-              <Button variant="brand-primary" className="w-full">
+              <Button className="w-full" variant="brand-primary">
                 <ShoppingCart className="mr-2" />
                 Add to Cart
               </Button>
               <div className="flex gap-2">
-                <Button variant="brand-ghost" size="sm" className="flex-1">
+                <Button className="flex-1" size="sm" variant="brand-ghost">
                   <Heart />
                 </Button>
-                <Button variant="brand-outline" size="sm" className="flex-1">
+                <Button className="flex-1" size="sm" variant="brand-outline">
                   Quick View
                 </Button>
               </div>
@@ -142,35 +169,39 @@ export function BrandButtonShowcase() {
           </div>
 
           {/* Seller Profile Example */}
-          <div className="p-4 border border-border rounded-[var(--radius-lg)] space-y-3">
+          <div className="space-y-3 rounded-[var(--radius-lg)] border border-border p-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-muted rounded-[var(--radius-full)]"></div>
+              <div className="h-12 w-12 rounded-[var(--radius-full)] bg-muted" />
               <div>
                 <h4 className="font-medium">Fashion Seller</h4>
-                <p className="text-sm text-muted-foreground">⭐ 4.9 (234 reviews)</p>
+                <p className="text-muted-foreground text-sm">
+                  ⭐ 4.9 (234 reviews)
+                </p>
               </div>
             </div>
             <div className="space-y-2">
-              <Button variant="brand-secondary" className="w-full">
+              <Button className="w-full" variant="brand-secondary">
                 <Users className="mr-2" />
                 Follow
               </Button>
-              <Button variant="brand-outline" className="w-full">
+              <Button className="w-full" variant="brand-outline">
                 View Profile
               </Button>
             </div>
           </div>
 
           {/* Premium Feature Example */}
-          <div className="p-4 border border-border rounded-[var(--radius-lg)] space-y-3">
-            <div className="text-center space-y-2">
-              <div className="w-16 h-16 bg-gradient-to-r from-[oklch(var(--brand-primary))] to-[oklch(var(--brand-accent))] rounded-[var(--radius-full)] mx-auto flex items-center justify-center">
+          <div className="space-y-3 rounded-[var(--radius-lg)] border border-border p-4">
+            <div className="space-y-2 text-center">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[var(--radius-full)] bg-gradient-to-r from-[oklch(var(--brand-primary))] to-[oklch(var(--brand-accent))]">
                 <Star className="text-background" />
               </div>
               <h4 className="font-medium">Premium Membership</h4>
-              <p className="text-sm text-muted-foreground">Unlock exclusive features</p>
+              <p className="text-muted-foreground text-sm">
+                Unlock exclusive features
+              </p>
             </div>
-            <Button variant="brand-gradient" className="w-full">
+            <Button className="w-full" variant="brand-gradient">
               Upgrade Now
             </Button>
           </div>

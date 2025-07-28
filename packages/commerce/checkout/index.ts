@@ -1,20 +1,19 @@
 // Export checkout schemas and types
-export * from './schemas';
-
-// Export checkout utilities
-export * from './utils';
-
-// Export checkout store
-export * from './store';
 
 // Export checkout hooks
 export { useCheckout } from './hooks';
+export * from './schemas';
+
+// Export checkout store
+export * from './store';
+// Export checkout utilities
+export * from './utils';
 
 // Convenience exports
-export { 
-  TAX_RATE, 
-  SHIPPING_RATES,
+export {
   calculateShipping,
   calculateTax,
-  calculateTotal 
+  calculateTotal,
+  SHIPPING_RATES,
+  TAX_RATE,
 } from './utils';

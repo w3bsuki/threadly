@@ -7,10 +7,15 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  Input,
   ErrorBoundary,
+  Input,
   MessagesSkeleton,
 } from '@repo/design-system/components';
+import { useChannel, useTypingIndicator } from '@repo/real-time/client';
+import {
+  createMessageSchema,
+  messageContentSchema,
+} from '@repo/validation/schemas';
 import {
   CheckCheck,
   MessageCircle,
@@ -19,10 +24,8 @@ import {
   Send,
   User,
 } from 'lucide-react';
-import { useState, useEffect, useRef, Suspense } from 'react';
-import { useChannel, useTypingIndicator } from '@repo/real-time/client';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { AvatarImage } from '../../components/optimized-image';
-import { createMessageSchema, messageContentSchema } from '@repo/validation/schemas';
 
 interface User {
   id: string;
@@ -94,8 +97,10 @@ function MessagesContentInner({
   const { bind: bindConversationChannel } = useChannel(
     selectedConversation ? `private-conversation-${selectedConversation}` : ''
   );
-  
-  const { typingUsers, sendTyping } = useTypingIndicator(selectedConversation || '');
+
+  const { typingUsers, sendTyping } = useTypingIndicator(
+    selectedConversation || ''
+  );
 
   // Transform conversations to match the component's expected format
   const transformedConversations = conversations.map((conv) => {
@@ -166,35 +171,39 @@ function MessagesContentInner({
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
-    
+
     const dateObj = date instanceof Date ? date : new Date(date);
-    const messageDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
-    
+    const messageDate = new Date(
+      dateObj.getFullYear(),
+      dateObj.getMonth(),
+      dateObj.getDate()
+    );
+
     if (messageDate.getTime() === today.getTime()) {
       return 'Today';
-    } else if (messageDate.getTime() === yesterday.getTime()) {
-      return 'Yesterday';
-    } else {
-      return messageDate.toLocaleDateString('en-US', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      });
     }
+    if (messageDate.getTime() === yesterday.getTime()) {
+      return 'Yesterday';
+    }
+    return messageDate.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
   };
 
   const groupMessagesByDate = (messages: Message[]) => {
     const groups: { [key: string]: Message[] } = {};
-    
-    messages.forEach(message => {
+
+    messages.forEach((message) => {
       const dateKey = formatDateGroup(new Date(message.createdAt));
       if (!groups[dateKey]) {
         groups[dateKey] = [];
       }
       groups[dateKey].push(message);
     });
-    
+
     return groups;
   };
 
@@ -205,11 +214,14 @@ function MessagesContentInner({
   useEffect(() => {
     if (!selectedConversation) return;
 
-    const unsubscribe = bindConversationChannel('new-message', (data: { message: Message }) => {
-      if (data.message.senderId !== currentUserId) {
-        setRealTimeMessages(prev => [...prev, data.message]);
+    const unsubscribe = bindConversationChannel(
+      'new-message',
+      (data: { message: Message }) => {
+        if (data.message.senderId !== currentUserId) {
+          setRealTimeMessages((prev) => [...prev, data.message]);
+        }
       }
-    });
+    );
 
     return () => {
       if (unsubscribe) unsubscribe();
@@ -232,14 +244,14 @@ function MessagesContentInner({
     // Basic input sanitization to prevent XSS
     const sanitizedValue = value.replace(/<[^>]*>/g, '');
     setNewMessage(sanitizedValue);
-    
+
     if (selectedConversation) {
       sendTyping(true);
-      
+
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
       }
-      
+
       typingTimeoutRef.current = setTimeout(() => {
         sendTyping(false);
       }, 1000);
@@ -247,13 +259,15 @@ function MessagesContentInner({
   };
 
   const sendMessage = async () => {
-    if (!newMessage.trim() || !selectedConversation || isSubmitting) return;
+    if (!(newMessage.trim() && selectedConversation) || isSubmitting) return;
 
     // Validate message content
     const validationResult = messageContentSchema.safeParse(newMessage.trim());
     if (!validationResult.success) {
       // Handle validation error
-      alert(validationResult.error.errors[0]?.message || 'Invalid message content');
+      alert(
+        validationResult.error.errors[0]?.message || 'Invalid message content'
+      );
       return;
     }
 
@@ -266,11 +280,11 @@ function MessagesContentInner({
       read: false,
     };
 
-    setOptimisticMessages(prev => [...prev, optimisticMessage]);
+    setOptimisticMessages((prev) => [...prev, optimisticMessage]);
     const messageText = validationResult.data;
     setNewMessage('');
     setIsSubmitting(true);
-    
+
     try {
       const response = await fetch('/api/messages', {
         method: 'POST',
@@ -286,15 +300,20 @@ function MessagesContentInner({
       const data = await response.json();
 
       if (data.success) {
-        setOptimisticMessages(prev => prev.filter(msg => msg.id !== tempId));
+        setOptimisticMessages((prev) =>
+          prev.filter((msg) => msg.id !== tempId)
+        );
         // Update state instead of reloading
-        setRealTimeMessages(prev => [...prev, data.message]);
+        setRealTimeMessages((prev) => [...prev, data.message]);
       } else {
         throw new Error(data.error || 'Failed to send message');
       }
     } catch (error) {
-      setOptimisticMessages(prev => prev.filter(msg => msg.id !== tempId));
-      setFailedMessages(prev => [...prev, { ...optimisticMessage, id: tempId }]);
+      setOptimisticMessages((prev) => prev.filter((msg) => msg.id !== tempId));
+      setFailedMessages((prev) => [
+        ...prev,
+        { ...optimisticMessage, id: tempId },
+      ]);
       setNewMessage(messageText);
     } finally {
       setIsSubmitting(false);
@@ -302,15 +321,19 @@ function MessagesContentInner({
   };
 
   const retryMessage = async (failedMessage: Message) => {
-    setFailedMessages(prev => prev.filter(msg => msg.id !== failedMessage.id));
-    
+    setFailedMessages((prev) =>
+      prev.filter((msg) => msg.id !== failedMessage.id)
+    );
+
     // Validate message content before retry
-    const validationResult = messageContentSchema.safeParse(failedMessage.content);
+    const validationResult = messageContentSchema.safeParse(
+      failedMessage.content
+    );
     if (!validationResult.success) {
-      setFailedMessages(prev => [...prev, failedMessage]);
+      setFailedMessages((prev) => [...prev, failedMessage]);
       return;
     }
-    
+
     const tempId = `temp-${Date.now()}`;
     const retryMessage: Message = {
       ...failedMessage,
@@ -318,9 +341,9 @@ function MessagesContentInner({
       createdAt: new Date(),
     };
 
-    setOptimisticMessages(prev => [...prev, retryMessage]);
+    setOptimisticMessages((prev) => [...prev, retryMessage]);
     setIsSubmitting(true);
-    
+
     try {
       const response = await fetch('/api/messages', {
         method: 'POST',
@@ -336,31 +359,36 @@ function MessagesContentInner({
       const data = await response.json();
 
       if (data.success) {
-        setOptimisticMessages(prev => prev.filter(msg => msg.id !== tempId));
+        setOptimisticMessages((prev) =>
+          prev.filter((msg) => msg.id !== tempId)
+        );
         // Update state instead of reloading
-        setRealTimeMessages(prev => [...prev, data.message]);
+        setRealTimeMessages((prev) => [...prev, data.message]);
       } else {
         throw new Error(data.error || 'Failed to send message');
       }
     } catch (error) {
-      setOptimisticMessages(prev => prev.filter(msg => msg.id !== tempId));
-      setFailedMessages(prev => [...prev, failedMessage]);
+      setOptimisticMessages((prev) => prev.filter((msg) => msg.id !== tempId));
+      setFailedMessages((prev) => [...prev, failedMessage]);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="grid gap-4 lg:gap-6 lg:grid-cols-3">
+    <div className="grid gap-4 lg:grid-cols-3 lg:gap-6">
       {/* Conversations List */}
-      <div className="lg:col-span-1 order-2 lg:order-1">
+      <div className="order-2 lg:order-1 lg:col-span-1">
         <Card className="h-full lg:max-h-[calc(100vh-12rem)]">
           <CardHeader className="px-3 sm:px-4">
-            <CardTitle className="text-base sm:text-lg">Conversations</CardTitle>
+            <CardTitle className="text-base sm:text-lg">
+              Conversations
+            </CardTitle>
             <div className="relative mt-2">
               <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground/70" />
               <Input
                 className="pl-9"
+                maxLength={100}
                 onChange={(e) => {
                   // Sanitize search input
                   const sanitizedValue = e.target.value.replace(/<[^>]*>/g, '');
@@ -368,11 +396,10 @@ function MessagesContentInner({
                 }}
                 placeholder="Search messages..."
                 value={searchQuery}
-                maxLength={100}
               />
             </div>
           </CardHeader>
-          <CardContent className="p-0 overflow-y-auto max-h-[400px] lg:max-h-[calc(100vh-20rem)]">
+          <CardContent className="max-h-[400px] overflow-y-auto p-0 lg:max-h-[calc(100vh-20rem)]">
             <div className="divide-y">
               {filteredConversations.length === 0 ? (
                 <div className="p-6 text-center text-muted-foreground">
@@ -381,10 +408,8 @@ function MessagesContentInner({
               ) : (
                 filteredConversations.map((conversation) => (
                   <button
-                    className={`w-full p-3 sm:p-4 text-left transition-colors hover:bg-muted touch-target ${
-                      selectedConversation === conversation.id
-                        ? 'bg-muted'
-                        : ''
+                    className={`touch-target w-full p-3 text-left transition-colors hover:bg-muted sm:p-4 ${
+                      selectedConversation === conversation.id ? 'bg-muted' : ''
                     }`}
                     key={conversation.id}
                     onClick={() => setSelectedConversation(conversation.id)}
@@ -395,8 +420,8 @@ function MessagesContentInner({
                           <AvatarImage
                             alt={conversation.otherUser.name}
                             className="h-10 w-10"
-                            src={conversation.otherUser.imageUrl}
                             size={40}
+                            src={conversation.otherUser.imageUrl}
                           />
                         ) : (
                           <User className="h-5 w-5 text-muted-foreground" />
@@ -405,7 +430,7 @@ function MessagesContentInner({
 
                       <div className="min-w-0 flex-1">
                         <div className="mb-1 flex items-center justify-between">
-                          <h4 className="font-medium text-sm line-clamp-1">
+                          <h4 className="line-clamp-1 font-medium text-sm">
                             {conversation.otherUser.name}
                           </h4>
                           {conversation.lastMessage && (
@@ -457,20 +482,20 @@ function MessagesContentInner({
       </div>
 
       {/* Chat Area */}
-      <div className="lg:col-span-2 order-1 lg:order-2">
-        <Card className="flex h-[500px] lg:h-[calc(100vh-12rem)] flex-col">
+      <div className="order-1 lg:order-2 lg:col-span-2">
+        <Card className="flex h-[500px] flex-col lg:h-[calc(100vh-12rem)]">
           {selectedConv ? (
             <>
               {/* Chat Header */}
-              <CardHeader className="border-b px-3 sm:px-4 py-3 sm:py-4">
+              <CardHeader className="border-b px-3 py-3 sm:px-4 sm:py-4">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-full)] bg-accent">
                     {selectedConv.otherUser.imageUrl ? (
                       <AvatarImage
                         alt={selectedConv.otherUser.name}
                         className="h-10 w-10"
-                        src={selectedConv.otherUser.imageUrl}
                         size={40}
+                        src={selectedConv.otherUser.imageUrl}
                       />
                     ) : (
                       <span className="font-medium text-muted-foreground text-sm">
@@ -491,7 +516,12 @@ function MessagesContentInner({
                     </div>
                   </div>
 
-                  <Button asChild size="sm" variant="outline" className="hidden sm:flex">
+                  <Button
+                    asChild
+                    className="hidden sm:flex"
+                    size="sm"
+                    variant="outline"
+                  >
                     <a href={`/product/${selectedConv.product.id}`}>
                       View Item
                     </a>
@@ -502,95 +532,120 @@ function MessagesContentInner({
               {/* Messages */}
               <CardContent className="flex-1 overflow-y-auto p-4">
                 <div className="space-y-4">
-                  {selectedConv.rawConversation.messages.length === 0 && optimisticMessages.length === 0 && realTimeMessages.length === 0 && failedMessages.length === 0 ? (
+                  {selectedConv.rawConversation.messages.length === 0 &&
+                  optimisticMessages.length === 0 &&
+                  realTimeMessages.length === 0 &&
+                  failedMessages.length === 0 ? (
                     <div className="py-8 text-center text-muted-foreground">
                       No messages yet. Start the conversation!
                     </div>
                   ) : (
                     (() => {
-                      const allMessages = [...selectedConv.rawConversation.messages, ...realTimeMessages, ...optimisticMessages, ...failedMessages];
+                      const allMessages = [
+                        ...selectedConv.rawConversation.messages,
+                        ...realTimeMessages,
+                        ...optimisticMessages,
+                        ...failedMessages,
+                      ];
                       const groupedMessages = groupMessagesByDate(allMessages);
-                      
-                      return Object.entries(groupedMessages).map(([dateGroup, messages]) => (
-                        <div key={dateGroup}>
-                          <div className="my-4 text-center">
-                            <span className="rounded-[var(--radius-full)] bg-secondary px-3 py-1 text-xs text-muted-foreground">
-                              {dateGroup}
-                            </span>
-                          </div>
-                          {messages.map((message) => {
-                            const isSender = message.senderId === currentUserId;
-                            const isOptimistic = message.id.startsWith('temp-');
-                            const isFailed = failedMessages.some(msg => msg.id === message.id);
-                            return (
-                              <div
-                                className={`flex items-start gap-3 ${isSender ? 'justify-end' : ''}`}
-                                key={message.id}
-                              >
-                          {!isSender && (
-                            <div className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-full)] bg-accent">
-                              <span className="font-medium text-muted-foreground text-xs">
-                                {selectedConv.otherUser.name
-                                  .charAt(0)
-                                  .toUpperCase()}
+
+                      return Object.entries(groupedMessages).map(
+                        ([dateGroup, messages]) => (
+                          <div key={dateGroup}>
+                            <div className="my-4 text-center">
+                              <span className="rounded-[var(--radius-full)] bg-secondary px-3 py-1 text-muted-foreground text-xs">
+                                {dateGroup}
                               </span>
                             </div>
-                          )}
-                          <div
-                            className={`flex-1 ${isSender ? 'text-right' : ''}`}
-                          >
-                            <div
-                              className={`max-w-xs rounded-[var(--radius-lg)] p-3 ${
-                                isSender
-                                  ? `ml-auto ${
-                                      isFailed
-                                        ? 'bg-red-600 text-background'
-                                        : isOptimistic
-                                        ? 'bg-blue-600 text-background opacity-70'
-                                        : 'bg-blue-600 text-background'
-                                    }`
-                                  : 'bg-secondary'
-                              }`}
-                            >
-                              <p className="text-sm">{message.content}</p>
-                              {isFailed && (
-                                <button
-                                  onClick={() => retryMessage(message)}
-                                  className="mt-2 text-xs text-background underline hover:no-underline"
+                            {messages.map((message) => {
+                              const isSender =
+                                message.senderId === currentUserId;
+                              const isOptimistic =
+                                message.id.startsWith('temp-');
+                              const isFailed = failedMessages.some(
+                                (msg) => msg.id === message.id
+                              );
+                              return (
+                                <div
+                                  className={`flex items-start gap-3 ${isSender ? 'justify-end' : ''}`}
+                                  key={message.id}
                                 >
-                                  Retry
-                                </button>
-                              )}
-                            </div>
-                            <div
-                              className={`mt-1 flex items-center gap-1 ${
-                                isSender ? 'justify-end' : ''
-                              }`}
-                            >
-                              {isSender && !isOptimistic && !isFailed && message.read && (
-                                <CheckCheck className="h-3 w-3 text-muted-foreground/70" />
-                              )}
-                              {isOptimistic && (
-                                <span className="text-muted-foreground/70 text-xs">Sending...</span>
-                              )}
-                              {isFailed && (
-                                <span className="text-red-500 text-xs">Failed</span>
-                              )}
-                              {!isOptimistic && !isFailed && (
-                                <span className="text-muted-foreground text-xs">
-                                  {formatTime(new Date(message.createdAt))}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
+                                  {!isSender && (
+                                    <div className="flex h-8 w-8 items-center justify-center rounded-[var(--radius-full)] bg-accent">
+                                      <span className="font-medium text-muted-foreground text-xs">
+                                        {selectedConv.otherUser.name
+                                          .charAt(0)
+                                          .toUpperCase()}
+                                      </span>
+                                    </div>
+                                  )}
+                                  <div
+                                    className={`flex-1 ${isSender ? 'text-right' : ''}`}
+                                  >
+                                    <div
+                                      className={`max-w-xs rounded-[var(--radius-lg)] p-3 ${
+                                        isSender
+                                          ? `ml-auto ${
+                                              isFailed
+                                                ? 'bg-red-600 text-background'
+                                                : isOptimistic
+                                                  ? 'bg-blue-600 text-background opacity-70'
+                                                  : 'bg-blue-600 text-background'
+                                            }`
+                                          : 'bg-secondary'
+                                      }`}
+                                    >
+                                      <p className="text-sm">
+                                        {message.content}
+                                      </p>
+                                      {isFailed && (
+                                        <button
+                                          className="mt-2 text-background text-xs underline hover:no-underline"
+                                          onClick={() => retryMessage(message)}
+                                        >
+                                          Retry
+                                        </button>
+                                      )}
+                                    </div>
+                                    <div
+                                      className={`mt-1 flex items-center gap-1 ${
+                                        isSender ? 'justify-end' : ''
+                                      }`}
+                                    >
+                                      {isSender &&
+                                        !isOptimistic &&
+                                        !isFailed &&
+                                        message.read && (
+                                          <CheckCheck className="h-3 w-3 text-muted-foreground/70" />
+                                        )}
+                                      {isOptimistic && (
+                                        <span className="text-muted-foreground/70 text-xs">
+                                          Sending...
+                                        </span>
+                                      )}
+                                      {isFailed && (
+                                        <span className="text-red-500 text-xs">
+                                          Failed
+                                        </span>
+                                      )}
+                                      {!(isOptimistic || isFailed) && (
+                                        <span className="text-muted-foreground text-xs">
+                                          {formatTime(
+                                            new Date(message.createdAt)
+                                          )}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
                               );
                             })}
-                        </div>
-                      ));
+                          </div>
+                        )
+                      );
                     })()
                   )}
-                  
+
                   {/* Typing indicator */}
                   {typingUsers.length > 0 && (
                     <div className="flex items-start gap-3">
@@ -602,21 +657,21 @@ function MessagesContentInner({
                       <div className="flex-1">
                         <div className="max-w-xs rounded-[var(--radius-lg)] bg-secondary p-3">
                           <div className="flex space-x-1">
-                            <div className="animate-pulse h-2 w-2 rounded-[var(--radius-full)] bg-muted-foreground/20"></div>
-                            <div className="animate-pulse h-2 w-2 rounded-[var(--radius-full)] bg-muted-foreground/20 delay-75"></div>
-                            <div className="animate-pulse h-2 w-2 rounded-[var(--radius-full)] bg-muted-foreground/20 delay-150"></div>
+                            <div className="h-2 w-2 animate-pulse rounded-[var(--radius-full)] bg-muted-foreground/20" />
+                            <div className="h-2 w-2 animate-pulse rounded-[var(--radius-full)] bg-muted-foreground/20 delay-75" />
+                            <div className="h-2 w-2 animate-pulse rounded-[var(--radius-full)] bg-muted-foreground/20 delay-150" />
                           </div>
                         </div>
                       </div>
                     </div>
                   )}
-                  
+
                   <div ref={messagesEndRef} />
                 </div>
               </CardContent>
 
               {/* Message Input */}
-              <div className="border-t p-3 sm:p-4 safe-area-pb">
+              <div className="safe-area-pb border-t p-3 sm:p-4">
                 <div className="flex items-center gap-2">
                   <Input
                     className="flex-1"
@@ -630,10 +685,10 @@ function MessagesContentInner({
                     value={newMessage}
                   />
                   <Button
+                    className="touch-target"
                     disabled={!newMessage.trim() || isSubmitting}
                     onClick={sendMessage}
                     size="icon"
-                    className="touch-target"
                   >
                     <Send className="h-4 w-4" />
                   </Button>
@@ -663,16 +718,16 @@ export function MessagesContent(props: MessagesContentProps) {
   return (
     <ErrorBoundary
       fallback={({ reset }) => (
-        <div className="min-h-[400px] flex items-center justify-center p-4">
+        <div className="flex min-h-[400px] items-center justify-center p-4">
           <Card className="w-full max-w-md">
             <CardHeader>
               <CardTitle>Unable to Load Messages</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 There was an error loading your messages. Please try again.
               </p>
-              <Button onClick={reset} className="w-full">
+              <Button className="w-full" onClick={reset}>
                 Try Again
               </Button>
             </CardContent>

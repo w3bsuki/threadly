@@ -21,7 +21,11 @@ export interface ErrorContext {
 
 class ErrorLogger {
   private static instance: ErrorLogger;
-  private errorQueue: Array<{ error: Error; context: ErrorContext; timestamp: Date }> = [];
+  private errorQueue: Array<{
+    error: Error;
+    context: ErrorContext;
+    timestamp: Date;
+  }> = [];
   private isInitialized = false;
 
   private constructor() {
@@ -38,7 +42,10 @@ class ErrorLogger {
   private initialize() {
     if (typeof window !== 'undefined') {
       // Browser error handlers
-      window.addEventListener('unhandledrejection', this.handleUnhandledRejection);
+      window.addEventListener(
+        'unhandledrejection',
+        this.handleUnhandledRejection
+      );
       window.addEventListener('error', this.handleGlobalError);
     }
 
@@ -78,7 +85,7 @@ class ErrorLogger {
       level: 'fatal',
       tags: { type: 'uncaught-exception' },
     });
-    
+
     // Exit the process after logging
     setTimeout(() => {
       process.exit(1);
@@ -88,14 +95,14 @@ class ErrorLogger {
   logError(error: Error | string, context: ErrorContext = {}) {
     const errorObj = typeof error === 'string' ? new Error(error) : error;
     const timestamp = new Date();
-    
+
     // Add to error queue for batch processing
     this.errorQueue.push({ error: errorObj, context, timestamp });
-    
+
     // Log to console in development
     if (process.env.NODE_ENV === 'development') {
     }
-    
+
     // Send to Sentry
     Sentry.withScope((scope) => {
       // Set user context
@@ -106,28 +113,28 @@ class ErrorLogger {
           username: context.user.role,
         });
       }
-      
+
       // Set tags
       if (context.tags) {
         Object.entries(context.tags).forEach(([key, value]) => {
           scope.setTag(key, value);
         });
       }
-      
+
       // Set extra context
       if (context.extra) {
         Object.entries(context.extra).forEach(([key, value]) => {
           scope.setExtra(key, value);
         });
       }
-      
+
       // Set level
       scope.setLevel(context.level || 'error');
-      
+
       // Capture the exception
       Sentry.captureException(errorObj);
     });
-    
+
     // Process error queue if needed
     this.processErrorQueue();
   }
@@ -136,15 +143,16 @@ class ErrorLogger {
     if (this.errorQueue.length > 100) {
       // Send batch to analytics or monitoring service
       const errors = this.errorQueue.splice(0, 50);
-      
+
       try {
         await this.sendBatchToMonitoring(errors);
-      } catch (err) {
-      }
+      } catch (err) {}
     }
   }
 
-  private async sendBatchToMonitoring(errors: Array<{ error: Error; context: ErrorContext; timestamp: Date }>) {
+  private async sendBatchToMonitoring(
+    errors: Array<{ error: Error; context: ErrorContext; timestamp: Date }>
+  ) {
     // This would send to your monitoring service
     // For now, we'll just log
     if (process.env.NODE_ENV === 'production') {
@@ -160,7 +168,7 @@ class ErrorLogger {
         timestamp,
       })),
     };
-    
+
     return stats;
   }
 
@@ -170,15 +178,21 @@ class ErrorLogger {
 
   destroy() {
     if (typeof window !== 'undefined') {
-      window.removeEventListener('unhandledrejection', this.handleUnhandledRejection);
+      window.removeEventListener(
+        'unhandledrejection',
+        this.handleUnhandledRejection
+      );
       window.removeEventListener('error', this.handleGlobalError);
     }
-    
+
     if (typeof process !== 'undefined') {
-      process.removeListener('unhandledRejection', this.handleUnhandledRejection);
+      process.removeListener(
+        'unhandledRejection',
+        this.handleUnhandledRejection
+      );
       process.removeListener('uncaughtException', this.handleUncaughtException);
     }
-    
+
     this.clearErrorQueue();
     this.isInitialized = false;
   }
@@ -186,6 +200,7 @@ class ErrorLogger {
 
 // Export singleton instance methods
 export const errorLogger = ErrorLogger.getInstance();
-export const logError = (error: Error | string, context?: ErrorContext) => errorLogger.logError(error, context);
+export const logError = (error: Error | string, context?: ErrorContext) =>
+  errorLogger.logError(error, context);
 export const getErrorStats = () => errorLogger.getErrorStats();
 export const clearErrorQueue = () => errorLogger.clearErrorQueue();

@@ -10,15 +10,15 @@ import { getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import type { Product, SimilarProduct } from '../../types';
-import { ProductBreadcrumb } from './product-breadcrumb';
-import { ProductImageGallery } from './product-image-gallery';
-import { ProductHeader } from './product-header';
-import { SellerInfoCard } from './seller-info-card';
-import { ProductDetailsCard } from './product-details-card';
-import { ProductActions } from './product-actions';
-import { ProductDescription } from './product-description';
-import { SimilarProducts } from './similar-products';
 import { MobileStickyActions } from './mobile-sticky-actions';
+import { ProductActions } from './product-actions';
+import { ProductBreadcrumb } from './product-breadcrumb';
+import { ProductDescription } from './product-description';
+import { ProductDetailsCard } from './product-details-card';
+import { ProductHeader } from './product-header';
+import { ProductImageGallery } from './product-image-gallery';
+import { SellerInfoCard } from './seller-info-card';
+import { SimilarProducts } from './similar-products';
 
 interface ProductDetailContainerProps {
   product: Product;
@@ -140,9 +140,9 @@ export function ProductDetailContainer({
   return (
     <div className="min-h-screen bg-background">
       <div className="container px-4 py-4 md:py-6">
-        <ProductBreadcrumb 
-          category={product.category} 
-          productTitle={product.title} 
+        <ProductBreadcrumb
+          category={product.category}
+          productTitle={product.title}
         />
 
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
@@ -151,51 +151,48 @@ export function ProductDetailContainer({
 
           {/* Product Information */}
           <div className="space-y-6">
-            <ProductHeader 
-              product={product} 
-              userRegion={userRegion} 
-              userCurrency={userCurrency} 
+            <ProductHeader
+              product={product}
+              userCurrency={userCurrency}
+              userRegion={userRegion}
             />
 
-            <SellerInfoCard 
-              seller={product.seller} 
-              productId={product.id} 
-            />
+            <SellerInfoCard productId={product.id} seller={product.seller} />
 
             <ProductDetailsCard product={product} />
 
             {/* Desktop Action Buttons */}
             <div className="hidden md:block">
               <ProductActions
-                productId={product.id}
-                isInCart={isInCart}
                 isFavorited={isFavorited}
+                isInCart={isInCart}
                 isPending={isPending}
-                onBuyNow={handleBuyNow}
                 onAddToCart={handleAddToCart}
+                onBuyNow={handleBuyNow}
                 onToggleFavorite={handleToggleFavorite}
+                productId={product.id}
               />
             </div>
           </div>
         </div>
 
         <ProductDescription description={product.description} />
-        
+
         <SimilarProducts products={similarProducts} />
       </div>
 
       {/* Mobile Sticky Action Bar */}
       <MobileStickyActions
-        productId={product.id}
-        price={product.price}
-        isInCart={isInCart}
-        isFavorited={isFavorited}
-        isPending={isPending}
-        userRegion={userRegion}
-        userCurrency={userCurrency}
         dictionary={dictionary}
+        isFavorited={isFavorited}
+        isInCart={isInCart}
+        isPending={isPending}
         onBuyNow={handleBuyNow}
         onToggleFavorite={handleToggleFavorite}
+        price={product.price}
+        productId={product.id}
+        userCurrency={userCurrency}
+        userRegion={userRegion}
       />
     </div>
   );

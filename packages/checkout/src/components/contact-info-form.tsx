@@ -8,7 +8,7 @@ import {
   FormMessage,
   Input,
 } from '@repo/design-system/components';
-import { UseFormReturn } from 'react-hook-form';
+import type { UseFormReturn } from 'react-hook-form';
 import type { CheckoutFormData } from '../types';
 
 interface ContactInfoFormProps {
@@ -18,7 +18,7 @@ interface ContactInfoFormProps {
 export function ContactInfoForm({ form }: ContactInfoFormProps) {
   return (
     <div className="grid gap-4 lg:gap-4">
-      <div className="grid gap-4 lg:gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 lg:gap-4">
         <FormField
           control={form.control}
           name="firstName"
@@ -26,10 +26,10 @@ export function ContactInfoForm({ form }: ContactInfoFormProps) {
             <FormItem>
               <FormLabel className="text-base lg:text-sm">First Name</FormLabel>
               <FormControl>
-                <Input 
-                  {...field} 
-                  className="h-12 text-base lg:h-10 lg:text-sm"
+                <Input
+                  {...field}
                   autoComplete="given-name"
+                  className="h-12 text-base lg:h-10 lg:text-sm"
                 />
               </FormControl>
               <FormMessage />
@@ -43,10 +43,10 @@ export function ContactInfoForm({ form }: ContactInfoFormProps) {
             <FormItem>
               <FormLabel className="text-base lg:text-sm">Last Name</FormLabel>
               <FormControl>
-                <Input 
-                  {...field} 
-                  className="h-12 text-base lg:h-10 lg:text-sm"
+                <Input
+                  {...field}
                   autoComplete="family-name"
+                  className="h-12 text-base lg:h-10 lg:text-sm"
                 />
               </FormControl>
               <FormMessage />
@@ -62,11 +62,11 @@ export function ContactInfoForm({ form }: ContactInfoFormProps) {
           <FormItem>
             <FormLabel className="text-base lg:text-sm">Email</FormLabel>
             <FormControl>
-              <Input 
-                type="email" 
-                {...field} 
-                className="h-12 text-base lg:h-10 lg:text-sm"
+              <Input
+                type="email"
+                {...field}
                 autoComplete="email"
+                className="h-12 text-base lg:h-10 lg:text-sm"
                 inputMode="email"
               />
             </FormControl>
@@ -82,12 +82,12 @@ export function ContactInfoForm({ form }: ContactInfoFormProps) {
           <FormItem>
             <FormLabel className="text-base lg:text-sm">Phone</FormLabel>
             <FormControl>
-              <Input 
-                type="tel" 
-                placeholder="(555) 123-4567" 
-                {...field} 
-                className="h-12 text-base lg:h-10 lg:text-sm"
+              <Input
+                placeholder="(555) 123-4567"
+                type="tel"
+                {...field}
                 autoComplete="tel"
+                className="h-12 text-base lg:h-10 lg:text-sm"
                 inputMode="tel"
               />
             </FormControl>

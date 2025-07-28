@@ -7,24 +7,24 @@ import { z } from 'zod';
 
 // Re-export message schemas from validation package
 export {
-  messageTypeSchema,
+  blockConversationSchema,
+  bulkMessageOperationSchema,
+  conversationFilterSchema,
+  conversationSettingsSchema,
   conversationStatusSchema,
-  messageContentSchema,
   createMessageSchema,
   createOfferMessageSchema,
-  updateMessageSchema,
   deleteMessageSchema,
   markAsReadSchema,
-  conversationFilterSchema,
-  reportMessageSchema,
-  blockConversationSchema,
-  typingIndicatorSchema,
+  messageContentSchema,
   messageReactionSchema,
-  conversationSettingsSchema,
-  messageTemplateSchema,
-  quickReplySchema,
   messageSearchSchema,
-  bulkMessageOperationSchema,
+  messageTemplateSchema,
+  messageTypeSchema,
+  quickReplySchema,
+  reportMessageSchema,
+  typingIndicatorSchema,
+  updateMessageSchema,
 } from '@repo/validation/schemas/message';
 
 // Additional schemas specific to the messaging package
@@ -64,10 +64,12 @@ export const productInfoSchema = z.object({
   title: z.string(),
   price: z.number(),
   status: z.enum(['AVAILABLE', 'SOLD', 'RESERVED', 'REMOVED']),
-  images: z.array(z.object({
-    imageUrl: z.string().url(),
-    alt: z.string().optional(),
-  })),
+  images: z.array(
+    z.object({
+      imageUrl: z.string().url(),
+      alt: z.string().optional(),
+    })
+  ),
 });
 
 export const messageWithSenderSchema = z.object({
@@ -109,11 +111,13 @@ export const conversationListItemSchema = z.object({
     name: z.string(),
     avatar: z.string().url().optional(),
   }),
-  lastMessage: z.object({
-    content: z.string(),
-    createdAt: z.date(),
-    isOwnMessage: z.boolean(),
-  }).optional(),
+  lastMessage: z
+    .object({
+      content: z.string(),
+      createdAt: z.date(),
+      isOwnMessage: z.boolean(),
+    })
+    .optional(),
   unreadCount: z.number(),
   status: z.enum(['ACTIVE', 'ARCHIVED']),
   updatedAt: z.date(),
@@ -130,10 +134,12 @@ export const messagesPaginationSchema = z.object({
 
 export const messagesResponseSchema = z.object({
   success: z.boolean(),
-  data: z.object({
-    messages: z.array(messageWithSenderSchema),
-    pagination: messagesPaginationSchema,
-  }).optional(),
+  data: z
+    .object({
+      messages: z.array(messageWithSenderSchema),
+      pagination: messagesPaginationSchema,
+    })
+    .optional(),
   error: z.string().optional(),
 });
 
@@ -176,17 +182,17 @@ export const typingEventSchema = z.object({
 // Client state schemas
 export const connectionStatusSchema = z.enum([
   'connecting',
-  'connected', 
+  'connected',
   'disconnected',
-  'error'
+  'error',
 ]);
 
 export const messageStatusSchema = z.enum([
   'sending',
-  'sent', 
+  'sent',
   'delivered',
   'read',
-  'failed'
+  'failed',
 ]);
 
 export const clientMessageSchema = messageWithSenderSchema.extend({
@@ -198,7 +204,13 @@ export const clientMessageSchema = messageWithSenderSchema.extend({
 export const quickReplyTemplateSchema = z.object({
   id: z.string(),
   text: z.string(),
-  category: z.enum(['greeting', 'question', 'offer', 'unavailable', 'shipping']),
+  category: z.enum([
+    'greeting',
+    'question',
+    'offer',
+    'unavailable',
+    'shipping',
+  ]),
 });
 
 export const messageThreadContextSchema = z.object({
@@ -211,7 +223,9 @@ export const messageThreadContextSchema = z.object({
 // Type exports from schemas
 export type SendMessageRequest = z.infer<typeof sendMessageRequestSchema>;
 export type FetchMessagesRequest = z.infer<typeof fetchMessagesRequestSchema>;
-export type CreateConversationRequest = z.infer<typeof createConversationRequestSchema>;
+export type CreateConversationRequest = z.infer<
+  typeof createConversationRequestSchema
+>;
 export type MessageEvent = z.infer<typeof messageEventSchema>;
 export type TypingEvent = z.infer<typeof typingEventSchema>;
 export type ConnectionStatus = z.infer<typeof connectionStatusSchema>;

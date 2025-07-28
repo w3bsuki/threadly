@@ -5,13 +5,13 @@ import { glob } from 'glob';
 
 /**
  * Design System Audit Script
- * 
+ *
  * This script audits the codebase for design system compliance and generates
  * a report of areas that need migration.
- * 
+ *
  * Usage:
  *   pnpm tsx scripts/design-system-audit.ts [options]
- * 
+ *
  * Options:
  *   --json       Output results as JSON
  *   --app        Audit specific app (web, app, api, storybook)
@@ -58,7 +58,8 @@ const auditRules: AuditRule[] = [
   {
     name: 'tailwind-colors',
     category: 'colors',
-    pattern: /\b(bg|text|border|ring)-(black|white|gray|red|blue|green|yellow|purple|pink|indigo)-\d{2,3}\b/g,
+    pattern:
+      /\b(bg|text|border|ring)-(black|white|gray|red|blue|green|yellow|purple|pink|indigo)-\d{2,3}\b/g,
     severity: 'warning',
     message: 'Tailwind color utility found. Use semantic color tokens.',
     autoFixable: true,
@@ -120,7 +121,8 @@ const auditRules: AuditRule[] = [
   {
     name: 'missing-design-system-import',
     category: 'imports',
-    pattern: /^(?!.*@repo\/design-system).*\b(Button|Card|Input|Select|Dialog)\b/gm,
+    pattern:
+      /^(?!.*@repo\/design-system).*\b(Button|Card|Input|Select|Dialog)\b/gm,
     severity: 'info',
     message: 'Component used without design system import.',
     autoFixable: false,
@@ -152,19 +154,19 @@ function auditFile(filePath: string): AuditResult {
 
   auditRules.forEach((rule) => {
     const matches = Array.from(content.matchAll(rule.pattern));
-    
+
     matches.forEach((match) => {
       if (match.index === undefined) return;
-      
+
       // Calculate line and column
       const beforeMatch = content.substring(0, match.index);
       const lineNumber = beforeMatch.split('\n').length;
       const lastNewlineIndex = beforeMatch.lastIndexOf('\n');
       const column = match.index - lastNewlineIndex;
-      
+
       // Get the line of code
       const code = lines[lineNumber - 1] || '';
-      
+
       violations.push({
         rule,
         line: lineNumber,
@@ -183,7 +185,7 @@ function auditApp(appName?: string): AuditResult[] {
     ignore: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/.next/**'],
   });
 
-  return files.map(auditFile).filter(result => result.violations.length > 0);
+  return files.map(auditFile).filter((result) => result.violations.length > 0);
 }
 
 function generateReport(results: AuditResult[], outputJson = false) {
@@ -203,9 +205,9 @@ function generateReport(results: AuditResult[], outputJson = false) {
   // Calculate statistics
   results.forEach((result) => {
     result.violations.forEach((violation) => {
-      stats.byCategory[violation.rule.category] = 
+      stats.byCategory[violation.rule.category] =
         (stats.byCategory[violation.rule.category] || 0) + 1;
-      stats.bySeverity[violation.rule.severity] = 
+      stats.bySeverity[violation.rule.severity] =
         (stats.bySeverity[violation.rule.severity] || 0) + 1;
       if (violation.rule.autoFixable) stats.autoFixable++;
     });
@@ -213,18 +215,21 @@ function generateReport(results: AuditResult[], outputJson = false) {
 
   // Print header
   console.log('\n🔍 Design System Audit Report\n');
-  console.log('=' .repeat(80));
+  console.log('='.repeat(80));
 
   // Print summary
   console.log('\n📊 Summary\n');
   console.log(`  Total files with violations: ${stats.totalFiles}`);
   console.log(`  Total violations: ${stats.totalViolations}`);
-  console.log(`  Auto-fixable: ${stats.autoFixable} (${Math.round(stats.autoFixable / stats.totalViolations * 100)}%)`);
+  console.log(
+    `  Auto-fixable: ${stats.autoFixable} (${Math.round((stats.autoFixable / stats.totalViolations) * 100)}%)`
+  );
 
   // Print by severity
   console.log('\n🚦 By Severity\n');
   Object.entries(stats.bySeverity).forEach(([severity, count]) => {
-    const icon = severity === 'error' ? '❌' : severity === 'warning' ? '⚠️ ' : 'ℹ️ ';
+    const icon =
+      severity === 'error' ? '❌' : severity === 'warning' ? '⚠️ ' : 'ℹ️ ';
     console.log(`  ${icon} ${severity}: ${count}`);
   });
 
@@ -241,17 +246,24 @@ function generateReport(results: AuditResult[], outputJson = false) {
 
   console.log('\n📋 Top Files with Violations\n');
   topFiles.forEach((result) => {
-    const errorCount = result.violations.filter(v => v.rule.severity === 'error').length;
-    const warningCount = result.violations.filter(v => v.rule.severity === 'warning').length;
-    
+    const errorCount = result.violations.filter(
+      (v) => v.rule.severity === 'error'
+    ).length;
+    const warningCount = result.violations.filter(
+      (v) => v.rule.severity === 'warning'
+    ).length;
+
     console.log(`  ${result.file}`);
     console.log(`    ${errorCount} errors, ${warningCount} warnings\n`);
   });
 
   // Print sample violations
   console.log('\n🔍 Sample Violations\n');
-  
-  const samplesByCategory = new Map<string, typeof results[0]['violations']>();
+
+  const samplesByCategory = new Map<
+    string,
+    (typeof results)[0]['violations']
+  >();
   results.forEach((result) => {
     result.violations.forEach((violation) => {
       if (!samplesByCategory.has(violation.rule.category)) {
@@ -268,11 +280,11 @@ function generateReport(results: AuditResult[], outputJson = false) {
     console.log(`  ${category}:`);
     violations.forEach((violation) => {
       const severity = violation.rule.severity;
-      
+
       console.log(`    ${severity}: ${violation.rule.message}`);
       console.log(`    ${violation.code}`);
       if (violation.rule.autoFixable) {
-        console.log(`    ✓ Auto-fixable`);
+        console.log('    ✓ Auto-fixable');
       }
       console.log('');
     });
@@ -280,10 +292,16 @@ function generateReport(results: AuditResult[], outputJson = false) {
 
   // Print recommendations
   console.log('\n💡 Recommendations\n');
-  console.log('  1. Run "pnpm tsx scripts/migrate-to-design-system.ts --dry-run" to preview auto-fixes');
+  console.log(
+    '  1. Run "pnpm tsx scripts/migrate-to-design-system.ts --dry-run" to preview auto-fixes'
+  );
   console.log('  2. Address error severity issues first');
-  console.log('  3. Review the migration plan in DESIGN_SYSTEM_MIGRATION_PLAN.md');
-  console.log('  4. Use "pnpm tsx scripts/design-system-audit.ts --json" for CI integration');
+  console.log(
+    '  3. Review the migration plan in DESIGN_SYSTEM_MIGRATION_PLAN.md'
+  );
+  console.log(
+    '  4. Use "pnpm tsx scripts/design-system-audit.ts --json" for CI integration'
+  );
   console.log('');
 }
 
@@ -295,10 +313,12 @@ const category = args.find((arg, i) => args[i - 1] === '--category');
 
 // Filter rules by category if specified
 if (category) {
-  const filteredRules = auditRules.filter(rule => rule.category === category);
+  const filteredRules = auditRules.filter((rule) => rule.category === category);
   if (filteredRules.length === 0) {
     console.error(`Invalid category: ${category}`);
-    console.error(`Valid categories: ${[...new Set(auditRules.map(r => r.category))].join(', ')}`);
+    console.error(
+      `Valid categories: ${[...new Set(auditRules.map((r) => r.category))].join(', ')}`
+    );
     process.exit(1);
   }
   auditRules.length = 0;
@@ -310,7 +330,7 @@ console.log('🚀 Running Design System Audit...\n');
 try {
   const results = auditApp(appName);
   generateReport(results, outputJson);
-  
+
   // Exit with error code if violations found
   if (results.length > 0) {
     process.exit(1);

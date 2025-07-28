@@ -6,9 +6,13 @@
 /**
  * Format cents to display price (e.g., 1999 → $19.99)
  */
-export function formatPrice(cents: number, currency: string = 'USD', locale?: string): string {
+export function formatPrice(
+  cents: number,
+  currency = 'USD',
+  locale?: string
+): string {
   const dollars = cents / 100;
-  
+
   // Map currency to appropriate locale if not provided
   const defaultLocales: Record<string, string> = {
     USD: 'en-US',
@@ -19,13 +23,13 @@ export function formatPrice(cents: number, currency: string = 'USD', locale?: st
     BGN: 'bg-BG',
     UAH: 'uk-UA',
   };
-  
+
   const formatLocale = locale || defaultLocales[currency] || 'en-US';
-  
+
   try {
     return new Intl.NumberFormat(formatLocale, {
       style: 'currency',
-      currency: currency,
+      currency,
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(dollars);
@@ -76,15 +80,15 @@ export function parseUserPriceToCents(input: string | number): number {
   if (typeof input === 'number') {
     return dollarsToStorageCents(input);
   }
-  
+
   // Remove currency symbols and whitespace
   const cleaned = input.replace(/[$,\s]/g, '');
-  const dollars = parseFloat(cleaned);
-  
+  const dollars = Number.parseFloat(cleaned);
+
   if (isNaN(dollars)) {
     throw new Error('Invalid price format');
   }
-  
+
   return dollarsToStorageCents(dollars);
 }
 
@@ -92,7 +96,7 @@ export function parseUserPriceToCents(input: string | number): number {
  * Validate price is within acceptable range
  */
 export function isPriceValid(cents: number): boolean {
-  return cents >= 1 && cents <= 99999999; // $0.01 to $999,999.99
+  return cents >= 1 && cents <= 99_999_999; // $0.01 to $999,999.99
 }
 
 /**
@@ -100,7 +104,11 @@ export function isPriceValid(cents: number): boolean {
  * Handles both legacy (dollars) and new (cents) formats
  * @deprecated Use formatPrice with proper cents values instead
  */
-export function formatDatabasePrice(value: number, isLegacyDollars: boolean = true, currency: string = 'USD'): string {
+export function formatDatabasePrice(
+  value: number,
+  isLegacyDollars = true,
+  currency = 'USD'
+): string {
   const cents = isLegacyDollars ? databaseDollarsToStripeCents(value) : value;
   return formatPrice(cents, currency);
 }

@@ -1,16 +1,20 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { redirect, notFound } from 'next/navigation';
-import type { Metadata } from 'next';
-import { Header } from '../../../../components/header';
-import { EditProductForm } from './components/edit-product-form';
 import { getDictionary } from '@repo/internationalization';
 import { decimalToNumber } from '@repo/utils';
+import type { Metadata } from 'next';
+import { notFound, redirect } from 'next/navigation';
+import { Header } from '../../../../components/header';
+import { EditProductForm } from './components/edit-product-form';
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string; id: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
   const dictionary = await getDictionary(locale);
-  
+
   return {
     title: 'Edit Product',
     description: 'Update your product listing',
@@ -55,20 +59,27 @@ const EditProductPage = async ({ params }: EditProductPageProps) => {
 
   return (
     <>
-      <Header pages={['Dashboard', 'Selling', 'Edit Listing']} page="Edit Listing" dictionary={dictionary} />
+      <Header
+        dictionary={dictionary}
+        page="Edit Listing"
+        pages={['Dashboard', 'Selling', 'Edit Listing']}
+      />
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <div className="mx-auto w-full max-w-2xl">
           <div className="mb-6">
-            <h1 className="text-2xl font-bold">Edit Product Listing</h1>
+            <h1 className="font-bold text-2xl">Edit Product Listing</h1>
             <p className="text-muted-foreground">
               Update your product details and images
             </p>
           </div>
-          
-          <EditProductForm product={{
-            ...product,
-            price: decimalToNumber(product.price)
-          }} userId={user.id} />
+
+          <EditProductForm
+            product={{
+              ...product,
+              price: decimalToNumber(product.price),
+            }}
+            userId={user.id}
+          />
         </div>
       </div>
     </>

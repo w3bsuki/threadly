@@ -14,7 +14,7 @@ export interface RetryOptions {
 const DEFAULT_OPTIONS: RetryOptions = {
   retries: 3,
   minTimeout: 1000,
-  maxTimeout: 30000,
+  maxTimeout: 30_000,
   factor: 2,
   randomize: true,
 };
@@ -22,25 +22,35 @@ const DEFAULT_OPTIONS: RetryOptions = {
 // Determine if an error is retryable
 export function isRetryableError(error: any): boolean {
   // Network errors
-  if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND' || error.code === 'ETIMEDOUT') {
+  if (
+    error.code === 'ECONNREFUSED' ||
+    error.code === 'ENOTFOUND' ||
+    error.code === 'ETIMEDOUT'
+  ) {
     return true;
   }
-  
+
   // HTTP errors that are retryable
   if (error.status >= 500 || error.status === 429 || error.status === 408) {
     return true;
   }
-  
+
   // Rate limit errors
-  if (error.message?.toLowerCase().includes('rate limit') || error.message?.toLowerCase().includes('too many requests')) {
+  if (
+    error.message?.toLowerCase().includes('rate limit') ||
+    error.message?.toLowerCase().includes('too many requests')
+  ) {
     return true;
   }
-  
+
   // Temporary failures
-  if (error.message?.toLowerCase().includes('temporary') || error.message?.toLowerCase().includes('try again')) {
+  if (
+    error.message?.toLowerCase().includes('temporary') ||
+    error.message?.toLowerCase().includes('try again')
+  ) {
     return true;
   }
-  
+
   return false;
 }
 
@@ -50,7 +60,7 @@ export async function withRetry<T>(
   options: RetryOptions = {}
 ): Promise<T> {
   const mergedOptions = { ...DEFAULT_OPTIONS, ...options };
-  
+
   return pRetry(
     async (attemptCount) => {
       try {
@@ -60,19 +70,19 @@ export async function withRetry<T>(
         if (options.shouldRetry && !options.shouldRetry(error)) {
           throw new AbortError(error as Error);
         }
-        
+
         // Default retry logic
         if (!isRetryableError(error)) {
           throw new AbortError(error as Error);
         }
-        
+
         // Log the retry attempt
         logError(error as Error, {
           level: 'warning',
           tags: { retry: 'true', attempt: attemptCount.toString() },
           extra: { options: mergedOptions },
         });
-        
+
         throw error;
       }
     },
@@ -86,11 +96,11 @@ export async function withRetry<T>(
         if (mergedOptions.onFailedAttempt) {
           await mergedOptions.onFailedAttempt(error);
         }
-        
+
         // Log failed attempts
         logError(error.message, {
           level: 'info',
-          tags: { 
+          tags: {
             retry: 'failed-attempt',
             attempt: error.attemptNumber.toString(),
             retriesLeft: error.retriesLeft.toString(),
@@ -103,13 +113,13 @@ export async function withRetry<T>(
 
 // Retry decorator for class methods
 export function Retry(options: RetryOptions = {}) {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
-    
+
     descriptor.value = async function (...args: any[]) {
       return withRetry(() => originalMethod.apply(this, args), options);
     };
-    
+
     return descriptor;
   };
 }
@@ -120,7 +130,7 @@ export async function withBatchRetry<T>(
   options: RetryOptions & { concurrency?: number } = {}
 ): Promise<Array<{ success: boolean; result?: T; error?: Error }>> {
   const { concurrency = 5, ...retryOptions } = options;
-  
+
   const results = await Promise.all(
     operations.map(async (operation) => {
       try {
@@ -131,7 +141,7 @@ export async function withBatchRetry<T>(
       }
     })
   );
-  
+
   return results;
 }
 
@@ -145,12 +155,12 @@ export function createRetryFetch(defaultOptions?: RetryOptions) {
     return withRetry(
       async () => {
         const response = await fetch(input, init);
-        
+
         // Check if response indicates a retryable error
         if (response.status >= 500 || response.status === 429) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         return response;
       },
       { ...defaultOptions, ...retryOptions }

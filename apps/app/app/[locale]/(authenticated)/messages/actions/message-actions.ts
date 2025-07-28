@@ -2,14 +2,15 @@
 
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { getPusherServer } from '@repo/real-time/server';
-import { getNotificationService } from '@repo/real-time/server';
+import { log, logError } from '@repo/observability/server';
+import {
+  getNotificationService,
+  getPusherServer,
+} from '@repo/real-time/server';
 import { sanitizeForDisplay } from '@repo/validation/sanitize';
 // Email imports will be dynamically imported when needed
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
 
 // Services will be initialized inside functions to avoid build-time issues
 
@@ -57,8 +58,13 @@ export async function sendMessage(input: z.infer<typeof sendMessageSchema>) {
       throw new Error('Conversation not found');
     }
 
-    if (conversation.buyerId !== dbUser.id && conversation.sellerId !== dbUser.id) {
-      throw new Error('You are not authorized to send messages in this conversation');
+    if (
+      conversation.buyerId !== dbUser.id &&
+      conversation.sellerId !== dbUser.id
+    ) {
+      throw new Error(
+        'You are not authorized to send messages in this conversation'
+      );
     }
 
     // Use transaction to ensure message creation and conversation update are atomic
@@ -93,7 +99,7 @@ export async function sendMessage(input: z.infer<typeof sendMessageSchema>) {
           updatedAt: new Date(),
         },
       });
-      
+
       return newMessage;
     });
 
@@ -105,7 +111,7 @@ export async function sendMessage(input: z.infer<typeof sendMessageSchema>) {
         pusherAppId: process.env.PUSHER_APP_ID!,
         pusherSecret: process.env.PUSHER_SECRET!,
       });
-      
+
       await pusherServer.sendMessage({
         id: message.id,
         conversationId: message.conversationId,
@@ -118,9 +124,10 @@ export async function sendMessage(input: z.infer<typeof sendMessageSchema>) {
     }
 
     // Send in-app notification to recipient
-    const recipientId = conversation.buyerId === dbUser.id 
-      ? conversation.sellerId 
-      : conversation.buyerId;
+    const recipientId =
+      conversation.buyerId === dbUser.id
+        ? conversation.sellerId
+        : conversation.buyerId;
 
     try {
       const notificationService = getNotificationService();
@@ -135,10 +142,9 @@ export async function sendMessage(input: z.infer<typeof sendMessageSchema>) {
       success: true,
       message,
     };
-
   } catch (error) {
     logError('Failed to send message:', error);
-    
+
     if (error instanceof z.ZodError) {
       return {
         success: false,
@@ -154,7 +160,9 @@ export async function sendMessage(input: z.infer<typeof sendMessageSchema>) {
   }
 }
 
-export async function createConversation(input: z.infer<typeof createConversationSchema>) {
+export async function createConversation(
+  input: z.infer<typeof createConversationSchema>
+) {
   try {
     // Verify user authentication
     const user = await currentUser();
@@ -262,10 +270,9 @@ export async function createConversation(input: z.infer<typeof createConversatio
       success: true,
       conversation,
     };
-
   } catch (error) {
     logError('Failed to create conversation:', error);
-    
+
     if (error instanceof z.ZodError) {
       return {
         success: false,
@@ -276,7 +283,10 @@ export async function createConversation(input: z.infer<typeof createConversatio
 
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to create conversation',
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to create conversation',
     };
   }
 }
@@ -309,14 +319,17 @@ export async function markMessagesAsRead(conversationId: string) {
       throw new Error('Conversation not found');
     }
 
-    if (conversation.buyerId !== dbUser.id && conversation.sellerId !== dbUser.id) {
+    if (
+      conversation.buyerId !== dbUser.id &&
+      conversation.sellerId !== dbUser.id
+    ) {
       throw new Error('You are not authorized to access this conversation');
     }
 
     // Mark all messages from other users as read
     await database.message.updateMany({
       where: {
-        conversationId: conversationId,
+        conversationId,
         senderId: { not: dbUser.id },
         read: false,
       },
@@ -328,13 +341,15 @@ export async function markMessagesAsRead(conversationId: string) {
     return {
       success: true,
     };
-
   } catch (error) {
     logError('Failed to mark messages as read:', error);
-    
+
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to mark messages as read',
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to mark messages as read',
     };
   }
 }
@@ -367,7 +382,10 @@ export async function archiveConversation(conversationId: string) {
       throw new Error('Conversation not found');
     }
 
-    if (conversation.buyerId !== dbUser.id && conversation.sellerId !== dbUser.id) {
+    if (
+      conversation.buyerId !== dbUser.id &&
+      conversation.sellerId !== dbUser.id
+    ) {
       throw new Error('You are not authorized to archive this conversation');
     }
 
@@ -384,13 +402,15 @@ export async function archiveConversation(conversationId: string) {
     return {
       success: true,
     };
-
   } catch (error) {
     logError('Failed to archive conversation:', error);
-    
+
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to archive conversation',
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to archive conversation',
     };
   }
 }

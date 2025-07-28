@@ -1,7 +1,10 @@
 'use client';
 
 import { MessagesContainer } from '@repo/messaging/components';
-import type { ConversationWithDetails, MessageWithSender } from '@repo/messaging/types';
+import type {
+  ConversationWithDetails,
+  MessageWithSender,
+} from '@repo/messaging/types';
 
 interface User {
   id: string;
@@ -59,18 +62,22 @@ export function MessagesContent({
   currentUserId,
 }: MessagesContentProps) {
   // Transform the conversations to match the expected type
-  const transformedConversations: ConversationWithDetails[] = conversations.map(conv => ({
-    ...conv,
-    messages: conv.messages.map((msg): MessageWithSender => ({
-      ...msg,
-      sender: {
-        id: msg.senderId,
-        firstName: null,
-        lastName: null,
-        imageUrl: null,
-      },
-    })),
-  }));
+  const transformedConversations: ConversationWithDetails[] = conversations.map(
+    (conv) => ({
+      ...conv,
+      messages: conv.messages.map(
+        (msg): MessageWithSender => ({
+          ...msg,
+          sender: {
+            id: msg.senderId,
+            firstName: null,
+            lastName: null,
+            imageUrl: null,
+          },
+        })
+      ),
+    })
+  );
 
   return (
     <MessagesContainer

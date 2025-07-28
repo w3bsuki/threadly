@@ -1,25 +1,30 @@
 import { database } from '@repo/database';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { 
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@repo/design-system/components';
+import {
   AlertTriangle,
-  User,
-  Package,
-  MessageCircle,
   Check,
-  X,
+  Clock,
   Eye,
-  Clock
+  MessageCircle,
+  Package,
+  User,
+  X,
 } from 'lucide-react';
-import { ReportActions } from './report-actions';
 import Link from 'next/link';
+import { ReportActions } from './report-actions';
 
 const AdminReportsPage: React.FC = async () => {
   // Get reports from database
   const reports = await database.report.findMany({
     where: {
-      status: { in: ['PENDING', 'UNDER_REVIEW'] }
+      status: { in: ['PENDING', 'UNDER_REVIEW'] },
     },
     include: {
       User_Report_reporterIdToUser: {
@@ -28,7 +33,7 @@ const AdminReportsPage: React.FC = async () => {
           firstName: true,
           lastName: true,
           email: true,
-        }
+        },
       },
       Product: {
         select: {
@@ -40,9 +45,9 @@ const AdminReportsPage: React.FC = async () => {
               id: true,
               firstName: true,
               lastName: true,
-            }
-          }
-        }
+            },
+          },
+        },
       },
       User_Report_reportedUserIdToUser: {
         select: {
@@ -50,8 +55,8 @@ const AdminReportsPage: React.FC = async () => {
           firstName: true,
           lastName: true,
           email: true,
-        }
-      }
+        },
+      },
     },
     orderBy: { createdAt: 'desc' },
     take: 50,
@@ -70,47 +75,57 @@ const AdminReportsPage: React.FC = async () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Content Moderation</h1>
-        <p className="text-muted-foreground mt-2">
+        <h1 className="font-bold text-3xl">Content Moderation</h1>
+        <p className="mt-2 text-muted-foreground">
           Review and manage user reports
         </p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Pending Reports</CardTitle>
+            <CardTitle className="font-medium text-sm">
+              Pending Reports
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.pending}</div>
+            <div className="font-bold text-2xl text-red-600">
+              {stats.pending}
+            </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Under Review</CardTitle>
+            <CardTitle className="font-medium text-sm">Under Review</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{stats.underReview}</div>
+            <div className="font-bold text-2xl text-yellow-600">
+              {stats.underReview}
+            </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Resolved</CardTitle>
+            <CardTitle className="font-medium text-sm">Resolved</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.resolved}</div>
+            <div className="font-bold text-2xl text-green-600">
+              {stats.resolved}
+            </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Dismissed</CardTitle>
+            <CardTitle className="font-medium text-sm">Dismissed</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-muted-foreground">{stats.dismissed}</div>
+            <div className="font-bold text-2xl text-muted-foreground">
+              {stats.dismissed}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -123,44 +138,60 @@ const AdminReportsPage: React.FC = async () => {
         <CardContent>
           <div className="space-y-4">
             {reports.map((report) => (
-              <div key={report.id} className="border rounded-[var(--radius-lg)] p-4">
+              <div
+                className="rounded-[var(--radius-lg)] border p-4"
+                key={report.id}
+              >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4">
-                    <div className="p-2 rounded-[var(--radius-lg)] bg-red-50 text-red-600">
-                      {report.type === 'PRODUCT' && <Package className="h-4 w-4" />}
+                    <div className="rounded-[var(--radius-lg)] bg-red-50 p-2 text-red-600">
+                      {report.type === 'PRODUCT' && (
+                        <Package className="h-4 w-4" />
+                      )}
                       {report.type === 'USER' && <User className="h-4 w-4" />}
-                      {report.type === 'MESSAGE' && <MessageCircle className="h-4 w-4" />}
+                      {report.type === 'MESSAGE' && (
+                        <MessageCircle className="h-4 w-4" />
+                      )}
                     </div>
-                    
+
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
+                      <div className="mb-2 flex items-center gap-2">
                         <h3 className="font-semibold">{report.reason}</h3>
-                        <Badge variant={
-                          report.status === 'PENDING' ? 'destructive' :
-                          report.status === 'UNDER_REVIEW' ? 'default' :
-                          report.status === 'RESOLVED' ? 'secondary' :
-                          'outline'
-                        }>
+                        <Badge
+                          variant={
+                            report.status === 'PENDING'
+                              ? 'destructive'
+                              : report.status === 'UNDER_REVIEW'
+                                ? 'default'
+                                : report.status === 'RESOLVED'
+                                  ? 'secondary'
+                                  : 'outline'
+                          }
+                        >
                           {report.status.replace('_', ' ')}
                         </Badge>
                       </div>
-                      
-                      <p className="text-sm text-muted-foreground mb-2">
+
+                      <p className="mb-2 text-muted-foreground text-sm">
                         {report.description || 'No additional details provided'}
                       </p>
-                      
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+
+                      <div className="flex items-center gap-4 text-muted-foreground text-sm">
                         <span>
-                          Type: <span className="font-medium">{report.type}</span>
+                          Type:{' '}
+                          <span className="font-medium">{report.type}</span>
                         </span>
                         <span>
-                          Target: {report.type === 'PRODUCT' ? 
-                            report.Product?.title || 'Deleted Product' : 
-                            `${report.User_Report_reportedUserIdToUser?.firstName || ''} ${report.User_Report_reportedUserIdToUser?.lastName || ''}`.trim() || 'Unknown User'
-                          }
+                          Target:{' '}
+                          {report.type === 'PRODUCT'
+                            ? report.Product?.title || 'Deleted Product'
+                            : `${report.User_Report_reportedUserIdToUser?.firstName || ''} ${report.User_Report_reportedUserIdToUser?.lastName || ''}`.trim() ||
+                              'Unknown User'}
                         </span>
                         <span>
-                          Reported by: {`${report.User_Report_reporterIdToUser.firstName || ''} ${report.User_Report_reporterIdToUser.lastName || ''}`.trim() || report.User_Report_reporterIdToUser.email}
+                          Reported by:{' '}
+                          {`${report.User_Report_reporterIdToUser.firstName || ''} ${report.User_Report_reporterIdToUser.lastName || ''}`.trim() ||
+                            report.User_Report_reporterIdToUser.email}
                         </span>
                         <span className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />
@@ -169,17 +200,20 @@ const AdminReportsPage: React.FC = async () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     {report.type === 'PRODUCT' && report.Product && (
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href={`/product/${report.Product.id}`} target="_blank">
-                          <Eye className="h-3 w-3 mr-1" />
+                      <Button asChild size="sm" variant="outline">
+                        <Link
+                          href={`/product/${report.Product.id}`}
+                          target="_blank"
+                        >
+                          <Eye className="mr-1 h-3 w-3" />
                           View
                         </Link>
                       </Button>
                     )}
-                    
+
                     <ReportActions report={report} />
                   </div>
                 </div>
@@ -188,9 +222,11 @@ const AdminReportsPage: React.FC = async () => {
           </div>
 
           {reports.length === 0 && (
-            <div className="text-center py-8 text-muted-foreground">
-              <AlertTriangle className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <h3 className="text-lg font-semibold mb-2">No reports to review</h3>
+            <div className="py-8 text-center text-muted-foreground">
+              <AlertTriangle className="mx-auto mb-4 h-12 w-12 opacity-50" />
+              <h3 className="mb-2 font-semibold text-lg">
+                No reports to review
+              </h3>
               <p>All reports have been processed. Great job!</p>
             </div>
           )}
@@ -203,24 +239,24 @@ const AdminReportsPage: React.FC = async () => {
           <CardTitle>Moderation Tools</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button variant="outline" asChild>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <Button asChild variant="outline">
               <Link href="/admin/users">
-                <User className="h-4 w-4 mr-2" />
+                <User className="mr-2 h-4 w-4" />
                 Manage Users
               </Link>
             </Button>
-            
-            <Button variant="outline" asChild>
+
+            <Button asChild variant="outline">
               <Link href="/admin/products">
-                <Package className="h-4 w-4 mr-2" />
+                <Package className="mr-2 h-4 w-4" />
                 Review Products
               </Link>
             </Button>
-            
-            <Button variant="outline" asChild>
+
+            <Button asChild variant="outline">
               <Link href="/admin">
-                <AlertTriangle className="h-4 w-4 mr-2" />
+                <AlertTriangle className="mr-2 h-4 w-4" />
                 Dashboard
               </Link>
             </Button>

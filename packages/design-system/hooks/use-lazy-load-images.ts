@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface UseLazyLoadOptions {
   threshold?: number;
@@ -17,15 +17,18 @@ export function useLazyLoadImages({
   const observerRef = useRef<IntersectionObserver | null>(null);
   const imageRefs = useRef<Map<string, HTMLElement>>(new Map());
 
-  const observe = useCallback((element: HTMLElement, imageId: string) => {
-    if (disabled) return;
+  const observe = useCallback(
+    (element: HTMLElement, imageId: string) => {
+      if (disabled) return;
 
-    imageRefs.current.set(imageId, element);
+      imageRefs.current.set(imageId, element);
 
-    if (observerRef.current) {
-      observerRef.current.observe(element);
-    }
-  }, [disabled]);
+      if (observerRef.current) {
+        observerRef.current.observe(element);
+      }
+    },
+    [disabled]
+  );
 
   const unobserve = useCallback((imageId: string) => {
     const element = imageRefs.current.get(imageId);
@@ -78,9 +81,12 @@ export function useLazyLoadImages({
     };
   }, [threshold, rootMargin, disabled, loadedImages]);
 
-  const isLoaded = useCallback((imageId: string) => {
-    return loadedImages.has(imageId);
-  }, [loadedImages]);
+  const isLoaded = useCallback(
+    (imageId: string) => {
+      return loadedImages.has(imageId);
+    },
+    [loadedImages]
+  );
 
   const preloadImages = useCallback((urls: string[]) => {
     urls.forEach((url) => {
@@ -106,21 +112,27 @@ export function useLazyLoadImages({
 
 // Hook for handling image loading states
 export function useImageLoadingState() {
-  const [loadingStates, setLoadingStates] = useState<Map<string, 'loading' | 'loaded' | 'error'>>(
-    new Map()
+  const [loadingStates, setLoadingStates] = useState<
+    Map<string, 'loading' | 'loaded' | 'error'>
+  >(new Map());
+
+  const setImageState = useCallback(
+    (imageId: string, state: 'loading' | 'loaded' | 'error') => {
+      setLoadingStates((prev) => {
+        const next = new Map(prev);
+        next.set(imageId, state);
+        return next;
+      });
+    },
+    []
   );
 
-  const setImageState = useCallback((imageId: string, state: 'loading' | 'loaded' | 'error') => {
-    setLoadingStates((prev) => {
-      const next = new Map(prev);
-      next.set(imageId, state);
-      return next;
-    });
-  }, []);
-
-  const getImageState = useCallback((imageId: string) => {
-    return loadingStates.get(imageId) || 'loading';
-  }, [loadingStates]);
+  const getImageState = useCallback(
+    (imageId: string) => {
+      return loadingStates.get(imageId) || 'loading';
+    },
+    [loadingStates]
+  );
 
   const reset = useCallback(() => {
     setLoadingStates(new Map());
@@ -134,7 +146,9 @@ export function useImageLoadingState() {
 }
 
 // Virtual list hook for large image galleries
-export function useVirtualImageList<T extends { id: string; imageUrl: string }>({
+export function useVirtualImageList<
+  T extends { id: string; imageUrl: string },
+>({
   items,
   itemHeight,
   containerHeight,

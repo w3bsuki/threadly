@@ -9,45 +9,42 @@ import { keys } from './keys';
 
 const arcjetKey = keys().ARCJET_KEY;
 
-// Export rate limiting functions and utilities
-export {
-  generalApiLimit,
-  authRateLimit,
-  paymentRateLimit,
-  uploadRateLimit,
-  messageRateLimit,
-  webhookRateLimit,
-  checkRateLimit,
-  type RateLimitResult,
-} from './rate-limits';
-
-// Export CSRF protection functions
-export {
-  generateCSRFToken,
-  setCSRFCookie,
-  getCSRFToken,
-  validateCSRFToken,
-  csrfMiddleware,
-  initializeCSRFProtection,
-  refreshCSRFToken,
-  getCSRFTokenFromCookie,
-  addCSRFHeader,
-  type CSRFConfig,
-} from './csrf';
-
 // Export audit logging functions
 export {
-  createAuditLog,
-  getAuditLogs,
-  auditMiddleware,
   type AuditEventType,
   type AuditLogEntry,
+  auditMiddleware,
+  createAuditLog,
+  getAuditLogs,
 } from './audit-log';
-
 export {
-  withAuditLog,
   logSecurityEvent,
+  withAuditLog,
 } from './audit-middleware';
+// Export CSRF protection functions
+export {
+  addCSRFHeader,
+  type CSRFConfig,
+  csrfMiddleware,
+  generateCSRFToken,
+  getCSRFToken,
+  getCSRFTokenFromCookie,
+  initializeCSRFProtection,
+  refreshCSRFToken,
+  setCSRFCookie,
+  validateCSRFToken,
+} from './csrf';
+// Export rate limiting functions and utilities
+export {
+  authRateLimit,
+  checkRateLimit,
+  generalApiLimit,
+  messageRateLimit,
+  paymentRateLimit,
+  type RateLimitResult,
+  uploadRateLimit,
+  webhookRateLimit,
+} from './rate-limits';
 
 export const secure = async (
   allow: (ArcjetWellKnownBot | ArcjetBotCategory)[],

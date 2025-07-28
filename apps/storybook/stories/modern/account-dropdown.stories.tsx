@@ -1,5 +1,8 @@
+import {
+  AccountDropdown,
+  MobileAccountDropdown,
+} from '@repo/design-system/components/navigation/account-dropdown';
 import type { Meta, StoryObj } from '@storybook/react';
-import { AccountDropdown, MobileAccountDropdown } from '@repo/design-system/components/navigation/account-dropdown';
 import { useState } from 'react';
 
 const meta = {
@@ -9,7 +12,8 @@ const meta = {
     layout: 'centered',
     docs: {
       description: {
-        component: 'A modern account dropdown component for user navigation with smooth animations and mobile optimization.',
+        component:
+          'A modern account dropdown component for user navigation with smooth animations and mobile optimization.',
       },
     },
   },
@@ -108,21 +112,25 @@ export const CustomDictionary: Story = {
 export const Interactive: Story = {
   render: () => {
     const [isSignedIn, setIsSignedIn] = useState(false);
-    
+
     return (
       <div className="flex items-center gap-4">
         <AccountDropdown
           isSignedIn={isSignedIn}
-          user={isSignedIn ? {
-            name: 'Interactive User',
-            email: 'user@example.com',
-          } : undefined}
           locale="en"
           onSignOut={() => setIsSignedIn(false)}
+          user={
+            isSignedIn
+              ? {
+                  name: 'Interactive User',
+                  email: 'user@example.com',
+                }
+              : undefined
+          }
         />
         <button
+          className="rounded-md bg-blue-600 px-4 py-2 font-medium text-sm text-white hover:bg-blue-700"
           onClick={() => setIsSignedIn(!isSignedIn)}
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
         >
           {isSignedIn ? 'Sign Out' : 'Sign In'}
         </button>

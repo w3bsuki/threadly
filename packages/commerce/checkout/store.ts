@@ -1,10 +1,10 @@
 'use client';
 
+import type { CartItem } from '@repo/cart';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { CheckoutSession, ShippingAddress, PaymentMethod } from '../types';
-import type { CartItem } from '@repo/cart';
-import { createCheckoutSession, SHIPPING_RATES } from './utils';
+import type { CheckoutSession, PaymentMethod, ShippingAddress } from '../types';
+import { createCheckoutSession, type SHIPPING_RATES } from './utils';
 
 interface CheckoutStore {
   // State
@@ -61,7 +61,7 @@ export const useCheckoutStore = create<CheckoutStore>()(
 
       // Set shipping address
       setShippingAddress: (address: ShippingAddress) => {
-        set(state => ({
+        set((state) => ({
           session: state.session
             ? { ...state.session, shippingAddress: address }
             : null,
@@ -70,7 +70,7 @@ export const useCheckoutStore = create<CheckoutStore>()(
 
       // Set billing address
       setBillingAddress: (address: ShippingAddress) => {
-        set(state => ({
+        set((state) => ({
           session: state.session
             ? { ...state.session, billingAddress: address }
             : null,
@@ -79,20 +79,23 @@ export const useCheckoutStore = create<CheckoutStore>()(
 
       // Set shipping method and recalculate totals
       setShippingMethod: (method: keyof typeof SHIPPING_RATES) => {
-        set(state => {
+        set((state) => {
           if (!state.session) return state;
 
           const updatedSession = createCheckoutSession(
-            state.session.items.map(item => ({
-              productId: item.productId,
-              title: item.title,
-              price: item.price,
-              imageUrl: item.imageUrl,
-              sellerId: item.sellerId,
-              sellerName: item.sellerName,
-              quantity: item.quantity,
-              condition: 'Used', // Default for checkout items
-            } as CartItem)),
+            state.session.items.map(
+              (item) =>
+                ({
+                  productId: item.productId,
+                  title: item.title,
+                  price: item.price,
+                  imageUrl: item.imageUrl,
+                  sellerId: item.sellerId,
+                  sellerName: item.sellerName,
+                  quantity: item.quantity,
+                  condition: 'Used', // Default for checkout items
+                }) as CartItem
+            ),
             { shippingMethod: method }
           );
 
@@ -108,7 +111,7 @@ export const useCheckoutStore = create<CheckoutStore>()(
 
       // Set payment method
       setPaymentMethod: (method: PaymentMethod) => {
-        set(state => ({
+        set((state) => ({
           session: state.session
             ? { ...state.session, paymentMethod: method }
             : null,
@@ -117,37 +120,43 @@ export const useCheckoutStore = create<CheckoutStore>()(
 
       // Set order notes
       setNotes: (notes: string) => {
-        set(state => ({
-          session: state.session
-            ? { ...state.session, notes }
-            : null,
+        set((state) => ({
+          session: state.session ? { ...state.session, notes } : null,
         }));
       },
 
       // Navigate to next step
       nextStep: () => {
-        set(state => {
-          const steps: CheckoutStore['currentStep'][] = ['shipping', 'payment', 'review'];
+        set((state) => {
+          const steps: CheckoutStore['currentStep'][] = [
+            'shipping',
+            'payment',
+            'review',
+          ];
           const currentIndex = steps.indexOf(state.currentStep);
-          
+
           if (currentIndex < steps.length - 1) {
             return { currentStep: steps[currentIndex + 1] };
           }
-          
+
           return state;
         });
       },
 
       // Navigate to previous step
       previousStep: () => {
-        set(state => {
-          const steps: CheckoutStore['currentStep'][] = ['shipping', 'payment', 'review'];
+        set((state) => {
+          const steps: CheckoutStore['currentStep'][] = [
+            'shipping',
+            'payment',
+            'review',
+          ];
           const currentIndex = steps.indexOf(state.currentStep);
-          
+
           if (currentIndex > 0) {
             return { currentStep: steps[currentIndex - 1] };
           }
-          
+
           return state;
         });
       },
@@ -165,7 +174,7 @@ export const useCheckoutStore = create<CheckoutStore>()(
 
       // Save address for future use
       saveAddress: (address: ShippingAddress) => {
-        set(state => ({
+        set((state) => ({
           savedAddresses: [...state.savedAddresses, address],
         }));
       },

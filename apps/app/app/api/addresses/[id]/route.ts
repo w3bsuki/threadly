@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@repo/auth/server';
-import { 
-  updateAddress, 
-  deleteAddress 
+import { type NextRequest, NextResponse } from 'next/server';
+import {
+  deleteAddress,
+  updateAddress,
 } from '../../../[locale]/(authenticated)/profile/actions/address-actions';
 
 interface RouteParams {
@@ -18,27 +18,27 @@ export async function PUT(
   try {
     const { id } = await params;
     const user = await currentUser();
-    
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
     const result = await updateAddress(id, body);
-    
+
     if (!result.success) {
       return NextResponse.json(
-        { 
+        {
           error: result.error,
-          details: result.details 
+          details: result.details,
         },
         { status: 400 }
       );
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      address: result.address 
+    return NextResponse.json({
+      success: true,
+      address: result.address,
     });
   } catch (error) {
     return NextResponse.json(
@@ -55,18 +55,15 @@ export async function DELETE(
   try {
     const { id } = await params;
     const user = await currentUser();
-    
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const result = await deleteAddress(id);
-    
+
     if (!result.success) {
-      return NextResponse.json(
-        { error: result.error },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: result.error }, { status: 400 });
     }
 
     return NextResponse.json({ success: true });

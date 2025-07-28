@@ -2,9 +2,9 @@ import { auth } from '@clerk/nextjs/server';
 import { database } from '@repo/database';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { MessagesContentLazy } from './components/messages-content-lazy';
-import { RealTimeWrapper } from '../../../components/real-time-wrapper';
 import { AuthPrompt } from '../../../components/auth-prompt';
+import { RealTimeWrapper } from '../../../components/real-time-wrapper';
+import { MessagesContentLazy } from './components/messages-content-lazy';
 
 export const metadata: Metadata = {
   title: 'Messages - Threadly',
@@ -24,9 +24,9 @@ export default async function MessagesPage({ params }: MessagesPageProps) {
   if (!userId) {
     return (
       <AuthPrompt
-        title="Sign in to access messages"
         description="You need to be signed in to send and receive messages from other users on Threadly."
         locale={locale}
+        title="Sign in to access messages"
       />
     );
   }

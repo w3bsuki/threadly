@@ -2,7 +2,7 @@
 
 /**
  * Production Database Setup Script
- * 
+ *
  * This script:
  * 1. Validates PostgreSQL connection
  * 2. Runs database migrations
@@ -26,19 +26,18 @@ interface DatabaseConfig {
 
 async function parsePostgreSQLUrl(url: string): Promise<DatabaseConfig> {
   const urlObj = new URL(url);
-  
+
   return {
     host: urlObj.hostname,
-    port: parseInt(urlObj.port) || 5432,
+    port: Number.parseInt(urlObj.port) || 5432,
     database: urlObj.pathname.slice(1),
     user: urlObj.username,
-    ssl: urlObj.searchParams.has('sslmode') || urlObj.protocol === 'postgres:'
+    ssl: urlObj.searchParams.has('sslmode') || urlObj.protocol === 'postgres:',
   };
 }
 
 async function validateConnection(): Promise<boolean> {
   try {
-    
     await database.$queryRaw`SELECT 1`;
     return true;
   } catch (error) {
@@ -49,16 +48,15 @@ async function validateConnection(): Promise<boolean> {
 
 async function runMigrations(): Promise<boolean> {
   try {
-    
     const { stdout, stderr } = await execAsync('pnpm db:push', {
-      cwd: process.cwd()
+      cwd: process.cwd(),
     });
-    
+
     if (stderr && !stderr.includes('warnings')) {
       console.error('❌ Migration failed:', stderr);
       return false;
     }
-    
+
     return true;
   } catch (error) {
     console.error('❌ Migration error:', error);
@@ -67,16 +65,15 @@ async function runMigrations(): Promise<boolean> {
 }
 
 async function createEssentialCategories(): Promise<void> {
-  
   const categories = [
-    { name: 'Women\'s Clothing', slug: 'womens-clothing' },
-    { name: 'Men\'s Clothing', slug: 'mens-clothing' },
+    { name: "Women's Clothing", slug: 'womens-clothing' },
+    { name: "Men's Clothing", slug: 'mens-clothing' },
     { name: 'Shoes', slug: 'shoes' },
     { name: 'Accessories', slug: 'accessories' },
     { name: 'Bags', slug: 'bags' },
     { name: 'Jewelry', slug: 'jewelry' },
     { name: 'Beauty', slug: 'beauty' },
-    { name: 'Home & Living', slug: 'home-living' }
+    { name: 'Home & Living', slug: 'home-living' },
   ];
 
   for (const category of categories) {
@@ -84,7 +81,7 @@ async function createEssentialCategories(): Promise<void> {
       await database.category.upsert({
         where: { slug: category.slug },
         update: {},
-        create: category
+        create: category,
       });
     } catch (error) {
       console.warn(`⚠️  Category ${category.name} may already exist`);
@@ -94,7 +91,6 @@ async function createEssentialCategories(): Promise<void> {
 
 async function validateOperations(): Promise<boolean> {
   try {
-    
     // Test basic CRUD operations
     const testOps = [
       // Categories
@@ -102,14 +98,14 @@ async function validateOperations(): Promise<boolean> {
       // Users (should be empty in fresh DB)
       () => database.user.count(),
       // Products (should be empty in fresh DB)
-      () => database.product.count()
+      () => database.product.count(),
     ];
 
     const results = await Promise.all(testOps);
     console.log('✅ Database operations tested successfully:', {
       categories: results[0],
       users: results[1],
-      products: results[2]
+      products: results[2],
     });
 
     return true;
@@ -121,13 +117,12 @@ async function validateOperations(): Promise<boolean> {
 
 async function setupIndexes(): Promise<void> {
   try {
-    
     // Critical indexes for production performance
     const indexes = [
-      'CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_products_search ON "Product" USING gin(to_tsvector(\'english\', title || \' \' || description));',
+      "CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_products_search ON \"Product\" USING gin(to_tsvector('english', title || ' ' || description));",
       'CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_products_price_range ON "Product" (price) WHERE status = \'AVAILABLE\';',
       'CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_messages_unread ON "Message" (read, "conversationId", "createdAt");',
-      'CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_recent ON "Order" ("buyerId", "createdAt" DESC);'
+      'CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_recent ON "Order" ("buyerId", "createdAt" DESC);',
     ];
 
     for (const indexQuery of indexes) {
@@ -146,14 +141,18 @@ async function setupIndexes(): Promise<void> {
 }
 
 async function main(): Promise<void> {
-
   const databaseUrl = process.env.DATABASE_URL;
   if (!databaseUrl) {
     console.error('❌ DATABASE_URL environment variable is required');
     process.exit(1);
   }
 
-  if (!databaseUrl.startsWith('postgresql://') && !databaseUrl.startsWith('postgres://')) {
+  if (
+    !(
+      databaseUrl.startsWith('postgresql://') ||
+      databaseUrl.startsWith('postgres://')
+    )
+  ) {
     console.error('❌ DATABASE_URL must be a PostgreSQL connection string');
     process.exit(1);
   }
@@ -185,8 +184,6 @@ async function main(): Promise<void> {
     if (!operationsValid) {
       process.exit(1);
     }
-
-
   } catch (error) {
     console.error('\n❌ Setup failed:', error);
     process.exit(1);

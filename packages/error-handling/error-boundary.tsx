@@ -1,9 +1,10 @@
 'use client';
 
-import React, { Component, ReactNode } from 'react';
 import * as Sentry from '@sentry/nextjs';
-import { ErrorPage } from './error-pages';
+import type React from 'react';
+import { Component, type ReactNode } from 'react';
 import { logError } from './error-logger';
+import { ErrorPage } from './error-pages';
 
 interface Props {
   children: ReactNode;
@@ -36,10 +37,10 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     const { onError, level = 'component' } = this.props;
-    
+
     // Increment error counter
     this.errorCounter++;
-    
+
     // Log to our error service
     logError(error, {
       componentStack: errorInfo.componentStack || undefined,
@@ -49,7 +50,7 @@ export class ErrorBoundary extends Component<Props, State> {
         errorCount: this.errorCounter,
       },
     });
-    
+
     // Send to Sentry
     Sentry.withScope((scope) => {
       scope.setTag('error-boundary', true);
@@ -61,13 +62,13 @@ export class ErrorBoundary extends Component<Props, State> {
       });
       Sentry.captureException(error);
     });
-    
+
     // Call custom error handler if provided
     onError?.(error, errorInfo);
-    
+
     // Auto-recover after 5 errors to prevent infinite loops
     if (this.errorCounter >= 5) {
-      this.scheduleReset(10000); // Reset after 10 seconds
+      this.scheduleReset(10_000); // Reset after 10 seconds
     }
   }
 
@@ -75,7 +76,7 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.resetTimeoutId) {
       clearTimeout(this.resetTimeoutId);
     }
-    
+
     this.resetTimeoutId = window.setTimeout(() => {
       this.resetErrorBoundary();
     }, delay);
@@ -93,11 +94,13 @@ export class ErrorBoundary extends Component<Props, State> {
   componentDidUpdate(prevProps: Props) {
     const { resetKeys } = this.props;
     const { hasError } = this.state;
-    
+
     if (hasError && prevProps.resetKeys !== resetKeys && resetKeys?.length) {
       // Check if any reset key changed
-      const hasResetKeyChanged = resetKeys.some((key, index) => key !== prevProps.resetKeys?.[index]);
-      
+      const hasResetKeyChanged = resetKeys.some(
+        (key, index) => key !== prevProps.resetKeys?.[index]
+      );
+
       if (hasResetKeyChanged) {
         this.resetErrorBoundary();
       }
@@ -119,12 +122,12 @@ export class ErrorBoundary extends Component<Props, State> {
       if (isolate) {
         return (
           <div className="rounded-[var(--radius-lg)] border border-destructive/50 bg-destructive/10 p-4">
-            <p className="text-sm font-medium text-destructive">
+            <p className="font-medium text-destructive text-sm">
               Something went wrong in this section
             </p>
             <button
-              onClick={this.resetErrorBoundary}
               className="mt-2 text-xs underline hover:no-underline"
+              onClick={this.resetErrorBoundary}
             >
               Try again
             </button>

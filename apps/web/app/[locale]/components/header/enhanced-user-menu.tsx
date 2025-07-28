@@ -1,20 +1,20 @@
 'use client';
 
 import { UserButton as ClerkUserButton } from '@repo/auth/client';
-import { 
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@repo/design-system/components';
-import { 
-  Heart, 
-  ShoppingBag, 
-  Package, 
+import {
+  ChevronDown,
+  Heart,
   LayoutDashboard,
+  Package,
   Settings,
-  ChevronDown
+  ShoppingBag,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -33,53 +33,59 @@ export function EnhancedUserMenu() {
 
   return (
     <div className="flex items-center gap-2">
-      <ClerkUserButton 
+      <ClerkUserButton
         afterSignOutUrl="/"
         appearance={{
           elements: {
-            userButtonBox: 'flex items-center gap-2'
-          }
+            userButtonBox: 'flex items-center gap-2',
+          },
         }}
       />
-      
+
       <DropdownMenu>
-        <DropdownMenuTrigger className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
+        <DropdownMenuTrigger className="flex items-center gap-1 text-muted-foreground text-sm transition-colors hover:text-foreground">
           Quick Links
           <ChevronDown className="h-4 w-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuItem asChild>
-            <Link href="/orders" className="cursor-pointer">
+            <Link className="cursor-pointer" href="/orders">
               <ShoppingBag className="mr-2 h-4 w-4" />
               My Orders
             </Link>
           </DropdownMenuItem>
-          
+
           <DropdownMenuItem asChild>
-            <Link href="/favorites" className="cursor-pointer">
+            <Link className="cursor-pointer" href="/favorites">
               <Heart className="mr-2 h-4 w-4" />
               Favorites
             </Link>
           </DropdownMenuItem>
-          
+
           <DropdownMenuItem asChild>
-            <Link href="/profile" className="cursor-pointer">
+            <Link className="cursor-pointer" href="/profile">
               <Settings className="mr-2 h-4 w-4" />
               Profile Settings
             </Link>
           </DropdownMenuItem>
-          
+
           <DropdownMenuSeparator />
-          
+
           <DropdownMenuItem asChild>
-            <Link href={`${env.NEXT_PUBLIC_APP_URL}/selling/listings`} className="cursor-pointer">
+            <Link
+              className="cursor-pointer"
+              href={`${env.NEXT_PUBLIC_APP_URL}/selling/listings`}
+            >
               <Package className="mr-2 h-4 w-4" />
               My Listings
             </Link>
           </DropdownMenuItem>
-          
+
           <DropdownMenuItem asChild>
-            <Link href={`${env.NEXT_PUBLIC_APP_URL}/dashboard`} className="cursor-pointer">
+            <Link
+              className="cursor-pointer"
+              href={`${env.NEXT_PUBLIC_APP_URL}/dashboard`}
+            >
               <LayoutDashboard className="mr-2 h-4 w-4" />
               Seller Dashboard
             </Link>

@@ -2,10 +2,9 @@
 
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
+import { log, logError } from '@repo/observability/server';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
 
 const addressSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
@@ -64,10 +63,9 @@ export async function createAddress(input: z.infer<typeof addressSchema>) {
       success: true,
       address,
     };
-
   } catch (error) {
     logError('Failed to create address:', error);
-    
+
     if (error instanceof z.ZodError) {
       return {
         success: false,
@@ -78,12 +76,16 @@ export async function createAddress(input: z.infer<typeof addressSchema>) {
 
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to create address',
+      error:
+        error instanceof Error ? error.message : 'Failed to create address',
     };
   }
 }
 
-export async function updateAddress(addressId: string, input: z.infer<typeof addressSchema>) {
+export async function updateAddress(
+  addressId: string,
+  input: z.infer<typeof addressSchema>
+) {
   try {
     const user = await currentUser();
     if (!user) {
@@ -141,10 +143,9 @@ export async function updateAddress(addressId: string, input: z.infer<typeof add
       success: true,
       address,
     };
-
   } catch (error) {
     logError('Failed to update address:', error);
-    
+
     if (error instanceof z.ZodError) {
       return {
         success: false,
@@ -155,7 +156,8 @@ export async function updateAddress(addressId: string, input: z.infer<typeof add
 
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to update address',
+      error:
+        error instanceof Error ? error.message : 'Failed to update address',
     };
   }
 }
@@ -207,13 +209,13 @@ export async function deleteAddress(addressId: string) {
     return {
       success: true,
     };
-
   } catch (error) {
     logError('Failed to delete address:', error);
-    
+
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to delete address',
+      error:
+        error instanceof Error ? error.message : 'Failed to delete address',
     };
   }
 }
@@ -273,13 +275,15 @@ export async function setDefaultAddress(addressId: string) {
     return {
       success: true,
     };
-
   } catch (error) {
     logError('Failed to set default address:', error);
-    
+
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to set default address',
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to set default address',
     };
   }
 }
@@ -303,20 +307,16 @@ export async function getUserAddresses() {
       where: {
         userId: dbUser.id,
       },
-      orderBy: [
-        { isDefault: 'desc' },
-        { createdAt: 'desc' },
-      ],
+      orderBy: [{ isDefault: 'desc' }, { createdAt: 'desc' }],
     });
 
     return {
       success: true,
       addresses,
     };
-
   } catch (error) {
     logError('Failed to get user addresses:', error);
-    
+
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to get addresses',
@@ -325,7 +325,9 @@ export async function getUserAddresses() {
   }
 }
 
-export async function getDefaultAddress(type: 'SHIPPING' | 'BILLING' = 'SHIPPING') {
+export async function getDefaultAddress(
+  type: 'SHIPPING' | 'BILLING' = 'SHIPPING'
+) {
   try {
     const user = await currentUser();
     if (!user) {
@@ -360,13 +362,15 @@ export async function getDefaultAddress(type: 'SHIPPING' | 'BILLING' = 'SHIPPING
       success: true,
       address,
     };
-
   } catch (error) {
     logError('Failed to get default address:', error);
-    
+
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to get default address',
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to get default address',
       address: null,
     };
   }

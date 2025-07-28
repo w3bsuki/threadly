@@ -1,4 +1,4 @@
-import { getCSRFTokenFromCookie, addCSRFHeader } from '@repo/security';
+import { addCSRFHeader, getCSRFTokenFromCookie } from '@repo/security';
 import { useCallback, useEffect, useState } from 'react';
 
 /**
@@ -21,7 +21,7 @@ export function useCSRF() {
     };
 
     // Check periodically for token changes
-    const interval = setInterval(checkToken, 60000); // Check every minute
+    const interval = setInterval(checkToken, 60_000); // Check every minute
 
     return () => clearInterval(interval);
   }, [csrfToken]);
@@ -32,7 +32,7 @@ export function useCSRF() {
   const fetchWithCSRF = useCallback(
     async (url: string, options: RequestInit = {}) => {
       const headers = addCSRFHeader(options.headers);
-      
+
       const response = await fetch(url, {
         ...options,
         headers,
@@ -71,14 +71,15 @@ export function useCSRF() {
 /**
  * Higher-order function to wrap an API client with CSRF protection
  */
-export function withCSRFProtection<T extends (...args: unknown[]) => Promise<Response>>(
-  apiFunction: T
-): T {
+export function withCSRFProtection<
+  T extends (...args: unknown[]) => Promise<Response>,
+>(apiFunction: T): T {
   return (async (...args: Parameters<T>) => {
     // Extract options from the last argument if it's an object
     const lastArg = args[args.length - 1];
-    const hasOptions = lastArg && typeof lastArg === 'object' && 'headers' in lastArg;
-    
+    const hasOptions =
+      lastArg && typeof lastArg === 'object' && 'headers' in lastArg;
+
     if (hasOptions) {
       // Add CSRF headers to existing options
       const options = lastArg as RequestInit;

@@ -1,33 +1,56 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Form,
+  Progress,
+  toast,
+} from '@repo/design-system/components';
+import { ValidationErrorDetail } from '@repo/validation/schemas';
+import { ChevronLeft, ChevronRight, Save } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Button } from '@repo/design-system/components';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Progress } from '@repo/design-system/components';
-import { Form } from '@repo/design-system/components';
-import { toast } from '@repo/design-system/components';
-import { ChevronLeft, ChevronRight, Save } from 'lucide-react';
 import { createProduct, saveDraftProduct } from '../actions/create-product';
-import { StepPhotosBasic } from './wizard-steps/step-photos-basic';
 import { StepDescription } from './wizard-steps/step-description';
 import { StepDetails } from './wizard-steps/step-details';
+import { StepPhotosBasic } from './wizard-steps/step-photos-basic';
 import { StepReview } from './wizard-steps/step-review';
-import { ValidationErrorDetail } from '@repo/validation/schemas';
 
 const productSchema = z.object({
-  title: z.string().min(1, 'Title is required').max(100, 'Title must be less than 100 characters'),
-  description: z.string().min(1, 'Description is required').max(1000, 'Description must be less than 1000 characters'),
-  price: z.number().min(0.01, 'Price must be at least $0.01').max(10000, 'Price must be less than $10,000'),
+  title: z
+    .string()
+    .min(1, 'Title is required')
+    .max(100, 'Title must be less than 100 characters'),
+  description: z
+    .string()
+    .min(1, 'Description is required')
+    .max(1000, 'Description must be less than 1000 characters'),
+  price: z
+    .number()
+    .min(0.01, 'Price must be at least $0.01')
+    .max(10_000, 'Price must be less than $10,000'),
   categoryId: z.string().min(1, 'Category is required'),
-  condition: z.enum(['NEW_WITH_TAGS', 'NEW_WITHOUT_TAGS', 'VERY_GOOD', 'GOOD', 'SATISFACTORY']),
+  condition: z.enum([
+    'NEW_WITH_TAGS',
+    'NEW_WITHOUT_TAGS',
+    'VERY_GOOD',
+    'GOOD',
+    'SATISFACTORY',
+  ]),
   brand: z.string().optional(),
   size: z.string().optional(),
   color: z.string().optional(),
-  images: z.array(z.string()).min(1, 'At least one image is required').max(5, 'Maximum 5 images allowed'),
+  images: z
+    .array(z.string())
+    .min(1, 'At least one image is required')
+    .max(5, 'Maximum 5 images allowed'),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
@@ -73,18 +96,22 @@ interface MultiStepWizardProps {
 }
 
 const STEPS = [
-  { id: 1, title: 'Photos & Basics', description: 'Add photos and basic information' },
+  {
+    id: 1,
+    title: 'Photos & Basics',
+    description: 'Add photos and basic information',
+  },
   { id: 2, title: 'Description', description: 'Describe your item' },
   { id: 3, title: 'Details', description: 'Add specific details' },
   { id: 4, title: 'Review', description: 'Review and publish' },
 ];
 
-export function MultiStepWizard({ 
-  userId, 
-  selectedTemplate, 
-  templates, 
+export function MultiStepWizard({
+  userId,
+  selectedTemplate,
+  templates,
   categories,
-  draftProduct 
+  draftProduct,
 }: MultiStepWizardProps) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
@@ -95,14 +122,31 @@ export function MultiStepWizard({
     resolver: zodResolver(productSchema),
     defaultValues: {
       title: draftProduct?.title || selectedTemplate?.title || '',
-      description: draftProduct?.description || selectedTemplate?.description || '',
-      price: draftProduct?.price ? Number(draftProduct.price) / 100 : selectedTemplate?.price || 0,
-      categoryId: draftProduct?.categoryId || selectedTemplate?.categoryId || '',
-      condition: (draftProduct?.condition || selectedTemplate?.condition || 'GOOD') as 'NEW_WITH_TAGS' | 'NEW_WITHOUT_TAGS' | 'VERY_GOOD' | 'GOOD' | 'SATISFACTORY' | undefined,
+      description:
+        draftProduct?.description || selectedTemplate?.description || '',
+      price: draftProduct?.price
+        ? Number(draftProduct.price) / 100
+        : selectedTemplate?.price || 0,
+      categoryId:
+        draftProduct?.categoryId || selectedTemplate?.categoryId || '',
+      condition: (draftProduct?.condition ||
+        selectedTemplate?.condition ||
+        'GOOD') as
+        | 'NEW_WITH_TAGS'
+        | 'NEW_WITHOUT_TAGS'
+        | 'VERY_GOOD'
+        | 'GOOD'
+        | 'SATISFACTORY'
+        | undefined,
       brand: draftProduct?.brand || selectedTemplate?.brand || '',
       size: draftProduct?.size || selectedTemplate?.size || '',
       color: draftProduct?.color || selectedTemplate?.color || '',
-      images: draftProduct?.images?.map((img: { imageUrl: string }) => img.imageUrl) || selectedTemplate?.images || [],
+      images:
+        draftProduct?.images?.map(
+          (img: { imageUrl: string }) => img.imageUrl
+        ) ||
+        selectedTemplate?.images ||
+        [],
     },
     mode: 'onChange',
   });
@@ -113,7 +157,7 @@ export function MultiStepWizard({
       if (form.formState.isDirty && !isSubmitting && !isSavingDraft) {
         await saveDraft();
       }
-    }, 30000);
+    }, 30_000);
 
     return () => clearInterval(interval);
   }, [form.formState.isDirty, isSubmitting, isSavingDraft]);
@@ -122,7 +166,7 @@ export function MultiStepWizard({
     try {
       setIsSavingDraft(true);
       const formData = form.getValues();
-      
+
       const result = await saveDraftProduct({
         ...formData,
         price: Math.round(formData.price * 100),
@@ -177,7 +221,7 @@ export function MultiStepWizard({
   const onSubmit = async (data: ProductFormData) => {
     try {
       setIsSubmitting(true);
-      
+
       const result = await createProduct({
         ...data,
         price: Math.round(data.price * 100),
@@ -188,18 +232,18 @@ export function MultiStepWizard({
       if (result && result.success) {
         toast.success('Product created successfully!');
         router.push('/selling/listings');
+      } else if (result.details) {
+        result.details.forEach((detail) => {
+          const path = detail.path?.map((p) => String(p)).join('.');
+          toast.error(`${path}: ${detail.message}`);
+        });
       } else {
-        if (result.details) {
-          result.details.forEach((detail) => {
-            const path = detail.path?.map(p => String(p)).join('.');
-            toast.error(`${path}: ${detail.message}`);
-          });
-        } else {
-          toast.error(result.error || 'Failed to create product');
-        }
+        toast.error(result.error || 'Failed to create product');
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to create product');
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to create product'
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -209,9 +253,8 @@ export function MultiStepWizard({
     switch (currentStep) {
       case 1:
         return (
-          <StepPhotosBasic 
-            form={form} 
-            templates={templates}
+          <StepPhotosBasic
+            form={form}
             onTemplateSelect={(template) => {
               form.reset({
                 ...form.getValues(),
@@ -219,14 +262,15 @@ export function MultiStepWizard({
                 price: template.price || 0,
               });
             }}
+            templates={templates}
           />
         );
       case 2:
-        return <StepDescription form={form} categories={categories} />;
+        return <StepDescription categories={categories} form={form} />;
       case 3:
         return <StepDetails form={form} />;
       case 4:
-        return <StepReview form={form} categories={categories} />;
+        return <StepReview categories={categories} form={form} />;
       default:
         return null;
     }
@@ -239,24 +283,25 @@ export function MultiStepWizard({
       {/* Progress Header */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">
-            Step {currentStep} of {STEPS.length}: {STEPS[currentStep - 1]?.title}
+          <h2 className="font-semibold text-xl">
+            Step {currentStep} of {STEPS.length}:{' '}
+            {STEPS[currentStep - 1]?.title}
           </h2>
           <Button
-            variant="outline"
-            size="sm"
-            onClick={manualSaveDraft}
-            disabled={isSavingDraft || !form.formState.isDirty}
             className="gap-2"
+            disabled={isSavingDraft || !form.formState.isDirty}
+            onClick={manualSaveDraft}
+            size="sm"
+            variant="outline"
           >
             <Save className="h-4 w-4" />
             {isSavingDraft ? 'Saving...' : 'Save Draft'}
           </Button>
         </div>
-        
+
         <div className="space-y-2">
-          <Progress value={progress} className="h-2" />
-          <p className="text-sm text-muted-foreground">
+          <Progress className="h-2" value={progress} />
+          <p className="text-muted-foreground text-sm">
             {STEPS[currentStep - 1]?.description}
           </p>
         </div>
@@ -266,7 +311,7 @@ export function MultiStepWizard({
       <Card>
         <CardContent className="p-6">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
               {renderCurrentStep()}
             </form>
           </Form>
@@ -276,11 +321,11 @@ export function MultiStepWizard({
       {/* Navigation */}
       <div className="flex justify-between">
         <Button
+          className="gap-2"
+          disabled={currentStep === 1}
+          onClick={prevStep}
           type="button"
           variant="outline"
-          onClick={prevStep}
-          disabled={currentStep === 1}
-          className="gap-2"
         >
           <ChevronLeft className="h-4 w-4" />
           Previous
@@ -288,20 +333,16 @@ export function MultiStepWizard({
 
         <div className="flex gap-2">
           {currentStep < 4 ? (
-            <Button
-              type="button"
-              onClick={nextStep}
-              className="gap-2"
-            >
+            <Button className="gap-2" onClick={nextStep} type="button">
               Next
               <ChevronRight className="h-4 w-4" />
             </Button>
           ) : (
             <Button
-              type="button"
-              onClick={() => form.handleSubmit(onSubmit)()}
-              disabled={isSubmitting}
               className="gap-2"
+              disabled={isSubmitting}
+              onClick={() => form.handleSubmit(onSubmit)()}
+              type="button"
             >
               {isSubmitting ? 'Publishing...' : 'Publish Listing'}
             </Button>

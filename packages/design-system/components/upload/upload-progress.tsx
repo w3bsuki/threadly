@@ -1,9 +1,9 @@
 'use client';
 
+import { CheckCircle2, FileImage, Loader2, XCircle } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { Progress } from '../ui/progress';
 import { Card } from '../ui/card';
-import { CheckCircle2, XCircle, Loader2, FileImage } from 'lucide-react';
+import { Progress } from '../ui/progress';
 import type { UploadProgressProps } from './types';
 
 export function UploadProgress({ file, className }: UploadProgressProps) {
@@ -44,24 +44,20 @@ export function UploadProgress({ file, className }: UploadProgressProps) {
     >
       <div className="flex items-center gap-3">
         <div className="flex-shrink-0">{getIcon()}</div>
-        
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium truncate">
-            {file.file.name}
-          </p>
-          <p className="text-xs text-muted-foreground">
-            {getStatusText()}
-          </p>
+
+        <div className="min-w-0 flex-1">
+          <p className="truncate font-medium text-sm">{file.file.name}</p>
+          <p className="text-muted-foreground text-xs">{getStatusText()}</p>
         </div>
-        
-        <div className="flex-shrink-0 text-xs text-muted-foreground">
+
+        <div className="flex-shrink-0 text-muted-foreground text-xs">
           {(file.file.size / 1024 / 1024).toFixed(1)}MB
         </div>
       </div>
-      
+
       {file.status === 'uploading' && (
         <div className="mt-2">
-          <Progress value={file.progress} className="h-1" />
+          <Progress className="h-1" value={file.progress} />
         </div>
       )}
     </Card>

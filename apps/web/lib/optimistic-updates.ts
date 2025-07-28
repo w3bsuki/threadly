@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface OptimisticUpdateConfig<T> {
   updateFn: (data: T) => Promise<T>;
@@ -20,50 +20,53 @@ export function useOptimisticUpdate<T>(
   const rollbackRef = useRef<T | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const update = useCallback(async (optimisticData: T) => {
-    setIsLoading(true);
-    setError(null);
-    
-    rollbackRef.current = data;
-    setData(optimisticData);
+  const update = useCallback(
+    async (optimisticData: T) => {
+      setIsLoading(true);
+      setError(null);
 
-    const timeout = config.timeout ?? 5000;
-    
-    try {
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        timeoutRef.current = setTimeout(() => {
-          reject(new Error('Request timeout'));
-        }, timeout);
-      });
+      rollbackRef.current = data;
+      setData(optimisticData);
 
-      const result = await Promise.race([
-        config.updateFn(optimisticData),
-        timeoutPromise
-      ]);
+      const timeout = config.timeout ?? 5000;
 
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+      try {
+        const timeoutPromise = new Promise<never>((_, reject) => {
+          timeoutRef.current = setTimeout(() => {
+            reject(new Error('Request timeout'));
+          }, timeout);
+        });
+
+        const result = await Promise.race([
+          config.updateFn(optimisticData),
+          timeoutPromise,
+        ]);
+
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+
+        setData(result);
+        config.onSuccess?.(result);
+        rollbackRef.current = null;
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error(String(err));
+        setError(error);
+
+        if (rollbackRef.current) {
+          const rollbackData = config.rollbackFn
+            ? config.rollbackFn(rollbackRef.current)
+            : rollbackRef.current;
+          setData(rollbackData);
+        }
+
+        config.onError?.(error, optimisticData);
+      } finally {
+        setIsLoading(false);
       }
-
-      setData(result);
-      config.onSuccess?.(result);
-      rollbackRef.current = null;
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error(String(err));
-      setError(error);
-      
-      if (rollbackRef.current) {
-        const rollbackData = config.rollbackFn 
-          ? config.rollbackFn(rollbackRef.current)
-          : rollbackRef.current;
-        setData(rollbackData);
-      }
-      
-      config.onError?.(error, optimisticData);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [data, config]);
+    },
+    [data, config]
+  );
 
   useEffect(() => {
     return () => {
@@ -83,7 +86,7 @@ export function useOptimisticUpdate<T>(
         setData(rollbackRef.current);
         rollbackRef.current = null;
       }
-    }
+    },
   };
 }
 
@@ -102,88 +105,102 @@ export function useOptimisticList<T extends { id: string }>(
   const [errors, setErrors] = useState<Map<string, Error>>(new Map());
   const rollbackRef = useRef<Map<string, T | null>>(new Map());
 
-  const addItem = useCallback(async (item: T) => {
-    const tempId = `temp-${Date.now()}`;
-    const tempItem = { ...item, id: tempId };
-    
-    setItems(prev => [...prev, tempItem]);
-    setLoadingIds(prev => new Set(prev).add(tempId));
-    
-    try {
-      const result = await config.addFn(item);
-      setItems(prev => prev.map(i => i.id === tempId ? result : i));
-      setLoadingIds(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(tempId);
-        return newSet;
-      });
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error(String(err));
-      setItems(prev => prev.filter(i => i.id !== tempId));
-      setLoadingIds(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(tempId);
-        return newSet;
-      });
-      setErrors(prev => new Map(prev).set(tempId, error));
-      config.onError?.(error, 'add', item);
-    }
-  }, [config]);
+  const addItem = useCallback(
+    async (item: T) => {
+      const tempId = `temp-${Date.now()}`;
+      const tempItem = { ...item, id: tempId };
 
-  const updateItem = useCallback(async (item: T) => {
-    setLoadingIds(prev => new Set(prev).add(item.id));
-    rollbackRef.current.set(item.id, items.find(i => i.id === item.id) || null);
-    
-    setItems(prev => prev.map(i => i.id === item.id ? item : i));
-    
-    try {
-      const result = await config.updateFn(item);
-      setItems(prev => prev.map(i => i.id === item.id ? result : i));
-      rollbackRef.current.delete(item.id);
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error(String(err));
-      const rollbackItem = rollbackRef.current.get(item.id);
-      if (rollbackItem) {
-        setItems(prev => prev.map(i => i.id === item.id ? rollbackItem : i));
+      setItems((prev) => [...prev, tempItem]);
+      setLoadingIds((prev) => new Set(prev).add(tempId));
+
+      try {
+        const result = await config.addFn(item);
+        setItems((prev) => prev.map((i) => (i.id === tempId ? result : i)));
+        setLoadingIds((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(tempId);
+          return newSet;
+        });
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error(String(err));
+        setItems((prev) => prev.filter((i) => i.id !== tempId));
+        setLoadingIds((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(tempId);
+          return newSet;
+        });
+        setErrors((prev) => new Map(prev).set(tempId, error));
+        config.onError?.(error, 'add', item);
       }
-      setErrors(prev => new Map(prev).set(item.id, error));
-      config.onError?.(error, 'update', item);
-    } finally {
-      setLoadingIds(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(item.id);
-        return newSet;
-      });
-    }
-  }, [items, config]);
+    },
+    [config]
+  );
 
-  const deleteItem = useCallback(async (id: string) => {
-    const itemToDelete = items.find(i => i.id === id);
-    if (!itemToDelete) return;
+  const updateItem = useCallback(
+    async (item: T) => {
+      setLoadingIds((prev) => new Set(prev).add(item.id));
+      rollbackRef.current.set(
+        item.id,
+        items.find((i) => i.id === item.id) || null
+      );
 
-    setLoadingIds(prev => new Set(prev).add(id));
-    rollbackRef.current.set(id, itemToDelete);
-    setItems(prev => prev.filter(i => i.id !== id));
-    
-    try {
-      await config.deleteFn(id);
-      rollbackRef.current.delete(id);
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error(String(err));
-      setItems(prev => [...prev, itemToDelete]);
-      setErrors(prev => new Map(prev).set(id, error));
-      config.onError?.(error, 'delete', itemToDelete);
-    } finally {
-      setLoadingIds(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(id);
-        return newSet;
-      });
-    }
-  }, [items, config]);
+      setItems((prev) => prev.map((i) => (i.id === item.id ? item : i)));
+
+      try {
+        const result = await config.updateFn(item);
+        setItems((prev) => prev.map((i) => (i.id === item.id ? result : i)));
+        rollbackRef.current.delete(item.id);
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error(String(err));
+        const rollbackItem = rollbackRef.current.get(item.id);
+        if (rollbackItem) {
+          setItems((prev) =>
+            prev.map((i) => (i.id === item.id ? rollbackItem : i))
+          );
+        }
+        setErrors((prev) => new Map(prev).set(item.id, error));
+        config.onError?.(error, 'update', item);
+      } finally {
+        setLoadingIds((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(item.id);
+          return newSet;
+        });
+      }
+    },
+    [items, config]
+  );
+
+  const deleteItem = useCallback(
+    async (id: string) => {
+      const itemToDelete = items.find((i) => i.id === id);
+      if (!itemToDelete) return;
+
+      setLoadingIds((prev) => new Set(prev).add(id));
+      rollbackRef.current.set(id, itemToDelete);
+      setItems((prev) => prev.filter((i) => i.id !== id));
+
+      try {
+        await config.deleteFn(id);
+        rollbackRef.current.delete(id);
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error(String(err));
+        setItems((prev) => [...prev, itemToDelete]);
+        setErrors((prev) => new Map(prev).set(id, error));
+        config.onError?.(error, 'delete', itemToDelete);
+      } finally {
+        setLoadingIds((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(id);
+          return newSet;
+        });
+      }
+    },
+    [items, config]
+  );
 
   const clearError = useCallback((id: string) => {
-    setErrors(prev => {
+    setErrors((prev) => {
       const newMap = new Map(prev);
       newMap.delete(id);
       return newMap;
@@ -199,7 +216,7 @@ export function useOptimisticList<T extends { id: string }>(
     deleteItem,
     clearError,
     isLoading: (id: string) => loadingIds.has(id),
-    getError: (id: string) => errors.get(id)
+    getError: (id: string) => errors.get(id),
   };
 }
 

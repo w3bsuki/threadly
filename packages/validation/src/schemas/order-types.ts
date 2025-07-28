@@ -8,18 +8,32 @@ export const OrderStatusSchema = z.enum([
   'DELIVERED',
   'CANCELLED',
   'REFUNDED',
-  'DISPUTED'
+  'DISPUTED',
 ]);
 
 export type OrderStatus = z.infer<typeof OrderStatusSchema>;
 
-export const PaymentMethodSchema = z.enum(['STRIPE', 'PAYPAL', 'BANK_TRANSFER']);
+export const PaymentMethodSchema = z.enum([
+  'STRIPE',
+  'PAYPAL',
+  'BANK_TRANSFER',
+]);
 export type PaymentMethod = z.infer<typeof PaymentMethodSchema>;
 
-export const PaymentStatusSchema = z.enum(['PENDING', 'PROCESSING', 'COMPLETED', 'FAILED', 'REFUNDED']);
+export const PaymentStatusSchema = z.enum([
+  'PENDING',
+  'PROCESSING',
+  'COMPLETED',
+  'FAILED',
+  'REFUNDED',
+]);
 export type PaymentStatus = z.infer<typeof PaymentStatusSchema>;
 
-export const ShippingMethodSchema = z.enum(['standard', 'express', 'overnight']);
+export const ShippingMethodSchema = z.enum([
+  'standard',
+  'express',
+  'overnight',
+]);
 export type ShippingMethod = z.infer<typeof ShippingMethodSchema>;
 
 export const AddressSchema = z.object({

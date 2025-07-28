@@ -13,37 +13,36 @@ type DecimalValue = DecimalLike | string | number | null | undefined;
  */
 export function decimalToNumber(decimal: DecimalValue): number {
   if (!decimal) return 0;
-  
+
   try {
     // Handle string representation
     if (typeof decimal === 'string') {
-      const parsed = parseFloat(decimal);
+      const parsed = Number.parseFloat(decimal);
       return isNaN(parsed) ? 0 : parsed;
     }
-    
+
     // Handle direct number
     if (typeof decimal === 'number') {
       return decimal;
     }
-    
+
     // Handle Decimal object
     if (decimal && typeof decimal === 'object') {
       // If it has a toNumber method, use it
       if ('toNumber' in decimal && typeof decimal.toNumber === 'function') {
         return decimal.toNumber();
       }
-      
+
       // Otherwise, try to convert to string first
       if ('toString' in decimal && typeof decimal.toString === 'function') {
         const stringValue = decimal.toString();
-        const parsed = parseFloat(stringValue);
+        const parsed = Number.parseFloat(stringValue);
         return isNaN(parsed) ? 0 : parsed;
       }
     }
-    
+
     return 0;
   } catch (error) {
-    console.warn('Failed to convert Decimal to number:', error);
     return 0;
   }
 }
@@ -53,16 +52,18 @@ export function decimalToNumber(decimal: DecimalValue): number {
  * @param value - The number value to convert
  * @returns A decimal-like object
  */
-export function numberToDecimal(value: number | string | null | undefined): DecimalLike {
+export function numberToDecimal(
+  value: number | string | null | undefined
+): DecimalLike {
   const numValue = value === null || value === undefined ? 0 : Number(value);
-  
+
   return {
     toString(): string {
       return String(numValue);
     },
     toNumber(): number {
       return numValue;
-    }
+    },
   };
 }
 
@@ -75,11 +76,11 @@ export function numberToDecimal(value: number | string | null | undefined): Deci
  */
 export function formatDecimalAsCurrency(
   decimal: DecimalValue,
-  currency: string = 'USD',
-  locale: string = 'en-US'
+  currency = 'USD',
+  locale = 'en-US'
 ): string {
   const number = decimalToNumber(decimal);
-  
+
   try {
     return new Intl.NumberFormat(locale, {
       style: 'currency',
@@ -88,7 +89,6 @@ export function formatDecimalAsCurrency(
       maximumFractionDigits: 2,
     }).format(number);
   } catch (error) {
-    console.warn('Failed to format decimal as currency:', error);
     return `${currency} ${number.toFixed(2)}`;
   }
 }
@@ -99,18 +99,14 @@ export function formatDecimalAsCurrency(
  * @param b - Second Decimal value
  * @returns The sum as a new Decimal
  */
-export function addDecimals(
-  a: DecimalValue,
-  b: DecimalValue
-): DecimalLike {
+export function addDecimals(a: DecimalValue, b: DecimalValue): DecimalLike {
   const numA = decimalToNumber(a);
   const numB = decimalToNumber(b);
-  
+
   try {
     const sum = numA + numB;
     return numberToDecimal(sum);
   } catch (error) {
-    console.warn('Failed to add decimals:', error);
     return numberToDecimal(0);
   }
 }
@@ -127,12 +123,11 @@ export function multiplyDecimals(
 ): DecimalLike {
   const numA = decimalToNumber(a);
   const numB = decimalToNumber(b);
-  
+
   try {
     const product = numA * numB;
     return numberToDecimal(product);
   } catch (error) {
-    console.warn('Failed to multiply decimals:', error);
     return numberToDecimal(0);
   }
 }
@@ -148,12 +143,11 @@ export function calculatePercentage(
   percentage: number
 ): DecimalLike {
   const numValue = decimalToNumber(value);
-  
+
   try {
     const result = numValue * (percentage / 100);
     return numberToDecimal(result);
   } catch (error) {
-    console.warn('Failed to calculate percentage:', error);
     return numberToDecimal(0);
   }
 }
@@ -166,16 +160,15 @@ export function calculatePercentage(
  */
 export function roundDecimal(
   decimal: DecimalValue,
-  decimalPlaces: number = 2
+  decimalPlaces = 2
 ): DecimalLike {
   const numValue = decimalToNumber(decimal);
-  
+
   try {
-    const factor = Math.pow(10, decimalPlaces);
+    const factor = 10 ** decimalPlaces;
     const rounded = Math.round(numValue * factor) / factor;
     return numberToDecimal(rounded);
   } catch (error) {
-    console.warn('Failed to round decimal:', error);
     return numberToDecimal(0);
   }
 }

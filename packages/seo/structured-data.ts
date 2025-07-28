@@ -1,4 +1,11 @@
-import type { WithContext, Organization, WebSite, Product, BreadcrumbList, Review } from 'schema-dts';
+import type {
+  BreadcrumbList,
+  Organization,
+  Product,
+  Review,
+  WebSite,
+  WithContext,
+} from 'schema-dts';
 
 // Organization structured data
 export const organizationStructuredData: WithContext<Organization> = {
@@ -7,7 +14,8 @@ export const organizationStructuredData: WithContext<Organization> = {
   name: 'Threadly',
   url: 'https://threadly.com',
   logo: 'https://threadly.com/icon.png',
-  description: 'Premium C2C fashion marketplace for buying and selling pre-loved clothing',
+  description:
+    'Premium C2C fashion marketplace for buying and selling pre-loved clothing',
   sameAs: [
     'https://twitter.com/threadly',
     'https://instagram.com/threadly',
@@ -36,7 +44,8 @@ export const websiteStructuredData: WithContext<WebSite> = {
   '@type': 'WebSite',
   name: 'Threadly',
   url: 'https://threadly.com',
-  description: 'Buy and sell pre-loved fashion. Discover unique pieces from brands you love.',
+  description:
+    'Buy and sell pre-loved fashion. Discover unique pieces from brands you love.',
   potentialAction: {
     '@type': 'SearchAction',
     target: {
@@ -68,18 +77,22 @@ export function generateProductStructuredData(product: {
   averageRating?: number;
   reviewCount?: number;
 }): WithContext<Product> {
-  const sellerName = `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() || 'Anonymous Seller';
-  
+  const sellerName =
+    `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() ||
+    'Anonymous Seller';
+
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.title,
     description: product.description,
-    image: product.images.map(img => img.imageUrl),
-    brand: product.brand ? {
-      '@type': 'Brand',
-      name: product.brand,
-    } : undefined,
+    image: product.images.map((img) => img.imageUrl),
+    brand: product.brand
+      ? {
+          '@type': 'Brand',
+          name: product.brand,
+        }
+      : undefined,
     category: product.category.name,
     color: product.color,
     size: product.size,
@@ -95,21 +108,26 @@ export function generateProductStructuredData(product: {
       },
       url: `https://threadly.com/product/${product.id}`,
     },
-    aggregateRating: product.averageRating && product.reviewCount ? {
-      '@type': 'AggregateRating',
-      ratingValue: product.averageRating.toString(),
-      reviewCount: product.reviewCount,
-    } as any : undefined,
+    aggregateRating:
+      product.averageRating && product.reviewCount
+        ? ({
+            '@type': 'AggregateRating',
+            ratingValue: product.averageRating.toString(),
+            reviewCount: product.reviewCount,
+          } as any)
+        : undefined,
     sku: product.id,
     productID: product.id,
   };
 }
 
 // Breadcrumb structured data generator
-export function generateBreadcrumbStructuredData(breadcrumbs: Array<{
-  name: string;
-  url: string;
-}>): WithContext<BreadcrumbList> {
+export function generateBreadcrumbStructuredData(
+  breadcrumbs: Array<{
+    name: string;
+    url: string;
+  }>
+): WithContext<BreadcrumbList> {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -137,8 +155,10 @@ export function generateReviewStructuredData(review: {
     title: string;
   };
 }): WithContext<Review> {
-  const reviewerName = `${review.reviewer.firstName || ''} ${review.reviewer.lastName || ''}`.trim() || 'Anonymous';
-  
+  const reviewerName =
+    `${review.reviewer.firstName || ''} ${review.reviewer.lastName || ''}`.trim() ||
+    'Anonymous';
+
   return {
     '@context': 'https://schema.org',
     '@type': 'Review',

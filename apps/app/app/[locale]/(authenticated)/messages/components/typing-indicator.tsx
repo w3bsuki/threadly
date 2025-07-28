@@ -9,23 +9,23 @@ interface TypingIndicatorProps {
 export const TypingIndicator = memo(({ userName }: TypingIndicatorProps) => {
   return (
     <div className="flex justify-start">
-      <div className="bg-muted px-4 py-2 rounded-[var(--radius-lg)]">
+      <div className="rounded-[var(--radius-lg)] bg-muted px-4 py-2">
         <div className="flex items-center gap-1">
           <div className="flex gap-1">
-            <div 
-              className="w-2 h-2 bg-muted-foreground/50 rounded-[var(--radius-full)] animate-bounce" 
-              style={{ animationDelay: '0ms' }} 
+            <div
+              className="h-2 w-2 animate-bounce rounded-[var(--radius-full)] bg-muted-foreground/50"
+              style={{ animationDelay: '0ms' }}
             />
-            <div 
-              className="w-2 h-2 bg-muted-foreground/50 rounded-[var(--radius-full)] animate-bounce" 
-              style={{ animationDelay: '150ms' }} 
+            <div
+              className="h-2 w-2 animate-bounce rounded-[var(--radius-full)] bg-muted-foreground/50"
+              style={{ animationDelay: '150ms' }}
             />
-            <div 
-              className="w-2 h-2 bg-muted-foreground/50 rounded-[var(--radius-full)] animate-bounce" 
-              style={{ animationDelay: '300ms' }} 
+            <div
+              className="h-2 w-2 animate-bounce rounded-[var(--radius-full)] bg-muted-foreground/50"
+              style={{ animationDelay: '300ms' }}
             />
           </div>
-          <span className="text-xs text-muted-foreground ml-2">
+          <span className="ml-2 text-muted-foreground text-xs">
             {userName} is typing...
           </span>
         </div>

@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@repo/design-system/components';
-import { DollarSign, ShoppingBag, Package, MessageSquare } from 'lucide-react';
 import { cn } from '@repo/design-system/lib/utils';
 import type { Dictionary } from '@repo/internationalization';
+import { DollarSign, MessageSquare, Package, ShoppingBag } from 'lucide-react';
 
 interface DashboardStatsProps {
   metrics: {
@@ -29,14 +29,19 @@ function StatCard({ title, value, icon: Icon, trend }: StatCardProps) {
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <p className="text-xs text-muted-foreground sm:text-sm">{title}</p>
-            <p className="text-xl font-bold tracking-tight sm:text-2xl">{value}</p>
+            <p className="text-muted-foreground text-xs sm:text-sm">{title}</p>
+            <p className="font-bold text-xl tracking-tight sm:text-2xl">
+              {value}
+            </p>
             {trend && (
-              <p className={cn(
-                "text-xs font-medium",
-                trend.isPositive ? "text-green-600" : "text-red-600"
-              )}>
-                {trend.isPositive ? '+' : ''}{trend.value}%
+              <p
+                className={cn(
+                  'font-medium text-xs',
+                  trend.isPositive ? 'text-green-600' : 'text-red-600'
+                )}
+              >
+                {trend.isPositive ? '+' : ''}
+                {trend.value}%
               </p>
             )}
           </div>
@@ -55,13 +60,13 @@ export function DashboardStats({ metrics, dictionary }: DashboardStatsProps) {
       title: dictionary.dashboard.dashboard.metrics.totalRevenue,
       value: `$${metrics.totalRevenue.toLocaleString()}`,
       icon: DollarSign,
-      trend: { value: 12.5, isPositive: true }
+      trend: { value: 12.5, isPositive: true },
     },
     {
       title: dictionary.dashboard.dashboard.metrics.completedSales,
       value: metrics.completedSales,
       icon: ShoppingBag,
-      trend: { value: 8.2, isPositive: true }
+      trend: { value: 8.2, isPositive: true },
     },
     {
       title: dictionary.dashboard.dashboard.metrics.activeListings,
@@ -76,7 +81,7 @@ export function DashboardStats({ metrics, dictionary }: DashboardStatsProps) {
   ];
 
   return (
-    <div className="grid gap-3 grid-cols-2 sm:gap-4 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
       {stats.map((stat, index) => (
         <StatCard key={index} {...stat} />
       ))}

@@ -1,37 +1,37 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import {
-  MultiStepWizard,
-  WizardStep,
-  WizardStepContainer,
-  FormWizard,
-  WizardFormStep,
-  WizardReviewStep,
-  WizardFieldGroup,
-  WizardSummary,
-  WizardSuccess,
-  WizardCard,
-  WizardInfo,
-  useWizard,
+  Button,
+  Card,
+  CardContent,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
+  FormWizard,
   Input,
-  Textarea,
+  MultiStepWizard,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Button,
-  Card,
-  CardContent,
+  Textarea,
+  useWizard,
+  WizardCard,
+  WizardFieldGroup,
+  WizardFormStep,
+  WizardInfo,
+  WizardReviewStep,
+  type WizardStep,
+  WizardStepContainer,
+  WizardSuccess,
+  WizardSummary,
 } from '@repo/design-system/components';
+import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 const meta: Meta<typeof MultiStepWizard> = {
   title: 'Modern/Wizard',
@@ -75,8 +75,8 @@ export const BasicWizard: Story = {
     if (completed) {
       return (
         <WizardSuccess
-          title="Registration Complete!"
           description="Thank you for signing up. You can now access all features."
+          title="Registration Complete!"
         >
           <Button onClick={() => setCompleted(false)}>Start Over</Button>
         </WizardSuccess>
@@ -85,20 +85,20 @@ export const BasicWizard: Story = {
 
     return (
       <MultiStepWizard
-        steps={steps}
         onComplete={() => setCompleted(true)}
         progressType="both"
+        steps={steps}
       >
         <WizardStepContainer>
           <WizardFormStep title="Personal Information">
             <WizardFieldGroup columns={2}>
               <div>
-                <label className="text-sm font-medium">First Name</label>
-                <Input placeholder="John" className="mt-1" />
+                <label className="font-medium text-sm">First Name</label>
+                <Input className="mt-1" placeholder="John" />
               </div>
               <div>
-                <label className="text-sm font-medium">Last Name</label>
-                <Input placeholder="Doe" className="mt-1" />
+                <label className="font-medium text-sm">Last Name</label>
+                <Input className="mt-1" placeholder="Doe" />
               </div>
             </WizardFieldGroup>
           </WizardFormStep>
@@ -106,12 +106,20 @@ export const BasicWizard: Story = {
           <WizardFormStep title="Contact Details">
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium">Email</label>
-                <Input type="email" placeholder="john@example.com" className="mt-1" />
+                <label className="font-medium text-sm">Email</label>
+                <Input
+                  className="mt-1"
+                  placeholder="john@example.com"
+                  type="email"
+                />
               </div>
               <div>
-                <label className="text-sm font-medium">Phone</label>
-                <Input type="tel" placeholder="+1 (555) 123-4567" className="mt-1" />
+                <label className="font-medium text-sm">Phone</label>
+                <Input
+                  className="mt-1"
+                  placeholder="+1 (555) 123-4567"
+                  type="tel"
+                />
               </div>
             </div>
           </WizardFormStep>
@@ -122,7 +130,9 @@ export const BasicWizard: Story = {
             </WizardInfo>
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium">Preferred Language</label>
+                <label className="font-medium text-sm">
+                  Preferred Language
+                </label>
                 <Select>
                   <SelectTrigger className="mt-1">
                     <SelectValue placeholder="Select language" />
@@ -139,13 +149,13 @@ export const BasicWizard: Story = {
 
           <WizardReviewStep>
             <WizardSummary
-              title="Your Information"
               items={[
                 { label: 'Name', value: 'John Doe' },
                 { label: 'Email', value: 'john@example.com' },
                 { label: 'Phone', value: '+1 (555) 123-4567' },
                 { label: 'Language', value: 'English' },
               ]}
+              title="Your Information"
             />
           </WizardReviewStep>
         </WizardStepContainer>
@@ -199,13 +209,15 @@ export const FormIntegratedWizard: Story = {
     if (isComplete) {
       return (
         <WizardSuccess
-          title="Product Created!"
           description="Your product has been successfully listed."
+          title="Product Created!"
         >
-          <Button onClick={() => {
-            setIsComplete(false);
-            form.reset();
-          }}>
+          <Button
+            onClick={() => {
+              setIsComplete(false);
+              form.reset();
+            }}
+          >
             Create Another
           </Button>
         </WizardSuccess>
@@ -215,14 +227,14 @@ export const FormIntegratedWizard: Story = {
     return (
       <FormWizard
         form={form}
-        steps={formSteps}
         onSubmit={(data) => {
           console.log('Form submitted:', data);
           setIsComplete(true);
         }}
         progressType="stepper"
+        steps={formSteps}
       >
-        <WizardFormStep title="Basic Information" stepIndex={0}>
+        <WizardFormStep stepIndex={0} title="Basic Information">
           <WizardFieldGroup columns={2}>
             <FormField
               control={form.control}
@@ -245,11 +257,13 @@ export const FormIntegratedWizard: Story = {
                   <FormLabel>Price ($)</FormLabel>
                   <FormControl>
                     <Input
-                      type="number"
-                      step="0.01"
                       placeholder="0.00"
+                      step="0.01"
+                      type="number"
                       {...field}
-                      onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                      onChange={(e) =>
+                        field.onChange(Number.parseFloat(e.target.value))
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -259,7 +273,7 @@ export const FormIntegratedWizard: Story = {
           </WizardFieldGroup>
         </WizardFormStep>
 
-        <WizardFormStep title="Product Details" stepIndex={1}>
+        <WizardFormStep stepIndex={1} title="Product Details">
           <div className="space-y-4">
             <FormField
               control={form.control}
@@ -269,8 +283,8 @@ export const FormIntegratedWizard: Story = {
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Describe your product..."
                       className="min-h-24"
+                      placeholder="Describe your product..."
                       {...field}
                     />
                   </FormControl>
@@ -330,17 +344,20 @@ export const FormIntegratedWizard: Story = {
 
         <WizardReviewStep stepIndex={2}>
           <WizardSummary
-            title="Product Summary"
             items={[
               { label: 'Title', value: form.watch('title') || 'Not set' },
               { label: 'Price', value: `$${form.watch('price') || 0}` },
               { label: 'Category', value: form.watch('category') || 'Not set' },
-              { label: 'Condition', value: form.watch('condition') || 'Not set' },
+              {
+                label: 'Condition',
+                value: form.watch('condition') || 'Not set',
+              },
             ]}
+            title="Product Summary"
           />
           <div className="mt-4">
-            <h4 className="font-medium mb-2">Description</h4>
-            <p className="text-sm text-muted-foreground">
+            <h4 className="mb-2 font-medium">Description</h4>
+            <p className="text-muted-foreground text-sm">
               {form.watch('description') || 'No description provided'}
             </p>
           </div>
@@ -354,29 +371,29 @@ export const CustomNavigationWizard: Story = {
   render: () => {
     return (
       <MultiStepWizard
-        steps={steps.slice(0, 3)}
-        progressType="bar"
         customNavigation={
           <div className="flex justify-center gap-4">
             <CustomNavigation />
           </div>
         }
+        progressType="bar"
+        steps={steps.slice(0, 3)}
       >
         <WizardStepContainer>
           <WizardCard>
-            <h3 className="text-lg font-semibold mb-4">Step 1 Content</h3>
+            <h3 className="mb-4 font-semibold text-lg">Step 1 Content</h3>
             <p className="text-muted-foreground">
               This wizard has custom navigation controls.
             </p>
           </WizardCard>
           <WizardCard>
-            <h3 className="text-lg font-semibold mb-4">Step 2 Content</h3>
+            <h3 className="mb-4 font-semibold text-lg">Step 2 Content</h3>
             <p className="text-muted-foreground">
               You can create your own navigation component.
             </p>
           </WizardCard>
           <WizardCard>
-            <h3 className="text-lg font-semibold mb-4">Step 3 Content</h3>
+            <h3 className="mb-4 font-semibold text-lg">Step 3 Content</h3>
             <p className="text-muted-foreground">
               This gives you full control over the wizard flow.
             </p>
@@ -394,16 +411,16 @@ function CustomNavigation() {
     <>
       {!wizard.isFirstStep && (
         <Button
-          variant="outline"
-          onClick={wizard.previousStep}
           disabled={wizard.isLoading}
+          onClick={wizard.previousStep}
+          variant="outline"
         >
           Go Back
         </Button>
       )}
       <Button
-        onClick={wizard.nextStep}
         disabled={!wizard.canGoNext || wizard.isLoading}
+        onClick={wizard.nextStep}
       >
         {wizard.isLastStep ? 'Finish' : 'Continue'}
       </Button>
@@ -421,29 +438,30 @@ export const MobileOptimizedWizard: Story = {
     return (
       <div className="min-h-screen bg-background">
         <MultiStepWizard
-          steps={steps.slice(0, 3)}
-          progressType="bar"
           navigationPosition="bottom"
+          progressType="bar"
           showStepIndicator={false}
+          steps={steps.slice(0, 3)}
         >
           <WizardStepContainer>
             <div className="p-4">
-              <h3 className="text-lg font-semibold mb-4">Mobile Step 1</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                This wizard is optimized for mobile devices with bottom navigation.
+              <h3 className="mb-4 font-semibold text-lg">Mobile Step 1</h3>
+              <p className="mb-4 text-muted-foreground text-sm">
+                This wizard is optimized for mobile devices with bottom
+                navigation.
               </p>
               <Input placeholder="Enter your name" />
             </div>
             <div className="p-4">
-              <h3 className="text-lg font-semibold mb-4">Mobile Step 2</h3>
-              <p className="text-sm text-muted-foreground mb-4">
+              <h3 className="mb-4 font-semibold text-lg">Mobile Step 2</h3>
+              <p className="mb-4 text-muted-foreground text-sm">
                 The navigation stays at the bottom for easy thumb access.
               </p>
               <Input placeholder="Enter your email" />
             </div>
             <div className="p-4">
-              <h3 className="text-lg font-semibold mb-4">Mobile Step 3</h3>
-              <p className="text-sm text-muted-foreground mb-4">
+              <h3 className="mb-4 font-semibold text-lg">Mobile Step 3</h3>
+              <p className="mb-4 text-muted-foreground text-sm">
                 Progress is shown as a simple bar to save space.
               </p>
               <Textarea placeholder="Additional comments" />

@@ -1,6 +1,10 @@
-import Pusher, { Channel, PresenceChannel } from 'pusher-js';
 import { withRetry } from '@repo/error-handling';
-import type { RealTimeClient, RealTimeConfig, ChannelSubscription } from '../types';
+import Pusher, { type Channel, type PresenceChannel } from 'pusher-js';
+import type {
+  ChannelSubscription,
+  RealTimeClient,
+  RealTimeConfig,
+} from '../types';
 
 export class PusherClient implements RealTimeClient {
   private pusher: Pusher;
@@ -20,16 +24,18 @@ export class PusherClient implements RealTimeClient {
     });
 
     // Connection state monitoring
-    this.pusher.connection.bind('connected', () => {
-    });
+    this.pusher.connection.bind('connected', () => {});
 
-    this.pusher.connection.bind('error', (err: any) => {
-    });
+    this.pusher.connection.bind('error', (err: any) => {});
   }
 
-  subscribe(channelName: string, event: string, callback: (data: any) => void): ChannelSubscription {
+  subscribe(
+    channelName: string,
+    event: string,
+    callback: (data: any) => void
+  ): ChannelSubscription {
     let channel = this.channels.get(channelName);
-    
+
     if (!channel) {
       channel = this.pusher.subscribe(channelName);
       this.channels.set(channelName, channel);
@@ -114,7 +120,7 @@ export class PusherClient implements RealTimeClient {
   onConnectionStateChange(callback: (state: string) => void): () => void {
     const handler = ({ current }: { current: string }) => callback(current);
     this.pusher.connection.bind('state_change', handler);
-    
+
     return () => {
       this.pusher.connection.unbind('state_change', handler);
     };

@@ -5,7 +5,7 @@ const SpacingToken = ({
   name,
   cssVar,
   value,
-  pixels
+  pixels,
 }: {
   name: string;
   cssVar: string;
@@ -13,30 +13,30 @@ const SpacingToken = ({
   pixels: string;
 }) => {
   const [copied, setCopied] = React.useState(false);
-  
+
   const handleCopy = () => {
     navigator.clipboard.writeText(cssVar);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-  
+
   return (
-    <div className="flex items-center gap-4 p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors">
+    <div className="flex items-center gap-4 rounded-lg border border-border p-4 transition-colors hover:bg-muted/50">
       <div className="flex-shrink-0">
-        <div 
-          className="bg-primary rounded"
-          style={{ 
+        <div
+          className="rounded bg-primary"
+          style={{
             width: `var(${cssVar})`,
             height: `var(${cssVar})`,
             minWidth: '4px',
-            minHeight: '4px'
+            minHeight: '4px',
           }}
         />
       </div>
-      <div className="flex-1 grid grid-cols-4 gap-4 items-center text-sm">
+      <div className="grid flex-1 grid-cols-4 items-center gap-4 text-sm">
         <div className="font-semibold">{name}</div>
-        <code 
-          className="bg-muted px-2 py-1 rounded cursor-pointer hover:bg-muted/80 text-xs"
+        <code
+          className="cursor-pointer rounded bg-muted px-2 py-1 text-xs hover:bg-muted/80"
           onClick={handleCopy}
         >
           {cssVar}
@@ -44,7 +44,7 @@ const SpacingToken = ({
         <div className="text-muted-foreground">{value}</div>
         <div className="text-muted-foreground">{pixels}</div>
       </div>
-      {copied && <span className="text-xs text-green-500">Copied!</span>}
+      {copied && <span className="text-green-500 text-xs">Copied!</span>}
     </div>
   );
 };
@@ -52,26 +52,26 @@ const SpacingToken = ({
 const SpacingExample = ({
   title,
   description,
-  spaces
+  spaces,
 }: {
   title: string;
   description: string;
   spaces: string[];
 }) => {
   return (
-    <div className="border border-border rounded-lg p-6">
-      <h3 className="text-lg font-semibold mb-2">{title}</h3>
-      <p className="text-sm text-muted-foreground mb-4">{description}</p>
+    <div className="rounded-lg border border-border p-6">
+      <h3 className="mb-2 font-semibold text-lg">{title}</h3>
+      <p className="mb-4 text-muted-foreground text-sm">{description}</p>
       <div className="flex flex-wrap gap-2">
         {spaces.map((space) => (
-          <div 
+          <div
+            className="flex items-center justify-center border-2 border-primary/30 border-dashed bg-primary/10 font-mono text-xs"
             key={space}
-            className="bg-primary/10 border-2 border-dashed border-primary/30 flex items-center justify-center text-xs font-mono"
-            style={{ 
+            style={{
               width: `var(${space})`,
               height: `var(${space})`,
               minWidth: '24px',
-              minHeight: '24px'
+              minHeight: '24px',
             }}
           >
             {space.split('-')[2]}
@@ -84,24 +84,65 @@ const SpacingExample = ({
 
 const SpacingVisualizer = () => {
   const [selectedSpace, setSelectedSpace] = React.useState('--space-4');
-  
+
   return (
-    <div className="border border-border rounded-lg p-6">
-      <h3 className="text-lg font-semibold mb-4">Interactive Spacing Visualizer</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="rounded-lg border border-border p-6">
+      <h3 className="mb-4 font-semibold text-lg">
+        Interactive Spacing Visualizer
+      </h3>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div>
-          <label className="text-sm font-medium mb-2 block">Select spacing value:</label>
-          <select 
-            className="w-full p-2 border border-border rounded-lg bg-background"
-            value={selectedSpace}
+          <label className="mb-2 block font-medium text-sm">
+            Select spacing value:
+          </label>
+          <select
+            className="w-full rounded-lg border border-border bg-background p-2"
             onChange={(e) => setSelectedSpace(e.target.value)}
+            value={selectedSpace}
           >
             {Array.from({ length: 21 }, (_, i) => {
-              const num = i === 0 ? 0 : i === 1 ? 1 : i === 2 ? 2 : i === 3 ? 3 : 
-                         i === 4 ? 4 : i === 5 ? 5 : i === 6 ? 6 : i === 7 ? 7 : 
-                         i === 8 ? 8 : i === 9 ? 9 : i === 10 ? 10 : i === 11 ? 12 : 
-                         i === 12 ? 14 : i === 13 ? 16 : i === 14 ? 20 : i === 15 ? 24 : 
-                         i === 16 ? 32 : i === 17 ? 40 : i === 18 ? 48 : i === 19 ? 56 : 64;
+              const num =
+                i === 0
+                  ? 0
+                  : i === 1
+                    ? 1
+                    : i === 2
+                      ? 2
+                      : i === 3
+                        ? 3
+                        : i === 4
+                          ? 4
+                          : i === 5
+                            ? 5
+                            : i === 6
+                              ? 6
+                              : i === 7
+                                ? 7
+                                : i === 8
+                                  ? 8
+                                  : i === 9
+                                    ? 9
+                                    : i === 10
+                                      ? 10
+                                      : i === 11
+                                        ? 12
+                                        : i === 12
+                                          ? 14
+                                          : i === 13
+                                            ? 16
+                                            : i === 14
+                                              ? 20
+                                              : i === 15
+                                                ? 24
+                                                : i === 16
+                                                  ? 32
+                                                  : i === 17
+                                                    ? 40
+                                                    : i === 18
+                                                      ? 48
+                                                      : i === 19
+                                                        ? 56
+                                                        : 64;
               return (
                 <option key={num} value={`--space-${num}`}>
                   space-{num}
@@ -110,41 +151,49 @@ const SpacingVisualizer = () => {
             })}
           </select>
         </div>
-        
+
         <div>
-          <div className="text-sm font-medium mb-2">Examples:</div>
+          <div className="mb-2 font-medium text-sm">Examples:</div>
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-sm">
               <span className="text-muted-foreground">Padding:</span>
-              <div 
-                className="bg-primary/10 border border-primary/30 rounded"
+              <div
+                className="rounded border border-primary/30 bg-primary/10"
                 style={{ padding: `var(${selectedSpace})` }}
               >
-                <div className="bg-primary/20 rounded px-3 py-1 text-xs">Content</div>
+                <div className="rounded bg-primary/20 px-3 py-1 text-xs">
+                  Content
+                </div>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2 text-sm">
               <span className="text-muted-foreground">Margin:</span>
-              <div className="bg-muted rounded p-2">
-                <div 
-                  className="bg-primary/20 rounded px-3 py-1 text-xs"
+              <div className="rounded bg-muted p-2">
+                <div
+                  className="rounded bg-primary/20 px-3 py-1 text-xs"
                   style={{ margin: `var(${selectedSpace})` }}
                 >
                   Content
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2 text-sm">
               <span className="text-muted-foreground">Gap:</span>
-              <div 
-                className="flex bg-muted rounded p-2"
+              <div
+                className="flex rounded bg-muted p-2"
                 style={{ gap: `var(${selectedSpace})` }}
               >
-                <div className="bg-primary/20 rounded px-3 py-1 text-xs">Item 1</div>
-                <div className="bg-primary/20 rounded px-3 py-1 text-xs">Item 2</div>
-                <div className="bg-primary/20 rounded px-3 py-1 text-xs">Item 3</div>
+                <div className="rounded bg-primary/20 px-3 py-1 text-xs">
+                  Item 1
+                </div>
+                <div className="rounded bg-primary/20 px-3 py-1 text-xs">
+                  Item 2
+                </div>
+                <div className="rounded bg-primary/20 px-3 py-1 text-xs">
+                  Item 3
+                </div>
               </div>
             </div>
           </div>
@@ -180,45 +229,46 @@ const SpacingDocumentation = () => {
   ];
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="mx-auto max-w-7xl p-8">
       <div className="mb-12">
-        <h1 className="text-4xl font-bold mb-4">Spacing System</h1>
-        <p className="text-lg text-muted-foreground mb-6">
-          Our spacing system is based on a 4px grid, providing consistent and harmonious spacing 
-          throughout the interface. This creates visual rhythm and improves scannability.
+        <h1 className="mb-4 font-bold text-4xl">Spacing System</h1>
+        <p className="mb-6 text-lg text-muted-foreground">
+          Our spacing system is based on a 4px grid, providing consistent and
+          harmonious spacing throughout the interface. This creates visual
+          rhythm and improves scannability.
         </p>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-muted/50 p-6 rounded-lg">
-            <h2 className="text-xl font-semibold mb-3">4px Grid System</h2>
+
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="rounded-lg bg-muted/50 p-6">
+            <h2 className="mb-3 font-semibold text-xl">4px Grid System</h2>
             <p className="text-sm">
-              All spacing values are multiples of 4px, ensuring consistent alignment and 
-              proportional relationships between elements.
+              All spacing values are multiples of 4px, ensuring consistent
+              alignment and proportional relationships between elements.
             </p>
           </div>
-          
-          <div className="bg-muted/50 p-6 rounded-lg">
-            <h2 className="text-xl font-semibold mb-3">Rem-based Values</h2>
+
+          <div className="rounded-lg bg-muted/50 p-6">
+            <h2 className="mb-3 font-semibold text-xl">Rem-based Values</h2>
             <p className="text-sm">
-              Spacing uses rem units for accessibility, allowing users to scale the interface 
-              with browser zoom while maintaining proportions.
+              Spacing uses rem units for accessibility, allowing users to scale
+              the interface with browser zoom while maintaining proportions.
             </p>
           </div>
-          
-          <div className="bg-muted/50 p-6 rounded-lg">
-            <h2 className="text-xl font-semibold mb-3">Consistent Scale</h2>
+
+          <div className="rounded-lg bg-muted/50 p-6">
+            <h2 className="mb-3 font-semibold text-xl">Consistent Scale</h2>
             <p className="text-sm">
-              The scale provides enough options for flexibility while preventing arbitrary 
-              spacing values that could break visual consistency.
+              The scale provides enough options for flexibility while preventing
+              arbitrary spacing values that could break visual consistency.
             </p>
           </div>
         </div>
       </div>
 
       <div className="mb-12">
-        <h2 className="text-2xl font-semibold mb-6">Spacing Scale</h2>
+        <h2 className="mb-6 font-semibold text-2xl">Spacing Scale</h2>
         <div className="space-y-2">
-          <div className="grid grid-cols-4 gap-4 px-4 text-sm font-medium text-muted-foreground">
+          <div className="grid grid-cols-4 gap-4 px-4 font-medium text-muted-foreground text-sm">
             <div>Name</div>
             <div>Token</div>
             <div>Rem</div>
@@ -235,78 +285,106 @@ const SpacingDocumentation = () => {
       </div>
 
       <div className="mb-12">
-        <h2 className="text-2xl font-semibold mb-6">Common Use Cases</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <h2 className="mb-6 font-semibold text-2xl">Common Use Cases</h2>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <SpacingExample
-            title="Component Padding"
             description="Internal spacing within components"
-            spaces={['--space-2', '--space-3', '--space-4', '--space-6', '--space-8']}
+            spaces={[
+              '--space-2',
+              '--space-3',
+              '--space-4',
+              '--space-6',
+              '--space-8',
+            ]}
+            title="Component Padding"
           />
-          
+
           <SpacingExample
-            title="Layout Gaps"
             description="Space between layout elements"
-            spaces={['--space-4', '--space-6', '--space-8', '--space-12', '--space-16']}
+            spaces={[
+              '--space-4',
+              '--space-6',
+              '--space-8',
+              '--space-12',
+              '--space-16',
+            ]}
+            title="Layout Gaps"
           />
-          
+
           <SpacingExample
-            title="Section Spacing"
             description="Vertical rhythm between sections"
             spaces={['--space-16', '--space-20', '--space-24', '--space-32']}
+            title="Section Spacing"
           />
-          
+
           <SpacingExample
-            title="Micro Spacing"
             description="Small gaps and adjustments"
             spaces={['--space-1', '--space-2', '--space-3', '--space-4']}
+            title="Micro Spacing"
           />
         </div>
       </div>
 
       <div className="mb-12">
-        <h2 className="text-2xl font-semibold mb-6">Spacing in Practice</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="border border-border rounded-lg p-6">
-            <h3 className="font-semibold mb-4">Card Component</h3>
-            <div className="bg-card border border-border rounded-lg" style={{ padding: 'var(--space-6)' }}>
-              <h4 className="text-lg font-semibold" style={{ marginBottom: 'var(--space-2)' }}>
+        <h2 className="mb-6 font-semibold text-2xl">Spacing in Practice</h2>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="rounded-lg border border-border p-6">
+            <h3 className="mb-4 font-semibold">Card Component</h3>
+            <div
+              className="rounded-lg border border-border bg-card"
+              style={{ padding: 'var(--space-6)' }}
+            >
+              <h4
+                className="font-semibold text-lg"
+                style={{ marginBottom: 'var(--space-2)' }}
+              >
                 Card Title
               </h4>
-              <p className="text-muted-foreground" style={{ marginBottom: 'var(--space-4)' }}>
-                This card demonstrates consistent spacing using our token system.
+              <p
+                className="text-muted-foreground"
+                style={{ marginBottom: 'var(--space-4)' }}
+              >
+                This card demonstrates consistent spacing using our token
+                system.
               </p>
               <div className="flex" style={{ gap: 'var(--space-3)' }}>
-                <button className="px-4 py-2 bg-primary text-primary-foreground rounded">
+                <button className="rounded bg-primary px-4 py-2 text-primary-foreground">
                   Action
                 </button>
-                <button className="px-4 py-2 border border-border rounded">
+                <button className="rounded border border-border px-4 py-2">
                   Cancel
                 </button>
               </div>
             </div>
           </div>
-          
-          <div className="border border-border rounded-lg p-6">
-            <h3 className="font-semibold mb-4">Form Layout</h3>
+
+          <div className="rounded-lg border border-border p-6">
+            <h3 className="mb-4 font-semibold">Form Layout</h3>
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium" style={{ marginBottom: 'var(--space-2)', display: 'block' }}>
+                <label
+                  className="font-medium text-sm"
+                  style={{ marginBottom: 'var(--space-2)', display: 'block' }}
+                >
                   Name
                 </label>
-                <input 
-                  type="text" 
-                  className="w-full px-3 py-2 border border-input rounded-lg"
+                <input
+                  className="w-full rounded-lg border border-input px-3 py-2"
                   placeholder="Enter your name"
+                  type="text"
                 />
               </div>
               <div>
-                <label className="text-sm font-medium" style={{ marginBottom: 'var(--space-2)', display: 'block' }}>
+                <label
+                  className="font-medium text-sm"
+                  style={{ marginBottom: 'var(--space-2)', display: 'block' }}
+                >
                   Email
                 </label>
-                <input 
-                  type="email" 
-                  className="w-full px-3 py-2 border border-input rounded-lg"
+                <input
+                  className="w-full rounded-lg border border-input px-3 py-2"
                   placeholder="Enter your email"
+                  type="email"
                 />
               </div>
             </div>
@@ -314,11 +392,11 @@ const SpacingDocumentation = () => {
         </div>
       </div>
 
-      <div className="mt-12 p-6 bg-muted/50 rounded-lg">
-        <h3 className="text-xl font-semibold mb-4">Usage Guidelines</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+      <div className="mt-12 rounded-lg bg-muted/50 p-6">
+        <h3 className="mb-4 font-semibold text-xl">Usage Guidelines</h3>
+        <div className="grid grid-cols-1 gap-6 text-sm md:grid-cols-2">
           <div>
-            <h4 className="font-semibold mb-2">Consistency</h4>
+            <h4 className="mb-2 font-semibold">Consistency</h4>
             <ul className="space-y-1">
               <li>• Always use spacing tokens, never arbitrary values</li>
               <li>• Use the same spacing for similar contexts</li>
@@ -326,9 +404,9 @@ const SpacingDocumentation = () => {
               <li>• Group related elements with smaller spacing</li>
             </ul>
           </div>
-          
+
           <div>
-            <h4 className="font-semibold mb-2">Hierarchy</h4>
+            <h4 className="mb-2 font-semibold">Hierarchy</h4>
             <ul className="space-y-1">
               <li>• More space creates stronger separation</li>
               <li>• Use larger spacing between major sections</li>
@@ -336,9 +414,9 @@ const SpacingDocumentation = () => {
               <li>• White space helps guide the eye</li>
             </ul>
           </div>
-          
+
           <div>
-            <h4 className="font-semibold mb-2">Responsive Spacing</h4>
+            <h4 className="mb-2 font-semibold">Responsive Spacing</h4>
             <ul className="space-y-1">
               <li>• Consider reducing spacing on mobile</li>
               <li>• Maintain touch target sizes (44px min)</li>
@@ -346,9 +424,9 @@ const SpacingDocumentation = () => {
               <li>• Use CSS clamp() for fluid spacing when needed</li>
             </ul>
           </div>
-          
+
           <div>
-            <h4 className="font-semibold mb-2">Common Patterns</h4>
+            <h4 className="mb-2 font-semibold">Common Patterns</h4>
             <ul className="space-y-1">
               <li>• Button padding: space-2 to space-4</li>
               <li>• Card padding: space-4 to space-6</li>

@@ -3,13 +3,13 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { z, ZodError, ZodSchema } from 'zod';
+import { ZodError, type ZodSchema, z } from 'zod';
 import { sanitizeForDisplay } from './sanitize';
 
 /**
  * Validation result type
  */
-export type ValidationResult<T> = 
+export type ValidationResult<T> =
   | { success: true; data: T }
   | { success: false; errors: ValidationError[] };
 
@@ -46,9 +46,9 @@ export const validateBody = async <T>(
     if (error instanceof ZodError) {
       return { success: false, errors: formatZodErrors(error) };
     }
-    return { 
-      success: false, 
-      errors: [{ path: '', message: 'Invalid request body' }] 
+    return {
+      success: false,
+      errors: [{ path: '', message: 'Invalid request body' }],
     };
   }
 };
@@ -63,7 +63,7 @@ export const validateQuery = <T>(
   try {
     const searchParams = request.nextUrl.searchParams;
     const query: Record<string, any> = {};
-    
+
     searchParams.forEach((value: string, key: string) => {
       // Handle array parameters (e.g., ?tags=a&tags=b)
       if (query[key]) {
@@ -76,16 +76,16 @@ export const validateQuery = <T>(
         query[key] = value;
       }
     });
-    
+
     const data = schema.parse(query);
     return { success: true, data };
   } catch (error) {
     if (error instanceof ZodError) {
       return { success: false, errors: formatZodErrors(error) };
     }
-    return { 
-      success: false, 
-      errors: [{ path: '', message: 'Invalid query parameters' }] 
+    return {
+      success: false,
+      errors: [{ path: '', message: 'Invalid query parameters' }],
     };
   }
 };
@@ -104,9 +104,9 @@ export const validateParams = <T>(
     if (error instanceof ZodError) {
       return { success: false, errors: formatZodErrors(error) };
     }
-    return { 
-      success: false, 
-      errors: [{ path: '', message: 'Invalid route parameters' }] 
+    return {
+      success: false,
+      errors: [{ path: '', message: 'Invalid route parameters' }],
     };
   }
 };
@@ -120,7 +120,7 @@ export const createValidationMiddleware = <T>(
 ) => {
   return async (request: NextRequest): Promise<NextResponse | null> => {
     let result: ValidationResult<T>;
-    
+
     switch (type) {
       case 'body':
         result = await validateBody(request, schema);
@@ -134,17 +134,17 @@ export const createValidationMiddleware = <T>(
           { status: 500 }
         );
     }
-    
+
     if (!result.success) {
       return NextResponse.json(
-        { 
-          error: 'Validation failed', 
-          details: result.errors 
+        {
+          error: 'Validation failed',
+          details: result.errors,
         },
         { status: 400 }
       );
     }
-    
+
     return null; // Continue to handler
   };
 };
@@ -155,14 +155,14 @@ export const createValidationMiddleware = <T>(
 export const createSizeLimitMiddleware = (maxBytes: number = 1024 * 1024) => {
   return async (request: NextRequest): Promise<NextResponse | null> => {
     const contentLength = request.headers.get('content-length');
-    
-    if (contentLength && parseInt(contentLength) > maxBytes) {
+
+    if (contentLength && Number.parseInt(contentLength) > maxBytes) {
       return NextResponse.json(
         { error: `Request body too large. Maximum size: ${maxBytes} bytes` },
         { status: 413 }
       );
     }
-    
+
     return null;
   };
 };
@@ -176,15 +176,15 @@ const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
  * Simple rate limit middleware
  */
 export const createRateLimitMiddleware = (
-  limit: number = 60,
+  limit = 60,
   windowMs: number = 60 * 1000
 ) => {
   return async (request: NextRequest): Promise<NextResponse | null> => {
     const identifier = request.headers.get('x-forwarded-for') || 'anonymous';
     const now = Date.now();
-    
+
     const record = rateLimitStore.get(identifier);
-    
+
     if (!record || record.resetAt < now) {
       rateLimitStore.set(identifier, {
         count: 1,
@@ -192,12 +192,12 @@ export const createRateLimitMiddleware = (
       });
       return null;
     }
-    
+
     if (record.count >= limit) {
       const retryAfter = Math.ceil((record.resetAt - now) / 1000);
       return NextResponse.json(
         { error: 'Too many requests' },
-        { 
+        {
           status: 429,
           headers: {
             'Retry-After': retryAfter.toString(),
@@ -208,7 +208,7 @@ export const createRateLimitMiddleware = (
         }
       );
     }
-    
+
     record.count++;
     return null;
   };
@@ -220,18 +220,18 @@ export const createRateLimitMiddleware = (
 export const createSanitizationMiddleware = (fields: string[] = []) => {
   return async (request: NextRequest): Promise<NextRequest> => {
     if (request.method === 'GET') return request;
-    
+
     try {
       const body = await request.json();
       const sanitized = { ...body };
-      
+
       // Sanitize specified fields
       fields.forEach((field) => {
         if (typeof sanitized[field] === 'string') {
           sanitized[field] = sanitizeForDisplay(sanitized[field]);
         }
       });
-      
+
       // Create new request with sanitized body
       return new NextRequest(request.url, {
         method: request.method,
@@ -247,7 +247,9 @@ export const createSanitizationMiddleware = (fields: string[] = []) => {
 /**
  * Combine multiple middleware functions
  */
-export const combineMiddleware = (...middlewares: Array<(req: NextRequest) => Promise<NextResponse | null>>) => {
+export const combineMiddleware = (
+  ...middlewares: Array<(req: NextRequest) => Promise<NextResponse | null>>
+) => {
   return async (request: NextRequest): Promise<NextResponse | null> => {
     for (const middleware of middlewares) {
       const response = await middleware(request);
@@ -267,7 +269,7 @@ export const withValidation = <T>(
 ) => {
   return async (request: NextRequest): Promise<NextResponse> => {
     let result: ValidationResult<T>;
-    
+
     switch (type) {
       case 'body':
         result = await validateBody(request, schema);
@@ -276,17 +278,17 @@ export const withValidation = <T>(
         result = validateQuery(request, schema);
         break;
     }
-    
+
     if (!result.success) {
       return NextResponse.json(
-        { 
-          error: 'Validation failed', 
-          details: result.errors 
+        {
+          error: 'Validation failed',
+          details: result.errors,
         },
         { status: 400 }
       );
     }
-    
+
     return handler(request, result.data);
   };
 };
@@ -294,7 +296,9 @@ export const withValidation = <T>(
 /**
  * Error response helper
  */
-export const validationErrorResponse = (errors: ValidationError[]): NextResponse => {
+export const validationErrorResponse = (
+  errors: ValidationError[]
+): NextResponse => {
   return NextResponse.json(
     {
       error: 'Validation failed',

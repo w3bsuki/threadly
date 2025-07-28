@@ -3,11 +3,11 @@
  * Standardized API utilities for search endpoints across all apps
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { UnifiedSearchService } from './unified-search';
-import { SearchHistoryService, SavedSearchService } from './history';
+import { SavedSearchService, SearchHistoryService } from './history';
 import type { SearchFilters } from './types';
+import { UnifiedSearchService } from './unified-search';
 
 // Validation schemas
 const searchParamsSchema = z.object({
@@ -20,7 +20,16 @@ const searchParamsSchema = z.object({
   minPrice: z.string().transform(Number).optional(),
   maxPrice: z.string().transform(Number).optional(),
   sellerRating: z.string().transform(Number).optional(),
-  sortBy: z.enum(['relevance', 'price_asc', 'price_desc', 'newest', 'most_viewed', 'most_favorited']).optional(),
+  sortBy: z
+    .enum([
+      'relevance',
+      'price_asc',
+      'price_desc',
+      'newest',
+      'most_viewed',
+      'most_favorited',
+    ])
+    .optional(),
   page: z.string().optional().default('0').transform(Number),
   limit: z.string().optional().default('20').transform(Number),
 });
@@ -44,12 +53,14 @@ const saveSearchSchema = z.object({
 export class SearchApiHandler {
   private searchService: UnifiedSearchService;
 
-  constructor(config: {
-    useAlgolia?: boolean;
-    useDatabaseFallback?: boolean;
-    cacheResults?: boolean;
-    trackHistory?: boolean;
-  } = {}) {
+  constructor(
+    config: {
+      useAlgolia?: boolean;
+      useDatabaseFallback?: boolean;
+      cacheResults?: boolean;
+      trackHistory?: boolean;
+    } = {}
+  ) {
     this.searchService = new UnifiedSearchService({
       useAlgolia: config.useAlgolia ?? true,
       useDatabaseFallback: config.useDatabaseFallback ?? true,
@@ -61,7 +72,10 @@ export class SearchApiHandler {
   /**
    * Main search endpoint
    */
-  async handleSearch(request: NextRequest, userId?: string): Promise<NextResponse> {
+  async handleSearch(
+    request: NextRequest,
+    userId?: string
+  ): Promise<NextResponse> {
     try {
       const url = new URL(request.url);
       const params = Object.fromEntries(url.searchParams.entries());
@@ -75,10 +89,13 @@ export class SearchApiHandler {
         conditions: validated.conditions?.split(',').filter(Boolean),
         sizes: validated.sizes?.split(',').filter(Boolean),
         colors: validated.colors?.split(',').filter(Boolean),
-        priceRange: validated.minPrice || validated.maxPrice ? {
-          min: validated.minPrice ?? 0,
-          max: validated.maxPrice ?? 999999,
-        } : undefined,
+        priceRange:
+          validated.minPrice || validated.maxPrice
+            ? {
+                min: validated.minPrice ?? 0,
+                max: validated.maxPrice ?? 999_999,
+              }
+            : undefined,
         sellerRating: validated.sellerRating,
         sortBy: validated.sortBy,
       };
@@ -107,7 +124,10 @@ export class SearchApiHandler {
       }
 
       return NextResponse.json(
-        { error: 'Search failed', message: error instanceof Error ? error.message : 'Unknown error' },
+        {
+          error: 'Search failed',
+          message: error instanceof Error ? error.message : 'Unknown error',
+        },
         { status: 500 }
       );
     }
@@ -165,13 +185,19 @@ export class SearchApiHandler {
   /**
    * Search history endpoint
    */
-  async handleSearchHistory(request: NextRequest, userId: string): Promise<NextResponse> {
+  async handleSearchHistory(
+    request: NextRequest,
+    userId: string
+  ): Promise<NextResponse> {
     try {
       if (request.method === 'GET') {
         const url = new URL(request.url);
         const limit = Number(url.searchParams.get('limit')) || 50;
-        
-        const history = await SearchHistoryService.getDatabaseHistory(userId, limit);
+
+        const history = await SearchHistoryService.getDatabaseHistory(
+          userId,
+          limit
+        );
         return NextResponse.json({ history });
       }
 
@@ -180,7 +206,10 @@ export class SearchApiHandler {
         return NextResponse.json({ success });
       }
 
-      return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
+      return NextResponse.json(
+        { error: 'Method not allowed' },
+        { status: 405 }
+      );
     } catch (error) {
       return NextResponse.json(
         { error: 'Failed to handle search history' },
@@ -192,7 +221,10 @@ export class SearchApiHandler {
   /**
    * Saved searches endpoint
    */
-  async handleSavedSearches(request: NextRequest, userId: string): Promise<NextResponse> {
+  async handleSavedSearches(
+    request: NextRequest,
+    userId: string
+  ): Promise<NextResponse> {
     try {
       if (request.method === 'GET') {
         const searches = await SavedSearchService.getSavedSearches(userId);
@@ -212,13 +244,19 @@ export class SearchApiHandler {
         );
 
         if (!saved) {
-          return NextResponse.json({ error: 'Failed to save search' }, { status: 500 });
+          return NextResponse.json(
+            { error: 'Failed to save search' },
+            { status: 500 }
+          );
         }
 
         return NextResponse.json({ search: saved });
       }
 
-      return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
+      return NextResponse.json(
+        { error: 'Method not allowed' },
+        { status: 405 }
+      );
     } catch (error) {
       if (error instanceof z.ZodError) {
         return NextResponse.json(
@@ -238,8 +276,8 @@ export class SearchApiHandler {
    * Individual saved search endpoint
    */
   async handleSavedSearch(
-    request: NextRequest, 
-    userId: string, 
+    request: NextRequest,
+    userId: string,
     searchId: string
   ): Promise<NextResponse> {
     try {
@@ -254,23 +292,35 @@ export class SearchApiHandler {
         );
 
         if (!updated) {
-          return NextResponse.json({ error: 'Search not found' }, { status: 404 });
+          return NextResponse.json(
+            { error: 'Search not found' },
+            { status: 404 }
+          );
         }
 
         return NextResponse.json({ search: updated });
       }
 
       if (request.method === 'DELETE') {
-        const success = await SavedSearchService.deleteSavedSearch(searchId, userId);
-        
+        const success = await SavedSearchService.deleteSavedSearch(
+          searchId,
+          userId
+        );
+
         if (!success) {
-          return NextResponse.json({ error: 'Search not found' }, { status: 404 });
+          return NextResponse.json(
+            { error: 'Search not found' },
+            { status: 404 }
+          );
         }
 
         return NextResponse.json({ success: true });
       }
 
-      return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
+      return NextResponse.json(
+        { error: 'Method not allowed' },
+        { status: 405 }
+      );
     } catch (error) {
       if (error instanceof z.ZodError) {
         return NextResponse.json(
@@ -298,10 +348,17 @@ export class SearchApiHandler {
       const body = await request.json();
       const { enabled } = z.object({ enabled: z.boolean() }).parse(body);
 
-      const success = await SavedSearchService.toggleAlerts(searchId, userId, enabled);
+      const success = await SavedSearchService.toggleAlerts(
+        searchId,
+        userId,
+        enabled
+      );
 
       if (!success) {
-        return NextResponse.json({ error: 'Search not found' }, { status: 404 });
+        return NextResponse.json(
+          { error: 'Search not found' },
+          { status: 404 }
+        );
       }
 
       return NextResponse.json({ success: true });
@@ -325,16 +382,21 @@ export class SearchApiHandler {
  * Convenience functions for Next.js API routes
  */
 
-export function createSearchHandler(config?: ConstructorParameters<typeof SearchApiHandler>[0]) {
+export function createSearchHandler(
+  config?: ConstructorParameters<typeof SearchApiHandler>[0]
+) {
   const handler = new SearchApiHandler(config);
-  
+
   return {
-    search: (request: NextRequest, userId?: string) => handler.handleSearch(request, userId),
+    search: (request: NextRequest, userId?: string) =>
+      handler.handleSearch(request, userId),
     suggestions: (request: NextRequest) => handler.handleSuggestions(request),
     popular: (request: NextRequest) => handler.handlePopular(request),
-    history: (request: NextRequest, userId: string) => handler.handleSearchHistory(request, userId),
-    savedSearches: (request: NextRequest, userId: string) => handler.handleSavedSearches(request, userId),
-    savedSearch: (request: NextRequest, userId: string, searchId: string) => 
+    history: (request: NextRequest, userId: string) =>
+      handler.handleSearchHistory(request, userId),
+    savedSearches: (request: NextRequest, userId: string) =>
+      handler.handleSavedSearches(request, userId),
+    savedSearch: (request: NextRequest, userId: string, searchId: string) =>
       handler.handleSavedSearch(request, userId, searchId),
     toggleAlerts: (request: NextRequest, userId: string, searchId: string) =>
       handler.handleToggleAlerts(request, userId, searchId),

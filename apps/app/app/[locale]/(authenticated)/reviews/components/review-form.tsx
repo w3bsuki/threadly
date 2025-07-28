@@ -1,25 +1,40 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  Alert,
+  AlertDescription,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Textarea,
+} from '@repo/design-system/components';
+import { AlertCircle, Star } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Button } from '@repo/design-system/components';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Textarea } from '@repo/design-system/components';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components';
-import { Alert, AlertDescription } from '@repo/design-system/components';
-import { Star, AlertCircle } from 'lucide-react';
 import { createReview } from '../actions/create-review';
 
 const reviewSchema = z.object({
-  rating: z.number().min(1, 'Please select a rating').max(5, 'Rating cannot exceed 5 stars'),
-  comment: z.string()
+  rating: z
+    .number()
+    .min(1, 'Please select a rating')
+    .max(5, 'Rating cannot exceed 5 stars'),
+  comment: z
+    .string()
     .min(10, 'Review must be at least 10 characters')
     .max(1000, 'Review must be less than 1000 characters')
     .refine((comment) => comment.trim().length >= 10, {
-      message: 'Review cannot be empty or contain only spaces'
+      message: 'Review cannot be empty or contain only spaces',
     }),
 });
 
@@ -32,7 +47,12 @@ interface ReviewFormProps {
   onSuccess?: () => void;
 }
 
-export function ReviewForm({ orderId, productTitle, sellerName, onSuccess }: ReviewFormProps) {
+export function ReviewForm({
+  orderId,
+  productTitle,
+  sellerName,
+  onSuccess,
+}: ReviewFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -77,14 +97,18 @@ export function ReviewForm({ orderId, productTitle, sellerName, onSuccess }: Rev
     <Card>
       <CardHeader>
         <CardTitle>Review Your Purchase</CardTitle>
-        <div className="text-sm text-muted-foreground">
-          <p><strong>Product:</strong> {productTitle}</p>
-          <p><strong>Seller:</strong> {sellerName}</p>
+        <div className="text-muted-foreground text-sm">
+          <p>
+            <strong>Product:</strong> {productTitle}
+          </p>
+          <p>
+            <strong>Seller:</strong> {sellerName}
+          </p>
         </div>
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
             {/* Rating */}
             <FormField
               control={form.control}
@@ -96,10 +120,10 @@ export function ReviewForm({ orderId, productTitle, sellerName, onSuccess }: Rev
                     <div className="flex gap-1">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button
+                          className="rounded p-1 transition-colors hover:bg-muted"
                           key={star}
-                          type="button"
                           onClick={() => field.onChange(star)}
-                          className="p-1 hover:bg-muted rounded transition-colors"
+                          type="button"
                         >
                           <Star
                             className={`h-6 w-6 ${
@@ -113,7 +137,7 @@ export function ReviewForm({ orderId, productTitle, sellerName, onSuccess }: Rev
                     </div>
                   </FormControl>
                   {field.value > 0 && (
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       {field.value} out of 5 stars
                     </p>
                   )}
@@ -131,13 +155,13 @@ export function ReviewForm({ orderId, productTitle, sellerName, onSuccess }: Rev
                   <FormLabel>Your Review</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Share your experience with this purchase..."
-                      maxLength={1000}
                       className="min-h-[100px]"
+                      maxLength={1000}
+                      placeholder="Share your experience with this purchase..."
                       {...field}
                     />
                   </FormControl>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {field.value.length}/1000 characters
                   </p>
                   <FormMessage />
@@ -156,16 +180,16 @@ export function ReviewForm({ orderId, productTitle, sellerName, onSuccess }: Rev
             {/* Submit */}
             <div className="flex gap-2">
               <Button
-                type="submit"
-                disabled={isSubmitting || !form.formState.isValid}
                 className="flex-1"
+                disabled={isSubmitting || !form.formState.isValid}
+                type="submit"
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Review'}
               </Button>
               <Button
+                onClick={() => router.back()}
                 type="button"
                 variant="outline"
-                onClick={() => router.back()}
               >
                 Cancel
               </Button>

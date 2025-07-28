@@ -5,15 +5,6 @@
 
 'use client';
 
-// Hooks
-export {
-  useMessages,
-  useConversations,
-  useTypingIndicator,
-  useMessageActions,
-  useRealTimeMessages,
-} from './hooks';
-
 // Components
 export {
   MessageBubble,
@@ -21,16 +12,24 @@ export {
   MessageThread,
   TypingIndicator,
 } from './components';
+// Hooks
+export {
+  useConversations,
+  useMessageActions,
+  useMessages,
+  useRealTimeMessages,
+  useTypingIndicator,
+} from './hooks';
 
 // Types for client components
 export type {
-  UseMessagesState,
-  UseConversationsState,
   ClientMessage,
+  ConnectionStatus,
+  ConversationListProps,
   MessageBubbleProps,
   MessageInputProps,
-  ConversationListProps,
-  MessageThreadProps,
-  ConnectionStatus,
   MessageStatus,
+  MessageThreadProps,
+  UseConversationsState,
+  UseMessagesState,
 } from './types';

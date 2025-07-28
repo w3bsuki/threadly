@@ -1,6 +1,6 @@
 import { database } from '@repo/database';
-import { getPusherServer } from './pusher-server';
 import type { NotificationEvent, NotificationPreferences } from '../types';
+import { getPusherServer } from './pusher-server';
 
 export interface EmailNotification {
   to: string;
@@ -13,7 +13,13 @@ export class NotificationService {
   private pusherServer: any;
 
   // Create and send in-app notification
-  async notify(userId: string, notification: Omit<NotificationEvent['data'], 'id' | 'userId' | 'createdAt' | 'read'>) {
+  async notify(
+    userId: string,
+    notification: Omit<
+      NotificationEvent['data'],
+      'id' | 'userId' | 'createdAt' | 'read'
+    >
+  ) {
     // Save to database
     const savedNotification = await database.notification.create({
       data: {
@@ -68,30 +74,35 @@ export class NotificationService {
     });
 
     // Default preferences if not set
-    return (user?.notificationPreferences as unknown as NotificationPreferences) || {
-      email: {
-        orderUpdates: true,
-        newMessages: true,
-        paymentReceived: true,
-        weeklyReport: true,
-        marketing: false,
-      },
-      push: {
-        orderUpdates: true,
-        newMessages: true,
-        paymentReceived: true,
-      },
-      inApp: {
-        orderUpdates: true,
-        newMessages: true,
-        paymentReceived: true,
-        systemAlerts: true,
-      },
-    };
+    return (
+      (user?.notificationPreferences as unknown as NotificationPreferences) || {
+        email: {
+          orderUpdates: true,
+          newMessages: true,
+          paymentReceived: true,
+          weeklyReport: true,
+          marketing: false,
+        },
+        push: {
+          orderUpdates: true,
+          newMessages: true,
+          paymentReceived: true,
+        },
+        inApp: {
+          orderUpdates: true,
+          newMessages: true,
+          paymentReceived: true,
+          systemAlerts: true,
+        },
+      }
+    );
   }
 
   // Update notification preferences
-  async updatePreferences(userId: string, preferences: Partial<NotificationPreferences>) {
+  async updatePreferences(
+    userId: string,
+    preferences: Partial<NotificationPreferences>
+  ) {
     return database.user.update({
       where: { id: userId },
       data: {
@@ -148,7 +159,7 @@ export class NotificationService {
         type: 'order',
         metadata: { orderId: order.id },
       }),
-      
+
       // Notify seller
       this.notify(order.sellerId, {
         title: 'New Order Received',
@@ -163,9 +174,10 @@ export class NotificationService {
 
   // Send notification for new message
   async notifyNewMessage(message: any, conversation: any) {
-    const recipientId = message.senderId === conversation.buyerId 
-      ? conversation.sellerId 
-      : conversation.buyerId;
+    const recipientId =
+      message.senderId === conversation.buyerId
+        ? conversation.sellerId
+        : conversation.buyerId;
 
     const sender = await database.user.findUnique({
       where: { id: message.senderId },
@@ -176,7 +188,7 @@ export class NotificationService {
       title: 'New Message',
       message: `${sender?.firstName} sent you a message`,
       type: 'message',
-      metadata: { 
+      metadata: {
         conversationId: conversation.id,
         messageId: message.id,
       },

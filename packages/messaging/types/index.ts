@@ -1,14 +1,10 @@
-import type { 
+import type {
+  ConversationStatus,
   CreateMessage,
   MessageType,
-  ConversationStatus
 } from '@repo/validation/schemas';
 
-export type {
-  CreateMessage,
-  MessageType,
-  ConversationStatus
-};
+export type { CreateMessage, MessageType, ConversationStatus };
 
 export type MessageStatus = 'SENT' | 'DELIVERED' | 'READ' | 'DELETED';
 
@@ -81,7 +77,7 @@ export interface ConversationListItem {
   } | null;
   unreadCount: number;
   rawConversation: Conversation;
-  
+
   // Additional fields from old types.ts
   productId?: string;
   productTitle?: string;
@@ -234,7 +230,11 @@ export type ConversationWithDetails = Conversation & {
 };
 
 // Hook-related types
-export type ConnectionStatus = 'connecting' | 'connected' | 'disconnected' | 'error';
+export type ConnectionStatus =
+  | 'connecting'
+  | 'connected'
+  | 'disconnected'
+  | 'error';
 
 export interface UseMessagesState {
   messages: ClientMessage[];
@@ -245,10 +245,14 @@ export interface UseMessagesState {
   connectionStatus: ConnectionStatus;
 }
 
-export type MessageAction = 
+export type MessageAction =
   | { type: 'ADD_MESSAGE'; message: ClientMessage }
   | { type: 'ADD_OPTIMISTIC'; message: ClientMessage }
-  | { type: 'CONFIRM_MESSAGE'; optimisticId: string; confirmedMessage: ClientMessage }
+  | {
+      type: 'CONFIRM_MESSAGE';
+      optimisticId: string;
+      confirmedMessage: ClientMessage;
+    }
   | { type: 'FAIL_MESSAGE'; optimisticId: string }
   | { type: 'RETRY_MESSAGE'; failedId: string }
   | { type: 'SET_MESSAGES'; messages: ClientMessage[] }

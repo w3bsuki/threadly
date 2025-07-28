@@ -12,8 +12,8 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { Heart, Search } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import { useSearch } from '../../../../lib/hooks/use-search';
 
 // Inline ProductPlaceholder for loading states
@@ -71,10 +71,10 @@ interface SearchResultsProps {
   containerHeight?: number;
 }
 
-export function SearchResults({ 
-  initialQuery = '', 
-  enableVirtualization = false, 
-  containerHeight = 600 
+export function SearchResults({
+  initialQuery = '',
+  enableVirtualization = false,
+  containerHeight = 600,
 }: SearchResultsProps) {
   const searchParams = useSearchParams();
   const [mounted, setMounted] = useState(false);
@@ -82,7 +82,6 @@ export function SearchResults({
   const [columns, setColumns] = useState(2);
   const { trackSearchQuery, trackLoadMore: trackSearchLoadMore } =
     useAnalyticsEvents();
-
 
   // Calculate columns based on screen size
   useEffect(() => {
@@ -96,7 +95,7 @@ export function SearchResults({
     };
 
     setColumns(calculateColumns());
-    
+
     const handleResize = () => setColumns(calculateColumns());
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -121,7 +120,9 @@ export function SearchResults({
     'most_viewed',
     'most_favorited',
   ] as const;
-  const sortBy = validSortOptions.includes(sort as typeof validSortOptions[number])
+  const sortBy = validSortOptions.includes(
+    sort as (typeof validSortOptions)[number]
+  )
     ? (sort as (typeof validSortOptions)[number])
     : 'relevance';
 
@@ -174,7 +175,7 @@ export function SearchResults({
   // Setup virtualization for large result sets (always initialize)
   const rowCount = Math.ceil(products.length / columns);
   const estimatedRowHeight = 400;
-  
+
   const virtualizer = useVirtualizer({
     count: rowCount,
     getScrollElement: () => parentRef.current,
@@ -275,10 +276,14 @@ export function SearchResults({
   return (
     <ErrorBoundary
       fallback={
-        <div className="flex items-center justify-center min-h-[400px] p-4">
+        <div className="flex min-h-[400px] items-center justify-center p-4">
           <div className="text-center">
-            <h3 className="text-lg font-semibold text-foreground mb-2">Error loading search results</h3>
-            <p className="text-sm text-muted-foreground">Please try refreshing the page or search again.</p>
+            <h3 className="mb-2 font-semibold text-foreground text-lg">
+              Error loading search results
+            </h3>
+            <p className="text-muted-foreground text-sm">
+              Please try refreshing the page or search again.
+            </p>
           </div>
         </div>
       }
@@ -316,215 +321,222 @@ export function SearchResults({
           </div>
         </div>
 
-      {/* Results Grid */}
-      {(!enableVirtualization || products.length < 50) ? (
-        // Non-virtualized version for smaller lists
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {products.map((product) => (
-            <Link href={`/product/${product.id}`} key={product.id}>
-              <Card className="group h-full cursor-pointer overflow-hidden transition-shadow hover:shadow-lg">
-                <div className="relative aspect-[3/4] bg-secondary">
-                  {product.images[0] &&
-                  !product.images[0].imageUrl.includes('picsum.photos') &&
-                  !product.images[0].imageUrl.includes('placehold.co') ? (
-                    <Image
-                      alt={product.title}
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                      fill
-                      sizes="(max-width: 768px) 50vw, 25vw"
-                      src={product.images[0].imageUrl}
-                    />
-                  ) : (
-                    <ProductPlaceholder className="h-full w-full" />
-                  )}
-
-                  {/* Heart Button */}
-                  <button
-                    aria-label="Add to favorites"
-                    className="absolute top-3 right-3 rounded-[var(--radius-full)] bg-background/90 p-2 backdrop-blur-sm transition-all hover:scale-110 hover:bg-background"
-                  >
-                    <Heart className="h-4 w-4 text-muted-foreground" />
-                  </button>
-                </div>
-
-                <CardContent className="p-4">
-                  <div className="mb-2">
-                    <p className="font-medium text-blue-600 text-xs uppercase tracking-wide">
-                      {product.brand || 'Unknown Brand'}
-                    </p>
-                    <h3 className="line-clamp-2 font-semibold text-foreground transition-colors group-hover:text-blue-600">
-                      {product.title}
-                    </h3>
-                  </div>
-
-                  <div className="mb-3 flex items-center justify-between">
-                    <span className="font-bold text-foreground text-lg">
-                      {formatCurrency(product.price)}
-                    </span>
-                    {product.size && (
-                      <Badge className="text-xs" variant="outline">
-                        Size {product.size}
-                      </Badge>
+        {/* Results Grid */}
+        {!enableVirtualization || products.length < 50 ? (
+          // Non-virtualized version for smaller lists
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {products.map((product) => (
+              <Link href={`/product/${product.id}`} key={product.id}>
+                <Card className="group h-full cursor-pointer overflow-hidden transition-shadow hover:shadow-lg">
+                  <div className="relative aspect-[3/4] bg-secondary">
+                    {product.images[0] &&
+                    !product.images[0].imageUrl.includes('picsum.photos') &&
+                    !product.images[0].imageUrl.includes('placehold.co') ? (
+                      <Image
+                        alt={product.title}
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        fill
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                        src={product.images[0].imageUrl}
+                      />
+                    ) : (
+                      <ProductPlaceholder className="h-full w-full" />
                     )}
+
+                    {/* Heart Button */}
+                    <button
+                      aria-label="Add to favorites"
+                      className="absolute top-3 right-3 rounded-[var(--radius-full)] bg-background/90 p-2 backdrop-blur-sm transition-all hover:scale-110 hover:bg-background"
+                    >
+                      <Heart className="h-4 w-4 text-muted-foreground" />
+                    </button>
                   </div>
 
-                  <div className="flex items-center justify-between text-muted-foreground text-sm">
-                    <span>
-                      {product.seller
-                        ? `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() ||
-                          'Anonymous'
-                        : 'Anonymous'}
-                    </span>
-                    <Badge className="text-xs" variant="secondary">
-                      {product.condition}
-                    </Badge>
-                  </div>
+                  <CardContent className="p-4">
+                    <div className="mb-2">
+                      <p className="font-medium text-blue-600 text-xs uppercase tracking-wide">
+                        {product.brand || 'Unknown Brand'}
+                      </p>
+                      <h3 className="line-clamp-2 font-semibold text-foreground transition-colors group-hover:text-blue-600">
+                        {product.title}
+                      </h3>
+                    </div>
 
-                  {product.category && (
-                    <p className="mt-1 text-muted-foreground text-xs">
-                      in {product.category.name}
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      ) : (
-        // Virtualized version for larger lists
-        <div
-          ref={parentRef}
-          style={{ height: `${containerHeight}px`, overflow: 'auto' }}
-          className="w-full"
-        >
-          <div
-            style={{
-              height: `${virtualizer.getTotalSize()}px`,
-              position: 'relative',
-            }}
-          >
-            {virtualizer.getVirtualItems().map((virtualRow) => {
-              const rowIndex = virtualRow.index;
-              const startIndex = rowIndex * columns;
-              const rowProducts = products.slice(startIndex, startIndex + columns);
+                    <div className="mb-3 flex items-center justify-between">
+                      <span className="font-bold text-foreground text-lg">
+                        {formatCurrency(product.price)}
+                      </span>
+                      {product.size && (
+                        <Badge className="text-xs" variant="outline">
+                          Size {product.size}
+                        </Badge>
+                      )}
+                    </div>
 
-              return (
-                <div
-                  key={virtualRow.key}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: `${virtualRow.size}px`,
-                    transform: `translateY(${virtualRow.start}px)`,
-                  }}
-                >
-                  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    {rowProducts.map((product) => (
-                      <Link href={`/product/${product.id}`} key={product.id}>
-                        <Card className="group h-full cursor-pointer overflow-hidden transition-shadow hover:shadow-lg">
-                          <div className="relative aspect-[3/4] bg-secondary">
-                            {product.images[0] &&
-                            !product.images[0].imageUrl.includes('picsum.photos') &&
-                            !product.images[0].imageUrl.includes('placehold.co') ? (
-                              <Image
-                                alt={product.title}
-                                className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                fill
-                                sizes="(max-width: 768px) 50vw, 25vw"
-                                src={product.images[0].imageUrl}
-                              />
-                            ) : (
-                              <ProductPlaceholder className="h-full w-full" />
-                            )}
+                    <div className="flex items-center justify-between text-muted-foreground text-sm">
+                      <span>
+                        {product.seller
+                          ? `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() ||
+                            'Anonymous'
+                          : 'Anonymous'}
+                      </span>
+                      <Badge className="text-xs" variant="secondary">
+                        {product.condition}
+                      </Badge>
+                    </div>
 
-                            {/* Heart Button */}
-                            <button
-                              aria-label="Add to favorites"
-                              className="absolute top-3 right-3 rounded-[var(--radius-full)] bg-background/90 p-2 backdrop-blur-sm transition-all hover:scale-110 hover:bg-background"
-                            >
-                              <Heart className="h-4 w-4 text-muted-foreground" />
-                            </button>
-                          </div>
-
-                          <CardContent className="p-4">
-                            <div className="mb-2">
-                              <p className="font-medium text-blue-600 text-xs uppercase tracking-wide">
-                                {product.brand || 'Unknown Brand'}
-                              </p>
-                              <h3 className="line-clamp-2 font-semibold text-foreground transition-colors group-hover:text-blue-600">
-                                {product.title}
-                              </h3>
-                            </div>
-
-                            <div className="mb-3 flex items-center justify-between">
-                              <span className="font-bold text-foreground text-lg">
-                                {formatCurrency(product.price)}
-                              </span>
-                              {product.size && (
-                                <Badge className="text-xs" variant="outline">
-                                  Size {product.size}
-                                </Badge>
-                              )}
-                            </div>
-
-                            <div className="flex items-center justify-between text-muted-foreground text-sm">
-                              <span>
-                                {product.seller
-                                  ? `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() ||
-                                    'Anonymous'
-                                  : 'Anonymous'}
-                              </span>
-                              <Badge className="text-xs" variant="secondary">
-                                {product.condition}
-                              </Badge>
-                            </div>
-
-                            {product.category && (
-                              <p className="mt-1 text-muted-foreground text-xs">
-                                in {product.category.name}
-                              </p>
-                            )}
-                          </CardContent>
-                        </Card>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
+                    {product.category && (
+                      <p className="mt-1 text-muted-foreground text-xs">
+                        in {product.category.name}
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
           </div>
-        </div>
-      )}
-
-      {/* Load More Button */}
-      {products.length > 0 && hasMore && (
-        <div className="mt-12 text-center">
-          <Button
-            className="px-8 py-3 font-medium"
-            disabled={loading}
-            onClick={() => {
-              loadMore();
-              trackSearchLoadMore('search_results', products.length);
-            }}
-            size="lg"
-            variant="outline"
+        ) : (
+          // Virtualized version for larger lists
+          <div
+            className="w-full"
+            ref={parentRef}
+            style={{ height: `${containerHeight}px`, overflow: 'auto' }}
           >
-            {loading ? 'Loading...' : 'Load more results'}
-          </Button>
-        </div>
-      )}
+            <div
+              style={{
+                height: `${virtualizer.getTotalSize()}px`,
+                position: 'relative',
+              }}
+            >
+              {virtualizer.getVirtualItems().map((virtualRow) => {
+                const rowIndex = virtualRow.index;
+                const startIndex = rowIndex * columns;
+                const rowProducts = products.slice(
+                  startIndex,
+                  startIndex + columns
+                );
 
-      {/* End of results indicator */}
-      {products.length > 0 && !hasMore && !loading && (
-        <div className="mt-12 text-center">
-          <p className="text-muted-foreground text-sm">
-            You've reached the end of the search results.
-          </p>
-        </div>
-      )}
-    </div>
+                return (
+                  <div
+                    key={virtualRow.key}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: `${virtualRow.size}px`,
+                      transform: `translateY(${virtualRow.start}px)`,
+                    }}
+                  >
+                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                      {rowProducts.map((product) => (
+                        <Link href={`/product/${product.id}`} key={product.id}>
+                          <Card className="group h-full cursor-pointer overflow-hidden transition-shadow hover:shadow-lg">
+                            <div className="relative aspect-[3/4] bg-secondary">
+                              {product.images[0] &&
+                              !product.images[0].imageUrl.includes(
+                                'picsum.photos'
+                              ) &&
+                              !product.images[0].imageUrl.includes(
+                                'placehold.co'
+                              ) ? (
+                                <Image
+                                  alt={product.title}
+                                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                  fill
+                                  sizes="(max-width: 768px) 50vw, 25vw"
+                                  src={product.images[0].imageUrl}
+                                />
+                              ) : (
+                                <ProductPlaceholder className="h-full w-full" />
+                              )}
+
+                              {/* Heart Button */}
+                              <button
+                                aria-label="Add to favorites"
+                                className="absolute top-3 right-3 rounded-[var(--radius-full)] bg-background/90 p-2 backdrop-blur-sm transition-all hover:scale-110 hover:bg-background"
+                              >
+                                <Heart className="h-4 w-4 text-muted-foreground" />
+                              </button>
+                            </div>
+
+                            <CardContent className="p-4">
+                              <div className="mb-2">
+                                <p className="font-medium text-blue-600 text-xs uppercase tracking-wide">
+                                  {product.brand || 'Unknown Brand'}
+                                </p>
+                                <h3 className="line-clamp-2 font-semibold text-foreground transition-colors group-hover:text-blue-600">
+                                  {product.title}
+                                </h3>
+                              </div>
+
+                              <div className="mb-3 flex items-center justify-between">
+                                <span className="font-bold text-foreground text-lg">
+                                  {formatCurrency(product.price)}
+                                </span>
+                                {product.size && (
+                                  <Badge className="text-xs" variant="outline">
+                                    Size {product.size}
+                                  </Badge>
+                                )}
+                              </div>
+
+                              <div className="flex items-center justify-between text-muted-foreground text-sm">
+                                <span>
+                                  {product.seller
+                                    ? `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() ||
+                                      'Anonymous'
+                                    : 'Anonymous'}
+                                </span>
+                                <Badge className="text-xs" variant="secondary">
+                                  {product.condition}
+                                </Badge>
+                              </div>
+
+                              {product.category && (
+                                <p className="mt-1 text-muted-foreground text-xs">
+                                  in {product.category.name}
+                                </p>
+                              )}
+                            </CardContent>
+                          </Card>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Load More Button */}
+        {products.length > 0 && hasMore && (
+          <div className="mt-12 text-center">
+            <Button
+              className="px-8 py-3 font-medium"
+              disabled={loading}
+              onClick={() => {
+                loadMore();
+                trackSearchLoadMore('search_results', products.length);
+              }}
+              size="lg"
+              variant="outline"
+            >
+              {loading ? 'Loading...' : 'Load more results'}
+            </Button>
+          </div>
+        )}
+
+        {/* End of results indicator */}
+        {products.length > 0 && !hasMore && !loading && (
+          <div className="mt-12 text-center">
+            <p className="text-muted-foreground text-sm">
+              You've reached the end of the search results.
+            </p>
+          </div>
+        )}
+      </div>
     </ErrorBoundary>
   );
 }

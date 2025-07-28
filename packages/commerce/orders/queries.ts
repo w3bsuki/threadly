@@ -1,4 +1,4 @@
-import type { Order, OrderStatus, OrderItem } from '../types';
+import type { Order, OrderItem, OrderStatus } from '../types';
 
 // Order query parameters
 export interface OrderQueryParams {
@@ -28,15 +28,19 @@ export async function fetchUserOrders(
   params: OrderQueryParams = {}
 ): Promise<OrdersResponse> {
   const queryParams = new URLSearchParams();
-  
+
   if (params.status) {
-    const statuses = Array.isArray(params.status) ? params.status : [params.status];
-    statuses.forEach(s => queryParams.append('status', s));
+    const statuses = Array.isArray(params.status)
+      ? params.status
+      : [params.status];
+    statuses.forEach((s) => queryParams.append('status', s));
   }
-  
+
   if (params.search) queryParams.append('search', params.search);
-  if (params.startDate) queryParams.append('startDate', params.startDate.toISOString());
-  if (params.endDate) queryParams.append('endDate', params.endDate.toISOString());
+  if (params.startDate)
+    queryParams.append('startDate', params.startDate.toISOString());
+  if (params.endDate)
+    queryParams.append('endDate', params.endDate.toISOString());
   if (params.page) queryParams.append('page', params.page.toString());
   if (params.limit) queryParams.append('limit', params.limit.toString());
   if (params.sortBy) queryParams.append('sortBy', params.sortBy);
@@ -58,16 +62,20 @@ export async function fetchSellerOrders(
   params: OrderQueryParams = {}
 ): Promise<OrdersResponse> {
   const queryParams = new URLSearchParams();
-  
+
   // Similar to fetchUserOrders but for seller-specific endpoint
   if (params.status) {
-    const statuses = Array.isArray(params.status) ? params.status : [params.status];
-    statuses.forEach(s => queryParams.append('status', s));
+    const statuses = Array.isArray(params.status)
+      ? params.status
+      : [params.status];
+    statuses.forEach((s) => queryParams.append('status', s));
   }
-  
+
   if (params.search) queryParams.append('search', params.search);
-  if (params.startDate) queryParams.append('startDate', params.startDate.toISOString());
-  if (params.endDate) queryParams.append('endDate', params.endDate.toISOString());
+  if (params.startDate)
+    queryParams.append('startDate', params.startDate.toISOString());
+  if (params.endDate)
+    queryParams.append('endDate', params.endDate.toISOString());
   if (params.page) queryParams.append('page', params.page.toString());
   if (params.limit) queryParams.append('limit', params.limit.toString());
   if (params.sortBy) queryParams.append('sortBy', params.sortBy);
@@ -200,8 +208,9 @@ export async function fetchOrderStats(
   byStatus: Record<OrderStatus, number>;
   recentOrders: Order[];
 }> {
-  const endpoint = type === 'seller' ? '/api/seller/orders/stats' : '/api/orders/stats';
-  
+  const endpoint =
+    type === 'seller' ? '/api/seller/orders/stats' : '/api/orders/stats';
+
   const response = await fetch(endpoint, {
     credentials: 'include',
   });

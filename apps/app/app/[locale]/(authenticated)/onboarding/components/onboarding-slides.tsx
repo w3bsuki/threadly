@@ -1,23 +1,23 @@
 'use client';
 
-import { Card, CardContent } from '@repo/design-system/components/ui/card';
 import { Button } from '@repo/design-system/components/ui/button';
-import { 
-  Sparkles,
-  ShoppingBag,
+import { Card, CardContent } from '@repo/design-system/components/ui/card';
+import {
+  Camera,
+  CheckCircle,
+  ChevronRight,
+  Clock,
+  DollarSign,
+  Heart,
+  MessageSquare,
   Package,
   Shield,
-  Users,
-  TrendingUp,
-  Camera,
-  DollarSign,
-  Clock,
-  ChevronRight,
-  CheckCircle,
+  ShoppingBag,
+  Sparkles,
   Star,
+  TrendingUp,
   Truck,
-  MessageSquare,
-  Heart
+  Users,
 } from 'lucide-react';
 
 interface OnboardingSlide {
@@ -28,220 +28,244 @@ interface OnboardingSlide {
 
 export const onboardingSlides: OnboardingSlide[] = [
   {
-    title: "Welcome to Threadly",
-    subtitle: "Your Premium Fashion Marketplace",
+    title: 'Welcome to Threadly',
+    subtitle: 'Your Premium Fashion Marketplace',
     content: (
       <div className="space-y-6">
-        <div className="flex justify-center mb-8">
+        <div className="mb-8 flex justify-center">
           <div className="relative">
-            <div className="w-32 h-32 rounded-[var(--radius-full)] bg-gradient-to-br from-purple-500 to-pink-500 animate-pulse" />
-            <Sparkles className="absolute top-0 right-0 w-8 h-8 text-yellow-400" />
+            <div className="h-32 w-32 animate-pulse rounded-[var(--radius-full)] bg-gradient-to-br from-purple-500 to-pink-500" />
+            <Sparkles className="absolute top-0 right-0 h-8 w-8 text-yellow-400" />
           </div>
         </div>
-        
+
         <div className="grid gap-4 md:grid-cols-3">
           <div className="text-center">
-            <div className="w-16 h-16 mx-auto mb-3 rounded-[var(--radius-full)] bg-purple-100 flex items-center justify-center">
-              <Users className="w-8 h-8 text-purple-600" />
+            <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-[var(--radius-full)] bg-purple-100">
+              <Users className="h-8 w-8 text-purple-600" />
             </div>
-            <h3 className="font-semibold mb-1">Trusted Community</h3>
-            <p className="text-sm text-muted-foreground">Join thousands of fashion lovers</p>
+            <h3 className="mb-1 font-semibold">Trusted Community</h3>
+            <p className="text-muted-foreground text-sm">
+              Join thousands of fashion lovers
+            </p>
           </div>
-          
+
           <div className="text-center">
-            <div className="w-16 h-16 mx-auto mb-3 rounded-[var(--radius-full)] bg-green-100 flex items-center justify-center">
-              <Shield className="w-8 h-8 text-green-600" />
+            <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-[var(--radius-full)] bg-green-100">
+              <Shield className="h-8 w-8 text-green-600" />
             </div>
-            <h3 className="font-semibold mb-1">100% Secure</h3>
-            <p className="text-sm text-muted-foreground">Protected payments & shipping</p>
+            <h3 className="mb-1 font-semibold">100% Secure</h3>
+            <p className="text-muted-foreground text-sm">
+              Protected payments & shipping
+            </p>
           </div>
-          
+
           <div className="text-center">
-            <div className="w-16 h-16 mx-auto mb-3 rounded-[var(--radius-full)] bg-blue-100 flex items-center justify-center">
-              <TrendingUp className="w-8 h-8 text-blue-600" />
+            <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-[var(--radius-full)] bg-blue-100">
+              <TrendingUp className="h-8 w-8 text-blue-600" />
             </div>
-            <h3 className="font-semibold mb-1">Low Fees</h3>
-            <p className="text-sm text-muted-foreground">Only 5% commission on sales</p>
+            <h3 className="mb-1 font-semibold">Low Fees</h3>
+            <p className="text-muted-foreground text-sm">
+              Only 5% commission on sales
+            </p>
           </div>
         </div>
       </div>
-    )
+    ),
   },
   {
-    title: "How Buying Works",
-    subtitle: "Shop with confidence in 4 simple steps",
+    title: 'How Buying Works',
+    subtitle: 'Shop with confidence in 4 simple steps',
     content: (
       <div className="space-y-4">
         <div className="grid gap-4">
-          <div className="flex gap-4 items-start">
-            <div className="flex-shrink-0 w-10 h-10 rounded-[var(--radius-full)] bg-blue-100 flex items-center justify-center">
+          <div className="flex items-start gap-4">
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[var(--radius-full)] bg-blue-100">
               <span className="font-bold text-blue-600">1</span>
             </div>
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <ShoppingBag className="w-5 h-5 text-blue-600" />
+              <div className="mb-1 flex items-center gap-2">
+                <ShoppingBag className="h-5 w-5 text-blue-600" />
                 <h4 className="font-semibold">Browse & Discover</h4>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Find unique pieces from verified sellers. Filter by brand, size, and style.
+              <p className="text-muted-foreground text-sm">
+                Find unique pieces from verified sellers. Filter by brand, size,
+                and style.
               </p>
             </div>
           </div>
-          
-          <div className="flex gap-4 items-start">
-            <div className="flex-shrink-0 w-10 h-10 rounded-[var(--radius-full)] bg-green-100 flex items-center justify-center">
+
+          <div className="flex items-start gap-4">
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[var(--radius-full)] bg-green-100">
               <span className="font-bold text-green-600">2</span>
             </div>
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <Shield className="w-5 h-5 text-green-600" />
+              <div className="mb-1 flex items-center gap-2">
+                <Shield className="h-5 w-5 text-green-600" />
                 <h4 className="font-semibold">Secure Checkout</h4>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Your payment is held securely until you receive and confirm your item.
+              <p className="text-muted-foreground text-sm">
+                Your payment is held securely until you receive and confirm your
+                item.
               </p>
             </div>
           </div>
-          
-          <div className="flex gap-4 items-start">
-            <div className="flex-shrink-0 w-10 h-10 rounded-[var(--radius-full)] bg-purple-100 flex items-center justify-center">
+
+          <div className="flex items-start gap-4">
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[var(--radius-full)] bg-purple-100">
               <span className="font-bold text-purple-600">3</span>
             </div>
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <Truck className="w-5 h-5 text-purple-600" />
+              <div className="mb-1 flex items-center gap-2">
+                <Truck className="h-5 w-5 text-purple-600" />
                 <h4 className="font-semibold">Track Shipment</h4>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Real-time updates from purchase to delivery. Sellers ship within 3 days.
+              <p className="text-muted-foreground text-sm">
+                Real-time updates from purchase to delivery. Sellers ship within
+                3 days.
               </p>
             </div>
           </div>
-          
-          <div className="flex gap-4 items-start">
-            <div className="flex-shrink-0 w-10 h-10 rounded-[var(--radius-full)] bg-yellow-100 flex items-center justify-center">
+
+          <div className="flex items-start gap-4">
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[var(--radius-full)] bg-yellow-100">
               <span className="font-bold text-yellow-600">4</span>
             </div>
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <Star className="w-5 h-5 text-yellow-600" />
+              <div className="mb-1 flex items-center gap-2">
+                <Star className="h-5 w-5 text-yellow-600" />
                 <h4 className="font-semibold">Rate & Review</h4>
               </div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Confirm receipt and share your experience to help our community.
               </p>
             </div>
           </div>
         </div>
-        
-        <Card className="bg-green-50 border-green-200">
+
+        <Card className="border-green-200 bg-green-50">
           <CardContent className="pt-6">
             <div className="flex gap-3">
-              <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+              <CheckCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-green-600" />
               <div className="text-sm">
-                <p className="font-medium text-green-900">Buyer Protection Guarantee</p>
-                <p className="text-green-700">Full refund if item doesn't arrive or isn't as described</p>
+                <p className="font-medium text-green-900">
+                  Buyer Protection Guarantee
+                </p>
+                <p className="text-green-700">
+                  Full refund if item doesn't arrive or isn't as described
+                </p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
-    )
+    ),
   },
   {
-    title: "How Selling Works",
-    subtitle: "Turn your closet into cash in minutes",
+    title: 'How Selling Works',
+    subtitle: 'Turn your closet into cash in minutes',
     content: (
       <div className="space-y-4">
         <div className="grid gap-4">
-          <div className="flex gap-4 items-start">
-            <div className="flex-shrink-0 w-10 h-10 rounded-[var(--radius-full)] bg-pink-100 flex items-center justify-center">
+          <div className="flex items-start gap-4">
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[var(--radius-full)] bg-pink-100">
               <span className="font-bold text-pink-600">1</span>
             </div>
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <Camera className="w-5 h-5 text-pink-600" />
+              <div className="mb-1 flex items-center gap-2">
+                <Camera className="h-5 w-5 text-pink-600" />
                 <h4 className="font-semibold">Snap & List</h4>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Take photos, add description, set price. Listing is free and takes 2 minutes.
+              <p className="text-muted-foreground text-sm">
+                Take photos, add description, set price. Listing is free and
+                takes 2 minutes.
               </p>
             </div>
           </div>
-          
-          <div className="flex gap-4 items-start">
-            <div className="flex-shrink-0 w-10 h-10 rounded-[var(--radius-full)] bg-green-100 flex items-center justify-center">
+
+          <div className="flex items-start gap-4">
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[var(--radius-full)] bg-green-100">
               <span className="font-bold text-green-600">2</span>
             </div>
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <DollarSign className="w-5 h-5 text-green-600" />
+              <div className="mb-1 flex items-center gap-2">
+                <DollarSign className="h-5 w-5 text-green-600" />
                 <h4 className="font-semibold">Make Sales</h4>
               </div>
-              <p className="text-sm text-muted-foreground">
-                When someone buys, we handle payment. You keep 95% of the sale price.
+              <p className="text-muted-foreground text-sm">
+                When someone buys, we handle payment. You keep 95% of the sale
+                price.
               </p>
             </div>
           </div>
-          
-          <div className="flex gap-4 items-start">
-            <div className="flex-shrink-0 w-10 h-10 rounded-[var(--radius-full)] bg-blue-100 flex items-center justify-center">
+
+          <div className="flex items-start gap-4">
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[var(--radius-full)] bg-blue-100">
               <span className="font-bold text-blue-600">3</span>
             </div>
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <Package className="w-5 h-5 text-blue-600" />
+              <div className="mb-1 flex items-center gap-2">
+                <Package className="h-5 w-5 text-blue-600" />
                 <h4 className="font-semibold">Ship Fast</h4>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Print label from dashboard, ship within 3 days. We provide tracking.
+              <p className="text-muted-foreground text-sm">
+                Print label from dashboard, ship within 3 days. We provide
+                tracking.
               </p>
             </div>
           </div>
-          
-          <div className="flex gap-4 items-start">
-            <div className="flex-shrink-0 w-10 h-10 rounded-[var(--radius-full)] bg-purple-100 flex items-center justify-center">
+
+          <div className="flex items-start gap-4">
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[var(--radius-full)] bg-purple-100">
               <span className="font-bold text-purple-600">4</span>
             </div>
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <Clock className="w-5 h-5 text-purple-600" />
+              <div className="mb-1 flex items-center gap-2">
+                <Clock className="h-5 w-5 text-purple-600" />
                 <h4 className="font-semibold">Get Paid</h4>
               </div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Funds released after delivery. Request payout anytime over $20.
               </p>
             </div>
           </div>
         </div>
-        
+
         <div className="grid gap-3 md:grid-cols-2">
-          <Card className="bg-purple-50 border-purple-200">
+          <Card className="border-purple-200 bg-purple-50">
             <CardContent className="pt-4 pb-4">
               <div className="flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-purple-600" />
-                <p className="text-sm font-medium text-purple-900">Only 5% Fee</p>
+                <TrendingUp className="h-4 w-4 text-purple-600" />
+                <p className="font-medium text-purple-900 text-sm">
+                  Only 5% Fee
+                </p>
               </div>
-              <p className="text-xs text-purple-700 mt-1">No listing fees or hidden costs</p>
+              <p className="mt-1 text-purple-700 text-xs">
+                No listing fees or hidden costs
+              </p>
             </CardContent>
           </Card>
-          
-          <Card className="bg-blue-50 border-blue-200">
+
+          <Card className="border-blue-200 bg-blue-50">
             <CardContent className="pt-4 pb-4">
               <div className="flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-blue-600" />
-                <p className="text-sm font-medium text-blue-900">24/7 Support</p>
+                <MessageSquare className="h-4 w-4 text-blue-600" />
+                <p className="font-medium text-blue-900 text-sm">
+                  24/7 Support
+                </p>
               </div>
-              <p className="text-xs text-blue-700 mt-1">We're here to help you succeed</p>
+              <p className="mt-1 text-blue-700 text-xs">
+                We're here to help you succeed
+              </p>
             </CardContent>
           </Card>
         </div>
       </div>
-    )
+    ),
   },
   {
-    title: "Safety & Trust",
-    subtitle: "Your security is our top priority",
+    title: 'Safety & Trust',
+    subtitle: 'Your security is our top priority',
     content: (
       <div className="space-y-6">
         <div className="grid gap-4">
@@ -249,21 +273,21 @@ export const onboardingSlides: OnboardingSlide[] = [
             <CardContent className="pt-6">
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
-                  <Shield className="w-8 h-8 text-green-600" />
+                  <Shield className="h-8 w-8 text-green-600" />
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-2">Secure Payments</h4>
-                  <ul className="space-y-1 text-sm text-muted-foreground">
+                  <h4 className="mb-2 font-semibold">Secure Payments</h4>
+                  <ul className="space-y-1 text-muted-foreground text-sm">
                     <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-600" />
+                      <CheckCircle className="h-4 w-4 text-green-600" />
                       All payments processed by Stripe
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-600" />
+                      <CheckCircle className="h-4 w-4 text-green-600" />
                       Money held until delivery confirmed
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-600" />
+                      <CheckCircle className="h-4 w-4 text-green-600" />
                       Full refund protection for buyers
                     </li>
                   </ul>
@@ -271,26 +295,26 @@ export const onboardingSlides: OnboardingSlide[] = [
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="border-2">
             <CardContent className="pt-6">
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
-                  <Users className="w-8 h-8 text-blue-600" />
+                  <Users className="h-8 w-8 text-blue-600" />
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-2">Verified Community</h4>
-                  <ul className="space-y-1 text-sm text-muted-foreground">
+                  <h4 className="mb-2 font-semibold">Verified Community</h4>
+                  <ul className="space-y-1 text-muted-foreground text-sm">
                     <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-blue-600" />
+                      <CheckCircle className="h-4 w-4 text-blue-600" />
                       All users verified through secure auth
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-blue-600" />
+                      <CheckCircle className="h-4 w-4 text-blue-600" />
                       Ratings and reviews from real buyers
                     </li>
                     <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-blue-600" />
+                      <CheckCircle className="h-4 w-4 text-blue-600" />
                       Report system for safety concerns
                     </li>
                   </ul>
@@ -299,82 +323,86 @@ export const onboardingSlides: OnboardingSlide[] = [
             </CardContent>
           </Card>
         </div>
-        
-        <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
+
+        <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50">
           <CardContent className="pt-6 text-center">
-            <Heart className="w-12 h-12 text-pink-500 mx-auto mb-3" />
-            <p className="font-semibold text-purple-900 mb-1">Join Our Community</p>
-            <p className="text-sm text-purple-700">
+            <Heart className="mx-auto mb-3 h-12 w-12 text-pink-500" />
+            <p className="mb-1 font-semibold text-purple-900">
+              Join Our Community
+            </p>
+            <p className="text-purple-700 text-sm">
               Thousands of fashion lovers buying and selling every day
             </p>
           </CardContent>
         </Card>
       </div>
-    )
+    ),
   },
   {
     title: "You're All Set!",
-    subtitle: "Start exploring Threadly now",
+    subtitle: 'Start exploring Threadly now',
     content: (
       <div className="space-y-6">
-        <div className="flex justify-center mb-6">
+        <div className="mb-6 flex justify-center">
           <div className="relative">
-            <div className="w-24 h-24 rounded-[var(--radius-full)] bg-green-100 flex items-center justify-center">
-              <CheckCircle className="w-12 h-12 text-green-600" />
+            <div className="flex h-24 w-24 items-center justify-center rounded-[var(--radius-full)] bg-green-100">
+              <CheckCircle className="h-12 w-12 text-green-600" />
             </div>
-            <Sparkles className="absolute -top-2 -right-2 w-6 h-6 text-yellow-400" />
+            <Sparkles className="-top-2 -right-2 absolute h-6 w-6 text-yellow-400" />
           </div>
         </div>
-        
-        <div className="text-center space-y-2 mb-8">
-          <h3 className="text-xl font-semibold">Welcome to Threadly!</h3>
-          <p className="text-muted-foreground">Choose how you'd like to start</p>
+
+        <div className="mb-8 space-y-2 text-center">
+          <h3 className="font-semibold text-xl">Welcome to Threadly!</h3>
+          <p className="text-muted-foreground">
+            Choose how you'd like to start
+          </p>
         </div>
-        
+
         <div className="grid gap-4 md:grid-cols-2">
-          <Card className="border-2 hover:border-primary transition-colors cursor-pointer">
+          <Card className="cursor-pointer border-2 transition-colors hover:border-primary">
             <CardContent className="pt-6">
-              <div className="text-center space-y-3">
-                <div className="w-16 h-16 mx-auto rounded-[var(--radius-full)] bg-blue-100 flex items-center justify-center">
-                  <ShoppingBag className="w-8 h-8 text-blue-600" />
+              <div className="space-y-3 text-center">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[var(--radius-full)] bg-blue-100">
+                  <ShoppingBag className="h-8 w-8 text-blue-600" />
                 </div>
                 <h4 className="font-semibold">Start Shopping</h4>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   Browse thousands of unique fashion items
                 </p>
                 <Button className="w-full" variant="outline">
-                  <ChevronRight className="w-4 h-4 mr-2" />
+                  <ChevronRight className="mr-2 h-4 w-4" />
                   Browse Items
                 </Button>
               </div>
             </CardContent>
           </Card>
-          
-          <Card className="border-2 hover:border-primary transition-colors cursor-pointer">
+
+          <Card className="cursor-pointer border-2 transition-colors hover:border-primary">
             <CardContent className="pt-6">
-              <div className="text-center space-y-3">
-                <div className="w-16 h-16 mx-auto rounded-[var(--radius-full)] bg-green-100 flex items-center justify-center">
-                  <Camera className="w-8 h-8 text-green-600" />
+              <div className="space-y-3 text-center">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[var(--radius-full)] bg-green-100">
+                  <Camera className="h-8 w-8 text-green-600" />
                 </div>
                 <h4 className="font-semibold">List Your First Item</h4>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   Turn your fashion into cash in minutes
                 </p>
                 <Button className="w-full" variant="outline">
-                  <ChevronRight className="w-4 h-4 mr-2" />
+                  <ChevronRight className="mr-2 h-4 w-4" />
                   Start Selling
                 </Button>
               </div>
             </CardContent>
           </Card>
         </div>
-        
-        <div className="text-center pt-4">
-          <p className="text-sm text-muted-foreground">
+
+        <div className="pt-4 text-center">
+          <p className="text-muted-foreground text-sm">
             You can always switch between buying and selling in your dashboard
           </p>
         </div>
       </div>
-    )
-  }
+    ),
+  },
 ];

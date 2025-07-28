@@ -38,34 +38,38 @@ export function MessageList({
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
-    
-    const messageDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    
+
+    const messageDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+    );
+
     if (messageDate.getTime() === today.getTime()) {
       return 'Today';
-    } else if (messageDate.getTime() === yesterday.getTime()) {
-      return 'Yesterday';
-    } else {
-      return messageDate.toLocaleDateString('en-US', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      });
     }
+    if (messageDate.getTime() === yesterday.getTime()) {
+      return 'Yesterday';
+    }
+    return messageDate.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
   };
 
   const groupMessagesByDate = (messages: Message[]) => {
     const groups: { [key: string]: Message[] } = {};
-    
-    messages.forEach(message => {
+
+    messages.forEach((message) => {
       const dateKey = formatDateGroup(new Date(message.createdAt));
       if (!groups[dateKey]) {
         groups[dateKey] = [];
       }
       groups[dateKey].push(message);
     });
-    
+
     return groups;
   };
 
@@ -82,7 +86,7 @@ export function MessageList({
           Object.entries(groupedMessages).map(([dateGroup, messages]) => (
             <div key={dateGroup}>
               <div className="my-4 text-center">
-                <span className="rounded-[var(--radius-full)] bg-secondary px-3 py-1 text-xs text-muted-foreground">
+                <span className="rounded-[var(--radius-full)] bg-secondary px-3 py-1 text-muted-foreground text-xs">
                   {dateGroup}
                 </span>
               </div>
@@ -92,28 +96,28 @@ export function MessageList({
                 const isFailed = failedMessageIds.includes(message.id);
                 return (
                   <MessageItem
+                    isFailed={isFailed}
+                    isOptimistic={isOptimistic}
+                    isSender={isSender}
                     key={message.id}
                     message={message}
-                    isSender={isSender}
-                    senderName={isSender ? 'You' : otherUserName}
-                    senderAvatar={isSender ? undefined : otherUserAvatar}
-                    isOptimistic={isOptimistic}
-                    isFailed={isFailed}
                     onRetry={() => onRetry?.(message)}
+                    senderAvatar={isSender ? undefined : otherUserAvatar}
+                    senderName={isSender ? 'You' : otherUserName}
                   />
                 );
               })}
             </div>
           ))
         )}
-        
+
         {typingUsers.length > 0 && (
-          <TypingIndicatorWithAvatar 
-            userName={otherUserName}
+          <TypingIndicatorWithAvatar
             userAvatar={otherUserAvatar}
+            userName={otherUserName}
           />
         )}
-        
+
         <div ref={messagesEndRef} />
       </div>
     </CardContent>

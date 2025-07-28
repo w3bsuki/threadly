@@ -1,6 +1,4 @@
-import { env } from '../../../env';
 import { analytics } from '@repo/analytics/posthog/server';
-import { database } from '@repo/database';
 import type {
   DeletedObjectJSON,
   OrganizationJSON,
@@ -8,11 +6,13 @@ import type {
   UserJSON,
   WebhookEvent,
 } from '@repo/auth/server';
+import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
-import { webhookRateLimit, checkRateLimit } from '@repo/security';
+import { checkRateLimit, webhookRateLimit } from '@repo/security';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { Webhook } from 'svix';
+import { env } from '../../../env';
 
 const handleUserCreated = async (data: UserJSON) => {
   try {
@@ -232,16 +232,16 @@ export const POST = async (request: Request): Promise<Response> => {
   if (!rateLimitResult.allowed) {
     logError('Auth webhook rate limit exceeded', {
       rateLimitResult,
-      headers: Object.fromEntries(request.headers.entries())
+      headers: Object.fromEntries(request.headers.entries()),
     });
-    
+
     return NextResponse.json(
-      { 
+      {
         error: rateLimitResult.error?.message || 'Rate limit exceeded',
         code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED',
-        ok: false 
+        ok: false,
       },
-      { 
+      {
         status: 429,
         headers: rateLimitResult.headers,
       }
@@ -255,7 +255,7 @@ export const POST = async (request: Request): Promise<Response> => {
   const svixSignature = headerPayload.get('svix-signature');
 
   // If there are no headers, error out
-  if (!svixId || !svixTimestamp || !svixSignature) {
+  if (!(svixId && svixTimestamp && svixSignature)) {
     return new Response('Error occured -- no svix headers', {
       status: 400,
     });
@@ -286,7 +286,6 @@ export const POST = async (request: Request): Promise<Response> => {
   // Get the ID and type
   const { id } = event.data;
   const eventType = event.type;
-
 
   let response: Response = new Response('', { status: 201 });
 

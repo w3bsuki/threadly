@@ -45,9 +45,9 @@ const FavoritesPage = async ({ params }: FavoritesProps) => {
     const { AuthPrompt } = await import('../../../components/auth-prompt');
     return (
       <AuthPrompt
-        title="Sign in to view favorites"
         description="You need to be signed in to save and manage your favorite items on Threadly."
         locale={locale}
+        title="Sign in to view favorites"
       />
     );
   }

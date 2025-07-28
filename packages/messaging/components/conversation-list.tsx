@@ -20,7 +20,6 @@ export function ConversationList({
   currentUserId,
   className,
 }: ConversationListProps) {
-
   // Conversations are already filtered by the parent component
 
   const formatTime = (date: Date) => {
@@ -47,17 +46,17 @@ export function ConversationList({
           <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground/70" />
           <Input
             className="pl-9"
+            maxLength={100}
             onChange={(e) => {
               const sanitizedValue = e.target.value.replace(/<[^>]*>/g, '');
               onSearchChange(sanitizedValue);
             }}
             placeholder="Search messages..."
             value={searchQuery}
-            maxLength={100}
           />
         </div>
       </CardHeader>
-      <CardContent className="p-0 overflow-y-auto max-h-[400px] lg:max-h-[calc(100vh-20rem)]">
+      <CardContent className="max-h-[400px] overflow-y-auto p-0 lg:max-h-[calc(100vh-20rem)]">
         <div className="divide-y">
           {conversations.length === 0 ? (
             <div className="p-6 text-center text-muted-foreground">
@@ -66,10 +65,8 @@ export function ConversationList({
           ) : (
             conversations.map((conversation) => (
               <button
-                className={`w-full p-3 sm:p-4 text-left transition-colors hover:bg-muted touch-target ${
-                  selectedConversationId === conversation.id
-                    ? 'bg-muted'
-                    : ''
+                className={`touch-target w-full p-3 text-left transition-colors hover:bg-muted sm:p-4 ${
+                  selectedConversationId === conversation.id ? 'bg-muted' : ''
                 }`}
                 key={conversation.id}
                 onClick={() => onConversationSelect(conversation)}
@@ -89,12 +86,14 @@ export function ConversationList({
 
                   <div className="min-w-0 flex-1">
                     <div className="mb-1 flex items-center justify-between">
-                      <h4 className="font-medium text-sm line-clamp-1">
+                      <h4 className="line-clamp-1 font-medium text-sm">
                         {conversation.otherUser.name}
                       </h4>
                       {conversation.lastMessage && (
                         <span className="text-muted-foreground text-xs">
-                          {formatTime(new Date(conversation.lastMessage.timestamp))}
+                          {formatTime(
+                            new Date(conversation.lastMessage.timestamp)
+                          )}
                         </span>
                       )}
                     </div>

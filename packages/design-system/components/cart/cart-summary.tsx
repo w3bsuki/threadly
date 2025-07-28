@@ -1,12 +1,18 @@
 'use client';
 
+import { ArrowRight, Info, ShoppingBag } from 'lucide-react';
 import * as React from 'react';
-import { ShoppingBag, ArrowRight, Info } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { Button } from '../ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card';
-import { Separator } from '../ui/separator';
 import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '../ui/card';
+import { Separator } from '../ui/separator';
 import {
   Tooltip,
   TooltipContent,
@@ -55,7 +61,10 @@ export const CartSummary: React.FC<CartSummaryProps> = ({
 
   const totalDiscount = discount + promoDiscount;
   const freeShippingThreshold = 50;
-  const remainingForFreeShipping = Math.max(0, freeShippingThreshold - subtotal);
+  const remainingForFreeShipping = Math.max(
+    0,
+    freeShippingThreshold - subtotal
+  );
 
   return (
     <Card
@@ -67,29 +76,32 @@ export const CartSummary: React.FC<CartSummaryProps> = ({
       )}
     >
       <CardHeader className={variant === 'compact' ? 'pb-4' : undefined}>
-        <CardTitle className={cn(
-          'flex items-center gap-2',
-          variant === 'compact' ? 'text-lg' : 'text-xl'
-        )}>
+        <CardTitle
+          className={cn(
+            'flex items-center gap-2',
+            variant === 'compact' ? 'text-lg' : 'text-xl'
+          )}
+        >
           <ShoppingBag className="h-5 w-5" />
           Order Summary
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {itemCount} {itemCount === 1 ? 'item' : 'items'}
         </p>
       </CardHeader>
 
-      <CardContent className={cn(
-        'space-y-4',
-        variant === 'compact' && 'space-y-3'
-      )}>
+      <CardContent
+        className={cn('space-y-4', variant === 'compact' && 'space-y-3')}
+      >
         {/* Free Shipping Progress */}
         {remainingForFreeShipping > 0 && shipping > 0 && (
-          <div className={cn(
-            'rounded-lg bg-muted/50 p-3 space-y-2',
-            enableAnimations && 'animate-fade-in animation-delay-200'
-          )}>
-            <p className="text-sm font-medium">
+          <div
+            className={cn(
+              'space-y-2 rounded-lg bg-muted/50 p-3',
+              enableAnimations && 'animation-delay-200 animate-fade-in'
+            )}
+          >
+            <p className="font-medium text-sm">
               Add ${remainingForFreeShipping.toFixed(2)} for free shipping!
             </p>
             <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
@@ -98,7 +110,9 @@ export const CartSummary: React.FC<CartSummaryProps> = ({
                   'h-full bg-primary transition-all duration-500',
                   enableAnimations && 'animate-slide-in-left'
                 )}
-                style={{ width: `${(subtotal / freeShippingThreshold) * 100}%` }}
+                style={{
+                  width: `${(subtotal / freeShippingThreshold) * 100}%`,
+                }}
               />
             </div>
           </div>
@@ -112,11 +126,11 @@ export const CartSummary: React.FC<CartSummaryProps> = ({
           </div>
 
           {totalDiscount > 0 && (
-            <div className="flex items-center justify-between text-sm text-green-600 dark:text-green-400">
+            <div className="flex items-center justify-between text-green-600 text-sm dark:text-green-400">
               <span className="flex items-center gap-1">
                 Discount
                 {promoCode && (
-                  <Badge variant="secondary" className="ml-1 text-xs">
+                  <Badge className="ml-1 text-xs" variant="secondary">
                     {promoCode}
                   </Badge>
                 )}
@@ -141,7 +155,11 @@ export const CartSummary: React.FC<CartSummaryProps> = ({
                 </TooltipProvider>
               )}
             </span>
-            <span className={shipping === 0 ? 'text-green-600 dark:text-green-400' : ''}>
+            <span
+              className={
+                shipping === 0 ? 'text-green-600 dark:text-green-400' : ''
+              }
+            >
               {shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
             </span>
           </div>
@@ -158,18 +176,20 @@ export const CartSummary: React.FC<CartSummaryProps> = ({
 
         {/* Total */}
         <div className="flex items-center justify-between">
-          <span className="text-base font-semibold">Total</span>
-          <span className={cn(
-            'font-bold',
-            variant === 'compact' ? 'text-lg' : 'text-xl',
-            enableAnimations && 'animate-bounce-in animation-delay-300'
-          )}>
+          <span className="font-semibold text-base">Total</span>
+          <span
+            className={cn(
+              'font-bold',
+              variant === 'compact' ? 'text-lg' : 'text-xl',
+              enableAnimations && 'animation-delay-300 animate-bounce-in'
+            )}
+          >
             ${total.toFixed(2)}
           </span>
         </div>
 
         {estimatedDelivery && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Estimated delivery: {estimatedDelivery}
           </p>
         )}
@@ -177,13 +197,13 @@ export const CartSummary: React.FC<CartSummaryProps> = ({
 
       <CardFooter className={variant === 'compact' ? 'pt-4' : undefined}>
         <Button
-          onClick={onCheckout}
-          disabled={isCheckoutLoading || itemCount === 0}
-          size={variant === 'compact' ? 'default' : 'lg'}
           className={cn(
             'w-full gap-2',
             enableAnimations && 'transition-all hover:gap-3'
           )}
+          disabled={isCheckoutLoading || itemCount === 0}
+          onClick={onCheckout}
+          size={variant === 'compact' ? 'default' : 'lg'}
           variant="brand-primary"
         >
           {isCheckoutLoading ? (

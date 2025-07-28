@@ -1,28 +1,28 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { 
+import {
+  Badge,
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  toast,
 } from '@repo/design-system/components';
-import { 
-  Bookmark, 
-  MoreVertical, 
-  Trash2, 
+import {
   Bell,
   BellOff,
+  Bookmark,
+  Loader2,
+  MoreVertical,
   Search,
-  Loader2
+  Trash2,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { SavedSearchDialog } from '@/components/saved-search-dialog';
-import { toast } from '@repo/design-system/components';
-import { type SearchFilters } from '@/lib/hooks/use-search';
+import type { SearchFilters } from '@/lib/hooks/use-search';
 
 interface SavedSearch {
   id: string;
@@ -40,7 +40,11 @@ interface SavedSearchesProps {
   onApplySearch?: (query: string, filters: SearchFilters) => void;
 }
 
-export function SavedSearches({ currentQuery = '', currentFilters, onApplySearch }: SavedSearchesProps) {
+export function SavedSearches({
+  currentQuery = '',
+  currentFilters,
+  onApplySearch,
+}: SavedSearchesProps) {
   const router = useRouter();
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -55,7 +59,7 @@ export function SavedSearches({ currentQuery = '', currentFilters, onApplySearch
     try {
       const response = await fetch('/api/saved-searches');
       if (!response.ok) throw new Error('Failed to fetch saved searches');
-      
+
       const data = await response.json();
       setSavedSearches(data.savedSearches);
     } catch (error) {
@@ -74,7 +78,7 @@ export function SavedSearches({ currentQuery = '', currentFilters, onApplySearch
 
       if (!response.ok) throw new Error('Failed to delete search');
 
-      setSavedSearches(prev => prev.filter(s => s.id !== id));
+      setSavedSearches((prev) => prev.filter((s) => s.id !== id));
       toast.success('Search deleted');
     } catch (error) {
       toast.error('Failed to delete search');
@@ -93,8 +97,8 @@ export function SavedSearches({ currentQuery = '', currentFilters, onApplySearch
 
       if (!response.ok) throw new Error('Failed to update alerts');
 
-      setSavedSearches(prev => 
-        prev.map(s => 
+      setSavedSearches((prev) =>
+        prev.map((s) =>
           s.id === id ? { ...s, alertEnabled: !currentEnabled } : s
         )
       );
@@ -131,35 +135,35 @@ export function SavedSearches({ currentQuery = '', currentFilters, onApplySearch
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium flex items-center gap-2">
+        <h3 className="flex items-center gap-2 font-medium text-sm">
           <Bookmark className="h-4 w-4" />
           Saved Searches
         </h3>
-        
+
         {currentQuery && (
           <SavedSearchDialog
-            query={currentQuery}
             filters={currentFilters}
             onSave={fetchSavedSearches}
+            query={currentQuery}
           />
         )}
       </div>
 
       {savedSearches.length === 0 ? (
-        <div className="text-center py-6 text-sm text-muted-foreground">
-          <Search className="h-8 w-8 mx-auto mb-2 opacity-50" />
+        <div className="py-6 text-center text-muted-foreground text-sm">
+          <Search className="mx-auto mb-2 h-8 w-8 opacity-50" />
           <p>No saved searches yet</p>
           <p>Save your searches for quick access</p>
         </div>
       ) : (
         <div className="space-y-2">
           {savedSearches.map((search) => (
-            <div 
+            <div
+              className="flex items-center justify-between rounded-[var(--radius-lg)] border p-3 transition-colors hover:bg-muted/50"
               key={search.id}
-              className="flex items-center justify-between p-3 border rounded-[var(--radius-lg)] hover:bg-muted/50 transition-colors"
             >
-              <div 
-                className="flex-1 cursor-pointer" 
+              <div
+                className="flex-1 cursor-pointer"
                 onClick={() => applySearch(search)}
               >
                 <div className="flex items-center gap-2">
@@ -170,23 +174,23 @@ export function SavedSearches({ currentQuery = '', currentFilters, onApplySearch
                     <BellOff className="h-3 w-3 text-muted-foreground" />
                   )}
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   "{search.query}"
                   {search.filters && Object.keys(search.filters).length > 0 && (
                     <> • {Object.keys(search.filters).length} filters</>
                   )}
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="mt-1 text-muted-foreground text-xs">
                   Saved {new Date(search.createdAt).toLocaleDateString()}
                 </p>
               </div>
-              
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="icon"
+                  <Button
                     disabled={deletingId === search.id}
+                    size="icon"
+                    variant="ghost"
                   >
                     {deletingId === search.id ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -197,28 +201,30 @@ export function SavedSearches({ currentQuery = '', currentFilters, onApplySearch
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => applySearch(search)}>
-                    <Search className="h-4 w-4 mr-2" />
+                    <Search className="mr-2 h-4 w-4" />
                     Apply Search
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => toggleAlerts(search.id, search.alertEnabled)}>
+                  <DropdownMenuItem
+                    onClick={() => toggleAlerts(search.id, search.alertEnabled)}
+                  >
                     {search.alertEnabled ? (
                       <>
-                        <BellOff className="h-4 w-4 mr-2" />
+                        <BellOff className="mr-2 h-4 w-4" />
                         Disable Alerts
                       </>
                     ) : (
                       <>
-                        <Bell className="h-4 w-4 mr-2" />
+                        <Bell className="mr-2 h-4 w-4" />
                         Enable Alerts
                       </>
                     )}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    onClick={() => deleteSearch(search.id)}
+                  <DropdownMenuItem
                     className="text-destructive"
+                    onClick={() => deleteSearch(search.id)}
                   >
-                    <Trash2 className="h-4 w-4 mr-2" />
+                    <Trash2 className="mr-2 h-4 w-4" />
                     Delete
                   </DropdownMenuItem>
                 </DropdownMenuContent>

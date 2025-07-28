@@ -10,7 +10,7 @@ export function getLocaleConfig(locale: string) {
 
 export function formatCurrency(amount: number, locale: string): string {
   const config = getLocaleConfig(locale);
-  
+
   return new Intl.NumberFormat(config.locale, {
     style: 'currency',
     currency: config.currency,
@@ -19,17 +19,24 @@ export function formatCurrency(amount: number, locale: string): string {
 
 export function formatNumber(value: number, locale: string): string {
   const config = getLocaleConfig(locale);
-  
+
   return new Intl.NumberFormat(config.locale).format(value);
 }
 
-export function formatDate(date: Date, locale: string, options?: Intl.DateTimeFormatOptions): string {
+export function formatDate(
+  date: Date,
+  locale: string,
+  options?: Intl.DateTimeFormatOptions
+): string {
   const config = getLocaleConfig(locale);
-  
+
   return new Intl.DateTimeFormat(config.locale, options).format(date);
 }
 
-export function formatRelativeTime(date: Date | string | number, locale: string): string {
+export function formatRelativeTime(
+  date: Date | string | number,
+  locale: string
+): string {
   const config = getLocaleConfig(locale);
   const rtf = new Intl.RelativeTimeFormat(config.locale, { numeric: 'auto' });
 
@@ -44,19 +51,22 @@ export function formatRelativeTime(date: Date | string | number, locale: string)
     dateObj = new Date();
   }
 
-  const daysDiff = Math.floor((dateObj.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+  const daysDiff = Math.floor(
+    (dateObj.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+  );
 
   if (daysDiff === 0) return 'today';
   if (daysDiff === -1) return 'yesterday';
   if (daysDiff === 1) return 'tomorrow';
-  
+
   if (Math.abs(daysDiff) < 7) {
     return rtf.format(daysDiff, 'day');
-  } else if (Math.abs(daysDiff) < 30) {
-    return rtf.format(Math.floor(daysDiff / 7), 'week');
-  } else if (Math.abs(daysDiff) < 365) {
-    return rtf.format(Math.floor(daysDiff / 30), 'month');
-  } else {
-    return rtf.format(Math.floor(daysDiff / 365), 'year');
   }
+  if (Math.abs(daysDiff) < 30) {
+    return rtf.format(Math.floor(daysDiff / 7), 'week');
+  }
+  if (Math.abs(daysDiff) < 365) {
+    return rtf.format(Math.floor(daysDiff / 30), 'month');
+  }
+  return rtf.format(Math.floor(daysDiff / 365), 'year');
 }

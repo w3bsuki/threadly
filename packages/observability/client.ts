@@ -4,12 +4,16 @@
  * https://docs.sentry.io/platforms/javascript/guides/nextjs/
  */
 
-import { init, replayIntegration, browserTracingIntegration } from '@sentry/nextjs';
+import {
+  browserTracingIntegration,
+  init,
+  replayIntegration,
+} from '@sentry/nextjs';
 import { keys } from './keys';
 
 export const initializeSentry = (): ReturnType<typeof init> => {
   const env = keys();
-  
+
   // Don't initialize if no DSN is provided
   if (!env.NEXT_PUBLIC_SENTRY_DSN) {
     console.warn('Sentry DSN not configured - error tracking disabled');
@@ -22,11 +26,13 @@ export const initializeSentry = (): ReturnType<typeof init> => {
     release: env.NEXT_PUBLIC_SENTRY_RELEASE,
 
     // Performance monitoring
-    tracesSampleRate: env.NEXT_PUBLIC_SENTRY_ENVIRONMENT === 'production' ? 0.1 : 1.0,
-    
+    tracesSampleRate:
+      env.NEXT_PUBLIC_SENTRY_ENVIRONMENT === 'production' ? 0.1 : 1.0,
+
     // Session replay for debugging user issues
     replaysOnErrorSampleRate: 1.0,
-    replaysSessionSampleRate: env.NEXT_PUBLIC_SENTRY_ENVIRONMENT === 'production' ? 0.1 : 0.5,
+    replaysSessionSampleRate:
+      env.NEXT_PUBLIC_SENTRY_ENVIRONMENT === 'production' ? 0.1 : 0.5,
 
     // Enable performance monitoring for React components
     integrations: [
@@ -35,12 +41,12 @@ export const initializeSentry = (): ReturnType<typeof init> => {
         enableInp: true,
         enableLongTask: true,
       }),
-      
+
       replayIntegration({
         // Session replay configuration
         maskAllText: true, // Protect user privacy
         blockAllMedia: true, // Don't record images/videos
-        
+
         // Marketplace-specific masking
         mask: [
           // Mask sensitive marketplace data
@@ -53,7 +59,7 @@ export const initializeSentry = (): ReturnType<typeof init> => {
           'input[name*="card"]',
           'input[name*="bank"]',
         ],
-        
+
         block: [
           // Block sensitive elements entirely
           '.payment-form',
@@ -66,11 +72,11 @@ export const initializeSentry = (): ReturnType<typeof init> => {
     // Enhanced error filtering for marketplace
     beforeSend(event, hint) {
       const error = hint.originalException;
-      
+
       // Filter out common non-critical errors
       if (error && typeof error === 'object' && 'message' in error) {
         const message = String(error.message).toLowerCase();
-        
+
         // Network/connectivity issues (user-side problems)
         if (
           message.includes('network error') ||
@@ -83,16 +89,16 @@ export const initializeSentry = (): ReturnType<typeof init> => {
         ) {
           return null;
         }
-        
+
         // Cancelled requests (user navigation)
         if (
-          message.includes('cancel') || 
+          message.includes('cancel') ||
           message.includes('abort') ||
           message.includes('navigation')
         ) {
           return null;
         }
-        
+
         // Browser extension interference
         if (
           message.includes('extension') ||
@@ -101,7 +107,7 @@ export const initializeSentry = (): ReturnType<typeof init> => {
         ) {
           return null;
         }
-        
+
         // Ad blocker related errors
         if (
           message.includes('adblock') ||
@@ -111,23 +117,23 @@ export const initializeSentry = (): ReturnType<typeof init> => {
           return null;
         }
       }
-      
+
       // Don't send events in development for console noise
       if (env.NEXT_PUBLIC_SENTRY_ENVIRONMENT === 'development') {
         console.warn('Sentry event (dev mode):', event);
         return null;
       }
-      
+
       return event;
     },
 
     // Privacy settings
     sendDefaultPii: false, // Don't send personally identifiable information
     attachStacktrace: true, // Include stack traces for better debugging
-    
+
     // Debug settings
     debug: env.NEXT_PUBLIC_SENTRY_ENVIRONMENT === 'development',
-    
+
     // Marketplace-specific tags
     initialScope: {
       tags: {
@@ -135,11 +141,12 @@ export const initializeSentry = (): ReturnType<typeof init> => {
         runtime: 'browser',
       },
     },
-    
+
     // Tune performance monitoring
     _experiments: {
       // Enable profiling for performance insights
-      profilesSampleRate: env.NEXT_PUBLIC_SENTRY_ENVIRONMENT === 'production' ? 0.01 : 0.1,
+      profilesSampleRate:
+        env.NEXT_PUBLIC_SENTRY_ENVIRONMENT === 'production' ? 0.01 : 0.1,
     },
   });
 };

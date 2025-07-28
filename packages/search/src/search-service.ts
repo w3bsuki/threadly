@@ -1,8 +1,17 @@
+import {
+  CACHE_KEYS,
+  CACHE_TAGS,
+  CACHE_TTL,
+  getCacheService,
+} from '@repo/cache';
 import { database, type Prisma } from '@repo/database';
-import { getCacheService } from '@repo/cache';
 import { getAlgoliaSearch } from './algolia-search';
-import type { SearchConfig, SearchProduct, SearchFilters, SearchResult } from './types';
-import { CACHE_KEYS, CACHE_TTL, CACHE_TAGS } from '@repo/cache';
+import type {
+  SearchConfig,
+  SearchFilters,
+  SearchProduct,
+  SearchResult,
+} from './types';
 
 // Define the shape of a product with all includes used by search
 type ProductForSearch = Prisma.ProductGetPayload<{
@@ -54,7 +63,9 @@ export class MarketplaceSearchService {
       categoryId: product.categoryId,
       categoryName: product.category?.name || '',
       sellerId: product.sellerId,
-      sellerName: product.seller ? `${product.seller.firstName} ${product.seller.lastName}`.trim() : '',
+      sellerName: product.seller
+        ? `${product.seller.firstName} ${product.seller.lastName}`.trim()
+        : '',
       sellerRating: product.seller?.averageRating || 0,
       sellerLocation: product.seller?.location || '',
       images: product.images?.map((img) => img.imageUrl).filter(Boolean) || [],
@@ -71,41 +82,76 @@ export class MarketplaceSearchService {
 
   private generateTags(product: ProductForSearch): string[] {
     const tags: string[] = [];
-    
+
     if (product.brand) tags.push(product.brand.toLowerCase());
     if (product.condition) tags.push(product.condition.toLowerCase());
     if (product.size) tags.push(product.size.toLowerCase());
     if (product.category?.name) tags.push(product.category.name.toLowerCase());
-    
+
     // Extract keywords from title and description
     const text = `${product.title} ${product.description || ''}`.toLowerCase();
     const keywords = text.match(/\b\w{3,}\b/g) || [];
     tags.push(...keywords.slice(0, 10)); // Limit to 10 keywords
-    
+
     return [...new Set(tags)]; // Remove duplicates
   }
 
   private extractColors(product: ProductForSearch): string[] {
     // This could be enhanced with ML/AI for automatic color detection
     const colorKeywords = [
-      'black', 'white', 'red', 'blue', 'green', 'yellow', 'orange', 'purple',
-      'pink', 'brown', 'gray', 'grey', 'navy', 'beige', 'cream', 'gold',
-      'silver', 'bronze', 'maroon', 'teal', 'olive', 'coral', 'mint'
+      'black',
+      'white',
+      'red',
+      'blue',
+      'green',
+      'yellow',
+      'orange',
+      'purple',
+      'pink',
+      'brown',
+      'gray',
+      'grey',
+      'navy',
+      'beige',
+      'cream',
+      'gold',
+      'silver',
+      'bronze',
+      'maroon',
+      'teal',
+      'olive',
+      'coral',
+      'mint',
     ];
-    
+
     const text = `${product.title} ${product.description || ''}`.toLowerCase();
-    return colorKeywords.filter(color => text.includes(color));
+    return colorKeywords.filter((color) => text.includes(color));
   }
 
   private extractMaterials(product: ProductForSearch): string[] {
     const materialKeywords = [
-      'cotton', 'polyester', 'wool', 'silk', 'linen', 'denim', 'leather',
-      'suede', 'cashmere', 'viscose', 'nylon', 'spandex', 'elastane',
-      'acrylic', 'modal', 'bamboo', 'hemp', 'tencel'
+      'cotton',
+      'polyester',
+      'wool',
+      'silk',
+      'linen',
+      'denim',
+      'leather',
+      'suede',
+      'cashmere',
+      'viscose',
+      'nylon',
+      'spandex',
+      'elastane',
+      'acrylic',
+      'modal',
+      'bamboo',
+      'hemp',
+      'tencel',
     ];
-    
+
     const text = `${product.title} ${product.description || ''}`.toLowerCase();
-    return materialKeywords.filter(material => text.includes(material));
+    return materialKeywords.filter((material) => text.includes(material));
   }
 
   // Index all products
@@ -131,9 +177,10 @@ export class MarketplaceSearchService {
         },
       });
 
-      const searchProducts = products.map(p => this.transformProductForSearch(p));
+      const searchProducts = products.map((p) =>
+        this.transformProductForSearch(p)
+      );
       await this.searchEngine.index(searchProducts);
-
     } catch (error) {
       throw error;
     }
@@ -196,7 +243,7 @@ export class MarketplaceSearchService {
     try {
       // Create cache key based on search parameters
       const cacheKey = this.createSearchCacheKey(filters, page, hitsPerPage);
-      
+
       // Try to get from cache first
       const cachedResult = await this.cacheService.getSearchResults(cacheKey);
       if (cachedResult) {
@@ -219,7 +266,7 @@ export class MarketplaceSearchService {
   async getSearchSuggestions(query: string, limit = 5) {
     try {
       const cacheKey = `search_suggestions:${query}:${limit}`;
-      
+
       return this.cacheService.remember(
         cacheKey,
         () => this.searchEngine.searchSuggestions(query, limit),
@@ -235,7 +282,7 @@ export class MarketplaceSearchService {
   async getPopularProducts(limit = 10) {
     try {
       const cacheKey = `popular_products:${limit}`;
-      
+
       return this.cacheService.remember(
         cacheKey,
         () => this.searchEngine.getPopularProducts(limit),
@@ -251,7 +298,7 @@ export class MarketplaceSearchService {
   async getSimilarProducts(productId: string, limit = 6) {
     try {
       const cacheKey = `similar_products:${productId}:${limit}`;
-      
+
       return this.cacheService.remember(
         cacheKey,
         () => this.searchEngine.getSimilarProducts(productId, limit),
@@ -267,7 +314,7 @@ export class MarketplaceSearchService {
   async getProductsByCategory(category: string, limit = 20) {
     try {
       const cacheKey = `category_products:${category}:${limit}`;
-      
+
       return this.cacheService.remember(
         cacheKey,
         () => this.searchEngine.getProductsByCategory(category, limit),
@@ -283,15 +330,13 @@ export class MarketplaceSearchService {
   async trackProductClick(productId: string, query: string, position: number) {
     try {
       await this.searchEngine.trackClick(productId, query, position);
-    } catch (error) {
-    }
+    } catch (error) {}
   }
 
   async trackProductConversion(productId: string, query: string) {
     try {
       await this.searchEngine.trackConversion(productId, query);
-    } catch (error) {
-    }
+    } catch (error) {}
   }
 
   // Auto-complete functionality
@@ -300,17 +345,13 @@ export class MarketplaceSearchService {
       if (!query || query.length < 2) return [];
 
       const cacheKey = `autocomplete:${query}:${limit}`;
-      
+
       return this.cacheService.remember(
         cacheKey,
         async () => {
-          const result = await this.searchEngine.search(
-            { query },
-            0,
-            limit
-          );
-          
-          return result.hits.map(hit => ({
+          const result = await this.searchEngine.search({ query }, 0, limit);
+
+          return result.hits.map((hit) => ({
             id: hit.id,
             title: hit.title,
             brand: hit.brand,
@@ -331,7 +372,7 @@ export class MarketplaceSearchService {
   async getFacetData(query = '') {
     try {
       const cacheKey = `facets:${query}`;
-      
+
       return this.cacheService.remember(
         cacheKey,
         async () => {
@@ -340,7 +381,7 @@ export class MarketplaceSearchService {
             0,
             0 // We only want facets, not hits
           );
-          
+
           return result.facets || {};
         },
         CACHE_TTL.MEDIUM,
@@ -352,13 +393,17 @@ export class MarketplaceSearchService {
   }
 
   // Utility methods
-  private createSearchCacheKey(filters: SearchFilters, page: number, hitsPerPage: number): string {
+  private createSearchCacheKey(
+    filters: SearchFilters,
+    page: number,
+    hitsPerPage: number
+  ): string {
     const filterKey = JSON.stringify({
       ...filters,
       page,
       hitsPerPage,
     });
-    
+
     return Buffer.from(filterKey).toString('base64');
   }
 
@@ -401,14 +446,14 @@ export class MarketplaceSearchService {
           break;
         }
 
-        const searchProducts = products.map(p => this.transformProductForSearch(p));
+        const searchProducts = products.map((p) =>
+          this.transformProductForSearch(p)
+        );
         await this.searchEngine.index(searchProducts);
 
-        
         skip += batchSize;
         hasMore = products.length === batchSize;
       }
-
     } catch (error) {
       throw error;
     }
@@ -418,14 +463,18 @@ export class MarketplaceSearchService {
 // Singleton instance
 let marketplaceSearchService: MarketplaceSearchService | null = null;
 
-export function getSearchService(config?: SearchConfig): MarketplaceSearchService {
+export function getSearchService(
+  config?: SearchConfig
+): MarketplaceSearchService {
   if (!marketplaceSearchService && config) {
     marketplaceSearchService = new MarketplaceSearchService(config);
   }
-  
+
   if (!marketplaceSearchService) {
-    throw new Error('MarketplaceSearchService not initialized. Call with config first.');
+    throw new Error(
+      'MarketplaceSearchService not initialized. Call with config first.'
+    );
   }
-  
+
   return marketplaceSearchService;
 }

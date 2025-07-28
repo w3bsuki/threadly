@@ -19,22 +19,30 @@ export function PromotionalBanner({ className }: PromotionalBannerProps) {
   const offers = [
     {
       id: 1,
-      text: dictionary.web?.global?.promotionalBanner?.freeShipping || 'Free shipping on orders over $50',
+      text:
+        dictionary.web?.global?.promotionalBanner?.freeShipping ||
+        'Free shipping on orders over $50',
       icon: '📦',
     },
     {
       id: 2,
-      text: dictionary.web?.global?.promotionalBanner?.newArrivals || 'New arrivals daily from verified sellers',
+      text:
+        dictionary.web?.global?.promotionalBanner?.newArrivals ||
+        'New arrivals daily from verified sellers',
       icon: '✨',
     },
     {
       id: 3,
-      text: dictionary.web?.global?.promotionalBanner?.securePayments || 'Secure payments & buyer protection',
+      text:
+        dictionary.web?.global?.promotionalBanner?.securePayments ||
+        'Secure payments & buyer protection',
       icon: '🔒',
     },
     {
       id: 4,
-      text: dictionary.web?.global?.promotionalBanner?.joinCommunity || 'Join 10,000+ fashion lovers',
+      text:
+        dictionary.web?.global?.promotionalBanner?.joinCommunity ||
+        'Join 10,000+ fashion lovers',
       icon: '💕',
     },
   ];
@@ -91,26 +99,25 @@ export function PromotionalBanner({ className }: PromotionalBannerProps) {
   }
 
   return (
-    <div 
+    <div
       className={cn(
         'relative bg-primary text-primary-foreground',
         'transform transition-all duration-300 ease-out',
-        'animate-in slide-in-from-top-1',
+        'slide-in-from-top-1 animate-in',
         className
       )}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      onTouchStart={() => setIsPaused(true)}
       onTouchEnd={() => setIsPaused(false)}
+      onTouchStart={() => setIsPaused(true)}
     >
       {/* Add safe area support for notched devices */}
-      <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 sm:py-4 pl-safe pr-safe">
+      <div className="mx-auto max-w-7xl px-4 py-3 pr-safe pl-safe sm:px-6 sm:py-4">
         <div className="flex items-center justify-between gap-2 sm:gap-4">
           {/* Offer content */}
-          <div className="flex flex-1 items-center justify-center min-h-[44px]">
-
+          <div className="flex min-h-[44px] flex-1 items-center justify-center">
             {/* Offer text with fade transition and mobile optimization */}
-            <div className="relative flex items-center justify-center w-full px-2 sm:px-4">
+            <div className="relative flex w-full items-center justify-center px-2 sm:px-4">
               {offers.map((offer, index) => (
                 <div
                   className={cn(
@@ -121,24 +128,30 @@ export function PromotionalBanner({ className }: PromotionalBannerProps) {
                   )}
                   key={offer.id}
                 >
-                  <span className="flex items-center text-sm sm:text-base md:text-lg font-medium">
-                    <span className="mr-2 sm:mr-3 text-lg sm:text-xl" role="img" aria-hidden="true">{offer.icon}</span>
-                    <span className="truncate leading-relaxed">{offer.text}</span>
+                  <span className="flex items-center font-medium text-sm sm:text-base md:text-lg">
+                    <span
+                      aria-hidden="true"
+                      className="mr-2 text-lg sm:mr-3 sm:text-xl"
+                      role="img"
+                    >
+                      {offer.icon}
+                    </span>
+                    <span className="truncate leading-relaxed">
+                      {offer.text}
+                    </span>
                   </span>
                 </div>
               ))}
             </div>
-
           </div>
-
 
           {/* Close button with mobile-optimized touch target */}
           <Button
-            className="ml-3 min-h-[44px] min-w-[44px] p-2 hover:opacity-80 transition-opacity duration-200"
+            aria-label="Dismiss promotional banner"
+            className="ml-3 min-h-[44px] min-w-[44px] p-2 transition-opacity duration-200 hover:opacity-80"
             onClick={handleDismiss}
             size="icon"
             variant="ghost"
-            aria-label="Dismiss promotional banner"
           >
             <X className="h-4 w-4 sm:h-5 sm:w-5" />
             <span className="sr-only">Dismiss banner</span>

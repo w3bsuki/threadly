@@ -7,12 +7,18 @@ export default defineConfig({
     compilerOptions: {
       incremental: false,
       composite: false,
-      tsBuildInfoFile: undefined
+      tsBuildInfoFile: undefined,
     },
-    resolve: true
+    resolve: true,
   },
   splitting: true,
   sourcemap: true,
   clean: true,
-  external: ['react', 'react-dom', '@prisma/client', '.prisma/client', '@repo/database'],
+  external: [
+    'react',
+    'react-dom',
+    '@prisma/client',
+    '.prisma/client',
+    '@repo/database',
+  ],
 });

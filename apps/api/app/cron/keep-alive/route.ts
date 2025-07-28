@@ -1,6 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { logError } from '@repo/observability/server';
-import { log } from '@repo/observability/server';
+import { log, logError } from '@repo/observability/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export const POST = async (request: NextRequest): Promise<Response> => {
   try {
@@ -12,10 +11,10 @@ export const POST = async (request: NextRequest): Promise<Response> => {
 
     // Simple keep-alive logic - you can customize this
     log.info('Keep-alive cron job executed successfully');
-    
-    return NextResponse.json({ 
+
+    return NextResponse.json({
       message: 'Keep-alive cron executed successfully',
-      timestamp: new Date().toISOString() 
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     logError('Keep-alive cron job failed:', error);
@@ -24,4 +23,4 @@ export const POST = async (request: NextRequest): Promise<Response> => {
       { status: 500 }
     );
   }
-}; 
+};

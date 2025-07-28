@@ -1,10 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
-import { reportSchema, queryParamsSchema, sanitizeForDisplay } from '@repo/validation';
+import { log, logError } from '@repo/observability/server';
+import {
+  queryParamsSchema,
+  reportSchema,
+  sanitizeForDisplay,
+} from '@repo/validation';
 import { randomUUID } from 'crypto';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,18 +17,18 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    
+
     // Validate input with Zod schema
     const validationResult = reportSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid input', 
-          details: validationResult.error.issues.map(e => ({
+        {
+          error: 'Invalid input',
+          details: validationResult.error.issues.map((e) => ({
             field: e.path.join('.'),
-            message: e.message
-          }))
-        }, 
+            message: e.message,
+          })),
+        },
         { status: 400 }
       );
     }
@@ -35,7 +38,7 @@ export async function POST(request: NextRequest) {
     // Get user's database ID
     const dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!dbUser) {
@@ -50,12 +53,15 @@ export async function POST(request: NextRequest) {
           { productId: type === 'PRODUCT' ? targetId : undefined },
           { reportedUserId: type === 'USER' ? targetId : undefined },
         ],
-        status: { in: ['PENDING', 'UNDER_REVIEW'] }
-      }
+        status: { in: ['PENDING', 'UNDER_REVIEW'] },
+      },
     });
 
     if (existingReport) {
-      return NextResponse.json({ error: 'You have already reported this item' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'You have already reported this item' },
+        { status: 400 }
+      );
     }
 
     // Sanitize user inputs
@@ -96,12 +102,12 @@ export async function POST(request: NextRequest) {
     // Notify admins/moderators
     const adminsAndMods = await database.user.findMany({
       where: {
-        role: { in: ['ADMIN', 'MODERATOR'] }
+        role: { in: ['ADMIN', 'MODERATOR'] },
       },
-      select: { id: true }
+      select: { id: true },
     });
 
-    const notifications = adminsAndMods.map(admin => ({
+    const notifications = adminsAndMods.map((admin) => ({
       id: randomUUID(),
       userId: admin.id,
       title: `New ${type.toLowerCase()} report`,
@@ -123,7 +129,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, reportId: report.id });
   } catch (error) {
     logError('Error creating report:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -140,16 +149,20 @@ export async function GET(request: NextRequest) {
     const limit = searchParams.get('limit');
 
     // Validate query parameters
-    const queryValidation = queryParamsSchema.safeParse({ status, page, limit });
+    const queryValidation = queryParamsSchema.safeParse({
+      status,
+      page,
+      limit,
+    });
     if (!queryValidation.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid query parameters', 
-          details: queryValidation.error.issues.map(e => ({
+        {
+          error: 'Invalid query parameters',
+          details: queryValidation.error.issues.map((e) => ({
             field: e.path.join('.'),
-            message: e.message
-          }))
-        }, 
+            message: e.message,
+          })),
+        },
         { status: 400 }
       );
     }
@@ -159,7 +172,7 @@ export async function GET(request: NextRequest) {
     // Get user's database ID
     const dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      select: { id: true, role: true }
+      select: { id: true, role: true },
     });
 
     if (!dbUser) {
@@ -189,7 +202,7 @@ export async function GET(request: NextRequest) {
             firstName: true,
             lastName: true,
             email: true,
-          }
+          },
         },
         Product: {
           select: {
@@ -201,9 +214,9 @@ export async function GET(request: NextRequest) {
                 id: true,
                 firstName: true,
                 lastName: true,
-              }
-            }
-          }
+              },
+            },
+          },
         },
         User_Report_reportedUserIdToUser: {
           select: {
@@ -211,8 +224,8 @@ export async function GET(request: NextRequest) {
             firstName: true,
             lastName: true,
             email: true,
-          }
-        }
+          },
+        },
       },
       orderBy: { createdAt: 'desc' },
       skip: (validatedPage - 1) * validatedLimit,
@@ -222,6 +235,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ reports });
   } catch (error) {
     logError('Error fetching reports:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

@@ -1,7 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { AccountDropdown, MobileAccountDropdown } from '../navigation/account-dropdown';
+import {
+  AccountDropdown,
+  MobileAccountDropdown,
+} from '../navigation/account-dropdown';
 import { Button } from '../ui/button';
 
 export function AccountDropdownDemo() {
@@ -16,61 +19,62 @@ export function AccountDropdownDemo() {
   return (
     <div className="space-y-8 p-8">
       <div className="space-y-4">
-        <h2 className="text-2xl font-bold">Account Dropdown Component</h2>
+        <h2 className="font-bold text-2xl">Account Dropdown Component</h2>
         <p className="text-muted-foreground">
-          A modern account dropdown component with smooth animations and mobile-friendly design.
+          A modern account dropdown component with smooth animations and
+          mobile-friendly design.
         </p>
       </div>
 
       <div className="space-y-6">
         <div className="flex gap-4">
-          <Button
-            onClick={() => setIsSignedIn(!isSignedIn)}
-            variant="outline"
-          >
-            Toggle Sign In State (Currently: {isSignedIn ? 'Signed In' : 'Signed Out'})
+          <Button onClick={() => setIsSignedIn(!isSignedIn)} variant="outline">
+            Toggle Sign In State (Currently:{' '}
+            {isSignedIn ? 'Signed In' : 'Signed Out'})
           </Button>
-          <Button
-            onClick={() => setShowMobile(!showMobile)}
-            variant="outline"
-          >
+          <Button onClick={() => setShowMobile(!showMobile)} variant="outline">
             {showMobile ? 'Show Desktop' : 'Show Mobile'} Version
           </Button>
         </div>
 
         <div className="flex items-center gap-8">
           <div className="space-y-2">
-            <h3 className="text-sm font-medium text-muted-foreground">
+            <h3 className="font-medium text-muted-foreground text-sm">
               {showMobile ? 'Mobile' : 'Desktop'} Version
             </h3>
-            <div className="flex items-center justify-center w-20 h-20 bg-muted rounded-lg">
+            <div className="flex h-20 w-20 items-center justify-center rounded-lg bg-muted">
               {showMobile ? (
                 <MobileAccountDropdown
                   isSignedIn={isSignedIn}
-                  user={isSignedIn ? mockUser : undefined}
                   onSignOut={() => {
                     alert('Sign out clicked');
                     setIsSignedIn(false);
                   }}
+                  user={isSignedIn ? mockUser : undefined}
                 />
               ) : (
                 <AccountDropdown
                   isSignedIn={isSignedIn}
-                  user={isSignedIn ? mockUser : undefined}
                   onSignOut={() => {
                     alert('Sign out clicked');
                     setIsSignedIn(false);
                   }}
+                  user={isSignedIn ? mockUser : undefined}
                 />
               )}
             </div>
           </div>
 
           <div className="flex-1 space-y-2">
-            <h3 className="text-sm font-medium text-muted-foreground">Features</h3>
-            <ul className="space-y-1 text-sm text-muted-foreground">
+            <h3 className="font-medium text-muted-foreground text-sm">
+              Features
+            </h3>
+            <ul className="space-y-1 text-muted-foreground text-sm">
               <li>• Smooth fade and zoom animations</li>
-              <li>• Proper touch targets for mobile ({showMobile ? '48px' : '40px'})</li>
+              <li>
+                • Proper touch targets for mobile (
+                {showMobile ? '48px' : '40px'})
+              </li>
               <li>• Clean, modern design with subtle hover states</li>
               <li>• Backdrop blur for premium feel</li>
               <li>• Destructive styling for sign out action</li>
@@ -80,12 +84,14 @@ export function AccountDropdownDemo() {
           </div>
         </div>
 
-        <div className="space-y-4 p-4 bg-muted/50 rounded-lg">
-          <h3 className="text-sm font-medium">Component States</h3>
+        <div className="space-y-4 rounded-lg bg-muted/50 p-4">
+          <h3 className="font-medium text-sm">Component States</h3>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <h4 className="text-xs font-medium text-muted-foreground mb-2">Signed In Menu Items</h4>
-              <ul className="space-y-1 text-xs text-muted-foreground">
+              <h4 className="mb-2 font-medium text-muted-foreground text-xs">
+                Signed In Menu Items
+              </h4>
+              <ul className="space-y-1 text-muted-foreground text-xs">
                 <li>• User info (name & email)</li>
                 <li>• Profile</li>
                 <li>• Orders</li>
@@ -94,8 +100,10 @@ export function AccountDropdownDemo() {
               </ul>
             </div>
             <div>
-              <h4 className="text-xs font-medium text-muted-foreground mb-2">Signed Out Menu Items</h4>
-              <ul className="space-y-1 text-xs text-muted-foreground">
+              <h4 className="mb-2 font-medium text-muted-foreground text-xs">
+                Signed Out Menu Items
+              </h4>
+              <ul className="space-y-1 text-muted-foreground text-xs">
                 <li>• Sign In</li>
                 <li>• Create Account</li>
               </ul>
@@ -103,10 +111,10 @@ export function AccountDropdownDemo() {
           </div>
         </div>
 
-        <div className="space-y-2 p-4 bg-muted/30 rounded-lg">
-          <h3 className="text-sm font-medium">Usage Example</h3>
-          <pre className="text-xs overflow-x-auto">
-{`import { AccountDropdown } from '@repo/design-system/components/navigation';
+        <div className="space-y-2 rounded-lg bg-muted/30 p-4">
+          <h3 className="font-medium text-sm">Usage Example</h3>
+          <pre className="overflow-x-auto text-xs">
+            {`import { AccountDropdown } from '@repo/design-system/components/navigation';
 
 <AccountDropdown
   isSignedIn={isSignedIn}

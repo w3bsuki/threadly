@@ -2,11 +2,11 @@
 // DO NOT USE IN NEW CODE - use createEmailService from email-service-client instead
 // This file will be removed in the next major version
 
-import { Resend } from 'resend';
 import { database } from '@repo/database';
 import { log } from '@repo/observability';
-import { OrderConfirmationEmail } from './templates/order-confirmation';
+import { Resend } from 'resend';
 import { NewMessageEmail } from './templates/new-message';
+import { OrderConfirmationEmail } from './templates/order-confirmation';
 import { PaymentReceivedEmail } from './templates/payment-received';
 import { WeeklyReportEmail } from './templates/weekly-report';
 
@@ -48,12 +48,13 @@ export class EmailService {
     this.resend = new Resend(config.apiKey);
     this.fromEmail = config.fromEmail || 'noreply@threadly.com';
     this.environment = config.environment || 'production';
-    this.enableDelivery = config.enableDelivery ?? (this.environment === 'production');
-    
+    this.enableDelivery =
+      config.enableDelivery ?? this.environment === 'production';
+
     log.info('Email service initialized', {
       fromEmail: this.fromEmail,
       environment: this.environment,
-      deliveryEnabled: this.enableDelivery
+      deliveryEnabled: this.enableDelivery,
     });
   }
 
@@ -66,15 +67,18 @@ export class EmailService {
       });
 
       if (!buyer?.email) {
-        log.warn('No buyer email found for order confirmation', { orderId: order.id });
+        log.warn('No buyer email found for order confirmation', {
+          orderId: order.id,
+        });
         return null;
       }
 
-      const prefs = buyer.notificationPreferences as any as NotificationPreferences;
+      const prefs =
+        buyer.notificationPreferences as any as NotificationPreferences;
       if (!prefs?.email?.orderUpdates) {
-        log.info('User has disabled order update emails', { 
-          orderId: order.id, 
-          buyerEmail: buyer.email 
+        log.info('User has disabled order update emails', {
+          orderId: order.id,
+          buyerEmail: buyer.email,
         });
         return null;
       }
@@ -83,7 +87,7 @@ export class EmailService {
         log.info('Email delivery disabled - would send order confirmation', {
           orderId: order.id,
           to: buyer.email,
-          environment: this.environment
+          environment: this.environment,
         });
         return { id: 'mock-email-id', environment: this.environment };
       }
@@ -101,15 +105,15 @@ export class EmailService {
         }) as any,
         tags: [
           { name: 'type', value: 'order-confirmation' },
-          { name: 'environment', value: this.environment }
-        ]
+          { name: 'environment', value: this.environment },
+        ],
       });
 
       if (error) {
-        log.error('Failed to send order confirmation email', { 
-          error, 
+        log.error('Failed to send order confirmation email', {
+          error,
           orderId: order.id,
-          buyerEmail: buyer.email 
+          buyerEmail: buyer.email,
         });
         throw error;
       }
@@ -117,7 +121,7 @@ export class EmailService {
       log.info('Order confirmation email sent successfully', {
         orderId: order.id,
         emailId: data?.id,
-        to: buyer.email
+        to: buyer.email,
       });
 
       return data;
@@ -129,9 +133,10 @@ export class EmailService {
 
   // Send new message notification
   async sendNewMessageNotification(message: any, conversation: any) {
-    const recipientId = message.senderId === conversation.buyerId 
-      ? conversation.sellerId 
-      : conversation.buyerId;
+    const recipientId =
+      message.senderId === conversation.buyerId
+        ? conversation.sellerId
+        : conversation.buyerId;
 
     const [recipient, sender] = await Promise.all([
       database.user.findUnique({
@@ -146,7 +151,8 @@ export class EmailService {
 
     if (!recipient?.email) return;
 
-    const prefs = recipient.notificationPreferences as any as NotificationPreferences;
+    const prefs =
+      recipient.notificationPreferences as any as NotificationPreferences;
     if (!prefs?.email?.newMessages) return;
 
     const { data, error } = await this.resend.emails.send({
@@ -177,7 +183,8 @@ export class EmailService {
 
     if (!seller?.email) return;
 
-    const prefs = seller.notificationPreferences as any as NotificationPreferences;
+    const prefs =
+      seller.notificationPreferences as any as NotificationPreferences;
     if (!prefs?.email?.paymentReceived) return;
 
     const { data, error } = await this.resend.emails.send({
@@ -208,7 +215,8 @@ export class EmailService {
 
     if (!seller?.email) return;
 
-    const prefs = seller.notificationPreferences as any as NotificationPreferences;
+    const prefs =
+      seller.notificationPreferences as any as NotificationPreferences;
     if (!prefs?.email?.weeklyReport) return;
 
     const { data, error } = await this.resend.emails.send({
@@ -234,8 +242,12 @@ export class EmailService {
   }
 
   // Send bulk emails (for marketing campaigns)
-  async sendBulkEmail(recipients: string[], subject: string, content: React.ReactElement) {
-    const emails = recipients.map(to => ({
+  async sendBulkEmail(
+    recipients: string[],
+    subject: string,
+    content: React.ReactElement
+  ) {
+    const emails = recipients.map((to) => ({
       from: this.fromEmail,
       to,
       subject,
@@ -258,21 +270,26 @@ export function getEmailService(config?: EmailConfig): EmailService {
   if (!emailService && config) {
     emailService = new EmailService(config);
   }
-  
+
   if (!emailService) {
-    throw new Error('EmailService not initialized. Provide configuration first.');
+    throw new Error(
+      'EmailService not initialized. Provide configuration first.'
+    );
   }
-  
+
   return emailService;
 }
 
 // Factory function for production setup
-export function createProductionEmailService(apiKey: string, fromEmail?: string): EmailService {
+export function createProductionEmailService(
+  apiKey: string,
+  fromEmail?: string
+): EmailService {
   return new EmailService({
     apiKey,
     fromEmail,
     environment: 'production',
-    enableDelivery: true
+    enableDelivery: true,
   });
 }
 
@@ -282,6 +299,6 @@ export function createDevelopmentEmailService(apiKey?: string): EmailService {
     apiKey: apiKey || 'mock-api-key',
     fromEmail: 'dev@threadly.com',
     environment: 'development',
-    enableDelivery: false // Don't send real emails in development
+    enableDelivery: false, // Don't send real emails in development
   });
 }

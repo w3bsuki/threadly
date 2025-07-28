@@ -1,14 +1,22 @@
 'use client';
 
-import * as React from 'react';
+import {
+  Calendar,
+  MapPin,
+  MessageCircle,
+  Package,
+  Shield,
+  Star,
+  Users,
+} from 'lucide-react';
 import Image from 'next/image';
-import { Card, CardContent, CardHeader } from '../ui/card';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { VerifiedBadge, PremiumBadge, ConditionStars } from '../brand/icons';
-import { Users, MapPin, Calendar, Star, Package, MessageCircle, Shield } from 'lucide-react';
+import * as React from 'react';
 import { cn } from '../../lib/utils';
+import { ConditionStars, PremiumBadge, VerifiedBadge } from '../brand/icons';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader } from '../ui/card';
 
 export interface SellerProfileProps {
   seller: {
@@ -55,10 +63,20 @@ export const SellerProfile: React.FC<SellerProfileProps> = ({
   const [following, setFollowing] = React.useState(isFollowing);
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const sellerName = `${seller.firstName || ''} ${seller.lastName || ''}`.trim() || seller.username || 'Anonymous';
-  const initials = sellerName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  const sellerName =
+    `${seller.firstName || ''} ${seller.lastName || ''}`.trim() ||
+    seller.username ||
+    'Anonymous';
+  const initials = sellerName
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
   const joinedYear = seller.joinedAt.getFullYear();
-  const joinedMonth = seller.joinedAt.toLocaleDateString('en-US', { month: 'long' });
+  const joinedMonth = seller.joinedAt.toLocaleDateString('en-US', {
+    month: 'long',
+  });
 
   const handleFollow = async () => {
     setIsLoading(true);
@@ -91,21 +109,21 @@ export const SellerProfile: React.FC<SellerProfileProps> = ({
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
             <Avatar className="h-12 w-12">
-              <AvatarImage src={seller.avatarUrl} alt={sellerName} />
+              <AvatarImage alt={sellerName} src={seller.avatarUrl} />
               <AvatarFallback className="bg-[oklch(var(--brand-primary)/.1)] text-[oklch(var(--brand-primary))]">
                 {initials}
               </AvatarFallback>
             </Avatar>
-            
-            <div className="flex-1 min-w-0">
+
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1">
-                <h3 className="font-semibold text-sm truncate">{sellerName}</h3>
+                <h3 className="truncate font-semibold text-sm">{sellerName}</h3>
                 {seller.isVerified && <VerifiedBadge size={14} />}
                 {seller.isPremium && <PremiumBadge size={14} />}
               </div>
-              
+
               {seller.averageRating && (
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <div className="flex items-center gap-1 text-muted-foreground text-xs">
                   <Star className="h-3 w-3 fill-[oklch(var(--brand-accent))] text-[oklch(var(--brand-accent))]" />
                   <span>{seller.averageRating.toFixed(1)}</span>
                   <span>({stats.totalSales} sales)</span>
@@ -114,10 +132,10 @@ export const SellerProfile: React.FC<SellerProfileProps> = ({
             </div>
 
             <Button
-              variant={following ? "brand-outline" : "brand-primary"}
-              size="sm"
-              onClick={handleFollow}
               disabled={isLoading}
+              onClick={handleFollow}
+              size="sm"
+              variant={following ? 'brand-outline' : 'brand-primary'}
             >
               {isLoading ? '...' : following ? 'Following' : 'Follow'}
             </Button>
@@ -134,21 +152,27 @@ export const SellerProfile: React.FC<SellerProfileProps> = ({
         <div className="relative h-24 bg-gradient-to-r from-[oklch(var(--brand-primary)/.1)] to-[oklch(var(--brand-accent)/.1)]">
           {seller.coverImageUrl && (
             <Image
-              src={seller.coverImageUrl}
               alt={`${sellerName}'s cover`}
-              fill
               className="object-cover"
+              fill
+              src={seller.coverImageUrl}
             />
           )}
         </div>
       )}
 
       <CardHeader className="pb-4">
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row">
           {/* Avatar */}
           <div className="relative">
-            <Avatar className={cn("h-16 w-16", variant === 'detailed' && "h-20 w-20 -mt-10 border-4 border-background")}>
-              <AvatarImage src={seller.avatarUrl} alt={sellerName} />
+            <Avatar
+              className={cn(
+                'h-16 w-16',
+                variant === 'detailed' &&
+                  '-mt-10 h-20 w-20 border-4 border-background'
+              )}
+            >
+              <AvatarImage alt={sellerName} src={seller.avatarUrl} />
               <AvatarFallback className="bg-[oklch(var(--brand-primary)/.1)] text-[oklch(var(--brand-primary))] text-lg">
                 {initials}
               </AvatarFallback>
@@ -158,7 +182,7 @@ export const SellerProfile: React.FC<SellerProfileProps> = ({
           {/* Seller Info */}
           <div className="flex-1 space-y-2">
             <div className="flex items-center gap-2">
-              <h2 className="text-xl font-bold">{sellerName}</h2>
+              <h2 className="font-bold text-xl">{sellerName}</h2>
               {seller.isVerified && <VerifiedBadge size={20} />}
               {seller.isPremium && <PremiumBadge size={20} />}
             </div>
@@ -166,14 +190,21 @@ export const SellerProfile: React.FC<SellerProfileProps> = ({
             {/* Rating */}
             {seller.averageRating && (
               <div className="flex items-center gap-2">
-                <ConditionStars rating={Math.round(seller.averageRating) as 1 | 2 | 3 | 4 | 5} size={12} />
-                <span className="text-sm font-medium">{seller.averageRating.toFixed(1)}</span>
-                <span className="text-sm text-muted-foreground">({seller.totalReviews} reviews)</span>
+                <ConditionStars
+                  rating={Math.round(seller.averageRating) as 1 | 2 | 3 | 4 | 5}
+                  size={12}
+                />
+                <span className="font-medium text-sm">
+                  {seller.averageRating.toFixed(1)}
+                </span>
+                <span className="text-muted-foreground text-sm">
+                  ({seller.totalReviews} reviews)
+                </span>
               </div>
             )}
 
             {/* Location & Join Date */}
-            <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+            <div className="flex flex-wrap gap-4 text-muted-foreground text-sm">
               {seller.location && (
                 <div className="flex items-center gap-1">
                   <MapPin className="h-4 w-4" />
@@ -182,29 +213,31 @@ export const SellerProfile: React.FC<SellerProfileProps> = ({
               )}
               <div className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
-                <span>Joined {joinedMonth} {joinedYear}</span>
+                <span>
+                  Joined {joinedMonth} {joinedYear}
+                </span>
               </div>
             </div>
 
             {/* Bio */}
             {seller.bio && variant === 'detailed' && (
-              <p className="text-sm text-muted-foreground mt-2">{seller.bio}</p>
+              <p className="mt-2 text-muted-foreground text-sm">{seller.bio}</p>
             )}
           </div>
 
           {/* Action Buttons */}
           <div className="flex flex-col gap-2 sm:items-end">
             <Button
-              variant={following ? "brand-outline" : "brand-primary"}
-              onClick={handleFollow}
-              disabled={isLoading}
               className="min-w-[100px]"
+              disabled={isLoading}
+              onClick={handleFollow}
+              variant={following ? 'brand-outline' : 'brand-primary'}
             >
               <Users className="mr-2 h-4 w-4" />
               {isLoading ? 'Loading...' : following ? 'Following' : 'Follow'}
             </Button>
-            
-            <Button variant="brand-secondary" onClick={handleMessage}>
+
+            <Button onClick={handleMessage} variant="brand-secondary">
               <MessageCircle className="mr-2 h-4 w-4" />
               Message
             </Button>
@@ -214,70 +247,81 @@ export const SellerProfile: React.FC<SellerProfileProps> = ({
 
       <CardContent className="pt-0">
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+        <div className="mb-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
           <div className="text-center">
-            <div className="text-lg font-bold text-[oklch(var(--brand-primary))]">
+            <div className="font-bold text-[oklch(var(--brand-primary))] text-lg">
               {stats.totalListings.toLocaleString()}
             </div>
-            <div className="text-xs text-muted-foreground">Listings</div>
+            <div className="text-muted-foreground text-xs">Listings</div>
           </div>
-          
+
           <div className="text-center">
-            <div className="text-lg font-bold text-[oklch(var(--brand-secondary))]">
+            <div className="font-bold text-[oklch(var(--brand-secondary))] text-lg">
               {stats.totalSales.toLocaleString()}
             </div>
-            <div className="text-xs text-muted-foreground">Sales</div>
+            <div className="text-muted-foreground text-xs">Sales</div>
           </div>
-          
+
           <div className="text-center">
-            <div className="text-lg font-bold text-[oklch(var(--brand-accent))]">
+            <div className="font-bold text-[oklch(var(--brand-accent))] text-lg">
               {stats.followersCount.toLocaleString()}
             </div>
-            <div className="text-xs text-muted-foreground">Followers</div>
+            <div className="text-muted-foreground text-xs">Followers</div>
           </div>
-          
+
           <div className="text-center">
-            <div className="text-lg font-bold text-[oklch(var(--brand-purple))]">
+            <div className="font-bold text-[oklch(var(--brand-purple))] text-lg">
               {stats.followingCount.toLocaleString()}
             </div>
-            <div className="text-xs text-muted-foreground">Following</div>
+            <div className="text-muted-foreground text-xs">Following</div>
           </div>
         </div>
 
         {/* Performance Metrics */}
-        {variant === 'detailed' && (stats.responseRate || stats.averageShippingTime) && (
-          <div className="border-t pt-4">
-            <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              Performance
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {stats.responseRate && (
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Response Rate</span>
-                  <Badge variant="secondary" className="bg-[oklch(var(--success-gentle))] text-[oklch(var(--brand-secondary))]">
-                    {stats.responseRate}%
-                  </Badge>
-                </div>
-              )}
-              {stats.averageShippingTime && (
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Avg. Shipping</span>
-                  <Badge variant="secondary" className="bg-[oklch(var(--info-gentle))] text-[oklch(var(--brand-primary))]">
-                    {stats.averageShippingTime} days
-                  </Badge>
-                </div>
-              )}
+        {variant === 'detailed' &&
+          (stats.responseRate || stats.averageShippingTime) && (
+            <div className="border-t pt-4">
+              <h4 className="mb-3 flex items-center gap-2 font-semibold text-sm">
+                <Shield className="h-4 w-4" />
+                Performance
+              </h4>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {stats.responseRate && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground text-sm">
+                      Response Rate
+                    </span>
+                    <Badge
+                      className="bg-[oklch(var(--success-gentle))] text-[oklch(var(--brand-secondary))]"
+                      variant="secondary"
+                    >
+                      {stats.responseRate}%
+                    </Badge>
+                  </div>
+                )}
+                {stats.averageShippingTime && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground text-sm">
+                      Avg. Shipping
+                    </span>
+                    <Badge
+                      className="bg-[oklch(var(--info-gentle))] text-[oklch(var(--brand-primary))]"
+                      variant="secondary"
+                    >
+                      {stats.averageShippingTime} days
+                    </Badge>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* View Listings Button */}
         <div className="mt-4">
-          <Button 
-            variant="brand-outline" 
+          <Button
             className="w-full"
             onClick={handleViewListings}
+            variant="brand-outline"
           >
             <Package className="mr-2 h-4 w-4" />
             View All Listings

@@ -1,7 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { validatePaginationParams, buildCursorWhere, processPaginationResult } from '@repo/design-system/lib/pagination';
+import {
+  buildCursorWhere,
+  processPaginationResult,
+  validatePaginationParams,
+} from '@repo/design-system/lib/pagination';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
@@ -36,16 +40,16 @@ export async function GET(request: NextRequest) {
       }>;
       status?: string;
     }
-    
+
     const where: WhereClause = {};
-    
+
     if (search) {
       where.OR = [
         { title: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } }
+        { description: { contains: search, mode: 'insensitive' } },
       ];
     }
-    
+
     if (statusFilter !== 'all') {
       where.status = statusFilter.toUpperCase();
     }
@@ -63,20 +67,20 @@ export async function GET(request: NextRequest) {
             id: true,
             firstName: true,
             lastName: true,
-            email: true
-          }
+            email: true,
+          },
         },
         category: true,
         images: {
           orderBy: { displayOrder: 'asc' },
-          take: 1
+          take: 1,
         },
         _count: {
           select: {
             favorites: true,
-            orders: true
-          }
-        }
+            orders: true,
+          },
+        },
       },
       take: pagination.limit,
     });

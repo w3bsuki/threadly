@@ -11,22 +11,25 @@ interface SignInPageProps {
   searchParams: Promise<{ from?: string }>;
 }
 
-export default async function SignInPage({ params, searchParams }: SignInPageProps) {
+export default async function SignInPage({
+  params,
+  searchParams,
+}: SignInPageProps) {
   const { locale } = await params;
   const { from } = await searchParams;
   const redirectUrl = from || `/${locale}`;
-  
+
   return (
     <div className="container mx-auto flex min-h-[calc(100vh-200px)] items-center justify-center px-4 py-16">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold">Welcome Back</h1>
+          <h1 className="font-bold text-3xl">Welcome Back</h1>
           <p className="mt-2 text-muted-foreground">
             Sign in to your account to continue
           </p>
         </div>
-        
-        <SignInClient redirectUrl={redirectUrl} locale={locale} />
+
+        <SignInClient locale={locale} redirectUrl={redirectUrl} />
       </div>
     </div>
   );

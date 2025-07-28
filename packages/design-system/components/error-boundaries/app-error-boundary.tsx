@@ -1,10 +1,10 @@
 'use client';
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { AlertTriangle, Bug, Home, RefreshCcw } from 'lucide-react';
+import React, { Component, type ErrorInfo, type ReactNode } from 'react';
+import { Alert, AlertDescription } from '../ui/alert';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { AlertTriangle, RefreshCcw, Home, Bug } from 'lucide-react';
-import { Alert, AlertDescription } from '../ui/alert';
 
 interface Props {
   children: ReactNode;
@@ -49,7 +49,6 @@ export class AppErrorBoundary extends Component<Props, State> {
 
     // Log error for monitoring
     if (typeof window !== 'undefined') {
-      
       // Report to error tracking service (Sentry, LogRocket, etc.)
       this.reportError(error, errorInfo);
     }
@@ -66,7 +65,8 @@ export class AppErrorBoundary extends Component<Props, State> {
       stack: error.stack,
       componentStack: errorInfo.componentStack,
       timestamp: new Date().toISOString(),
-      userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'server',
+      userAgent:
+        typeof window !== 'undefined' ? window.navigator.userAgent : 'server',
       url: typeof window !== 'undefined' ? window.location.href : 'server',
       props: this.props,
     };
@@ -83,7 +83,10 @@ export class AppErrorBoundary extends Component<Props, State> {
     // Store locally for debugging
     if (typeof window !== 'undefined' && window.localStorage) {
       try {
-        localStorage.setItem(`error_${this.state.errorId}`, JSON.stringify(errorReport));
+        localStorage.setItem(
+          `error_${this.state.errorId}`,
+          JSON.stringify(errorReport)
+        );
       } catch (storageError) {
         console.warn('Failed to store error in localStorage:', storageError);
       }
@@ -123,7 +126,7 @@ export class AppErrorBoundary extends Component<Props, State> {
     const bugReportUrl = `mailto:support@threadly.com?subject=Error Report - ${errorId}&body=${encodeURIComponent(
       `Error ID: ${errorId}\n\nError Details:\n${JSON.stringify(errorDetails, null, 2)}\n\nSteps to reproduce:\n1. \n2. \n3. `
     )}`;
-    
+
     if (typeof window !== 'undefined') {
       window.open(bugReportUrl);
     }
@@ -137,10 +140,10 @@ export class AppErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen flex items-center justify-center bg-background p-4">
-          <Card className="max-w-lg w-full">
+        <div className="flex min-h-screen items-center justify-center bg-background p-4">
+          <Card className="w-full max-w-lg">
             <CardHeader className="text-center">
-              <div className="mx-auto w-12 h-12 bg-destructive/10 rounded-[var(--radius-full)] flex items-center justify-center mb-4">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-[var(--radius-full)] bg-destructive/10">
                 <AlertTriangle className="h-6 w-6 text-destructive" />
               </div>
               <CardTitle className="text-xl">Something went wrong</CardTitle>
@@ -148,7 +151,7 @@ export class AppErrorBoundary extends Component<Props, State> {
                 We encountered an unexpected error. Our team has been notified.
               </p>
             </CardHeader>
-            
+
             <CardContent className="space-y-4">
               {this.props.showDetails && this.state.error && (
                 <Alert variant="destructive">
@@ -162,33 +165,33 @@ export class AppErrorBoundary extends Component<Props, State> {
               )}
 
               <div className="grid grid-cols-1 gap-3">
-                <Button onClick={this.handleRetry} className="w-full">
-                  <RefreshCcw className="h-4 w-4 mr-2" />
+                <Button className="w-full" onClick={this.handleRetry}>
+                  <RefreshCcw className="mr-2 h-4 w-4" />
                   Try again
                 </Button>
-                
+
                 <div className="grid grid-cols-2 gap-3">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => window.location.href = '/'}
+                  <Button
                     className="w-full"
+                    onClick={() => (window.location.href = '/')}
+                    variant="outline"
                   >
-                    <Home className="h-4 w-4 mr-2" />
+                    <Home className="mr-2 h-4 w-4" />
                     Home
                   </Button>
-                  
-                  <Button 
-                    variant="outline" 
-                    onClick={this.handleReportBug}
+
+                  <Button
                     className="w-full"
+                    onClick={this.handleReportBug}
+                    variant="outline"
                   >
-                    <Bug className="h-4 w-4 mr-2" />
+                    <Bug className="mr-2 h-4 w-4" />
                     Report
                   </Button>
                 </div>
               </div>
 
-              <div className="text-center text-xs text-muted-foreground">
+              <div className="text-center text-muted-foreground text-xs">
                 Error ID: {this.state.errorId}
               </div>
             </CardContent>
@@ -202,10 +205,10 @@ export class AppErrorBoundary extends Component<Props, State> {
 }
 
 // Convenience wrapper component
-export function AppErrorProvider({ 
-  children, 
+export function AppErrorProvider({
+  children,
   onError,
-  showDetails = process.env.NODE_ENV === 'development' 
+  showDetails = process.env.NODE_ENV === 'development',
 }: {
   children: ReactNode;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;

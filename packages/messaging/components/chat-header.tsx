@@ -1,20 +1,19 @@
 'use client';
 
-import {
-  Button,
-  CardHeader,
-} from '@repo/design-system/components';
+import { Button, CardHeader } from '@repo/design-system/components';
 import { Package } from 'lucide-react';
 import type { ChatHeaderProps } from '../types';
 
-export function ChatHeader({ 
-  otherUser, 
-  product, 
+export function ChatHeader({
+  otherUser,
+  product,
   onProductClick,
-  className 
+  className,
 }: ChatHeaderProps) {
   return (
-    <CardHeader className={`border-b px-3 sm:px-4 py-3 sm:py-4 ${className || ''}`}>
+    <CardHeader
+      className={`border-b px-3 py-3 sm:px-4 sm:py-4 ${className || ''}`}
+    >
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-full)] bg-accent">
           {otherUser.imageUrl ? (
@@ -31,9 +30,7 @@ export function ChatHeader({
         </div>
 
         <div className="flex-1">
-          <h3 className="font-medium">
-            {otherUser.name}
-          </h3>
+          <h3 className="font-medium">{otherUser.name}</h3>
           <div className="flex items-center gap-2 text-muted-foreground text-sm">
             <Package className="h-3 w-3" />
             <span>{product.title}</span>
@@ -42,11 +39,11 @@ export function ChatHeader({
           </div>
         </div>
 
-        <Button 
-          size="sm" 
-          variant="outline" 
+        <Button
           className="hidden sm:flex"
           onClick={onProductClick}
+          size="sm"
+          variant="outline"
         >
           View Item
         </Button>

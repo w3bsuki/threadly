@@ -1,9 +1,9 @@
 'use client';
 
-import { Button } from './button';
-import { cn } from '../../lib/utils';
 import { X } from 'lucide-react';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import { cn } from '../../lib/utils';
+import { Button } from './button';
 
 interface BannerProps {
   children: ReactNode;
@@ -33,35 +33,41 @@ export function Banner({
   className,
 }: BannerProps) {
   return (
-    <div className={cn(bannerVariants[variant], 'border-b overflow-hidden', className)}>
-      <div className="max-w-7xl mx-auto px-4 py-4">
+    <div
+      className={cn(
+        bannerVariants[variant],
+        'overflow-hidden border-b',
+        className
+      )}
+    >
+      <div className="mx-auto max-w-7xl px-4 py-4">
         <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 flex-1 min-w-0 overflow-hidden">
+          <div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
             {icon && <div className="shrink-0 text-xl">{icon}</div>}
-            <div className="text-lg font-semibold whitespace-nowrap animate-[scroll_15s_linear_infinite]">
+            <div className="animate-[scroll_15s_linear_infinite] whitespace-nowrap font-semibold text-lg">
               {children}
             </div>
           </div>
-          
-          <div className="flex items-center gap-2 shrink-0">
+
+          <div className="flex shrink-0 items-center gap-2">
             {action && (
               <Button
-                variant="ghost"
-                size="sm"
-                onClick={action.onClick}
                 className="h-auto p-0 text-xs underline underline-offset-2 hover:no-underline"
+                onClick={action.onClick}
+                size="sm"
+                variant="ghost"
               >
                 {action.label}
               </Button>
             )}
-            
+
             {onDismiss && (
               <Button
-                variant="ghost"
-                size="sm"
-                onClick={onDismiss}
-                className="h-6 w-6 p-0 hover:bg-white/20 text-white"
                 aria-label="Dismiss banner"
+                className="h-6 w-6 p-0 text-white hover:bg-white/20"
+                onClick={onDismiss}
+                size="sm"
+                variant="ghost"
               >
                 <X className="h-3 w-3" />
               </Button>

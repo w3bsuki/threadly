@@ -5,8 +5,6 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from '@repo/design-system/components';
-import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -20,7 +18,7 @@ const PresenceAvatar = ({ info }: PresenceAvatarProps) => (
   <Tooltip delayDuration={0}>
     <TooltipTrigger>
       <Avatar className="h-7 w-7 bg-secondary ring-1 ring-background">
-        <AvatarImage src={info?.avatar} alt={info?.name} />
+        <AvatarImage alt={info?.name} src={info?.avatar} />
         <AvatarFallback className="text-xs">
           {info?.name?.slice(0, 2)}
         </AvatarFallback>
@@ -40,7 +38,7 @@ export const AvatarStack = (): React.JSX.Element => {
   return (
     <div className="-space-x-1 flex items-center px-4">
       {others.slice(0, 3).map(({ connectionId, info }) => (
-        <PresenceAvatar key={connectionId} info={info} />
+        <PresenceAvatar info={info} key={connectionId} />
       ))}
 
       {hasMoreUsers && (

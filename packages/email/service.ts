@@ -1,9 +1,9 @@
 import { resend } from './index';
 import { keys } from './keys';
-import { WelcomeTemplate } from './templates/welcome';
+import { ContactTemplate } from './templates/contact';
 import { OrderConfirmationTemplate } from './templates/order-confirmation';
 import { OrderShippedTemplate } from './templates/order-shipped';
-import { ContactTemplate } from './templates/contact';
+import { WelcomeTemplate } from './templates/welcome';
 
 const env = keys();
 
@@ -50,10 +50,7 @@ export interface ContactEmailData {
 /**
  * Send welcome email to new users
  */
-export async function sendWelcomeEmail(
-  to: string,
-  data: WelcomeEmailData
-) {
+export async function sendWelcomeEmail(to: string, data: WelcomeEmailData) {
   try {
     const result = await resend.emails.send({
       from: env.RESEND_FROM,
@@ -113,9 +110,7 @@ export async function sendOrderShippedEmail(
 /**
  * Send contact form email to support
  */
-export async function sendContactEmail(
-  data: ContactEmailData
-) {
+export async function sendContactEmail(data: ContactEmailData) {
   try {
     const result = await resend.emails.send({
       from: env.RESEND_FROM,

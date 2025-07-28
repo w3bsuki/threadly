@@ -1,6 +1,10 @@
 'use client';
 
-import { Badge, ConditionBadge } from '@repo/design-system/components';
+import {
+  Badge,
+  ConditionBadge,
+  ProductGridSkeleton,
+} from '@repo/design-system/components';
 import type { Dictionary } from '@repo/internationalization';
 import { ErrorBoundary } from '@repo/utils';
 import { useVirtualizer } from '@tanstack/react-virtual';
@@ -9,7 +13,6 @@ import { useEffect, useRef, useState } from 'react';
 import { formatCurrency } from '@/lib/utils/currency';
 import { ProductImage } from '../../components/optimized-image';
 import { ProductQuickView } from '../../components/product-quick-view';
-import { ProductGridSkeleton } from '@repo/design-system/components';
 
 // Inline ProductPlaceholder for loading states
 const ProductPlaceholder = ({
@@ -114,16 +117,15 @@ function useGridColumns(isCompact: boolean) {
         if (width >= 1024) return 6; // lg
         if (width >= 768) return 4; // md
         return 2; // base
-      } else {
-        if (width >= 1280) return 5; // xl
-        if (width >= 1024) return 4; // lg
-        if (width >= 768) return 3; // md
-        return 2; // base
       }
+      if (width >= 1280) return 5; // xl
+      if (width >= 1024) return 4; // lg
+      if (width >= 768) return 3; // md
+      return 2; // base
     };
 
     setColumns(calculateColumns());
-    
+
     const handleResize = () => setColumns(calculateColumns());
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -281,7 +283,15 @@ const ProductCard = ({
               <div className="absolute top-2 left-2">
                 <ConditionBadge
                   className="bg-white/95 shadow-sm"
-                  condition={product.condition as 'NEW_WITH_TAGS' | 'NEW_WITHOUT_TAGS' | 'VERY_GOOD' | 'GOOD' | 'SATISFACTORY' | 'FAIR'}
+                  condition={
+                    product.condition as
+                      | 'NEW_WITH_TAGS'
+                      | 'NEW_WITHOUT_TAGS'
+                      | 'VERY_GOOD'
+                      | 'GOOD'
+                      | 'SATISFACTORY'
+                      | 'FAIR'
+                  }
                 />
               </div>
 
@@ -347,11 +357,11 @@ export function ProductGrid({
 }: ProductGridProps) {
   const columns = useGridColumns(isCompact);
   const parentRef = useRef<HTMLDivElement>(null);
-  
+
   // Calculate rows and row height
   const rowCount = Math.ceil(products.length / columns);
   const estimatedRowHeight = isCompact ? 280 : 320;
-  
+
   const virtualizer = useVirtualizer({
     count: rowCount,
     getScrollElement: () => parentRef.current,
@@ -373,10 +383,14 @@ export function ProductGrid({
     return (
       <ErrorBoundary
         fallback={
-          <div className="flex items-center justify-center min-h-[400px] p-4">
+          <div className="flex min-h-[400px] items-center justify-center p-4">
             <div className="text-center">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Unable to load products</h3>
-              <p className="text-sm text-gray-600">Please try refreshing the page.</p>
+              <h3 className="mb-2 font-semibold text-gray-900 text-lg">
+                Unable to load products
+              </h3>
+              <p className="text-gray-600 text-sm">
+                Please try refreshing the page.
+              </p>
             </div>
           </div>
         }
@@ -398,18 +412,22 @@ export function ProductGrid({
   return (
     <ErrorBoundary
       fallback={
-        <div className="flex items-center justify-center min-h-[400px] p-4">
+        <div className="flex min-h-[400px] items-center justify-center p-4">
           <div className="text-center">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Unable to load products</h3>
-            <p className="text-sm text-gray-600">Please try refreshing the page.</p>
+            <h3 className="mb-2 font-semibold text-gray-900 text-lg">
+              Unable to load products
+            </h3>
+            <p className="text-gray-600 text-sm">
+              Please try refreshing the page.
+            </p>
           </div>
         </div>
       }
     >
       <div
+        className="w-full"
         ref={parentRef}
         style={{ height: `${containerHeight}px`, overflow: 'auto' }}
-        className="w-full"
       >
         <div
           style={{
@@ -420,7 +438,10 @@ export function ProductGrid({
           {virtualizer.getVirtualItems().map((virtualRow) => {
             const rowIndex = virtualRow.index;
             const startIndex = rowIndex * columns;
-            const rowProducts = products.slice(startIndex, startIndex + columns);
+            const rowProducts = products.slice(
+              startIndex,
+              startIndex + columns
+            );
 
             return (
               <div

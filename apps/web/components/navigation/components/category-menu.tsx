@@ -120,7 +120,7 @@ export function CategoryMenu({
 
         <div className="flex gap-2 border-gray-100 border-t p-3">
           <Link
-            className="flex-1 rounded-[var(--radius-lg)] bg-primary px-3 py-2 text-center font-medium text-sm text-background transition-colors hover:bg-primary/90"
+            className="flex-1 rounded-[var(--radius-lg)] bg-primary px-3 py-2 text-center font-medium text-background text-sm transition-colors hover:bg-primary/90"
             href="/products?condition=NEW_WITH_TAGS"
             onClick={onClose}
             role="menuitem"
@@ -128,7 +128,7 @@ export function CategoryMenu({
             NEW
           </Link>
           <Link
-            className="flex-1 rounded-[var(--radius-lg)] bg-red-500 px-3 py-2 text-center font-medium text-sm text-background transition-colors hover:bg-red-600"
+            className="flex-1 rounded-[var(--radius-lg)] bg-red-500 px-3 py-2 text-center font-medium text-background text-sm transition-colors hover:bg-red-600"
             href="/products?sale=true"
             onClick={onClose}
             role="menuitem"
@@ -136,7 +136,7 @@ export function CategoryMenu({
             SALE
           </Link>
           <Link
-            className="flex-1 rounded-[var(--radius-lg)] bg-orange-500 px-3 py-2 text-center font-medium text-sm text-background transition-colors hover:bg-orange-600"
+            className="flex-1 rounded-[var(--radius-lg)] bg-orange-500 px-3 py-2 text-center font-medium text-background text-sm transition-colors hover:bg-orange-600"
             href="/products?sort=popular"
             onClick={onClose}
             role="menuitem"

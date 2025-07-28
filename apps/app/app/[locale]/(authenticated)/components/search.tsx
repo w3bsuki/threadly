@@ -1,12 +1,10 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@repo/design-system/components';
-import { Input } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
+import { Badge, Button, Input } from '@repo/design-system/components';
 import { useAutocomplete, useSearchHistory } from '@repo/search/client';
-import { ArrowRightIcon, SearchIcon, Clock, X } from 'lucide-react';
+import { ArrowRightIcon, Clock, SearchIcon, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 
 export const Search: React.FC = () => {
   const [query, setQuery] = useState('');
@@ -28,7 +26,13 @@ export const Search: React.FC = () => {
     }
   };
 
-  const handleSuggestionClick = (suggestion: { title: string; image?: string; brand?: string; category?: string; price: number }) => {
+  const handleSuggestionClick = (suggestion: {
+    title: string;
+    image?: string;
+    brand?: string;
+    category?: string;
+    price: number;
+  }) => {
     setQuery(suggestion.title);
     addToHistory(suggestion.title);
     router.push(`/search?q=${encodeURIComponent(suggestion.title)}`);
@@ -67,27 +71,27 @@ export const Search: React.FC = () => {
 
   return (
     <div className="relative w-full max-w-md">
-      <form onSubmit={handleSubmit} className="flex items-center gap-2 px-4">
+      <form className="flex items-center gap-2 px-4" onSubmit={handleSubmit}>
         <div className="relative w-full">
           <div className="absolute top-px bottom-px left-px flex h-8 w-8 items-center justify-center">
-            <SearchIcon size={16} className="text-muted-foreground" />
+            <SearchIcon className="text-muted-foreground" size={16} />
           </div>
           <Input
-            ref={inputRef}
-            type="text"
-            value={query}
+            className="h-auto w-full bg-background py-1.5 pr-3 pl-8 text-xs"
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setShowDropdown(true)}
             placeholder="Search products, brands, categories..."
-            className="h-auto bg-background py-1.5 pr-3 pl-8 text-xs w-full"
+            ref={inputRef}
+            type="text"
+            value={query}
           />
           <Button
+            className="absolute top-px right-px bottom-px h-8 w-8"
+            size="icon"
             type="submit"
             variant="ghost"
-            size="icon"
-            className="absolute top-px right-px bottom-px h-8 w-8"
           >
-            <ArrowRightIcon size={16} className="text-muted-foreground" />
+            <ArrowRightIcon className="text-muted-foreground" size={16} />
           </Button>
         </div>
       </form>
@@ -95,28 +99,30 @@ export const Search: React.FC = () => {
       {/* Dropdown */}
       {showDropdown && (showSuggestions || showHistory) && (
         <div
+          className="absolute top-full right-4 left-4 z-50 mt-1 max-h-80 overflow-y-auto rounded-[var(--radius-md)] border bg-background shadow-lg"
           ref={dropdownRef}
-          className="absolute top-full left-4 right-4 z-50 mt-1 bg-background border rounded-[var(--radius-md)] shadow-lg max-h-80 overflow-y-auto"
         >
           {/* Search History */}
           {showHistory && (
             <div className="p-2">
-              <div className="text-xs text-muted-foreground mb-2 px-2">Recent searches</div>
+              <div className="mb-2 px-2 text-muted-foreground text-xs">
+                Recent searches
+              </div>
               {history.slice(0, 5).map((item, index) => (
                 <div
+                  className="group flex cursor-pointer items-center justify-between rounded px-2 py-1.5 hover:bg-muted"
                   key={index}
-                  className="flex items-center justify-between px-2 py-1.5 hover:bg-muted rounded cursor-pointer group"
                   onClick={() => handleHistoryClick(item)}
                 >
                   <div className="flex items-center gap-2">
-                    <Clock size={12} className="text-muted-foreground" />
+                    <Clock className="text-muted-foreground" size={12} />
                     <span className="text-sm">{item}</span>
                   </div>
                   <Button
-                    variant="ghost"
-                    size="sm"
-                    className="opacity-0 group-hover:opacity-100 h-auto p-1"
+                    className="h-auto p-1 opacity-0 group-hover:opacity-100"
                     onClick={(e) => handleRemoveHistory(item, e)}
+                    size="sm"
+                    variant="ghost"
                   >
                     <X size={12} />
                   </Button>
@@ -129,29 +135,35 @@ export const Search: React.FC = () => {
           {showSuggestions && (
             <div className="p-2">
               {loading && (
-                <div className="text-xs text-muted-foreground mb-2 px-2">Loading...</div>
+                <div className="mb-2 px-2 text-muted-foreground text-xs">
+                  Loading...
+                </div>
               )}
               {!loading && (
                 <>
-                  <div className="text-xs text-muted-foreground mb-2 px-2">Suggestions</div>
+                  <div className="mb-2 px-2 text-muted-foreground text-xs">
+                    Suggestions
+                  </div>
                   {suggestions.map((suggestion, index) => (
                     <div
+                      className="flex cursor-pointer items-center gap-3 rounded px-2 py-2 hover:bg-muted"
                       key={index}
-                      className="flex items-center gap-3 px-2 py-2 hover:bg-muted rounded cursor-pointer"
                       onClick={() => handleSuggestionClick(suggestion)}
                     >
                       {suggestion.image && (
                         <img
-                          src={suggestion.image}
                           alt={suggestion.title}
-                          className="w-8 h-8 object-cover rounded"
+                          className="h-8 w-8 rounded object-cover"
+                          src={suggestion.image}
                         />
                       )}
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium truncate">{suggestion.title}</div>
-                        <div className="text-xs text-muted-foreground flex items-center gap-2">
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate font-medium text-sm">
+                          {suggestion.title}
+                        </div>
+                        <div className="flex items-center gap-2 text-muted-foreground text-xs">
                           {suggestion.brand && (
-                            <Badge variant="secondary" className="text-xs">
+                            <Badge className="text-xs" variant="secondary">
                               {suggestion.brand}
                             </Badge>
                           )}
@@ -160,7 +172,7 @@ export const Search: React.FC = () => {
                           )}
                         </div>
                       </div>
-                      <div className="text-sm font-semibold">
+                      <div className="font-semibold text-sm">
                         ${suggestion.price}
                       </div>
                     </div>

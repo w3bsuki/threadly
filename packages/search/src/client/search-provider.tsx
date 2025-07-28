@@ -1,7 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, ReactNode } from 'react';
-import { MarketplaceSearchService } from '../search-service';
+import React, { createContext, type ReactNode, useContext } from 'react';
+import type { MarketplaceSearchService } from '../search-service';
 
 interface SearchContextType {
   searchService: MarketplaceSearchService;
@@ -14,7 +14,10 @@ interface SearchProviderProps {
   searchService: MarketplaceSearchService;
 }
 
-export function SearchProvider({ children, searchService }: SearchProviderProps) {
+export function SearchProvider({
+  children,
+  searchService,
+}: SearchProviderProps) {
   return (
     <SearchContext.Provider value={{ searchService }}>
       {children}

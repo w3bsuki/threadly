@@ -1,10 +1,16 @@
 'use client';
 
-import { Input } from '@repo/design-system/components';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components';
-import { UseFormReturn } from 'react-hook-form';
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+} from '@repo/design-system/components';
+import type { CreateProductInput } from '@repo/validation/schemas';
+import type { UseFormReturn } from 'react-hook-form';
 import { ImageUploadLazy } from '../../../../../../components/image-upload-lazy';
-import { CreateProductInput } from '@repo/validation/schemas';
 
 interface StepPhotosBasicProps {
   form: UseFormReturn<CreateProductInput>;
@@ -18,12 +24,14 @@ export function StepPhotosBasic({ form }: StepPhotosBasicProps) {
         name="images"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-sm sm:text-base font-medium">Product Photos</FormLabel>
+            <FormLabel className="font-medium text-sm sm:text-base">
+              Product Photos
+            </FormLabel>
             <FormControl>
               <ImageUploadLazy
-                value={field.value}
-                onChange={field.onChange}
                 maxFiles={5}
+                onChange={field.onChange}
+                value={field.value}
               />
             </FormControl>
             <FormMessage />
@@ -37,12 +45,14 @@ export function StepPhotosBasic({ form }: StepPhotosBasicProps) {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm sm:text-base font-medium">Item Title</FormLabel>
+              <FormLabel className="font-medium text-sm sm:text-base">
+                Item Title
+              </FormLabel>
               <FormControl>
-                <Input 
-                  placeholder="e.g. Vintage Denim Jacket" 
+                <Input
+                  placeholder="e.g. Vintage Denim Jacket"
                   {...field}
-                  className="text-base h-12 sm:h-10"
+                  className="h-12 text-base sm:h-10"
                 />
               </FormControl>
               <FormMessage />
@@ -55,16 +65,20 @@ export function StepPhotosBasic({ form }: StepPhotosBasicProps) {
           name="price"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm sm:text-base font-medium">Price ($)</FormLabel>
+              <FormLabel className="font-medium text-sm sm:text-base">
+                Price ($)
+              </FormLabel>
               <FormControl>
                 <Input
-                  type="number"
-                  step="0.01"
                   placeholder="0.00"
+                  step="0.01"
+                  type="number"
                   {...field}
-                  onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                  className="text-base h-12 sm:h-10"
+                  className="h-12 text-base sm:h-10"
                   inputMode="decimal"
+                  onChange={(e) =>
+                    field.onChange(Number.parseFloat(e.target.value) || 0)
+                  }
                 />
               </FormControl>
               <FormMessage />
@@ -73,10 +87,11 @@ export function StepPhotosBasic({ form }: StepPhotosBasicProps) {
         />
       </div>
 
-      <div className="bg-muted/50 p-3 sm:p-4 rounded-[var(--radius-lg)]">
-        <p className="text-xs sm:text-sm text-muted-foreground">
-          📸 <strong>Photo Tips:</strong> Use natural lighting, show all angles, and include any flaws or wear. 
-          First photo will be your main listing image.
+      <div className="rounded-[var(--radius-lg)] bg-muted/50 p-3 sm:p-4">
+        <p className="text-muted-foreground text-xs sm:text-sm">
+          📸 <strong>Photo Tips:</strong> Use natural lighting, show all angles,
+          and include any flaws or wear. First photo will be your main listing
+          image.
         </p>
       </div>
     </div>

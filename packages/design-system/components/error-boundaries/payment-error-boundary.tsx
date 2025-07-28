@@ -1,10 +1,16 @@
 'use client';
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import {
+  AlertTriangle,
+  ArrowLeft,
+  CreditCard,
+  RefreshCcw,
+  ShoppingCart,
+} from 'lucide-react';
+import React, { Component, type ErrorInfo, type ReactNode } from 'react';
+import { Alert, AlertDescription } from '../ui/alert';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { CreditCard, AlertTriangle, RefreshCcw, ShoppingCart, ArrowLeft } from 'lucide-react';
-import { Alert, AlertDescription } from '../ui/alert';
 
 interface Props {
   children: ReactNode;
@@ -33,12 +39,18 @@ export class PaymentErrorBoundary extends Component<Props, State> {
   static getDerivedStateFromError(error: Error): Partial<State> {
     // Classify error type based on error message/type
     let errorType: State['errorType'] = 'unknown';
-    
+
     if (error.message.includes('payment') || error.message.includes('stripe')) {
       errorType = 'payment';
-    } else if (error.message.includes('network') || error.message.includes('fetch')) {
+    } else if (
+      error.message.includes('network') ||
+      error.message.includes('fetch')
+    ) {
       errorType = 'network';
-    } else if (error.message.includes('validation') || error.message.includes('invalid')) {
+    } else if (
+      error.message.includes('validation') ||
+      error.message.includes('invalid')
+    ) {
       errorType = 'validation';
     }
 
@@ -51,10 +63,10 @@ export class PaymentErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log payment-specific error
-    
+
     // Report to payment monitoring
     this.reportPaymentError(error, errorInfo);
-    
+
     // Call custom error handler
     this.props.onError?.(error, errorInfo);
   }
@@ -70,12 +82,17 @@ export class PaymentErrorBoundary extends Component<Props, State> {
         componentStack: errorInfo.componentStack,
         timestamp: new Date().toISOString(),
         productTitle: this.props.productTitle,
-        userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'server',
-        checkoutUrl: typeof window !== 'undefined' ? window.location.href : 'server',
+        userAgent:
+          typeof window !== 'undefined' ? window.navigator.userAgent : 'server',
+        checkoutUrl:
+          typeof window !== 'undefined' ? window.location.href : 'server',
       };
 
       // Store for analysis (in production, send to Stripe monitoring, Sentry, etc.)
-      localStorage.setItem(`payment_error_${Date.now()}`, JSON.stringify(paymentErrorReport));
+      localStorage.setItem(
+        `payment_error_${Date.now()}`,
+        JSON.stringify(paymentErrorReport)
+      );
     }
   };
 
@@ -90,12 +107,13 @@ export class PaymentErrorBoundary extends Component<Props, State> {
 
   private getErrorMessage = () => {
     const { errorType, error } = this.state;
-    
+
     switch (errorType) {
       case 'payment':
         return {
           title: 'Payment Processing Error',
-          description: 'There was an issue processing your payment. Your card was not charged.',
+          description:
+            'There was an issue processing your payment. Your card was not charged.',
           action: 'Please check your payment details and try again.',
         };
       case 'network':
@@ -107,7 +125,8 @@ export class PaymentErrorBoundary extends Component<Props, State> {
       case 'validation':
         return {
           title: 'Payment Information Invalid',
-          description: 'Some of your payment information appears to be incorrect.',
+          description:
+            'Some of your payment information appears to be incorrect.',
           action: 'Please verify your card details and billing address.',
         };
       default:
@@ -124,10 +143,10 @@ export class PaymentErrorBoundary extends Component<Props, State> {
       const errorMessage = this.getErrorMessage();
 
       return (
-        <div className="min-h-[400px] flex items-center justify-center p-4">
-          <Card className="max-w-md w-full">
+        <div className="flex min-h-[400px] items-center justify-center p-4">
+          <Card className="w-full max-w-md">
             <CardHeader className="text-center">
-              <div className="mx-auto w-12 h-12 bg-destructive/10 rounded-[var(--radius-full)] flex items-center justify-center mb-4">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-[var(--radius-full)] bg-destructive/10">
                 <CreditCard className="h-6 w-6 text-destructive" />
               </div>
               <CardTitle className="text-lg">{errorMessage.title}</CardTitle>
@@ -135,53 +154,54 @@ export class PaymentErrorBoundary extends Component<Props, State> {
                 {errorMessage.description}
               </p>
             </CardHeader>
-            
+
             <CardContent className="space-y-4">
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
-                  {errorMessage.action}
-                </AlertDescription>
+                <AlertDescription>{errorMessage.action}</AlertDescription>
               </Alert>
 
               {this.props.productTitle && (
-                <div className="text-center p-3 bg-muted rounded-[var(--radius-lg)]">
-                  <p className="text-sm text-muted-foreground">Item:</p>
+                <div className="rounded-[var(--radius-lg)] bg-muted p-3 text-center">
+                  <p className="text-muted-foreground text-sm">Item:</p>
                   <p className="font-medium">{this.props.productTitle}</p>
                 </div>
               )}
 
               <div className="grid grid-cols-1 gap-3">
-                <Button onClick={this.handleRetry} className="w-full">
-                  <RefreshCcw className="h-4 w-4 mr-2" />
+                <Button className="w-full" onClick={this.handleRetry}>
+                  <RefreshCcw className="mr-2 h-4 w-4" />
                   Try Payment Again
                 </Button>
-                
+
                 <div className="grid grid-cols-2 gap-3">
-                  <Button 
-                    variant="outline" 
-                    onClick={this.props.onCancel}
+                  <Button
                     className="w-full"
+                    onClick={this.props.onCancel}
+                    variant="outline"
                   >
-                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    <ArrowLeft className="mr-2 h-4 w-4" />
                     Back
                   </Button>
-                  
-                  <Button 
-                    variant="outline" 
-                    onClick={() => window.location.href = '/cart'}
+
+                  <Button
                     className="w-full"
+                    onClick={() => (window.location.href = '/cart')}
+                    variant="outline"
                   >
-                    <ShoppingCart className="h-4 w-4 mr-2" />
+                    <ShoppingCart className="mr-2 h-4 w-4" />
                     Cart
                   </Button>
                 </div>
               </div>
 
               <div className="text-center">
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   Need help? Contact{' '}
-                  <a href="mailto:support@threadly.com" className="text-primary hover:underline">
+                  <a
+                    className="text-primary hover:underline"
+                    href="mailto:support@threadly.com"
+                  >
                     support@threadly.com
                   </a>
                 </p>
@@ -197,12 +217,12 @@ export class PaymentErrorBoundary extends Component<Props, State> {
 }
 
 // Convenience wrapper for checkout flows
-export function PaymentErrorProvider({ 
-  children, 
+export function PaymentErrorProvider({
+  children,
   onError,
   onRetry,
   onCancel,
-  productTitle 
+  productTitle,
 }: {
   children: ReactNode;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
@@ -211,10 +231,10 @@ export function PaymentErrorProvider({
   productTitle?: string;
 }) {
   return (
-    <PaymentErrorBoundary 
-      onError={onError} 
-      onRetry={onRetry}
+    <PaymentErrorBoundary
       onCancel={onCancel}
+      onError={onError}
+      onRetry={onRetry}
       productTitle={productTitle}
     >
       {children}

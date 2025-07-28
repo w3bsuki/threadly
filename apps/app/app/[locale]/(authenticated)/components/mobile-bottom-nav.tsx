@@ -1,22 +1,21 @@
 'use client';
 
-import { Button } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { cn } from '@repo/design-system/lib/utils';
-import { 
-  Search, 
-  MessageCircle, 
-  LayoutDashboard,
-  User,
-  Plus,
-  Heart,
-  ShoppingBag
-} from 'lucide-react';
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
 import { useCartStore } from '@repo/commerce';
-import { useState, useEffect } from 'react';
+import { Badge, Button } from '@repo/design-system/components';
+import { cn } from '@repo/design-system/lib/utils';
 import type { Dictionary } from '@repo/internationalization';
+import {
+  Heart,
+  LayoutDashboard,
+  MessageCircle,
+  Plus,
+  Search,
+  ShoppingBag,
+  User,
+} from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface MobileBottomNavProps {
   className?: string;
@@ -24,7 +23,11 @@ interface MobileBottomNavProps {
   dictionary: Dictionary;
 }
 
-export function MobileBottomNav({ className, unreadMessages = 0, dictionary }: MobileBottomNavProps): React.JSX.Element {
+export function MobileBottomNav({
+  className,
+  unreadMessages = 0,
+  dictionary,
+}: MobileBottomNavProps): React.JSX.Element {
   const pathname = usePathname();
   const { getTotalItems } = useCartStore();
   const [cartItems, setCartItems] = useState(0);
@@ -72,91 +75,94 @@ export function MobileBottomNav({ className, unreadMessages = 0, dictionary }: M
   return (
     <>
       {/* Bottom Navigation */}
-      <div 
+      <div
         className={cn(
-          'fixed bottom-0 left-0 right-0 z-50 md:hidden',
+          'fixed right-0 bottom-0 left-0 z-50 md:hidden',
           'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60',
-          'border-t border-border',
+          'border-border border-t',
           'safe-area-padding-bottom', // Handle device safe areas
           className
         )}
       >
         <nav className="flex items-center justify-around px-2 py-2">
           {navItems.map((item) => {
-            const isActive = pathname === item.href || 
+            const isActive =
+              pathname === item.href ||
               (item.href !== '/' && pathname.startsWith(item.href));
             const Icon = item.icon;
-            
+
             const LinkComponent = item.isExternal ? 'a' : Link;
-            const linkProps = item.isExternal 
-              ? { href: item.href, target: '_blank', rel: 'noopener noreferrer' }
+            const linkProps = item.isExternal
+              ? {
+                  href: item.href,
+                  target: '_blank',
+                  rel: 'noopener noreferrer',
+                }
               : { href: item.href };
 
             return (
               <LinkComponent key={item.href} {...linkProps} className="flex-1">
                 <Button
-                  variant="ghost"
-                  size="sm"
+                  aria-current={isActive ? 'page' : undefined}
+                  aria-label={item.label}
                   className={cn(
                     'relative flex flex-col items-center justify-center',
                     'h-16 w-full gap-1 rounded-[var(--radius-lg)]',
                     'min-h-[44px] min-w-[44px]', // Ensure minimum touch target
-                    'text-xs font-medium',
+                    'font-medium text-xs',
                     'hover:bg-accent/50 active:bg-accent',
                     'transition-colors duration-200',
                     item.isSpecial && [
                       'bg-primary text-primary-foreground',
                       'hover:bg-primary/90 active:bg-primary/80',
-                      'shadow-lg shadow-primary/20'
+                      'shadow-lg shadow-primary/20',
                     ],
-                    isActive && !item.isSpecial && [
-                      'text-primary bg-primary/10',
-                      'hover:bg-primary/15'
-                    ]
+                    isActive &&
+                      !item.isSpecial && [
+                        'bg-primary/10 text-primary',
+                        'hover:bg-primary/15',
+                      ]
                   )}
-                  aria-label={item.label}
-                  aria-current={isActive ? 'page' : undefined}
+                  size="sm"
+                  variant="ghost"
                 >
                   <div className="relative">
-                    <Icon 
-                      className={cn(
-                        'h-5 w-5',
-                        item.isSpecial && 'h-6 w-6'
-                      )} 
+                    <Icon
+                      className={cn('h-5 w-5', item.isSpecial && 'h-6 w-6')}
                     />
-                    
+
                     {/* Badge for notifications/cart items */}
                     {item.badge !== null && (
-                      <Badge 
-                        variant="destructive" 
+                      <Badge
                         className={cn(
-                          'absolute -top-2 -right-2',
-                          'h-5 w-5 flex items-center justify-center',
-                          'text-xs font-bold min-w-[20px] px-1',
-                          'animate-in fade-in-0 zoom-in-50 duration-200'
+                          '-top-2 -right-2 absolute',
+                          'flex h-5 w-5 items-center justify-center',
+                          'min-w-[20px] px-1 font-bold text-xs',
+                          'fade-in-0 zoom-in-50 animate-in duration-200'
                         )}
+                        variant="destructive"
                       >
                         {item.badge > 99 ? '99+' : item.badge}
                       </Badge>
                     )}
-                    
+
                     {/* Cart badge for shopping bag icon */}
                     {item.href === '/buying/cart' && cartItems > 0 && (
-                      <Badge 
-                        variant="destructive" 
+                      <Badge
                         className={cn(
-                          'absolute -top-2 -right-2',
-                          'h-5 w-5 flex items-center justify-center',
-                          'text-xs font-bold min-w-[20px] px-1',
-                          'animate-in fade-in-0 zoom-in-50 duration-200'
+                          '-top-2 -right-2 absolute',
+                          'flex h-5 w-5 items-center justify-center',
+                          'min-w-[20px] px-1 font-bold text-xs',
+                          'fade-in-0 zoom-in-50 animate-in duration-200'
                         )}
+                        variant="destructive"
                       >
                         {cartItems > 99 ? '99+' : cartItems}
                       </Badge>
                     )}
                   </div>
-                  
-                  <span 
+
+                  <span
                     className={cn(
                       'text-[10px] leading-none',
                       'max-w-full truncate',
@@ -171,15 +177,19 @@ export function MobileBottomNav({ className, unreadMessages = 0, dictionary }: M
           })}
         </nav>
       </div>
-      
+
       {/* Spacer to prevent content from being hidden behind bottom nav */}
-      <div className="h-20 md:hidden" aria-hidden="true" />
+      <div aria-hidden="true" className="h-20 md:hidden" />
     </>
   );
 }
 
 // Secondary actions bottom sheet trigger (for less common actions)
-export function SecondaryActionsNav({ dictionary }: { dictionary: Dictionary }): React.JSX.Element {
+export function SecondaryActionsNav({
+  dictionary,
+}: {
+  dictionary: Dictionary;
+}): React.JSX.Element {
   const { getTotalItems } = useCartStore();
   const [cartItems, setCartItems] = useState(0);
 
@@ -190,7 +200,7 @@ export function SecondaryActionsNav({ dictionary }: { dictionary: Dictionary }):
   const secondaryActions = [
     {
       href: '/buying/cart',
-      icon: ShoppingBag, 
+      icon: ShoppingBag,
       label: dictionary.web.global.navigation.cart || 'Cart',
       badge: cartItems > 0 ? cartItems : null,
     },
@@ -207,32 +217,32 @@ export function SecondaryActionsNav({ dictionary }: { dictionary: Dictionary }):
       <div className="flex flex-col gap-2">
         {secondaryActions.map((action) => {
           const Icon = action.icon;
-          
+
           return (
-            <Link key={action.href} href={action.href}>
+            <Link href={action.href} key={action.href}>
               <Button
-                size="icon"
-                variant="secondary"
+                aria-label={action.label}
                 className={cn(
                   'relative h-12 w-12 rounded-[var(--radius-full)]',
-                  'shadow-lg shadow-black/10',
+                  'shadow-black/10 shadow-lg',
                   'bg-background/95 backdrop-blur',
                   'border border-border/50',
                   'hover:bg-accent active:bg-accent/80',
                   'transition-all duration-200'
                 )}
-                aria-label={action.label}
+                size="icon"
+                variant="secondary"
               >
                 <Icon className="h-5 w-5" />
-                
+
                 {action.badge !== null && action.badge > 0 && (
-                  <Badge 
-                    variant="destructive" 
+                  <Badge
                     className={cn(
-                      'absolute -top-1 -right-1',
-                      'h-5 w-5 flex items-center justify-center',
-                      'text-xs font-bold min-w-[20px] px-1'
+                      '-top-1 -right-1 absolute',
+                      'flex h-5 w-5 items-center justify-center',
+                      'min-w-[20px] px-1 font-bold text-xs'
                     )}
+                    variant="destructive"
                   >
                     {action.badge > 99 ? '99+' : action.badge}
                   </Badge>

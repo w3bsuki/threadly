@@ -6,8 +6,13 @@ import type { ImageData, UploadResult } from './types';
 export interface UploadthingImageUploadProps {
   value: ImageData[];
   onChange: (images: ImageData[]) => void;
-  useUploadThing: (endpoint: string, options?: any) => {
-    startUpload: (files: File[]) => Promise<Array<{ url: string; key?: string; name?: string }>>;
+  useUploadThing: (
+    endpoint: string,
+    options?: any
+  ) => {
+    startUpload: (
+      files: File[]
+    ) => Promise<Array<{ url: string; key?: string; name?: string }>>;
     isUploading: boolean;
   };
   endpoint?: string;
@@ -42,32 +47,16 @@ export function UploadthingImageUpload({
         const progressInterval = setInterval(() => {
           onProgress(Math.min(90, Math.random() * 100));
         }, 500);
-        
+
         const result = await startUpload([file]);
-        
+
         clearInterval(progressInterval);
         onProgress(100);
-        
+
         if (!result || result.length === 0) {
           throw new Error('Upload failed');
         }
-        
-        const uploadResult = result[0];
-        if (!uploadResult) {
-          throw new Error('Upload result is empty');
-        }
-        return {
-          url: uploadResult.url,
-          id: uploadResult.key,
-          alt: uploadResult.name,
-        };
-      } else {
-        const result = await startUpload([file]);
-        
-        if (!result || result.length === 0) {
-          throw new Error('Upload failed');
-        }
-        
+
         const uploadResult = result[0];
         if (!uploadResult) {
           throw new Error('Upload result is empty');
@@ -78,6 +67,21 @@ export function UploadthingImageUpload({
           alt: uploadResult.name,
         };
       }
+      const result = await startUpload([file]);
+
+      if (!result || result.length === 0) {
+        throw new Error('Upload failed');
+      }
+
+      const uploadResult = result[0];
+      if (!uploadResult) {
+        throw new Error('Upload result is empty');
+      }
+      return {
+        url: uploadResult.url,
+        id: uploadResult.key,
+        alt: uploadResult.name,
+      };
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -88,10 +92,10 @@ export function UploadthingImageUpload({
 
   return (
     <ImageUpload
-      value={value}
+      disabled={props.disabled || isUploading}
       onChange={onChange}
       onUpload={handleUpload}
-      disabled={props.disabled || isUploading}
+      value={value}
       {...props}
     />
   );

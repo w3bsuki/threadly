@@ -1,21 +1,21 @@
-import { NextResponse } from 'next/server';
-import { database } from '@repo/database';
 import { cache } from '@repo/cache';
+import { database } from '@repo/database';
+import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
     const startTime = Date.now();
-    
+
     // Check database connectivity
     const dbCheck = await database.$queryRaw`SELECT 1 as status`;
     const dbLatency = Date.now() - startTime;
-    
+
     // Check cache connectivity
     const cacheStartTime = Date.now();
     await cache.set('health-check', 'ok', { ttl: 10 });
     const cacheResult = await cache.get('health-check');
     const cacheLatency = Date.now() - cacheStartTime;
-    
+
     const health = {
       status: 'healthy',
       timestamp: new Date().toISOString(),
@@ -36,7 +36,7 @@ export async function GET() {
         },
       },
     };
-    
+
     return NextResponse.json(health);
   } catch (error) {
     return NextResponse.json(

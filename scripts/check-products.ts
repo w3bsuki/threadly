@@ -2,7 +2,9 @@ import { database } from '@repo/database';
 
 if (!process.env.DATABASE_URL) {
   console.error('❌ DATABASE_URL environment variable is not set');
-  console.error('Please set the DATABASE_URL environment variable before running this script');
+  console.error(
+    'Please set the DATABASE_URL environment variable before running this script'
+  );
   process.exit(1);
 }
 
@@ -23,7 +25,7 @@ async function checkProducts() {
     });
 
     console.log(`\n📊 Total products found: ${products.length}`);
-    
+
     products.forEach((product, index) => {
       console.log(`
 Product ${index + 1}:
@@ -60,8 +62,10 @@ Product ${index + 1}:
         ],
       },
     });
-    console.log(`\n🔍 Products containing "leather": ${leatherProducts.length}`);
-    leatherProducts.forEach(product => {
+    console.log(
+      `\n🔍 Products containing "leather": ${leatherProducts.length}`
+    );
+    leatherProducts.forEach((product) => {
       console.log(`- ${product.title} (${product.brand || 'No brand'})`);
     });
 
@@ -83,10 +87,9 @@ Product ${index + 1}:
       },
     });
     console.log(`\n🧥 Products containing "jacket": ${jacketProducts.length}`);
-    jacketProducts.forEach(product => {
+    jacketProducts.forEach((product) => {
       console.log(`- ${product.title} (${product.brand || 'No brand'})`);
     });
-
   } catch (error) {
     console.error('❌ Error checking products:', error);
   }

@@ -1,6 +1,6 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 const sellerProfileSchema = z.object({
@@ -12,27 +12,27 @@ const sellerProfileSchema = z.object({
   accountHolderName: z.string().optional(),
   payoutMethod: z.enum(['bank_transfer', 'paypal']).default('bank_transfer'),
   shippingFrom: z.string().min(1),
-  processingTime: z.string().transform(val => parseInt(val)),
-  defaultShippingCost: z.string().transform(val => parseFloat(val)),
+  processingTime: z.string().transform((val) => Number.parseInt(val)),
+  defaultShippingCost: z.string().transform((val) => Number.parseFloat(val)),
   shippingNotes: z.string().optional(),
 });
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const user = await currentUser();
-    
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await request.json();
-    
+
     const validated = sellerProfileSchema.parse(body);
 
     // Get or create database user
     let dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      select: { id: true, SellerProfile: true }
+      select: { id: true, SellerProfile: true },
     });
 
     if (!dbUser) {
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           lastName: user.lastName,
           imageUrl: user.imageUrl,
         },
-        select: { id: true, SellerProfile: true }
+        select: { id: true, SellerProfile: true },
       });
     }
 
@@ -57,14 +57,21 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Update user with payment info if provided
-    if (validated.bankAccountNumber || validated.bankRoutingNumber || validated.accountHolderName) {
+    if (
+      validated.bankAccountNumber ||
+      validated.bankRoutingNumber ||
+      validated.accountHolderName
+    ) {
       await database.user.update({
         where: { id: dbUser.id },
         data: {
           bankAccountNumber: validated.bankAccountNumber || null,
           bankRoutingNumber: validated.bankRoutingNumber || null,
           accountHolderName: validated.accountHolderName || null,
-          payoutMethod: validated.payoutMethod === 'bank_transfer' ? 'BANK_TRANSFER' : 'PAYPAL',
+          payoutMethod:
+            validated.payoutMethod === 'bank_transfer'
+              ? 'BANK_TRANSFER'
+              : 'PAYPAL',
         },
       });
     }
@@ -84,7 +91,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({
       success: true,
-      sellerProfile: sellerProfile,
+      sellerProfile,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -93,7 +100,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         { status: 400 }
       );
     }
-    
+
     // Prisma errors
     if ((error as { code?: string })?.code === 'P2002') {
       return NextResponse.json(
@@ -101,14 +108,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         { status: 409 }
       );
     }
-    
+
     if (error instanceof Error) {
       return NextResponse.json(
         { error: error.message || 'Failed to create seller profile' },
         { status: 500 }
       );
     }
-    
+
     return NextResponse.json(
       { error: 'Failed to create seller profile' },
       { status: 500 }

@@ -1,9 +1,9 @@
 'use client';
 
-import { useRef, useState } from 'react';
 import { cn } from '@repo/design-system/lib/utils';
-import { useVirtualImageList } from '../../hooks/use-lazy-load-images';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { useVirtualImageList } from '../../hooks/use-lazy-load-images';
 import { Button } from './button';
 import { Dialog, DialogContent } from './dialog';
 
@@ -46,7 +46,9 @@ export function ImageGallery({
     overscan: 2,
   });
 
-  const displayImages = enableVirtualization ? virtualList.visibleItems : images;
+  const displayImages = enableVirtualization
+    ? virtualList.visibleItems
+    : images;
 
   const handlePrevious = () => {
     if (selectedIndex !== null && selectedIndex > 0) {
@@ -79,17 +81,19 @@ export function ImageGallery({
   return (
     <>
       <div
-        ref={containerRef}
         className={cn(
           'relative',
           enableVirtualization && 'overflow-y-auto',
           className
         )}
-        style={enableVirtualization ? { height: containerHeight } : undefined}
         onScroll={enableVirtualization ? virtualList.handleScroll : undefined}
+        ref={containerRef}
+        style={enableVirtualization ? { height: containerHeight } : undefined}
       >
         {enableVirtualization && (
-          <div style={{ height: virtualList.totalHeight, position: 'relative' }}>
+          <div
+            style={{ height: virtualList.totalHeight, position: 'relative' }}
+          >
             <div
               style={{
                 transform: `translateY(${virtualList.offsetY}px)`,
@@ -99,28 +103,25 @@ export function ImageGallery({
                 right: 0,
               }}
             >
-              <div
-                className={cn(
-                  'grid',
-                  `grid-cols-${columns}`,
-                  `gap-${gap}`
-                )}
-              >
+              <div className={cn('grid', `grid-cols-${columns}`, `gap-${gap}`)}>
                 {displayImages.map((image, index) => (
                   <div
-                    key={image.id}
                     className={cn(
                       'relative cursor-pointer overflow-hidden rounded-[var(--radius-lg)]',
                       itemClassName
                     )}
+                    key={image.id}
+                    onClick={() =>
+                      enableLightbox &&
+                      setSelectedIndex(virtualList.startIndex + index)
+                    }
                     style={{ height: itemHeight }}
-                    onClick={() => enableLightbox && setSelectedIndex(virtualList.startIndex + index)}
                   >
                     <img
-                      src={image.imageUrl}
                       alt={image.alt || `Image ${index + 1}`}
-                      className="absolute inset-0 w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 hover:scale-105"
                       loading="lazy"
+                      src={image.imageUrl}
                     />
                   </div>
                 ))}
@@ -130,27 +131,21 @@ export function ImageGallery({
         )}
 
         {!enableVirtualization && (
-          <div
-            className={cn(
-              'grid',
-              `grid-cols-${columns}`,
-              `gap-${gap}`
-            )}
-          >
+          <div className={cn('grid', `grid-cols-${columns}`, `gap-${gap}`)}>
             {displayImages.map((image, index) => (
               <div
-                key={image.id}
                 className={cn(
-                  'relative cursor-pointer overflow-hidden rounded-[var(--radius-lg)] aspect-square',
+                  'relative aspect-square cursor-pointer overflow-hidden rounded-[var(--radius-lg)]',
                   itemClassName
                 )}
+                key={image.id}
                 onClick={() => enableLightbox && setSelectedIndex(index)}
               >
                 <img
-                  src={image.imageUrl}
                   alt={image.alt || `Image ${index + 1}`}
-                  className="absolute inset-0 w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 hover:scale-105"
                   loading="lazy"
+                  src={image.imageUrl}
                 />
               </div>
             ))}
@@ -160,27 +155,27 @@ export function ImageGallery({
 
       {/* Lightbox */}
       {enableLightbox && selectedIndex !== null && (
-        <Dialog open={true} onOpenChange={() => setSelectedIndex(null)}>
+        <Dialog onOpenChange={() => setSelectedIndex(null)} open={true}>
           <DialogContent
-            className="max-w-[90vw] max-h-[90vh] p-0"
+            className="max-h-[90vh] max-w-[90vw] p-0"
             onKeyDown={handleKeyDown}
           >
-            <div className="relative w-full h-full flex items-center justify-center bg-foreground">
+            <div className="relative flex h-full w-full items-center justify-center bg-foreground">
               <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-4 right-4 text-background hover:bg-background/20 z-10"
+                className="absolute top-4 right-4 z-10 text-background hover:bg-background/20"
                 onClick={() => setSelectedIndex(null)}
+                size="icon"
+                variant="ghost"
               >
                 <X className="h-6 w-6" />
               </Button>
 
               {selectedIndex > 0 && (
                 <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-background hover:bg-background/20 z-10"
+                  className="-translate-y-1/2 absolute top-1/2 left-4 z-10 text-background hover:bg-background/20"
                   onClick={handlePrevious}
+                  size="icon"
+                  variant="ghost"
                 >
                   <ChevronLeft className="h-6 w-6" />
                 </Button>
@@ -188,24 +183,26 @@ export function ImageGallery({
 
               {selectedIndex < images.length - 1 && (
                 <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-background hover:bg-background/20 z-10"
+                  className="-translate-y-1/2 absolute top-1/2 right-4 z-10 text-background hover:bg-background/20"
                   onClick={handleNext}
+                  size="icon"
+                  variant="ghost"
                 >
                   <ChevronRight className="h-6 w-6" />
                 </Button>
               )}
 
-              <div className="relative w-full h-full max-w-[80vw] max-h-[80vh]">
+              <div className="relative h-full max-h-[80vh] w-full max-w-[80vw]">
                 <img
+                  alt={
+                    images[selectedIndex].alt || `Image ${selectedIndex + 1}`
+                  }
+                  className="absolute inset-0 h-full w-full object-contain"
                   src={images[selectedIndex].imageUrl}
-                  alt={images[selectedIndex].alt || `Image ${selectedIndex + 1}`}
-                  className="absolute inset-0 w-full h-full object-contain"
                 />
               </div>
 
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-background text-sm">
+              <div className="-translate-x-1/2 absolute bottom-4 left-1/2 text-background text-sm">
                 {selectedIndex + 1} / {images.length}
               </div>
             </div>

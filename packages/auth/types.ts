@@ -13,7 +13,9 @@ export interface AdminUser {
 }
 
 // Type guard for admin checking
-export function isAdminUser(user: { role: UserRole } | null): user is AdminUser {
+export function isAdminUser(
+  user: { role: UserRole } | null
+): user is AdminUser {
   return user?.role === 'ADMIN';
 }
 

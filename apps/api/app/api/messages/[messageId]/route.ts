@@ -199,7 +199,10 @@ export async function DELETE(
     }
 
     // Only the sender can delete their own message
-    if (!accessCheck.message || !accessCheck.user || accessCheck.message.senderId !== accessCheck.user.id) {
+    if (
+      !(accessCheck.message && accessCheck.user) ||
+      accessCheck.message.senderId !== accessCheck.user.id
+    ) {
       return NextResponse.json(
         {
           success: false,

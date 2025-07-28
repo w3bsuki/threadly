@@ -45,7 +45,13 @@ export interface SearchFilters {
   sellerRating?: number;
   availableForTrade?: boolean;
   location?: string;
-  sortBy?: 'relevance' | 'price_asc' | 'price_desc' | 'newest' | 'most_viewed' | 'most_favorited';
+  sortBy?:
+    | 'relevance'
+    | 'price_asc'
+    | 'price_desc'
+    | 'newest'
+    | 'most_viewed'
+    | 'most_favorited';
   [key: string]: unknown;
 }
 
@@ -92,11 +98,21 @@ export interface SearchIndexable {
 }
 
 export interface SearchEngine {
-  search(filters: SearchFilters, page?: number, hitsPerPage?: number): Promise<SearchResult>;
+  search(
+    filters: SearchFilters,
+    page?: number,
+    hitsPerPage?: number
+  ): Promise<SearchResult>;
   searchSuggestions(query: string, limit?: number): Promise<SearchSuggestion[]>;
   getPopularProducts(limit?: number): Promise<SearchProduct[]>;
-  getSimilarProducts(productId: string, limit?: number): Promise<SearchProduct[]>;
-  getProductsByCategory(category: string, limit?: number): Promise<SearchProduct[]>;
+  getSimilarProducts(
+    productId: string,
+    limit?: number
+  ): Promise<SearchProduct[]>;
+  getProductsByCategory(
+    category: string,
+    limit?: number
+  ): Promise<SearchProduct[]>;
   trackClick(productId: string, query: string, position: number): Promise<void>;
   trackConversion(productId: string, query: string): Promise<void>;
   getAnalytics(startDate: Date, endDate: Date): Promise<SearchAnalytics>;

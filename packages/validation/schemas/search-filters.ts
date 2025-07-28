@@ -14,7 +14,7 @@ export const SortOption = {
   MOST_FAVORITED: 'most_favorited',
 } as const;
 
-export type SortOptionType = typeof SortOption[keyof typeof SortOption];
+export type SortOptionType = (typeof SortOption)[keyof typeof SortOption];
 
 // Product conditions enum (matching product.ts)
 export const ProductCondition = {
@@ -27,34 +27,41 @@ export const ProductCondition = {
   FAIR: 'FAIR',
 } as const;
 
-export type ProductConditionType = typeof ProductCondition[keyof typeof ProductCondition];
+export type ProductConditionType =
+  (typeof ProductCondition)[keyof typeof ProductCondition];
 
 // Search filters schema
 export const searchFiltersSchema = z.object({
   query: z.string().optional(),
   categories: z.array(z.string()).optional(),
   brands: z.array(z.string()).optional(),
-  conditions: z.array(z.enum([
-    'NEW_WITH_TAGS',
-    'NEW_WITHOUT_TAGS',
-    'VERY_GOOD',
-    'GOOD',
-    'SATISFACTORY',
-    'LIKE_NEW',
-    'FAIR',
-  ])).optional(),
+  conditions: z
+    .array(
+      z.enum([
+        'NEW_WITH_TAGS',
+        'NEW_WITHOUT_TAGS',
+        'VERY_GOOD',
+        'GOOD',
+        'SATISFACTORY',
+        'LIKE_NEW',
+        'FAIR',
+      ])
+    )
+    .optional(),
   sizes: z.array(z.string()).optional(),
   colors: z.array(z.string()).optional(),
   priceMin: z.number().optional(),
   priceMax: z.number().optional(),
-  sortBy: z.enum([
-    'relevance',
-    'price_asc',
-    'price_desc',
-    'newest',
-    'most_viewed',
-    'most_favorited',
-  ]).optional(),
+  sortBy: z
+    .enum([
+      'relevance',
+      'price_asc',
+      'price_desc',
+      'newest',
+      'most_viewed',
+      'most_favorited',
+    ])
+    .optional(),
 });
 
 // TypeScript interface derived from schema
@@ -80,7 +87,15 @@ export interface FilterOptions {
 }
 
 // Product filter value types
-export type FilterValue = string | number | [number, number] | string[] | boolean;
+export type FilterValue =
+  | string
+  | number
+  | [number, number]
+  | string[]
+  | boolean;
 
 // Filter update function type
-export type FilterUpdateFunction = (key: keyof FilterState, value: FilterValue) => void;
+export type FilterUpdateFunction = (
+  key: keyof FilterState,
+  value: FilterValue
+) => void;

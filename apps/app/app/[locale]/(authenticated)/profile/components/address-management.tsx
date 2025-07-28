@@ -1,18 +1,36 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Checkbox,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@repo/design-system/components';
+import { Edit, MapPin, Plus, Star, Trash2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
-import { Input } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/design-system/components';
-import { Checkbox } from '@repo/design-system/components';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@repo/design-system/components';
-import { MapPin, Plus, Edit, Trash2, Star } from 'lucide-react';
 
 const addressSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
@@ -96,7 +114,9 @@ export function AddressManagement() {
   const onSubmit = async (data: AddressFormData) => {
     setIsSubmitting(true);
     try {
-      const url = editingAddress ? `/api/addresses/${editingAddress.id}` : '/api/addresses';
+      const url = editingAddress
+        ? `/api/addresses/${editingAddress.id}`
+        : '/api/addresses';
       const method = editingAddress ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -176,7 +196,7 @@ export function AddressManagement() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8">Loading addresses...</div>
+          <div className="py-8 text-center">Loading addresses...</div>
         </CardContent>
       </Card>
     );
@@ -190,21 +210,24 @@ export function AddressManagement() {
             <MapPin className="h-5 w-5" />
             Address Management
           </div>
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
             <DialogTrigger asChild>
               <Button onClick={newAddress} size="sm">
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className="mr-2 h-4 w-4" />
                 Add Address
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>
                   {editingAddress ? 'Edit Address' : 'Add New Address'}
                 </DialogTitle>
               </DialogHeader>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <form
+                  className="space-y-4"
+                  onSubmit={form.handleSubmit(onSubmit)}
+                >
                   <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
@@ -326,12 +349,17 @@ export function AddressManagement() {
                         <FormItem>
                           <FormLabel>Country</FormLabel>
                           <FormControl>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select
+                              defaultValue={field.value}
+                              onValueChange={field.onChange}
+                            >
                               <SelectTrigger>
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="US">United States</SelectItem>
+                                <SelectItem value="US">
+                                  United States
+                                </SelectItem>
                                 <SelectItem value="CA">Canada</SelectItem>
                                 <SelectItem value="MX">Mexico</SelectItem>
                               </SelectContent>
@@ -365,12 +393,17 @@ export function AddressManagement() {
                         <FormItem>
                           <FormLabel>Address Type</FormLabel>
                           <FormControl>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select
+                              defaultValue={field.value}
+                              onValueChange={field.onChange}
+                            >
                               <SelectTrigger>
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="SHIPPING">Shipping</SelectItem>
+                                <SelectItem value="SHIPPING">
+                                  Shipping
+                                </SelectItem>
                                 <SelectItem value="BILLING">Billing</SelectItem>
                               </SelectContent>
                             </Select>
@@ -400,13 +433,13 @@ export function AddressManagement() {
 
                   <div className="flex justify-end gap-2 pt-4">
                     <Button
+                      onClick={() => setDialogOpen(false)}
                       type="button"
                       variant="outline"
-                      onClick={() => setDialogOpen(false)}
                     >
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={isSubmitting}>
+                    <Button disabled={isSubmitting} type="submit">
                       {isSubmitting ? 'Saving...' : 'Save Address'}
                     </Button>
                   </div>
@@ -418,10 +451,10 @@ export function AddressManagement() {
       </CardHeader>
       <CardContent>
         {addresses.length === 0 ? (
-          <div className="text-center py-8">
-            <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No addresses saved</h3>
-            <p className="text-muted-foreground mb-4">
+          <div className="py-8 text-center">
+            <MapPin className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+            <h3 className="mb-2 font-semibold text-lg">No addresses saved</h3>
+            <p className="mb-4 text-muted-foreground">
               Add an address to make checkout faster and easier.
             </p>
           </div>
@@ -429,30 +462,39 @@ export function AddressManagement() {
           <div className="space-y-4">
             {addresses.map((address) => (
               <div
+                className="rounded-[var(--radius-lg)] border p-4 transition-colors hover:border-border"
                 key={address.id}
-                className="border rounded-[var(--radius-lg)] p-4 hover:border-border transition-colors"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="mb-2 flex items-center gap-2">
                       <h3 className="font-medium">
                         {address.firstName} {address.lastName}
                       </h3>
-                      <Badge variant={address.type === 'SHIPPING' ? 'default' : 'secondary'}>
+                      <Badge
+                        variant={
+                          address.type === 'SHIPPING' ? 'default' : 'secondary'
+                        }
+                      >
                         {address.type}
                       </Badge>
                       {address.isDefault && (
-                        <Badge variant="outline" className="text-yellow-600 border-yellow-600">
-                          <Star className="h-3 w-3 mr-1" />
+                        <Badge
+                          className="border-yellow-600 text-yellow-600"
+                          variant="outline"
+                        >
+                          <Star className="mr-1 h-3 w-3" />
                           Default
                         </Badge>
                       )}
                     </div>
-                    
+
                     {address.company && (
-                      <p className="text-sm text-muted-foreground">{address.company}</p>
+                      <p className="text-muted-foreground text-sm">
+                        {address.company}
+                      </p>
                     )}
-                    
+
                     <p className="text-sm">
                       {address.streetLine1}
                       {address.streetLine2 && `, ${address.streetLine2}`}
@@ -461,25 +503,27 @@ export function AddressManagement() {
                       {address.city}, {address.state} {address.zipCode}
                     </p>
                     <p className="text-sm">{address.country}</p>
-                    
+
                     {address.phone && (
-                      <p className="text-sm text-muted-foreground mt-1">{address.phone}</p>
+                      <p className="mt-1 text-muted-foreground text-sm">
+                        {address.phone}
+                      </p>
                     )}
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     <Button
+                      onClick={() => editAddress(address)}
                       size="sm"
                       variant="outline"
-                      onClick={() => editAddress(address)}
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
                     <Button
+                      className="text-red-600 hover:text-red-700"
+                      onClick={() => deleteAddress(address.id)}
                       size="sm"
                       variant="outline"
-                      onClick={() => deleteAddress(address.id)}
-                      className="text-red-600 hover:text-red-700"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

@@ -1,8 +1,17 @@
 'use client';
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@repo/design-system/components';
 import { useEffect, useState } from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/design-system/components';
-import { getCategoriesFlat, type CategoryOption } from '../actions/get-categories';
+import {
+  type CategoryOption,
+  getCategoriesFlat,
+} from '../actions/get-categories';
 
 interface CategorySelectorProps {
   value?: string;
@@ -10,7 +19,11 @@ interface CategorySelectorProps {
   placeholder?: string;
 }
 
-export function CategorySelector({ value, onValueChange, placeholder = "Select a category" }: CategorySelectorProps) {
+export function CategorySelector({
+  value,
+  onValueChange,
+  placeholder = 'Select a category',
+}: CategorySelectorProps) {
   const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -52,8 +65,8 @@ export function CategorySelector({ value, onValueChange, placeholder = "Select a
           </SelectTrigger>
         </Select>
         <button
+          className="text-blue-600 text-sm underline hover:text-blue-800"
           onClick={() => window.location.reload()}
-          className="text-sm text-blue-600 hover:text-blue-800 underline"
         >
           Retry loading categories
         </button>
@@ -62,7 +75,7 @@ export function CategorySelector({ value, onValueChange, placeholder = "Select a
   }
 
   return (
-    <Select onValueChange={onValueChange} value={value || ""}>
+    <Select onValueChange={onValueChange} value={value || ''}>
       <SelectTrigger>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
@@ -74,7 +87,7 @@ export function CategorySelector({ value, onValueChange, placeholder = "Select a
             </SelectItem>
           ))
         ) : (
-          <SelectItem value="no-categories" disabled>
+          <SelectItem disabled value="no-categories">
             No categories available
           </SelectItem>
         )}

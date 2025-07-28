@@ -2,12 +2,13 @@ import { PrismaClient } from '../packages/database/generated/client';
 
 if (!process.env.DATABASE_URL) {
   console.error('❌ DATABASE_URL environment variable is not set');
-  console.error('Please set the DATABASE_URL environment variable before running this script');
+  console.error(
+    'Please set the DATABASE_URL environment variable before running this script'
+  );
   process.exit(1);
 }
 
 async function testDatabase() {
-  
   const prisma = new PrismaClient({
     datasourceUrl: process.env.DATABASE_URL,
   });
@@ -22,17 +23,15 @@ async function testDatabase() {
       include: {
         children: true,
         _count: {
-          select: { products: true }
-        }
-      }
+          select: { products: true },
+        },
+      },
     });
 
-    categories.forEach(cat => {
-    });
+    categories.forEach((cat) => {});
 
     // Test product query
     const productCount = await prisma.product.count();
-
   } catch (error) {
     console.error('❌ Database connection failed:', error);
   } finally {

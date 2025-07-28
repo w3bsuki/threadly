@@ -1,8 +1,8 @@
 'use server';
 
 import { database } from '@repo/database';
-import type { UserPreferenceRole } from '@/lib/database-types';
 import { revalidatePath } from 'next/cache';
+import type { UserPreferenceRole } from '@/lib/database-types';
 
 export async function getUserPreferences(clerkId: string) {
   try {
@@ -10,7 +10,7 @@ export async function getUserPreferences(clerkId: string) {
       where: { clerkId },
       include: { UserPreferences: true },
     });
-    
+
     return user?.UserPreferences || null;
   } catch (error) {
     return null;
@@ -67,7 +67,7 @@ export async function getCategories() {
     const categories = await database.category.findMany({
       orderBy: { name: 'asc' },
     });
-    
+
     return categories.map((cat) => ({
       id: cat.id,
       name: cat.name,

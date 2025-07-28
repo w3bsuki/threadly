@@ -1,19 +1,22 @@
 import { currentUser } from '@repo/auth/server';
-import { redirect } from 'next/navigation';
-import { SellerOnboardingWizard } from './components/seller-onboarding-wizard';
-import { QuickSetupButton } from './components/quick-setup-button';
 import { database } from '@repo/database';
+import { redirect } from 'next/navigation';
+import { QuickSetupButton } from './components/quick-setup-button';
+import { SellerOnboardingWizard } from './components/seller-onboarding-wizard';
 
 interface PageProps {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ returnTo?: string }>;
 }
 
-export default async function SellerOnboardingPage({ params, searchParams }: PageProps): Promise<React.JSX.Element> {
+export default async function SellerOnboardingPage({
+  params,
+  searchParams,
+}: PageProps): Promise<React.JSX.Element> {
   const user = await currentUser();
   const { locale } = await params;
   const { returnTo } = await searchParams;
-  
+
   if (!user) {
     redirect('/sign-in');
   }
@@ -21,10 +24,10 @@ export default async function SellerOnboardingPage({ params, searchParams }: Pag
   // Check if seller profile already exists
   const dbUser = await database.user.findUnique({
     where: { clerkId: user.id },
-    select: { 
+    select: {
       id: true,
-      SellerProfile: true 
-    }
+      SellerProfile: true,
+    },
   });
 
   if (dbUser?.SellerProfile) {
@@ -38,9 +41,13 @@ export default async function SellerOnboardingPage({ params, searchParams }: Pag
   }
 
   return (
-    <div className="container max-w-3xl mx-auto py-8 px-4">
-      <SellerOnboardingWizard userId={user.id} returnTo={returnTo} locale={locale} />
-      
+    <div className="container mx-auto max-w-3xl px-4 py-8">
+      <SellerOnboardingWizard
+        locale={locale}
+        returnTo={returnTo}
+        userId={user.id}
+      />
+
       {/* Quick setup option if coming from web */}
       {returnTo && <QuickSetupButton returnTo={returnTo} />}
     </div>

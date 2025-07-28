@@ -1,8 +1,8 @@
+import { getDictionary } from '@repo/internationalization';
+import { createMetadata } from '@repo/seo/metadata';
+import type { Metadata } from 'next';
 import { ProductGrid } from '../(home)/components/product-grid';
 import { CategoryNav } from '../components/category-nav';
-import { createMetadata } from '@repo/seo/metadata';
-import { getDictionary } from '@repo/internationalization';
-import type { Metadata } from 'next';
 
 export async function generateMetadata({
   params,
@@ -14,11 +14,22 @@ export async function generateMetadata({
 
   return createMetadata({
     title: "Kids' Fashion - Threadly",
-    description: "Discover unique kids' fashion from our community of sellers. Find clothes, shoes, and accessories for babies, toddlers, and children.",
-    keywords: ["kids' fashion", "children's clothes", "baby clothes", "toddler fashion", "kids shoes", "children's accessories", "secondhand", "vintage"],
+    description:
+      "Discover unique kids' fashion from our community of sellers. Find clothes, shoes, and accessories for babies, toddlers, and children.",
+    keywords: [
+      "kids' fashion",
+      "children's clothes",
+      'baby clothes',
+      'toddler fashion',
+      'kids shoes',
+      "children's accessories",
+      'secondhand',
+      'vintage',
+    ],
     openGraph: {
       title: "Kids' Fashion - Threadly Marketplace",
-      description: "Shop curated kids' fashion from independent sellers and designers.",
+      description:
+        "Shop curated kids' fashion from independent sellers and designers.",
       type: 'website',
       images: [
         {
@@ -32,7 +43,8 @@ export async function generateMetadata({
     twitter: {
       card: 'summary_large_image',
       title: "Kids' Fashion - Threadly",
-      description: "Discover unique kids' fashion from our community of sellers.",
+      description:
+        "Discover unique kids' fashion from our community of sellers.",
       images: ['/images/kids-fashion-hero.jpg'],
     },
   });

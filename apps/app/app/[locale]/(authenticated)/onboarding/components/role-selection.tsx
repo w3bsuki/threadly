@@ -1,5 +1,5 @@
-import { ShoppingBag, Store, Repeat, CheckCircle } from 'lucide-react';
 import { cn } from '@repo/design-system/lib/utils';
+import { CheckCircle, Repeat, ShoppingBag, Store } from 'lucide-react';
 import type { UserPreferenceRole } from '@/lib/database-types';
 
 interface RoleSelectionProps {
@@ -28,11 +28,16 @@ const roles = [
   },
 ];
 
-export function RoleSelection({ selectedRole, onSelect }: RoleSelectionProps): React.JSX.Element {
+export function RoleSelection({
+  selectedRole,
+  onSelect,
+}: RoleSelectionProps): React.JSX.Element {
   return (
     <div className="space-y-4">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-semibold mb-2">What brings you to Threadly?</h2>
+      <div className="mb-6 text-center">
+        <h2 className="mb-2 font-semibold text-2xl">
+          What brings you to Threadly?
+        </h2>
         <p className="text-muted-foreground">
           Choose your primary interest (you can always change this later)
         </p>
@@ -42,39 +47,39 @@ export function RoleSelection({ selectedRole, onSelect }: RoleSelectionProps): R
         {roles.map((role) => {
           const Icon = role.icon;
           const isSelected = selectedRole === role.value;
-          
+
           return (
             <button
-              key={role.value}
-              onClick={() => onSelect(role.value)}
               className={cn(
-                'flex items-start p-4 rounded-[var(--radius-lg)] border-2 transition-all text-left',
+                'flex items-start rounded-[var(--radius-lg)] border-2 p-4 text-left transition-all',
                 'hover:border-primary/50 hover:bg-accent/50',
                 isSelected
                   ? 'border-primary bg-primary/5'
                   : 'border-border bg-background'
               )}
+              key={role.value}
+              onClick={() => onSelect(role.value)}
             >
               <div
                 className={cn(
-                  'p-3 rounded-[var(--radius-full)] mr-4 transition-colors',
+                  'mr-4 rounded-[var(--radius-full)] p-3 transition-colors',
                   isSelected
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted text-muted-foreground'
                 )}
               >
-                <Icon className="w-6 h-6" />
+                <Icon className="h-6 w-6" />
               </div>
-              
+
               <div className="flex-1">
-                <h3 className="font-semibold mb-1">{role.title}</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="mb-1 font-semibold">{role.title}</h3>
+                <p className="text-muted-foreground text-sm">
                   {role.description}
                 </p>
               </div>
-              
+
               {isSelected && (
-                <CheckCircle className="w-5 h-5 text-primary mt-1" />
+                <CheckCircle className="mt-1 h-5 w-5 text-primary" />
               )}
             </button>
           );

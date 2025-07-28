@@ -1,11 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
-import { Skeleton } from '@repo/design-system/components';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Skeleton,
+} from '@repo/design-system/components';
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 interface Recommendation {
   productId: string;
@@ -19,10 +24,10 @@ interface ProductRecommendationsProps {
   productId?: string;
 }
 
-export function ProductRecommendations({ 
+export function ProductRecommendations({
   type = 'PERSONALIZED',
   title = 'Recommended for You',
-  productId
+  productId,
 }: ProductRecommendationsProps) {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,13 +57,13 @@ export function ProductRecommendations({
   };
 
   const nextSlide = () => {
-    setCurrentIndex((prev) => 
+    setCurrentIndex((prev) =>
       prev + 4 >= recommendations.length ? 0 : prev + 4
     );
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => 
+    setCurrentIndex((prev) =>
       prev - 4 < 0 ? Math.max(0, recommendations.length - 4) : prev - 4
     );
   };
@@ -73,9 +78,9 @@ export function ProductRecommendations({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="space-y-2">
+              <div className="space-y-2" key={i}>
                 <Skeleton className="aspect-square rounded-[var(--radius-lg)]" />
                 <Skeleton className="h-4 w-full" />
                 <Skeleton className="h-4 w-2/3" />
@@ -91,7 +96,10 @@ export function ProductRecommendations({
     return null;
   }
 
-  const visibleRecommendations = recommendations.slice(currentIndex, currentIndex + 4);
+  const visibleRecommendations = recommendations.slice(
+    currentIndex,
+    currentIndex + 4
+  );
 
   return (
     <Card>
@@ -103,20 +111,20 @@ export function ProductRecommendations({
           </CardTitle>
           <div className="flex gap-1">
             <Button
+              className="h-8 w-8"
+              disabled={currentIndex === 0}
+              onClick={prevSlide}
               size="icon"
               variant="ghost"
-              onClick={prevSlide}
-              disabled={currentIndex === 0}
-              className="h-8 w-8"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <Button
+              className="h-8 w-8"
+              disabled={currentIndex + 4 >= recommendations.length}
+              onClick={nextSlide}
               size="icon"
               variant="ghost"
-              onClick={nextSlide}
-              disabled={currentIndex + 4 >= recommendations.length}
-              className="h-8 w-8"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -124,25 +132,25 @@ export function ProductRecommendations({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {visibleRecommendations.map((rec) => (
             <Link
-              key={rec.productId}
-              href={`/products/${rec.productId}`}
               className="group"
+              href={`/products/${rec.productId}`}
+              key={rec.productId}
             >
               <div className="space-y-2">
-                <div className="aspect-square bg-muted rounded-[var(--radius-lg)] overflow-hidden">
+                <div className="aspect-square overflow-hidden rounded-[var(--radius-lg)] bg-muted">
                   {/* Product image would go here */}
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                  <div className="flex h-full w-full items-center justify-center text-muted-foreground">
                     <Package className="h-8 w-8" />
                   </div>
                 </div>
                 <div>
-                  <p className="font-medium line-clamp-1 group-hover:text-primary transition-colors">
+                  <p className="line-clamp-1 font-medium transition-colors group-hover:text-primary">
                     Product #{rec.productId.slice(-6)}
                   </p>
-                  <p className="text-xs text-muted-foreground line-clamp-1">
+                  <p className="line-clamp-1 text-muted-foreground text-xs">
                     {rec.reason}
                   </p>
                 </div>

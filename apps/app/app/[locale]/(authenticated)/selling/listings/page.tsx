@@ -1,36 +1,49 @@
 import { currentUser } from '@repo/auth/server';
+import { CACHE_KEYS, getCacheService } from '@repo/cache';
 import { database } from '@repo/database';
-import { redirect } from 'next/navigation';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@repo/design-system/components';
+import {
+  buildCursorWhere,
+  processPaginationResult,
+  validatePaginationParams,
+} from '@repo/design-system/lib/pagination';
+import { getDictionary } from '@repo/internationalization';
+import { decimalToNumber } from '@repo/utils';
+import { Edit, Eye, MoreHorizontal, Plus, Trash2 } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Button } from '@repo/design-system/components';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { Plus, Edit, MoreHorizontal, Eye, Trash2 } from 'lucide-react';
-import { decimalToNumber } from '@repo/utils';
-import { getDictionary } from '@repo/internationalization';
+import { redirect } from 'next/navigation';
 import { formatCurrency, formatNumber } from '@/lib/locale-format';
-import { validatePaginationParams, buildCursorWhere, processPaginationResult } from '@repo/design-system/lib/pagination';
 import { ListingsWithPagination } from './components/listings-with-pagination';
-import { getCacheService, CACHE_KEYS } from '@repo/cache';
 
-export async function generateMetadata({ 
-  params 
-}: { 
-  params: Promise<{ locale: string }> 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
   const dictionary = await getDictionary(locale);
-  
+
   return {
     title: dictionary.dashboard.listings.title,
     description: dictionary.dashboard.listings.title,
   };
 }
 
-async function getCachedListingsData(userId: string, cursor?: string, limit = 20) {
+async function getCachedListingsData(
+  userId: string,
+  cursor?: string,
+  limit = 20
+) {
   const cache = getCacheService();
-  
+
   return cache.remember(
     CACHE_KEYS.USER_LISTINGS(userId, cursor, limit),
     async () => {
@@ -76,10 +89,10 @@ async function getCachedListingsData(userId: string, cursor?: string, limit = 20
   );
 }
 
-const MyListingsPage = async ({ 
+const MyListingsPage = async ({
   params,
   searchParams,
-}: { 
+}: {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
@@ -94,7 +107,7 @@ const MyListingsPage = async ({
   // Get database user with just ID for performance
   const dbUser = await database.user.findUnique({
     where: { clerkId: user.id },
-    select: { id: true }
+    select: { id: true },
   });
 
   if (!dbUser) {
@@ -107,15 +120,15 @@ const MyListingsPage = async ({
         lastName: user.lastName,
         imageUrl: user.imageUrl,
       },
-      select: { id: true }
+      select: { id: true },
     });
-    
+
     // Return empty state for new user
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">My Listings</h1>
+            <h1 className="font-bold text-3xl tracking-tight">My Listings</h1>
             <p className="text-muted-foreground">
               Manage your products and track their performance
             </p>
@@ -139,7 +152,11 @@ const MyListingsPage = async ({
   const pagination = validatePaginationParams(searchParamsObj);
 
   // Fetch cached listings data
-  const { products, totalCount, pagination: paginationResult } = await getCachedListingsData(
+  const {
+    products,
+    totalCount,
+    pagination: paginationResult,
+  } = await getCachedListingsData(
     dbUser.id,
     pagination.cursor,
     pagination.limit
@@ -149,67 +166,73 @@ const MyListingsPage = async ({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">My Listings</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="font-bold text-2xl">My Listings</h1>
+          <p className="text-muted-foreground text-sm">
             Manage your products and track their performance
           </p>
         </div>
-        <Button size="sm" asChild>
+        <Button asChild size="sm">
           <Link href="/selling/new">
-            <Plus className="h-4 w-4 mr-1.5" />
+            <Plus className="mr-1.5 h-4 w-4" />
             Add New
           </Link>
         </Button>
       </div>
 
       <ListingsWithPagination
-        initialData={paginationResult}
-        userId={dbUser.id}
-        locale={locale}
         dictionary={dictionary}
+        initialData={paginationResult}
+        locale={locale}
+        userId={dbUser.id}
       />
 
       {/* Summary Stats */}
       {totalCount > 0 && (
-        <div className="grid gap-3 grid-cols-2 md:grid-cols-4 mt-4">
+        <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
           <Card>
             <CardContent className="p-3">
               <div className="text-center">
-                <p className="text-lg font-bold">{totalCount}</p>
-                <p className="text-xs text-muted-foreground">Total Listings</p>
+                <p className="font-bold text-lg">{totalCount}</p>
+                <p className="text-muted-foreground text-xs">Total Listings</p>
               </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardContent className="p-3">
               <div className="text-center">
-                <p className="text-lg font-bold">
-                  {products.filter(p => p.status === 'AVAILABLE').length}
+                <p className="font-bold text-lg">
+                  {products.filter((p) => p.status === 'AVAILABLE').length}
                 </p>
-                <p className="text-xs text-muted-foreground">Active</p>
+                <p className="text-muted-foreground text-xs">Active</p>
               </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardContent className="p-3">
               <div className="text-center">
-                <p className="text-lg font-bold">
-                  {products.filter(p => p.status === 'SOLD').length}
+                <p className="font-bold text-lg">
+                  {products.filter((p) => p.status === 'SOLD').length}
                 </p>
-                <p className="text-xs text-muted-foreground">Sold</p>
+                <p className="text-muted-foreground text-xs">Sold</p>
               </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardContent className="p-3">
               <div className="text-center">
-                <p className="text-lg font-bold">
-                  ${(products.reduce((sum, p) => sum + decimalToNumber(p.price), 0) / 100).toFixed(0)}
+                <p className="font-bold text-lg">
+                  $
+                  {(
+                    products.reduce(
+                      (sum, p) => sum + decimalToNumber(p.price),
+                      0
+                    ) / 100
+                  ).toFixed(0)}
                 </p>
-                <p className="text-xs text-muted-foreground">Page Value</p>
+                <p className="text-muted-foreground text-xs">Page Value</p>
               </div>
             </CardContent>
           </Card>

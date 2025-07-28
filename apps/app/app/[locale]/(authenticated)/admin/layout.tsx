@@ -1,18 +1,18 @@
-import { requireAdmin } from '@/lib/auth/admin';
 import { Card } from '@repo/design-system/components';
-import { 
-  Users, 
-  Package, 
-  MessageSquare, 
-  AlertTriangle,
-  BarChart,
-  Settings,
-  Shield,
-  Activity
-} from 'lucide-react';
-import Link from 'next/link';
 import { cn } from '@repo/design-system/lib/utils';
 import { getDictionary } from '@repo/internationalization';
+import {
+  Activity,
+  AlertTriangle,
+  BarChart,
+  MessageSquare,
+  Package,
+  Settings,
+  Shield,
+  Users,
+} from 'lucide-react';
+import Link from 'next/link';
+import { requireAdmin } from '@/lib/auth/admin';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -71,20 +71,22 @@ const AdminLayout: React.FC<AdminLayoutProps> = async ({
       {/* Admin Sidebar */}
       <div className="w-64 border-r bg-muted/10">
         <div className="p-6">
-          <div className="flex items-center gap-2 mb-8">
+          <div className="mb-8 flex items-center gap-2">
             <Shield className="h-6 w-6 text-primary" />
-            <h2 className="text-xl font-bold">{dictionary.dashboard.admin.title}</h2>
+            <h2 className="font-bold text-xl">
+              {dictionary.dashboard.admin.title}
+            </h2>
           </div>
-          
+
           <nav className="space-y-1">
             {adminNavItems.map((item) => (
               <Link
-                key={item.href}
-                href={item.href}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-[var(--radius-lg)] text-sm font-medium transition-colors",
-                  "hover:bg-accent hover:text-accent-foreground"
+                  'flex items-center gap-3 rounded-[var(--radius-lg)] px-3 py-2 font-medium text-sm transition-colors',
+                  'hover:bg-accent hover:text-accent-foreground'
                 )}
+                href={item.href}
+                key={item.href}
               >
                 <item.icon className="h-4 w-4" />
                 {item.title}
@@ -96,9 +98,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = async ({
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto">
-        <div className="p-8">
-          {children}
-        </div>
+        <div className="p-8">{children}</div>
       </div>
     </div>
   );

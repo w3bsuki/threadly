@@ -69,7 +69,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(mockData);
   } catch (error) {
-    log.error('Web Vitals aggregation error:', error as Record<string, unknown>);
+    log.error(
+      'Web Vitals aggregation error:',
+      error as Record<string, unknown>
+    );
     return NextResponse.json(
       { error: 'Failed to fetch web vitals data' },
       { status: 500 }

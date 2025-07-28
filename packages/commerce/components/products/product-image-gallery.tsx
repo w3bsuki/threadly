@@ -12,7 +12,10 @@ interface ProductImageGalleryProps {
   title: string;
 }
 
-export function ProductImageGallery({ images, title }: ProductImageGalleryProps) {
+export function ProductImageGallery({
+  images,
+  title,
+}: ProductImageGalleryProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const handleTouchStart = useRef<{ x: number; y: number } | null>(null);
 

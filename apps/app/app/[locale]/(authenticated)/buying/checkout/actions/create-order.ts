@@ -2,18 +2,21 @@
 
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
+import { log, logError } from '@repo/observability/server';
+import { decimalToNumber } from '@repo/utils';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
-import { decimalToNumber } from '@repo/utils';
 
 const createOrderSchema = z.object({
-  items: z.array(z.object({
-    productId: z.string(),
-    quantity: z.number().min(1),
-    price: z.number().min(0),
-  })).min(1),
+  items: z
+    .array(
+      z.object({
+        productId: z.string(),
+        quantity: z.number().min(1),
+        price: z.number().min(0),
+      })
+    )
+    .min(1),
   shippingAddress: z.object({
     firstName: z.string().min(1),
     lastName: z.string().min(1),
@@ -41,12 +44,12 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
     if (!user) {
       redirect('/sign-in');
     }
-    
+
     // Get database user
     const dbUser = await database.user.findUnique({
-      where: { clerkId: user.id }
+      where: { clerkId: user.id },
     });
-    
+
     if (!dbUser) {
       return {
         success: false,
@@ -58,7 +61,7 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
     const validatedInput = createOrderSchema.parse(input);
 
     // Verify all products exist and are available
-    const productIds = validatedInput.items.map(item => item.productId);
+    const productIds = validatedInput.items.map((item) => item.productId);
     const products = await database.product.findMany({
       where: {
         id: { in: productIds },
@@ -78,8 +81,11 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
 
     // Verify prices haven't changed
     for (const orderItem of validatedInput.items) {
-      const product = products.find(p => p.id === orderItem.productId);
-      if (!product || Math.abs(decimalToNumber(product.price) - orderItem.price) > 0.01) {
+      const product = products.find((p) => p.id === orderItem.productId);
+      if (
+        !product ||
+        Math.abs(decimalToNumber(product.price) - orderItem.price) > 0.01
+      ) {
         return {
           success: false,
           error: 'Product prices have changed. Please refresh your cart.',
@@ -141,7 +147,7 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
     // Use transaction to ensure all orders are created successfully
     const result = await database.$transaction(async (tx) => {
       const orders = [];
-      
+
       // Get or create the shipping address first
       let shippingAddress = await tx.address.findFirst({
         where: {
@@ -168,15 +174,15 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
             zipCode: validatedInput.shippingAddress.zipCode,
             country: validatedInput.shippingAddress.country,
             type: 'SHIPPING',
-            isDefault: validatedInput.saveAddress || false,
+            isDefault: validatedInput.saveAddress,
           },
         });
       }
-      
+
       // Create separate orders for each product (current schema limitation)
       for (const item of validatedInput.items) {
-        const product = products.find(p => p.id === item.productId)!;
-        
+        const product = products.find((p) => p.id === item.productId)!;
+
         // Create individual order for each product
         const order = await tx.order.create({
           data: {
@@ -186,7 +192,10 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
             amount: item.price * item.quantity,
             shippingCost: validatedInput.shippingCost,
             tax: validatedInput.tax,
-            totalAmount: item.price * item.quantity + validatedInput.shippingCost + validatedInput.tax,
+            totalAmount:
+              item.price * item.quantity +
+              validatedInput.shippingCost +
+              validatedInput.tax,
             status: 'PENDING',
             shippingAddressId: shippingAddress.id,
           },
@@ -206,9 +215,9 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
             seller: true,
           },
         });
-        
+
         orders.push(order);
-        
+
         // Remove item from cart after order creation
         await tx.cartItem.deleteMany({
           where: {
@@ -217,7 +226,7 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
           },
         });
       }
-      
+
       return orders;
     });
 
@@ -231,18 +240,15 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
       const { sendOrderConfirmationEmail } = await import('@repo/email');
       if (user.emailAddresses?.[0]?.emailAddress && orders.length > 0) {
         const primaryOrder = orders[0];
-        await sendOrderConfirmationEmail(
-          user.emailAddresses[0].emailAddress,
-          {
-            firstName: dbUser.firstName || 'Customer',
-            orderId: primaryOrder.id,
-            productTitle: primaryOrder.Product.title,
-            productImage: primaryOrder.Product.images[0]?.imageUrl,
-            price: decimalToNumber(primaryOrder.amount),
-            sellerName: primaryOrder.seller.firstName || 'Seller',
-            orderUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'}/buying/orders/${primaryOrder.id}`,
-          }
-        );
+        await sendOrderConfirmationEmail(user.emailAddresses[0].emailAddress, {
+          firstName: dbUser.firstName || 'Customer',
+          orderId: primaryOrder.id,
+          productTitle: primaryOrder.Product.title,
+          productImage: primaryOrder.Product.images[0]?.imageUrl,
+          price: decimalToNumber(primaryOrder.amount),
+          sellerName: primaryOrder.seller.firstName || 'Seller',
+          orderUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'}/buying/orders/${primaryOrder.id}`,
+        });
       }
     } catch (error) {
       logError('Failed to send confirmation email:', error);
@@ -273,7 +279,7 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
         notes: validatedInput.notes,
         paymentIntentId: validatedInput.paymentIntentId,
         // Transform orders into orderItems format
-        orderItems: orders.map(o => ({
+        orderItems: orders.map((o) => ({
           id: o.id,
           productId: o.productId,
           sellerId: o.sellerId,
@@ -286,10 +292,9 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
         })),
       },
     };
-
   } catch (error) {
     logError('Failed to create order:', error);
-    
+
     if (error instanceof z.ZodError) {
       return {
         success: false,

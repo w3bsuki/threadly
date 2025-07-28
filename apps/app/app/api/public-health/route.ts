@@ -10,6 +10,6 @@ export async function GET() {
     env: {
       nodeEnv: process.env.NODE_ENV,
       hasClerkKey: !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
-    }
+    },
   });
 }

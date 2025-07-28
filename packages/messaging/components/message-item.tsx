@@ -13,7 +13,6 @@ export function MessageItem({
   onRetry,
   className,
 }: MessageItemProps) {
-
   const formatTime = (date: Date) => {
     const now = new Date();
     const diff = now.getTime() - date.getTime();
@@ -49,9 +48,7 @@ export function MessageItem({
           )}
         </div>
       )}
-      <div
-        className={`flex-1 ${isSender ? 'text-right' : ''}`}
-      >
+      <div className={`flex-1 ${isSender ? 'text-right' : ''}`}>
         <div
           className={`max-w-xs rounded-[var(--radius-lg)] p-3 ${
             isSender
@@ -59,8 +56,8 @@ export function MessageItem({
                   isFailed
                     ? 'bg-red-600 text-background'
                     : isOptimistic
-                    ? 'bg-blue-600 text-background opacity-70'
-                    : 'bg-blue-600 text-background'
+                      ? 'bg-blue-600 text-background opacity-70'
+                      : 'bg-blue-600 text-background'
                 }`
               : 'bg-secondary'
           }`}
@@ -68,8 +65,8 @@ export function MessageItem({
           <p className="text-sm">{message.content}</p>
           {isFailed && onRetry && (
             <button
+              className="mt-2 text-background text-xs underline hover:no-underline"
               onClick={onRetry}
-              className="mt-2 text-xs text-background underline hover:no-underline"
             >
               Retry
             </button>
@@ -86,10 +83,8 @@ export function MessageItem({
           {isOptimistic && (
             <span className="text-muted-foreground/70 text-xs">Sending...</span>
           )}
-          {isFailed && (
-            <span className="text-red-500 text-xs">Failed</span>
-          )}
-          {!isOptimistic && !isFailed && (
+          {isFailed && <span className="text-red-500 text-xs">Failed</span>}
+          {!(isOptimistic || isFailed) && (
             <span className="text-muted-foreground text-xs">
               {formatTime(new Date(message.createdAt))}
             </span>

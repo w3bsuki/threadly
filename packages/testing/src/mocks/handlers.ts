@@ -1,39 +1,45 @@
-import { http, HttpResponse } from 'msw';
-import { mockProducts, mockUsers, mockOrders, mockConversations } from './data';
+import { HttpResponse, http } from 'msw';
+import { mockConversations, mockOrders, mockProducts, mockUsers } from './data';
 
 export const handlers = [
   // Search API
   http.post('/api/search', async ({ request }) => {
-    const { filters, page = 0, hitsPerPage = 20 } = await request.json() as any;
-    
+    const {
+      filters,
+      page = 0,
+      hitsPerPage = 20,
+    } = (await request.json()) as any;
+
     let results = [...mockProducts];
-    
+
     // Apply filters
     if (filters.query) {
-      results = results.filter(product =>
-        product.title.toLowerCase().includes(filters.query.toLowerCase()) ||
-        product.brand?.toLowerCase().includes(filters.query.toLowerCase())
+      results = results.filter(
+        (product) =>
+          product.title.toLowerCase().includes(filters.query.toLowerCase()) ||
+          product.brand?.toLowerCase().includes(filters.query.toLowerCase())
       );
     }
-    
+
     if (filters.categories?.length) {
-      results = results.filter(product =>
+      results = results.filter((product) =>
         filters.categories.includes(product.categoryName)
       );
     }
-    
+
     if (filters.priceRange) {
-      results = results.filter(product =>
-        product.price >= filters.priceRange.min &&
-        product.price <= filters.priceRange.max
+      results = results.filter(
+        (product) =>
+          product.price >= filters.priceRange.min &&
+          product.price <= filters.priceRange.max
       );
     }
-    
+
     // Pagination
     const start = page * hitsPerPage;
     const end = start + hitsPerPage;
     const hits = results.slice(start, end);
-    
+
     return HttpResponse.json({
       hits,
       totalHits: results.length,
@@ -41,9 +47,9 @@ export const handlers = [
       totalPages: Math.ceil(results.length / hitsPerPage),
       processingTimeMS: 10,
       facets: {
-        categoryName: { 'Electronics': 10, 'Clothing': 15, 'Books': 5 },
-        brand: { 'Apple': 5, 'Nike': 8, 'Samsung': 3 },
-        condition: { 'NEW_WITH_TAGS': 12, 'GOOD': 18, 'VERY_GOOD': 8 },
+        categoryName: { Electronics: 10, Clothing: 15, Books: 5 },
+        brand: { Apple: 5, Nike: 8, Samsung: 3 },
+        condition: { NEW_WITH_TAGS: 12, GOOD: 18, VERY_GOOD: 8 },
       },
     });
   }),
@@ -52,17 +58,17 @@ export const handlers = [
   http.get('/api/search/suggestions', ({ request }) => {
     const url = new URL(request.url);
     const query = url.searchParams.get('q') || '';
-    
+
     if (query.length < 2) {
       return HttpResponse.json([]);
     }
-    
+
     const suggestions = [
       { query, count: 25 },
       { query, category: 'Electronics', count: 10 },
       { query, category: 'Clothing', count: 8 },
     ];
-    
+
     return HttpResponse.json(suggestions);
   }),
 
@@ -70,17 +76,17 @@ export const handlers = [
   http.get('/api/search/autocomplete', ({ request }) => {
     const url = new URL(request.url);
     const query = url.searchParams.get('q') || '';
-    
+
     if (query.length < 2) {
       return HttpResponse.json([]);
     }
-    
+
     const results = mockProducts
-      .filter(product =>
+      .filter((product) =>
         product.title.toLowerCase().includes(query.toLowerCase())
       )
       .slice(0, 5)
-      .map(product => ({
+      .map((product) => ({
         id: product.id,
         title: product.title,
         brand: product.brand,
@@ -88,27 +94,27 @@ export const handlers = [
         image: product.images[0],
         category: product.categoryName,
       }));
-    
+
     return HttpResponse.json(results);
   }),
 
   // Products API
   http.get('/api/products', ({ request }) => {
     const url = new URL(request.url);
-    const page = parseInt(url.searchParams.get('page') || '0');
-    const limit = parseInt(url.searchParams.get('limit') || '20');
+    const page = Number.parseInt(url.searchParams.get('page') || '0');
+    const limit = Number.parseInt(url.searchParams.get('limit') || '20');
     const category = url.searchParams.get('category');
-    
+
     let results = [...mockProducts];
-    
+
     if (category) {
-      results = results.filter(product => product.categoryName === category);
+      results = results.filter((product) => product.categoryName === category);
     }
-    
+
     const start = page * limit;
     const end = start + limit;
     const products = results.slice(start, end);
-    
+
     return HttpResponse.json({
       products,
       total: results.length,
@@ -118,12 +124,12 @@ export const handlers = [
   }),
 
   http.get('/api/products/:id', ({ params }) => {
-    const product = mockProducts.find(p => p.id === params.id);
-    
+    const product = mockProducts.find((p) => p.id === params.id);
+
     if (!product) {
       return HttpResponse.json({ error: 'Product not found' }, { status: 404 });
     }
-    
+
     return HttpResponse.json(product);
   }),
 
@@ -131,28 +137,28 @@ export const handlers = [
   http.get('/api/orders', ({ request }) => {
     const url = new URL(request.url);
     const type = url.searchParams.get('type'); // 'buying' or 'selling'
-    
+
     let results = [...mockOrders];
-    
+
     if (type === 'buying') {
-      results = results.filter(order => order.buyerId === 'current-user');
+      results = results.filter((order) => order.buyerId === 'current-user');
     } else if (type === 'selling') {
-      results = results.filter(order => order.sellerId === 'current-user');
+      results = results.filter((order) => order.sellerId === 'current-user');
     }
-    
+
     return HttpResponse.json(results);
   }),
 
   http.post('/api/orders', async ({ request }) => {
-    const orderData = await request.json() as any;
-    
+    const orderData = (await request.json()) as any;
+
     const newOrder = {
       id: `order_${Date.now()}`,
       ...orderData,
       status: 'PENDING',
       createdAt: new Date().toISOString(),
     };
-    
+
     return HttpResponse.json(newOrder, { status: 201 });
   }),
 
@@ -160,21 +166,21 @@ export const handlers = [
   http.get('/api/conversations', ({ request }) => {
     const url = new URL(request.url);
     const type = url.searchParams.get('type');
-    
+
     let results = [...mockConversations];
-    
+
     if (type === 'buying') {
-      results = results.filter(conv => conv.buyerId === 'current-user');
+      results = results.filter((conv) => conv.buyerId === 'current-user');
     } else if (type === 'selling') {
-      results = results.filter(conv => conv.sellerId === 'current-user');
+      results = results.filter((conv) => conv.sellerId === 'current-user');
     }
-    
+
     return HttpResponse.json(results);
   }),
 
   http.post('/api/conversations/:id/messages', async ({ params, request }) => {
-    const messageData = await request.json() as any;
-    
+    const messageData = (await request.json()) as any;
+
     const newMessage = {
       id: `msg_${Date.now()}`,
       conversationId: params.id,
@@ -183,7 +189,7 @@ export const handlers = [
       read: false,
       createdAt: new Date().toISOString(),
     };
-    
+
     return HttpResponse.json(newMessage, { status: 201 });
   }),
 
@@ -204,13 +210,13 @@ export const handlers = [
         message: 'John sent you a message',
         type: 'MESSAGE',
         read: true,
-        createdAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+        createdAt: new Date(Date.now() - 86_400_000).toISOString(), // 1 day ago
       },
     ];
-    
+
     return HttpResponse.json({
       notifications,
-      unreadCount: notifications.filter(n => !n.read).length,
+      unreadCount: notifications.filter((n) => !n.read).length,
     });
   }),
 
@@ -220,8 +226,8 @@ export const handlers = [
 
   // Stripe payment intents
   http.post('/api/stripe/create-payment-intent', async ({ request }) => {
-    const { amount } = await request.json() as any;
-    
+    const { amount } = (await request.json()) as any;
+
     return HttpResponse.json({
       clientSecret: `pi_test_${Date.now()}_secret_test`,
       paymentIntentId: `pi_test_${Date.now()}`,
@@ -245,10 +251,7 @@ export const handlers = [
 
   // Fallback for unhandled requests
   http.all('*', ({ request }) => {
-    return HttpResponse.json(
-      { error: 'Endpoint not mocked' },
-      { status: 404 }
-    );
+    return HttpResponse.json({ error: 'Endpoint not mocked' }, { status: 404 });
   }),
 ];
 
@@ -288,7 +291,7 @@ export function createDelayedHandler(
 ) {
   const httpMethod = http[method];
   return httpMethod(path, async () => {
-    await new Promise(resolve => setTimeout(resolve, delay));
+    await new Promise((resolve) => setTimeout(resolve, delay));
     return HttpResponse.json(response, { status });
   });
 }

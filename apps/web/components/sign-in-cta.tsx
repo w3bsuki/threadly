@@ -30,7 +30,7 @@ export function SignInCTA({
   fullWidth = false,
 }: SignInCTAProps) {
   const params = useParams();
-  const locale = params.locale as string || 'bg';
+  const locale = (params.locale as string) || 'bg';
 
   // Stay in web app for sign-in
   const signInUrl = `/${locale}/sign-in`;

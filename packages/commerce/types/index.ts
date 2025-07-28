@@ -98,7 +98,7 @@ export interface OrderItem {
   sellerName: string;
 }
 
-export type OrderStatus = 
+export type OrderStatus =
   | 'PENDING'
   | 'PROCESSING'
   | 'SHIPPED'
@@ -106,7 +106,7 @@ export type OrderStatus =
   | 'CANCELLED'
   | 'REFUNDED';
 
-export type PaymentStatus = 
+export type PaymentStatus =
   | 'PENDING'
   | 'PROCESSING'
   | 'SUCCEEDED'

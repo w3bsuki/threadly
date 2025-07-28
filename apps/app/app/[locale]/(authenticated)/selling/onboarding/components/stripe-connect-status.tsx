@@ -1,6 +1,12 @@
-import { Badge } from '@repo/design-system/components';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/design-system/components';
-import { CheckCircle2, AlertCircle, XCircle, Clock, Ban } from 'lucide-react';
+import {
+  Badge,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@repo/design-system/components';
+import { AlertCircle, Ban, CheckCircle2, Clock, XCircle } from 'lucide-react';
 
 type AccountStatus = {
   status: 'not_connected' | 'connected' | 'pending' | 'restricted' | 'disabled';
@@ -31,7 +37,10 @@ interface StripeConnectStatusProps {
   compact?: boolean;
 }
 
-export const StripeConnectStatus = ({ status, compact = false }: StripeConnectStatusProps): React.JSX.Element => {
+export const StripeConnectStatus = ({
+  status,
+  compact = false,
+}: StripeConnectStatusProps): React.JSX.Element => {
   const getStatusConfig = () => {
     switch (status.status) {
       case 'connected':
@@ -52,7 +61,7 @@ export const StripeConnectStatus = ({ status, compact = false }: StripeConnectSt
           borderColor: 'border-yellow-200',
           badge: 'secondary' as const,
           title: 'Pending',
-          description: status.hasPendingVerification 
+          description: status.hasPendingVerification
             ? 'Account verification in progress'
             : 'Complete your account setup to start selling',
         };
@@ -85,7 +94,8 @@ export const StripeConnectStatus = ({ status, compact = false }: StripeConnectSt
           borderColor: 'border-border',
           badge: 'outline' as const,
           title: 'Not Connected',
-          description: 'Connect your Stripe account to start accepting payments',
+          description:
+            'Connect your Stripe account to start accepting payments',
         };
     }
   };
@@ -97,9 +107,7 @@ export const StripeConnectStatus = ({ status, compact = false }: StripeConnectSt
     return (
       <div className="flex items-center gap-2">
         <Icon className={`h-4 w-4 ${config.color}`} />
-        <Badge variant={config.badge}>
-          {config.title}
-        </Badge>
+        <Badge variant={config.badge}>{config.title}</Badge>
       </div>
     );
   }
@@ -117,61 +125,84 @@ export const StripeConnectStatus = ({ status, compact = false }: StripeConnectSt
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Account ID</p>
-              <p className="text-sm font-mono">{status.accountId?.slice(0, 20)}...</p>
+              <p className="font-medium text-muted-foreground text-sm">
+                Account ID
+              </p>
+              <p className="font-mono text-sm">
+                {status.accountId?.slice(0, 20)}...
+              </p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Details Submitted</p>
+              <p className="font-medium text-muted-foreground text-sm">
+                Details Submitted
+              </p>
               <Badge variant={status.detailsSubmitted ? 'default' : 'outline'}>
                 {status.detailsSubmitted ? 'Yes' : 'No'}
               </Badge>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Can Accept Payments</p>
+              <p className="font-medium text-muted-foreground text-sm">
+                Can Accept Payments
+              </p>
               <Badge variant={status.canAcceptPayments ? 'default' : 'outline'}>
                 {status.canAcceptPayments ? 'Yes' : 'No'}
               </Badge>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Payouts Enabled</p>
+              <p className="font-medium text-muted-foreground text-sm">
+                Payouts Enabled
+              </p>
               <Badge variant={status.payoutsEnabled ? 'default' : 'outline'}>
                 {status.payoutsEnabled ? 'Yes' : 'No'}
               </Badge>
             </div>
           </div>
 
-          {status.requirements && status.requirementsCount && status.requirementsCount > 0 && (
-            <div className="mt-4 pt-4 border-t">
-              <p className="text-sm font-medium text-muted-foreground mb-2">
-                Requirements ({status.requirementsCount})
-              </p>
-              <div className="space-y-2">
-                {status.requirements.currentlyDue.length > 0 && (
-                  <div>
-                    <p className="text-xs font-medium text-red-600">Currently Due:</p>
-                    <ul className="text-xs text-muted-foreground list-disc list-inside">
-                      {status.requirements.currentlyDue.slice(0, 3).map((req, idx) => (
-                        <li key={idx}>{req.replace(/_/g, ' ')}</li>
-                      ))}
-                      {status.requirements.currentlyDue.length > 3 && (
-                        <li>...and {status.requirements.currentlyDue.length - 3} more</li>
-                      )}
-                    </ul>
-                  </div>
-                )}
-                {status.requirements.pendingVerification.length > 0 && (
-                  <div>
-                    <p className="text-xs font-medium text-yellow-600">Pending Verification:</p>
-                    <ul className="text-xs text-muted-foreground list-disc list-inside">
-                      {status.requirements.pendingVerification.slice(0, 3).map((req, idx) => (
-                        <li key={idx}>{req.replace(/_/g, ' ')}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+          {status.requirements &&
+            status.requirementsCount &&
+            status.requirementsCount > 0 && (
+              <div className="mt-4 border-t pt-4">
+                <p className="mb-2 font-medium text-muted-foreground text-sm">
+                  Requirements ({status.requirementsCount})
+                </p>
+                <div className="space-y-2">
+                  {status.requirements.currentlyDue.length > 0 && (
+                    <div>
+                      <p className="font-medium text-red-600 text-xs">
+                        Currently Due:
+                      </p>
+                      <ul className="list-inside list-disc text-muted-foreground text-xs">
+                        {status.requirements.currentlyDue
+                          .slice(0, 3)
+                          .map((req, idx) => (
+                            <li key={idx}>{req.replace(/_/g, ' ')}</li>
+                          ))}
+                        {status.requirements.currentlyDue.length > 3 && (
+                          <li>
+                            ...and {status.requirements.currentlyDue.length - 3}{' '}
+                            more
+                          </li>
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                  {status.requirements.pendingVerification.length > 0 && (
+                    <div>
+                      <p className="font-medium text-xs text-yellow-600">
+                        Pending Verification:
+                      </p>
+                      <ul className="list-inside list-disc text-muted-foreground text-xs">
+                        {status.requirements.pendingVerification
+                          .slice(0, 3)
+                          .map((req, idx) => (
+                            <li key={idx}>{req.replace(/_/g, ' ')}</li>
+                          ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </CardContent>
       )}
     </Card>

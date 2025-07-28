@@ -13,10 +13,12 @@ if (process.env.NODE_ENV === 'production') {
   });
 } else {
   // Development uses standard client
-  database = globalForPrisma.prisma || new PrismaClient({
-    log: ['error', 'warn'],
-  });
-  
+  database =
+    globalForPrisma.prisma ||
+    new PrismaClient({
+      log: ['error', 'warn'],
+    });
+
   if (!globalForPrisma.prisma) {
     globalForPrisma.prisma = database;
   }

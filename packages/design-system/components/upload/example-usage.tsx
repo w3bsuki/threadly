@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { ImageUpload } from './image-upload';
-import { UploadthingImageUpload } from './uploadthing-image-upload';
 import type { ImageData, UploadResult } from './types';
+import { UploadthingImageUpload } from './uploadthing-image-upload';
 
 // Example 1: Basic usage with custom upload handler
 export function BasicImageUploadExample() {
@@ -17,7 +17,7 @@ export function BasicImageUploadExample() {
     // Simulate upload progress
     if (onProgress) {
       for (let i = 0; i <= 100; i += 10) {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
         onProgress(i);
       }
     }
@@ -39,29 +39,33 @@ export function BasicImageUploadExample() {
 
   return (
     <ImageUpload
-      value={images}
-      onChange={setImages}
-      onUpload={handleUpload}
       maxFiles={5}
-      maxSize={8 * 1024 * 1024} // 8MB
+      maxSize={8 * 1024 * 1024}
       multiple
+      onChange={setImages}
+      onUpload={handleUpload} // 8MB
       reorderable
+      value={images}
     />
   );
 }
 
 // Example 2: Usage with uploadthing
-export function UploadthingExample({ useUploadThing }: { useUploadThing: any }) {
+export function UploadthingExample({
+  useUploadThing,
+}: {
+  useUploadThing: any;
+}) {
   const [images, setImages] = useState<ImageData[]>([]);
 
   return (
     <UploadthingImageUpload
-      value={images}
-      onChange={setImages}
-      useUploadThing={useUploadThing}
       endpoint="productImages"
       maxFiles={10}
+      onChange={setImages}
       reorderable
+      useUploadThing={useUploadThing}
+      value={images}
     />
   );
 }
@@ -80,12 +84,12 @@ export function SingleImageUploadExample() {
 
   return (
     <ImageUpload
-      value={image ? [image] : []}
-      onChange={(images) => setImage(images[0] || null)}
-      onUpload={handleUpload}
+      accept="image/png,image/jpeg"
       maxFiles={1}
       multiple={false}
-      accept="image/png,image/jpeg"
+      onChange={(images) => setImage(images[0] || null)}
+      onUpload={handleUpload}
+      value={image ? [image] : []}
     />
   );
 }
@@ -110,15 +114,15 @@ export function AvatarUploadExample() {
   return (
     <div className="max-w-xs">
       <ImageUpload
-        value={avatar ? [avatar] : []}
-        onChange={(images) => setAvatar(images[0] || null)}
-        onUpload={handleUpload}
-        maxFiles={1}
-        maxSize={2 * 1024 * 1024} // 2MB for avatars
-        multiple={false}
         accept="image/png,image/jpeg,image/webp"
         className="space-y-2"
         dropzoneClassName="h-32"
+        maxFiles={1}
+        maxSize={2 * 1024 * 1024} // 2MB for avatars
+        multiple={false}
+        onChange={(images) => setAvatar(images[0] || null)}
+        onUpload={handleUpload}
+        value={avatar ? [avatar] : []}
       />
     </div>
   );

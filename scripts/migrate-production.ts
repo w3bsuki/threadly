@@ -2,7 +2,7 @@
 
 /**
  * Production database migration script
- * 
+ *
  * This script safely migrates the database schema to production
  * and handles data migration if needed.
  */
@@ -33,8 +33,11 @@ async function checkDatabaseExists() {
       WHERE table_schema = 'public' 
       AND table_type = 'BASE TABLE'
     `;
-    
-    log.info('Existing tables found', { count: tables.length, tables: tables.map(t => t.table_name) });
+
+    log.info('Existing tables found', {
+      count: tables.length,
+      tables: tables.map((t) => t.table_name),
+    });
     return tables.length > 0;
   } catch (error) {
     log.error('Error checking database tables', { error });
@@ -45,12 +48,12 @@ async function checkDatabaseExists() {
 async function runMigrations() {
   try {
     log.info('Starting database migration process...');
-    
+
     // For production, we should use Prisma migrate deploy
     // This applies migrations that have been created and tested in development
     log.info('Use: pnpm db:migrate:deploy for production migrations');
     log.info('This script validates the environment and connection only');
-    
+
     return true;
   } catch (error) {
     log.error('Migration failed', { error });
@@ -61,31 +64,51 @@ async function runMigrations() {
 async function seedEssentialData() {
   try {
     log.info('Checking for essential data...');
-    
+
     // Check if categories exist
     const categoryCount = await prisma.category.count();
     if (categoryCount === 0) {
       log.info('No categories found - seeding essential categories');
-      
+
       const essentialCategories = [
-        { name: 'Women', slug: 'women', description: 'Women\'s clothing and accessories' },
-        { name: 'Men', slug: 'men', description: 'Men\'s clothing and accessories' },
-        { name: 'Shoes', slug: 'shoes', description: 'Footwear for all occasions' },
-        { name: 'Bags', slug: 'bags', description: 'Handbags, backpacks, and accessories' },
-        { name: 'Accessories', slug: 'accessories', description: 'Jewelry, watches, and more' },
+        {
+          name: 'Women',
+          slug: 'women',
+          description: "Women's clothing and accessories",
+        },
+        {
+          name: 'Men',
+          slug: 'men',
+          description: "Men's clothing and accessories",
+        },
+        {
+          name: 'Shoes',
+          slug: 'shoes',
+          description: 'Footwear for all occasions',
+        },
+        {
+          name: 'Bags',
+          slug: 'bags',
+          description: 'Handbags, backpacks, and accessories',
+        },
+        {
+          name: 'Accessories',
+          slug: 'accessories',
+          description: 'Jewelry, watches, and more',
+        },
       ];
-      
+
       for (const category of essentialCategories) {
         await prisma.category.create({
-          data: category
+          data: category,
         });
       }
-      
+
       log.info('Essential categories seeded successfully');
     } else {
       log.info('Categories already exist', { count: categoryCount });
     }
-    
+
     return true;
   } catch (error) {
     log.error('Failed to seed essential data', { error });
@@ -96,10 +119,17 @@ async function seedEssentialData() {
 async function validateSchema() {
   try {
     log.info('Validating database schema...');
-    
+
     // Check critical tables exist
-    const requiredTables = ['User', 'Product', 'Category', 'Order', 'Message', 'Conversation'];
-    
+    const requiredTables = [
+      'User',
+      'Product',
+      'Category',
+      'Order',
+      'Message',
+      'Conversation',
+    ];
+
     for (const table of requiredTables) {
       try {
         await prisma.$queryRawUnsafe(`SELECT 1 FROM "${table}" LIMIT 1`);
@@ -109,17 +139,19 @@ async function validateSchema() {
         throw new Error(`Required table ${table} not found`);
       }
     }
-    
+
     // Check critical indexes
-    const indexes = await prisma.$queryRaw<Array<{ indexname: string, tablename: string }>>`
+    const indexes = await prisma.$queryRaw<
+      Array<{ indexname: string; tablename: string }>
+    >`
       SELECT indexname, tablename 
       FROM pg_indexes 
       WHERE schemaname = 'public'
       AND tablename IN ('User', 'Product', 'Category', 'Order')
     `;
-    
+
     log.info('Database indexes', { count: indexes.length, indexes });
-    
+
     return true;
   } catch (error) {
     log.error('Schema validation failed', { error });
@@ -129,18 +161,14 @@ async function validateSchema() {
 
 async function generateProductionReport() {
   try {
-    const [
-      userCount,
-      productCount,
-      orderCount,
-      categoryCount
-    ] = await Promise.all([
-      prisma.user.count(),
-      prisma.product.count(),
-      prisma.order.count(),
-      prisma.category.count()
-    ]);
-    
+    const [userCount, productCount, orderCount, categoryCount] =
+      await Promise.all([
+        prisma.user.count(),
+        prisma.product.count(),
+        prisma.order.count(),
+        prisma.category.count(),
+      ]);
+
     const report = {
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV || 'unknown',
@@ -150,12 +178,12 @@ async function generateProductionReport() {
           users: userCount,
           products: productCount,
           orders: orderCount,
-          categories: categoryCount
-        }
+          categories: categoryCount,
+        },
       },
-      ready: userCount >= 0 && categoryCount >= 5 // At least categories must exist
+      ready: userCount >= 0 && categoryCount >= 5, // At least categories must exist
     };
-    
+
     log.info('Production database report', report);
     return report;
   } catch (error) {
@@ -166,64 +194,64 @@ async function generateProductionReport() {
 
 async function main() {
   log.info('Starting production database setup and validation...');
-  
+
   // Check environment
   const databaseUrl = process.env.DATABASE_URL;
   if (!databaseUrl) {
     log.error('DATABASE_URL environment variable is required');
     process.exit(1);
   }
-  
+
   if (!databaseUrl.includes('postgresql://')) {
     log.error('Production requires PostgreSQL database');
     process.exit(1);
   }
-  
+
   // Validate connection
   const connected = await validateConnection();
   if (!connected) {
     log.error('Cannot connect to database');
     process.exit(1);
   }
-  
+
   // Check if database exists
   const hasExistingData = await checkDatabaseExists();
   log.info('Database status', { hasExistingData });
-  
+
   // Run migrations (in production, this should be done manually)
   const migrated = await runMigrations();
   if (!migrated) {
     log.error('Migration process failed');
     process.exit(1);
   }
-  
+
   // Validate schema
   const schemaValid = await validateSchema();
   if (!schemaValid) {
     log.error('Schema validation failed');
     process.exit(1);
   }
-  
+
   // Seed essential data
   const seeded = await seedEssentialData();
   if (!seeded) {
     log.error('Failed to seed essential data');
     process.exit(1);
   }
-  
+
   // Generate report
   const report = await generateProductionReport();
   if (!report) {
     log.error('Failed to generate production report');
     process.exit(1);
   }
-  
+
   if (report.ready) {
     log.info('✅ Production database is ready!');
   } else {
     log.warn('⚠️ Production database needs attention');
   }
-  
+
   await prisma.$disconnect();
 }
 

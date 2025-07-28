@@ -1,22 +1,29 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { createProductSchema, type CreateProductInput } from '@repo/validation/schemas';
-import { UseFormReturn } from 'react-hook-form';
-import { Button } from '@repo/design-system/components';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Progress } from '@repo/design-system/components';
-import { Form } from '@repo/design-system/components';
-import { toast } from '@repo/design-system/components';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Form,
+  Progress,
+  toast,
+} from '@repo/design-system/components';
+import {
+  type CreateProductInput,
+  createProductSchema,
+} from '@repo/validation/schemas';
 import { ChevronLeft, ChevronRight, Save } from 'lucide-react';
-import { StepPhotosBasic } from './wizard-steps/step-photos-basic';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { type UseFormReturn, useForm } from 'react-hook-form';
+import { createProduct, saveDraftProduct } from '../actions/create-product';
 import { StepDescription } from './wizard-steps/step-description';
 import { StepDetails } from './wizard-steps/step-details';
+import { StepPhotosBasic } from './wizard-steps/step-photos-basic';
 import { StepReview } from './wizard-steps/step-review';
-import { createProduct, saveDraftProduct } from '../actions/create-product';
 
 interface Category {
   id: string;
@@ -31,13 +38,21 @@ interface MultiStepWizardProps {
 }
 
 const STEPS = [
-  { id: 1, title: 'Photos & Basics', description: 'Add photos and basic information' },
+  {
+    id: 1,
+    title: 'Photos & Basics',
+    description: 'Add photos and basic information',
+  },
   { id: 2, title: 'Description', description: 'Describe your item' },
   { id: 3, title: 'Details', description: 'Add specific details' },
   { id: 4, title: 'Review', description: 'Review and publish' },
 ];
 
-export function MultiStepWizard({ categories, locale, userId }: MultiStepWizardProps) {
+export function MultiStepWizard({
+  categories,
+  locale,
+  userId,
+}: MultiStepWizardProps) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,7 +85,7 @@ export function MultiStepWizard({ categories, locale, userId }: MultiStepWizardP
     try {
       setIsSavingDraft(true);
       const formData = form.getValues();
-      
+
       const result = await saveDraftProduct(formData);
 
       if (result?.success) {
@@ -120,24 +135,26 @@ export function MultiStepWizard({ categories, locale, userId }: MultiStepWizardP
   const onSubmit = async (data: CreateProductInput) => {
     try {
       setIsSubmitting(true);
-      
+
       const result = await createProduct(data);
 
       if (result && result.success) {
         toast.success('Product created successfully!');
         router.push(`/${locale}/selling/listings`);
-      } else {
-        if (result.details) {
-          result.details.forEach((detail: { path?: (string | number)[], message: string }) => {
+      } else if (result.details) {
+        result.details.forEach(
+          (detail: { path?: (string | number)[]; message: string }) => {
             const path = detail.path?.map((p) => String(p)).join('.');
             toast.error(`${path}: ${detail.message}`);
-          });
-        } else {
-          toast.error(result.error || 'Failed to create product');
-        }
+          }
+        );
+      } else {
+        toast.error(result.error || 'Failed to create product');
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to create product');
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to create product'
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -146,13 +163,25 @@ export function MultiStepWizard({ categories, locale, userId }: MultiStepWizardP
   const renderCurrentStep = () => {
     switch (currentStep) {
       case 1:
-        return <StepPhotosBasic form={form as UseFormReturn<CreateProductInput>} />;
+        return (
+          <StepPhotosBasic form={form as UseFormReturn<CreateProductInput>} />
+        );
       case 2:
-        return <StepDescription form={form as UseFormReturn<CreateProductInput>} categories={categories} />;
+        return (
+          <StepDescription
+            categories={categories}
+            form={form as UseFormReturn<CreateProductInput>}
+          />
+        );
       case 3:
         return <StepDetails form={form as UseFormReturn<CreateProductInput>} />;
       case 4:
-        return <StepReview form={form as UseFormReturn<CreateProductInput>} categories={categories} />;
+        return (
+          <StepReview
+            categories={categories}
+            form={form as UseFormReturn<CreateProductInput>}
+          />
+        );
       default:
         return null;
     }
@@ -163,51 +192,66 @@ export function MultiStepWizard({ categories, locale, userId }: MultiStepWizardP
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="space-y-3 sm:space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <h2 className="text-lg sm:text-xl font-semibold">
-            <span className="sm:hidden">Step {currentStep}/{STEPS.length}</span>
-            <span className="hidden sm:inline">Step {currentStep} of {STEPS.length}: {STEPS[currentStep - 1]?.title}</span>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="font-semibold text-lg sm:text-xl">
+            <span className="sm:hidden">
+              Step {currentStep}/{STEPS.length}
+            </span>
+            <span className="hidden sm:inline">
+              Step {currentStep} of {STEPS.length}:{' '}
+              {STEPS[currentStep - 1]?.title}
+            </span>
           </h2>
           <Button
-            variant="outline"
-            size="sm"
-            onClick={manualSaveDraft}
+            className="w-full gap-2 sm:w-auto"
             disabled={isSavingDraft || !form.formState.isDirty}
-            className="gap-2 w-full sm:w-auto"
+            onClick={manualSaveDraft}
+            size="sm"
+            variant="outline"
           >
             <Save className="h-4 w-4" />
-            <span className="sm:hidden">{isSavingDraft ? 'Saving...' : 'Save'}</span>
-            <span className="hidden sm:inline">{isSavingDraft ? 'Saving...' : 'Save Draft'}</span>
+            <span className="sm:hidden">
+              {isSavingDraft ? 'Saving...' : 'Save'}
+            </span>
+            <span className="hidden sm:inline">
+              {isSavingDraft ? 'Saving...' : 'Save Draft'}
+            </span>
           </Button>
         </div>
-        
+
         <div className="space-y-2">
-          <Progress value={progress} className="h-2" />
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            <span className="font-medium sm:hidden">{STEPS[currentStep - 1]?.title}:</span> {STEPS[currentStep - 1]?.description}
+          <Progress className="h-2" value={progress} />
+          <p className="text-muted-foreground text-xs sm:text-sm">
+            <span className="font-medium sm:hidden">
+              {STEPS[currentStep - 1]?.title}:
+            </span>{' '}
+            {STEPS[currentStep - 1]?.description}
           </p>
         </div>
       </div>
 
-      <Card className="border-0 sm:border shadow-none sm:shadow-sm">
+      <Card className="border-0 shadow-none sm:border sm:shadow-sm">
         <CardContent className="p-4 sm:p-6">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
+            <form
+              className="space-y-4 sm:space-y-6"
+              onSubmit={form.handleSubmit(onSubmit)}
+            >
               {renderCurrentStep()}
             </form>
           </Form>
         </CardContent>
       </Card>
 
-      <div className="sticky bottom-0 -mx-4 px-4 py-3 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t sm:static sm:mx-0 sm:p-0 sm:bg-transparent sm:backdrop-blur-none sm:border-0">
-        <div className="flex justify-between items-center gap-3">
+      <div className="-mx-4 sticky bottom-0 border-t bg-background/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
+        <div className="flex items-center justify-between gap-3">
           <Button
+            className="min-w-[100px] gap-1 sm:gap-2"
+            disabled={currentStep === 1}
+            onClick={prevStep}
+            size="default"
             type="button"
             variant="outline"
-            onClick={prevStep}
-            disabled={currentStep === 1}
-            className="gap-1 sm:gap-2 min-w-[100px]"
-            size="default"
           >
             <ChevronLeft className="h-4 w-4" />
             <span className="hidden sm:inline">Previous</span>
@@ -217,21 +261,21 @@ export function MultiStepWizard({ categories, locale, userId }: MultiStepWizardP
           <div className="flex gap-2">
             {currentStep < 4 ? (
               <Button
-                type="button"
+                className="min-w-[100px] gap-1 sm:gap-2"
                 onClick={nextStep}
-                className="gap-1 sm:gap-2 min-w-[100px]"
                 size="default"
+                type="button"
               >
                 Next
                 <ChevronRight className="h-4 w-4" />
               </Button>
             ) : (
               <Button
-                type="button"
-                onClick={() => form.handleSubmit(onSubmit)()}
+                className="min-w-[140px] gap-2"
                 disabled={isSubmitting}
-                className="gap-2 min-w-[140px]"
+                onClick={() => form.handleSubmit(onSubmit)()}
                 size="default"
+                type="button"
               >
                 {isSubmitting ? 'Publishing...' : 'Publish Listing'}
               </Button>

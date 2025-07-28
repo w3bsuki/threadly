@@ -72,7 +72,10 @@ export default function RegionSelectorDemo() {
             <h3 className="mb-3 font-semibold">Price Display Examples</h3>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {demoProducts.map((product) => (
-                <div className="rounded-[var(--radius-lg)] border p-3" key={product.name}>
+                <div
+                  className="rounded-[var(--radius-lg)] border p-3"
+                  key={product.name}
+                >
                   <p className="font-medium text-sm">{product.name}</p>
                   <p className="mt-1 font-bold text-lg">
                     {formatPrice(product.price)}

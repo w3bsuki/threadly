@@ -1,9 +1,11 @@
 'use client';
 
-import { lazy, Suspense } from 'react';
 import { Skeleton } from '@repo/design-system/components';
+import { lazy, Suspense } from 'react';
 
-const ImageUpload = lazy(() => import('./image-upload').then(module => ({ default: module.ImageUpload })));
+const ImageUpload = lazy(() =>
+  import('./image-upload').then((module) => ({ default: module.ImageUpload }))
+);
 
 interface ImageData {
   id?: string;

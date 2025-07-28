@@ -9,7 +9,16 @@ export const SearchFiltersSchema = z.object({
   colors: z.array(z.string()).optional(),
   priceMin: z.number().min(0).optional(),
   priceMax: z.number().min(0).optional(),
-  sortBy: z.enum(['relevance', 'price_asc', 'price_desc', 'newest', 'most_viewed', 'most_favorited']).optional(),
+  sortBy: z
+    .enum([
+      'relevance',
+      'price_asc',
+      'price_desc',
+      'newest',
+      'most_viewed',
+      'most_favorited',
+    ])
+    .optional(),
   page: z.number().int().positive().optional(),
   pageSize: z.number().int().positive().max(100).optional(),
   sellerId: z.string().optional(),
@@ -25,7 +34,7 @@ export const SearchSortOptions = z.enum([
   'price_desc',
   'newest',
   'most_viewed',
-  'most_favorited'
+  'most_favorited',
 ]);
 
 export type SearchSortOption = z.infer<typeof SearchSortOptions>;

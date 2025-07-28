@@ -1,14 +1,14 @@
-import { NextRequest } from 'next/server';
 import { auth } from '@clerk/nextjs';
-import { getSearchService } from '@repo/search';
-import { z } from 'zod';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
-import { 
-  createSuccessResponse, 
-  createErrorResponse, 
+import {
+  createErrorResponse,
+  createSuccessResponse,
+  ErrorCode,
   validateInput,
-  ErrorCode
 } from '@repo/api-utils';
+import { getSearchService } from '@repo/search';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import type { NextRequest } from 'next/server';
+import { z } from 'zod';
 
 let searchService: ReturnType<typeof getSearchService> | null = null;
 
@@ -21,14 +21,25 @@ const searchRequestSchema = z.object({
     sizes: z.array(z.string()).optional(),
     colors: z.array(z.string()).optional(),
     materials: z.array(z.string()).optional(),
-    priceRange: z.object({
-      min: z.number(),
-      max: z.number(),
-    }).optional(),
+    priceRange: z
+      .object({
+        min: z.number(),
+        max: z.number(),
+      })
+      .optional(),
     sellerRating: z.number().optional(),
     availableForTrade: z.boolean().optional(),
     location: z.string().optional(),
-    sortBy: z.enum(['relevance', 'price_asc', 'price_desc', 'newest', 'most_viewed', 'most_favorited']).optional(),
+    sortBy: z
+      .enum([
+        'relevance',
+        'price_asc',
+        'price_desc',
+        'newest',
+        'most_viewed',
+        'most_favorited',
+      ])
+      .optional(),
   }),
   page: z.number().default(0),
   hitsPerPage: z.number().max(100).default(20),
@@ -38,10 +49,10 @@ export async function POST(request: NextRequest) {
   // Check authentication
   const { userId } = auth();
   if (!userId) {
-    return createErrorResponse(
-      new Error('Unauthorized'),
-      { status: 401, errorCode: ErrorCode.UNAUTHORIZED }
-    );
+    return createErrorResponse(new Error('Unauthorized'), {
+      status: 401,
+      errorCode: ErrorCode.UNAUTHORIZED,
+    });
   }
 
   // Check rate limit
@@ -49,10 +60,10 @@ export async function POST(request: NextRequest) {
   if (!rateLimitResult.allowed) {
     return createErrorResponse(
       new Error(rateLimitResult.error?.message || 'Rate limit exceeded'),
-      { 
+      {
         status: 429,
         headers: rateLimitResult.headers,
-        errorCode: ErrorCode.RATE_LIMIT_EXCEEDED
+        errorCode: ErrorCode.RATE_LIMIT_EXCEEDED,
       }
     );
   }
@@ -65,11 +76,11 @@ export async function POST(request: NextRequest) {
       const searchOnlyApiKey = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
       const indexName = process.env.ALGOLIA_INDEX_NAME;
 
-      if (!appId || !apiKey || !searchOnlyApiKey || !indexName) {
-        return createErrorResponse(
-          new Error('Search service not configured'),
-          { status: 503, errorCode: ErrorCode.SERVICE_UNAVAILABLE }
-        );
+      if (!(appId && apiKey && searchOnlyApiKey && indexName)) {
+        return createErrorResponse(new Error('Search service not configured'), {
+          status: 503,
+          errorCode: ErrorCode.SERVICE_UNAVAILABLE,
+        });
       }
 
       searchService = getSearchService({
@@ -83,14 +94,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validationResult = validateInput(body, searchRequestSchema);
     if (!validationResult.success) {
-      return createErrorResponse(
-        new Error('Invalid search parameters'),
-        { 
-          status: 400, 
-          errorCode: ErrorCode.VALIDATION_FAILED,
-          details: validationResult.error.issues
-        }
-      );
+      return createErrorResponse(new Error('Invalid search parameters'), {
+        status: 400,
+        errorCode: ErrorCode.VALIDATION_FAILED,
+        details: validationResult.error.issues,
+      });
     }
     const { filters, page, hitsPerPage } = validationResult.data;
 
@@ -106,10 +114,10 @@ export async function GET(request: NextRequest) {
   // Check authentication
   const { userId } = auth();
   if (!userId) {
-    return createErrorResponse(
-      new Error('Unauthorized'),
-      { status: 401, errorCode: ErrorCode.UNAUTHORIZED }
-    );
+    return createErrorResponse(new Error('Unauthorized'), {
+      status: 401,
+      errorCode: ErrorCode.UNAUTHORIZED,
+    });
   }
 
   // Check rate limit
@@ -117,10 +125,10 @@ export async function GET(request: NextRequest) {
   if (!rateLimitResult.allowed) {
     return createErrorResponse(
       new Error(rateLimitResult.error?.message || 'Rate limit exceeded'),
-      { 
+      {
         status: 429,
         headers: rateLimitResult.headers,
-        errorCode: ErrorCode.RATE_LIMIT_EXCEEDED
+        errorCode: ErrorCode.RATE_LIMIT_EXCEEDED,
       }
     );
   }
@@ -133,11 +141,11 @@ export async function GET(request: NextRequest) {
       const searchOnlyApiKey = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
       const indexName = process.env.ALGOLIA_INDEX_NAME;
 
-      if (!appId || !apiKey || !searchOnlyApiKey || !indexName) {
-        return createErrorResponse(
-          new Error('Search service not configured'),
-          { status: 503, errorCode: ErrorCode.SERVICE_UNAVAILABLE }
-        );
+      if (!(appId && apiKey && searchOnlyApiKey && indexName)) {
+        return createErrorResponse(new Error('Search service not configured'), {
+          status: 503,
+          errorCode: ErrorCode.SERVICE_UNAVAILABLE,
+        });
       }
 
       searchService = getSearchService({
@@ -150,11 +158,18 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q') || '';
-    const page = parseInt(searchParams.get('page') || '0');
+    const page = Number.parseInt(searchParams.get('page') || '0');
     const category = searchParams.get('category');
     const brand = searchParams.get('brand');
     const condition = searchParams.get('condition');
-    const sortBy = searchParams.get('sortBy') as 'relevance' | 'price_asc' | 'price_desc' | 'newest' | 'most_viewed' | 'most_favorited' | null;
+    const sortBy = searchParams.get('sortBy') as
+      | 'relevance'
+      | 'price_asc'
+      | 'price_desc'
+      | 'newest'
+      | 'most_viewed'
+      | 'most_favorited'
+      | null;
 
     interface SearchFilters {
       query: string;
@@ -165,7 +180,7 @@ export async function GET(request: NextRequest) {
     }
 
     const filters: SearchFilters = { query };
-    
+
     if (category) filters.categories = [category];
     if (brand) filters.brands = [brand];
     if (condition) filters.conditions = [condition];

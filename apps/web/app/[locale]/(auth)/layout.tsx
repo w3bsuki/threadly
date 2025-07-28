@@ -5,9 +5,7 @@ type AuthLayoutProps = {
 };
 
 const AuthLayout = ({ children }: AuthLayoutProps) => (
-  <div className="min-h-screen">
-    {children}
-  </div>
+  <div className="min-h-screen">{children}</div>
 );
 
 export default AuthLayout;

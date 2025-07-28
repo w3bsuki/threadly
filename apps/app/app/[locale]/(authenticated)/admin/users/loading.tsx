@@ -1,17 +1,22 @@
-import { TableSkeleton } from '@repo/design-system/components';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Skeleton } from '@repo/design-system/components';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Skeleton,
+  TableSkeleton,
+} from '@repo/design-system/components';
 
 export default function Loading(): React.JSX.Element {
   return (
     <div className="space-y-6">
       <div>
         <Skeleton className="h-9 w-48" />
-        <Skeleton className="h-5 w-64 mt-2" />
+        <Skeleton className="mt-2 h-5 w-64" />
       </div>
 
       {/* Stats skeleton */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
           <Card key={i}>
             <CardHeader className="pb-3">
@@ -36,7 +41,7 @@ export default function Loading(): React.JSX.Element {
           </div>
         </CardHeader>
         <CardContent>
-          <TableSkeleton rows={10} cols={6} />
+          <TableSkeleton cols={6} rows={10} />
         </CardContent>
       </Card>
     </div>

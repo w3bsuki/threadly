@@ -1,9 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@repo/design-system/components';
-import { 
+import {
+  Button,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -11,11 +9,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Input,
+  Label,
+  toast,
 } from '@repo/design-system/components';
-import { Input } from '@repo/design-system/components';
-import { Label } from '@repo/design-system/components';
-import { Truck, CheckCircle, Package, MessageCircle, Eye } from 'lucide-react';
-import { toast } from '@repo/design-system/components';
+import { CheckCircle, Eye, MessageCircle, Package, Truck } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 interface OrderActionsProps {
   orderId: string;
@@ -24,7 +24,12 @@ interface OrderActionsProps {
   buyerName: string;
 }
 
-export function OrderActions({ orderId, status, productTitle, buyerName }: OrderActionsProps) {
+export function OrderActions({
+  orderId,
+  status,
+  productTitle,
+  buyerName,
+}: OrderActionsProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [trackingNumber, setTrackingNumber] = useState('');
@@ -83,7 +88,9 @@ export function OrderActions({ orderId, status, productTitle, buyerName }: Order
       const data = await response.json();
 
       if (data.success) {
-        toast.success(`Order for "${productTitle}" has been marked as delivered`);
+        toast.success(
+          `Order for "${productTitle}" has been marked as delivered`
+        );
         setDeliverDialogOpen(false);
         router.refresh();
       } else {
@@ -99,9 +106,9 @@ export function OrderActions({ orderId, status, productTitle, buyerName }: Order
   return (
     <div className="flex gap-2">
       {status === 'PAID' && (
-        <Dialog open={shipDialogOpen} onOpenChange={setShipDialogOpen}>
+        <Dialog onOpenChange={setShipDialogOpen} open={shipDialogOpen}>
           <DialogTrigger asChild>
-            <Button size="sm" className="flex items-center gap-1">
+            <Button className="flex items-center gap-1" size="sm">
               <Truck className="h-3 w-3" />
               Mark as Shipped
             </Button>
@@ -110,45 +117,46 @@ export function OrderActions({ orderId, status, productTitle, buyerName }: Order
             <DialogHeader>
               <DialogTitle>Ship Order</DialogTitle>
               <DialogDescription>
-                Mark this order as shipped and provide tracking information for {buyerName}.
+                Mark this order as shipped and provide tracking information for{' '}
+                {buyerName}.
               </DialogDescription>
             </DialogHeader>
-            
+
             <div className="space-y-4">
               <div>
                 <Label htmlFor="tracking">Tracking Number *</Label>
                 <Input
+                  disabled={isLoading}
                   id="tracking"
-                  value={trackingNumber}
                   onChange={(e) => setTrackingNumber(e.target.value)}
                   placeholder="Enter tracking number"
-                  disabled={isLoading}
+                  value={trackingNumber}
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="carrier">Carrier (Optional)</Label>
                 <Input
+                  disabled={isLoading}
                   id="carrier"
-                  value={carrier}
                   onChange={(e) => setCarrier(e.target.value)}
                   placeholder="e.g., FedEx, UPS, USPS"
-                  disabled={isLoading}
+                  value={carrier}
                 />
               </div>
             </div>
 
             <DialogFooter>
-              <Button 
-                variant="outline" 
-                onClick={() => setShipDialogOpen(false)}
+              <Button
                 disabled={isLoading}
+                onClick={() => setShipDialogOpen(false)}
+                variant="outline"
               >
                 Cancel
               </Button>
-              <Button 
-                onClick={handleShipOrder}
+              <Button
                 disabled={isLoading || !trackingNumber.trim()}
+                onClick={handleShipOrder}
               >
                 {isLoading ? 'Shipping...' : 'Mark as Shipped'}
               </Button>
@@ -158,9 +166,9 @@ export function OrderActions({ orderId, status, productTitle, buyerName }: Order
       )}
 
       {status === 'SHIPPED' && (
-        <Dialog open={deliverDialogOpen} onOpenChange={setDeliverDialogOpen}>
+        <Dialog onOpenChange={setDeliverDialogOpen} open={deliverDialogOpen}>
           <DialogTrigger asChild>
-            <Button size="sm" className="flex items-center gap-1">
+            <Button className="flex items-center gap-1" size="sm">
               <CheckCircle className="h-3 w-3" />
               Mark as Delivered
             </Button>
@@ -169,15 +177,16 @@ export function OrderActions({ orderId, status, productTitle, buyerName }: Order
             <DialogHeader>
               <DialogTitle>Confirm Delivery</DialogTitle>
               <DialogDescription>
-                Mark this order as delivered. {buyerName} will be notified and can leave a review.
+                Mark this order as delivered. {buyerName} will be notified and
+                can leave a review.
               </DialogDescription>
             </DialogHeader>
 
             <div className="py-4">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 By marking this order as delivered, you confirm that:
               </p>
-              <ul className="list-disc list-inside text-sm text-muted-foreground mt-2 space-y-1">
+              <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground text-sm">
                 <li>The item has been successfully delivered to the buyer</li>
                 <li>The buyer will be notified of the delivery</li>
                 <li>The buyer can now leave a review for this transaction</li>
@@ -185,17 +194,14 @@ export function OrderActions({ orderId, status, productTitle, buyerName }: Order
             </div>
 
             <DialogFooter>
-              <Button 
-                variant="outline" 
-                onClick={() => setDeliverDialogOpen(false)}
+              <Button
                 disabled={isLoading}
+                onClick={() => setDeliverDialogOpen(false)}
+                variant="outline"
               >
                 Cancel
               </Button>
-              <Button 
-                onClick={handleDeliverOrder}
-                disabled={isLoading}
-              >
+              <Button disabled={isLoading} onClick={handleDeliverOrder}>
                 {isLoading ? 'Confirming...' : 'Mark as Delivered'}
               </Button>
             </DialogFooter>
@@ -203,12 +209,12 @@ export function OrderActions({ orderId, status, productTitle, buyerName }: Order
         </Dialog>
       )}
 
-      <Button variant="outline" size="sm" className="flex items-center gap-1">
+      <Button className="flex items-center gap-1" size="sm" variant="outline">
         <Eye className="h-3 w-3" />
         View Details
       </Button>
-      
-      <Button variant="outline" size="sm" className="flex items-center gap-1">
+
+      <Button className="flex items-center gap-1" size="sm" variant="outline">
         <MessageCircle className="h-3 w-3" />
         Message Buyer
       </Button>

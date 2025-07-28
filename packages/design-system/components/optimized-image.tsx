@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { cn } from '../lib/utils';
 
 export interface OptimizedImageProps {
@@ -74,45 +74,51 @@ export function OptimizedImage({
 
   if (hasError) {
     return (
-      <div 
-        className={cn(
-          "bg-muted flex items-center justify-center",
-          className
-        )}
+      <div
+        className={cn('flex items-center justify-center bg-muted', className)}
         style={aspectRatio ? { aspectRatio } : undefined}
       >
-        <span className="text-muted-foreground text-sm">Image not available</span>
+        <span className="text-muted-foreground text-sm">
+          Image not available
+        </span>
       </div>
     );
   }
 
   return (
-    <div 
-      ref={imgRef}
+    <div
       className={cn(
-        "relative overflow-hidden",
-        isLoading && "animate-pulse bg-muted",
+        'relative overflow-hidden',
+        isLoading && 'animate-pulse bg-muted',
         className
       )}
+      ref={imgRef}
       style={aspectRatio ? { aspectRatio } : undefined}
     >
       <Image
-        src={src}
         alt={alt}
-        width={fill ? undefined : width}
-        height={fill ? undefined : height}
-        fill={fill}
-        sizes={sizes || (fill ? "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" : undefined)}
-        quality={quality}
-        priority={priority}
-        onLoad={handleLoad}
-        onError={handleError}
-        placeholder={placeholder}
         blurDataURL={blurDataURL}
         className={cn(
-          "duration-700 ease-in-out",
-          isLoading ? "scale-110 blur-2xl grayscale" : "scale-100 blur-0 grayscale-0"
+          'duration-700 ease-in-out',
+          isLoading
+            ? 'scale-110 blur-2xl grayscale'
+            : 'scale-100 blur-0 grayscale-0'
         )}
+        fill={fill}
+        height={fill ? undefined : height}
+        onError={handleError}
+        onLoad={handleLoad}
+        placeholder={placeholder}
+        priority={priority}
+        quality={quality}
+        sizes={
+          sizes ||
+          (fill
+            ? '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+            : undefined)
+        }
+        src={src}
+        width={fill ? undefined : width}
       />
     </div>
   );

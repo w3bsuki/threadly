@@ -2,9 +2,15 @@
 
 import { SignIn } from '@clerk/nextjs';
 
-export function SignInClient({ redirectUrl, locale }: { redirectUrl: string; locale: string }) {
+export function SignInClient({
+  redirectUrl,
+  locale,
+}: {
+  redirectUrl: string;
+  locale: string;
+}) {
   return (
-    <SignIn 
+    <SignIn
       appearance={{
         elements: {
           rootBox: 'mx-auto',

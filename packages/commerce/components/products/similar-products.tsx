@@ -4,8 +4,8 @@ import { Card, CardContent } from '@repo/design-system/components';
 import { Package } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { formatCurrency } from '../../utils/currency';
 import type { SimilarProduct } from '../../types';
+import { formatCurrency } from '../../utils/currency';
 
 interface SimilarProductsProps {
   products: SimilarProduct[];
@@ -16,9 +16,7 @@ export function SimilarProducts({ products }: SimilarProductsProps) {
 
   return (
     <div className="mt-12">
-      <h3 className="mb-6 font-bold text-xl md:text-2xl">
-        Similar Items
-      </h3>
+      <h3 className="mb-6 font-bold text-xl md:text-2xl">Similar Items</h3>
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
         {products.map((product) => (
           <Link href={`/product/${product.id}`} key={product.id}>

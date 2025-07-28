@@ -46,7 +46,7 @@ export const Testimonials = ({ dictionary }: TestimonialsProps) => {
             <h2 className="mb-4 font-bold text-3xl tracking-tight md:text-5xl">
               Why Choose Threadly?
             </h2>
-            <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
               A marketplace built for fashion lovers who care about style,
               quality, and sustainability
             </p>
@@ -61,7 +61,9 @@ export const Testimonials = ({ dictionary }: TestimonialsProps) => {
                   className="hover:-translate-y-1 flex flex-col items-center rounded-2xl bg-background p-6 text-center shadow-lg transition-all duration-300 hover:shadow-xl"
                   key={index}
                 >
-                  <div className={`rounded-[var(--radius-full)] p-4 ${value.color} mb-4`}>
+                  <div
+                    className={`rounded-[var(--radius-full)] p-4 ${value.color} mb-4`}
+                  >
                     <IconComponent className="h-8 w-8" />
                   </div>
                   <h3 className="mb-3 font-bold text-foreground text-lg">
@@ -77,7 +79,7 @@ export const Testimonials = ({ dictionary }: TestimonialsProps) => {
 
           {/* Call to Action */}
           <div className="text-center">
-            <p className="mb-4 text-secondary-foreground text-lg">
+            <p className="mb-4 text-lg text-secondary-foreground">
               Ready to discover your next favorite piece?
             </p>
             <p className="text-muted-foreground">

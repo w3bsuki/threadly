@@ -1,7 +1,7 @@
-import { Badge } from '../ui/badge';
 import { cn } from '@repo/design-system/lib/utils';
+import { Badge } from '../ui/badge';
 
-type Condition = 
+type Condition =
   | 'NEW_WITH_TAGS'
   | 'NEW_WITHOUT_TAGS'
   | 'VERY_GOOD'
@@ -30,11 +30,13 @@ interface ConditionBadgeProps {
 const conditionConfig = {
   NEW_WITH_TAGS: {
     label: 'New',
-    className: 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100',
+    className:
+      'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100',
   },
   NEW_WITHOUT_TAGS: {
     label: 'New',
-    className: 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100',
+    className:
+      'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100',
   },
   VERY_GOOD: {
     label: 'Very Good',
@@ -46,7 +48,8 @@ const conditionConfig = {
   },
   SATISFACTORY: {
     label: 'Fair',
-    className: 'bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100',
+    className:
+      'bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100',
   },
   FAIR: {
     label: 'Fair',
@@ -54,12 +57,16 @@ const conditionConfig = {
   },
 };
 
-export function ConditionBadge({ condition, className, dictionary }: ConditionBadgeProps) {
+export function ConditionBadge({
+  condition,
+  className,
+  dictionary,
+}: ConditionBadgeProps) {
   const config = conditionConfig[condition];
-  
+
   if (!config) {
     return (
-      <Badge variant="secondary" className={cn('text-xs', className)}>
+      <Badge className={cn('text-xs', className)} variant="secondary">
         {condition}
       </Badge>
     );
@@ -69,9 +76,13 @@ export function ConditionBadge({ condition, className, dictionary }: ConditionBa
   const getLabel = () => {
     switch (condition) {
       case 'NEW_WITH_TAGS':
-        return dictionary?.web?.product?.conditions?.newWithTags || config.label;
+        return (
+          dictionary?.web?.product?.conditions?.newWithTags || config.label
+        );
       case 'NEW_WITHOUT_TAGS':
-        return dictionary?.web?.product?.conditions?.newWithoutTags || config.label;
+        return (
+          dictionary?.web?.product?.conditions?.newWithoutTags || config.label
+        );
       case 'VERY_GOOD':
         return dictionary?.web?.product?.conditions?.veryGood || config.label;
       case 'GOOD':
@@ -85,13 +96,13 @@ export function ConditionBadge({ condition, className, dictionary }: ConditionBa
   };
 
   return (
-    <Badge 
-      variant="outline" 
+    <Badge
       className={cn(
-        'text-xs font-medium transition-colors',
+        'font-medium text-xs transition-colors',
         config.className,
         className
       )}
+      variant="outline"
     >
       {getLabel()}
     </Badge>

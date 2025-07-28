@@ -1,58 +1,61 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { 
-  Button, 
-  Input, 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Checkbox,
+import {
   Badge,
+  Button,
   Card,
   CardContent,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  Checkbox,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  Input,
   Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@repo/design-system/components';
-import { 
-  Search, 
-  Filter, 
-  MoreHorizontal, 
-  Edit, 
-  Eye, 
-  Grid3X3, 
-  List,
-  ChevronDown,
-  Check,
-  X,
-  DollarSign,
-  Package,
-  Calendar,
-  ChevronUp
-} from 'lucide-react';
-import { decimalToNumber } from '@repo/utils';
-import { CursorPagination, useCursorPagination } from '@repo/design-system/components/marketplace';
+import {
+  CursorPagination,
+  useCursorPagination,
+} from '@repo/design-system/components/marketplace';
 import type { CursorPaginationResult } from '@repo/design-system/lib/pagination';
-import { BulkOperationType } from '@/lib/database-types';
+import { decimalToNumber } from '@repo/utils';
+import {
+  Calendar,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  DollarSign,
+  Edit,
+  Eye,
+  Filter,
+  Grid3X3,
+  List,
+  MoreHorizontal,
+  Package,
+  Search,
+  X,
+} from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useCallback, useMemo, useState } from 'react';
+import type { BulkOperationType } from '@/lib/database-types';
 
 interface Product {
   id: string;
@@ -102,7 +105,9 @@ export function AdvancedInventoryTable({
 }: AdvancedInventoryTableProps) {
   const [products, setProducts] = useState(initialData.items);
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
-  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
+  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(
+    new Set()
+  );
   const [sortField, setSortField] = useState<SortField>('createdAt');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [filters, setFilters] = useState<FilterState>({
@@ -131,34 +136,43 @@ export function AdvancedInventoryTable({
     // Apply search filter
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
-      filtered = filtered.filter(product =>
-        product.title.toLowerCase().includes(searchLower) ||
-        product.brand?.toLowerCase().includes(searchLower) ||
-        product.category.name.toLowerCase().includes(searchLower)
+      filtered = filtered.filter(
+        (product) =>
+          product.title.toLowerCase().includes(searchLower) ||
+          product.brand?.toLowerCase().includes(searchLower) ||
+          product.category.name.toLowerCase().includes(searchLower)
       );
     }
 
     // Apply status filter
     if (filters.status) {
-      filtered = filtered.filter(product => product.status === filters.status);
+      filtered = filtered.filter(
+        (product) => product.status === filters.status
+      );
     }
 
     // Apply category filter
     if (filters.category) {
-      filtered = filtered.filter(product => product.category.id === filters.category);
+      filtered = filtered.filter(
+        (product) => product.category.id === filters.category
+      );
     }
 
     // Apply condition filter
     if (filters.condition) {
-      filtered = filtered.filter(product => product.condition === filters.condition);
+      filtered = filtered.filter(
+        (product) => product.condition === filters.condition
+      );
     }
 
     // Apply price range filter
     if (filters.priceMin || filters.priceMax) {
-      filtered = filtered.filter(product => {
+      filtered = filtered.filter((product) => {
         const price = decimalToNumber(product.price) / 100;
-        const min = filters.priceMin ? parseFloat(filters.priceMin) : 0;
-        const max = filters.priceMax ? parseFloat(filters.priceMax) : Infinity;
+        const min = filters.priceMin ? Number.parseFloat(filters.priceMin) : 0;
+        const max = filters.priceMax
+          ? Number.parseFloat(filters.priceMax)
+          : Number.POSITIVE_INFINITY;
         return price >= min && price <= max;
       });
     }
@@ -166,7 +180,7 @@ export function AdvancedInventoryTable({
     // Apply sorting
     filtered.sort((a, b) => {
       let comparison = 0;
-      
+
       switch (sortField) {
         case 'title':
           comparison = a.title.localeCompare(b.title);
@@ -175,7 +189,8 @@ export function AdvancedInventoryTable({
           comparison = decimalToNumber(a.price) - decimalToNumber(b.price);
           break;
         case 'createdAt':
-          comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          comparison =
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
           break;
         case 'views':
           comparison = a.views - b.views;
@@ -184,7 +199,7 @@ export function AdvancedInventoryTable({
           comparison = a.status.localeCompare(b.status);
           break;
       }
-      
+
       return sortDirection === 'asc' ? comparison : -comparison;
     });
 
@@ -214,11 +229,14 @@ export function AdvancedInventoryTable({
     if (selectedProducts.size === filteredAndSortedProducts.length) {
       setSelectedProducts(new Set());
     } else {
-      setSelectedProducts(new Set(filteredAndSortedProducts.map(p => p.id)));
+      setSelectedProducts(new Set(filteredAndSortedProducts.map((p) => p.id)));
     }
   };
 
-  const handleBulkAction = async (operation: BulkOperationType, data: Record<string, unknown>) => {
+  const handleBulkAction = async (
+    operation: BulkOperationType,
+    data: Record<string, unknown>
+  ) => {
     if (selectedProducts.size === 0) return;
 
     setIsLoading(true);
@@ -262,25 +280,40 @@ export function AdvancedInventoryTable({
 
   const getConditionText = (condition: string) => {
     switch (condition) {
-      case 'NEW_WITH_TAGS': return 'New with tags';
-      case 'NEW_WITHOUT_TAGS': return 'New without tags';
-      case 'VERY_GOOD': return 'Very good';
-      case 'GOOD': return 'Good';
-      case 'SATISFACTORY': return 'Satisfactory';
-      default: return condition;
+      case 'NEW_WITH_TAGS':
+        return 'New with tags';
+      case 'NEW_WITHOUT_TAGS':
+        return 'New without tags';
+      case 'VERY_GOOD':
+        return 'Very good';
+      case 'GOOD':
+        return 'Good';
+      case 'SATISFACTORY':
+        return 'Satisfactory';
+      default:
+        return condition;
     }
   };
 
-  const SortButton = ({ field, children }: { field: SortField; children: React.ReactNode }) => (
+  const SortButton = ({
+    field,
+    children,
+  }: {
+    field: SortField;
+    children: React.ReactNode;
+  }) => (
     <Button
-      variant="ghost"
+      className="h-auto justify-start p-0 font-semibold"
       onClick={() => handleSort(field)}
-      className="h-auto p-0 font-semibold justify-start"
+      variant="ghost"
     >
       {children}
-      {sortField === field && (
-        sortDirection === 'asc' ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />
-      )}
+      {sortField === field &&
+        (sortDirection === 'asc' ? (
+          <ChevronUp className="ml-1 h-4 w-4" />
+        ) : (
+          <ChevronDown className="ml-1 h-4 w-4" />
+        ))}
     </Button>
   );
 
@@ -290,19 +323,21 @@ export function AdvancedInventoryTable({
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-2">
           <div className="relative flex-1 lg:w-80">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
             <Input
+              className="pl-10"
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, search: e.target.value }))
+              }
               placeholder="Search products..."
               value={filters.search}
-              onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-              className="pl-10"
             />
           </div>
-          
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Filter className="h-4 w-4 mr-2" />
+              <Button size="sm" variant="outline">
+                <Filter className="mr-2 h-4 w-4" />
                 Filters
               </Button>
             </DropdownMenuTrigger>
@@ -310,7 +345,12 @@ export function AdvancedInventoryTable({
               <div className="space-y-4">
                 <div>
                   <Label>Status</Label>
-                  <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}>
+                  <Select
+                    onValueChange={(value) =>
+                      setFilters((prev) => ({ ...prev, status: value }))
+                    }
+                    value={filters.status}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="All statuses" />
                     </SelectTrigger>
@@ -323,16 +363,21 @@ export function AdvancedInventoryTable({
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div>
                   <Label>Category</Label>
-                  <Select value={filters.category} onValueChange={(value) => setFilters(prev => ({ ...prev, category: value }))}>
+                  <Select
+                    onValueChange={(value) =>
+                      setFilters((prev) => ({ ...prev, category: value }))
+                    }
+                    value={filters.category}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="All categories" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="">All categories</SelectItem>
-                      {categories.map(category => (
+                      {categories.map((category) => (
                         <SelectItem key={category.id} value={category.id}>
                           {category.name}
                         </SelectItem>
@@ -340,24 +385,34 @@ export function AdvancedInventoryTable({
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="flex gap-2">
                   <div className="flex-1">
                     <Label>Min Price</Label>
                     <Input
-                      type="number"
+                      onChange={(e) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          priceMin: e.target.value,
+                        }))
+                      }
                       placeholder="0"
+                      type="number"
                       value={filters.priceMin}
-                      onChange={(e) => setFilters(prev => ({ ...prev, priceMin: e.target.value }))}
                     />
                   </div>
                   <div className="flex-1">
                     <Label>Max Price</Label>
                     <Input
-                      type="number"
+                      onChange={(e) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          priceMax: e.target.value,
+                        }))
+                      }
                       placeholder="999"
+                      type="number"
                       value={filters.priceMax}
-                      onChange={(e) => setFilters(prev => ({ ...prev, priceMax: e.target.value }))}
                     />
                   </div>
                 </div>
@@ -368,9 +423,9 @@ export function AdvancedInventoryTable({
 
         <div className="flex items-center gap-2">
           {selectedProducts.size > 0 && (
-            <Dialog open={showBulkActions} onOpenChange={setShowBulkActions}>
+            <Dialog onOpenChange={setShowBulkActions} open={showBulkActions}>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
+                <Button size="sm" variant="outline">
                   Actions ({selectedProducts.size})
                 </Button>
               </DialogTrigger>
@@ -380,24 +435,31 @@ export function AdvancedInventoryTable({
                 </DialogHeader>
                 <div className="space-y-2">
                   <Button
-                    variant="outline"
                     className="w-full justify-start"
-                    onClick={() => handleBulkAction('STATUS_CHANGE', { status: 'AVAILABLE' })}
                     disabled={isLoading}
+                    onClick={() =>
+                      handleBulkAction('STATUS_CHANGE', { status: 'AVAILABLE' })
+                    }
+                    variant="outline"
                   >
                     Mark as Available
                   </Button>
                   <Button
-                    variant="outline"
                     className="w-full justify-start"
-                    onClick={() => handleBulkAction('STATUS_CHANGE', { status: 'REMOVED' })}
                     disabled={isLoading}
+                    onClick={() =>
+                      handleBulkAction('STATUS_CHANGE', { status: 'REMOVED' })
+                    }
+                    variant="outline"
                   >
                     Remove from Sale
                   </Button>
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button variant="outline" className="w-full justify-start">
+                      <Button
+                        className="w-full justify-start"
+                        variant="outline"
+                      >
                         Update Prices
                       </Button>
                     </DialogTrigger>
@@ -408,15 +470,23 @@ export function AdvancedInventoryTable({
                       <div className="space-y-4">
                         <div>
                           <Label>New Price ($)</Label>
-                          <Input type="number" placeholder="Enter new price" id="bulk-price" />
+                          <Input
+                            id="bulk-price"
+                            placeholder="Enter new price"
+                            type="number"
+                          />
                         </div>
                         <Button
                           className="w-full"
                           onClick={() => {
-                            const priceInput = document.getElementById('bulk-price') as HTMLInputElement;
-                            const price = parseFloat(priceInput.value);
+                            const priceInput = document.getElementById(
+                              'bulk-price'
+                            ) as HTMLInputElement;
+                            const price = Number.parseFloat(priceInput.value);
                             if (price > 0) {
-                              handleBulkAction('PRICE_UPDATE', { price: price * 100 });
+                              handleBulkAction('PRICE_UPDATE', {
+                                price: price * 100,
+                              });
                             }
                           }}
                         >
@@ -429,19 +499,19 @@ export function AdvancedInventoryTable({
               </DialogContent>
             </Dialog>
           )}
-          
+
           <div className="flex rounded-[var(--radius-md)] border">
             <Button
-              variant={viewMode === 'grid' ? 'default' : 'ghost'}
-              size="sm"
               onClick={() => setViewMode('grid')}
+              size="sm"
+              variant={viewMode === 'grid' ? 'default' : 'ghost'}
             >
               <Grid3X3 className="h-4 w-4" />
             </Button>
             <Button
-              variant={viewMode === 'table' ? 'default' : 'ghost'}
-              size="sm"
               onClick={() => setViewMode('table')}
+              size="sm"
+              variant={viewMode === 'table' ? 'default' : 'ghost'}
             >
               <List className="h-4 w-4" />
             </Button>
@@ -458,7 +528,11 @@ export function AdvancedInventoryTable({
                 <TableRow>
                   <TableHead className="w-12">
                     <Checkbox
-                      checked={selectedProducts.size === filteredAndSortedProducts.length && filteredAndSortedProducts.length > 0}
+                      checked={
+                        selectedProducts.size ===
+                          filteredAndSortedProducts.length &&
+                        filteredAndSortedProducts.length > 0
+                      }
                       onCheckedChange={handleSelectAll}
                     />
                   </TableHead>
@@ -472,7 +546,9 @@ export function AdvancedInventoryTable({
                   <TableHead>
                     <SortButton field="status">Status</SortButton>
                   </TableHead>
-                  <TableHead className="hidden md:table-cell">Category</TableHead>
+                  <TableHead className="hidden md:table-cell">
+                    Category
+                  </TableHead>
                   <TableHead className="hidden lg:table-cell">
                     <SortButton field="views">Views</SortButton>
                   </TableHead>
@@ -495,14 +571,14 @@ export function AdvancedInventoryTable({
                       <div className="relative h-12 w-12 overflow-hidden rounded-[var(--radius-md)]">
                         {product.images[0] ? (
                           <Image
-                            src={product.images[0].imageUrl}
                             alt={product.title}
-                            fill
                             className="object-cover"
+                            fill
                             sizes="48px"
+                            src={product.images[0].imageUrl}
                           />
                         ) : (
-                          <div className="h-full w-full bg-muted flex items-center justify-center">
+                          <div className="flex h-full w-full items-center justify-center bg-muted">
                             <Package className="h-4 w-4 text-muted-foreground" />
                           </div>
                         )}
@@ -510,8 +586,10 @@ export function AdvancedInventoryTable({
                     </TableCell>
                     <TableCell>
                       <div>
-                        <p className="font-medium line-clamp-1">{product.title}</p>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="line-clamp-1 font-medium">
+                          {product.title}
+                        </p>
+                        <p className="text-muted-foreground text-sm">
                           {getConditionText(product.condition)}
                         </p>
                       </div>
@@ -538,20 +616,20 @@ export function AdvancedInventoryTable({
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
+                          <Button size="sm" variant="ghost">
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem asChild>
                             <Link href={`/selling/listings/${product.id}/edit`}>
-                              <Edit className="h-4 w-4 mr-2" />
+                              <Edit className="mr-2 h-4 w-4" />
                               Edit
                             </Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem asChild>
                             <Link href={`/product/${product.id}`}>
-                              <Eye className="h-4 w-4 mr-2" />
+                              <Eye className="mr-2 h-4 w-4" />
                               View
                             </Link>
                           </DropdownMenuItem>
@@ -570,63 +648,68 @@ export function AdvancedInventoryTable({
       {viewMode === 'grid' && (
         <div className="space-y-4">
           {filteredAndSortedProducts.length > 0 && (
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <div className="flex items-center justify-between text-muted-foreground text-sm">
               <span>
-                {selectedProducts.size > 0 && `${selectedProducts.size} selected • `}
+                {selectedProducts.size > 0 &&
+                  `${selectedProducts.size} selected • `}
                 Showing {filteredAndSortedProducts.length} products
               </span>
             </div>
           )}
-          
+
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filteredAndSortedProducts.map((product) => (
-              <Card key={product.id} className="overflow-hidden relative">
+              <Card className="relative overflow-hidden" key={product.id}>
                 <div className="absolute top-2 left-2 z-10">
                   <Checkbox
                     checked={selectedProducts.has(product.id)}
+                    className="border-border bg-background/90"
                     onCheckedChange={() => handleSelectProduct(product.id)}
-                    className="bg-background/90 border-border"
                   />
                 </div>
-                
-                <div className="aspect-square relative">
+
+                <div className="relative aspect-square">
                   {product.images[0] ? (
                     <Image
-                      src={product.images[0].imageUrl}
                       alt={product.title}
-                      fill
                       className="object-cover"
+                      fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      src={product.images[0].imageUrl}
                     />
                   ) : (
-                    <div className="w-full h-full bg-muted flex items-center justify-center">
+                    <div className="flex h-full w-full items-center justify-center bg-muted">
                       <Package className="h-8 w-8 text-muted-foreground" />
                     </div>
                   )}
-                  
+
                   <div className="absolute top-2 right-2">
                     <Badge className={getStatusColor(product.status)}>
                       {product.status}
                     </Badge>
                   </div>
-                  
-                  <div className="absolute bottom-2 right-2">
+
+                  <div className="absolute right-2 bottom-2">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 bg-background/80 hover:bg-background/90">
+                        <Button
+                          className="h-8 w-8 bg-background/80 hover:bg-background/90"
+                          size="icon"
+                          variant="ghost"
+                        >
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
                           <Link href={`/selling/listings/${product.id}/edit`}>
-                            <Edit className="h-4 w-4 mr-2" />
+                            <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <Link href={`/product/${product.id}`}>
-                            <Eye className="h-4 w-4 mr-2" />
+                            <Eye className="mr-2 h-4 w-4" />
                             View
                           </Link>
                         </DropdownMenuItem>
@@ -634,22 +717,28 @@ export function AdvancedInventoryTable({
                     </DropdownMenu>
                   </div>
                 </div>
-                
+
                 <CardContent className="p-4">
                   <div className="space-y-2">
-                    <h3 className="font-semibold line-clamp-1">{product.title}</h3>
-                    <p className="text-2xl font-bold">
+                    <h3 className="line-clamp-1 font-semibold">
+                      {product.title}
+                    </h3>
+                    <p className="font-bold text-2xl">
                       ${(decimalToNumber(product.price) / 100).toFixed(2)}
                     </p>
-                    
-                    <div className="flex items-center justify-between text-sm text-muted-foreground">
+
+                    <div className="flex items-center justify-between text-muted-foreground text-sm">
                       <span>{getConditionText(product.condition)}</span>
                       <span>{product.category.name}</span>
                     </div>
-                    
-                    <div className="flex items-center justify-between text-xs text-muted-foreground border-t pt-2">
-                      <span>{product._count.favorites} saves • {product.views} views</span>
-                      <span>{new Date(product.createdAt).toLocaleDateString()}</span>
+
+                    <div className="flex items-center justify-between border-t pt-2 text-muted-foreground text-xs">
+                      <span>
+                        {product._count.favorites} saves • {product.views} views
+                      </span>
+                      <span>
+                        {new Date(product.createdAt).toLocaleDateString()}
+                      </span>
                     </div>
                   </div>
                 </CardContent>
@@ -663,21 +752,23 @@ export function AdvancedInventoryTable({
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <div className="text-center">
-              <h3 className="text-lg font-semibold mb-2">No products found</h3>
-              <p className="text-muted-foreground mb-4">
+              <h3 className="mb-2 font-semibold text-lg">No products found</h3>
+              <p className="mb-4 text-muted-foreground">
                 Try adjusting your search or filter criteria
               </p>
               <Button
+                onClick={() =>
+                  setFilters({
+                    search: '',
+                    status: '',
+                    category: '',
+                    condition: '',
+                    priceMin: '',
+                    priceMax: '',
+                    dateRange: '',
+                  })
+                }
                 variant="outline"
-                onClick={() => setFilters({
-                  search: '',
-                  status: '',
-                  category: '',
-                  condition: '',
-                  priceMin: '',
-                  priceMax: '',
-                  dateRange: '',
-                })}
               >
                 Clear Filters
               </Button>

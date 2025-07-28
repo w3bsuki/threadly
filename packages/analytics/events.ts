@@ -127,7 +127,9 @@ export const createProductProperties = (product: any): ProductEventProps => ({
   product_condition: product.condition,
   product_size: product.size,
   seller_id: product.seller?.id,
-  seller_name: product.seller?.name || `${product.seller?.firstName || ''} ${product.seller?.lastName || ''}`.trim(),
+  seller_name:
+    product.seller?.name ||
+    `${product.seller?.firstName || ''} ${product.seller?.lastName || ''}`.trim(),
 });
 
 export const createSearchProperties = (
@@ -174,13 +176,25 @@ export const trackProductView = (analytics: any, product: any) => {
   });
 };
 
-export const trackProductFavorite = (analytics: any, product: any, isFavorited: boolean) => {
-  const event = isFavorited ? AnalyticsEvents.PRODUCT_FAVORITED : AnalyticsEvents.PRODUCT_UNFAVORITED;
+export const trackProductFavorite = (
+  analytics: any,
+  product: any,
+  isFavorited: boolean
+) => {
+  const event = isFavorited
+    ? AnalyticsEvents.PRODUCT_FAVORITED
+    : AnalyticsEvents.PRODUCT_UNFAVORITED;
   analytics.capture(event, createProductProperties(product));
 };
 
-export const trackSearch = (analytics: any, query: string, resultsCount?: number, filters?: any) => {
-  analytics.capture(AnalyticsEvents.PRODUCTS_SEARCHED, 
+export const trackSearch = (
+  analytics: any,
+  query: string,
+  resultsCount?: number,
+  filters?: any
+) => {
+  analytics.capture(
+    AnalyticsEvents.PRODUCTS_SEARCHED,
     createSearchProperties(query, resultsCount, filters?.category, filters)
   );
 };
@@ -193,10 +207,17 @@ export const trackAddToCart = (analytics: any, product: any) => {
 };
 
 export const trackPageView = (analytics: any, path: string, title?: string) => {
-  analytics.capture(AnalyticsEvents.PAGE_VIEWED, createPageProperties(path, title));
+  analytics.capture(
+    AnalyticsEvents.PAGE_VIEWED,
+    createPageProperties(path, title)
+  );
 };
 
-export const trackError = (analytics: any, error: Error, context?: Record<string, any>) => {
+export const trackError = (
+  analytics: any,
+  error: Error,
+  context?: Record<string, any>
+) => {
   analytics.capture(AnalyticsEvents.ERROR_OCCURRED, {
     error_message: error.message,
     error_stack: error.stack,

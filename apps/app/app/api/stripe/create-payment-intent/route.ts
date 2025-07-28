@@ -1,12 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { paymentRateLimit, checkRateLimit } from '@repo/security';
+import { log, logError } from '@repo/observability/server';
+import { checkRateLimit, paymentRateLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { env } from '@/env';
 import { z } from 'zod';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
+import { env } from '@/env';
 
 // Initialize Stripe with proper error handling
 let stripe: Stripe | null = null;
@@ -23,12 +22,16 @@ const createPaymentIntentSchema = z.object({
   currency: z.string().default('usd'),
   orderId: z.string().optional(), // Optional for cart purchases
   sellerId: z.string().optional(), // Optional for cart purchases
-  orderItems: z.array(z.object({
-    productId: z.string(),
-    title: z.string(),
-    quantity: z.number(),
-    price: z.number(),
-  })).optional(), // For cart purchases
+  orderItems: z
+    .array(
+      z.object({
+        productId: z.string(),
+        title: z.string(),
+        quantity: z.number(),
+        price: z.number(),
+      })
+    )
+    .optional(), // For cart purchases
 });
 
 export async function POST(request: NextRequest) {
@@ -36,7 +39,10 @@ export async function POST(request: NextRequest) {
     // Check if Stripe is configured
     if (!stripe) {
       return NextResponse.json(
-        { error: 'Payment processing is not configured. Please contact support.' },
+        {
+          error:
+            'Payment processing is not configured. Please contact support.',
+        },
         { status: 503 }
       );
     }
@@ -46,9 +52,11 @@ export async function POST(request: NextRequest) {
     if (!rateLimitResult.allowed) {
       return NextResponse.json(
         {
-          error: rateLimitResult.error?.message || 'Too many payment requests. Please try again later.',
+          error:
+            rateLimitResult.error?.message ||
+            'Too many payment requests. Please try again later.',
         },
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
         }
@@ -60,7 +68,8 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { productId, amount, currency, orderId, sellerId, orderItems } = createPaymentIntentSchema.parse(body);
+    const { productId, amount, currency, orderId, sellerId, orderItems } =
+      createPaymentIntentSchema.parse(body);
 
     // Create payment intent configuration
     const paymentIntentData: Stripe.PaymentIntentCreateParams = {
@@ -79,32 +88,32 @@ export async function POST(request: NextRequest) {
       // For cart purchases, include the order ID if provided
       paymentIntentData.metadata!.type = 'cart';
       paymentIntentData.metadata!.itemCount = orderItems.length.toString();
-      
+
       // CRITICAL FIX: Store ALL order-related IDs
       if (orderId) {
         paymentIntentData.metadata!.orderId = orderId;
       }
-      
+
       // Store all product IDs and seller IDs for webhook processing
-      const productIds = orderItems.map(item => item.productId);
+      const productIds = orderItems.map((item) => item.productId);
       const uniqueProductIds = [...new Set(productIds)];
-      
+
       // Store as JSON array in metadata (Stripe allows up to 500 chars per value)
       paymentIntentData.metadata!.productIds = JSON.stringify(uniqueProductIds);
-      
+
       // Get unique seller IDs for the products
       const products = await database.product.findMany({
         where: { id: { in: uniqueProductIds } },
-        select: { id: true, sellerId: true }
+        select: { id: true, sellerId: true },
       });
-      
-      const sellerIds = [...new Set(products.map(p => p.sellerId))];
+
+      const sellerIds = [...new Set(products.map((p) => p.sellerId))];
       paymentIntentData.metadata!.sellerIds = JSON.stringify(sellerIds);
-      
+
       // Calculate platform fee (5% for Threadly)
       const platformFeeAmount = Math.round(amount * 0.05 * 100); // 5% in cents
       paymentIntentData.application_fee_amount = platformFeeAmount;
-      
+
       // For cart purchases, we'll handle seller payouts separately
       // since there might be multiple sellers
     } else if (productId && orderId && sellerId) {
@@ -113,7 +122,7 @@ export async function POST(request: NextRequest) {
       paymentIntentData.metadata!.productId = productId;
       paymentIntentData.metadata!.orderId = orderId;
       paymentIntentData.metadata!.sellerId = sellerId;
-      
+
       // Get seller's Stripe account
       const seller = await database.user.findUnique({
         where: { id: sellerId },
@@ -141,10 +150,9 @@ export async function POST(request: NextRequest) {
       clientSecret: paymentIntent.client_secret,
       paymentIntentId: paymentIntent.id,
     });
-
   } catch (error) {
     logError('Payment intent creation error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.issues },

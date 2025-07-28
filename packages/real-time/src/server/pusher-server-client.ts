@@ -1,6 +1,11 @@
 import Pusher from 'pusher';
-import type { RealTimeConfig, MessageEvent, NotificationEvent, TypingEvent } from '../types';
 import type { ConversationRepository, UserRepository } from '../repositories';
+import type {
+  MessageEvent,
+  NotificationEvent,
+  RealTimeConfig,
+  TypingEvent,
+} from '../types';
 
 export function createPusherServer(
   config: RealTimeConfig,
@@ -9,7 +14,7 @@ export function createPusherServer(
     userRepository: UserRepository;
   }
 ) {
-  if (!config.pusherAppId || !config.pusherSecret) {
+  if (!(config.pusherAppId && config.pusherSecret)) {
     throw new Error('PusherServer requires appId and secret');
   }
 
@@ -32,7 +37,7 @@ export function createPusherServer(
           userId,
           conversationId
         );
-        
+
         if (!hasAccess) {
           throw new Error('Unauthorized access to conversation');
         }
@@ -64,22 +69,25 @@ export function createPusherServer(
       // Send to conversation channel for real-time updates
       const conversationChannel = `private-conversation-${message.conversationId}`;
       await pusher.trigger(conversationChannel, 'new-message', message);
-      
+
       // Also get conversation to send notification to recipient's user channel
-      const conversation = await repositories.conversationRepository.findById(message.conversationId);
-      
+      const conversation = await repositories.conversationRepository.findById(
+        message.conversationId
+      );
+
       if (conversation) {
         // Determine recipient (the user who didn't send the message)
-        const recipientId = message.senderId === conversation.buyerId 
-          ? conversation.sellerId 
-          : conversation.buyerId;
-        
+        const recipientId =
+          message.senderId === conversation.buyerId
+            ? conversation.sellerId
+            : conversation.buyerId;
+
         // Send notification to recipient's user channel for updating conversation list
         const userChannel = `private-user-${recipientId}`;
         await pusher.trigger(userChannel, 'new-message-notification', {
           conversationId: message.conversationId,
           senderId: message.senderId,
-          createdAt: message.createdAt
+          createdAt: message.createdAt,
         });
       }
     },
@@ -91,7 +99,10 @@ export function createPusherServer(
     },
 
     // Send notification
-    async sendNotification(userId: string, notification: NotificationEvent['data']) {
+    async sendNotification(
+      userId: string,
+      notification: NotificationEvent['data']
+    ) {
       const channel = `private-user-${userId}`;
       await pusher.trigger(channel, 'new-notification', notification);
     },
@@ -112,7 +123,9 @@ export function createPusherServer(
     },
 
     // Trigger batch events
-    async triggerBatch(batch: Array<{ channel: string; event: string; data: any }>) {
+    async triggerBatch(
+      batch: Array<{ channel: string; event: string; data: any }>
+    ) {
       const triggers = batch.map(({ channel, event, data }) => ({
         channel,
         name: event,
@@ -120,7 +133,7 @@ export function createPusherServer(
       }));
 
       await pusher.triggerBatch(triggers);
-    }
+    },
   };
 }
 
@@ -130,7 +143,10 @@ async function verifyConversationAccess(
   userId: string,
   conversationId: string
 ): Promise<boolean> {
-  const conversation = await conversationRepo.findByUserAccess(conversationId, userId);
+  const conversation = await conversationRepo.findByUserAccess(
+    conversationId,
+    userId
+  );
   return !!conversation;
 }
 

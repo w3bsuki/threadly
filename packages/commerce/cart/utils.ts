@@ -8,19 +8,19 @@ export const validateCart = (items: CartItem[]): CartValidationResult => {
     if (!item.productId) {
       errors.push(`Item missing productId: ${item.title}`);
     }
-    
+
     if (!item.title) {
       errors.push(`Item missing title: ${item.productId}`);
     }
-    
+
     if (item.price <= 0) {
       errors.push(`Invalid price for item: ${item.title}`);
     }
-    
+
     if (item.quantity <= 0) {
       errors.push(`Invalid quantity for item: ${item.title}`);
     }
-    
+
     if (item.availableQuantity && item.quantity > item.availableQuantity) {
       warnings.push(`Quantity exceeds available stock for: ${item.title}`);
     }

@@ -1,1 +1,2 @@
-import { MobileButton } from "./components/mobile/mobile-button"; console.log(MobileButton);
+import { MobileButton } from './components/mobile/mobile-button';
+console.log(MobileButton);

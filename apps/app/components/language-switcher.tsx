@@ -1,6 +1,5 @@
 'use client';
 
-import { useParams, usePathname, useRouter } from 'next/navigation';
 import {
   Select,
   SelectContent,
@@ -9,6 +8,7 @@ import {
   SelectValue,
 } from '@repo/design-system/components';
 import { Globe } from 'lucide-react';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 
 const locales = [
   { code: 'en', name: 'English', flag: '🇬🇧' },
@@ -20,19 +20,19 @@ export function LanguageSwitcher(): React.JSX.Element {
   const params = useParams();
   const pathname = usePathname();
   const router = useRouter();
-  
-  const currentLocale = params.locale as string || 'en';
+
+  const currentLocale = (params.locale as string) || 'en';
 
   const handleLocaleChange = (newLocale: string) => {
     // Replace the current locale in the pathname
-    const newPath = pathname.replace(/^\/[^\/]+/, `/${newLocale}`);
+    const newPath = pathname.replace(/^\/[^/]+/, `/${newLocale}`);
     router.push(newPath);
   };
 
   return (
-    <Select value={currentLocale} onValueChange={handleLocaleChange}>
+    <Select onValueChange={handleLocaleChange} value={currentLocale}>
       <SelectTrigger className="w-[180px]">
-        <Globe className="h-4 w-4 mr-2" />
+        <Globe className="mr-2 h-4 w-4" />
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

@@ -22,18 +22,19 @@ export function AnimatedSkeleton({
 }: AnimatedSkeletonProps) {
   const animationClass = {
     pulse: 'animate-pulse',
-    shimmer: 'animate-shimmer bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 bg-[length:200%_100%]',
+    shimmer:
+      'animate-shimmer bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 bg-[length:200%_100%]',
     wave: 'animate-pulse',
   }[animation];
 
   const elements = Array.from({ length: count }, (_, i) => (
     <Skeleton
-      key={i}
       className={cn(
         animationClass,
         circle && 'rounded-[var(--radius-full)]',
         className
       )}
+      key={i}
       style={{
         height: typeof height === 'number' ? `${height}px` : height,
         width: typeof width === 'number' ? `${width}px` : width,
@@ -49,12 +50,12 @@ export function AnimatedSkeleton({
 export function ProductCardSkeleton() {
   return (
     <div className="space-y-3">
-      <AnimatedSkeleton height={300} className="rounded-[var(--radius-lg)]" />
+      <AnimatedSkeleton className="rounded-[var(--radius-lg)]" height={300} />
       <div className="space-y-2">
         <AnimatedSkeleton height={20} width="80%" />
         <AnimatedSkeleton height={16} width="60%" />
         <div className="flex items-center gap-2">
-          <AnimatedSkeleton height={24} width={24} circle />
+          <AnimatedSkeleton circle height={24} width={24} />
           <AnimatedSkeleton height={16} width="40%" />
         </div>
       </div>
@@ -66,7 +67,7 @@ export function ProductCardSkeleton() {
 export function UserProfileSkeleton() {
   return (
     <div className="flex items-center gap-4">
-      <AnimatedSkeleton height={48} width={48} circle />
+      <AnimatedSkeleton circle height={48} width={48} />
       <div className="space-y-2">
         <AnimatedSkeleton height={20} width={120} />
         <AnimatedSkeleton height={16} width={80} />
@@ -80,7 +81,7 @@ export function TableRowSkeleton({ columns = 4 }: { columns?: number }) {
   return (
     <tr className="border-b">
       {Array.from({ length: columns }, (_, i) => (
-        <td key={i} className="p-4">
+        <td className="p-4" key={i}>
           <AnimatedSkeleton height={16} width="80%" />
         </td>
       ))}
@@ -94,8 +95,8 @@ export function TextBlockSkeleton({ lines = 3 }: { lines?: number }) {
     <div className="space-y-2">
       {Array.from({ length: lines }, (_, i) => (
         <AnimatedSkeleton
-          key={i}
           height={16}
+          key={i}
           width={i === lines - 1 ? '60%' : '100%'}
         />
       ))}

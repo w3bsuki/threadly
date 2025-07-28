@@ -1,14 +1,17 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { redirect } from 'next/navigation';
-import type { Metadata } from 'next';
-import { MultiStepWizard } from './components/multi-step-wizard';
-import { Alert, AlertDescription, AlertTitle } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
+} from '@repo/design-system/components';
+import { log, logError } from '@repo/observability/server';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
+import { redirect } from 'next/navigation';
+import { MultiStepWizard } from './components/multi-step-wizard';
 
 const title = 'Sell New Item';
 const description = 'List your fashion item for sale on Threadly';
@@ -18,9 +21,9 @@ export const metadata: Metadata = {
   description,
 };
 
-const SellNewItemPage = async ({ 
-  searchParams 
-}: { 
+const SellNewItemPage = async ({
+  searchParams,
+}: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
   const user = await currentUser();
@@ -30,16 +33,21 @@ const SellNewItemPage = async ({
   }
 
   try {
-
     // Get template and draft parameters
     const awaitedSearchParams = await searchParams;
-    const templateId = typeof awaitedSearchParams.template === 'string' ? awaitedSearchParams.template : undefined;
-    const draftId = typeof awaitedSearchParams.draft === 'string' ? awaitedSearchParams.draft : undefined;
+    const templateId =
+      typeof awaitedSearchParams.template === 'string'
+        ? awaitedSearchParams.template
+        : undefined;
+    const draftId =
+      typeof awaitedSearchParams.draft === 'string'
+        ? awaitedSearchParams.draft
+        : undefined;
 
     // Check if user exists in database, create if not
     let dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      select: { 
+      select: {
         id: true,
         stripeAccountId: true,
         SellerProfile: true,
@@ -60,7 +68,7 @@ const SellNewItemPage = async ({
           id: true,
           stripeAccountId: true,
           SellerProfile: true,
-        }
+        },
       });
     }
 
@@ -71,13 +79,15 @@ const SellNewItemPage = async ({
         <div className="space-y-6">
           <div className="flex items-center gap-4">
             <Link href="/">
-              <Button variant="ghost" size="icon">
+              <Button size="icon" variant="ghost">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold">List New Item</h1>
-              <p className="text-muted-foreground">Get ready to sell your fashion items</p>
+              <h1 className="font-bold text-2xl">List New Item</h1>
+              <p className="text-muted-foreground">
+                Get ready to sell your fashion items
+              </p>
             </div>
           </div>
 
@@ -86,16 +96,15 @@ const SellNewItemPage = async ({
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Seller Profile Required</AlertTitle>
               <AlertDescription>
-                You need to complete your seller profile before you can list items for sale.
-                This includes your payment information and shipping settings.
+                You need to complete your seller profile before you can list
+                items for sale. This includes your payment information and
+                shipping settings.
               </AlertDescription>
             </Alert>
-            
+
             <div className="text-center">
               <Button asChild>
-                <Link href="/selling/onboarding">
-                  Set Up Seller Account
-                </Link>
+                <Link href="/selling/onboarding">Set Up Seller Account</Link>
               </Button>
             </div>
           </div>
@@ -104,46 +113,49 @@ const SellNewItemPage = async ({
     }
 
     // Fetch template data, draft, and categories
-    const [selectedTemplate, draftProduct, templates, categories] = await Promise.all([
-      // Template feature disabled
-      null,
-      null,
-      // Templates feature disabled
-      Promise.resolve([]),
-      database.category.findMany({
-        orderBy: { name: 'asc' }
-      })
-    ]);
+    const [selectedTemplate, draftProduct, templates, categories] =
+      await Promise.all([
+        // Template feature disabled
+        null,
+        null,
+        // Templates feature disabled
+        Promise.resolve([]),
+        database.category.findMany({
+          orderBy: { name: 'asc' },
+        }),
+      ]);
 
     // User has seller profile, show product form
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
           <Link href="/">
-            <Button variant="ghost" size="icon">
+            <Button size="icon" variant="ghost">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold">List New Item</h1>
-            <p className="text-muted-foreground">Fill out the details below to list your fashion item for sale</p>
+            <h1 className="font-bold text-2xl">List New Item</h1>
+            <p className="text-muted-foreground">
+              Fill out the details below to list your fashion item for sale
+            </p>
           </div>
         </div>
-        
+
         <div className="mx-auto w-full max-w-4xl">
-          <MultiStepWizard 
-            userId={dbUser.id} 
-            selectedTemplate={selectedTemplate || undefined}
-            templates={templates}
+          <MultiStepWizard
             categories={categories}
             draftProduct={draftProduct || undefined}
+            selectedTemplate={selectedTemplate || undefined}
+            templates={templates}
+            userId={dbUser.id}
           />
         </div>
       </div>
     );
   } catch (error) {
     logError('Error in SellNewItemPage:', error);
-    
+
     return (
       <div className="mx-auto w-full max-w-2xl p-8">
         <Alert className="mb-6">
@@ -151,17 +163,17 @@ const SellNewItemPage = async ({
           <AlertTitle>Error Loading Page</AlertTitle>
           <AlertDescription>
             Unable to load the product creation page. Please try again later.
-            <pre className="mt-2 text-xs whitespace-pre-wrap">
-              {error instanceof Error ? error.message : JSON.stringify(error, null, 2)}
+            <pre className="mt-2 whitespace-pre-wrap text-xs">
+              {error instanceof Error
+                ? error.message
+                : JSON.stringify(error, null, 2)}
             </pre>
           </AlertDescription>
         </Alert>
-        
+
         <div className="text-center">
           <Button asChild>
-            <Link href="/">
-              Go Back Home
-            </Link>
+            <Link href="/">Go Back Home</Link>
           </Button>
         </div>
       </div>

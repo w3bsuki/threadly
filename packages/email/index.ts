@@ -5,7 +5,7 @@ export const resend = new Resend(keys().RESEND_TOKEN);
 
 // Export all email functions and templates
 export * from './service';
-export * from './templates/welcome';
+export * from './templates/contact';
 export * from './templates/order-confirmation';
 export * from './templates/order-shipped';
-export * from './templates/contact';
+export * from './templates/welcome';

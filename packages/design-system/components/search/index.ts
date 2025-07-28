@@ -1,6 +1,6 @@
 export {
-  SearchResultsSkeleton,
+  SearchFiltersSkeleton,
   SearchInputSkeleton,
+  SearchResultsSkeleton,
   SearchSuggestionsSkeleton,
-  SearchFiltersSkeleton
 } from './skeletons';

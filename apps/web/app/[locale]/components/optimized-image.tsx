@@ -210,7 +210,12 @@ export function AvatarImage({
   className?: string;
 }) {
   return (
-    <div className={cn('relative overflow-hidden rounded-[var(--radius-full)]', className)}>
+    <div
+      className={cn(
+        'relative overflow-hidden rounded-[var(--radius-full)]',
+        className
+      )}
+    >
       <OptimizedImage
         alt={alt}
         className="object-cover"

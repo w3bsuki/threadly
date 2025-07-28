@@ -1,13 +1,13 @@
-import { env } from '../../../env';
 import { analytics } from '@repo/analytics/posthog/server';
 import { clerkClient } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { parseError, logError } from '@repo/observability/server';
-import { stripe } from '@repo/payments';
+import { logError, parseError } from '@repo/observability/server';
 import type { Stripe } from '@repo/payments';
-import { webhookRateLimit, checkRateLimit } from '@repo/security';
+import { stripe } from '@repo/payments';
+import { checkRateLimit, webhookRateLimit } from '@repo/security';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { env } from '../../../env';
 
 const getUserFromCustomerId = async (customerId: string) => {
   const clerk = await clerkClient();
@@ -73,19 +73,20 @@ const handlePaymentIntentSucceeded = async (
       return;
     }
 
-    const { buyerId, type, orderId, productId, productIds, sellerIds } = paymentIntent.metadata;
-    
+    const { buyerId, type, orderId, productId, productIds, sellerIds } =
+      paymentIntent.metadata;
+
     if (!buyerId) {
       logError('[Payment Intent] Missing buyer ID', {
         paymentIntentId: paymentIntent.id,
-        metadata: paymentIntent.metadata
+        metadata: paymentIntent.metadata,
       });
       return;
     }
 
     // Check if this payment was already processed (idempotency)
     const existingPayment = await database.payment.findFirst({
-      where: { stripePaymentId: paymentIntent.id }
+      where: { stripePaymentId: paymentIntent.id },
     });
 
     if (existingPayment) {
@@ -96,13 +97,13 @@ const handlePaymentIntentSucceeded = async (
     // Get database user from Clerk ID
     const dbUser = await database.user.findUnique({
       where: { clerkId: buyerId },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!dbUser) {
       logError('[Payment Intent] Database user not found', {
-        clerkId: buyerId, 
-        paymentIntentId: paymentIntent.id 
+        clerkId: buyerId,
+        paymentIntentId: paymentIntent.id,
       });
       return;
     }
@@ -111,7 +112,7 @@ const handlePaymentIntentSucceeded = async (
     if (type === 'cart' && productIds) {
       // Parse product IDs from JSON
       const parsedProductIds = JSON.parse(productIds) as string[];
-      
+
       // Start a transaction to update all orders and products
       const result = await database.$transaction(async (tx) => {
         // Find all orders for this buyer with these products in PENDING status
@@ -125,10 +126,10 @@ const handlePaymentIntentSucceeded = async (
             Product: {
               select: {
                 id: true,
-                sellerId: true
-              }
-            }
-          }
+                sellerId: true,
+              },
+            },
+          },
         });
 
         if (orders.length === 0) {
@@ -137,7 +138,7 @@ const handlePaymentIntentSucceeded = async (
 
         // Update all orders to PAID status
         const updatedOrders = await Promise.all(
-          orders.map(order => 
+          orders.map((order) =>
             tx.order.update({
               where: { id: order.id },
               data: { status: 'PAID' },
@@ -147,7 +148,7 @@ const handlePaymentIntentSucceeded = async (
 
         // Mark all products as SOLD
         await Promise.all(
-          parsedProductIds.map(productId =>
+          parsedProductIds.map((productId) =>
             tx.product.update({
               where: { id: productId },
               data: { status: 'SOLD' },
@@ -157,7 +158,7 @@ const handlePaymentIntentSucceeded = async (
 
         // Create payment records for each order
         const payments = await Promise.all(
-          orders.map(order =>
+          orders.map((order) =>
             tx.payment.create({
               data: {
                 orderId: order.id,
@@ -171,25 +172,25 @@ const handlePaymentIntentSucceeded = async (
 
         // Credit seller balances
         const sellerUpdates = new Map<string, number>();
-        
+
         for (const order of orders) {
           const sellerId = order.Product.sellerId;
           const platformFee = order.amount.toNumber() * 0.05; // 5% fee
           const sellerAmount = order.amount.toNumber() - platformFee;
-          
+
           const currentAmount = sellerUpdates.get(sellerId) || 0;
           sellerUpdates.set(sellerId, currentAmount + sellerAmount);
         }
-        
+
         // Update seller balances
         for (const [sellerId, amount] of sellerUpdates) {
           await tx.user.update({
             where: { id: sellerId },
             data: {
               sellerBalance: {
-                increment: amount
-              }
-            }
+                increment: amount,
+              },
+            },
           });
         }
 
@@ -201,7 +202,7 @@ const handlePaymentIntentSucceeded = async (
         // Update order status to PAID
         const order = await tx.order.update({
           where: { id: orderId },
-          data: { 
+          data: {
             status: 'PAID',
           },
         });
@@ -209,7 +210,7 @@ const handlePaymentIntentSucceeded = async (
         // Mark product as SOLD
         await tx.product.update({
           where: { id: productId },
-          data: { 
+          data: {
             status: 'SOLD',
           },
         });
@@ -228,21 +229,21 @@ const handlePaymentIntentSucceeded = async (
         const saleAmount = paymentIntent.amount / 100;
         const platformFee = saleAmount * 0.05;
         const sellerAmount = saleAmount - platformFee;
-        
+
         // Get product details to find seller
         const product = await tx.product.findUnique({
           where: { id: productId },
-          select: { sellerId: true }
+          select: { sellerId: true },
         });
-        
+
         if (product) {
           await tx.user.update({
             where: { id: product.sellerId },
             data: {
               sellerBalance: {
-                increment: sellerAmount
-              }
-            }
+                increment: sellerAmount,
+              },
+            },
           });
         }
 
@@ -251,7 +252,7 @@ const handlePaymentIntentSucceeded = async (
     } else {
       logError('[Payment Intent] Invalid metadata structure', {
         paymentIntentId: paymentIntent.id,
-        metadata: paymentIntent.metadata
+        metadata: paymentIntent.metadata,
       });
       return;
     }
@@ -280,15 +281,21 @@ const handlePaymentIntentSucceeded = async (
 };
 
 export const POST = async (request: Request): Promise<Response> => {
-  if (!env.STRIPE_WEBHOOK_SECRET || env.STRIPE_WEBHOOK_SECRET.includes('placeholder')) {
+  if (
+    !env.STRIPE_WEBHOOK_SECRET ||
+    env.STRIPE_WEBHOOK_SECRET.includes('placeholder')
+  ) {
     logError('Stripe webhook secret not properly configured', {
       hasSecret: !!env.STRIPE_WEBHOOK_SECRET,
       secretFormat: env.STRIPE_WEBHOOK_SECRET?.substring(0, 10) + '...',
     });
-    return NextResponse.json({ 
-      message: 'Webhook endpoint not configured', 
-      ok: false 
-    }, { status: 503 });
+    return NextResponse.json(
+      {
+        message: 'Webhook endpoint not configured',
+        ok: false,
+      },
+      { status: 503 }
+    );
   }
 
   // Check rate limit first for security
@@ -296,16 +303,16 @@ export const POST = async (request: Request): Promise<Response> => {
   if (!rateLimitResult.allowed) {
     logError('Webhook rate limit exceeded', {
       rateLimitResult,
-      headers: Object.fromEntries(request.headers.entries())
+      headers: Object.fromEntries(request.headers.entries()),
     });
-    
+
     return NextResponse.json(
-      { 
+      {
         error: rateLimitResult.error?.message || 'Rate limit exceeded',
         code: rateLimitResult.error?.code || 'RATE_LIMIT_EXCEEDED',
-        ok: false 
+        ok: false,
       },
-      { 
+      {
         status: 429,
         headers: rateLimitResult.headers,
       }

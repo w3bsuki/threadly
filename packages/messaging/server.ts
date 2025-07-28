@@ -3,22 +3,22 @@
  */
 
 import { database } from '@repo/database';
-import { sanitizeForDisplay } from '@repo/validation/sanitize';
 import { log, logError } from '@repo/observability/server';
 import { getPusherServer } from '@repo/real-time/server';
-import type { 
-  MessageWithSender, 
-  ConversationWithDetails, 
-  ConversationListItem,
-  MessagesResponse,
-  SendMessageResult,
-  CreateConversationResult 
-} from './types';
-import { 
-  sendMessageRequestSchema, 
-  fetchMessagesRequestSchema, 
-  createConversationRequestSchema 
+import { sanitizeForDisplay } from '@repo/validation/sanitize';
+import {
+  createConversationRequestSchema,
+  fetchMessagesRequestSchema,
+  sendMessageRequestSchema,
 } from './schemas';
+import type {
+  ConversationListItem,
+  ConversationWithDetails,
+  CreateConversationResult,
+  MessagesResponse,
+  MessageWithSender,
+  SendMessageResult,
+} from './types';
 
 /**
  * Get messages for a conversation with pagination
@@ -53,7 +53,8 @@ export async function getMessages(
       return { success: false, error: 'Conversation not found' };
     }
 
-    const isParticipant = conversation.buyerId === dbUser.id || conversation.sellerId === dbUser.id;
+    const isParticipant =
+      conversation.buyerId === dbUser.id || conversation.sellerId === dbUser.id;
     if (!isParticipant) {
       return { success: false, error: 'Access denied' };
     }
@@ -158,8 +159,14 @@ export async function sendMessage(
       return { success: false, error: 'Conversation not found' };
     }
 
-    if (conversation.buyerId !== dbUser.id && conversation.sellerId !== dbUser.id) {
-      return { success: false, error: 'You are not authorized to send messages in this conversation' };
+    if (
+      conversation.buyerId !== dbUser.id &&
+      conversation.sellerId !== dbUser.id
+    ) {
+      return {
+        success: false,
+        error: 'You are not authorized to send messages in this conversation',
+      };
     }
 
     // Create the message with sanitized content
@@ -197,7 +204,7 @@ export async function sendMessage(
         pusherAppId: process.env.PUSHER_APP_ID!,
         pusherSecret: process.env.PUSHER_SECRET!,
       });
-      
+
       await pusherServer.sendMessage({
         id: message.id,
         conversationId: message.conversationId,
@@ -263,11 +270,17 @@ export async function createConversation(
     });
 
     if (!product) {
-      return { success: false, error: 'Product not found or no longer available' };
+      return {
+        success: false,
+        error: 'Product not found or no longer available',
+      };
     }
 
     if (product.sellerId === dbUser.id) {
-      return { success: false, error: 'You cannot start a conversation about your own product' };
+      return {
+        success: false,
+        error: 'You cannot start a conversation about your own product',
+      };
     }
 
     // Check if conversation already exists
@@ -387,7 +400,10 @@ export async function createConversation(
     logError('Failed to create conversation:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to create conversation',
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to create conversation',
     };
   }
 }
@@ -418,14 +434,20 @@ export async function markMessagesAsRead(
       return { success: false, error: 'Conversation not found' };
     }
 
-    if (conversation.buyerId !== dbUser.id && conversation.sellerId !== dbUser.id) {
-      return { success: false, error: 'You are not authorized to access this conversation' };
+    if (
+      conversation.buyerId !== dbUser.id &&
+      conversation.sellerId !== dbUser.id
+    ) {
+      return {
+        success: false,
+        error: 'You are not authorized to access this conversation',
+      };
     }
 
     // Mark all messages from other users as read
     await database.message.updateMany({
       where: {
-        conversationId: conversationId,
+        conversationId,
         senderId: { not: dbUser.id },
         read: false,
       },
@@ -437,7 +459,10 @@ export async function markMessagesAsRead(
     logError('Failed to mark messages as read:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to mark messages as read',
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to mark messages as read',
     };
   }
 }
@@ -447,7 +472,11 @@ export async function markMessagesAsRead(
  */
 export async function getUserConversations(
   userId: string
-): Promise<{ success: boolean; conversations?: ConversationListItem[]; error?: string }> {
+): Promise<{
+  success: boolean;
+  conversations?: ConversationListItem[];
+  error?: string;
+}> {
   try {
     // Get database user
     const dbUser = await database.user.findUnique({
@@ -461,10 +490,7 @@ export async function getUserConversations(
     // Get conversations where user is buyer or seller
     const conversations = await database.conversation.findMany({
       where: {
-        OR: [
-          { buyerId: dbUser.id },
-          { sellerId: dbUser.id },
-        ],
+        OR: [{ buyerId: dbUser.id }, { sellerId: dbUser.id }],
         status: 'ACTIVE',
       },
       include: {
@@ -524,39 +550,45 @@ export async function getUserConversations(
       orderBy: { updatedAt: 'desc' },
     });
 
-    const conversationList: ConversationListItem[] = conversations.map((conv) => {
-      const otherParticipant = conv.buyerId === dbUser.id ? conv.seller : conv.buyer;
-      const lastMessage = conv.messages[0];
-      const productImage = conv.product.images[0]?.imageUrl || '';
+    const conversationList: ConversationListItem[] = conversations.map(
+      (conv) => {
+        const otherParticipant =
+          conv.buyerId === dbUser.id ? conv.seller : conv.buyer;
+        const lastMessage = conv.messages[0];
+        const productImage = conv.product.images[0]?.imageUrl || '';
 
-      return {
-        id: conv.id,
-        productId: conv.productId,
-        productTitle: conv.product.title,
-        productImage,
-        productPrice: conv.product.price.toString(),
-        otherParticipant: {
-          id: otherParticipant.id,
-          name: `${otherParticipant.firstName} ${otherParticipant.lastName}`.trim(),
-          avatar: otherParticipant.imageUrl || undefined,
-        },
-        lastMessage: lastMessage ? {
-          content: lastMessage.content,
-          createdAt: lastMessage.createdAt,
-          isOwnMessage: lastMessage.senderId === dbUser.id,
-        } : undefined,
-        unreadCount: conv._count.messages,
-        status: conv.status,
-        updatedAt: conv.updatedAt,
-      };
-    });
+        return {
+          id: conv.id,
+          productId: conv.productId,
+          productTitle: conv.product.title,
+          productImage,
+          productPrice: conv.product.price.toString(),
+          otherParticipant: {
+            id: otherParticipant.id,
+            name: `${otherParticipant.firstName} ${otherParticipant.lastName}`.trim(),
+            avatar: otherParticipant.imageUrl || undefined,
+          },
+          lastMessage: lastMessage
+            ? {
+                content: lastMessage.content,
+                createdAt: lastMessage.createdAt,
+                isOwnMessage: lastMessage.senderId === dbUser.id,
+              }
+            : undefined,
+          unreadCount: conv._count.messages,
+          status: conv.status,
+          updatedAt: conv.updatedAt,
+        };
+      }
+    );
 
     return { success: true, conversations: conversationList };
   } catch (error) {
     logError('Failed to get user conversations:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to get conversations',
+      error:
+        error instanceof Error ? error.message : 'Failed to get conversations',
     };
   }
 }
@@ -587,8 +619,14 @@ export async function archiveConversation(
       return { success: false, error: 'Conversation not found' };
     }
 
-    if (conversation.buyerId !== dbUser.id && conversation.sellerId !== dbUser.id) {
-      return { success: false, error: 'You are not authorized to archive this conversation' };
+    if (
+      conversation.buyerId !== dbUser.id &&
+      conversation.sellerId !== dbUser.id
+    ) {
+      return {
+        success: false,
+        error: 'You are not authorized to archive this conversation',
+      };
     }
 
     // Update conversation status to archived
@@ -607,7 +645,10 @@ export async function archiveConversation(
     logError('Failed to archive conversation:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to archive conversation',
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to archive conversation',
     };
   }
 }

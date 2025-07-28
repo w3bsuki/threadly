@@ -32,7 +32,9 @@ export function generateCSRFToken(): string {
   // Use Web Crypto API for Edge Runtime compatibility
   const array = new Uint8Array(CSRF_TOKEN_LENGTH);
   crypto.getRandomValues(array);
-  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+  return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join(
+    ''
+  );
 }
 
 /**
@@ -40,7 +42,7 @@ export function generateCSRFToken(): string {
  */
 export async function setCSRFCookie(token: string): Promise<void> {
   const cookieStore = await cookies();
-  
+
   cookieStore.set({
     name: CSRF_COOKIE_NAME,
     value: token,
@@ -64,7 +66,9 @@ export async function getCSRFToken(): Promise<string | null> {
 /**
  * Validate CSRF token from request
  */
-export async function validateCSRFToken(request: NextRequest): Promise<boolean> {
+export async function validateCSRFToken(
+  request: NextRequest
+): Promise<boolean> {
   // Skip CSRF check for GET and HEAD requests
   if (['GET', 'HEAD'].includes(request.method)) {
     return true;
@@ -72,7 +76,7 @@ export async function validateCSRFToken(request: NextRequest): Promise<boolean> 
 
   // Check if path is exempt
   const pathname = new URL(request.url).pathname;
-  if (CSRF_EXEMPT_PATHS.some(path => pathname.startsWith(path))) {
+  if (CSRF_EXEMPT_PATHS.some((path) => pathname.startsWith(path))) {
     return true;
   }
 
@@ -84,10 +88,14 @@ export async function validateCSRFToken(request: NextRequest): Promise<boolean> 
 
   // Get token from header or body
   const headerToken = request.headers.get(CSRF_HEADER_NAME);
-  
+
   // For form submissions, check body as well
   let bodyToken: string | null = null;
-  if (request.headers.get('content-type')?.includes('application/x-www-form-urlencoded')) {
+  if (
+    request.headers
+      .get('content-type')
+      ?.includes('application/x-www-form-urlencoded')
+  ) {
     try {
       const formData = await request.formData();
       bodyToken = formData.get('csrf_token') as string | null;
@@ -113,7 +121,7 @@ export async function csrfMiddleware(
   config?: CSRFConfig
 ): Promise<Response | null> {
   const isValid = await validateCSRFToken(request);
-  
+
   if (!isValid) {
     return new Response(
       JSON.stringify({
@@ -128,7 +136,7 @@ export async function csrfMiddleware(
       }
     );
   }
-  
+
   return null; // Continue to next middleware
 }
 
@@ -151,7 +159,7 @@ export async function refreshCSRFToken(): Promise<string> {
     await setCSRFCookie(currentToken);
     return currentToken;
   }
-  
+
   // Generate new token if none exists
   return initializeCSRFProtection();
 }
@@ -163,8 +171,10 @@ export function getCSRFTokenFromCookie(): string | null {
   if (typeof document === 'undefined') {
     return null;
   }
-  
-  const match = document.cookie.match(new RegExp(`(^| )${CSRF_COOKIE_NAME}=([^;]+)`));
+
+  const match = document.cookie.match(
+    new RegExp(`(^| )${CSRF_COOKIE_NAME}=([^;]+)`)
+  );
   return match?.[2] ?? null;
 }
 
@@ -176,7 +186,7 @@ export function addCSRFHeader(headers: HeadersInit = {}): HeadersInit {
   if (!token) {
     return headers;
   }
-  
+
   return {
     ...headers,
     [CSRF_HEADER_NAME]: token,

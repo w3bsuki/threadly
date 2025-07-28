@@ -1,5 +1,4 @@
-import { Toaster } from '@repo/design-system/components';
-import { TooltipProvider } from '@repo/design-system/components';
+import { Toaster, TooltipProvider } from '@repo/design-system/components';
 import { ThemeProvider } from '@repo/design-system/providers/theme';
 import { withThemeByClassName } from '@storybook/addon-themes';
 import type { Preview } from '@storybook/react';

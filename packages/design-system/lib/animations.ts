@@ -36,8 +36,10 @@ export const animations = {
 
   // Modal/Dialog animations
   modalBackdrop: 'animate-in fade-in duration-300',
-  modalContent: 'animate-in fade-in zoom-in-95 slide-in-from-bottom-4 duration-300',
-  modalExit: 'animate-out fade-out zoom-out-95 slide-out-to-bottom-4 duration-200',
+  modalContent:
+    'animate-in fade-in zoom-in-95 slide-in-from-bottom-4 duration-300',
+  modalExit:
+    'animate-out fade-out zoom-out-95 slide-out-to-bottom-4 duration-200',
 
   // Accordion animations
   accordionDown: 'animate-accordion-down',
@@ -47,10 +49,12 @@ export const animations = {
   listItem: 'animate-in fade-in slide-in-from-left-2',
 
   // Skeleton loading
-  skeleton: 'animate-pulse bg-gradient-to-r from-transparent via-white/10 to-transparent',
+  skeleton:
+    'animate-pulse bg-gradient-to-r from-transparent via-white/10 to-transparent',
 
   // Button hover states
-  buttonHover: 'transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]',
+  buttonHover:
+    'transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]',
   buttonPress: 'transition-transform duration-100 active:scale-95',
 
   // Card animations
@@ -129,7 +133,8 @@ export const hoverAnimations = {
 export const loadingAnimations = {
   dots: 'animate-pulse',
   spinner: 'animate-spin',
-  skeleton: 'animate-pulse bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%] animate-shimmer',
+  skeleton:
+    'animate-pulse bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%] animate-shimmer',
   progressBar: 'animate-progress',
 };
 

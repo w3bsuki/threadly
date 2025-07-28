@@ -1,18 +1,31 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useCartStore } from '@/lib/stores/cart-store';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
-import { Separator } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { Alert, AlertDescription } from '@repo/design-system/components';
-import { Skeleton } from '@repo/design-system/components';
-import { CheckCircle2, Package, Truck, MessageSquare, ShoppingBag, AlertCircle } from 'lucide-react';
-import Link from 'next/link';
-import Image from 'next/image';
+import {
+  Alert,
+  AlertDescription,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Separator,
+  Skeleton,
+} from '@repo/design-system/components';
 import { formatDistanceToNow } from 'date-fns';
+import {
+  AlertCircle,
+  CheckCircle2,
+  MessageSquare,
+  Package,
+  ShoppingBag,
+  Truck,
+} from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useCartStore } from '@/lib/stores/cart-store';
 
 interface OrderItem {
   id: string;
@@ -54,7 +67,10 @@ interface SuccessContentProps {
   userId: string;
 }
 
-export function SuccessContent({ paymentIntentId, userId }: SuccessContentProps) {
+export function SuccessContent({
+  paymentIntentId,
+  userId,
+}: SuccessContentProps) {
   const router = useRouter();
   const { clearCart } = useCartStore();
   const [order, setOrder] = useState<Order | null>(null);
@@ -89,7 +105,9 @@ export function SuccessContent({ paymentIntentId, userId }: SuccessContentProps)
           throw new Error('Payment not successful');
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load order details');
+        setError(
+          err instanceof Error ? err.message : 'Failed to load order details'
+        );
       } finally {
         setLoading(false);
       }
@@ -112,16 +130,15 @@ export function SuccessContent({ paymentIntentId, userId }: SuccessContentProps)
     return (
       <Card>
         <CardContent className="pt-6">
-          <div className="text-center py-12">
-            <AlertCircle className="mx-auto h-12 w-12 text-destructive mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Unable to Load Order</h3>
-            <p className="text-muted-foreground mb-6">
-              {error || 'We couldn\'t find your order details. Please check your orders page.'}
+          <div className="py-12 text-center">
+            <AlertCircle className="mx-auto mb-4 h-12 w-12 text-destructive" />
+            <h3 className="mb-2 font-semibold text-lg">Unable to Load Order</h3>
+            <p className="mb-6 text-muted-foreground">
+              {error ||
+                "We couldn't find your order details. Please check your orders page."}
             </p>
             <Button asChild>
-              <Link href="/buying/orders">
-                View Orders
-              </Link>
+              <Link href="/buying/orders">View Orders</Link>
             </Button>
           </div>
         </CardContent>
@@ -145,9 +162,9 @@ export function SuccessContent({ paymentIntentId, userId }: SuccessContentProps)
     <div className="space-y-6">
       {/* Success Header */}
       <div className="text-center">
-        <CheckCircle2 className="mx-auto h-16 w-16 text-green-600 mb-4" />
-        <h1 className="text-3xl font-bold mb-2">Order Confirmed!</h1>
-        <p className="text-muted-foreground text-lg">
+        <CheckCircle2 className="mx-auto mb-4 h-16 w-16 text-green-600" />
+        <h1 className="mb-2 font-bold text-3xl">Order Confirmed!</h1>
+        <p className="text-lg text-muted-foreground">
           Thank you for your purchase. Your order has been successfully placed.
         </p>
       </div>
@@ -157,12 +174,15 @@ export function SuccessContent({ paymentIntentId, userId }: SuccessContentProps)
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Order #{order.id.slice(-8).toUpperCase()}</CardTitle>
-            <Badge variant="secondary" className="bg-green-100 text-green-800">
+            <Badge className="bg-green-100 text-green-800" variant="secondary">
               Paid
             </Badge>
           </div>
-          <p className="text-sm text-muted-foreground">
-            Placed {formatDistanceToNow(new Date(order.createdAt), { addSuffix: true })}
+          <p className="text-muted-foreground text-sm">
+            Placed{' '}
+            {formatDistanceToNow(new Date(order.createdAt), {
+              addSuffix: true,
+            })}
           </p>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -170,27 +190,29 @@ export function SuccessContent({ paymentIntentId, userId }: SuccessContentProps)
           <div className="space-y-4">
             <h3 className="font-semibold">Items Purchased</h3>
             {order.orderItems.map((item) => (
-              <div key={item.id} className="flex gap-4">
-                <div className="relative h-20 w-20 rounded-[var(--radius-lg)] overflow-hidden bg-secondary">
+              <div className="flex gap-4" key={item.id}>
+                <div className="relative h-20 w-20 overflow-hidden rounded-[var(--radius-lg)] bg-secondary">
                   {item.product.images[0] ? (
                     <Image
-                      src={item.product.images[0].url}
                       alt={item.title}
-                      fill
                       className="object-cover"
+                      fill
+                      src={item.product.images[0].url}
                     />
                   ) : (
-                    <div className="flex items-center justify-center h-full">
+                    <div className="flex h-full items-center justify-center">
                       <Package className="h-8 w-8 text-muted-foreground" />
                     </div>
                   )}
                 </div>
                 <div className="flex-1">
                   <h4 className="font-medium">{item.title}</h4>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     Condition: {item.condition} • Qty: {item.quantity}
                   </p>
-                  <p className="font-semibold">${(item.price * item.quantity).toFixed(2)}</p>
+                  <p className="font-semibold">
+                    ${(item.price * item.quantity).toFixed(2)}
+                  </p>
                 </div>
               </div>
             ))}
@@ -200,22 +222,31 @@ export function SuccessContent({ paymentIntentId, userId }: SuccessContentProps)
 
           {/* Shipping Details */}
           <div className="space-y-4">
-            <h3 className="font-semibold flex items-center gap-2">
+            <h3 className="flex items-center gap-2 font-semibold">
               <Truck className="h-4 w-4" />
               Shipping Information
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Shipping To</p>
-                <p>{order.shippingFirstName} {order.shippingLastName}</p>
+                <p className="font-medium text-muted-foreground text-sm">
+                  Shipping To
+                </p>
+                <p>
+                  {order.shippingFirstName} {order.shippingLastName}
+                </p>
                 <p>{order.shippingAddress}</p>
-                <p>{order.shippingCity}, {order.shippingState} {order.shippingZipCode}</p>
+                <p>
+                  {order.shippingCity}, {order.shippingState}{' '}
+                  {order.shippingZipCode}
+                </p>
                 <p>{order.shippingCountry}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Delivery Method</p>
+                <p className="font-medium text-muted-foreground text-sm">
+                  Delivery Method
+                </p>
                 <p className="capitalize">{order.shippingMethod} Shipping</p>
-                <p className="text-sm text-muted-foreground mt-2">
+                <p className="mt-2 text-muted-foreground text-sm">
                   Estimated delivery by{' '}
                   <span className="font-medium">
                     {estimatedDelivery.toLocaleDateString('en-US', {
@@ -270,15 +301,23 @@ export function SuccessContent({ paymentIntentId, userId }: SuccessContentProps)
             <ul className="space-y-2 text-sm">
               <li className="flex items-start gap-2">
                 <span className="text-muted-foreground">1.</span>
-                <span>The seller will be notified of your order and will prepare your items for shipping.</span>
+                <span>
+                  The seller will be notified of your order and will prepare
+                  your items for shipping.
+                </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-muted-foreground">2.</span>
-                <span>You'll receive a tracking number once the seller ships your items.</span>
+                <span>
+                  You'll receive a tracking number once the seller ships your
+                  items.
+                </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-muted-foreground">3.</span>
-                <span>You can track your order status from your orders page.</span>
+                <span>
+                  You can track your order status from your orders page.
+                </span>
               </li>
             </ul>
           </div>
@@ -286,19 +325,17 @@ export function SuccessContent({ paymentIntentId, userId }: SuccessContentProps)
       </Alert>
 
       {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row">
         <Button asChild className="flex-1">
-          <Link href="/buying/orders">
-            View Order Details
-          </Link>
+          <Link href="/buying/orders">View Order Details</Link>
         </Button>
-        <Button asChild variant="outline" className="flex-1">
+        <Button asChild className="flex-1" variant="outline">
           <Link href="/browse">
             <ShoppingBag className="mr-2 h-4 w-4" />
             Continue Shopping
           </Link>
         </Button>
-        <Button asChild variant="outline" className="flex-1">
+        <Button asChild className="flex-1" variant="outline">
           <Link href={`/messages?orderId=${order.id}`}>
             <MessageSquare className="mr-2 h-4 w-4" />
             Message Seller

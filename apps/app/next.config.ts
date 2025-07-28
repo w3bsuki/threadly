@@ -1,8 +1,8 @@
-import { env } from './env';
 import { withToolbar } from '@repo/feature-flags/lib/toolbar';
 import { config, withAnalyzer } from '@repo/next-config';
 import { withLogging, withSentry } from '@repo/observability/next-config';
 import type { NextConfig } from 'next';
+import { env } from './env';
 
 // Start with base configuration
 let nextConfig: NextConfig = withToolbar(config);
@@ -48,7 +48,12 @@ nextConfig = {
     webpackBuildWorker: true,
     optimizeCss: true,
   },
-  serverExternalPackages: ['@prisma/client', '@prisma/engines', '@neondatabase/serverless', 'ws'],
+  serverExternalPackages: [
+    '@prisma/client',
+    '@prisma/engines',
+    '@neondatabase/serverless',
+    'ws',
+  ],
   // Webpack configuration
   webpack: (config, { isServer, webpack, dev }) => {
     // Suppress warnings
@@ -57,9 +62,11 @@ nextConfig = {
         { module: /require-in-the-middle/ },
         { module: /@opentelemetry\/instrumentation/ },
       ];
-      
+
       // Add Prisma monorepo workaround plugin
-      const { PrismaPlugin } = require('@prisma/nextjs-monorepo-workaround-plugin');
+      const {
+        PrismaPlugin,
+      } = require('@prisma/nextjs-monorepo-workaround-plugin');
       config.plugins = [...config.plugins, new PrismaPlugin()];
     }
 
@@ -67,7 +74,7 @@ nextConfig = {
     if (!dev) {
       // Enable module concatenation
       config.optimization.concatenateModules = true;
-      
+
       // Optimize chunk splitting
       config.optimization.splitChunks = {
         chunks: 'all',
@@ -83,8 +90,10 @@ nextConfig = {
           },
           lib: {
             test(module) {
-              return module.size() > 160000 &&
-                /node_modules[\\/]/.test(module.identifier());
+              return (
+                module.size() > 160_000 &&
+                /node_modules[\\/]/.test(module.identifier())
+              );
             },
             name(module) {
               const hash = require('crypto').createHash('sha1');
@@ -112,14 +121,17 @@ nextConfig = {
   productionBrowserSourceMaps: false,
   poweredByHeader: false,
   compress: true,
-  
+
   // Compiler options
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production' ? {
-      exclude: ['error', 'warn'],
-    } : false,
+    removeConsole:
+      process.env.NODE_ENV === 'production'
+        ? {
+            exclude: ['error', 'warn'],
+          }
+        : false,
   },
-  
+
   // Image optimization
   images: {
     formats: ['image/avif', 'image/webp'],
@@ -150,7 +162,7 @@ nextConfig = {
       },
     ],
   },
-  
+
   // Cache and headers configuration
   async headers() {
     return [
@@ -221,15 +233,13 @@ nextConfig = {
 // Enable Sentry for error tracking and performance monitoring
 try {
   nextConfig = withSentry(nextConfig);
-} catch (error) {
-  console.warn('Sentry configuration failed, continuing without Sentry:', error);
+} catch {
 }
 
 // Enable logging for better observability
 try {
   nextConfig = withLogging(nextConfig);
-} catch (error) {
-  console.warn('Logging configuration failed, continuing without enhanced logging:', error);
+} catch {
 }
 
 if (env.ANALYZE === 'true') {

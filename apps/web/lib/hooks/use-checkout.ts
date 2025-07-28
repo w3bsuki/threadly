@@ -1,8 +1,8 @@
 'use client';
 
 import { useUser } from '@repo/auth/client';
+import type { CartItem } from '@repo/validation/schemas';
 import { useCallback } from 'react';
-import { CartItem } from '@repo/validation/schemas';
 
 // Simplified checkout hook since the new checkout component handles its own state
 export function useCheckout() {

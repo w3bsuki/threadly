@@ -8,32 +8,28 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  Form,
-  Textarea,
   Checkbox,
+  Form,
+  FormControl,
   FormField,
   FormItem,
-  FormControl,
   FormLabel,
+  Textarea,
 } from '@repo/design-system/components';
-import {
-  Elements,
-  useElements,
-  useStripe,
-} from '@stripe/react-stripe-js';
+import { Elements, useElements, useStripe } from '@stripe/react-stripe-js';
 import type { Stripe } from '@stripe/stripe-js';
 import { AlertCircle, Truck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { type CartItem, type CheckoutFormData, checkoutSchema } from '../types';
+import { calculateOrderCosts } from '../utils/calculate-costs';
 import { ContactInfoForm } from './contact-info-form';
+import { EmptyCart } from './empty-cart';
+import { OrderSummary } from './order-summary';
+import { PaymentForm } from './payment-form';
 import { ShippingAddressForm } from './shipping-address-form';
 import { ShippingOptions } from './shipping-options';
-import { PaymentForm } from './payment-form';
-import { OrderSummary } from './order-summary';
-import { EmptyCart } from './empty-cart';
-import { checkoutSchema, type CheckoutFormData, type CartItem } from '../types';
-import { calculateOrderCosts } from '../utils/calculate-costs';
 
 interface CheckoutContainerProps {
   stripe: Stripe | null;
@@ -140,10 +136,14 @@ function CheckoutFormContent({
         }
 
         onCartClear();
-        router.push(`/checkout/success?payment_intent=${result.paymentIntent.id}`);
+        router.push(
+          `/checkout/success?payment_intent=${result.paymentIntent.id}`
+        );
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
+      setError(
+        err instanceof Error ? err.message : 'An unexpected error occurred'
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -160,11 +160,13 @@ function CheckoutFormContent({
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="grid gap-6 lg:grid-cols-3">
-          <div className="space-y-4 lg:space-y-6 lg:col-span-2 px-4 lg:px-0">
+          <div className="space-y-4 px-4 lg:col-span-2 lg:space-y-6 lg:px-0">
             {/* Contact Information */}
             <Card className="border-0 shadow-sm lg:border lg:shadow-none">
               <CardHeader className="pb-4 lg:pb-6">
-                <CardTitle className="text-lg lg:text-xl">Contact Information</CardTitle>
+                <CardTitle className="text-lg lg:text-xl">
+                  Contact Information
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <ContactInfoForm form={form} />
@@ -174,7 +176,9 @@ function CheckoutFormContent({
             {/* Shipping Address */}
             <Card className="border-0 shadow-sm lg:border lg:shadow-none">
               <CardHeader className="pb-4 lg:pb-6">
-                <CardTitle className="text-lg lg:text-xl">Shipping Address</CardTitle>
+                <CardTitle className="text-lg lg:text-xl">
+                  Shipping Address
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <ShippingAddressForm form={form} />
@@ -197,7 +201,9 @@ function CheckoutFormContent({
             {/* Order Notes */}
             <Card className="border-0 shadow-sm lg:border lg:shadow-none">
               <CardHeader className="pb-4 lg:pb-6">
-                <CardTitle className="text-lg lg:text-xl">Order Notes (Optional)</CardTitle>
+                <CardTitle className="text-lg lg:text-xl">
+                  Order Notes (Optional)
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <FormField
@@ -207,29 +213,29 @@ function CheckoutFormContent({
                     <FormItem>
                       <FormControl>
                         <Textarea
-                          placeholder="Special delivery instructions or notes..."
                           className="min-h-20 text-base lg:text-sm"
+                          placeholder="Special delivery instructions or notes..."
                           {...field}
                         />
                       </FormControl>
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="saveAddress"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center space-x-3 space-y-0 mt-4">
+                    <FormItem className="mt-4 flex flex-row items-center space-x-3 space-y-0">
                       <FormControl>
                         <Checkbox
                           checked={field.value}
-                          onCheckedChange={field.onChange}
                           className="h-6 w-6 lg:h-4 lg:w-4"
+                          onCheckedChange={field.onChange}
                         />
                       </FormControl>
                       <div className="space-y-1 leading-none">
-                        <FormLabel className="text-base lg:text-sm cursor-pointer">
+                        <FormLabel className="cursor-pointer text-base lg:text-sm">
                           Save this address for future orders
                         </FormLabel>
                       </div>
@@ -240,7 +246,7 @@ function CheckoutFormContent({
             </Card>
 
             {/* Payment */}
-            <div className="lg:hidden mb-4">
+            <div className="mb-4 lg:hidden">
               <PaymentForm error={error} />
             </div>
             <div className="hidden lg:block">
@@ -248,7 +254,7 @@ function CheckoutFormContent({
             </div>
 
             {error && (
-              <Alert variant="destructive" className="mx-4 lg:mx-0">
+              <Alert className="mx-4 lg:mx-0" variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
@@ -258,23 +264,23 @@ function CheckoutFormContent({
           {/* Desktop Order Summary */}
           <div className="hidden lg:block">
             <OrderSummary
-              items={items}
               costs={costs}
-              isProcessing={isProcessing}
-              onSubmit={form.handleSubmit(onSubmit)}
               isMobile={false}
+              isProcessing={isProcessing}
+              items={items}
+              onSubmit={form.handleSubmit(onSubmit)}
             />
           </div>
         </div>
 
         {/* Mobile Sticky Bottom Bar */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden">
+        <div className="fixed right-0 bottom-0 left-0 z-50 lg:hidden">
           <OrderSummary
-            items={items}
             costs={costs}
-            isProcessing={isProcessing}
-            onSubmit={form.handleSubmit(onSubmit)}
             isMobile={true}
+            isProcessing={isProcessing}
+            items={items}
+            onSubmit={form.handleSubmit(onSubmit)}
           />
         </div>
       </form>
@@ -294,12 +300,12 @@ export function CheckoutContainer({
   }
 
   return (
-    <Elements stripe={stripe} options={{ clientSecret }}>
+    <Elements options={{ clientSecret }} stripe={stripe}>
       <CheckoutFormContent
         clientSecret={clientSecret}
-        paymentIntentId={paymentIntentId}
         items={items}
         onCartClear={onCartClear}
+        paymentIntentId={paymentIntentId}
       />
     </Elements>
   );

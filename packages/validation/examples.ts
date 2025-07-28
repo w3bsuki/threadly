@@ -2,24 +2,20 @@
  * Example usage of the validation package
  */
 
-import { 
+import {
+  checkPasswordStrength,
+  createMessageSchema,
   // Schemas
   createProductSchema,
   emailSchema,
-  createMessageSchema,
-  
+  filterProfanity,
+  // Validators
+  isValidProductTitle,
   // Sanitization
   sanitizeHtml,
   sanitizeText,
-  filterProfanity,
-  
-  // Validators
-  isValidProductTitle,
-  checkPasswordStrength,
-  
   // Middleware
   withValidation,
-  
   // Types
   z,
 } from './index';
@@ -27,21 +23,22 @@ import {
 // Example 1: Validate a product submission
 const validateProduct = () => {
   const productData = {
-    title: 'Vintage Levi\'s Denim Jacket',
-    description: 'Beautiful vintage denim jacket from the 1990s. Great condition with minor wear.',
+    title: "Vintage Levi's Denim Jacket",
+    description:
+      'Beautiful vintage denim jacket from the 1990s. Great condition with minor wear.',
     price: 89.99,
     category: 'UNISEX',
     subcategory: 'JACKETS',
     condition: 'VERY_GOOD',
     size: 'M',
     color: 'BLUE',
-    brand: 'Levi\'s',
+    brand: "Levi's",
     images: [
       {
         url: 'https://utfs.io/f/abc123.jpg',
         alt: 'Front view',
-        order: 0
-      }
+        order: 0,
+      },
     ],
     quantity: 1,
   };
@@ -56,11 +53,12 @@ const validateProduct = () => {
 
 // Example 2: Sanitize user input
 const sanitizeUserInput = () => {
-  const userMessage = 'Check out my <script>alert("xss")</script> awesome product!';
-  
+  const userMessage =
+    'Check out my <script>alert("xss")</script> awesome product!';
+
   // Remove all HTML
   const sanitized = sanitizeText(userMessage);
-  
+
   // Filter profanity
   const withProfanity = 'This is a damn good product!';
   const filtered = filterProfanity(withProfanity);
@@ -73,40 +71,39 @@ const validateEmail = async () => {
     'test@tempmail.com', // Disposable
     'invalid.email',
   ];
-  
+
   for (const email of emails) {
     try {
       emailSchema.parse(email);
-    } catch (error) {
-    }
+    } catch (error) {}
   }
 };
 
 // Example 4: Check password strength
 const checkPassword = () => {
   const passwords = [
-    'password',      // Weak
-    'Password1',     // Better
-    'P@ssw0rd123!',  // Strong
+    'password', // Weak
+    'Password1', // Better
+    'P@ssw0rd123!', // Strong
   ];
-  
-  passwords.forEach(pwd => {
+
+  passwords.forEach((pwd) => {
     const result = checkPasswordStrength(pwd);
   });
 };
 
 // Example 5: API Route with validation
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export const POST = withValidation(
   async (request: NextRequest, data: z.infer<typeof createMessageSchema>) => {
     // Data is already validated and typed
-    
+
     // Sanitize the content before saving
     const sanitizedContent = filterProfanity(data.content);
-    
+
     // Process the message...
-    
+
     return NextResponse.json({ success: true });
   },
   createMessageSchema,
@@ -116,7 +113,7 @@ export const POST = withValidation(
 // Example 6: Custom validation for business rules
 const validateBusinessRules = () => {
   const title = 'AMAZING DEAL!!!! BUY NOW!!!!';
-  
+
   if (!isValidProductTitle(title)) {
   }
 };

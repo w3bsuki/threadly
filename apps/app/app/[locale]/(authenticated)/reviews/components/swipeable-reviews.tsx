@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { ReviewCard } from './review-card';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@repo/design-system/lib/utils';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { ReviewCard } from './review-card';
 
 interface SwipeableReviewsProps {
   reviews: Array<{
@@ -23,7 +23,10 @@ interface SwipeableReviewsProps {
   className?: string;
 }
 
-export function SwipeableReviews({ reviews, className }: SwipeableReviewsProps) {
+export function SwipeableReviews({
+  reviews,
+  className,
+}: SwipeableReviewsProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
@@ -41,8 +44,8 @@ export function SwipeableReviews({ reviews, className }: SwipeableReviewsProps) 
   };
 
   const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-    
+    if (!(touchStart && touchEnd)) return;
+
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
@@ -75,34 +78,34 @@ export function SwipeableReviews({ reviews, className }: SwipeableReviewsProps) 
     if (containerRef.current) {
       containerRef.current.scrollTo({
         left: currentIndex * containerRef.current.offsetWidth,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     }
   }, [currentIndex]);
 
   if (reviews.length === 0) {
     return (
-      <div className={cn("text-center py-8 text-muted-foreground", className)}>
+      <div className={cn('py-8 text-center text-muted-foreground', className)}>
         No reviews yet
       </div>
     );
   }
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn('relative', className)}>
       {/* Mobile Swipeable View */}
       <div className="md:hidden">
         <div
-          ref={containerRef}
-          className="flex overflow-x-hidden snap-x snap-mandatory"
-          onTouchStart={onTouchStart}
-          onTouchMove={onTouchMove}
+          className="flex snap-x snap-mandatory overflow-x-hidden"
           onTouchEnd={onTouchEnd}
+          onTouchMove={onTouchMove}
+          onTouchStart={onTouchStart}
+          ref={containerRef}
         >
           {reviews.map((review, index) => (
             <div
-              key={review.id}
               className="w-full flex-shrink-0 snap-center px-4"
+              key={review.id}
               style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
               <ReviewCard review={review} />
@@ -111,23 +114,23 @@ export function SwipeableReviews({ reviews, className }: SwipeableReviewsProps) 
         </div>
 
         {/* Indicators */}
-        <div className="flex justify-center gap-1.5 mt-4">
+        <div className="mt-4 flex justify-center gap-1.5">
           {reviews.map((_, index) => (
             <button
+              className={cn(
+                'h-2 w-2 rounded-[var(--radius-full)] transition-all',
+                index === currentIndex
+                  ? 'w-6 bg-primary'
+                  : 'bg-muted-foreground/30'
+              )}
               key={index}
               onClick={() => goToReview(index)}
-              className={cn(
-                "w-2 h-2 rounded-[var(--radius-full)] transition-all",
-                index === currentIndex
-                  ? "bg-primary w-6"
-                  : "bg-muted-foreground/30"
-              )}
             />
           ))}
         </div>
 
         {/* Review counter */}
-        <p className="text-center text-sm text-muted-foreground mt-2">
+        <p className="mt-2 text-center text-muted-foreground text-sm">
           {currentIndex + 1} of {reviews.length} reviews
         </p>
       </div>
@@ -136,34 +139,31 @@ export function SwipeableReviews({ reviews, className }: SwipeableReviewsProps) 
       <div className="hidden md:block">
         <div className="grid gap-4">
           {reviews.map((review) => (
-            <ReviewCard
-              key={review.id}
-              review={review}
-            />
+            <ReviewCard key={review.id} review={review} />
           ))}
         </div>
       </div>
 
       {/* Desktop Navigation Buttons */}
-      <div className="hidden md:flex absolute top-1/2 -translate-y-1/2 w-full justify-between px-2 pointer-events-none">
+      <div className="-translate-y-1/2 pointer-events-none absolute top-1/2 hidden w-full justify-between px-2 md:flex">
         <button
-          onClick={prevReview}
           className={cn(
-            "pointer-events-auto bg-background/80 backdrop-blur border rounded-[var(--radius-full)] p-2 shadow-lg transition-opacity",
-            currentIndex === 0 ? "opacity-0" : "opacity-100"
+            'pointer-events-auto rounded-[var(--radius-full)] border bg-background/80 p-2 shadow-lg backdrop-blur transition-opacity',
+            currentIndex === 0 ? 'opacity-0' : 'opacity-100'
           )}
           disabled={currentIndex === 0}
+          onClick={prevReview}
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
-        
+
         <button
-          onClick={nextReview}
           className={cn(
-            "pointer-events-auto bg-background/80 backdrop-blur border rounded-[var(--radius-full)] p-2 shadow-lg transition-opacity",
-            currentIndex === reviews.length - 1 ? "opacity-0" : "opacity-100"
+            'pointer-events-auto rounded-[var(--radius-full)] border bg-background/80 p-2 shadow-lg backdrop-blur transition-opacity',
+            currentIndex === reviews.length - 1 ? 'opacity-0' : 'opacity-100'
           )}
           disabled={currentIndex === reviews.length - 1}
+          onClick={nextReview}
         >
           <ChevronRight className="h-5 w-5" />
         </button>

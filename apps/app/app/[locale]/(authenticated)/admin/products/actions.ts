@@ -1,28 +1,31 @@
 'use server';
 
 import { canModerate } from '@repo/auth/admin';
-import { database } from '@repo/database';
-import { revalidatePath } from 'next/cache';
-import { log } from '@repo/observability/server';
-import { randomUUID } from 'crypto';
 import { currentUser } from '@repo/auth/server';
-import { BulkOperationType, BulkOperationStatus } from '@/lib/database-types';
-import { ProductStatus } from '@repo/database/generated/client';
-import { BulkUpdateData } from '@repo/validation/schemas';
+import { database } from '@repo/database';
+import type { ProductStatus } from '@repo/database/generated/client';
+import { log } from '@repo/observability/server';
+import type { BulkUpdateData } from '@repo/validation/schemas';
+import { randomUUID } from 'crypto';
+import { revalidatePath } from 'next/cache';
+import type {
+  BulkOperationStatus,
+  BulkOperationType,
+} from '@/lib/database-types';
 
 export async function approveProduct(productId: string) {
   const isModerator = await canModerate();
   if (!isModerator) {
     throw new Error('Unauthorized');
   }
-  
+
   // You could add a "verified" field to products
   // For now, we'll just ensure it's available
   await database.product.update({
     where: { id: productId },
-    data: { status: 'AVAILABLE' }
+    data: { status: 'AVAILABLE' },
   });
-  
+
   revalidatePath('/admin/products');
   return { success: true };
 }
@@ -32,25 +35,25 @@ export async function removeProduct(productId: string, reason: string) {
   if (!isModerator) {
     throw new Error('Unauthorized');
   }
-  
+
   // Get product with seller info
   const product = await database.product.findUnique({
     where: { id: productId },
     include: {
-      seller: { select: { id: true } }
-    }
+      seller: { select: { id: true } },
+    },
   });
-  
+
   if (!product) {
     throw new Error('Product not found');
   }
-  
+
   // Update product status
   await database.product.update({
     where: { id: productId },
-    data: { status: 'REMOVED' }
+    data: { status: 'REMOVED' },
   });
-  
+
   // Send notification to seller
   await database.notification.create({
     data: {
@@ -60,24 +63,24 @@ export async function removeProduct(productId: string, reason: string) {
       message: `Your product "${product.title}" has been removed from the marketplace. Reason: ${reason}`,
       type: 'SYSTEM',
       metadata: JSON.stringify({
-        productId: productId,
+        productId,
         action: 'removed',
-        reason: reason,
+        reason,
       }),
     },
   });
-  
+
   // Cancel any pending orders for this product
   await database.order.updateMany({
     where: {
-      productId: productId,
-      status: 'PENDING'
+      productId,
+      status: 'PENDING',
     },
     data: {
-      status: 'CANCELLED'
-    }
+      status: 'CANCELLED',
+    },
   });
-  
+
   revalidatePath('/admin/products');
   return { success: true };
 }
@@ -87,24 +90,24 @@ export async function restoreProduct(productId: string) {
   if (!isModerator) {
     throw new Error('Unauthorized');
   }
-  
+
   // Get product with seller info
   const product = await database.product.findUnique({
     where: { id: productId },
     include: {
-      seller: { select: { id: true } }
-    }
+      seller: { select: { id: true } },
+    },
   });
-  
+
   if (!product) {
     throw new Error('Product not found');
   }
-  
+
   await database.product.update({
     where: { id: productId },
-    data: { status: 'AVAILABLE' }
+    data: { status: 'AVAILABLE' },
   });
-  
+
   // Notify seller that product was restored
   await database.notification.create({
     data: {
@@ -114,12 +117,12 @@ export async function restoreProduct(productId: string) {
       message: `Your product "${product.title}" has been restored and is now available for sale again.`,
       type: 'SYSTEM',
       metadata: JSON.stringify({
-        productId: productId,
+        productId,
         action: 'restored',
       }),
     },
   });
-  
+
   revalidatePath('/admin/products');
   return { success: true };
 }
@@ -137,7 +140,7 @@ export async function bulkUpdateProducts({
   }
 
   let updateData: { status: ProductStatus };
-  
+
   switch (action) {
     case 'remove':
       updateData = { status: 'REMOVED' };
@@ -157,20 +160,20 @@ export async function bulkUpdateProducts({
     const products = await database.product.findMany({
       where: { id: { in: productIds } },
       include: {
-        seller: { select: { id: true } }
-      }
+        seller: { select: { id: true } },
+      },
     });
 
     // Update products
     await database.product.updateMany({
       where: {
-        id: { in: productIds }
+        id: { in: productIds },
       },
-      data: updateData
+      data: updateData,
     });
 
     // Send notifications to sellers
-    const notifications = products.map(product => ({
+    const notifications = products.map((product) => ({
       id: randomUUID(),
       userId: product.seller.id,
       title: `Product ${action === 'remove' ? 'Removed' : action === 'restore' ? 'Restored' : 'Archived'}`,
@@ -178,13 +181,13 @@ export async function bulkUpdateProducts({
       type: 'SYSTEM' as const,
       metadata: JSON.stringify({
         productId: product.id,
-        action: action,
+        action,
         bulkOperation: true,
       }),
     }));
 
     await database.notification.createMany({
-      data: notifications
+      data: notifications,
     });
 
     // Cancel pending orders if removing products
@@ -192,11 +195,11 @@ export async function bulkUpdateProducts({
       await database.order.updateMany({
         where: {
           productId: { in: productIds },
-          status: 'PENDING'
+          status: 'PENDING',
         },
         data: {
-          status: 'CANCELLED'
-        }
+          status: 'CANCELLED',
+        },
       });
     }
 
@@ -206,7 +209,6 @@ export async function bulkUpdateProducts({
     throw new Error('Failed to update products');
   }
 }
-
 
 export async function bulkUpdateSellerProducts({
   productIds,
@@ -224,7 +226,7 @@ export async function bulkUpdateSellerProducts({
 
   const dbUser = await database.user.findUnique({
     where: { clerkId: user.id },
-    select: { id: true }
+    select: { id: true },
   });
 
   if (!dbUser) {
@@ -233,11 +235,11 @@ export async function bulkUpdateSellerProducts({
 
   // Verify all products belong to the seller
   const products = await database.product.findMany({
-    where: { 
+    where: {
       id: { in: productIds },
-      sellerId: dbUser.id
+      sellerId: dbUser.id,
     },
-    select: { id: true, title: true }
+    select: { id: true, title: true },
   });
 
   if (products.length !== productIds.length) {
@@ -249,7 +251,7 @@ export async function bulkUpdateSellerProducts({
 
   try {
     let updateData: Record<string, unknown> = {};
-    let results = { success: 0, errors: 0, skipped: 0 };
+    const results = { success: 0, errors: 0, skipped: 0 };
 
     switch (operation) {
       case 'PRICE_UPDATE':
@@ -282,11 +284,16 @@ export async function bulkUpdateSellerProducts({
       try {
         await database.product.update({
           where: { id: product.id },
-          data: updateData
+          data: updateData,
         });
         results.success++;
       } catch (error) {
-        log.error(`Failed to update product ${product.id}:`, error instanceof Error ? { message: error.message } : { error: String(error) });
+        log.error(
+          `Failed to update product ${product.id}:`,
+          error instanceof Error
+            ? { message: error.message }
+            : { error: String(error) }
+        );
         results.errors++;
       }
     }
@@ -296,25 +303,29 @@ export async function bulkUpdateSellerProducts({
       operationId,
       processedItems: results.success + results.errors,
       successCount: results.success,
-      errorCount: results.errors
+      errorCount: results.errors,
     });
 
     revalidatePath('/selling/listings');
-    return { 
-      success: true, 
+    return {
+      success: true,
       results,
       operationId,
-      message: `Bulk update: ${results.success} successful, ${results.errors} errors`
+      message: `Bulk update: ${results.success} successful, ${results.errors} errors`,
     };
-
   } catch (error) {
     // Log operation failure
     log.error('Bulk operation failed:', {
       operationId,
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
-    
-    log.error('Bulk operation failed:', error instanceof Error ? { message: error.message } : { error: String(error) });
+
+    log.error(
+      'Bulk operation failed:',
+      error instanceof Error
+        ? { message: error.message }
+        : { error: String(error) }
+    );
     throw new Error('Failed to perform bulk update');
   }
 }
@@ -334,7 +345,7 @@ export async function getBulkOperationStatus(operationId: string) {
     totalItems: 0,
     processedItems: 0,
     successCount: 0,
-    errorCount: 0
+    errorCount: 0,
   };
 }
 

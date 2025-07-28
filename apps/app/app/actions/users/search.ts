@@ -1,9 +1,9 @@
 'use server';
 
 import {
-  type OrganizationMembership,
   auth,
   clerkClient,
+  type OrganizationMembership,
 } from '@repo/auth/server';
 import Fuse from 'fuse.js';
 

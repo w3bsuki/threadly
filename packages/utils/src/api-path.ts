@@ -7,18 +7,18 @@ export function getApiPath(path: string): string {
   if (!path.startsWith('/api/')) {
     throw new Error('API path must start with /api/');
   }
-  
+
   // In client-side code, we need to strip any locale prefix from the current URL
   if (typeof window !== 'undefined') {
     const currentPath = window.location.pathname;
     const localeMatch = currentPath.match(/^\/([a-z]{2})\//);
-    
+
     if (localeMatch) {
       // We're on a locale-prefixed page, need to go up one level
       return `..${path}`;
     }
   }
-  
+
   return path;
 }
 
@@ -30,9 +30,10 @@ export function getAbsoluteApiPath(path: string, baseUrl?: string): string {
   if (!path.startsWith('/api/')) {
     throw new Error('API path must start with /api/');
   }
-  
+
   // Use provided baseUrl or current origin
-  const base = baseUrl || (typeof window !== 'undefined' ? window.location.origin : '');
-  
+  const base =
+    baseUrl || (typeof window !== 'undefined' ? window.location.origin : '');
+
   return `${base}${path}`;
 }

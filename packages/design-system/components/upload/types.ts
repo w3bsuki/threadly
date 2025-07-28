@@ -23,7 +23,10 @@ export interface UploadFile {
 export interface ImageUploadProps {
   value?: ImageData[];
   onChange: (images: ImageData[]) => void;
-  onUpload: (file: File, onProgress?: (progress: number) => void) => Promise<UploadResult>;
+  onUpload: (
+    file: File,
+    onProgress?: (progress: number) => void
+  ) => Promise<UploadResult>;
   maxFiles?: number;
   maxSize?: number;
   accept?: string;

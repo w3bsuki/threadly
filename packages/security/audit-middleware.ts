@@ -1,18 +1,29 @@
-import { createAuditLog, auditMiddleware, type AuditEventType } from './audit-log';
 import { currentUser } from '@repo/auth/server';
+import {
+  type AuditEventType,
+  auditMiddleware,
+  createAuditLog,
+} from './audit-log';
 
 interface AuditConfig {
   eventType: AuditEventType;
-  resourceType?: 'user' | 'product' | 'order' | 'payment' | 'seller' | 'admin' | 'security';
+  resourceType?:
+    | 'user'
+    | 'product'
+    | 'order'
+    | 'payment'
+    | 'seller'
+    | 'admin'
+    | 'security';
   severity?: 'low' | 'medium' | 'high' | 'critical';
 }
 
 export function withAuditLog(config: AuditConfig) {
-  return function (
+  return (
     target: unknown,
     propertyKey: string,
     descriptor: PropertyDescriptor
-  ) {
+  ) => {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: unknown[]) {
@@ -22,14 +33,15 @@ export function withAuditLog(config: AuditConfig) {
 
       try {
         const result = await originalMethod.apply(this, args);
-        
+
         await createAuditLog({
           userId: user?.id,
           eventType: config.eventType,
           resourceType: config.resourceType,
-          resourceId: typeof result === 'object' && result !== null && 'id' in result 
-            ? String(result.id) 
-            : undefined,
+          resourceId:
+            typeof result === 'object' && result !== null && 'id' in result
+              ? String(result.id)
+              : undefined,
           ...auditInfo,
           metadata: {
             success: true,
@@ -64,7 +76,13 @@ export function withAuditLog(config: AuditConfig) {
 }
 
 export async function logSecurityEvent(
-  eventType: Extract<AuditEventType, 'SECURITY_ALERT' | 'RATE_LIMIT_EXCEEDED' | 'CSRF_VIOLATION' | 'SUSPICIOUS_ACTIVITY'>,
+  eventType: Extract<
+    AuditEventType,
+    | 'SECURITY_ALERT'
+    | 'RATE_LIMIT_EXCEEDED'
+    | 'CSRF_VIOLATION'
+    | 'SUSPICIOUS_ACTIVITY'
+  >,
   request: Request,
   metadata?: Record<string, unknown>
 ) {

@@ -8,15 +8,15 @@ export const SignIn = () => {
   const from = searchParams.get('from');
   const returnTo = searchParams.get('returnTo');
   const redirectUrl = from || returnTo || '/';
-  
+
   return (
     <ClerkSignIn
+      afterSignInUrl={redirectUrl}
       appearance={{
         elements: {
           header: 'hidden',
         },
       }}
-      afterSignInUrl={redirectUrl}
       signUpUrl={`/sign-up${redirectUrl ? `?from=${encodeURIComponent(redirectUrl)}` : ''}`}
     />
   );

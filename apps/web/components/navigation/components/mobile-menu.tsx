@@ -80,7 +80,9 @@ export function MobileMenu({
                   <p className="font-semibold text-lg">
                     {user?.firstName} {user?.lastName}
                   </p>
-                  <p className="text-muted-foreground text-sm">View your profile</p>
+                  <p className="text-muted-foreground text-sm">
+                    View your profile
+                  </p>
                 </div>
               </div>
             ) : (
@@ -128,7 +130,9 @@ export function MobileMenu({
               </div>
               <div>
                 <p className="font-medium">Browse All</p>
-                <p className="text-muted-foreground text-sm">Explore everything</p>
+                <p className="text-muted-foreground text-sm">
+                  Explore everything
+                </p>
               </div>
             </Link>
           </div>
@@ -138,7 +142,7 @@ export function MobileMenu({
           {isSignedIn ? (
             <Button
               asChild
-              className="h-14 w-full bg-foreground font-medium text-base text-background hover:bg-secondary-foreground"
+              className="h-14 w-full bg-foreground font-medium text-background text-base hover:bg-secondary-foreground"
             >
               <Link href={`/${locale}/selling/new`} onClick={onClose}>
                 <Plus className="mr-2 h-5 w-5" />
@@ -148,7 +152,7 @@ export function MobileMenu({
           ) : (
             <Button
               asChild
-              className="h-14 w-full bg-foreground font-medium text-base text-background hover:bg-secondary-foreground"
+              className="h-14 w-full bg-foreground font-medium text-background text-base hover:bg-secondary-foreground"
             >
               <Link href={`/${locale}/sign-in`} onClick={onClose}>
                 <Plus className="mr-2 h-5 w-5" />

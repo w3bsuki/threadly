@@ -1,8 +1,8 @@
 'use client';
 
 import { cn } from '@repo/design-system/lib/utils';
-import { Skeleton } from './skeleton';
 import { Card, CardContent, CardHeader } from './card';
+import { Skeleton } from './skeleton';
 
 interface LoadingSkeletonProps {
   className?: string;
@@ -10,25 +10,27 @@ interface LoadingSkeletonProps {
   count?: number;
 }
 
-export function LoadingSkeleton({ 
-  className, 
+export function LoadingSkeleton({
+  className,
   variant = 'default',
-  count = 1 
+  count = 1,
 }: LoadingSkeletonProps) {
   const items = Array.from({ length: count }, (_, i) => i);
 
   if (variant === 'card') {
     return (
-      <div className={cn('grid gap-4 sm:grid-cols-2 lg:grid-cols-3', className)}>
+      <div
+        className={cn('grid gap-4 sm:grid-cols-2 lg:grid-cols-3', className)}
+      >
         {items.map((i) => (
-          <Card key={i} className="overflow-hidden">
+          <Card className="overflow-hidden" key={i}>
             <CardHeader className="p-0">
               <Skeleton className="aspect-[4/3] w-full" />
             </CardHeader>
-            <CardContent className="p-4 space-y-3">
+            <CardContent className="space-y-3 p-4">
               <Skeleton className="h-4 w-3/4" />
               <Skeleton className="h-3 w-1/2" />
-              <div className="flex justify-between items-center pt-2">
+              <div className="flex items-center justify-between pt-2">
                 <Skeleton className="h-5 w-16" />
                 <Skeleton className="h-8 w-24" />
               </div>
@@ -43,7 +45,10 @@ export function LoadingSkeleton({
     return (
       <div className={cn('space-y-3', className)}>
         {items.map((i) => (
-          <div key={i} className="flex items-center space-x-4 p-4 border rounded-lg">
+          <div
+            className="flex items-center space-x-4 rounded-lg border p-4"
+            key={i}
+          >
             <Skeleton className="h-12 w-12 rounded-full" />
             <div className="flex-1 space-y-2">
               <Skeleton className="h-4 w-1/4" />
@@ -58,9 +63,14 @@ export function LoadingSkeleton({
 
   if (variant === 'grid') {
     return (
-      <div className={cn('grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4', className)}>
+      <div
+        className={cn(
+          'grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4',
+          className
+        )}
+      >
         {items.map((i) => (
-          <div key={i} className="space-y-3">
+          <div className="space-y-3" key={i}>
             <Skeleton className="aspect-square w-full rounded-lg" />
             <Skeleton className="h-4 w-3/4" />
             <Skeleton className="h-5 w-1/2" />
@@ -76,11 +86,11 @@ export function LoadingSkeleton({
 export function ProductListingSkeleton() {
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <Skeleton className="h-8 w-32" />
         <Skeleton className="h-10 w-24" />
       </div>
-      <LoadingSkeleton variant="grid" count={8} />
+      <LoadingSkeleton count={8} variant="grid" />
     </div>
   );
 }
@@ -92,15 +102,15 @@ export function MessagesSkeleton() {
         <Card>
           <CardHeader>
             <Skeleton className="h-6 w-32" />
-            <Skeleton className="h-10 w-full mt-2" />
+            <Skeleton className="mt-2 h-10 w-full" />
           </CardHeader>
           <CardContent className="p-0">
-            <LoadingSkeleton variant="list" count={5} className="border-0" />
+            <LoadingSkeleton className="border-0" count={5} variant="list" />
           </CardContent>
         </Card>
       </div>
       <div className="md:col-span-2">
-        <Card className="h-[600px] flex flex-col">
+        <Card className="flex h-[600px] flex-col">
           <CardHeader className="border-b">
             <div className="flex items-center gap-3">
               <Skeleton className="h-10 w-10 rounded-full" />
@@ -117,7 +127,7 @@ export function MessagesSkeleton() {
                 <Skeleton className="h-8 w-8 rounded-full" />
                 <Skeleton className="h-20 w-48 rounded-lg" />
               </div>
-              <div className="flex gap-3 justify-end">
+              <div className="flex justify-end gap-3">
                 <Skeleton className="h-20 w-48 rounded-lg" />
               </div>
               <div className="flex gap-3">
@@ -150,7 +160,7 @@ export function DashboardSkeleton() {
             </CardHeader>
             <CardContent>
               <Skeleton className="h-8 w-24" />
-              <Skeleton className="h-3 w-32 mt-2" />
+              <Skeleton className="mt-2 h-3 w-32" />
             </CardContent>
           </Card>
         ))}
@@ -161,7 +171,7 @@ export function DashboardSkeleton() {
             <Skeleton className="h-6 w-32" />
           </CardHeader>
           <CardContent>
-            <LoadingSkeleton variant="list" count={3} className="border-0" />
+            <LoadingSkeleton className="border-0" count={3} variant="list" />
           </CardContent>
         </Card>
         <Card>

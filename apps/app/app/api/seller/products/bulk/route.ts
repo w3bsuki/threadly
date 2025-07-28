@@ -1,30 +1,38 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { z } from 'zod';
 import { log } from '@repo/observability/server';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 const bulkOperationSchema = z.object({
   productIds: z.array(z.string().cuid()).min(1).max(100),
   operation: z.enum([
     'PRICE_UPDATE',
-    'STATUS_CHANGE', 
+    'STATUS_CHANGE',
     'CATEGORY_UPDATE',
     'CONDITION_UPDATE',
     'BRAND_UPDATE',
     'SIZE_UPDATE',
-    'COLOR_UPDATE'
+    'COLOR_UPDATE',
   ]),
   data: z.object({
     price: z.number().positive().optional(),
     status: z.enum(['AVAILABLE', 'SOLD', 'RESERVED', 'REMOVED']).optional(),
     categoryId: z.string().cuid().optional(),
-    condition: z.enum(['NEW_WITH_TAGS', 'NEW_WITHOUT_TAGS', 'VERY_GOOD', 'GOOD', 'SATISFACTORY']).optional(),
+    condition: z
+      .enum([
+        'NEW_WITH_TAGS',
+        'NEW_WITHOUT_TAGS',
+        'VERY_GOOD',
+        'GOOD',
+        'SATISFACTORY',
+      ])
+      .optional(),
     brand: z.string().optional(),
     size: z.string().optional(),
-    color: z.string().optional()
-  })
+    color: z.string().optional(),
+  }),
 });
 
 export async function POST(request: NextRequest) {
@@ -34,9 +42,9 @@ export async function POST(request: NextRequest) {
     if (!rateLimitResult.allowed) {
       return NextResponse.json(
         { error: rateLimitResult.error?.message || 'Rate limit exceeded' },
-        { 
+        {
           status: 429,
-          headers: rateLimitResult.headers
+          headers: rateLimitResult.headers,
         }
       );
     }
@@ -48,7 +56,7 @@ export async function POST(request: NextRequest) {
 
     const dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!dbUser) {
@@ -60,7 +68,10 @@ export async function POST(request: NextRequest) {
 
     if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Invalid request data', details: validationResult.error.flatten() },
+        {
+          error: 'Invalid request data',
+          details: validationResult.error.flatten(),
+        },
         { status: 400 }
       );
     }
@@ -69,11 +80,11 @@ export async function POST(request: NextRequest) {
 
     // Verify all products belong to the seller
     const products = await database.product.findMany({
-      where: { 
+      where: {
         id: { in: productIds },
-        sellerId: dbUser.id
+        sellerId: dbUser.id,
       },
-      select: { id: true, title: true }
+      select: { id: true, title: true },
     });
 
     if (products.length !== productIds.length) {
@@ -97,7 +108,7 @@ export async function POST(request: NextRequest) {
         color?: string;
       }
       let updateData: UpdateData = {};
-      let results = { success: 0, errors: 0, skipped: 0 };
+      const results = { success: 0, errors: 0, skipped: 0 };
 
       // Prepare update data based on operation type
       switch (operation) {
@@ -143,7 +154,7 @@ export async function POST(request: NextRequest) {
         try {
           await database.product.update({
             where: { id: product.id },
-            data: updateData
+            data: updateData,
           });
           results.success++;
         } catch (error) {
@@ -165,13 +176,12 @@ export async function POST(request: NextRequest) {
       //   }
       // });
 
-      return NextResponse.json({ 
-        success: true, 
+      return NextResponse.json({
+        success: true,
         results,
         operationId: bulkOperation.id,
-        message: `Bulk update: ${results.success} successful, ${results.errors} errors`
+        message: `Bulk update: ${results.success} successful, ${results.errors} errors`,
       });
-
     } catch (error) {
       // TODO: Mark operation as failed when model is added
       // await database.bulkOperation.update({
@@ -181,14 +191,13 @@ export async function POST(request: NextRequest) {
       //     errors: { error: error instanceof Error ? error.message : 'Unknown error' }
       //   }
       // });
-      
+
       log.error('Bulk operation failed:', error);
       return NextResponse.json(
         { error: 'Failed to perform bulk update' },
         { status: 500 }
       );
     }
-
   } catch (error) {
     log.error('Bulk operation API error:', error);
     return NextResponse.json(
@@ -205,9 +214,9 @@ export async function GET(request: NextRequest) {
     if (!rateLimitResult.allowed) {
       return NextResponse.json(
         { error: rateLimitResult.error?.message || 'Rate limit exceeded' },
-        { 
+        {
           status: 429,
-          headers: rateLimitResult.headers
+          headers: rateLimitResult.headers,
         }
       );
     }
@@ -219,7 +228,7 @@ export async function GET(request: NextRequest) {
 
     const dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!dbUser) {
@@ -227,12 +236,14 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit') || '10');
+    const limit = Number.parseInt(searchParams.get('limit') || '10');
     const operationId = searchParams.get('operationId');
 
     // TODO: Add BulkOperation model to database schema
-    return NextResponse.json({ error: 'Operation tracking not implemented' }, { status: 501 });
-
+    return NextResponse.json(
+      { error: 'Operation tracking not implemented' },
+      { status: 501 }
+    );
   } catch (error) {
     log.error('Get bulk operations API error:', error);
     return NextResponse.json(

@@ -1,7 +1,7 @@
 import { database } from '@repo/database';
 import { log } from '@repo/observability/server';
 
-export type AuditEventType = 
+export type AuditEventType =
   | 'USER_LOGIN'
   | 'USER_LOGOUT'
   | 'USER_REGISTER'
@@ -30,7 +30,14 @@ export type AuditEventType =
 export interface AuditLogEntry {
   userId?: string;
   eventType: AuditEventType;
-  resourceType?: 'user' | 'product' | 'order' | 'payment' | 'seller' | 'admin' | 'security';
+  resourceType?:
+    | 'user'
+    | 'product'
+    | 'order'
+    | 'payment'
+    | 'seller'
+    | 'admin'
+    | 'security';
   resourceId?: string;
   ipAddress?: string;
   userAgent?: string;
@@ -71,16 +78,18 @@ export async function getAuditLogs(filters: {
   limit?: number;
 }) {
   const where: Record<string, unknown> = {};
-  
+
   if (filters.userId) where.userId = filters.userId;
   if (filters.eventType) where.eventType = filters.eventType;
   if (filters.resourceType) where.resourceType = filters.resourceType;
   if (filters.severity) where.severity = filters.severity;
-  
+
   if (filters.startDate || filters.endDate) {
     where.createdAt = {};
-    if (filters.startDate) (where.createdAt as Record<string, Date>).gte = filters.startDate;
-    if (filters.endDate) (where.createdAt as Record<string, Date>).lte = filters.endDate;
+    if (filters.startDate)
+      (where.createdAt as Record<string, Date>).gte = filters.startDate;
+    if (filters.endDate)
+      (where.createdAt as Record<string, Date>).lte = filters.endDate;
   }
 
   return database.auditLog.findMany({
@@ -92,11 +101,12 @@ export async function getAuditLogs(filters: {
 
 export function auditMiddleware(req: Request): Partial<AuditLogEntry> {
   const headers = req.headers;
-  
+
   return {
-    ipAddress: headers.get('x-forwarded-for')?.split(',')[0] || 
-               headers.get('x-real-ip') || 
-               'unknown',
+    ipAddress:
+      headers.get('x-forwarded-for')?.split(',')[0] ||
+      headers.get('x-real-ip') ||
+      'unknown',
     userAgent: headers.get('user-agent') || undefined,
   };
 }

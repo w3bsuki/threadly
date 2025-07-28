@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { StandardApiError, parseError, ErrorCode } from './errors';
+import { type ErrorCode, parseError, StandardApiError } from './errors';
 
 export interface ApiSuccessResponse<T = unknown> {
   success: true;
@@ -60,17 +60,19 @@ export function createErrorResponse(
   }
 ): NextResponse<ApiErrorResponse> {
   const standardError = parseError(error);
-  
+
   // Log error if requested (default: true for 5xx errors)
   const shouldLog = options?.logError ?? standardError.getStatusCode() >= 500;
   if (shouldLog) {
     // Import logging asynchronously to avoid circular dependencies
-    import('@repo/observability/server').then(({ logError }) => {
-      logError('API Error:', standardError.toJSON());
-    }).catch(() => {
-      // Fallback to console if observability is not available
-      console.error('API Error:', standardError.toJSON());
-    });
+    import('@repo/observability/server')
+      .then(({ logError }) => {
+        logError('API Error:', standardError.toJSON());
+      })
+      .catch(() => {
+        // Fallback to console if observability is not available
+        console.error('API Error:', standardError.toJSON());
+      });
   }
 
   const response: ApiErrorResponse = {
@@ -78,7 +80,11 @@ export function createErrorResponse(
     error: {
       code: options?.errorCode || standardError.code,
       message: standardError.message,
-      ...(options?.details ? { details: options.details } : standardError.details ? { details: standardError.details } : {}),
+      ...(options?.details
+        ? { details: options.details }
+        : standardError.details
+          ? { details: standardError.details }
+          : {}),
       ...(standardError.context ? { context: standardError.context } : {}),
     },
   };

@@ -12,7 +12,9 @@ export function SafeUserButton() {
 
   if (!mounted) {
     // Return a placeholder with the same dimensions to prevent layout shift
-    return <div className="h-8 w-8 animate-pulse rounded-[var(--radius-full)] bg-accent" />;
+    return (
+      <div className="h-8 w-8 animate-pulse rounded-[var(--radius-full)] bg-accent" />
+    );
   }
 
   return <ClerkUserButton />;

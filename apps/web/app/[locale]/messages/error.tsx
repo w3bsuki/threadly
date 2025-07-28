@@ -1,10 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from '@repo/design-system/components/ui/alert';
 import { Button } from '@repo/design-system/components/ui/button';
-import { AlertCircle, RefreshCw, MessageSquare } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@repo/design-system/components/ui/alert';
+import { AlertCircle, MessageSquare, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 export default function MessagesError({
   error,
@@ -13,53 +17,50 @@ export default function MessagesError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  useEffect(() => {
-    if (error) {
-      console.error('Messages error:', error);
-    }
-  }, [error]);
 
-  const isNetworkError = error.message?.toLowerCase().includes('network') || 
-                        error.message?.toLowerCase().includes('fetch');
+  const isNetworkError =
+    error.message?.toLowerCase().includes('network') ||
+    error.message?.toLowerCase().includes('fetch');
 
   return (
-    <div className="container mx-auto min-h-[600px] flex items-center justify-center p-4">
+    <div className="container mx-auto flex min-h-[600px] items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <Alert variant="destructive" className="border-destructive/20">
+        <Alert className="border-destructive/20" variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Messages Unavailable</AlertTitle>
           <AlertDescription className="mt-2">
-            <p className="text-sm mb-2">
-              {isNetworkError 
+            <p className="mb-2 text-sm">
+              {isNetworkError
                 ? 'Unable to connect to the messaging service. Please check your internet connection.'
                 : 'We encountered an error loading your messages. Please try again.'}
             </p>
-            <p className="text-xs text-muted-foreground">
-              Your messages are safe and will be available once the connection is restored.
+            <p className="text-muted-foreground text-xs">
+              Your messages are safe and will be available once the connection
+              is restored.
             </p>
           </AlertDescription>
         </Alert>
-        
-        <div className="flex flex-col sm:flex-row gap-3 mt-4">
-          <Button 
-            onClick={reset} 
-            variant="outline" 
-            size="sm" 
+
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+          <Button
             className="w-full sm:w-auto"
+            onClick={reset}
+            size="sm"
+            variant="outline"
           >
-            <RefreshCw className="h-4 w-4 mr-2" />
+            <RefreshCw className="mr-2 h-4 w-4" />
             Try Again
           </Button>
-          
-          <Link href="/dashboard" className="w-full sm:w-auto">
-            <Button variant="outline" size="sm" className="w-full">
-              <MessageSquare className="h-4 w-4 mr-2" />
+
+          <Link className="w-full sm:w-auto" href="/dashboard">
+            <Button className="w-full" size="sm" variant="outline">
+              <MessageSquare className="mr-2 h-4 w-4" />
               Go to Dashboard
             </Button>
           </Link>
-          
-          <Link href="/" className="w-full sm:w-auto">
-            <Button variant="default" size="sm" className="w-full">
+
+          <Link className="w-full sm:w-auto" href="/">
+            <Button className="w-full" size="sm" variant="default">
               Go Home
             </Button>
           </Link>

@@ -1,7 +1,7 @@
 import { match as matchLocale } from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
-import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 export const locales = ['bg', 'en', 'uk'];
 export const defaultLocale = 'bg';
@@ -12,7 +12,7 @@ function getLocale(request: NextRequest): string {
   const pathnameLocale = locales.find(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
-  
+
   if (pathnameLocale) return pathnameLocale;
 
   // Try to detect from Accept-Language header
@@ -20,7 +20,7 @@ function getLocale(request: NextRequest): string {
     const headers = Object.fromEntries(request.headers.entries());
     const negotiator = new Negotiator({ headers });
     const languages = negotiator.languages();
-    
+
     return matchLocale(languages, locales, defaultLocale);
   } catch {
     return defaultLocale;
@@ -29,7 +29,7 @@ function getLocale(request: NextRequest): string {
 
 export function internationalizationMiddleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-  
+
   // Check if the pathname already includes a locale
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
@@ -42,12 +42,12 @@ export function internationalizationMiddleware(request: NextRequest) {
   // Redirect if no locale in pathname
   const locale = getLocale(request);
   const newUrl = new URL(`/${locale}${pathname}`, request.url);
-  
+
   // For the root path, we can use rewrite instead of redirect for better UX
   if (pathname === '/' && locale === defaultLocale) {
     return NextResponse.rewrite(newUrl);
   }
-  
+
   return NextResponse.redirect(newUrl);
 }
 

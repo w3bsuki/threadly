@@ -72,15 +72,20 @@ export function getOrderProgress(status: OrderStatus): number {
 }
 
 // Group orders by status
-export function groupOrdersByStatus(orders: Order[]): Record<OrderStatus, Order[]> {
-  return orders.reduce((groups, order) => {
-    const status = order.status;
-    if (!groups[status]) {
-      groups[status] = [];
-    }
-    groups[status].push(order);
-    return groups;
-  }, {} as Record<OrderStatus, Order[]>);
+export function groupOrdersByStatus(
+  orders: Order[]
+): Record<OrderStatus, Order[]> {
+  return orders.reduce(
+    (groups, order) => {
+      const status = order.status;
+      if (!groups[status]) {
+        groups[status] = [];
+      }
+      groups[status].push(order);
+      return groups;
+    },
+    {} as Record<OrderStatus, Order[]>
+  );
 }
 
 // Filter orders by date range
@@ -89,7 +94,7 @@ export function filterOrdersByDateRange(
   startDate: Date,
   endDate: Date
 ): Order[] {
-  return orders.filter(order => {
+  return orders.filter((order) => {
     const orderDate = new Date(order.createdAt);
     return orderDate >= startDate && orderDate <= endDate;
   });
@@ -99,13 +104,16 @@ export function filterOrdersByDateRange(
 export function calculateOrderStats(orders: Order[]) {
   const total = orders.length;
   const revenue = orders
-    .filter(o => o.status !== 'CANCELLED' && o.status !== 'REFUNDED')
+    .filter((o) => o.status !== 'CANCELLED' && o.status !== 'REFUNDED')
     .reduce((sum, order) => sum + order.total, 0);
-  
-  const byStatus = orders.reduce((acc, order) => {
-    acc[order.status] = (acc[order.status] || 0) + 1;
-    return acc;
-  }, {} as Record<OrderStatus, number>);
+
+  const byStatus = orders.reduce(
+    (acc, order) => {
+      acc[order.status] = (acc[order.status] || 0) + 1;
+      return acc;
+    },
+    {} as Record<OrderStatus, number>
+  );
 
   const averageOrderValue = total > 0 ? revenue / total : 0;
 
@@ -114,9 +122,7 @@ export function calculateOrderStats(orders: Order[]) {
     revenue,
     averageOrderValue,
     byStatus,
-    completionRate: total > 0 
-      ? (byStatus.DELIVERED || 0) / total * 100 
-      : 0,
+    completionRate: total > 0 ? ((byStatus.DELIVERED || 0) / total) * 100 : 0,
   };
 }
 
@@ -129,17 +135,22 @@ export function formatOrderId(orderId: string): string {
 
 // Check if order can be cancelled
 export function canCancelOrder(order: Order): boolean {
-  return ['PENDING', 'PROCESSING'].includes(order.status) && 
-         order.paymentStatus !== 'REFUNDED';
+  return (
+    ['PENDING', 'PROCESSING'].includes(order.status) &&
+    order.paymentStatus !== 'REFUNDED'
+  );
 }
 
 // Check if order can be refunded
 export function canRefundOrder(order: Order): boolean {
-  return order.status === 'DELIVERED' && 
-         order.paymentStatus === 'SUCCEEDED' &&
-         // Check if within refund window (e.g., 30 days)
-         new Date().getTime() - new Date(order.deliveredAt || order.createdAt).getTime() 
-         <= 30 * 24 * 60 * 60 * 1000;
+  return (
+    order.status === 'DELIVERED' &&
+    order.paymentStatus === 'SUCCEEDED' &&
+    // Check if within refund window (e.g., 30 days)
+    new Date().getTime() -
+      new Date(order.deliveredAt || order.createdAt).getTime() <=
+      30 * 24 * 60 * 60 * 1000
+  );
 }
 
 // Generate tracking URL
@@ -167,7 +178,9 @@ export function sortOrders(
   const sorted = [...orders].sort((a, b) => {
     switch (sortBy) {
       case 'date':
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
       case 'total':
         return a.total - b.total;
       case 'status':

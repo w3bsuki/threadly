@@ -2,10 +2,9 @@
 
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
+import { log, logError } from '@repo/observability/server';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
 
 const updateProfileSchema = z.object({
   firstName: z.string().min(1).max(50),
@@ -34,7 +33,9 @@ const updateNotificationSchema = z.object({
   pushOffers: z.boolean(),
 });
 
-export async function updateUserProfile(input: z.infer<typeof updateProfileSchema>) {
+export async function updateUserProfile(
+  input: z.infer<typeof updateProfileSchema>
+) {
   try {
     // Verify user authentication
     const user = await currentUser();
@@ -73,10 +74,9 @@ export async function updateUserProfile(input: z.infer<typeof updateProfileSchem
     return {
       success: true,
     };
-
   } catch (error) {
     logError('Failed to update user profile:', error);
-    
+
     if (error instanceof z.ZodError) {
       return {
         success: false,
@@ -87,12 +87,15 @@ export async function updateUserProfile(input: z.infer<typeof updateProfileSchem
 
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to update profile',
+      error:
+        error instanceof Error ? error.message : 'Failed to update profile',
     };
   }
 }
 
-export async function updateShippingAddress(input: z.infer<typeof updateAddressSchema>) {
+export async function updateShippingAddress(
+  input: z.infer<typeof updateAddressSchema>
+) {
   try {
     // Verify user authentication
     const user = await currentUser();
@@ -113,10 +116,9 @@ export async function updateShippingAddress(input: z.infer<typeof updateAddressS
     return {
       success: true,
     };
-
   } catch (error) {
     logError('Failed to update shipping address:', error);
-    
+
     if (error instanceof z.ZodError) {
       return {
         success: false,
@@ -127,12 +129,15 @@ export async function updateShippingAddress(input: z.infer<typeof updateAddressS
 
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to update address',
+      error:
+        error instanceof Error ? error.message : 'Failed to update address',
     };
   }
 }
 
-export async function updateNotificationSettings(input: z.infer<typeof updateNotificationSchema>) {
+export async function updateNotificationSettings(
+  input: z.infer<typeof updateNotificationSchema>
+) {
   try {
     // Verify user authentication
     const user = await currentUser();
@@ -161,10 +166,9 @@ export async function updateNotificationSettings(input: z.infer<typeof updateNot
     return {
       success: true,
     };
-
   } catch (error) {
     logError('Failed to update notification settings:', error);
-    
+
     if (error instanceof z.ZodError) {
       return {
         success: false,
@@ -175,7 +179,10 @@ export async function updateNotificationSettings(input: z.infer<typeof updateNot
 
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to update notification settings',
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to update notification settings',
     };
   }
 }

@@ -1,15 +1,26 @@
 'use client';
 
-import { Input } from '@repo/design-system/components';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
-import { UseFormReturn } from 'react-hook-form';
-import { ImageUpload } from '../image-upload';
-import { Badge } from '@repo/design-system/components';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+} from '@repo/design-system/components';
+import type {
+  CreateProductInput,
+  SellerTemplate,
+} from '@repo/validation/schemas';
 import { FileText as Template } from 'lucide-react';
-import type { CreateProductInput } from '@repo/validation/schemas';
-import type { SellerTemplate } from '@repo/validation/schemas';
+import type { UseFormReturn } from 'react-hook-form';
+import { ImageUpload } from '../image-upload';
 
 interface StepPhotosBasicProps {
   form: UseFormReturn<CreateProductInput>;
@@ -17,7 +28,11 @@ interface StepPhotosBasicProps {
   onTemplateSelect: (template: SellerTemplate) => void;
 }
 
-export function StepPhotosBasic({ form, templates, onTemplateSelect }: StepPhotosBasicProps) {
+export function StepPhotosBasic({
+  form,
+  templates,
+  onTemplateSelect,
+}: StepPhotosBasicProps) {
   return (
     <div className="space-y-6">
       {/* Template Selection */}
@@ -30,23 +45,27 @@ export function StepPhotosBasic({ form, templates, onTemplateSelect }: StepPhoto
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {templates.slice(0, 4).map((template) => (
                 <Button
+                  className="h-auto p-3 text-left"
                   key={template.id}
+                  onClick={() => onTemplateSelect(template)}
                   type="button"
                   variant="outline"
-                  className="h-auto p-3 text-left"
-                  onClick={() => onTemplateSelect(template)}
                 >
-                  <div className="flex flex-col gap-1 w-full">
+                  <div className="flex w-full flex-col gap-1">
                     <div className="flex items-center justify-between">
-                      <span className="font-medium text-sm">{template.name}</span>
+                      <span className="font-medium text-sm">
+                        {template.name}
+                      </span>
                       {template.isDefault && (
-                        <Badge variant="secondary" className="text-xs">Default</Badge>
+                        <Badge className="text-xs" variant="secondary">
+                          Default
+                        </Badge>
                       )}
                     </div>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-muted-foreground text-xs">
                       Template #{template.id.slice(0, 8)}
                     </span>
                   </div>
@@ -63,12 +82,14 @@ export function StepPhotosBasic({ form, templates, onTemplateSelect }: StepPhoto
         name="images"
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="text-base font-medium">Product Photos</FormLabel>
+            <FormLabel className="font-medium text-base">
+              Product Photos
+            </FormLabel>
             <FormControl>
               <ImageUpload
-                value={field.value}
-                onChange={field.onChange}
                 maxFiles={5}
+                onChange={field.onChange}
+                value={field.value}
               />
             </FormControl>
             <FormMessage />
@@ -77,16 +98,18 @@ export function StepPhotosBasic({ form, templates, onTemplateSelect }: StepPhoto
       />
 
       {/* Basic Information */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <FormField
           control={form.control}
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-base font-medium">Item Title</FormLabel>
+              <FormLabel className="font-medium text-base">
+                Item Title
+              </FormLabel>
               <FormControl>
-                <Input 
-                  placeholder="e.g. Vintage Denim Jacket" 
+                <Input
+                  placeholder="e.g. Vintage Denim Jacket"
                   {...field}
                   className="text-base"
                 />
@@ -101,15 +124,17 @@ export function StepPhotosBasic({ form, templates, onTemplateSelect }: StepPhoto
           name="price"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-base font-medium">Price ($)</FormLabel>
+              <FormLabel className="font-medium text-base">Price ($)</FormLabel>
               <FormControl>
                 <Input
-                  type="number"
-                  step="0.01"
                   placeholder="0.00"
+                  step="0.01"
+                  type="number"
                   {...field}
-                  onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                   className="text-base"
+                  onChange={(e) =>
+                    field.onChange(Number.parseFloat(e.target.value) || 0)
+                  }
                 />
               </FormControl>
               <FormMessage />
@@ -118,10 +143,11 @@ export function StepPhotosBasic({ form, templates, onTemplateSelect }: StepPhoto
         />
       </div>
 
-      <div className="bg-muted/50 p-4 rounded-[var(--radius-lg)]">
-        <p className="text-sm text-muted-foreground">
-          📸 <strong>Photo Tips:</strong> Use natural lighting, show all angles, and include any flaws or wear. 
-          First photo will be your main listing image.
+      <div className="rounded-[var(--radius-lg)] bg-muted/50 p-4">
+        <p className="text-muted-foreground text-sm">
+          📸 <strong>Photo Tips:</strong> Use natural lighting, show all angles,
+          and include any flaws or wear. First photo will be your main listing
+          image.
         </p>
       </div>
     </div>

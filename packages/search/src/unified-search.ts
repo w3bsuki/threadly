@@ -3,17 +3,17 @@
  * Combines Algolia and database search with fallback capabilities
  */
 
-import { database } from '@repo/database';
 import { getCacheService } from '@repo/cache';
+import { database } from '@repo/database';
 import { AlgoliaSearchService } from './algolia-search';
 import { SearchHistoryService } from './history';
-import type { 
-  SearchFilters, 
-  SearchResult, 
-  SearchProduct, 
-  SearchSuggestion,
+import type {
+  SearchConfig,
   SearchEngine,
-  SearchConfig
+  SearchFilters,
+  SearchProduct,
+  SearchResult,
+  SearchSuggestion,
 } from './types';
 
 export interface UnifiedSearchConfig {
@@ -42,7 +42,9 @@ export class UnifiedSearchService implements SearchEngine {
 
     if (this.config.useAlgolia && this.config.algoliaConfig) {
       try {
-        this.algoliaService = new AlgoliaSearchService(this.config.algoliaConfig);
+        this.algoliaService = new AlgoliaSearchService(
+          this.config.algoliaConfig
+        );
       } catch (error) {
         console.warn('Failed to initialize Algolia service:', error);
       }
@@ -53,12 +55,17 @@ export class UnifiedSearchService implements SearchEngine {
    * Main search method with Algolia-first, database fallback
    */
   async search(
-    filters: SearchFilters, 
-    page: number = 0, 
-    hitsPerPage: number = 20
+    filters: SearchFilters,
+    page = 0,
+    hitsPerPage = 20
   ): Promise<SearchResult> {
-    const cacheKey = this.generateCacheKey('search', filters, page, hitsPerPage);
-    
+    const cacheKey = this.generateCacheKey(
+      'search',
+      filters,
+      page,
+      hitsPerPage
+    );
+
     // Try cache first if enabled
     if (this.config.cacheResults) {
       const cached = await this.cache.get<SearchResult>(cacheKey);
@@ -73,7 +80,7 @@ export class UnifiedSearchService implements SearchEngine {
     if (this.algoliaService) {
       try {
         result = await this.algoliaService.search(filters, page, hitsPerPage);
-        
+
         // Cache successful result
         if (this.config.cacheResults) {
           await this.cache.set(cacheKey, result, { ttl: this.config.cacheTTL });
@@ -98,7 +105,7 @@ export class UnifiedSearchService implements SearchEngine {
     // Fallback to database search
     if (this.config.useDatabaseFallback) {
       result = await this.searchDatabase(filters, page, hitsPerPage);
-      
+
       // Cache successful result
       if (this.config.cacheResults) {
         await this.cache.set(cacheKey, result, { ttl: this.config.cacheTTL });
@@ -187,7 +194,7 @@ export class UnifiedSearchService implements SearchEngine {
 
     // Build order by clause
     let orderBy: any = { createdAt: 'desc' }; // default
-    
+
     switch (filters.sortBy) {
       case 'price_asc':
         orderBy = { price: 'asc' };
@@ -238,7 +245,7 @@ export class UnifiedSearchService implements SearchEngine {
     ]);
 
     // Transform to SearchProduct format
-    const hits: SearchProduct[] = products.map(product => ({
+    const hits: SearchProduct[] = products.map((product) => ({
       id: product.id,
       title: product.title,
       description: product.description || '',
@@ -249,10 +256,11 @@ export class UnifiedSearchService implements SearchEngine {
       categoryId: product.categoryId,
       categoryName: product.category?.name,
       sellerId: product.sellerId,
-      sellerName: `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim(),
+      sellerName:
+        `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim(),
       sellerRating: undefined,
       sellerLocation: undefined,
-      images: product.images.map(img => img.imageUrl),
+      images: product.images.map((img) => img.imageUrl),
       views: product.views,
       favorites: product.favorites?.length || 0,
       status: product.status,
@@ -276,7 +284,10 @@ export class UnifiedSearchService implements SearchEngine {
   /**
    * Search suggestions with fallback
    */
-  async searchSuggestions(query: string, limit: number = 5): Promise<SearchSuggestion[]> {
+  async searchSuggestions(
+    query: string,
+    limit = 5
+  ): Promise<SearchSuggestion[]> {
     const cacheKey = this.generateCacheKey('suggestions', { query }, limit);
 
     if (this.config.cacheResults) {
@@ -289,32 +300,45 @@ export class UnifiedSearchService implements SearchEngine {
     // Try Algolia first
     if (this.algoliaService) {
       try {
-        const suggestions = await this.algoliaService.searchSuggestions(query, limit);
-        
+        const suggestions = await this.algoliaService.searchSuggestions(
+          query,
+          limit
+        );
+
         if (this.config.cacheResults) {
-          await this.cache.set(cacheKey, suggestions, { ttl: this.config.cacheTTL });
+          await this.cache.set(cacheKey, suggestions, {
+            ttl: this.config.cacheTTL,
+          });
         }
-        
+
         return suggestions;
       } catch (error) {
-        console.warn('Algolia suggestions failed, falling back to database:', error);
+        console.warn(
+          'Algolia suggestions failed, falling back to database:',
+          error
+        );
       }
     }
 
     // Database fallback for suggestions
     const suggestions = await this.getDatabaseSuggestions(query, limit);
-    
+
     if (this.config.cacheResults) {
-      await this.cache.set(cacheKey, suggestions, { ttl: this.config.cacheTTL });
+      await this.cache.set(cacheKey, suggestions, {
+        ttl: this.config.cacheTTL,
+      });
     }
-    
+
     return suggestions;
   }
 
   /**
    * Get suggestions from database
    */
-  private async getDatabaseSuggestions(query: string, limit: number): Promise<SearchSuggestion[]> {
+  private async getDatabaseSuggestions(
+    query: string,
+    limit: number
+  ): Promise<SearchSuggestion[]> {
     const searchResults = await database.product.groupBy({
       by: ['title'],
       where: {
@@ -335,7 +359,7 @@ export class UnifiedSearchService implements SearchEngine {
       take: limit,
     });
 
-    return searchResults.map(result => ({
+    return searchResults.map((result) => ({
       query: result.title,
       count: result._count.title,
     }));
@@ -344,12 +368,15 @@ export class UnifiedSearchService implements SearchEngine {
   /**
    * Get popular products
    */
-  async getPopularProducts(limit: number = 10): Promise<SearchProduct[]> {
+  async getPopularProducts(limit = 10): Promise<SearchProduct[]> {
     if (this.algoliaService) {
       try {
         return await this.algoliaService.getPopularProducts(limit);
       } catch (error) {
-        console.warn('Algolia popular products failed, falling back to database:', error);
+        console.warn(
+          'Algolia popular products failed, falling back to database:',
+          error
+        );
       }
     }
 
@@ -359,19 +386,25 @@ export class UnifiedSearchService implements SearchEngine {
       0,
       limit
     );
-    
+
     return result.hits;
   }
 
   /**
    * Get similar products
    */
-  async getSimilarProducts(productId: string, limit: number = 6): Promise<SearchProduct[]> {
+  async getSimilarProducts(
+    productId: string,
+    limit = 6
+  ): Promise<SearchProduct[]> {
     if (this.algoliaService) {
       try {
         return await this.algoliaService.getSimilarProducts(productId, limit);
       } catch (error) {
-        console.warn('Algolia similar products failed, falling back to database:', error);
+        console.warn(
+          'Algolia similar products failed, falling back to database:',
+          error
+        );
       }
     }
 
@@ -393,26 +426,29 @@ export class UnifiedSearchService implements SearchEngine {
     );
 
     // Filter out the original product
-    return result.hits.filter(hit => hit.id !== productId).slice(0, limit);
+    return result.hits.filter((hit) => hit.id !== productId).slice(0, limit);
   }
 
   /**
    * Get products by category
    */
-  async getProductsByCategory(category: string, limit: number = 20): Promise<SearchProduct[]> {
-    const result = await this.search(
-      { categories: [category] },
-      0,
-      limit
-    );
-    
+  async getProductsByCategory(
+    category: string,
+    limit = 20
+  ): Promise<SearchProduct[]> {
+    const result = await this.search({ categories: [category] }, 0, limit);
+
     return result.hits;
   }
 
   /**
    * Track click analytics (placeholder - extend as needed)
    */
-  async trackClick(productId: string, query: string, position: number): Promise<void> {
+  async trackClick(
+    productId: string,
+    query: string,
+    position: number
+  ): Promise<void> {
     if (this.algoliaService) {
       try {
         await this.algoliaService.trackClick(productId, query, position);
@@ -464,7 +500,11 @@ export class UnifiedSearchService implements SearchEngine {
   /**
    * Generate cache key for consistent caching
    */
-  private generateCacheKey(operation: string, filters: any, ...args: any[]): string {
+  private generateCacheKey(
+    operation: string,
+    filters: any,
+    ...args: any[]
+  ): string {
     const key = `search:${operation}:${JSON.stringify(filters)}:${args.join(':')}`;
     return key.replace(/\s+/g, '').toLowerCase();
   }

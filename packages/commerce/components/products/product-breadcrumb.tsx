@@ -15,7 +15,10 @@ interface ProductBreadcrumbProps {
   productTitle: string;
 }
 
-export function ProductBreadcrumb({ category, productTitle }: ProductBreadcrumbProps) {
+export function ProductBreadcrumb({
+  category,
+  productTitle,
+}: ProductBreadcrumbProps) {
   return (
     <Breadcrumb className="mb-6 hidden md:block">
       <BreadcrumbList>
@@ -40,9 +43,7 @@ export function ProductBreadcrumb({ category, productTitle }: ProductBreadcrumbP
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage className="truncate">
-            {productTitle}
-          </BreadcrumbPage>
+          <BreadcrumbPage className="truncate">{productTitle}</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

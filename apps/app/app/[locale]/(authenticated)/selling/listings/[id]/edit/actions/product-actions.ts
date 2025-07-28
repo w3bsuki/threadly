@@ -2,33 +2,31 @@
 
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { redirect } from 'next/navigation';
-import { z } from 'zod';
-import { 
-  productConditionSchema,
-} from '@repo/validation/schemas/product';
+import { log, logError } from '@repo/observability/server';
+import { getAlgoliaSyncService, MarketplaceSearchService } from '@repo/search';
 import {
+  containsProfanity,
+  filterProfanity,
+  sanitizeForDisplay,
+  sanitizeHtml,
+} from '@repo/validation/sanitize';
+import {
+  cuidSchema,
   priceCentsSchema,
   safeTextSchema,
-  cuidSchema,
 } from '@repo/validation/schemas/common';
-import { 
-  sanitizeForDisplay, 
-  sanitizeHtml,
-  filterProfanity,
-  containsProfanity,
-} from '@repo/validation/sanitize';
-import { 
-  isValidProductTitle,
+import { productConditionSchema } from '@repo/validation/schemas/product';
+import {
   isAllowedImageUrl,
   isPriceInRange,
+  isValidProductTitle,
 } from '@repo/validation/validators';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
-import { MarketplaceSearchService, getAlgoliaSyncService } from '@repo/search';
+import { redirect } from 'next/navigation';
+import { z } from 'zod';
 
 const updateProductSchema = z.object({
-  title: z.string()
+  title: z
+    .string()
     .trim()
     .min(3, 'Title must be at least 3 characters')
     .max(100, 'Title must be at most 100 characters')
@@ -41,14 +39,15 @@ const updateProductSchema = z.object({
     .refine((title) => !containsProfanity(title), {
       message: 'Product title contains inappropriate content',
     }),
-  description: z.string()
+  description: z
+    .string()
     .trim()
     .min(10, 'Description must be at least 10 characters')
     .max(2000, 'Description must be at most 2000 characters')
     .refine((text) => !/<[^>]*>/.test(text), {
       message: 'HTML tags are not allowed',
     }),
-  price: priceCentsSchema.refine((price) => price >= 1 && price <= 99999999, {
+  price: priceCentsSchema.refine((price) => price >= 1 && price <= 99_999_999, {
     message: 'Price must be between $0.01 and $999,999.99',
   }),
   categoryId: cuidSchema,
@@ -57,17 +56,27 @@ const updateProductSchema = z.object({
   size: z.string().max(20).optional(),
   color: z.string().max(30).optional(),
   status: z.enum(['AVAILABLE', 'SOLD', 'RESERVED', 'REMOVED']),
-  images: z.array(
-    z.string()
-      .url('Invalid image URL')
-      .refine((url) => isAllowedImageUrl(url, ['uploadthing.com', 'utfs.io']), {
-        message: 'Image must be from an allowed source',
-      })
-  ).min(1, 'At least one image is required').max(10, 'Maximum 10 images allowed'),
+  images: z
+    .array(
+      z
+        .string()
+        .url('Invalid image URL')
+        .refine(
+          (url) => isAllowedImageUrl(url, ['uploadthing.com', 'utfs.io']),
+          {
+            message: 'Image must be from an allowed source',
+          }
+        )
+    )
+    .min(1, 'At least one image is required')
+    .max(10, 'Maximum 10 images allowed'),
   sellerId: z.string(),
 });
 
-export async function updateProduct(productId: string, input: z.infer<typeof updateProductSchema>) {
+export async function updateProduct(
+  productId: string,
+  input: z.infer<typeof updateProductSchema>
+) {
   try {
     // Verify user authentication
     const user = await currentUser();
@@ -77,7 +86,7 @@ export async function updateProduct(productId: string, input: z.infer<typeof upd
 
     // Get database user
     const dbUser = await database.user.findUnique({
-      where: { clerkId: user.id }
+      where: { clerkId: user.id },
     });
 
     if (!dbUser) {
@@ -95,7 +104,9 @@ export async function updateProduct(productId: string, input: z.infer<typeof upd
         ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'p', 'br', 'ul', 'ol', 'li'],
         ALLOWED_ATTR: [],
       }),
-      brand: validatedInput.brand ? sanitizeForDisplay(validatedInput.brand) : null,
+      brand: validatedInput.brand
+        ? sanitizeForDisplay(validatedInput.brand)
+        : null,
     };
 
     // Verify the user owns this product
@@ -118,7 +129,7 @@ export async function updateProduct(productId: string, input: z.infer<typeof upd
       // Delete existing images
       await tx.productImage.deleteMany({
         where: {
-          productId: productId,
+          productId,
         },
       });
 
@@ -145,7 +156,7 @@ export async function updateProduct(productId: string, input: z.infer<typeof upd
       if (sanitizedData.images.length > 0) {
         await tx.productImage.createMany({
           data: sanitizedData.images.map((url, index) => ({
-            productId: productId,
+            productId,
             imageUrl: url,
             alt: `${sanitizedData.title} - Image ${index + 1}`,
             displayOrder: index,
@@ -180,7 +191,10 @@ export async function updateProduct(productId: string, input: z.infer<typeof upd
         await algoliaSync.updateProduct(productForSearch);
         log.info('Product updated in Algolia', { productId });
       } catch (algoliaError) {
-        logError('Failed to update product in Algolia (non-critical):', algoliaError);
+        logError(
+          'Failed to update product in Algolia (non-critical):',
+          algoliaError
+        );
       }
     }
 
@@ -192,22 +206,24 @@ export async function updateProduct(productId: string, input: z.infer<typeof upd
         searchOnlyApiKey: process.env.ALGOLIA_SEARCH_API_KEY!,
         indexName: process.env.ALGOLIA_INDEX_NAME || 'products',
       });
-      
+
       await searchService.indexProduct(productId);
       log.info('Successfully updated product in search index:', { productId });
     } catch (searchError) {
       // Log search indexing errors but don't fail the product update
-      logError('Failed to update product in search index (non-critical):', searchError);
+      logError(
+        'Failed to update product in search index (non-critical):',
+        searchError
+      );
     }
 
     return {
       success: true,
       product: updatedProduct,
     };
-
   } catch (error) {
     logError('Failed to update product:', error);
-    
+
     if (error instanceof z.ZodError) {
       return {
         success: false,
@@ -218,7 +234,8 @@ export async function updateProduct(productId: string, input: z.infer<typeof upd
 
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to update product',
+      error:
+        error instanceof Error ? error.message : 'Failed to update product',
     };
   }
 }
@@ -233,7 +250,7 @@ export async function deleteProduct(productId: string) {
 
     // Get database user
     const dbUser = await database.user.findUnique({
-      where: { clerkId: user.id }
+      where: { clerkId: user.id },
     });
 
     if (!dbUser) {
@@ -255,7 +272,7 @@ export async function deleteProduct(productId: string) {
     // Check if product has any orders
     const ordersCount = await database.order.count({
       where: {
-        productId: productId,
+        productId,
       },
     });
 
@@ -270,7 +287,7 @@ export async function deleteProduct(productId: string) {
           title: `[DELETED] ${existingProduct.title}`,
         },
       });
-      
+
       // Update status in Algolia to reflect removal
       try {
         const algoliaSync = getAlgoliaSyncService();
@@ -289,13 +306,19 @@ export async function deleteProduct(productId: string) {
             },
           },
         });
-        
+
         if (productForSearch) {
           await algoliaSync.updateProduct(productForSearch);
-          log.info('Product status updated in Algolia', { productId, status: 'REMOVED' });
+          log.info('Product status updated in Algolia', {
+            productId,
+            status: 'REMOVED',
+          });
         }
       } catch (algoliaError) {
-        logError('Failed to update product status in Algolia (non-critical):', algoliaError);
+        logError(
+          'Failed to update product status in Algolia (non-critical):',
+          algoliaError
+        );
       }
     } else {
       // Safe to delete if no orders exist
@@ -303,7 +326,7 @@ export async function deleteProduct(productId: string) {
         // Delete images first
         await tx.productImage.deleteMany({
           where: {
-            productId: productId,
+            productId,
           },
         });
 
@@ -314,14 +337,17 @@ export async function deleteProduct(productId: string) {
           },
         });
       });
-      
+
       // Remove from Algolia
       try {
         const algoliaSync = getAlgoliaSyncService();
         await algoliaSync.deleteProduct(productId);
         log.info('Product deleted from Algolia', { productId });
       } catch (algoliaError) {
-        logError('Failed to delete product from Algolia (non-critical):', algoliaError);
+        logError(
+          'Failed to delete product from Algolia (non-critical):',
+          algoliaError
+        );
       }
     }
 
@@ -333,24 +359,29 @@ export async function deleteProduct(productId: string) {
         searchOnlyApiKey: process.env.ALGOLIA_SEARCH_API_KEY!,
         indexName: process.env.ALGOLIA_INDEX_NAME || 'products',
       });
-      
+
       await searchService.removeProduct(productId);
-      log.info('Successfully removed product from search index:', { productId });
+      log.info('Successfully removed product from search index:', {
+        productId,
+      });
     } catch (searchError) {
       // Log search indexing errors but don't fail the product deletion
-      logError('Failed to remove product from search index (non-critical):', searchError);
+      logError(
+        'Failed to remove product from search index (non-critical):',
+        searchError
+      );
     }
 
     return {
       success: true,
     };
-
   } catch (error) {
     logError('Failed to delete product:', error);
-    
+
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to delete product',
+      error:
+        error instanceof Error ? error.message : 'Failed to delete product',
     };
   }
 }

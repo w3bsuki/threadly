@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback, useState, forwardRef } from 'react';
+import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/utils';
 
 // Haptic feedback types
@@ -12,7 +12,7 @@ const HAPTIC_PATTERNS: Record<HapticFeedbackType, number[]> = {
   medium: [20],
   heavy: [30, 10, 30],
   success: [15, 10, 15],
-  error: [50, 20, 50, 20, 50]
+  error: [50, 20, 50, 20, 50],
 };
 
 // Screen reader announcement utility
@@ -38,7 +38,7 @@ export const hapticFeedback = {
     if (!hapticFeedback.isSupported()) return;
 
     const pattern = HAPTIC_PATTERNS[type];
-    
+
     try {
       if ('vibrate' in navigator) {
         navigator.vibrate(pattern);
@@ -58,7 +58,7 @@ export const hapticFeedback = {
 
   custom: (pattern: number[]) => {
     if (!hapticFeedback.isSupported()) return;
-    
+
     try {
       if ('vibrate' in navigator) {
         navigator.vibrate(pattern);
@@ -68,7 +68,7 @@ export const hapticFeedback = {
     } catch (error) {
       // Silently fail
     }
-  }
+  },
 };
 
 // Pull-to-refresh indicator component
@@ -78,36 +78,46 @@ interface PullToRefreshIndicatorProps {
   threshold: number;
 }
 
-const PullToRefreshIndicator = ({ pullDistance, isRefreshing, threshold }: PullToRefreshIndicatorProps) => {
+const PullToRefreshIndicator = ({
+  pullDistance,
+  isRefreshing,
+  threshold,
+}: PullToRefreshIndicatorProps) => {
   const normalizedDistance = Math.min(pullDistance, threshold * 1.5);
   const opacity = Math.min(normalizedDistance / threshold, 1);
-  const scale = 0.5 + (opacity * 0.5);
+  const scale = 0.5 + opacity * 0.5;
   const rotation = normalizedDistance * 3;
 
   return (
     <div
+      aria-label={
+        isRefreshing
+          ? 'Refreshing content'
+          : `Pull ${pullDistance >= threshold ? 'to refresh' : 'down more to refresh'}`
+      }
+      aria-live="polite"
       className={cn(
-        "absolute top-0 left-1/2 -translate-x-1/2 w-10 h-10",
-        "flex items-center justify-center rounded-full",
-        "bg-primary text-primary-foreground shadow-lg",
-        "transition-all duration-200 ease-out",
-        "pointer-events-none z-50",
-        pullDistance > 0 ? "opacity-100" : "opacity-0"
+        '-translate-x-1/2 absolute top-0 left-1/2 h-10 w-10',
+        'flex items-center justify-center rounded-full',
+        'bg-primary text-primary-foreground shadow-lg',
+        'transition-all duration-200 ease-out',
+        'pointer-events-none z-50',
+        pullDistance > 0 ? 'opacity-100' : 'opacity-0'
       )}
+      role="status"
       style={{
         transform: `translateX(-50%) translateY(${normalizedDistance - 50}px) scale(${scale})`,
-        opacity
+        opacity,
       }}
-      role="status"
-      aria-label={isRefreshing ? "Refreshing content" : `Pull ${pullDistance >= threshold ? 'to refresh' : 'down more to refresh'}`}
-      aria-live="polite"
     >
       <svg
-        className={cn("w-5 h-5", isRefreshing && "animate-spin")}
-        fill="none"
-        viewBox="0 0 24 24"
-        style={{ transform: !isRefreshing ? `rotate(${rotation}deg)` : undefined }}
         aria-hidden="true"
+        className={cn('h-5 w-5', isRefreshing && 'animate-spin')}
+        fill="none"
+        style={{
+          transform: isRefreshing ? undefined : `rotate(${rotation}deg)`,
+        }}
+        viewBox="0 0 24 24"
       >
         <circle
           className="opacity-25"
@@ -119,8 +129,8 @@ const PullToRefreshIndicator = ({ pullDistance, isRefreshing, threshold }: PullT
         />
         <path
           className="opacity-75"
-          fill="currentColor"
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          fill="currentColor"
         />
       </svg>
     </div>
@@ -139,46 +149,52 @@ const usePullToRefresh = ({
   onRefresh,
   threshold = 80,
   resistance = 2.5,
-  disabled = false
+  disabled = false,
 }: UsePullToRefreshOptions) => {
   const [isPulling, setIsPulling] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
-  
+
   const startY = useRef(0);
   const currentY = useRef(0);
   const hasAnnouncedThreshold = useRef(false);
 
-  const handleTouchStart = useCallback((e: TouchEvent) => {
-    if (disabled || isRefreshing || window.scrollY > 0) return;
-    
-    startY.current = e.touches[0]?.clientY || 0;
-    setIsPulling(true);
-    hasAnnouncedThreshold.current = false;
-  }, [disabled, isRefreshing]);
+  const handleTouchStart = useCallback(
+    (e: TouchEvent) => {
+      if (disabled || isRefreshing || window.scrollY > 0) return;
 
-  const handleTouchMove = useCallback((e: TouchEvent) => {
-    if (!isPulling || disabled || isRefreshing || window.scrollY > 0) return;
+      startY.current = e.touches[0]?.clientY || 0;
+      setIsPulling(true);
+      hasAnnouncedThreshold.current = false;
+    },
+    [disabled, isRefreshing]
+  );
 
-    currentY.current = e.touches[0]?.clientY || 0;
-    const distance = Math.max(0, currentY.current - startY.current);
+  const handleTouchMove = useCallback(
+    (e: TouchEvent) => {
+      if (!isPulling || disabled || isRefreshing || window.scrollY > 0) return;
 
-    if (distance > 0) {
-      // Only prevent default when actually pulling to refresh
-      if (isPulling && distance > 5) {
-        e.preventDefault();
+      currentY.current = e.touches[0]?.clientY || 0;
+      const distance = Math.max(0, currentY.current - startY.current);
+
+      if (distance > 0) {
+        // Only prevent default when actually pulling to refresh
+        if (isPulling && distance > 5) {
+          e.preventDefault();
+        }
+        const resistedDistance = distance / resistance;
+        setPullDistance(resistedDistance);
+
+        // Haptic feedback and screen reader announcement at threshold
+        if (resistedDistance >= threshold && !hasAnnouncedThreshold.current) {
+          hapticFeedback.light();
+          announceToScreenReader('Release to refresh');
+          hasAnnouncedThreshold.current = true;
+        }
       }
-      const resistedDistance = distance / resistance;
-      setPullDistance(resistedDistance);
-
-      // Haptic feedback and screen reader announcement at threshold
-      if (resistedDistance >= threshold && !hasAnnouncedThreshold.current) {
-        hapticFeedback.light();
-        announceToScreenReader('Release to refresh');
-        hasAnnouncedThreshold.current = true;
-      }
-    }
-  }, [isPulling, disabled, isRefreshing, resistance, threshold]);
+    },
+    [isPulling, disabled, isRefreshing, resistance, threshold]
+  );
 
   const handleTouchEnd = useCallback(async () => {
     if (!isPulling || disabled) return;
@@ -207,22 +223,25 @@ const usePullToRefresh = ({
   }, [isPulling, disabled, pullDistance, threshold, isRefreshing, onRefresh]);
 
   // Keyboard support for pull-to-refresh
-  const handleKeyboardRefresh = useCallback(async (e: KeyboardEvent) => {
-    if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) {
-      e.preventDefault();
-      setIsRefreshing(true);
-      announceToScreenReader('Refreshing content');
-      
-      try {
-        await onRefresh();
-        announceToScreenReader('Content refreshed successfully');
-      } catch (error) {
-        announceToScreenReader('Refresh failed. Please try again.');
-      } finally {
-        setIsRefreshing(false);
+  const handleKeyboardRefresh = useCallback(
+    async (e: KeyboardEvent) => {
+      if (e.key === 'F5' || (e.ctrlKey && e.key === 'r')) {
+        e.preventDefault();
+        setIsRefreshing(true);
+        announceToScreenReader('Refreshing content');
+
+        try {
+          await onRefresh();
+          announceToScreenReader('Content refreshed successfully');
+        } catch (error) {
+          announceToScreenReader('Refresh failed. Please try again.');
+        } finally {
+          setIsRefreshing(false);
+        }
       }
-    }
-  }, [onRefresh]);
+    },
+    [onRefresh]
+  );
 
   return {
     isPulling,
@@ -233,8 +252,8 @@ const usePullToRefresh = ({
       onTouchStart: handleTouchStart,
       onTouchMove: handleTouchMove,
       onTouchEnd: handleTouchEnd,
-      onKeyDown: handleKeyboardRefresh
-    }
+      onKeyDown: handleKeyboardRefresh,
+    },
   };
 };
 
@@ -256,7 +275,7 @@ const useSwipeGesture = ({
   onSwipeDown,
   threshold = 50,
   restraint = 100,
-  allowMouseEvents = false
+  allowMouseEvents = false,
 }: UseSwipeGestureOptions) => {
   const touchStart = useRef({ x: 0, y: 0 });
   const touchEnd = useRef({ x: 0, y: 0 });
@@ -265,85 +284,96 @@ const useSwipeGesture = ({
     touchStart.current = { x: clientX, y: clientY };
   }, []);
 
-  const handleEnd = useCallback((clientX: number, clientY: number) => {
-    touchEnd.current = { x: clientX, y: clientY };
+  const handleEnd = useCallback(
+    (clientX: number, clientY: number) => {
+      touchEnd.current = { x: clientX, y: clientY };
 
-    const deltaX = touchEnd.current.x - touchStart.current.x;
-    const deltaY = touchEnd.current.y - touchStart.current.y;
-    const absX = Math.abs(deltaX);
-    const absY = Math.abs(deltaY);
+      const deltaX = touchEnd.current.x - touchStart.current.x;
+      const deltaY = touchEnd.current.y - touchStart.current.y;
+      const absX = Math.abs(deltaX);
+      const absY = Math.abs(deltaY);
 
-    // Horizontal swipe
-    if (absX > threshold && absY < restraint) {
-      if (deltaX > 0 && onSwipeRight) {
-        hapticFeedback.light();
-        announceToScreenReader('Swiped right');
-        onSwipeRight();
-      } else if (deltaX < 0 && onSwipeLeft) {
-        hapticFeedback.light();
-        announceToScreenReader('Swiped left');
-        onSwipeLeft();
-      }
-    }
-
-    // Vertical swipe
-    if (absY > threshold && absX < restraint) {
-      if (deltaY > 0 && onSwipeDown) {
-        hapticFeedback.light();
-        announceToScreenReader('Swiped down');
-        onSwipeDown();
-      } else if (deltaY < 0 && onSwipeUp) {
-        hapticFeedback.light();
-        announceToScreenReader('Swiped up');
-        onSwipeUp();
-      }
-    }
-  }, [threshold, restraint, onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown]);
-
-  // Keyboard alternatives for swipe gestures
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (!e.ctrlKey) return;
-
-    switch (e.key) {
-      case 'ArrowLeft':
-        e.preventDefault();
-        if (onSwipeLeft) {
-          announceToScreenReader('Navigated left');
+      // Horizontal swipe
+      if (absX > threshold && absY < restraint) {
+        if (deltaX > 0 && onSwipeRight) {
+          hapticFeedback.light();
+          announceToScreenReader('Swiped right');
+          onSwipeRight();
+        } else if (deltaX < 0 && onSwipeLeft) {
+          hapticFeedback.light();
+          announceToScreenReader('Swiped left');
           onSwipeLeft();
         }
-        break;
-      case 'ArrowRight':
-        e.preventDefault();
-        if (onSwipeRight) {
-          announceToScreenReader('Navigated right');
-          onSwipeRight();
-        }
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        if (onSwipeUp) {
-          announceToScreenReader('Navigated up');
+      }
+
+      // Vertical swipe
+      if (absY > threshold && absX < restraint) {
+        if (deltaY > 0 && onSwipeDown) {
+          hapticFeedback.light();
+          announceToScreenReader('Swiped down');
+          onSwipeDown();
+        } else if (deltaY < 0 && onSwipeUp) {
+          hapticFeedback.light();
+          announceToScreenReader('Swiped up');
           onSwipeUp();
         }
-        break;
-      case 'ArrowDown':
-        e.preventDefault();
-        if (onSwipeDown) {
-          announceToScreenReader('Navigated down');
-          onSwipeDown();
-        }
-        break;
-    }
-  }, [onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown]);
+      }
+    },
+    [threshold, restraint, onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown]
+  );
+
+  // Keyboard alternatives for swipe gestures
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (!e.ctrlKey) return;
+
+      switch (e.key) {
+        case 'ArrowLeft':
+          e.preventDefault();
+          if (onSwipeLeft) {
+            announceToScreenReader('Navigated left');
+            onSwipeLeft();
+          }
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          if (onSwipeRight) {
+            announceToScreenReader('Navigated right');
+            onSwipeRight();
+          }
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          if (onSwipeUp) {
+            announceToScreenReader('Navigated up');
+            onSwipeUp();
+          }
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          if (onSwipeDown) {
+            announceToScreenReader('Navigated down');
+            onSwipeDown();
+          }
+          break;
+      }
+    },
+    [onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown]
+  );
 
   const handlers = {
-    onTouchStart: (e: React.TouchEvent) => handleStart(e.touches[0]?.clientX || 0, e.touches[0]?.clientY || 0),
-    onTouchEnd: (e: React.TouchEvent) => handleEnd(e.changedTouches[0]?.clientX || 0, e.changedTouches[0]?.clientY || 0),
+    onTouchStart: (e: React.TouchEvent) =>
+      handleStart(e.touches[0]?.clientX || 0, e.touches[0]?.clientY || 0),
+    onTouchEnd: (e: React.TouchEvent) =>
+      handleEnd(
+        e.changedTouches[0]?.clientX || 0,
+        e.changedTouches[0]?.clientY || 0
+      ),
     onKeyDown: handleKeyDown,
     ...(allowMouseEvents && {
       onMouseDown: (e: React.MouseEvent) => handleStart(e.clientX, e.clientY),
-      onMouseUp: (e: React.MouseEvent) => handleEnd(e.clientX, e.clientY)
-    })
+      onMouseUp: (e: React.MouseEvent) => handleEnd(e.clientX, e.clientY),
+    }),
   };
 
   return handlers;
@@ -359,25 +389,28 @@ interface UseLongPressOptions {
 const useLongPress = ({
   onLongPress,
   threshold = 500,
-  preventDefault = true
+  preventDefault = true,
 }: UseLongPressOptions) => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const isPressed = useRef(false);
 
-  const start = useCallback((e: React.TouchEvent | React.MouseEvent) => {
-    if (preventDefault) {
-      e.preventDefault();
-    }
-
-    isPressed.current = true;
-    timerRef.current = setTimeout(() => {
-      if (isPressed.current) {
-        hapticFeedback.medium();
-        announceToScreenReader('Long press activated');
-        onLongPress();
+  const start = useCallback(
+    (e: React.TouchEvent | React.MouseEvent) => {
+      if (preventDefault) {
+        e.preventDefault();
       }
-    }, threshold);
-  }, [onLongPress, threshold, preventDefault]);
+
+      isPressed.current = true;
+      timerRef.current = setTimeout(() => {
+        if (isPressed.current) {
+          hapticFeedback.medium();
+          announceToScreenReader('Long press activated');
+          onLongPress();
+        }
+      }, threshold);
+    },
+    [onLongPress, threshold, preventDefault]
+  );
 
   const cancel = useCallback(() => {
     isPressed.current = false;
@@ -388,13 +421,16 @@ const useLongPress = ({
   }, []);
 
   // Keyboard alternative for long press
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && e.shiftKey) {
-      e.preventDefault();
-      announceToScreenReader('Long press activated via keyboard');
-      onLongPress();
-    }
-  }, [onLongPress]);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' && e.shiftKey) {
+        e.preventDefault();
+        announceToScreenReader('Long press activated via keyboard');
+        onLongPress();
+      }
+    },
+    [onLongPress]
+  );
 
   return {
     onTouchStart: start,
@@ -403,7 +439,7 @@ const useLongPress = ({
     onMouseDown: start,
     onMouseUp: cancel,
     onMouseLeave: cancel,
-    onKeyDown: handleKeyDown
+    onKeyDown: handleKeyDown,
   };
 };
 
@@ -415,7 +451,7 @@ interface UseDoubleTapOptions {
 
 const useDoubleTap = ({
   onDoubleTap,
-  threshold = 300
+  threshold = 300,
 }: UseDoubleTapOptions) => {
   const lastTap = useRef(0);
 
@@ -432,17 +468,20 @@ const useDoubleTap = ({
   }, [onDoubleTap, threshold]);
 
   // Keyboard alternative for double tap
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && e.ctrlKey) {
-      e.preventDefault();
-      announceToScreenReader('Double tap activated via keyboard');
-      onDoubleTap();
-    }
-  }, [onDoubleTap]);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' && e.ctrlKey) {
+        e.preventDefault();
+        announceToScreenReader('Double tap activated via keyboard');
+        onDoubleTap();
+      }
+    },
+    [onDoubleTap]
+  );
 
   return {
     onClick: handleTap,
-    onKeyDown: handleKeyDown
+    onKeyDown: handleKeyDown,
   };
 };
 
@@ -462,183 +501,218 @@ interface MobileInteractionsProps {
   'aria-describedby'?: string;
 }
 
-export const MobileInteractions = forwardRef<HTMLDivElement, MobileInteractionsProps>(({
-  children,
-  onRefresh,
-  onSwipeLeft,
-  onSwipeRight,
-  onSwipeUp,
-  onSwipeDown,
-  enablePullToRefresh = true,
-  enableSwipeGestures = true,
-  enableHapticFeedback = true,
-  className,
-  'aria-label': ariaLabel,
-  'aria-describedby': ariaDescribedBy
-}, ref) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const mergedRef = ref || containerRef;
+export const MobileInteractions = forwardRef<
+  HTMLDivElement,
+  MobileInteractionsProps
+>(
+  (
+    {
+      children,
+      onRefresh,
+      onSwipeLeft,
+      onSwipeRight,
+      onSwipeUp,
+      onSwipeDown,
+      enablePullToRefresh = true,
+      enableSwipeGestures = true,
+      enableHapticFeedback = true,
+      className,
+      'aria-label': ariaLabel,
+      'aria-describedby': ariaDescribedBy,
+    },
+    ref
+  ) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const mergedRef = ref || containerRef;
 
-  // Pull-to-refresh
-  const pullToRefresh = usePullToRefresh({
-    onRefresh: onRefresh || (async () => {}),
-    disabled: !enablePullToRefresh || !onRefresh
-  });
-
-  // Swipe gestures
-  const swipeHandlers = useSwipeGesture({
-    onSwipeLeft,
-    onSwipeRight,
-    onSwipeUp,
-    onSwipeDown
-  });
-
-  // Add haptic feedback to all interactive elements
-  useEffect(() => {
-    if (!enableHapticFeedback) return;
-
-    const handleInteraction = () => hapticFeedback.light();
-    const attachedElements = new WeakMap<Element, boolean>();
-    
-    const addHapticToElement = (element: Element) => {
-      if (!attachedElements.has(element)) {
-        element.addEventListener('click', handleInteraction, { passive: true });
-        attachedElements.set(element, true);
-      }
-    };
-    
-    const removeHapticFromElement = (element: Element) => {
-      if (attachedElements.has(element)) {
-        element.removeEventListener('click', handleInteraction);
-        attachedElements.delete(element);
-      }
-    };
-
-    // Initial setup
-    const selector = 'button, a[href], input, textarea, select, [role="button"], [tabindex]:not([tabindex="-1"])';
-    const initialElements = document.querySelectorAll(selector);
-    initialElements.forEach(addHapticToElement);
-
-    // Observe only specific mutations
-    let mutationTimeout: NodeJS.Timeout | null = null;
-    const observer = new MutationObserver((mutations) => {
-      // Debounce mutation handling
-      if (mutationTimeout) clearTimeout(mutationTimeout);
-      
-      mutationTimeout = setTimeout(() => {
-        mutations.forEach(mutation => {
-          // Handle removed nodes
-          mutation.removedNodes.forEach(node => {
-            if (node.nodeType === Node.ELEMENT_NODE) {
-              const element = node as Element;
-              if (element.matches && element.matches(selector)) {
-                removeHapticFromElement(element);
-              }
-              // Check descendants
-              const descendants = element.querySelectorAll?.(selector);
-              descendants?.forEach(removeHapticFromElement);
-            }
-          });
-          
-          // Handle added nodes
-          mutation.addedNodes.forEach(node => {
-            if (node.nodeType === Node.ELEMENT_NODE) {
-              const element = node as Element;
-              if (element.matches && element.matches(selector)) {
-                addHapticToElement(element);
-              }
-              // Check descendants
-              const descendants = element.querySelectorAll?.(selector);
-              descendants?.forEach(addHapticToElement);
-            }
-          });
-        });
-      }, 100); // Debounce by 100ms
-    });
-    
-    observer.observe(document.body, { 
-      childList: true, 
-      subtree: true,
-      attributes: false,
-      characterData: false
+    // Pull-to-refresh
+    const pullToRefresh = usePullToRefresh({
+      onRefresh: onRefresh || (async () => {}),
+      disabled: !(enablePullToRefresh && onRefresh),
     });
 
-    return () => {
-      if (mutationTimeout) clearTimeout(mutationTimeout);
-      observer.disconnect();
-      // Clean up all event listeners
-      const allElements = document.querySelectorAll(selector);
-      allElements.forEach(removeHapticFromElement);
-    };
-  }, [enableHapticFeedback]);
+    // Swipe gestures
+    const swipeHandlers = useSwipeGesture({
+      onSwipeLeft,
+      onSwipeRight,
+      onSwipeUp,
+      onSwipeDown,
+    });
 
-  // Setup pull-to-refresh event listeners
-  useEffect(() => {
-    if (!enablePullToRefresh || !onRefresh) return;
+    // Add haptic feedback to all interactive elements
+    useEffect(() => {
+      if (!enableHapticFeedback) return;
 
-    const element = (mergedRef as React.RefObject<HTMLDivElement>).current;
-    if (!element) return;
+      const handleInteraction = () => hapticFeedback.light();
+      const attachedElements = new WeakMap<Element, boolean>();
 
-    const { onTouchStart, onTouchMove, onTouchEnd, onKeyDown } = pullToRefresh.handlers;
+      const addHapticToElement = (element: Element) => {
+        if (!attachedElements.has(element)) {
+          element.addEventListener('click', handleInteraction, {
+            passive: true,
+          });
+          attachedElements.set(element, true);
+        }
+      };
 
-    // Use AbortController for better cleanup
-    const controller = new AbortController();
-    const signal = controller.signal;
+      const removeHapticFromElement = (element: Element) => {
+        if (attachedElements.has(element)) {
+          element.removeEventListener('click', handleInteraction);
+          attachedElements.delete(element);
+        }
+      };
 
-    element.addEventListener('touchstart', onTouchStart as any, { passive: true, signal });
-    element.addEventListener('touchmove', onTouchMove as any, { passive: false, signal });
-    element.addEventListener('touchend', onTouchEnd as any, { passive: true, signal });
-    element.addEventListener('touchcancel', onTouchEnd as any, { passive: true, signal });
-    document.addEventListener('keydown', onKeyDown as any, { signal });
+      // Initial setup
+      const selector =
+        'button, a[href], input, textarea, select, [role="button"], [tabindex]:not([tabindex="-1"])';
+      const initialElements = document.querySelectorAll(selector);
+      initialElements.forEach(addHapticToElement);
 
-    return () => {
-      controller.abort();
-    };
-  }, [enablePullToRefresh, onRefresh, pullToRefresh.handlers, mergedRef]);
+      // Observe only specific mutations
+      let mutationTimeout: NodeJS.Timeout | null = null;
+      const observer = new MutationObserver((mutations) => {
+        // Debounce mutation handling
+        if (mutationTimeout) clearTimeout(mutationTimeout);
 
-  // Announce gesture controls to screen readers on mount
-  useEffect(() => {
-    const controls: string[] = [];
-    
-    if (enablePullToRefresh && onRefresh) {
-      controls.push('Pull down or press F5 to refresh');
-    }
-    
-    if (enableSwipeGestures) {
-      const swipeControls: string[] = [];
-      if (onSwipeLeft) swipeControls.push('Ctrl+Left Arrow to navigate left');
-      if (onSwipeRight) swipeControls.push('Ctrl+Right Arrow to navigate right');
-      if (onSwipeUp) swipeControls.push('Ctrl+Up Arrow to navigate up');
-      if (onSwipeDown) swipeControls.push('Ctrl+Down Arrow to navigate down');
-      controls.push(...swipeControls);
-    }
-    
-    if (controls.length > 0) {
-      announceToScreenReader(`Gesture controls available: ${controls.join(', ')}`);
-    }
-  }, [enablePullToRefresh, enableSwipeGestures, onRefresh, onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown]);
+        mutationTimeout = setTimeout(() => {
+          mutations.forEach((mutation) => {
+            // Handle removed nodes
+            mutation.removedNodes.forEach((node) => {
+              if (node.nodeType === Node.ELEMENT_NODE) {
+                const element = node as Element;
+                if (element.matches && element.matches(selector)) {
+                  removeHapticFromElement(element);
+                }
+                // Check descendants
+                const descendants = element.querySelectorAll?.(selector);
+                descendants?.forEach(removeHapticFromElement);
+              }
+            });
 
-  return (
-    <div
-      ref={mergedRef}
-      className={cn("relative", className)}
-      {...(enableSwipeGestures ? swipeHandlers : {})}
-      role="region"
-      aria-label={ariaLabel || "Interactive content area"}
-      aria-describedby={ariaDescribedBy}
-      tabIndex={enableSwipeGestures ? 0 : undefined}
-    >
-      {enablePullToRefresh && onRefresh && (
-        <PullToRefreshIndicator
-          pullDistance={pullToRefresh.pullDistance}
-          isRefreshing={pullToRefresh.isRefreshing}
-          threshold={pullToRefresh.threshold}
-        />
-      )}
-      {children}
-    </div>
-  );
-});
+            // Handle added nodes
+            mutation.addedNodes.forEach((node) => {
+              if (node.nodeType === Node.ELEMENT_NODE) {
+                const element = node as Element;
+                if (element.matches && element.matches(selector)) {
+                  addHapticToElement(element);
+                }
+                // Check descendants
+                const descendants = element.querySelectorAll?.(selector);
+                descendants?.forEach(addHapticToElement);
+              }
+            });
+          });
+        }, 100); // Debounce by 100ms
+      });
+
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: false,
+        characterData: false,
+      });
+
+      return () => {
+        if (mutationTimeout) clearTimeout(mutationTimeout);
+        observer.disconnect();
+        // Clean up all event listeners
+        const allElements = document.querySelectorAll(selector);
+        allElements.forEach(removeHapticFromElement);
+      };
+    }, [enableHapticFeedback]);
+
+    // Setup pull-to-refresh event listeners
+    useEffect(() => {
+      if (!(enablePullToRefresh && onRefresh)) return;
+
+      const element = (mergedRef as React.RefObject<HTMLDivElement>).current;
+      if (!element) return;
+
+      const { onTouchStart, onTouchMove, onTouchEnd, onKeyDown } =
+        pullToRefresh.handlers;
+
+      // Use AbortController for better cleanup
+      const controller = new AbortController();
+      const signal = controller.signal;
+
+      element.addEventListener('touchstart', onTouchStart as any, {
+        passive: true,
+        signal,
+      });
+      element.addEventListener('touchmove', onTouchMove as any, {
+        passive: false,
+        signal,
+      });
+      element.addEventListener('touchend', onTouchEnd as any, {
+        passive: true,
+        signal,
+      });
+      element.addEventListener('touchcancel', onTouchEnd as any, {
+        passive: true,
+        signal,
+      });
+      document.addEventListener('keydown', onKeyDown as any, { signal });
+
+      return () => {
+        controller.abort();
+      };
+    }, [enablePullToRefresh, onRefresh, pullToRefresh.handlers, mergedRef]);
+
+    // Announce gesture controls to screen readers on mount
+    useEffect(() => {
+      const controls: string[] = [];
+
+      if (enablePullToRefresh && onRefresh) {
+        controls.push('Pull down or press F5 to refresh');
+      }
+
+      if (enableSwipeGestures) {
+        const swipeControls: string[] = [];
+        if (onSwipeLeft) swipeControls.push('Ctrl+Left Arrow to navigate left');
+        if (onSwipeRight)
+          swipeControls.push('Ctrl+Right Arrow to navigate right');
+        if (onSwipeUp) swipeControls.push('Ctrl+Up Arrow to navigate up');
+        if (onSwipeDown) swipeControls.push('Ctrl+Down Arrow to navigate down');
+        controls.push(...swipeControls);
+      }
+
+      if (controls.length > 0) {
+        announceToScreenReader(
+          `Gesture controls available: ${controls.join(', ')}`
+        );
+      }
+    }, [
+      enablePullToRefresh,
+      enableSwipeGestures,
+      onRefresh,
+      onSwipeLeft,
+      onSwipeRight,
+      onSwipeUp,
+      onSwipeDown,
+    ]);
+
+    return (
+      <div
+        className={cn('relative', className)}
+        ref={mergedRef}
+        {...(enableSwipeGestures ? swipeHandlers : {})}
+        aria-describedby={ariaDescribedBy}
+        aria-label={ariaLabel || 'Interactive content area'}
+        role="region"
+        tabIndex={enableSwipeGestures ? 0 : undefined}
+      >
+        {enablePullToRefresh && onRefresh && (
+          <PullToRefreshIndicator
+            isRefreshing={pullToRefresh.isRefreshing}
+            pullDistance={pullToRefresh.pullDistance}
+            threshold={pullToRefresh.threshold}
+          />
+        )}
+        {children}
+      </div>
+    );
+  }
+);
 
 MobileInteractions.displayName = 'MobileInteractions';
 
@@ -653,7 +727,12 @@ interface ReachabilityZoneProps {
   'aria-label'?: string;
 }
 
-export const ReachabilityZone = ({ children, onActivate, className, 'aria-label': ariaLabel }: ReachabilityZoneProps) => {
+export const ReachabilityZone = ({
+  children,
+  onActivate,
+  className,
+  'aria-label': ariaLabel,
+}: ReachabilityZoneProps) => {
   const doubleTapHandlers = useDoubleTap({
     onDoubleTap: () => {
       if (onActivate) {
@@ -663,16 +742,16 @@ export const ReachabilityZone = ({ children, onActivate, className, 'aria-label'
         window.scrollTo({ top: 0, behavior: 'smooth' });
         announceToScreenReader('Scrolled to top');
       }
-    }
+    },
   });
 
   return (
-    <div 
-      className={cn("cursor-pointer", className)} 
+    <div
+      className={cn('cursor-pointer', className)}
       {...doubleTapHandlers}
+      aria-label={ariaLabel || 'Double tap or Ctrl+Enter to activate'}
       role="button"
       tabIndex={0}
-      aria-label={ariaLabel || "Double tap or Ctrl+Enter to activate"}
     >
       {children}
     </div>

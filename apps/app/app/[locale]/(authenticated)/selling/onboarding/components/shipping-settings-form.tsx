@@ -1,13 +1,25 @@
 'use client';
 
-import { useState } from 'react';
 import { Button } from '@repo/design-system/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@repo/design-system/components/ui/card';
 import { Input } from '@repo/design-system/components/ui/input';
 import { Label } from '@repo/design-system/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/design-system/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@repo/design-system/components/ui/select';
 import { Textarea } from '@repo/design-system/components/ui/textarea';
 import { Package, Truck } from 'lucide-react';
+import { useState } from 'react';
 
 interface ShippingSettingsData {
   shippingFrom: string;
@@ -23,7 +35,12 @@ interface ShippingSettingsFormProps {
   onBack: () => void;
 }
 
-export function ShippingSettingsForm({ data, onUpdate, onNext, onBack }: ShippingSettingsFormProps) {
+export function ShippingSettingsForm({
+  data,
+  onUpdate,
+  onNext,
+  onBack,
+}: ShippingSettingsFormProps) {
   const [formData, setFormData] = useState(data);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -37,21 +54,24 @@ export function ShippingSettingsForm({ data, onUpdate, onNext, onBack }: Shippin
       <CardHeader>
         <CardTitle>Shipping Settings</CardTitle>
         <CardDescription>
-          Set your default shipping preferences. You can customize these for each listing.
+          Set your default shipping preferences. You can customize these for
+          each listing.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-2">
             <Label htmlFor="shippingFrom">Ships From</Label>
             <Input
               id="shippingFrom"
-              value={formData.shippingFrom}
-              onChange={(e) => setFormData({ ...formData, shippingFrom: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, shippingFrom: e.target.value })
+              }
               placeholder="City, State/Country"
               required
+              value={formData.shippingFrom}
             />
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Buyers will see this location
             </p>
           </div>
@@ -59,8 +79,10 @@ export function ShippingSettingsForm({ data, onUpdate, onNext, onBack }: Shippin
           <div className="space-y-2">
             <Label htmlFor="processingTime">Processing Time</Label>
             <Select
+              onValueChange={(value) =>
+                setFormData({ ...formData, processingTime: value })
+              }
               value={formData.processingTime}
-              onValueChange={(value) => setFormData({ ...formData, processingTime: value })}
             >
               <SelectTrigger id="processingTime">
                 <SelectValue placeholder="Select processing time" />
@@ -73,7 +95,7 @@ export function ShippingSettingsForm({ data, onUpdate, onNext, onBack }: Shippin
                 <SelectItem value="7">1 week</SelectItem>
               </SelectContent>
             </Select>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               How long before you ship after receiving an order
             </p>
           </div>
@@ -81,20 +103,27 @@ export function ShippingSettingsForm({ data, onUpdate, onNext, onBack }: Shippin
           <div className="space-y-2">
             <Label htmlFor="defaultShippingCost">Default Shipping Cost</Label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+              <span className="-translate-y-1/2 absolute top-1/2 left-3 text-muted-foreground">
+                $
+              </span>
               <Input
-                id="defaultShippingCost"
-                type="number"
-                step="0.01"
-                min="0"
-                value={formData.defaultShippingCost}
-                onChange={(e) => setFormData({ ...formData, defaultShippingCost: e.target.value })}
                 className="pl-8"
+                id="defaultShippingCost"
+                min="0"
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    defaultShippingCost: e.target.value,
+                  })
+                }
                 placeholder="0.00"
                 required
+                step="0.01"
+                type="number"
+                value={formData.defaultShippingCost}
               />
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               You can set custom shipping for each item
             </p>
           </div>
@@ -103,10 +132,12 @@ export function ShippingSettingsForm({ data, onUpdate, onNext, onBack }: Shippin
             <Label htmlFor="shippingNotes">Shipping Notes (Optional)</Label>
             <Textarea
               id="shippingNotes"
-              value={formData.shippingNotes}
-              onChange={(e) => setFormData({ ...formData, shippingNotes: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, shippingNotes: e.target.value })
+              }
               placeholder="Any special shipping information buyers should know..."
               rows={3}
+              value={formData.shippingNotes}
             />
           </div>
 
@@ -117,8 +148,9 @@ export function ShippingSettingsForm({ data, onUpdate, onNext, onBack }: Shippin
                   <Package className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <p className="font-medium text-sm">Packaging Tips</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Use clean packaging and include a thank you note for better reviews
+                    <p className="mt-1 text-muted-foreground text-xs">
+                      Use clean packaging and include a thank you note for
+                      better reviews
                     </p>
                   </div>
                 </div>
@@ -130,7 +162,7 @@ export function ShippingSettingsForm({ data, onUpdate, onNext, onBack }: Shippin
                   <Truck className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <p className="font-medium text-sm">Tracking</p>
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className="mt-1 text-muted-foreground text-xs">
                       Always provide tracking numbers to protect yourself
                     </p>
                   </div>
@@ -140,7 +172,7 @@ export function ShippingSettingsForm({ data, onUpdate, onNext, onBack }: Shippin
           </div>
 
           <div className="flex justify-between">
-            <Button type="button" variant="outline" onClick={onBack}>
+            <Button onClick={onBack} type="button" variant="outline">
               Back
             </Button>
             <Button type="submit">Continue</Button>

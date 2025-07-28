@@ -152,9 +152,21 @@ export const footerLinks: NavigationSection[] = [
   {
     title: 'Social',
     links: [
-      { href: 'https://twitter.com/threadly', label: 'Twitter', external: true },
-      { href: 'https://instagram.com/threadly', label: 'Instagram', external: true },
-      { href: 'https://facebook.com/threadly', label: 'Facebook', external: true },
+      {
+        href: 'https://twitter.com/threadly',
+        label: 'Twitter',
+        external: true,
+      },
+      {
+        href: 'https://instagram.com/threadly',
+        label: 'Instagram',
+        external: true,
+      },
+      {
+        href: 'https://facebook.com/threadly',
+        label: 'Facebook',
+        external: true,
+      },
       { href: 'https://tiktok.com/@threadly', label: 'TikTok', external: true },
     ],
   },

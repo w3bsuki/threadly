@@ -1,9 +1,13 @@
 'use client';
 
-import { lazy, Suspense } from 'react';
 import { Skeleton } from '@repo/design-system/components';
+import { lazy, Suspense } from 'react';
 
-const MessagesContent = lazy(() => import('./messages-content').then(module => ({ default: module.MessagesContent })));
+const MessagesContent = lazy(() =>
+  import('./messages-content').then((module) => ({
+    default: module.MessagesContent,
+  }))
+);
 
 interface User {
   id: string;
@@ -60,10 +64,10 @@ function MessagesContentSkeleton() {
   return (
     <div className="flex h-[calc(100vh-200px)]">
       <div className="w-1/3 border-r">
-        <div className="p-4 space-y-3">
+        <div className="space-y-3 p-4">
           <Skeleton className="h-4 w-24" />
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3" key={i}>
               <Skeleton className="h-10 w-10 rounded-[var(--radius-full)]" />
               <div className="flex-1 space-y-2">
                 <Skeleton className="h-4 w-32" />
@@ -73,18 +77,23 @@ function MessagesContentSkeleton() {
           ))}
         </div>
       </div>
-      <div className="flex-1 flex flex-col">
-        <div className="p-4 border-b">
+      <div className="flex flex-1 flex-col">
+        <div className="border-b p-4">
           <Skeleton className="h-6 w-48" />
         </div>
-        <div className="flex-1 p-4 space-y-4">
+        <div className="flex-1 space-y-4 p-4">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className={`flex ${i % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
-              <Skeleton className={`h-10 ${i % 2 === 0 ? 'w-48' : 'w-32'} rounded-[var(--radius-lg)]`} />
+            <div
+              className={`flex ${i % 2 === 0 ? 'justify-start' : 'justify-end'}`}
+              key={i}
+            >
+              <Skeleton
+                className={`h-10 ${i % 2 === 0 ? 'w-48' : 'w-32'} rounded-[var(--radius-lg)]`}
+              />
             </div>
           ))}
         </div>
-        <div className="p-4 border-t">
+        <div className="border-t p-4">
           <Skeleton className="h-10 w-full" />
         </div>
       </div>

@@ -1,9 +1,9 @@
 'use client';
 
-import * as React from 'react';
-import Image from 'next/image';
-import { cn } from '../../lib/utils';
 import { Package } from 'lucide-react';
+import Image from 'next/image';
+import * as React from 'react';
+import { cn } from '../../lib/utils';
 
 export interface ProductImageProps {
   src: string;
@@ -55,32 +55,38 @@ export const ProductImage: React.FC<ProductImageProps> = ({
     <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-muted to-muted/50 text-muted-foreground">
       <div className="flex flex-col items-center gap-2">
         <Package className="h-8 w-8" />
-        <span className="text-xs font-medium">No Image</span>
+        <span className="font-medium text-xs">No Image</span>
       </div>
     </div>
   );
 
   return (
-    <div className={cn('relative overflow-hidden bg-muted', aspectRatioClasses[aspectRatio], className)}>
+    <div
+      className={cn(
+        'relative overflow-hidden bg-muted',
+        aspectRatioClasses[aspectRatio],
+        className
+      )}
+    >
       {!imageError && src ? (
         <>
           <Image
-            src={src}
             alt={alt}
-            fill
-            quality={quality}
-            priority={priority}
             className={cn(
               'object-cover transition-all duration-300',
-              isLoading && blur && 'blur-sm scale-105',
-              !isLoading && 'blur-0 scale-100'
+              isLoading && blur && 'scale-105 blur-sm',
+              !isLoading && 'scale-100 blur-0'
             )}
-            onLoad={handleLoad}
+            fill
             onError={handleError}
+            onLoad={handleLoad}
+            priority={priority}
+            quality={quality}
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+            src={src}
           />
           {isLoading && blur && (
-            <div className="absolute inset-0 bg-muted/20 animate-pulse" />
+            <div className="absolute inset-0 animate-pulse bg-muted/20" />
           )}
         </>
       ) : (
@@ -123,9 +129,9 @@ export const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
     return (
       <div className={className}>
         <ProductImage
-          src=""
           alt="No images available"
           aspectRatio={aspectRatio}
+          src=""
         />
       </div>
     );
@@ -135,11 +141,11 @@ export const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
     <div className={cn('space-y-4', className)}>
       {/* Main Image */}
       <ProductImage
-        src={images[selectedIndex]?.imageUrl || ''}
         alt={images[selectedIndex]?.alt || `Product image ${selectedIndex + 1}`}
         aspectRatio={aspectRatio}
-        priority={selectedIndex === 0}
         className="w-full"
+        priority={selectedIndex === 0}
+        src={images[selectedIndex]?.imageUrl || ''}
       />
 
       {/* Thumbnails */}
@@ -147,25 +153,25 @@ export const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({
         <div className="grid grid-cols-4 gap-2">
           {images.slice(0, 4).map((image, index) => (
             <button
-              key={image.id || index}
-              onClick={() => handleImageSelect(index)}
               className={cn(
-                'relative rounded-[var(--radius-lg)] overflow-hidden border-2 transition-all',
+                'relative overflow-hidden rounded-[var(--radius-lg)] border-2 transition-all',
                 selectedIndex === index
                   ? 'border-primary shadow-md'
                   : 'border-transparent hover:border-muted-foreground/50'
               )}
+              key={image.id || index}
+              onClick={() => handleImageSelect(index)}
             >
               <ProductImage
-                src={image.imageUrl}
                 alt={image.alt || `Thumbnail ${index + 1}`}
                 aspectRatio="1/1"
-                className="h-16 w-16"
                 blur={false}
+                className="h-16 w-16"
                 quality={60}
+                src={image.imageUrl}
               />
               {index === 3 && images.length > 4 && (
-                <div className="absolute inset-0 bg-foreground/50 flex items-center justify-center text-background text-xs font-medium">
+                <div className="absolute inset-0 flex items-center justify-center bg-foreground/50 font-medium text-background text-xs">
                   +{images.length - 4}
                 </div>
               )}

@@ -1,5 +1,5 @@
-import { clsx } from 'clsx';
 import type { ClassValue } from 'clsx';
+import { clsx } from 'clsx';
 import { toast } from 'sonner';
 import { twMerge } from 'tailwind-merge';
 

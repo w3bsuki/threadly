@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { validatePaginationParams } from '@repo/design-system/lib/pagination';
-import { generalApiLimit, checkRateLimit } from '@repo/security';
+import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,9 +11,9 @@ export async function GET(request: NextRequest) {
     if (!rateLimitResult.allowed) {
       return NextResponse.json(
         { error: rateLimitResult.error?.message || 'Rate limit exceeded' },
-        { 
+        {
           status: 429,
-          headers: rateLimitResult.headers
+          headers: rateLimitResult.headers,
         }
       );
     }
@@ -50,37 +50,49 @@ export async function GET(request: NextRequest) {
       }>;
       role?: string;
     }
-    
+
     const where: WhereClause = {};
-    
+
     if (search) {
       where.OR = [
         { email: { contains: search } },
         { firstName: { contains: search } },
-        { lastName: { contains: search } }
+        { lastName: { contains: search } },
       ];
     }
-    
+
     if (roleFilter !== 'all') {
       where.role = roleFilter.toUpperCase();
     }
 
     // Custom cursor for joinedAt field (since we order by joinedAt, not createdAt)
-    const cursorWhere = pagination.cursor ? {
-      OR: [
-        {
-          joinedAt: {
-            lt: new Date(Buffer.from(pagination.cursor, 'base64').toString('utf-8').split(':')[0]),
-          },
-        },
-        {
-          joinedAt: new Date(Buffer.from(pagination.cursor, 'base64').toString('utf-8').split(':')[0]),
-          id: {
-            lt: Buffer.from(pagination.cursor, 'base64').toString('utf-8').split(':')[1],
-          },
-        },
-      ],
-    } : {};
+    const cursorWhere = pagination.cursor
+      ? {
+          OR: [
+            {
+              joinedAt: {
+                lt: new Date(
+                  Buffer.from(pagination.cursor, 'base64')
+                    .toString('utf-8')
+                    .split(':')[0]
+                ),
+              },
+            },
+            {
+              joinedAt: new Date(
+                Buffer.from(pagination.cursor, 'base64')
+                  .toString('utf-8')
+                  .split(':')[0]
+              ),
+              id: {
+                lt: Buffer.from(pagination.cursor, 'base64')
+                  .toString('utf-8')
+                  .split(':')[1],
+              },
+            },
+          ],
+        }
+      : {};
 
     // Fetch users with pagination (using joinedAt for cursor)
     const users = await database.user.findMany({
@@ -104,18 +116,21 @@ export async function GET(request: NextRequest) {
           select: {
             Product: true,
             Order_Order_buyerIdToUser: true,
-            Order_Order_sellerIdToUser: true
-          }
-        }
+            Order_Order_sellerIdToUser: true,
+          },
+        },
       },
       take: pagination.limit,
     });
 
     // Process pagination result (create compatible data for cursor generation)
     const hasNextPage = users.length === pagination.limit;
-    const nextCursor = hasNextPage && users.length > 0 
-      ? Buffer.from(`${users[users.length - 1].joinedAt.toISOString()}:${users[users.length - 1].id}`).toString('base64')
-      : undefined;
+    const nextCursor =
+      hasNextPage && users.length > 0
+        ? Buffer.from(
+            `${users[users.length - 1].joinedAt.toISOString()}:${users[users.length - 1].id}`
+          ).toString('base64')
+        : undefined;
 
     return NextResponse.json({
       items: users,

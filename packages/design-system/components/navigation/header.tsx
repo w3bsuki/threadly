@@ -1,14 +1,14 @@
 'use client';
 
-import { ReactNode, useState } from 'react';
+import { Search } from 'lucide-react';
+import { type ReactNode, useState } from 'react';
 import { cn } from '../../lib/utils';
+import { Button } from '../ui/button';
+import { HeaderActions } from './header-actions';
 import { HeaderBase } from './header-base';
 import { HeaderLogo } from './header-logo';
 import { HeaderSearch } from './header-search';
-import { HeaderActions } from './header-actions';
 import { MobileMenu } from './mobile-menu';
-import { Button } from '../ui/button';
-import { Search } from 'lucide-react';
 
 interface HeaderProps {
   logo?: {
@@ -51,23 +51,17 @@ export function Header({
   };
 
   return (
-    <HeaderBase sticky={sticky} className={className}>
+    <HeaderBase className={className} sticky={sticky}>
       {/* Mobile Layout - Simplified */}
       <div className="flex w-full items-center justify-between md:hidden">
         {/* Logo left */}
-        <HeaderLogo
-          href={logo.href}
-          logoText={logo.text}
-          showFullText={true}
-        />
+        <HeaderLogo href={logo.href} logoText={logo.text} showFullText={true} />
 
         {/* Right: Menu only */}
         {mobileMenu ? (
           mobileMenu
         ) : mobileMenuContent ? (
-          <MobileMenu side="right">
-            {mobileMenuContent}
-          </MobileMenu>
+          <MobileMenu side="right">{mobileMenuContent}</MobileMenu>
         ) : null}
       </div>
 
@@ -78,12 +72,12 @@ export function Header({
 
         {/* Search */}
         {search && (
-          <form onSubmit={handleSearchSubmit} className="flex-1 max-w-2xl">
+          <form className="max-w-2xl flex-1" onSubmit={handleSearchSubmit}>
             <HeaderSearch
-              placeholder={search.placeholder}
-              value={searchValue}
               onChange={handleSearchChange}
               onClear={() => setSearchValue('')}
+              placeholder={search.placeholder}
+              value={searchValue}
             />
           </form>
         )}

@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import { useCartStore, type CartItem } from '@repo/commerce';
-import { Button } from '@repo/design-system/components';
-import { ShoppingCart, Check } from 'lucide-react';
-import { cn } from '@repo/design-system/lib/utils';
+import { type CartItem, useCartStore } from '@repo/commerce';
 import { useMobileTouch } from '@repo/design-system';
+import { Button } from '@repo/design-system/components';
+import { cn } from '@repo/design-system/lib/utils';
+import { Check, ShoppingCart } from 'lucide-react';
+import { useState } from 'react';
 
 interface Product {
   id: string;
@@ -28,17 +28,30 @@ interface Product {
 interface AddToCartButtonProps {
   product: Product;
   className?: string;
-  variant?: 'default' | 'outline' | 'secondary' | 'ghost' | 'link' | 'destructive';
-  size?: 'default' | 'sm' | 'lg' | 'icon' | 'mobile' | 'mobile-lg' | 'mobile-icon';
+  variant?:
+    | 'default'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link'
+    | 'destructive';
+  size?:
+    | 'default'
+    | 'sm'
+    | 'lg'
+    | 'icon'
+    | 'mobile'
+    | 'mobile-lg'
+    | 'mobile-icon';
   showText?: boolean;
 }
 
-export function AddToCartButton({ 
-  product, 
+export function AddToCartButton({
+  product,
   className,
   variant = 'default',
   size = 'default',
-  showText = true
+  showText = true,
 }: AddToCartButtonProps): React.JSX.Element {
   const { addItem, isInCart, toggleCart } = useCartStore();
   const [isAdding, setIsAdding] = useState(false);
@@ -46,16 +59,25 @@ export function AddToCartButton({
   const { getMobileButtonSize, getTouchTargetClasses } = useMobileTouch();
 
   const inCart = isInCart(product.id);
-  const sellerName = `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() || 'Unknown Seller';
-  
+  const sellerName =
+    `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() ||
+    'Unknown Seller';
+
   // Use mobile-safe size
-  const buttonSize = getMobileButtonSize(size) as 'default' | 'sm' | 'lg' | 'icon' | 'mobile' | 'mobile-lg' | 'mobile-icon';
+  const buttonSize = getMobileButtonSize(size) as
+    | 'default'
+    | 'sm'
+    | 'lg'
+    | 'icon'
+    | 'mobile'
+    | 'mobile-lg'
+    | 'mobile-icon';
 
   const handleAddToCart = async () => {
     if (product.status !== 'AVAILABLE') return;
-    
+
     setIsAdding(true);
-    
+
     try {
       const cartItem: Omit<CartItem, 'id' | 'quantity'> = {
         productId: product.id,
@@ -71,13 +93,12 @@ export function AddToCartButton({
       };
 
       addItem(cartItem);
-      
+
       setJustAdded(true);
       setTimeout(() => setJustAdded(false), 2000);
-      
+
       // Open cart dropdown to show item was added
       toggleCart();
-      
     } catch (error) {
     } finally {
       setIsAdding(false);
@@ -88,7 +109,7 @@ export function AddToCartButton({
 
   const getButtonText = () => {
     if (!showText) return null;
-    
+
     if (justAdded) return 'Added!';
     if (isAdding) return 'Adding...';
     if (inCart) return 'In Cart';
@@ -104,11 +125,11 @@ export function AddToCartButton({
 
   return (
     <Button
-      variant={inCart ? 'secondary' : variant}
-      size={buttonSize}
       className={cn(getTouchTargetClasses(), className)}
-      onClick={handleAddToCart}
       disabled={isDisabled}
+      onClick={handleAddToCart}
+      size={buttonSize}
+      variant={inCart ? 'secondary' : variant}
     >
       {showText ? (
         <>

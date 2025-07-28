@@ -13,7 +13,10 @@ interface ErrorBoundaryProps {
   onError?: (error: Error, errorInfo: any) => void;
 }
 
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -36,13 +39,16 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       return (
         <div className="flex min-h-screen items-center justify-center bg-muted">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-foreground mb-4">Something went wrong</h1>
-            <p className="text-muted-foreground mb-6">
-              We're sorry, but something unexpected happened. Please try refreshing the page.
+            <h1 className="mb-4 font-bold text-2xl text-foreground">
+              Something went wrong
+            </h1>
+            <p className="mb-6 text-muted-foreground">
+              We're sorry, but something unexpected happened. Please try
+              refreshing the page.
             </p>
             <button
+              className="rounded-[var(--radius-md)] bg-blue-600 px-4 py-2 text-background transition-colors hover:bg-blue-700"
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-blue-600 text-background rounded-[var(--radius-md)] hover:bg-blue-700 transition-colors"
             >
               Refresh Page
             </button>

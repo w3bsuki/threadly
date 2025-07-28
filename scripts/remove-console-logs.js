@@ -1,20 +1,20 @@
 #!/usr/bin/env node
 
 import fs from 'fs';
-import path from 'path';
 import { glob } from 'glob';
+import path from 'path';
 
 // Patterns to remove
 const consolePatterns = [
   /console\.(log|error|warn|info|debug|trace|dir|table|time|timeEnd|assert|count|group|groupEnd)\([^)]*\);?\s*\n?/g,
   /console\.(log|error|warn|info|debug|trace|dir|table|time|timeEnd|assert|count|group|groupEnd)\([^{]*{[^}]*}\);?\s*\n?/g,
-  /console\.(log|error|warn|info|debug|trace|dir|table|time|timeEnd|assert|count|group|groupEnd)\([^)]*\)[,;]?\s*\n?/g
+  /console\.(log|error|warn|info|debug|trace|dir|table|time|timeEnd|assert|count|group|groupEnd)\([^)]*\)[,;]?\s*\n?/g,
 ];
 
 // Files to process
 const filePatterns = [
   'apps/**/*.{ts,tsx,js,jsx}',
-  'packages/**/*.{ts,tsx,js,jsx}'
+  'packages/**/*.{ts,tsx,js,jsx}',
 ];
 
 // Directories to exclude
@@ -25,7 +25,7 @@ const excludeDirs = [
   '**/.turbo/**',
   '**/build/**',
   '**/coverage/**',
-  '**/.cache/**'
+  '**/.cache/**',
 ];
 
 let totalRemoved = 0;
@@ -40,7 +40,7 @@ async function processFiles() {
 
     files.forEach(file => {
     let content = fs.readFileSync(file, 'utf8');
-    let originalContent = content;
+    const originalContent = content;
     let removedCount = 0;
 
     // Remove console statements

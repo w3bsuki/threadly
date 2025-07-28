@@ -1,8 +1,8 @@
+import { getDictionary } from '@repo/internationalization';
+import { createMetadata } from '@repo/seo/metadata';
+import type { Metadata } from 'next';
 import { ProductGrid } from '../(home)/components/product-grid';
 import { CategoryNav } from '../components/category-nav';
-import { createMetadata } from '@repo/seo/metadata';
-import { getDictionary } from '@repo/internationalization';
-import type { Metadata } from 'next';
 
 export async function generateMetadata({
   params,
@@ -14,11 +14,23 @@ export async function generateMetadata({
 
   return createMetadata({
     title: "Women's Fashion - Threadly",
-    description: "Discover unique women's fashion from our community of sellers. Find dresses, tops, pants, shoes, and accessories from independent designers.",
-    keywords: ["women's fashion", "designer clothes", "dresses", "tops", "pants", "shoes", "accessories", "secondhand", "vintage"],
+    description:
+      "Discover unique women's fashion from our community of sellers. Find dresses, tops, pants, shoes, and accessories from independent designers.",
+    keywords: [
+      "women's fashion",
+      'designer clothes',
+      'dresses',
+      'tops',
+      'pants',
+      'shoes',
+      'accessories',
+      'secondhand',
+      'vintage',
+    ],
     openGraph: {
       title: "Women's Fashion - Threadly Marketplace",
-      description: "Shop curated women's fashion from independent sellers and designers.",
+      description:
+        "Shop curated women's fashion from independent sellers and designers.",
       type: 'website',
       images: [
         {
@@ -32,7 +44,8 @@ export async function generateMetadata({
     twitter: {
       card: 'summary_large_image',
       title: "Women's Fashion - Threadly",
-      description: "Discover unique women's fashion from our community of sellers.",
+      description:
+        "Discover unique women's fashion from our community of sellers.",
       images: ['/images/women-fashion-hero.jpg'],
     },
   });

@@ -1,18 +1,18 @@
 'use client';
 
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import type { CartState, CartItem, CartConfig } from './types';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import type { CartConfig, CartItem, CartState } from './types';
 
 const STORAGE_KEY = 'threadly-cart-unified';
 const BROADCAST_CHANNEL = 'threadly-cart-sync';
 
 export const createCartStore = (config?: CartConfig) => {
-  const { 
+  const {
     storageKey = STORAGE_KEY,
     apiEndpoint = '/api/cart',
     autoSync = false,
-    enableBroadcast = true 
+    enableBroadcast = true,
   } = config || {};
 
   return create<CartState>()(
@@ -23,21 +23,23 @@ export const createCartStore = (config?: CartConfig) => {
         lastSyncTimestamp: 0,
 
         addItem: (newItem) => {
-          const existingItem = get().items.find(item => item.productId === newItem.productId);
-          
+          const existingItem = get().items.find(
+            (item) => item.productId === newItem.productId
+          );
+
           if (existingItem) {
             // If item already exists, increase quantity
-            const newQuantity = newItem.availableQuantity 
+            const newQuantity = newItem.availableQuantity
               ? Math.min(existingItem.quantity + 1, newItem.availableQuantity)
               : existingItem.quantity + 1;
-              
-            set(state => ({
-              items: state.items.map(item =>
+
+            set((state) => ({
+              items: state.items.map((item) =>
                 item.productId === newItem.productId
                   ? { ...item, quantity: newQuantity }
                   : item
               ),
-              lastSyncTimestamp: Date.now()
+              lastSyncTimestamp: Date.now(),
             }));
           } else {
             // Add new item
@@ -46,18 +48,18 @@ export const createCartStore = (config?: CartConfig) => {
               id: `cart-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
               quantity: 1,
             };
-            
-            set(state => ({
+
+            set((state) => ({
               items: [...state.items, cartItem],
-              lastSyncTimestamp: Date.now()
+              lastSyncTimestamp: Date.now(),
             }));
           }
-          
+
           // Broadcast change to other tabs/apps
           if (enableBroadcast) {
             get().broadcastChange?.();
           }
-          
+
           // Auto-sync if enabled
           if (autoSync && get().syncWithServer) {
             get().syncWithServer!();
@@ -65,15 +67,15 @@ export const createCartStore = (config?: CartConfig) => {
         },
 
         removeItem: (productId) => {
-          set(state => ({
-            items: state.items.filter(item => item.productId !== productId),
-            lastSyncTimestamp: Date.now()
+          set((state) => ({
+            items: state.items.filter((item) => item.productId !== productId),
+            lastSyncTimestamp: Date.now(),
           }));
-          
+
           if (enableBroadcast) {
             get().broadcastChange?.();
           }
-          
+
           if (autoSync && get().syncWithServer) {
             get().syncWithServer!();
           }
@@ -85,23 +87,23 @@ export const createCartStore = (config?: CartConfig) => {
             return;
           }
 
-          set(state => ({
-            items: state.items.map(item => {
+          set((state) => ({
+            items: state.items.map((item) => {
               if (item.productId === productId) {
-                const newQuantity = item.availableQuantity 
+                const newQuantity = item.availableQuantity
                   ? Math.min(quantity, item.availableQuantity)
                   : quantity;
                 return { ...item, quantity: newQuantity };
               }
               return item;
             }),
-            lastSyncTimestamp: Date.now()
+            lastSyncTimestamp: Date.now(),
           }));
-          
+
           if (enableBroadcast) {
             get().broadcastChange?.();
           }
-          
+
           if (autoSync && get().syncWithServer) {
             get().syncWithServer!();
           }
@@ -109,17 +111,17 @@ export const createCartStore = (config?: CartConfig) => {
 
         clearCart: () => {
           set({ items: [], lastSyncTimestamp: Date.now() });
-          
+
           if (enableBroadcast) {
             get().broadcastChange?.();
           }
-          
+
           if (autoSync && get().syncWithServer) {
             get().syncWithServer!();
           }
         },
 
-        toggleCart: () => set(state => ({ isOpen: !state.isOpen })),
+        toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
         closeCart: () => set({ isOpen: false }),
         openCart: () => set({ isOpen: true }),
 
@@ -131,32 +133,31 @@ export const createCartStore = (config?: CartConfig) => {
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 items: get().items,
-                timestamp: get().lastSyncTimestamp
-              })
+                timestamp: get().lastSyncTimestamp,
+              }),
             });
-            
+
             if (response.ok) {
-              const serverState = await response.json() as { 
-                items: CartItem[]; 
-                timestamp: number; 
+              const serverState = (await response.json()) as {
+                items: CartItem[];
+                timestamp: number;
               };
               if (serverState.timestamp > get().lastSyncTimestamp) {
                 set({
                   items: serverState.items,
-                  lastSyncTimestamp: serverState.timestamp
+                  lastSyncTimestamp: serverState.timestamp,
                 });
               }
             }
-          } catch (error) {
-          }
+          } catch (error) {}
         },
 
         enableAutoSync: () => {
           // Set up periodic sync
           const interval = setInterval(() => {
             get().syncWithServer?.();
-          }, 30000); // Sync every 30 seconds
-          
+          }, 30_000); // Sync every 30 seconds
+
           // Return cleanup function
           return () => clearInterval(interval);
         },
@@ -166,14 +167,13 @@ export const createCartStore = (config?: CartConfig) => {
           if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
             try {
               const channel = new BroadcastChannel(BROADCAST_CHANNEL);
-              channel.postMessage({ 
-                type: 'CART_UPDATED', 
+              channel.postMessage({
+                type: 'CART_UPDATED',
                 items: get().items,
-                timestamp: get().lastSyncTimestamp
+                timestamp: get().lastSyncTimestamp,
               });
               channel.close();
-            } catch (error) {
-            }
+            } catch (error) {}
           }
         },
 
@@ -183,17 +183,17 @@ export const createCartStore = (config?: CartConfig) => {
             try {
               const channel = new BroadcastChannel(BROADCAST_CHANNEL);
               channel.onmessage = (event: MessageEvent) => {
-                const data = event.data as { 
-                  type: string; 
-                  items: CartItem[]; 
-                  timestamp: number; 
+                const data = event.data as {
+                  type: string;
+                  items: CartItem[];
+                  timestamp: number;
                 };
                 if (data.type === 'CART_UPDATED') {
                   // Only update if the external change is newer
                   if (data.timestamp > get().lastSyncTimestamp) {
-                    set({ 
+                    set({
                       items: data.items,
-                      lastSyncTimestamp: data.timestamp 
+                      lastSyncTimestamp: data.timestamp,
                     });
                   }
                 }
@@ -207,21 +207,28 @@ export const createCartStore = (config?: CartConfig) => {
         },
 
         // Getters
-        getTotalItems: () => get().items.reduce((total, item) => total + item.quantity, 0),
-        getTotalPrice: () => get().items.reduce((total, item) => total + item.price * item.quantity, 0),
-        getItem: (productId) => get().items.find(item => item.productId === productId),
-        isInCart: (productId) => get().items.some(item => item.productId === productId),
+        getTotalItems: () =>
+          get().items.reduce((total, item) => total + item.quantity, 0),
+        getTotalPrice: () =>
+          get().items.reduce(
+            (total, item) => total + item.price * item.quantity,
+            0
+          ),
+        getItem: (productId) =>
+          get().items.find((item) => item.productId === productId),
+        isInCart: (productId) =>
+          get().items.some((item) => item.productId === productId),
         getItemCount: (productId) => {
-          const item = get().items.find(item => item.productId === productId);
+          const item = get().items.find((item) => item.productId === productId);
           return item ? item.quantity : 0;
         },
       }),
       {
         name: storageKey,
         storage: createJSONStorage(() => localStorage),
-        partialize: (state) => ({ 
+        partialize: (state) => ({
           items: state.items,
-          lastSyncTimestamp: state.lastSyncTimestamp
+          lastSyncTimestamp: state.lastSyncTimestamp,
         }),
         onRehydrateStorage: () => (state) => {
           // Set up cross-tab synchronization after rehydration

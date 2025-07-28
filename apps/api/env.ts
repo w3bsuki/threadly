@@ -31,9 +31,10 @@ export const env = createEnv({
   ],
   server: {
     // API-specific server variables
-    PORT: process.env.NODE_ENV === 'production' 
-      ? z.string().optional()
-      : z.string().default('3002'),
+    PORT:
+      process.env.NODE_ENV === 'production'
+        ? z.string().optional()
+        : z.string().default('3002'),
   },
   client: {
     // No client variables needed for API app

@@ -4,10 +4,10 @@ import { Heart, Plus, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CartDropdown } from '../../../app/[locale]/components/header/cart-dropdown';
-import { SafeUserButton } from '../../../app/[locale]/components/header/safe-user-button';
 import { EnhancedUserMenu } from '../../../app/[locale]/components/header/enhanced-user-menu';
-import { SignInCTA } from '../../sign-in-cta';
+import { SafeUserButton } from '../../../app/[locale]/components/header/safe-user-button';
 import { env } from '../../../env';
+import { SignInCTA } from '../../sign-in-cta';
 
 interface UserActionsProps {
   variant: 'desktop' | 'mobile';
@@ -42,20 +42,14 @@ export function UserActions({ variant, locale, onClose }: UserActionsProps) {
         )}
 
         {isSignedIn ? (
-          <Button
-            asChild
-            variant="default"
-          >
+          <Button asChild variant="default">
             <Link href={`/${locale}/selling/new`}>
               <Plus className="mr-2 h-5 w-5" />
               Sell
             </Link>
           </Button>
         ) : (
-          <SignInCTA
-            redirectPath="/selling/new"
-            variant="default"
-          >
+          <SignInCTA redirectPath="/selling/new" variant="default">
             <Plus className="mr-2 h-5 w-5" />
             Sell
           </SignInCTA>
@@ -69,12 +63,7 @@ export function UserActions({ variant, locale, onClose }: UserActionsProps) {
       {isSignedIn ? (
         <SafeUserButton />
       ) : (
-        <Button
-          asChild
-          className="-mr-2 h-9 w-9"
-          size="icon"
-          variant="ghost"
-        >
+        <Button asChild className="-mr-2 h-9 w-9" size="icon" variant="ghost">
           <Link href={`/${locale}/sign-in`}>
             <User className="h-5 w-5" />
           </Link>

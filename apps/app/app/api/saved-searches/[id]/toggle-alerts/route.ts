@@ -1,8 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
+import { log, logError } from '@repo/observability/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function PATCH(
   request: NextRequest,
@@ -19,13 +18,16 @@ export async function PATCH(
     const { alertEnabled } = body;
 
     if (typeof alertEnabled !== 'boolean') {
-      return NextResponse.json({ error: 'alertEnabled must be a boolean' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'alertEnabled must be a boolean' },
+        { status: 400 }
+      );
     }
 
     // Get user's database ID
     const dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!dbUser) {
@@ -41,16 +43,22 @@ export async function PATCH(
       data: {
         alertEnabled,
         updatedAt: new Date(),
-      }
+      },
     });
 
     if (result.count === 0) {
-      return NextResponse.json({ error: 'Saved search not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Saved search not found' },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     logError('Error updating saved search:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

@@ -1,7 +1,7 @@
 'use client';
 
-import * as React from 'react';
 import { Minus, Plus } from 'lucide-react';
+import * as React from 'react';
 import { cn } from '../../lib/utils';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -40,75 +40,81 @@ export const CartQuantitySelector: React.FC<CartQuantitySelectorProps> = ({
 
   const handleChange = (newValue: number) => {
     if (newValue < min || newValue > max || disabled) return;
-    
+
     if (enableAnimations) {
       setIsAnimating(true);
       setTimeout(() => setIsAnimating(false), 300);
     }
-    
+
     onChange(newValue);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setInputValue(val);
-    
-    const numVal = parseInt(val, 10);
+
+    const numVal = Number.parseInt(val, 10);
     if (!isNaN(numVal) && numVal >= min && numVal <= max) {
       handleChange(numVal);
     }
   };
 
   const handleInputBlur = () => {
-    const numVal = parseInt(inputValue, 10);
+    const numVal = Number.parseInt(inputValue, 10);
     if (isNaN(numVal) || numVal < min || numVal > max) {
       setInputValue(value.toString());
     }
   };
 
-  const buttonSize = size === 'sm' ? 'icon-sm' : size === 'lg' ? 'icon-lg' : 'icon';
-  const iconSize = size === 'sm' ? 'h-3 w-3' : size === 'lg' ? 'h-5 w-5' : 'h-4 w-4';
+  const buttonSize =
+    size === 'sm' ? 'icon-sm' : size === 'lg' ? 'icon-lg' : 'icon';
+  const iconSize =
+    size === 'sm' ? 'h-3 w-3' : size === 'lg' ? 'h-5 w-5' : 'h-4 w-4';
 
   if (variant === 'inline') {
     return (
-      <div className={cn(
-        'inline-flex items-center gap-1 rounded-lg border bg-background',
-        disabled && 'opacity-50',
-        className
-      )}>
+      <div
+        className={cn(
+          'inline-flex items-center gap-1 rounded-lg border bg-background',
+          disabled && 'opacity-50',
+          className
+        )}
+      >
         <Button
-          variant="ghost"
-          size={buttonSize}
-          onClick={() => handleChange(value - 1)}
-          disabled={disabled || value <= min}
           className={cn(
             'rounded-r-none border-r',
             enableAnimations && 'transition-transform active:scale-95'
           )}
+          disabled={disabled || value <= min}
+          onClick={() => handleChange(value - 1)}
+          size={buttonSize}
+          variant="ghost"
         >
           <Minus className={iconSize} />
           <span className="sr-only">Decrease quantity</span>
         </Button>
-        
-        <span className={cn(
-          'min-w-[3rem] text-center font-medium tabular-nums',
-          size === 'sm' && 'text-sm px-2',
-          size === 'md' && 'text-base px-3',
-          size === 'lg' && 'text-lg px-4',
-          enableAnimations && isAnimating && 'animate-bounce-in'
-        )}>
+
+        <span
+          className={cn(
+            'min-w-[3rem] text-center font-medium tabular-nums',
+            size === 'sm' && 'px-2 text-sm',
+            size === 'md' && 'px-3 text-base',
+            size === 'lg' && 'px-4 text-lg',
+            enableAnimations && isAnimating && 'animate-bounce-in'
+          )}
+        >
           {value}
         </span>
-        
+
         <Button
-          variant="ghost"
-          size={buttonSize}
-          onClick={() => handleChange(value + 1)}
-          disabled={disabled || value >= max}
           className={cn(
             'rounded-l-none border-l',
             enableAnimations && 'transition-transform active:scale-95'
           )}
+          disabled={disabled || value >= max}
+          onClick={() => handleChange(value + 1)}
+          size={buttonSize}
+          variant="ghost"
         >
           <Plus className={iconSize} />
           <span className="sr-only">Increase quantity</span>
@@ -119,41 +125,45 @@ export const CartQuantitySelector: React.FC<CartQuantitySelectorProps> = ({
 
   if (variant === 'compact') {
     return (
-      <div className={cn(
-        'flex items-center gap-1',
-        disabled && 'opacity-50',
-        className
-      )}>
+      <div
+        className={cn(
+          'flex items-center gap-1',
+          disabled && 'opacity-50',
+          className
+        )}
+      >
         <Button
-          variant="outline"
-          size={buttonSize}
-          onClick={() => handleChange(value - 1)}
-          disabled={disabled || value <= min}
           className={cn(
             enableAnimations && 'transition-transform active:scale-95'
           )}
+          disabled={disabled || value <= min}
+          onClick={() => handleChange(value - 1)}
+          size={buttonSize}
+          variant="outline"
         >
           <Minus className={iconSize} />
         </Button>
-        
-        <span className={cn(
-          'min-w-[2rem] text-center font-medium tabular-nums',
-          size === 'sm' && 'text-sm',
-          size === 'md' && 'text-base',
-          size === 'lg' && 'text-lg',
-          enableAnimations && isAnimating && 'animate-bounce-in'
-        )}>
+
+        <span
+          className={cn(
+            'min-w-[2rem] text-center font-medium tabular-nums',
+            size === 'sm' && 'text-sm',
+            size === 'md' && 'text-base',
+            size === 'lg' && 'text-lg',
+            enableAnimations && isAnimating && 'animate-bounce-in'
+          )}
+        >
           {value}
         </span>
-        
+
         <Button
-          variant="outline"
-          size={buttonSize}
-          onClick={() => handleChange(value + 1)}
-          disabled={disabled || value >= max}
           className={cn(
             enableAnimations && 'transition-transform active:scale-95'
           )}
+          disabled={disabled || value >= max}
+          onClick={() => handleChange(value + 1)}
+          size={buttonSize}
+          variant="outline"
         >
           <Plus className={iconSize} />
         </Button>
@@ -163,64 +173,68 @@ export const CartQuantitySelector: React.FC<CartQuantitySelectorProps> = ({
 
   // Default variant with optional input
   return (
-    <div className={cn(
-      'flex items-center gap-2',
-      disabled && 'opacity-50',
-      className
-    )}>
+    <div
+      className={cn(
+        'flex items-center gap-2',
+        disabled && 'opacity-50',
+        className
+      )}
+    >
       <Button
-        variant="outline"
-        size={buttonSize}
-        onClick={() => handleChange(value - 1)}
-        disabled={disabled || value <= min}
         className={cn(
           enableAnimations && 'transition-all active:scale-95',
           'hover:bg-primary hover:text-primary-foreground'
         )}
+        disabled={disabled || value <= min}
+        onClick={() => handleChange(value - 1)}
+        size={buttonSize}
+        variant="outline"
       >
         <Minus className={iconSize} />
         <span className="sr-only">Decrease quantity</span>
       </Button>
-      
+
       {showInput ? (
         <Input
-          type="number"
-          value={inputValue}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-          disabled={disabled}
-          min={min}
-          max={max}
           className={cn(
             'text-center font-medium tabular-nums',
             size === 'sm' && 'h-8 w-14 text-sm',
             size === 'md' && 'h-9 w-16',
             size === 'lg' && 'h-10 w-20 text-lg',
             enableAnimations && isAnimating && 'animate-bounce-in',
-            '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
+            '[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none'
           )}
+          disabled={disabled}
+          max={max}
+          min={min}
+          onBlur={handleInputBlur}
+          onChange={handleInputChange}
+          type="number"
+          value={inputValue}
         />
       ) : (
-        <span className={cn(
-          'min-w-[3rem] text-center font-medium tabular-nums',
-          size === 'sm' && 'text-sm',
-          size === 'md' && 'text-base',
-          size === 'lg' && 'text-lg',
-          enableAnimations && isAnimating && 'animate-bounce-in'
-        )}>
+        <span
+          className={cn(
+            'min-w-[3rem] text-center font-medium tabular-nums',
+            size === 'sm' && 'text-sm',
+            size === 'md' && 'text-base',
+            size === 'lg' && 'text-lg',
+            enableAnimations && isAnimating && 'animate-bounce-in'
+          )}
+        >
           {value}
         </span>
       )}
-      
+
       <Button
-        variant="outline"
-        size={buttonSize}
-        onClick={() => handleChange(value + 1)}
-        disabled={disabled || value >= max}
         className={cn(
           enableAnimations && 'transition-all active:scale-95',
           'hover:bg-primary hover:text-primary-foreground'
         )}
+        disabled={disabled || value >= max}
+        onClick={() => handleChange(value + 1)}
+        size={buttonSize}
+        variant="outline"
       >
         <Plus className={iconSize} />
         <span className="sr-only">Increase quantity</span>

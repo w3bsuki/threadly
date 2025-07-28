@@ -13,7 +13,7 @@ const categories = [
       { name: 'Women Bags', slug: 'women-bags' },
       { name: 'Women Jewelry', slug: 'women-jewelry' },
       { name: 'Women Accessories', slug: 'women-accessories' },
-    ]
+    ],
   },
   // Men's categories
   {
@@ -23,7 +23,7 @@ const categories = [
       { name: 'Men Clothing', slug: 'men-clothing' },
       { name: 'Men Shoes', slug: 'men-shoes' },
       { name: 'Men Accessories', slug: 'men-accessories' },
-    ]
+    ],
   },
   // Kids categories
   {
@@ -33,7 +33,7 @@ const categories = [
       { name: 'Kids Clothing', slug: 'kids-clothing' },
       { name: 'Kids Shoes', slug: 'kids-shoes' },
       { name: 'Kids Toys', slug: 'kids-toys' },
-    ]
+    ],
   },
   // Designer category
   {
@@ -44,7 +44,7 @@ const categories = [
       { name: 'Designer Bags', slug: 'designer-bags' },
       { name: 'Designer Shoes', slug: 'designer-shoes' },
       { name: 'Designer Jewelry', slug: 'designer-jewelry' },
-    ]
+    ],
   },
   // Unisex category
   {
@@ -54,12 +54,11 @@ const categories = [
       { name: 'Unisex Clothing', slug: 'unisex-clothing' },
       { name: 'Unisex Accessories', slug: 'unisex-accessories' },
       { name: 'Home Items', slug: 'unisex-home' },
-    ]
+    ],
   },
 ];
 
 async function seedCategories() {
-
   for (const category of categories) {
     // Create parent category
     const parent = await prisma.category.upsert({
@@ -70,7 +69,6 @@ async function seedCategories() {
         slug: category.slug,
       },
     });
-
 
     // Create child categories
     for (const child of category.children) {
@@ -83,10 +81,8 @@ async function seedCategories() {
           parentId: parent.id,
         },
       });
-
     }
   }
-
 }
 
 async function main() {

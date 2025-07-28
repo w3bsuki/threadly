@@ -47,10 +47,7 @@ export function MobileStickyActions({
             variant="outline"
           >
             <Heart
-              className={cn(
-                'mr-2 h-4 w-4',
-                isFavorited && 'fill-current'
-              )}
+              className={cn('mr-2 h-4 w-4', isFavorited && 'fill-current')}
             />
             {isFavorited
               ? dictionary.web.global.navigation.saved || 'Saved'
@@ -62,7 +59,7 @@ export function MobileStickyActions({
         </div>
         {isInCart ? (
           <Button
-            className="h-12 w-full bg-primary/90 font-medium text-base text-background hover:bg-secondary-foreground"
+            className="h-12 w-full bg-primary/90 font-medium text-background text-base hover:bg-secondary-foreground"
             onClick={() => router.push('/cart')}
             size="lg"
           >
@@ -71,23 +68,20 @@ export function MobileStickyActions({
           </Button>
         ) : (
           <Button
-            className="h-12 w-full bg-primary font-medium text-base text-background hover:bg-primary/90"
+            className="h-12 w-full bg-primary font-medium text-background text-base hover:bg-primary/90"
             onClick={onBuyNow}
             size="lg"
           >
             <ShoppingCart className="mr-2 h-5 w-5" />
             {dictionary.web.cart.addToCart || 'Buy Now'} -{' '}
             {userRegion
-              ? formatPriceForDisplay(
-                  price,
-                  userRegion,
-                  userCurrency as any
-                ).displayPrice
+              ? formatPriceForDisplay(price, userRegion, userCurrency as any)
+                  .displayPrice
               : formatCurrency(price, userCurrency as any)}
           </Button>
         )}
       </div>
-      
+
       {/* Mobile bottom padding */}
       <div className="h-32 md:hidden" />
     </>

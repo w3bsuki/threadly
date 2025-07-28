@@ -8,7 +8,7 @@ import { z } from 'zod';
 // Helper to create optional URL validation
 const optionalUrl = z.string().url().optional().or(z.literal(''));
 
-// Helper to create required URL validation  
+// Helper to create required URL validation
 const requiredUrl = z.string().url();
 
 // Core application configuration
@@ -113,12 +113,14 @@ export const MonitoringEnvSchema = z.object({
   SENTRY_PROJECT: z.string().optional(),
   SENTRY_AUTH_TOKEN: z.string().optional(),
   NEXT_PUBLIC_SENTRY_DSN: z.string().optional(),
-  NEXT_PUBLIC_SENTRY_ENVIRONMENT: z.enum(['development', 'staging', 'production']).optional(),
-  
+  NEXT_PUBLIC_SENTRY_ENVIRONMENT: z
+    .enum(['development', 'staging', 'production'])
+    .optional(),
+
   // BetterStack
   BETTERSTACK_API_KEY: z.string().optional(),
   BETTERSTACK_URL: z.string().url().optional(),
-  
+
   // Analytics
   NEXT_PUBLIC_GA_MEASUREMENT_ID: z.string().startsWith('G-').optional(),
   NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(),
@@ -134,11 +136,22 @@ export const ThirdPartyEnvSchema = z.object({
 
 // Build & Development
 export const BuildEnvSchema = z.object({
-  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+  NODE_ENV: z
+    .enum(['development', 'production', 'test'])
+    .default('development'),
   PORT: z.string().regex(/^\d+$/).transform(Number).optional(),
-  ANALYZE: z.string().transform(val => val === 'true').optional(),
-  SKIP_ENV_VALIDATION: z.string().transform(val => val === 'true').optional(),
-  CI: z.string().transform(val => val === 'true').optional(),
+  ANALYZE: z
+    .string()
+    .transform((val) => val === 'true')
+    .optional(),
+  SKIP_ENV_VALIDATION: z
+    .string()
+    .transform((val) => val === 'true')
+    .optional(),
+  CI: z
+    .string()
+    .transform((val) => val === 'true')
+    .optional(),
   VERCEL: z.string().optional(),
   VERCEL_ENV: z.enum(['production', 'preview', 'development']).optional(),
   VERCEL_URL: z.string().optional(),
@@ -148,8 +161,14 @@ export const BuildEnvSchema = z.object({
 
 // Feature flags
 export const FeatureFlagsEnvSchema = z.object({
-  ENABLE_NEW_CHECKOUT: z.string().transform(val => val === 'true').optional(),
-  ENABLE_AI_CHAT: z.string().transform(val => val === 'true').optional(),
+  ENABLE_NEW_CHECKOUT: z
+    .string()
+    .transform((val) => val === 'true')
+    .optional(),
+  ENABLE_AI_CHAT: z
+    .string()
+    .transform((val) => val === 'true')
+    .optional(),
 });
 
 // Testing
@@ -189,37 +208,49 @@ export const ClientEnvSchema = z.object({
   NEXT_PUBLIC_WEB_URL: CoreEnvSchema.shape.NEXT_PUBLIC_WEB_URL,
   NEXT_PUBLIC_API_URL: CoreEnvSchema.shape.NEXT_PUBLIC_API_URL,
   NEXT_PUBLIC_DOCS_URL: CoreEnvSchema.shape.NEXT_PUBLIC_DOCS_URL,
-  
+
   // Clerk
-  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ClerkEnvSchema.shape.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
-  NEXT_PUBLIC_CLERK_SIGN_IN_URL: ClerkEnvSchema.shape.NEXT_PUBLIC_CLERK_SIGN_IN_URL,
-  NEXT_PUBLIC_CLERK_SIGN_UP_URL: ClerkEnvSchema.shape.NEXT_PUBLIC_CLERK_SIGN_UP_URL,
-  NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: ClerkEnvSchema.shape.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL,
-  NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: ClerkEnvSchema.shape.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL,
-  
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
+    ClerkEnvSchema.shape.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+  NEXT_PUBLIC_CLERK_SIGN_IN_URL:
+    ClerkEnvSchema.shape.NEXT_PUBLIC_CLERK_SIGN_IN_URL,
+  NEXT_PUBLIC_CLERK_SIGN_UP_URL:
+    ClerkEnvSchema.shape.NEXT_PUBLIC_CLERK_SIGN_UP_URL,
+  NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL:
+    ClerkEnvSchema.shape.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL,
+  NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL:
+    ClerkEnvSchema.shape.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL,
+
   // Stripe
-  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: StripeEnvSchema.shape.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-  
+  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
+    StripeEnvSchema.shape.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+
   // UploadThing
-  NEXT_PUBLIC_UPLOADTHING_APP_ID: UploadThingEnvSchema.shape.NEXT_PUBLIC_UPLOADTHING_APP_ID,
-  
+  NEXT_PUBLIC_UPLOADTHING_APP_ID:
+    UploadThingEnvSchema.shape.NEXT_PUBLIC_UPLOADTHING_APP_ID,
+
   // Pusher
   NEXT_PUBLIC_PUSHER_APP_KEY: PusherEnvSchema.shape.NEXT_PUBLIC_PUSHER_APP_KEY,
   NEXT_PUBLIC_PUSHER_CLUSTER: PusherEnvSchema.shape.NEXT_PUBLIC_PUSHER_CLUSTER,
-  
+
   // Algolia
   NEXT_PUBLIC_ALGOLIA_APP_ID: AlgoliaEnvSchema.shape.NEXT_PUBLIC_ALGOLIA_APP_ID,
-  NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY: AlgoliaEnvSchema.shape.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY,
-  NEXT_PUBLIC_ALGOLIA_INDEX_NAME: AlgoliaEnvSchema.shape.NEXT_PUBLIC_ALGOLIA_INDEX_NAME,
-  
+  NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY:
+    AlgoliaEnvSchema.shape.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY,
+  NEXT_PUBLIC_ALGOLIA_INDEX_NAME:
+    AlgoliaEnvSchema.shape.NEXT_PUBLIC_ALGOLIA_INDEX_NAME,
+
   // Knock
   NEXT_PUBLIC_KNOCK_API_KEY: KnockEnvSchema.shape.NEXT_PUBLIC_KNOCK_API_KEY,
-  NEXT_PUBLIC_KNOCK_FEED_CHANNEL_ID: KnockEnvSchema.shape.NEXT_PUBLIC_KNOCK_FEED_CHANNEL_ID,
-  
+  NEXT_PUBLIC_KNOCK_FEED_CHANNEL_ID:
+    KnockEnvSchema.shape.NEXT_PUBLIC_KNOCK_FEED_CHANNEL_ID,
+
   // Monitoring
   NEXT_PUBLIC_SENTRY_DSN: MonitoringEnvSchema.shape.NEXT_PUBLIC_SENTRY_DSN,
-  NEXT_PUBLIC_SENTRY_ENVIRONMENT: MonitoringEnvSchema.shape.NEXT_PUBLIC_SENTRY_ENVIRONMENT,
-  NEXT_PUBLIC_GA_MEASUREMENT_ID: MonitoringEnvSchema.shape.NEXT_PUBLIC_GA_MEASUREMENT_ID,
+  NEXT_PUBLIC_SENTRY_ENVIRONMENT:
+    MonitoringEnvSchema.shape.NEXT_PUBLIC_SENTRY_ENVIRONMENT,
+  NEXT_PUBLIC_GA_MEASUREMENT_ID:
+    MonitoringEnvSchema.shape.NEXT_PUBLIC_GA_MEASUREMENT_ID,
   NEXT_PUBLIC_POSTHOG_KEY: MonitoringEnvSchema.shape.NEXT_PUBLIC_POSTHOG_KEY,
   NEXT_PUBLIC_POSTHOG_HOST: MonitoringEnvSchema.shape.NEXT_PUBLIC_POSTHOG_HOST,
 });
@@ -235,7 +266,10 @@ export type ClientEnv = z.infer<typeof ClientEnvSchema>;
  * @returns Validated environment variables
  * @throws ZodError if validation fails
  */
-export function validateEnv(env: Record<string, string | undefined>, isServer = true): ServerEnv | ClientEnv {
+export function validateEnv(
+  env: Record<string, string | undefined>,
+  isServer = true
+): ServerEnv | ClientEnv {
   const schema = isServer ? ServerEnvSchema : ClientEnvSchema;
   return schema.parse(env);
 }
@@ -243,7 +277,10 @@ export function validateEnv(env: Record<string, string | undefined>, isServer = 
 /**
  * Safe environment validation that returns errors instead of throwing
  */
-export function safeValidateEnv(env: Record<string, string | undefined>, isServer = true) {
+export function safeValidateEnv(
+  env: Record<string, string | undefined>,
+  isServer = true
+) {
   const schema = isServer ? ServerEnvSchema : ClientEnvSchema;
   return schema.safeParse(env);
 }

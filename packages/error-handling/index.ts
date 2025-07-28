@@ -1,7 +1,8 @@
 // Core error handling exports (no React/Next.js dependencies)
+
+export * from './circuit-breaker';
 export * from './error-logger';
 export * from './retry';
-export * from './circuit-breaker';
 export * from './types';
 
 // React/Next.js components are excluded from build but available for manual import

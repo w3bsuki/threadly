@@ -12,29 +12,33 @@ export default function SellingError({
 }): React.JSX.Element {
   return (
     <div className="flex min-h-[400px] items-center justify-center p-4">
-      <div className="text-center space-y-4 max-w-md">
+      <div className="max-w-md space-y-4 text-center">
         <div className="flex justify-center">
           <AlertCircle className="h-12 w-12 text-destructive" />
         </div>
-        <h2 className="text-2xl font-bold">Something went wrong!</h2>
+        <h2 className="font-bold text-2xl">Something went wrong!</h2>
         <p className="text-muted-foreground">
-          We encountered an error while loading the selling dashboard. This might be due to a configuration issue.
+          We encountered an error while loading the selling dashboard. This
+          might be due to a configuration issue.
         </p>
         {process.env.NODE_ENV === 'development' && (
-          <div className="mt-4 p-4 bg-muted rounded-[var(--radius-md)] text-left">
-            <p className="text-sm font-mono text-muted-foreground break-all">
+          <div className="mt-4 rounded-[var(--radius-md)] bg-muted p-4 text-left">
+            <p className="break-all font-mono text-muted-foreground text-sm">
               {error.message}
             </p>
             {error.digest && (
-              <p className="text-xs text-muted-foreground mt-2">
+              <p className="mt-2 text-muted-foreground text-xs">
                 Error ID: {error.digest}
               </p>
             )}
           </div>
         )}
-        <div className="flex gap-4 justify-center">
+        <div className="flex justify-center gap-4">
           <Button onClick={reset}>Try again</Button>
-          <Button variant="outline" onClick={() => window.location.href = '/'}>
+          <Button
+            onClick={() => (window.location.href = '/')}
+            variant="outline"
+          >
             Go home
           </Button>
         </div>

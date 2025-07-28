@@ -1,6 +1,5 @@
-import { database } from "@repo/database";
-import { cache } from "@repo/cache";
-import { ProductStatus } from "@repo/database";
+import { cache } from '@repo/cache';
+import { database, ProductStatus } from '@repo/database';
 
 export interface CategoryBreakdown {
   categoryId: string;
@@ -39,7 +38,7 @@ export async function getSellerAnalytics(
   endDate: Date
 ): Promise<SellerAnalytics> {
   const cacheKey = `seller_analytics:${sellerId}:${startDate.toISOString()}:${endDate.toISOString()}`;
-  
+
   return cache.remember(
     cacheKey,
     async () => {
@@ -48,14 +47,14 @@ export async function getSellerAnalytics(
         database.product.aggregate({
           where: { sellerId },
           _count: true,
-          _sum: { views: true }
+          _sum: { views: true },
         }),
         database.product.count({
-          where: { 
+          where: {
             sellerId,
-            status: ProductStatus.AVAILABLE
-          }
-        })
+            status: ProductStatus.AVAILABLE,
+          },
+        }),
       ]);
 
       // Get sales stats
@@ -64,11 +63,11 @@ export async function getSellerAnalytics(
           sellerId,
           createdAt: {
             gte: startDate,
-            lte: endDate
-          }
+            lte: endDate,
+          },
         },
         _count: true,
-        _sum: { amount: true }
+        _sum: { amount: true },
       });
 
       // Get category breakdown with proper batching
@@ -117,7 +116,9 @@ export async function getSellerAnalytics(
       `;
 
       // Get views over time (daily aggregation)
-      const viewsOverTime = await database.$queryRaw<Array<{ date: string; views: number }>>`
+      const viewsOverTime = await database.$queryRaw<
+        Array<{ date: string; views: number }>
+      >`
         SELECT 
           DATE(ua."createdAt") as date,
           COUNT(*) as views
@@ -132,7 +133,9 @@ export async function getSellerAnalytics(
       `;
 
       // Get sales over time (daily aggregation)
-      const salesOverTime = await database.$queryRaw<Array<{ date: string; sales: number; revenue: number }>>`
+      const salesOverTime = await database.$queryRaw<
+        Array<{ date: string; sales: number; revenue: number }>
+      >`
         SELECT 
           DATE(o."createdAt") as date,
           COUNT(*) as sales,
@@ -148,7 +151,8 @@ export async function getSellerAnalytics(
       const totalViews = Number(productStats._sum.views || 0);
       const totalSales = salesStats._count;
       const totalRevenue = Number(salesStats._sum.amount || 0);
-      const conversionRate = totalViews > 0 ? (totalSales / totalViews) * 100 : 0;
+      const conversionRate =
+        totalViews > 0 ? (totalSales / totalViews) * 100 : 0;
       const averageOrderValue = totalSales > 0 ? totalRevenue / totalSales : 0;
 
       return {
@@ -158,27 +162,27 @@ export async function getSellerAnalytics(
         totalSales,
         conversionRate,
         averageOrderValue,
-        categoryBreakdown: categoryData.map(cat => ({
+        categoryBreakdown: categoryData.map((cat) => ({
           ...cat,
           productCount: Number(cat.productCount),
           totalViews: Number(cat.totalViews),
           totalSales: Number(cat.totalSales),
-          revenue: Number(cat.revenue)
+          revenue: Number(cat.revenue),
         })),
-        topProducts: topProducts.map(prod => ({
+        topProducts: topProducts.map((prod) => ({
           ...prod,
           sales: Number(prod.sales),
-          revenue: Number(prod.revenue)
+          revenue: Number(prod.revenue),
         })),
-        viewsOverTime: viewsOverTime.map(v => ({
+        viewsOverTime: viewsOverTime.map((v) => ({
           date: v.date.toString(),
-          views: Number(v.views)
+          views: Number(v.views),
         })),
-        salesOverTime: salesOverTime.map(s => ({
+        salesOverTime: salesOverTime.map((s) => ({
           date: s.date.toString(),
           sales: Number(s.sales),
-          revenue: Number(s.revenue)
-        }))
+          revenue: Number(s.revenue),
+        })),
       };
     },
     cache.TTL.LONG // 30 minute cache
@@ -187,7 +191,7 @@ export async function getSellerAnalytics(
 
 export async function getProductAnalytics(productId: string) {
   const cacheKey = `product_analytics:${productId}`;
-  
+
   return cache.remember(
     cacheKey,
     async () => {
@@ -203,18 +207,18 @@ export async function getProductAnalytics(productId: string) {
       const [interactions, orderStats, favoriteCount] = await Promise.all([
         // TODO: Add UserInteraction model to database schema
         Promise.resolve([]),
-        
+
         // Get order stats
         database.order.aggregate({
           where: { productId },
           _count: true,
-          _sum: { amount: true }
+          _sum: { amount: true },
         }),
-        
+
         // Get favorite count
         database.favorite.count({
-          where: { productId }
-        })
+          where: { productId },
+        }),
       ]);
 
       const interactionCounts = {} as Record<string, number>;
@@ -227,10 +231,11 @@ export async function getProductAnalytics(productId: string) {
         favoriteCount,
         salesCount: orderStats._count,
         revenue: Number(orderStats._sum.amount || 0),
-        conversionRate: interactionCounts.VIEW > 0 
-          ? (orderStats._count / interactionCounts.VIEW) * 100 
-          : 0,
-        updatedAt: new Date()
+        conversionRate:
+          interactionCounts.VIEW > 0
+            ? (orderStats._count / interactionCounts.VIEW) * 100
+            : 0,
+        updatedAt: new Date(),
       };
 
       // TODO: Update or create analytics record when model is added

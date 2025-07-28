@@ -1,10 +1,10 @@
-import { unstable_cache } from 'next/cache'
-import { cache } from 'react'
-import { prisma } from '@repo/database'
+import { prisma } from '@repo/database';
+import { unstable_cache } from 'next/cache';
+import { cache } from 'react';
 
 export interface FetchOptions {
-  cache?: RequestCache | { revalidate?: number | false; tags?: string[] }
-  next?: { revalidate?: number | false; tags?: string[] }
+  cache?: RequestCache | { revalidate?: number | false; tags?: string[] };
+  next?: { revalidate?: number | false; tags?: string[] };
 }
 
 // Deduplicate requests within a single request lifecycle
@@ -12,47 +12,50 @@ export const dedupe = <T extends (...args: any[]) => Promise<any>>(
   fn: T,
   keyFn?: (...args: Parameters<T>) => string
 ): T => {
-  return cache(fn) as T
-}
+  return cache(fn) as T;
+};
 
 // Cache data between requests
 export const cacheData = <T extends (...args: any[]) => Promise<any>>(
   fn: T,
   keys: string[],
   options?: {
-    revalidate?: number | false
-    tags?: string[]
+    revalidate?: number | false;
+    tags?: string[];
   }
 ): T => {
   return unstable_cache(fn, keys, {
     revalidate: options?.revalidate ?? 3600, // 1 hour default
     tags: options?.tags,
-  }) as T
-}
+  }) as T;
+};
 
 // Parallel data fetching
-export async function fetchInParallel<T extends Record<string, () => Promise<any>>>(
-  fetchers: T
-): Promise<{ [K in keyof T]: Awaited<ReturnType<T[K]>> }> {
-  const keys = Object.keys(fetchers) as (keyof T)[]
-  const promises = keys.map((key) => fetchers[key]())
-  const results = await Promise.all(promises)
-  
-  return keys.reduce((acc, key, index) => {
-    acc[key] = results[index]
-    return acc
-  }, {} as { [K in keyof T]: Awaited<ReturnType<T[K]>> })
+export async function fetchInParallel<
+  T extends Record<string, () => Promise<any>>,
+>(fetchers: T): Promise<{ [K in keyof T]: Awaited<ReturnType<T[K]>> }> {
+  const keys = Object.keys(fetchers) as (keyof T)[];
+  const promises = keys.map((key) => fetchers[key]());
+  const results = await Promise.all(promises);
+
+  return keys.reduce(
+    (acc, key, index) => {
+      acc[key] = results[index];
+      return acc;
+    },
+    {} as { [K in keyof T]: Awaited<ReturnType<T[K]>> }
+  );
 }
 
 // Optimized pagination
 export interface PaginatedResponse<T> {
-  items: T[]
-  total: number
-  page: number
-  pageSize: number
-  totalPages: number
-  hasNextPage: boolean
-  hasPreviousPage: boolean
+  items: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
 }
 
 export async function fetchPaginated<T>(
@@ -61,15 +64,15 @@ export async function fetchPaginated<T>(
   page: number,
   pageSize: number
 ): Promise<PaginatedResponse<T>> {
-  const skip = (page - 1) * pageSize
-  
+  const skip = (page - 1) * pageSize;
+
   const [items, total] = await Promise.all([
     fetcher(skip, pageSize),
     counter(),
-  ])
-  
-  const totalPages = Math.ceil(total / pageSize)
-  
+  ]);
+
+  const totalPages = Math.ceil(total / pageSize);
+
   return {
     items,
     total,
@@ -78,14 +81,14 @@ export async function fetchPaginated<T>(
     totalPages,
     hasNextPage: page < totalPages,
     hasPreviousPage: page > 1,
-  }
+  };
 }
 
 // Cursor-based pagination
 export interface CursorPaginatedResponse<T> {
-  items: T[]
-  nextCursor: string | null
-  hasMore: boolean
+  items: T[];
+  nextCursor: string | null;
+  hasMore: boolean;
 }
 
 export async function fetchCursorPaginated<T extends { id: string }>(
@@ -94,17 +97,17 @@ export async function fetchCursorPaginated<T extends { id: string }>(
   limit = 20
 ): Promise<CursorPaginatedResponse<T>> {
   // Fetch one extra item to determine if there's more
-  const items = await fetcher(cursor, limit + 1)
-  
-  const hasMore = items.length > limit
-  const resultItems = hasMore ? items.slice(0, -1) : items
-  const nextCursor = hasMore ? resultItems[resultItems.length - 1]?.id : null
-  
+  const items = await fetcher(cursor, limit + 1);
+
+  const hasMore = items.length > limit;
+  const resultItems = hasMore ? items.slice(0, -1) : items;
+  const nextCursor = hasMore ? resultItems[resultItems.length - 1]?.id : null;
+
   return {
     items: resultItems,
     nextCursor,
     hasMore,
-  }
+  };
 }
 
 // Optimistic updates helper
@@ -115,18 +118,18 @@ export function createOptimisticUpdate<T>(
 ): T[] {
   switch (action) {
     case 'add':
-      return [item as T, ...currentData]
-    
+      return [item as T, ...currentData];
+
     case 'update':
       return currentData.map((data) =>
         (data as any).id === item.id ? { ...data, ...item } : data
-      )
-    
+      );
+
     case 'delete':
-      return currentData.filter((data) => (data as any).id !== item.id)
-    
+      return currentData.filter((data) => (data as any).id !== item.id);
+
     default:
-      return currentData
+      return currentData;
   }
 }
 
@@ -136,33 +139,35 @@ export async function batchOperation<T, R>(
   operation: (batch: T[]) => Promise<R[]>,
   batchSize = 50
 ): Promise<R[]> {
-  const results: R[] = []
-  
+  const results: R[] = [];
+
   for (let i = 0; i < items.length; i += batchSize) {
-    const batch = items.slice(i, i + batchSize)
-    const batchResults = await operation(batch)
-    results.push(...batchResults)
+    const batch = items.slice(i, i + batchSize);
+    const batchResults = await operation(batch);
+    results.push(...batchResults);
   }
-  
-  return results
+
+  return results;
 }
 
 // Streaming data helper
 export async function* streamData<T>(
-  fetcher: (cursor?: string) => Promise<{ items: T[]; nextCursor: string | null }>,
+  fetcher: (
+    cursor?: string
+  ) => Promise<{ items: T[]; nextCursor: string | null }>,
   initialCursor?: string
 ): AsyncGenerator<T[], void, unknown> {
-  let cursor: string | null | undefined = initialCursor
-  
+  let cursor: string | null | undefined = initialCursor;
+
   while (true) {
-    const { items, nextCursor } = await fetcher(cursor)
-    
-    if (items.length === 0) break
-    
-    yield items
-    
-    if (!nextCursor) break
-    cursor = nextCursor
+    const { items, nextCursor } = await fetcher(cursor);
+
+    if (items.length === 0) break;
+
+    yield items;
+
+    if (!nextCursor) break;
+    cursor = nextCursor;
   }
 }
 
@@ -174,13 +179,17 @@ export function prefetchQuery<T>(
   return {
     queryKey: cacheKey,
     queryFn: dedupe(queryFn),
-  }
+  };
 }
 
 // Data loader pattern
 export class DataLoader<K, V> {
-  private batch: Array<{ key: K; resolve: (value: V) => void; reject: (error: any) => void }> = []
-  private scheduled = false
+  private batch: Array<{
+    key: K;
+    resolve: (value: V) => void;
+    reject: (error: any) => void;
+  }> = [];
+  private scheduled = false;
 
   constructor(
     private batchFn: (keys: K[]) => Promise<V[]>,
@@ -189,37 +198,37 @@ export class DataLoader<K, V> {
 
   async load(key: K): Promise<V> {
     return new Promise((resolve, reject) => {
-      this.batch.push({ key, resolve, reject })
-      
+      this.batch.push({ key, resolve, reject });
+
       if (!this.scheduled) {
-        this.scheduled = true
-        process.nextTick(() => this.flush())
+        this.scheduled = true;
+        process.nextTick(() => this.flush());
       }
-      
+
       if (this.batch.length >= (this.options.maxBatchSize || 100)) {
-        this.flush()
+        this.flush();
       }
-    })
+    });
   }
 
   private async flush() {
-    const batch = this.batch
-    this.batch = []
-    this.scheduled = false
-    
-    if (batch.length === 0) return
-    
+    const batch = this.batch;
+    this.batch = [];
+    this.scheduled = false;
+
+    if (batch.length === 0) return;
+
     try {
-      const keys = batch.map(({ key }) => key)
-      const values = await this.batchFn(keys)
-      
+      const keys = batch.map(({ key }) => key);
+      const values = await this.batchFn(keys);
+
       batch.forEach(({ resolve }, index) => {
-        resolve(values[index])
-      })
+        resolve(values[index]);
+      });
     } catch (error) {
       batch.forEach(({ reject }) => {
-        reject(error)
-      })
+        reject(error);
+      });
     }
   }
 }

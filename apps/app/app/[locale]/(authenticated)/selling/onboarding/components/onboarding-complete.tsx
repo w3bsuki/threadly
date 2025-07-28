@@ -1,9 +1,21 @@
 'use client';
 
-import { Button } from '@repo/design-system/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
 import { Badge } from '@repo/design-system/components/ui/badge';
-import { CheckCircle2, Package, DollarSign, TrendingUp, ArrowRight } from 'lucide-react';
+import { Button } from '@repo/design-system/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@repo/design-system/components/ui/card';
+import {
+  ArrowRight,
+  CheckCircle2,
+  DollarSign,
+  Package,
+  TrendingUp,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export function OnboardingComplete() {
@@ -35,7 +47,8 @@ export function OnboardingComplete() {
           </div>
           <CardTitle className="text-2xl">You're All Set!</CardTitle>
           <CardDescription className="text-base">
-            Your seller account is ready. Start listing items and making sales today.
+            Your seller account is ready. Start listing items and making sales
+            today.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -49,28 +62,33 @@ export function OnboardingComplete() {
             <Badge className="mt-1">5%</Badge>
             <div>
               <p className="font-medium">Platform Fee</p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 We only take 5% when you make a sale. No listing fees!
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-start gap-3">
-            <Badge className="mt-1" variant="secondary">$20</Badge>
+            <Badge className="mt-1" variant="secondary">
+              $20
+            </Badge>
             <div>
               <p className="font-medium">Minimum Payout</p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Request payouts anytime your balance reaches $20 or more.
               </p>
             </div>
           </div>
 
           <div className="flex items-start gap-3">
-            <Badge className="mt-1" variant="outline">3 days</Badge>
+            <Badge className="mt-1" variant="outline">
+              3 days
+            </Badge>
             <div>
               <p className="font-medium">Shipping Time</p>
-              <p className="text-sm text-muted-foreground">
-                Ship items within 3 business days to maintain your seller rating.
+              <p className="text-muted-foreground text-sm">
+                Ship items within 3 business days to maintain your seller
+                rating.
               </p>
             </div>
           </div>
@@ -81,7 +99,11 @@ export function OnboardingComplete() {
         {nextSteps.map((step, index) => {
           const Icon = step.icon;
           return (
-            <Card key={index} className="cursor-pointer hover:shadow-md transition-shadow" onClick={step.action}>
+            <Card
+              className="cursor-pointer transition-shadow hover:shadow-md"
+              key={index}
+              onClick={step.action}
+            >
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <Icon className="h-8 w-8 text-primary" />
@@ -101,7 +123,11 @@ export function OnboardingComplete() {
       </div>
 
       <div className="flex justify-center pt-4">
-        <Button variant="outline" size="lg" onClick={() => router.push('/dashboard')}>
+        <Button
+          onClick={() => router.push('/dashboard')}
+          size="lg"
+          variant="outline"
+        >
           <DollarSign className="mr-2 h-4 w-4" />
           Go to Dashboard
         </Button>

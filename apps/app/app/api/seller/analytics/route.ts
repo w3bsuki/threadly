@@ -1,15 +1,21 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { z } from 'zod';
 import { log } from '@repo/observability/server';
-import { getSellerAnalytics, getProductAnalytics } from '../../../../lib/queries/seller-analytics';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import {
+  getProductAnalytics,
+  getSellerAnalytics,
+} from '../../../../lib/queries/seller-analytics';
 
 const analyticsQuerySchema = z.object({
   productId: z.string().cuid().optional(),
-  timeRange: z.enum(['day', 'week', 'month', 'year']).optional().default('week'),
+  timeRange: z
+    .enum(['day', 'week', 'month', 'year'])
+    .optional()
+    .default('week'),
   startDate: z.string().optional(),
-  endDate: z.string().optional()
+  endDate: z.string().optional(),
 });
 
 export async function GET(request: NextRequest) {
@@ -21,7 +27,7 @@ export async function GET(request: NextRequest) {
 
     const dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!dbUser) {
@@ -34,7 +40,10 @@ export async function GET(request: NextRequest) {
 
     if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Invalid query parameters', details: validationResult.error.flatten() },
+        {
+          error: 'Invalid query parameters',
+          details: validationResult.error.flatten(),
+        },
         { status: 400 }
       );
     }
@@ -71,22 +80,23 @@ export async function GET(request: NextRequest) {
       const product = await database.product.findFirst({
         where: {
           id: productId,
-          sellerId: dbUser.id
-        }
+          sellerId: dbUser.id,
+        },
       });
 
       if (!product) {
-        return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+        return NextResponse.json(
+          { error: 'Product not found' },
+          { status: 404 }
+        );
       }
 
       const analytics = await getProductAnalytics(productId);
       return NextResponse.json({ analytics });
-    } else {
-      // Get seller analytics
-      const analytics = await getSellerAnalytics(dbUser.id, start, end);
-      return NextResponse.json({ analytics });
     }
-
+    // Get seller analytics
+    const analytics = await getSellerAnalytics(dbUser.id, start, end);
+    return NextResponse.json({ analytics });
   } catch (error) {
     log.error('Analytics API error:', error);
     return NextResponse.json(
@@ -105,7 +115,7 @@ export async function POST(request: NextRequest) {
 
     const dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!dbUser) {
@@ -129,12 +139,11 @@ export async function POST(request: NextRequest) {
     if (event === 'view') {
       await database.product.update({
         where: { id: productId },
-        data: { views: { increment: 1 } }
+        data: { views: { increment: 1 } },
       });
     }
 
     return NextResponse.json({ success: true });
-
   } catch (error) {
     log.error('Analytics tracking error:', error);
     return NextResponse.json(

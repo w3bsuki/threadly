@@ -1,9 +1,20 @@
 import { z } from 'zod';
 
-export const ProductConditionSchema = z.enum(['NEW', 'LIKE_NEW', 'GOOD', 'FAIR']);
+export const ProductConditionSchema = z.enum([
+  'NEW',
+  'LIKE_NEW',
+  'GOOD',
+  'FAIR',
+]);
 export type ProductCondition = z.infer<typeof ProductConditionSchema>;
 
-export const ProductStatusSchema = z.enum(['DRAFT', 'AVAILABLE', 'SOLD', 'REMOVED', 'RESERVED']);
+export const ProductStatusSchema = z.enum([
+  'DRAFT',
+  'AVAILABLE',
+  'SOLD',
+  'REMOVED',
+  'RESERVED',
+]);
 export type ProductStatus = z.infer<typeof ProductStatusSchema>;
 
 export const ProductImageSchema = z.object({

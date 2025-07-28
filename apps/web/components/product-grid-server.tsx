@@ -9,7 +9,7 @@ const ProductStatus = {
   AVAILABLE: 'AVAILABLE',
   SOLD: 'SOLD',
   RESERVED: 'RESERVED',
-  REMOVED: 'REMOVED'
+  REMOVED: 'REMOVED',
 } as const;
 
 // Type for our transformed product data
@@ -147,7 +147,7 @@ export async function ProductGridServer({
         'redis://localhost:6379',
       token: process.env.UPSTASH_REDIS_REST_TOKEN || undefined,
     });
-    
+
     // Build the where clause based on filters
     const whereClause: Prisma.ProductWhereInput = {
       status: ProductStatus.AVAILABLE,
@@ -173,7 +173,7 @@ export async function ProductGridServer({
 
     // Try to get from cache first
     const cachedProducts = await cache.get(cacheKey);
-    
+
     let products;
     if (cachedProducts && Array.isArray(cachedProducts)) {
       products = cachedProducts;
@@ -198,7 +198,7 @@ export async function ProductGridServer({
         orderBy,
         take: limit,
       });
-      
+
       // Cache the results for 5 minutes
       await cache.set(cacheKey, products, 300);
     }
@@ -239,7 +239,7 @@ export async function ProductGridServer({
         </p>
         <p className="mb-4 text-red-600 text-sm">Error: {errorMessage}</p>
         <a
-          className="inline-flex items-center rounded-[var(--radius-md)] border border-transparent bg-foreground px-6 py-3 font-medium text-base text-background shadow-sm hover:bg-secondary-foreground"
+          className="inline-flex items-center rounded-[var(--radius-md)] border border-transparent bg-foreground px-6 py-3 font-medium text-background text-base shadow-sm hover:bg-secondary-foreground"
           href="/"
         >
           Refresh page

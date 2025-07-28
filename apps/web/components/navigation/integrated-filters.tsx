@@ -369,7 +369,7 @@ export function IntegratedFilters({
               >
                 <div
                   className={cn(
-                    "mr-2 h-3 w-3 rounded-full border",
+                    'mr-2 h-3 w-3 rounded-full border',
                     color.className
                   )}
                 />

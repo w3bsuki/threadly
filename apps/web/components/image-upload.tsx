@@ -1,12 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import { Button } from '@repo/design-system/components';
-import { Card } from '@repo/design-system/components';
-import { X, Upload, Image as ImageIcon } from 'lucide-react';
+import { Button, Card } from '@repo/design-system/components';
 import { cn } from '@repo/design-system/lib/utils';
-import { useUploadThing } from '@/lib/uploadthing';
+import { Image as ImageIcon, Upload, X } from 'lucide-react';
 import Image from 'next/image';
+import { useState } from 'react';
+import { useUploadThing } from '@/lib/uploadthing';
 
 interface ImageData {
   url: string;
@@ -21,44 +20,56 @@ interface ImageUploadProps {
   maxFiles?: number;
 }
 
-export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps) {
+export function ImageUpload({
+  value,
+  onChange,
+  maxFiles = 5,
+}: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
 
-  const { startUpload, isUploading: isUploadThingUploading } = useUploadThing("productImages", {
-    onClientUploadComplete: (res: Array<{ url: string }>) => {
-      const newImages = res?.map((file, index) => ({
-        url: file.url,
-        alt: `Product image ${value.length + index + 1}`,
-        order: value.length + index
-      })) || [];
-      const updatedImages = [...value, ...newImages].slice(0, maxFiles);
-      onChange(updatedImages);
-      setIsUploading(false);
-    },
-    onUploadError: (error: Error) => {
-      setIsUploading(false);
-      
-      
-      if (error.message.includes('auth') || error.message.includes('Authentication')) {
-        alert('Authentication required. Please log in to upload images.');
-      } else if (error.message.includes('rate')) {
-        alert('Too many uploads. Please wait a moment and try again.');
-      } else if (error.message.includes('size')) {
-        alert('File is too large. Please choose files under 8MB.');
-      } else {
-        alert(`Failed to upload image: ${error.message || 'Unknown error'}. Please try again.`);
-      }
-    },
-    onUploadBegin: (name: string) => {
-      setIsUploading(true);
-    },
-  });
+  const { startUpload, isUploading: isUploadThingUploading } = useUploadThing(
+    'productImages',
+    {
+      onClientUploadComplete: (res: Array<{ url: string }>) => {
+        const newImages =
+          res?.map((file, index) => ({
+            url: file.url,
+            alt: `Product image ${value.length + index + 1}`,
+            order: value.length + index,
+          })) || [];
+        const updatedImages = [...value, ...newImages].slice(0, maxFiles);
+        onChange(updatedImages);
+        setIsUploading(false);
+      },
+      onUploadError: (error: Error) => {
+        setIsUploading(false);
+
+        if (
+          error.message.includes('auth') ||
+          error.message.includes('Authentication')
+        ) {
+          alert('Authentication required. Please log in to upload images.');
+        } else if (error.message.includes('rate')) {
+          alert('Too many uploads. Please wait a moment and try again.');
+        } else if (error.message.includes('size')) {
+          alert('File is too large. Please choose files under 8MB.');
+        } else {
+          alert(
+            `Failed to upload image: ${error.message || 'Unknown error'}. Please try again.`
+          );
+        }
+      },
+      onUploadBegin: (name: string) => {
+        setIsUploading(true);
+      },
+    }
+  );
 
   const handleFileUpload = async (files: FileList) => {
     if (!files.length) return;
-    
+
     const fileArray = Array.from(files);
-    const validFiles = fileArray.filter(file => {
+    const validFiles = fileArray.filter((file) => {
       if (file.size > 8 * 1024 * 1024) {
         alert(`File ${file.name} is too large. Please choose files under 8MB.`);
         return false;
@@ -74,7 +85,9 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
       if (error instanceof Error) {
         alert(`Upload failed: ${error.message}`);
       } else {
-        alert("Upload failed. Please check your internet connection and try again.");
+        alert(
+          'Upload failed. Please check your internet connection and try again.'
+        );
       }
     }
   };
@@ -100,38 +113,45 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
     <div className="space-y-3 sm:space-y-4">
       <Card
         className={cn(
-          "border-2 border-dashed border-muted-foreground/25 hover:border-muted-foreground/50 transition-colors",
-          isUploading && "border-primary"
+          'border-2 border-muted-foreground/25 border-dashed transition-colors hover:border-muted-foreground/50',
+          isUploading && 'border-primary'
         )}
-        onDrop={handleDrop}
         onDragOver={handleDragOver}
+        onDrop={handleDrop}
       >
-        <div className="p-4 sm:p-6 text-center">
+        <div className="p-4 text-center sm:p-6">
           <input
-            type="file"
-            multiple
             accept="image/*"
-            onChange={(e) => e.target.files && handleFileUpload(e.target.files)}
             className="hidden"
+            disabled={
+              isUploading || isUploadThingUploading || value.length >= maxFiles
+            }
             id="image-upload"
-            disabled={isUploading || isUploadThingUploading || value.length >= maxFiles}
+            multiple
+            onChange={(e) => e.target.files && handleFileUpload(e.target.files)}
+            type="file"
           />
-          
-          <div className="mx-auto flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-[var(--radius-lg)] bg-muted">
-            <Upload className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground" />
+
+          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-[var(--radius-lg)] bg-muted sm:h-12 sm:w-12">
+            <Upload className="h-5 w-5 text-muted-foreground sm:h-6 sm:w-6" />
           </div>
-          
+
           <div className="mt-3 sm:mt-4">
             <label
-              htmlFor="image-upload"
               className={cn(
-                "cursor-pointer text-sm font-medium text-primary hover:text-primary/80 touch-manipulation",
-                (isUploading || isUploadThingUploading || value.length >= maxFiles) && "cursor-not-allowed opacity-50"
+                'cursor-pointer touch-manipulation font-medium text-primary text-sm hover:text-primary/80',
+                (isUploading ||
+                  isUploadThingUploading ||
+                  value.length >= maxFiles) &&
+                  'cursor-not-allowed opacity-50'
               )}
+              htmlFor="image-upload"
             >
-              {(isUploading || isUploadThingUploading) ? 'Uploading...' : 'Tap to add photos'}
+              {isUploading || isUploadThingUploading
+                ? 'Uploading...'
+                : 'Tap to add photos'}
             </label>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="mt-1 text-muted-foreground text-xs">
               PNG, JPG, GIF up to 8MB ({value.length}/{maxFiles} images)
             </p>
           </div>
@@ -141,26 +161,26 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
       {value.length > 0 && (
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {value.map((image, index) => (
-            <Card key={index} className="relative overflow-hidden group">
-              <div className="aspect-square relative">
+            <Card className="group relative overflow-hidden" key={index}>
+              <div className="relative aspect-square">
                 <Image
-                  src={image.url}
                   alt={image.alt || `Product image ${index + 1}`}
-                  fill
                   className="object-cover"
+                  fill
                   sizes="(max-width: 640px) 33vw, (max-width: 768px) 25vw, 20vw"
+                  src={image.url}
                 />
                 <Button
+                  className="absolute top-1 right-1 h-7 w-7 opacity-90 transition-opacity sm:h-6 sm:w-6 sm:opacity-0 sm:group-hover:opacity-100"
+                  onClick={() => removeImage(index)}
+                  size="icon"
                   type="button"
                   variant="destructive"
-                  size="icon"
-                  className="absolute top-1 right-1 h-7 w-7 sm:h-6 sm:w-6 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
-                  onClick={() => removeImage(index)}
                 >
                   <X className="h-3.5 w-3.5 sm:h-3 sm:w-3" />
                 </Button>
                 {index === 0 && (
-                  <div className="absolute bottom-1 left-1 bg-foreground/80 text-background text-[10px] sm:text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-sm">
+                  <div className="absolute bottom-1 left-1 rounded-sm bg-foreground/80 px-1.5 py-0.5 text-[10px] text-background sm:px-2 sm:py-1 sm:text-xs">
                     Main
                   </div>
                 )}
@@ -169,11 +189,12 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
           ))}
           {value.length < maxFiles && (
             <label
-              htmlFor="image-upload"
               className={cn(
-                "aspect-square border-2 border-dashed border-muted-foreground/25 rounded-[var(--radius-md)] flex items-center justify-center cursor-pointer hover:border-muted-foreground/50 transition-colors touch-manipulation",
-                (isUploading || isUploadThingUploading) && "cursor-not-allowed opacity-50"
+                'flex aspect-square cursor-pointer touch-manipulation items-center justify-center rounded-[var(--radius-md)] border-2 border-muted-foreground/25 border-dashed transition-colors hover:border-muted-foreground/50',
+                (isUploading || isUploadThingUploading) &&
+                  'cursor-not-allowed opacity-50'
               )}
+              htmlFor="image-upload"
             >
               <Upload className="h-5 w-5 text-muted-foreground/50" />
             </label>
@@ -182,9 +203,9 @@ export function ImageUpload({ value, onChange, maxFiles = 5 }: ImageUploadProps)
       )}
 
       {value.length === 0 && (
-        <div className="text-center py-6 sm:py-8">
-          <ImageIcon className="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground/50" />
-          <p className="mt-2 text-xs sm:text-sm text-muted-foreground">
+        <div className="py-6 text-center sm:py-8">
+          <ImageIcon className="mx-auto h-10 w-10 text-muted-foreground/50 sm:h-12 sm:w-12" />
+          <p className="mt-2 text-muted-foreground text-xs sm:text-sm">
             Add photos to help buyers see your item
           </p>
         </div>

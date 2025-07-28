@@ -1,29 +1,29 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import { Button } from '@repo/design-system/components';
 import {
   Header,
+  HeaderActions,
   HeaderBase,
   HeaderLogo,
   HeaderSearch,
-  HeaderActions,
-  MobileMenu,
   MenuButton,
+  MobileDrawerNav,
+  MobileMenu,
   MobileNav,
   StickyHeader,
-  MobileDrawerNav,
 } from '@repo/design-system/components/navigation';
-import { Button } from '@repo/design-system/components';
-import { 
-  ShoppingCart, 
-  Heart, 
-  Bell, 
-  User,
+import type { Meta, StoryObj } from '@storybook/react';
+import {
+  Bell,
+  Heart,
   Home,
-  Search,
-  ShoppingBag,
-  MessageCircle,
   LayoutDashboard,
+  MessageCircle,
   Package,
+  Search,
   Settings,
+  ShoppingBag,
+  ShoppingCart,
+  User,
 } from 'lucide-react';
 
 const meta = {
@@ -39,16 +39,16 @@ type Story = StoryObj<typeof meta>;
 
 const mockActions = (
   <>
-    <Button variant="ghost" size="icon">
+    <Button size="icon" variant="ghost">
       <Bell className="h-5 w-5" />
     </Button>
-    <Button variant="ghost" size="icon">
+    <Button size="icon" variant="ghost">
       <Heart className="h-5 w-5" />
     </Button>
-    <Button variant="ghost" size="icon">
+    <Button size="icon" variant="ghost">
       <ShoppingCart className="h-5 w-5" />
     </Button>
-    <Button variant="ghost" size="icon">
+    <Button size="icon" variant="ghost">
       <User className="h-5 w-5" />
     </Button>
   </>
@@ -56,6 +56,22 @@ const mockActions = (
 
 const mockDrawerContent = (
   <MobileDrawerNav
+    footer={
+      <div className="flex items-center justify-between">
+        <Button size="sm" variant="outline">
+          Settings
+        </Button>
+        <Button size="sm" variant="outline">
+          Sign Out
+        </Button>
+      </div>
+    }
+    header={
+      <div>
+        <h2 className="font-semibold text-lg">Menu</h2>
+        <p className="text-muted-foreground text-sm">Navigate Threadly</p>
+      </div>
+    }
     sections={[
       {
         title: 'Main Navigation',
@@ -69,8 +85,8 @@ const mockDrawerContent = (
       {
         title: 'Categories',
         items: [
-          { 
-            label: 'Women', 
+          {
+            label: 'Women',
             href: '#',
             children: [
               { label: 'Dresses', href: '#' },
@@ -78,8 +94,8 @@ const mockDrawerContent = (
               { label: 'Bottoms', href: '#' },
             ],
           },
-          { 
-            label: 'Men', 
+          {
+            label: 'Men',
             href: '#',
             children: [
               { label: 'Shirts', href: '#' },
@@ -92,18 +108,6 @@ const mockDrawerContent = (
         ],
       },
     ]}
-    header={
-      <div>
-        <h2 className="text-lg font-semibold">Menu</h2>
-        <p className="text-sm text-muted-foreground">Navigate Threadly</p>
-      </div>
-    }
-    footer={
-      <div className="flex items-center justify-between">
-        <Button variant="outline" size="sm">Settings</Button>
-        <Button variant="outline" size="sm">Sign Out</Button>
-      </div>
-    }
   />
 );
 
@@ -142,7 +146,7 @@ export const Transparent: Story = {
       <div className="min-h-screen bg-gradient-to-br from-primary/20 to-secondary/20">
         <Story />
         <div className="p-8">
-          <h1 className="text-4xl font-bold mb-4">Transparent Header</h1>
+          <h1 className="mb-4 font-bold text-4xl">Transparent Header</h1>
           <p>The header above has a transparent background.</p>
         </div>
       </div>
@@ -157,8 +161,8 @@ export const WithStickyBehavior: Story = {
         <StickyHeader>
           <Header {...Default.args} />
         </StickyHeader>
-        <div className="p-8 space-y-4">
-          <h1 className="text-4xl font-bold mb-4">Sticky Header Demo</h1>
+        <div className="space-y-4 p-8">
+          <h1 className="mb-4 font-bold text-4xl">Sticky Header Demo</h1>
           <p>Scroll down to see the header hide and show behavior.</p>
           {Array.from({ length: 50 }).map((_, i) => (
             <p key={i}>
@@ -183,10 +187,11 @@ export const MobileNavigation: Story = {
       <div className="min-h-screen bg-background pb-20">
         <Header {...Default.args} />
         <div className="p-4">
-          <h1 className="text-2xl font-bold mb-4">Mobile Navigation</h1>
+          <h1 className="mb-4 font-bold text-2xl">Mobile Navigation</h1>
           <p>The bottom navigation is shown on mobile devices.</p>
         </div>
         <MobileNav
+          currentPath="#"
           items={[
             { label: 'Home', href: '#', icon: Home },
             { label: 'Search', href: '#', icon: Search },
@@ -194,7 +199,6 @@ export const MobileNavigation: Story = {
             { label: 'Messages', href: '#', icon: MessageCircle, badge: 5 },
             { label: 'Profile', href: '#', icon: User },
           ]}
-          currentPath="#"
         />
       </div>
     ),
@@ -206,9 +210,9 @@ export const HeaderComponents: Story = {
     (Story) => (
       <div className="space-y-8 p-8">
         <div>
-          <h3 className="text-lg font-semibold mb-4">Header Base</h3>
+          <h3 className="mb-4 font-semibold text-lg">Header Base</h3>
           <HeaderBase>
-            <div className="flex items-center justify-between w-full">
+            <div className="flex w-full items-center justify-between">
               <span>Header Base Component</span>
               <span>Right Content</span>
             </div>
@@ -216,7 +220,7 @@ export const HeaderComponents: Story = {
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold mb-4">Header Logo</h3>
+          <h3 className="mb-4 font-semibold text-lg">Header Logo</h3>
           <div className="flex gap-4">
             <HeaderLogo />
             <HeaderLogo logoText="Custom" />
@@ -225,7 +229,7 @@ export const HeaderComponents: Story = {
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold mb-4">Menu Button</h3>
+          <h3 className="mb-4 font-semibold text-lg">Menu Button</h3>
           <div className="flex gap-4">
             <MenuButton />
             <MenuButton isOpen />
@@ -233,15 +237,15 @@ export const HeaderComponents: Story = {
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold mb-4">Header Search</h3>
+          <h3 className="mb-4 font-semibold text-lg">Header Search</h3>
           <div className="space-y-4">
             <HeaderSearch placeholder="Default search..." />
-            <HeaderSearch variant="minimal" placeholder="Minimal search..." />
+            <HeaderSearch placeholder="Minimal search..." variant="minimal" />
           </div>
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold mb-4">Header Actions</h3>
+          <h3 className="mb-4 font-semibold text-lg">Header Actions</h3>
           <div className="space-y-4">
             <HeaderActions spacing="tight">{mockActions}</HeaderActions>
             <HeaderActions spacing="normal">{mockActions}</HeaderActions>

@@ -1,5 +1,5 @@
-import { database } from '@repo/database';
 import type { Prisma } from '@repo/database';
+import { database } from '@repo/database';
 
 // Test database helpers
 export class TestDatabase {
@@ -11,14 +11,13 @@ export class TestDatabase {
 
     const tables = tablenames
       .map(({ tablename }) => tablename)
-      .filter(name => name !== '_prisma_migrations')
-      .map(name => `"public"."${name}"`)
+      .filter((name) => name !== '_prisma_migrations')
+      .map((name) => `"public"."${name}"`)
       .join(', ');
 
     try {
       await database.$executeRawUnsafe(`TRUNCATE TABLE ${tables} CASCADE;`);
-    } catch (error) {
-    }
+    } catch (error) {}
   }
 
   // Create test user
@@ -72,8 +71,12 @@ export class TestDatabase {
     imageCount = 3,
     data?: Partial<Prisma.ProductUncheckedCreateInput>
   ) {
-    const product = await this.createProduct(sellerId, categoryId, data);
-    
+    const product = await TestDatabase.createProduct(
+      sellerId,
+      categoryId,
+      data
+    );
+
     const images = await Promise.all(
       Array.from({ length: imageCount }, (_, index) =>
         database.productImage.create({
@@ -185,40 +188,40 @@ export class TestDatabase {
   // Seed test data for integration tests
   static async seedTestData() {
     // Create test users
-    const seller = await this.createUser({
+    const seller = await TestDatabase.createUser({
       firstName: 'John',
       lastName: 'Seller',
       email: 'seller@test.com',
       clerkId: 'test_seller',
     });
 
-    const buyer = await this.createUser({
+    const buyer = await TestDatabase.createUser({
       firstName: 'Jane',
-      lastName: 'Buyer', 
+      lastName: 'Buyer',
       email: 'buyer@test.com',
       clerkId: 'test_buyer',
     });
 
     // Create test categories
     const categories = await Promise.all([
-      this.createCategory({ name: 'Electronics', slug: 'electronics' }),
-      this.createCategory({ name: 'Clothing', slug: 'clothing' }),
-      this.createCategory({ name: 'Books', slug: 'books' }),
+      TestDatabase.createCategory({ name: 'Electronics', slug: 'electronics' }),
+      TestDatabase.createCategory({ name: 'Clothing', slug: 'clothing' }),
+      TestDatabase.createCategory({ name: 'Books', slug: 'books' }),
     ]);
 
     // Create test products
     const products = await Promise.all([
-      this.createProductWithImages(seller.id, categories[0].id, 2, {
+      TestDatabase.createProductWithImages(seller.id, categories[0].id, 2, {
         title: 'iPhone 12',
-        price: 59999,
+        price: 59_999,
         condition: 'VERY_GOOD',
       }),
-      this.createProductWithImages(seller.id, categories[1].id, 3, {
+      TestDatabase.createProductWithImages(seller.id, categories[1].id, 3, {
         title: 'Nike Air Max',
-        price: 12999,
+        price: 12_999,
         condition: 'GOOD',
       }),
-      this.createProductWithImages(seller.id, categories[2].id, 1, {
+      TestDatabase.createProductWithImages(seller.id, categories[2].id, 1, {
         title: 'JavaScript Book',
         price: 2999,
         condition: 'NEW_WITHOUT_TAGS',
@@ -226,17 +229,17 @@ export class TestDatabase {
     ]);
 
     // Create test conversation and messages
-    const conversation = await this.createConversation(
+    const conversation = await TestDatabase.createConversation(
       buyer.id,
       seller.id,
       products[0].product.id
     );
 
     await Promise.all([
-      this.createMessage(conversation.id, buyer.id, {
+      TestDatabase.createMessage(conversation.id, buyer.id, {
         content: 'Is this still available?',
       }),
-      this.createMessage(conversation.id, seller.id, {
+      TestDatabase.createMessage(conversation.id, seller.id, {
         content: 'Yes, it is! Would you like to buy it?',
       }),
     ]);
@@ -250,12 +253,14 @@ export class TestDatabase {
   }
 
   // Generate realistic test data
-  static async generateRealisticData(count: {
-    users?: number;
-    categories?: number;
-    products?: number;
-    orders?: number;
-  } = {}) {
+  static async generateRealisticData(
+    count: {
+      users?: number;
+      categories?: number;
+      products?: number;
+      orders?: number;
+    } = {}
+  ) {
     const {
       users: userCount = 10,
       categories: categoryCount = 5,
@@ -266,9 +271,9 @@ export class TestDatabase {
     // Create users
     const users = await Promise.all(
       Array.from({ length: userCount }, (_, i) =>
-        this.createUser({
+        TestDatabase.createUser({
           firstName: `User${i}`,
-          lastName: `Test`,
+          lastName: 'Test',
           email: `user${i}@test.com`,
           clerkId: `test_user_${i}`,
         })
@@ -278,7 +283,7 @@ export class TestDatabase {
     // Create categories
     const categories = await Promise.all(
       Array.from({ length: categoryCount }, (_, i) =>
-        this.createCategory({
+        TestDatabase.createCategory({
           name: `Category ${i}`,
           slug: `category-${i}`,
         })
@@ -288,15 +293,22 @@ export class TestDatabase {
     // Create products
     const products = await Promise.all(
       Array.from({ length: productCount }, async (_, i) => {
-        const sellerId = users[Math.floor(Math.random() * users.length)]?.id || users[0]!.id;
-        const categoryId = categories[Math.floor(Math.random() * categories.length)]?.id || categories[0]!.id;
-        
-        return this.createProductWithImages(sellerId, categoryId, 2, {
+        const sellerId =
+          users[Math.floor(Math.random() * users.length)]?.id || users[0]!.id;
+        const categoryId =
+          categories[Math.floor(Math.random() * categories.length)]?.id ||
+          categories[0]!.id;
+
+        return TestDatabase.createProductWithImages(sellerId, categoryId, 2, {
           title: `Product ${i}`,
-          price: Math.floor(Math.random() * 50000) + 1000, // $10 - $500
-          condition: ['NEW_WITH_TAGS', 'NEW_WITHOUT_TAGS', 'VERY_GOOD', 'GOOD', 'SATISFACTORY'][
-            Math.floor(Math.random() * 5)
-          ] as any,
+          price: Math.floor(Math.random() * 50_000) + 1000, // $10 - $500
+          condition: [
+            'NEW_WITH_TAGS',
+            'NEW_WITHOUT_TAGS',
+            'VERY_GOOD',
+            'GOOD',
+            'SATISFACTORY',
+          ][Math.floor(Math.random() * 5)] as any,
         });
       })
     );
@@ -304,33 +316,29 @@ export class TestDatabase {
     // Create orders
     const orders = await Promise.all(
       Array.from({ length: orderCount }, async (_, i) => {
-        const productWithImages = products[Math.floor(Math.random() * products.length)];
+        const productWithImages =
+          products[Math.floor(Math.random() * products.length)];
         const buyer = users[Math.floor(Math.random() * users.length)];
-        
-        if (!productWithImages || !buyer) {
+
+        if (!(productWithImages && buyer)) {
           return null;
         }
-        
+
         const buyerId = buyer.id;
         const product = productWithImages.product;
-        
+
         // Make sure buyer is not the seller
         if (buyerId === product.sellerId) {
           return null;
         }
 
-        return this.createOrder(
-          buyerId,
-          product.sellerId,
-          product.id,
-          {
-            amount: product.price,
-            totalAmount: product.price,
-            status: ['PENDING', 'PAID', 'SHIPPED', 'DELIVERED'][
-              Math.floor(Math.random() * 4)
-            ] as any,
-          }
-        );
+        return TestDatabase.createOrder(buyerId, product.sellerId, product.id, {
+          amount: product.price,
+          totalAmount: product.price,
+          status: ['PENDING', 'PAID', 'SHIPPED', 'DELIVERED'][
+            Math.floor(Math.random() * 4)
+          ] as any,
+        });
       })
     );
 
@@ -344,7 +352,7 @@ export class TestDatabase {
 
   // Wait for database operations to complete
   static async waitForDatabase() {
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
   // Check database connection

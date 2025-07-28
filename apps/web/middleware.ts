@@ -61,8 +61,8 @@ const securityHeaders = {
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'none'",
-    "upgrade-insecure-requests"
-  ].join('; ')
+    'upgrade-insecure-requests',
+  ].join('; '),
 };
 
 // CORS configuration
@@ -84,14 +84,14 @@ export default clerkMiddleware(async (auth, request: NextRequest) => {
 
   // Skip middleware for static files and API routes
   if (
-    pathname.startsWith('/_next/') || 
-    pathname.startsWith('/api/') || 
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/api/') ||
     pathname.includes('.') ||
     pathname === '/favicon.ico' ||
     pathname === '/manifest.json'
   ) {
     const response = NextResponse.next();
-    
+
     // Add security headers to API routes
     if (pathname.startsWith('/api/')) {
       Object.entries(securityHeaders).forEach(([key, value]) => {
@@ -101,7 +101,7 @@ export default clerkMiddleware(async (auth, request: NextRequest) => {
         response.headers.set(key, value);
       });
     }
-    
+
     return response;
   }
 
@@ -119,23 +119,23 @@ export default clerkMiddleware(async (auth, request: NextRequest) => {
         const returnUrl = pathname;
         const signInUrl = `/${locale}/sign-in?from=${encodeURIComponent(returnUrl)}`;
         const response = NextResponse.redirect(new URL(signInUrl, request.url));
-        
+
         // Add security headers to redirect response
         Object.entries(securityHeaders).forEach(([key, value]) => {
           response.headers.set(key, value);
         });
-        
+
         return response;
       }
       // If user is authenticated, let them continue in web - DO NOT REDIRECT
     }
     const response = NextResponse.next();
-    
+
     // Add security headers to all responses
     Object.entries(securityHeaders).forEach(([key, value]) => {
       response.headers.set(key, value);
     });
-    
+
     return response;
   }
 
@@ -144,12 +144,12 @@ export default clerkMiddleware(async (auth, request: NextRequest) => {
     const locale = defaultLocale;
     const newUrl = new URL(`/${locale}`, request.url);
     const response = NextResponse.redirect(newUrl, 302);
-    
+
     // Add security headers to redirect response
     Object.entries(securityHeaders).forEach(([key, value]) => {
       response.headers.set(key, value);
     });
-    
+
     return response;
   }
 
@@ -157,11 +157,11 @@ export default clerkMiddleware(async (auth, request: NextRequest) => {
   const locale = defaultLocale;
   const newUrl = new URL(`/${locale}${pathname}`, request.url);
   const response = NextResponse.redirect(newUrl, 302);
-  
+
   // Add security headers to redirect response
   Object.entries(securityHeaders).forEach(([key, value]) => {
     response.headers.set(key, value);
   });
-  
+
   return response;
 });

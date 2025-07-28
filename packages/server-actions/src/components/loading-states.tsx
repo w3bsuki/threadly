@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { cn } from '@repo/design-system/lib/utils'
+import { cn } from '@repo/design-system/lib/utils';
+import type React from 'react';
 
 interface SpinnerProps {
-  size?: 'sm' | 'md' | 'lg'
-  className?: string
+  size?: 'sm' | 'md' | 'lg';
+  className?: string;
 }
 
 export function Spinner({ size = 'md', className }: SpinnerProps) {
@@ -13,41 +13,45 @@ export function Spinner({ size = 'md', className }: SpinnerProps) {
     sm: 'h-4 w-4 border-2',
     md: 'h-6 w-6 border-2',
     lg: 'h-8 w-8 border-3',
-  }
+  };
 
   return (
     <div
+      aria-label="Loading"
       className={cn(
         'animate-spin rounded-full border-gray-200 border-t-blue-600',
         sizeClasses[size],
         className
       )}
       role="status"
-      aria-label="Loading"
     >
       <span className="sr-only">Loading...</span>
     </div>
-  )
+  );
 }
 
 interface LoadingDotsProps {
-  className?: string
+  className?: string;
 }
 
 export function LoadingDots({ className }: LoadingDotsProps) {
   return (
-    <div className={cn('flex space-x-1', className)} role="status" aria-label="Loading">
+    <div
+      aria-label="Loading"
+      className={cn('flex space-x-1', className)}
+      role="status"
+    >
       <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:-0.3s]" />
       <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:-0.15s]" />
       <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400" />
       <span className="sr-only">Loading...</span>
     </div>
-  )
+  );
 }
 
 interface SkeletonProps {
-  className?: string
-  animate?: boolean
+  className?: string;
+  animate?: boolean;
 }
 
 export function Skeleton({ className, animate = true }: SkeletonProps) {
@@ -59,15 +63,15 @@ export function Skeleton({ className, animate = true }: SkeletonProps) {
         className
       )}
     />
-  )
+  );
 }
 
 interface LoadingOverlayProps {
-  show: boolean
-  children: React.ReactNode
-  spinner?: boolean
-  blur?: boolean
-  className?: string
+  show: boolean;
+  children: React.ReactNode;
+  spinner?: boolean;
+  blur?: boolean;
+  className?: string;
 }
 
 export function LoadingOverlay({
@@ -92,13 +96,14 @@ export function LoadingOverlay({
         </div>
       )}
     </div>
-  )
+  );
 }
 
-interface LoadingButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  loading?: boolean
-  loadingText?: string
-  children: React.ReactNode
+interface LoadingButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  loading?: boolean;
+  loadingText?: string;
+  children: React.ReactNode;
 }
 
 export function LoadingButton({
@@ -111,27 +116,28 @@ export function LoadingButton({
 }: LoadingButtonProps) {
   return (
     <button
-      disabled={loading || disabled}
       className={cn(
         'relative inline-flex items-center justify-center',
         loading && 'cursor-not-allowed opacity-70',
         className
       )}
+      disabled={loading || disabled}
       {...props}
     >
       {loading && (
-        <Spinner size="sm" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
+        <Spinner
+          className="-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2"
+          size="sm"
+        />
       )}
-      <span className={cn(loading && 'invisible')}>
-        {children}
-      </span>
+      <span className={cn(loading && 'invisible')}>{children}</span>
       {loading && loadingText && (
-        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        <span className="-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2">
           {loadingText}
         </span>
       )}
     </button>
-  )
+  );
 }
 
 // Skeleton Components for common UI patterns
@@ -143,7 +149,7 @@ export function ProductCardSkeleton() {
       <Skeleton className="mb-2 h-4 w-1/2" />
       <Skeleton className="h-6 w-1/3" />
     </div>
-  )
+  );
 }
 
 export function ProductGridSkeleton({ count = 12 }: { count?: number }) {
@@ -153,7 +159,7 @@ export function ProductGridSkeleton({ count = 12 }: { count?: number }) {
         <ProductCardSkeleton key={i} />
       ))}
     </div>
-  )
+  );
 }
 
 export function ListItemSkeleton() {
@@ -165,19 +171,19 @@ export function ListItemSkeleton() {
         <Skeleton className="h-3 w-1/2" />
       </div>
     </div>
-  )
+  );
 }
 
 export function TableRowSkeleton({ columns = 4 }: { columns?: number }) {
   return (
     <tr>
       {Array.from({ length: columns }).map((_, i) => (
-        <td key={i} className="p-4">
+        <td className="p-4" key={i}>
           <Skeleton className="h-4 w-full" />
         </td>
       ))}
     </tr>
-  )
+  );
 }
 
 export function FormSkeleton() {
@@ -196,5 +202,5 @@ export function FormSkeleton() {
         <Skeleton className="h-10 w-24" />
       </div>
     </div>
-  )
+  );
 }

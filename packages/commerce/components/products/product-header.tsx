@@ -7,8 +7,8 @@ import {
   type Region,
 } from '@repo/internationalization/client';
 import { Heart } from 'lucide-react';
-import { formatCurrency } from '../../utils/currency';
 import { conditionColors, conditionLabels, type Product } from '../../types';
+import { formatCurrency } from '../../utils/currency';
 
 interface ProductHeaderProps {
   product: Product;
@@ -16,10 +16,10 @@ interface ProductHeaderProps {
   userCurrency: string;
 }
 
-export function ProductHeader({ 
-  product, 
-  userRegion, 
-  userCurrency 
+export function ProductHeader({
+  product,
+  userRegion,
+  userCurrency,
 }: ProductHeaderProps) {
   return (
     <div className="space-y-4">
@@ -56,17 +56,11 @@ export function ProductHeader({
         <Badge
           className={cn(
             'font-medium text-sm',
-            conditionColors[
-              product.condition as keyof typeof conditionColors
-            ]
+            conditionColors[product.condition as keyof typeof conditionColors]
           )}
           variant="secondary"
         >
-          {
-            conditionLabels[
-              product.condition as keyof typeof conditionLabels
-            ]
-          }
+          {conditionLabels[product.condition as keyof typeof conditionLabels]}
         </Badge>
         {product.size && (
           <Badge className="text-sm" variant="outline">

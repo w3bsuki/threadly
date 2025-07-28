@@ -1,6 +1,6 @@
 export {
-  MessageListSkeleton,
-  ConversationSkeleton,
   ChatInputSkeleton,
-  MessageBubbleSkeleton
+  ConversationSkeleton,
+  MessageBubbleSkeleton,
+  MessageListSkeleton,
 } from './skeletons';

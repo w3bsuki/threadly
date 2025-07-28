@@ -3,7 +3,7 @@ import { database } from '@repo/database';
 
 export async function ensureUserExists() {
   const user = await currentUser();
-  
+
   if (!user) {
     return null;
   }
@@ -12,7 +12,7 @@ export async function ensureUserExists() {
     // Check if user exists in database
     let dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      include: { UserPreferences: true }
+      include: { UserPreferences: true },
     });
 
     // If user doesn't exist, create them
@@ -25,7 +25,7 @@ export async function ensureUserExists() {
           lastName: user.lastName || null,
           imageUrl: user.imageUrl || null,
         },
-        include: { UserPreferences: true }
+        include: { UserPreferences: true },
       });
 
       // Create default preferences
@@ -64,7 +64,7 @@ export async function ensureUserExists() {
 export async function getUserWithSync(clerkId: string) {
   let user = await database.user.findUnique({
     where: { clerkId },
-    include: { UserPreferences: true, SellerProfile: true }
+    include: { UserPreferences: true, SellerProfile: true },
   });
 
   if (!user) {
@@ -74,7 +74,7 @@ export async function getUserWithSync(clerkId: string) {
       // Fetch again with all includes
       user = await database.user.findUnique({
         where: { clerkId },
-        include: { UserPreferences: true, SellerProfile: true }
+        include: { UserPreferences: true, SellerProfile: true },
       });
     }
   }

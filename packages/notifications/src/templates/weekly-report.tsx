@@ -1,11 +1,5 @@
-import * as React from 'react';
-import {
-  Button,
-  Column,
-  Row,
-  Section,
-  Text,
-} from '@react-email/components';
+import { Button, Column, Row, Section, Text } from '@react-email/components';
+import type * as React from 'react';
 import { BaseTemplate } from './base-template';
 
 interface WeeklyReportEmailProps {
@@ -37,8 +31,8 @@ export function WeeklyReportEmail({
 
   return (
     <BaseTemplate
-      preview={`Your weekly Threadly report for ${weekRange}`}
       heading={`Hi ${sellerName}, here's your weekly report!`}
+      preview={`Your weekly Threadly report for ${weekRange}`}
     >
       <Section style={content}>
         <Text style={text}>
@@ -92,9 +86,7 @@ export function WeeklyReportEmail({
           <Text style={tipItem}>
             • Upload high-quality photos with good lighting
           </Text>
-          <Text style={tipItem}>
-            • Respond to messages within 24 hours
-          </Text>
+          <Text style={tipItem}>• Respond to messages within 24 hours</Text>
           <Text style={tipItem}>
             • Price competitively by checking similar items
           </Text>

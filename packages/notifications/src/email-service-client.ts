@@ -1,17 +1,17 @@
-import { Resend } from 'resend';
 import { log } from '@repo/observability';
-import { OrderConfirmationEmail } from './templates/order-confirmation';
+import { Resend } from 'resend';
 import { NewMessageEmail } from './templates/new-message';
+import { OrderConfirmationEmail } from './templates/order-confirmation';
 import { PaymentReceivedEmail } from './templates/payment-received';
 import { WeeklyReportEmail } from './templates/weekly-report';
-import type { 
-  UserRepository, 
-  NotificationPreferences, 
-  Order, 
-  Message, 
-  Conversation, 
+import type {
+  Conversation,
+  Message,
+  NotificationPreferences,
+  Order,
   Payment,
-  WeeklyReportData
+  UserRepository,
+  WeeklyReportData,
 } from './types';
 
 interface EmailConfig {
@@ -21,16 +21,19 @@ interface EmailConfig {
   enableDelivery?: boolean;
 }
 
-export function createEmailService(config: EmailConfig, userRepository: UserRepository) {
+export function createEmailService(
+  config: EmailConfig,
+  userRepository: UserRepository
+) {
   const resend = new Resend(config.apiKey);
   const fromEmail = config.fromEmail || 'noreply@threadly.com';
   const environment = config.environment || 'production';
-  const enableDelivery = config.enableDelivery ?? (environment === 'production');
-  
+  const enableDelivery = config.enableDelivery ?? environment === 'production';
+
   log.info('Email service initialized', {
     fromEmail,
     environment,
-    deliveryEnabled: enableDelivery
+    deliveryEnabled: enableDelivery,
   });
 
   return {
@@ -39,15 +42,18 @@ export function createEmailService(config: EmailConfig, userRepository: UserRepo
         const buyer = await userRepository.findById(order.buyerId);
 
         if (!buyer?.email) {
-          log.warn('No buyer email found for order confirmation', { orderId: order.id });
+          log.warn('No buyer email found for order confirmation', {
+            orderId: order.id,
+          });
           return null;
         }
 
-        const prefs = buyer.notificationPreferences as any as NotificationPreferences;
+        const prefs =
+          buyer.notificationPreferences as any as NotificationPreferences;
         if (!prefs?.email?.orderUpdates) {
-          log.info('User has disabled order update emails', { 
-            orderId: order.id, 
-            buyerEmail: buyer.email 
+          log.info('User has disabled order update emails', {
+            orderId: order.id,
+            buyerEmail: buyer.email,
           });
           return null;
         }
@@ -56,7 +62,7 @@ export function createEmailService(config: EmailConfig, userRepository: UserRepo
           log.info('Email delivery disabled - would send order confirmation', {
             orderId: order.id,
             to: buyer.email,
-            environment
+            environment,
           });
           return { id: 'mock-email-id', environment };
         }
@@ -74,15 +80,15 @@ export function createEmailService(config: EmailConfig, userRepository: UserRepo
           }) as any,
           tags: [
             { name: 'type', value: 'order-confirmation' },
-            { name: 'environment', value: environment }
-          ]
+            { name: 'environment', value: environment },
+          ],
         });
 
         if (error) {
-          log.error('Failed to send order confirmation email', { 
-            error, 
+          log.error('Failed to send order confirmation email', {
+            error,
             orderId: order.id,
-            buyerEmail: buyer.email 
+            buyerEmail: buyer.email,
           });
           throw error;
         }
@@ -90,20 +96,27 @@ export function createEmailService(config: EmailConfig, userRepository: UserRepo
         log.info('Order confirmation email sent successfully', {
           orderId: order.id,
           emailId: data?.id,
-          to: buyer.email
+          to: buyer.email,
         });
 
         return data;
       } catch (error) {
-        log.error('Error in sendOrderConfirmation', { error, orderId: order.id });
+        log.error('Error in sendOrderConfirmation', {
+          error,
+          orderId: order.id,
+        });
         throw error;
       }
     },
 
-    async sendNewMessageNotification(message: Message, conversation: Conversation) {
-      const recipientId = message.senderId === conversation.buyerId 
-        ? conversation.sellerId 
-        : conversation.buyerId;
+    async sendNewMessageNotification(
+      message: Message,
+      conversation: Conversation
+    ) {
+      const recipientId =
+        message.senderId === conversation.buyerId
+          ? conversation.sellerId
+          : conversation.buyerId;
 
       const [recipient, sender] = await Promise.all([
         userRepository.findById(recipientId),
@@ -112,7 +125,8 @@ export function createEmailService(config: EmailConfig, userRepository: UserRepo
 
       if (!recipient?.email) return;
 
-      const prefs = recipient.notificationPreferences as any as NotificationPreferences;
+      const prefs =
+        recipient.notificationPreferences as any as NotificationPreferences;
       if (!prefs?.email?.newMessages) return;
 
       const { data, error } = await resend.emails.send({
@@ -121,7 +135,8 @@ export function createEmailService(config: EmailConfig, userRepository: UserRepo
         subject: `New message from ${sender?.firstName}`,
         react: NewMessageEmail({
           recipientName: recipient.firstName || 'User',
-          senderName: `${sender?.firstName || ''} ${sender?.lastName || ''}`.trim(),
+          senderName:
+            `${sender?.firstName || ''} ${sender?.lastName || ''}`.trim(),
           messagePreview: message.content.substring(0, 100),
           conversationUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'https://app.threadly.com'}/messages/${conversation.id}`,
         }) as any,
@@ -139,7 +154,8 @@ export function createEmailService(config: EmailConfig, userRepository: UserRepo
 
       if (!seller?.email) return;
 
-      const prefs = seller.notificationPreferences as any as NotificationPreferences;
+      const prefs =
+        seller.notificationPreferences as any as NotificationPreferences;
       if (!prefs?.email?.paymentReceived) return;
 
       const { data, error } = await resend.emails.send({
@@ -167,7 +183,8 @@ export function createEmailService(config: EmailConfig, userRepository: UserRepo
 
       if (!seller?.email) return;
 
-      const prefs = seller.notificationPreferences as any as NotificationPreferences;
+      const prefs =
+        seller.notificationPreferences as any as NotificationPreferences;
       if (!prefs?.email?.weeklyReport) return;
 
       const { data, error } = await resend.emails.send({
@@ -193,8 +210,12 @@ export function createEmailService(config: EmailConfig, userRepository: UserRepo
       return data;
     },
 
-    async sendBulkEmail(recipients: string[], subject: string, content: React.ReactElement) {
-      const emails = recipients.map(to => ({
+    async sendBulkEmail(
+      recipients: string[],
+      subject: string,
+      content: React.ReactElement
+    ) {
+      const emails = recipients.map((to) => ({
         from: fromEmail,
         to,
         subject,
@@ -208,7 +229,7 @@ export function createEmailService(config: EmailConfig, userRepository: UserRepo
       }
 
       return data;
-    }
+    },
   };
 }
 

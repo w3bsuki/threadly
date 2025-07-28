@@ -84,8 +84,8 @@ export function ProductQuickViewMobile({
         )}
       </DialogTrigger>
 
-      <DialogContent className="max-h-[85dvh] w-[90dvw] max-w-sm gap-0 border-0 bg-card p-0 shadow-2xl overflow-hidden rounded-[var(--radius-xl)]">
-        <div className="relative flex h-full max-h-[90dvh] flex-col bg-card overflow-hidden">
+      <DialogContent className="max-h-[85dvh] w-[90dvw] max-w-sm gap-0 overflow-hidden rounded-[var(--radius-xl)] border-0 bg-card p-0 shadow-2xl">
+        <div className="relative flex h-full max-h-[90dvh] flex-col overflow-hidden bg-card">
           {/* Close Button */}
 
           {/* Product Image */}
@@ -123,7 +123,7 @@ export function ProductQuickViewMobile({
           </div>
 
           {/* Content */}
-          <div className="flex flex-1 flex-col space-y-4 p-4 min-h-0 overflow-y-auto">
+          <div className="flex min-h-0 flex-1 flex-col space-y-4 overflow-y-auto p-4">
             {/* Product Info */}
             <div>
               <p className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
@@ -172,7 +172,7 @@ export function ProductQuickViewMobile({
             </div>
 
             {/* Actions */}
-            <div className="sticky bottom-0 bg-card border-t pt-4 grid grid-cols-2 gap-3">
+            <div className="sticky bottom-0 grid grid-cols-2 gap-3 border-t bg-card pt-4">
               <Button
                 className="h-12 rounded-lg bg-primary font-semibold text-primary-foreground text-sm transition-all hover:bg-primary/90"
                 disabled={isLoading}

@@ -90,7 +90,7 @@ export const SuccessContent = ({ order }: SuccessContentProps) => {
         <h1 className="mb-2 font-bold text-3xl text-foreground">
           Order Confirmed!
         </h1>
-        <p className="mb-8 text-muted-foreground text-lg">
+        <p className="mb-8 text-lg text-muted-foreground">
           Thank you for your purchase. Your order has been successfully placed.
         </p>
 

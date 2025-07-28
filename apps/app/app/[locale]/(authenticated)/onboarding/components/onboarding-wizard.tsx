@@ -1,28 +1,30 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@repo/design-system/components/ui/button';
 import { Card, CardContent } from '@repo/design-system/components/ui/card';
-import { ChevronLeft, ChevronRight, Check, Loader2 } from 'lucide-react';
-import { StepIndicator } from './step-indicator';
-import { RoleSelection } from './role-selection';
-import { InterestsSelection } from './interests-selection';
-import { BrandsSelection } from './brands-selection';
-import { LocationSelection } from './location-selection';
-import { HowItWorks } from './how-it-works';
-import { saveUserPreferences } from '../actions';
+import { Check, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import type { UserPreferenceRole } from '@/lib/database-types';
+import { saveUserPreferences } from '../actions';
+import { BrandsSelection } from './brands-selection';
+import { HowItWorks } from './how-it-works';
+import { InterestsSelection } from './interests-selection';
+import { LocationSelection } from './location-selection';
+import { RoleSelection } from './role-selection';
+import { StepIndicator } from './step-indicator';
 
 interface OnboardingWizardProps {
   userId: string;
 }
 
-export function OnboardingWizard({ userId }: OnboardingWizardProps): React.JSX.Element {
+export function OnboardingWizard({
+  userId,
+}: OnboardingWizardProps): React.JSX.Element {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     preferredRole: 'BUYER' as UserPreferenceRole,
     interests: [] as string[],
@@ -51,8 +53,11 @@ export function OnboardingWizard({ userId }: OnboardingWizardProps): React.JSX.E
         ...formData,
         onboardingCompleted: true,
       });
-      
-      if (formData.preferredRole === 'SELLER' || formData.preferredRole === 'BOTH') {
+
+      if (
+        formData.preferredRole === 'SELLER' ||
+        formData.preferredRole === 'BOTH'
+      ) {
         router.push('/selling/onboarding');
       } else {
         router.push('/dashboard');
@@ -83,9 +88,9 @@ export function OnboardingWizard({ userId }: OnboardingWizardProps): React.JSX.E
   };
 
   return (
-    <div className="container max-w-2xl mx-auto py-8 px-4">
+    <div className="container mx-auto max-w-2xl px-4 py-8">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold mb-2">Welcome to Threadly!</h1>
+        <h1 className="mb-2 font-bold text-3xl">Welcome to Threadly!</h1>
         <p className="text-muted-foreground">
           Let's personalize your experience in just a few steps
         </p>
@@ -98,32 +103,34 @@ export function OnboardingWizard({ userId }: OnboardingWizardProps): React.JSX.E
           <div className="min-h-[400px]">
             {currentStep === 1 && (
               <RoleSelection
-                selectedRole={formData.preferredRole}
                 onSelect={(role) => updateFormData({ preferredRole: role })}
+                selectedRole={formData.preferredRole}
               />
             )}
-            
+
             {currentStep === 2 && (
               <InterestsSelection
-                selectedInterests={formData.interests}
                 onSelect={(interests) => updateFormData({ interests })}
+                selectedInterests={formData.interests}
               />
             )}
-            
+
             {currentStep === 3 && (
               <BrandsSelection
+                onSelect={(brands) =>
+                  updateFormData({ favoriteBrands: brands })
+                }
                 selectedBrands={formData.favoriteBrands}
-                onSelect={(brands) => updateFormData({ favoriteBrands: brands })}
               />
             )}
-            
+
             {currentStep === 4 && (
               <LocationSelection
                 location={formData.location}
                 onSelect={(location) => updateFormData({ location })}
               />
             )}
-            
+
             {currentStep === 5 && (
               <HowItWorks selectedRole={formData.preferredRole} />
             )}
@@ -131,24 +138,20 @@ export function OnboardingWizard({ userId }: OnboardingWizardProps): React.JSX.E
         </CardContent>
       </Card>
 
-      <div className="flex justify-between mt-8">
+      <div className="mt-8 flex justify-between">
         <div className="flex gap-2">
           {currentStep > 1 && (
             <Button
-              variant="outline"
-              onClick={handleBack}
               disabled={isSubmitting}
+              onClick={handleBack}
+              variant="outline"
             >
-              <ChevronLeft className="w-4 h-4 mr-1" />
+              <ChevronLeft className="mr-1 h-4 w-4" />
               Back
             </Button>
           )}
-          
-          <Button
-            variant="ghost"
-            onClick={handleSkip}
-            disabled={isSubmitting}
-          >
+
+          <Button disabled={isSubmitting} onClick={handleSkip} variant="ghost">
             Skip for now
           </Button>
         </div>
@@ -157,22 +160,19 @@ export function OnboardingWizard({ userId }: OnboardingWizardProps): React.JSX.E
           {currentStep < totalSteps ? (
             <Button onClick={handleNext}>
               Next
-              <ChevronRight className="w-4 h-4 ml-1" />
+              <ChevronRight className="ml-1 h-4 w-4" />
             </Button>
           ) : (
-            <Button 
-              onClick={handleComplete}
-              disabled={isSubmitting}
-            >
+            <Button disabled={isSubmitting} onClick={handleComplete}>
               {isSubmitting ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Setting up...
                 </>
               ) : (
                 <>
                   Complete Setup
-                  <Check className="w-4 h-4 ml-1" />
+                  <Check className="ml-1 h-4 w-4" />
                 </>
               )}
             </Button>

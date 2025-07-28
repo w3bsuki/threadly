@@ -3,10 +3,20 @@ import { z } from 'zod';
 export const UserRoleSchema = z.enum(['USER', 'SELLER', 'ADMIN', 'MODERATOR']);
 export type UserRole = z.infer<typeof UserRoleSchema>;
 
-export const UserStatusSchema = z.enum(['ACTIVE', 'INACTIVE', 'SUSPENDED', 'BANNED']);
+export const UserStatusSchema = z.enum([
+  'ACTIVE',
+  'INACTIVE',
+  'SUSPENDED',
+  'BANNED',
+]);
 export type UserStatus = z.infer<typeof UserStatusSchema>;
 
-export const SellerStatusSchema = z.enum(['PENDING', 'APPROVED', 'REJECTED', 'SUSPENDED']);
+export const SellerStatusSchema = z.enum([
+  'PENDING',
+  'APPROVED',
+  'REJECTED',
+  'SUSPENDED',
+]);
 export type SellerStatus = z.infer<typeof SellerStatusSchema>;
 
 export const NotificationPreferencesSchema = z.object({
@@ -20,7 +30,9 @@ export const NotificationPreferencesSchema = z.object({
   newListings: z.boolean().default(true),
 });
 
-export type NotificationPreferences = z.infer<typeof NotificationPreferencesSchema>;
+export type NotificationPreferences = z.infer<
+  typeof NotificationPreferencesSchema
+>;
 
 export const PrivacySettingsSchema = z.object({
   profileVisible: z.boolean().default(true),
@@ -37,11 +49,13 @@ export const UserProfileSchema = z.object({
   bio: z.string().max(500).nullable().optional(),
   location: z.string().max(100).nullable().optional(),
   website: z.string().url().nullable().optional(),
-  socialLinks: z.object({
-    instagram: z.string().nullable().optional(),
-    twitter: z.string().nullable().optional(),
-    facebook: z.string().nullable().optional(),
-  }).optional(),
+  socialLinks: z
+    .object({
+      instagram: z.string().nullable().optional(),
+      twitter: z.string().nullable().optional(),
+      facebook: z.string().nullable().optional(),
+    })
+    .optional(),
   avatarUrl: z.string().url().nullable().optional(),
   coverImageUrl: z.string().url().nullable().optional(),
   joinedAt: z.date(),

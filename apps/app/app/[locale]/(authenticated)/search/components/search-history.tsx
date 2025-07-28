@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Button } from '@repo/design-system/components';
-import { Clock, X, TrendingUp, Search, Loader2 } from 'lucide-react';
-import { toast } from '@repo/design-system/components';
+import { Button, toast } from '@repo/design-system/components';
+import { Clock, Loader2, Search, TrendingUp, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface SearchHistoryItem {
   id: string;
@@ -17,7 +16,10 @@ interface SearchHistoryProps {
   currentQuery?: string;
 }
 
-export function SearchHistory({ onSearchSelect, currentQuery }: SearchHistoryProps) {
+export function SearchHistory({
+  onSearchSelect,
+  currentQuery,
+}: SearchHistoryProps) {
   const [history, setHistory] = useState<SearchHistoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [popularSearches] = useState([
@@ -28,7 +30,7 @@ export function SearchHistory({ onSearchSelect, currentQuery }: SearchHistoryPro
     'winter coats',
     'evening wear',
     'casual shirts',
-    'accessories'
+    'accessories',
   ]);
 
   // Load search history from API
@@ -40,7 +42,7 @@ export function SearchHistory({ onSearchSelect, currentQuery }: SearchHistoryPro
     try {
       const response = await fetch('/api/search-history');
       if (!response.ok) throw new Error('Failed to fetch search history');
-      
+
       const data = await response.json();
       setHistory(data.searchHistory);
     } catch (error) {
@@ -78,32 +80,28 @@ export function SearchHistory({ onSearchSelect, currentQuery }: SearchHistoryPro
       {history.length > 0 && (
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium flex items-center gap-2">
+            <h3 className="flex items-center gap-2 font-medium text-sm">
               <Clock className="h-4 w-4" />
               Recent Searches
             </h3>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={clearHistory}
-            >
+            <Button onClick={clearHistory} size="sm" variant="ghost">
               Clear All
             </Button>
           </div>
-          
+
           <div className="flex flex-wrap gap-2">
             {history.map((item) => (
               <Button
-                key={item.id}
-                variant="outline"
-                size="sm"
                 className="h-8"
+                key={item.id}
                 onClick={() => onSearchSelect(item.query)}
+                size="sm"
+                variant="outline"
               >
-                <Search className="h-3 w-3 mr-1" />
+                <Search className="mr-1 h-3 w-3" />
                 {item.query}
                 {item.resultCount > 0 && (
-                  <span className="text-xs text-muted-foreground ml-1">
+                  <span className="ml-1 text-muted-foreground text-xs">
                     ({item.resultCount})
                   </span>
                 )}
@@ -115,19 +113,19 @@ export function SearchHistory({ onSearchSelect, currentQuery }: SearchHistoryPro
 
       {/* Popular Searches */}
       <div className="space-y-2">
-        <h3 className="text-sm font-medium flex items-center gap-2">
+        <h3 className="flex items-center gap-2 font-medium text-sm">
           <TrendingUp className="h-4 w-4" />
           Popular Searches
         </h3>
-        
+
         <div className="flex flex-wrap gap-2">
           {popularSearches.map((search) => (
             <Button
-              key={search}
-              variant="secondary"
-              size="sm"
               className="h-8"
+              key={search}
               onClick={() => onSearchSelect(search)}
+              size="sm"
+              variant="secondary"
             >
               {search}
             </Button>
@@ -137,8 +135,8 @@ export function SearchHistory({ onSearchSelect, currentQuery }: SearchHistoryPro
 
       {/* No History State */}
       {history.length === 0 && (
-        <div className="text-center py-4 text-sm text-muted-foreground">
-          <Clock className="h-8 w-8 mx-auto mb-2 opacity-50" />
+        <div className="py-4 text-center text-muted-foreground text-sm">
+          <Clock className="mx-auto mb-2 h-8 w-8 opacity-50" />
           <p>No recent searches</p>
           <p>Your search history will appear here</p>
         </div>

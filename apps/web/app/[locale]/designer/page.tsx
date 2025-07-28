@@ -1,10 +1,10 @@
 import { Badge, Button } from '@repo/design-system/components';
+import { getDictionary } from '@repo/internationalization';
+import { createMetadata } from '@repo/seo/metadata';
 import { Award, ChevronRight, Crown, Shield, Star } from 'lucide-react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ProductGrid } from '../(home)/components/product-grid';
-import { createMetadata } from '@repo/seo/metadata';
-import { getDictionary } from '@repo/internationalization';
-import type { Metadata } from 'next';
 
 export async function generateMetadata({
   params,
@@ -16,7 +16,8 @@ export async function generateMetadata({
 
   return createMetadata({
     title: 'Designer Marketplace - Authenticated Luxury Fashion | Threadly',
-    description: 'Shop authenticated luxury designer fashion from Gucci, Chanel, Prada, Louis Vuitton, and more. Every piece is verified by our authentication experts.',
+    description:
+      'Shop authenticated luxury designer fashion from Gucci, Chanel, Prada, Louis Vuitton, and more. Every piece is verified by our authentication experts.',
     keywords: [
       'designer fashion',
       'luxury fashion',
@@ -35,7 +36,8 @@ export async function generateMetadata({
     ],
     openGraph: {
       title: 'Designer Marketplace - Authenticated Luxury Fashion',
-      description: 'Discover authenticated luxury fashion from the world\'s most coveted designers. Every piece is verified, every transaction is protected.',
+      description:
+        "Discover authenticated luxury fashion from the world's most coveted designers. Every piece is verified, every transaction is protected.",
       type: 'website',
       images: [
         {
@@ -49,7 +51,8 @@ export async function generateMetadata({
     twitter: {
       card: 'summary_large_image',
       title: 'Designer Marketplace - Threadly',
-      description: 'Shop authenticated luxury designer fashion from the world\'s most prestigious brands.',
+      description:
+        "Shop authenticated luxury designer fashion from the world's most prestigious brands.",
       images: ['/images/designer-hero.jpg'],
     },
   });

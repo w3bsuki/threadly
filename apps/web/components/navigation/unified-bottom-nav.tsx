@@ -3,7 +3,7 @@
 import { useUser } from '@repo/auth/client';
 import { Badge } from '@repo/design-system/components';
 import { cn } from '@repo/design-system/lib/utils';
-import { Home, Search, Plus, ShoppingCart, User } from 'lucide-react';
+import { Home, Plus, Search, ShoppingCart, User } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { env } from '@/env';
@@ -35,12 +35,14 @@ export function UnifiedBottomNav({
       href: `/${locale}/search`,
       label: dictionary.web?.global?.navigation?.browse || 'Search',
       icon: Search,
-      active: pathname.startsWith(`/${locale}/search`) || pathname.startsWith(`/${locale}/browse`) || pathname.startsWith(`/${locale}/categories`) || pathname.startsWith(`/${locale}/products`),
+      active:
+        pathname.startsWith(`/${locale}/search`) ||
+        pathname.startsWith(`/${locale}/browse`) ||
+        pathname.startsWith(`/${locale}/categories`) ||
+        pathname.startsWith(`/${locale}/products`),
     },
     {
-      href: isSignedIn 
-        ? `/${locale}/selling/new`
-        : `/${locale}/sign-in`,
+      href: isSignedIn ? `/${locale}/selling/new` : `/${locale}/sign-in`,
       label: dictionary.web?.global?.navigation?.sell || 'Sell',
       icon: Plus,
       active: pathname.startsWith(`/${locale}/selling/new`),
@@ -57,7 +59,11 @@ export function UnifiedBottomNav({
       href: `/${locale}/account`,
       label: dictionary.web?.global?.navigation?.profile || 'Account',
       icon: User,
-      active: pathname.startsWith(`/${locale}/account`) || pathname.startsWith(`/${locale}/profile`) || pathname.startsWith(`/${locale}/messages`) || pathname.startsWith(`/${locale}/favorites`),
+      active:
+        pathname.startsWith(`/${locale}/account`) ||
+        pathname.startsWith(`/${locale}/profile`) ||
+        pathname.startsWith(`/${locale}/messages`) ||
+        pathname.startsWith(`/${locale}/favorites`),
       badge: unreadMessages > 0 ? unreadMessages : undefined,
     },
   ];
@@ -82,7 +88,8 @@ export function UnifiedBottomNav({
                 item.active
                   ? 'bg-secondary text-foreground'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground',
-                item.isAction && 'bg-primary text-primary-foreground hover:bg-primary/90'
+                item.isAction &&
+                  'bg-primary text-primary-foreground hover:bg-primary/90'
               )}
               href={item.href}
               key={item.href}

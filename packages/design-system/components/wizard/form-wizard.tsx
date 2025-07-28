@@ -1,17 +1,29 @@
 'use client';
 
 import * as React from 'react';
-import { UseFormReturn, FieldValues, Path, Controller, ControllerRenderProps } from 'react-hook-form';
-import { MultiStepWizard, MultiStepWizardProps, WizardStep } from './multi-step-wizard';
-import { WizardFormStep } from './wizard-step';
+import {
+  Controller,
+  type ControllerRenderProps,
+  type FieldValues,
+  type Path,
+  type UseFormReturn,
+} from 'react-hook-form';
 import { Form } from '../ui/form';
+import {
+  MultiStepWizard,
+  type MultiStepWizardProps,
+  type WizardStep,
+} from './multi-step-wizard';
+import { WizardFormStep } from './wizard-step';
 
-export interface FormWizardStep<T extends FieldValues> extends Omit<WizardStep, 'validate'> {
+export interface FormWizardStep<T extends FieldValues>
+  extends Omit<WizardStep, 'validate'> {
   fields?: Path<T>[];
   validate?: (form: UseFormReturn<T>) => boolean | Promise<boolean>;
 }
 
-export interface FormWizardProps<T extends FieldValues> extends Omit<MultiStepWizardProps, 'steps' | 'children'> {
+export interface FormWizardProps<T extends FieldValues>
+  extends Omit<MultiStepWizardProps, 'steps' | 'children'> {
   form: UseFormReturn<T>;
   steps: FormWizardStep<T>[];
   children: React.ReactNode;
@@ -36,11 +48,11 @@ export function FormWizard<T extends FieldValues>({
             const isValid = await form.trigger(step.fields);
             if (!isValid) return false;
           }
-          
+
           if (step.validate) {
             return await step.validate(form);
           }
-          
+
           return true;
         },
       })),
@@ -61,8 +73,8 @@ export function FormWizard<T extends FieldValues>({
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <MultiStepWizard
           {...wizardProps}
-          steps={enhancedSteps}
           onComplete={handleComplete}
+          steps={enhancedSteps}
         >
           {children}
         </MultiStepWizard>

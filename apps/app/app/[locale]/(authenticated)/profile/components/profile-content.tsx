@@ -1,53 +1,76 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+  Label,
+  Separator,
+  Switch,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Textarea,
+} from '@repo/design-system/components';
+import { format } from 'date-fns';
+import {
+  BarChart3,
+  Bell,
+  Calendar,
+  CreditCard,
+  DollarSign,
+  Mail,
+  MapPin,
+  MessageSquare,
+  Package,
+  Phone,
+  Settings,
+  Shield,
+  ShoppingBag,
+  Star,
+  User,
+  UserPlus,
+  Users,
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
-import { Input } from '@repo/design-system/components';
-import { Label } from '@repo/design-system/components';
-import { Textarea } from '@repo/design-system/components';
-import { Switch } from '@repo/design-system/components';
-import { Avatar, AvatarFallback, AvatarImage } from '@repo/design-system/components';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/design-system/components';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components';
-import { Separator } from '@repo/design-system/components';
-import { 
-  User, 
-  Mail, 
-  MapPin, 
-  Phone, 
-  Calendar, 
-  Star, 
-  Package, 
-  DollarSign, 
-  ShoppingBag,
-  Settings,
-  Bell,
-  Shield,
-  CreditCard,
-  Users,
-  UserPlus,
-  BarChart3,
-  MessageSquare
-} from 'lucide-react';
-import { format } from 'date-fns';
-import { updateUserProfile, updateNotificationSettings, updateShippingAddress } from '../actions/profile-actions';
+import {
+  updateNotificationSettings,
+  updateShippingAddress,
+  updateUserProfile,
+} from '../actions/profile-actions';
 import { AddressManagement } from './address-management';
 
 const profileSchema = z.object({
   firstName: z.string().min(1, 'First name is required').max(50),
   lastName: z.string().min(1, 'Last name is required').max(50),
-  username: z.string().min(3, 'Username must be at least 3 characters').max(30).optional(),
+  username: z
+    .string()
+    .min(3, 'Username must be at least 3 characters')
+    .max(30)
+    .optional(),
   bio: z.string().max(500, 'Bio must be less than 500 characters').optional(),
   phone: z.string().optional(),
   website: z.string().url('Must be a valid URL').optional().or(z.literal('')),
 });
-
 
 const notificationSchema = z.object({
   emailMarketing: z.boolean(),
@@ -71,7 +94,6 @@ interface UserStats {
   followers_count: number;
   following_count: number;
 }
-
 
 interface User {
   id: string;
@@ -107,7 +129,6 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
     },
   });
 
-
   const notificationForm = useForm<NotificationFormData>({
     resolver: zodResolver(notificationSchema),
     defaultValues: {
@@ -135,7 +156,6 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
     }
   };
 
-
   const onSubmitNotifications = async (data: NotificationFormData) => {
     setIsUpdatingNotifications(true);
     try {
@@ -157,28 +177,29 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
         <CardContent className="pt-6">
           <div className="flex items-center gap-6">
             <Avatar className="h-24 w-24">
-              <AvatarImage src={user.imageUrl} alt={user.firstName} />
+              <AvatarImage alt={user.firstName} src={user.imageUrl} />
               <AvatarFallback className="text-2xl">
-                {user.firstName?.[0]}{user.lastName?.[0]}
+                {user.firstName?.[0]}
+                {user.lastName?.[0]}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <h2 className="text-2xl font-bold">
+              <h2 className="font-bold text-2xl">
                 {user.firstName} {user.lastName}
               </h2>
-              <p className="text-muted-foreground flex items-center gap-2">
+              <p className="flex items-center gap-2 text-muted-foreground">
                 <Mail className="h-4 w-4" />
                 {user.emailAddresses[0]?.emailAddress}
               </p>
               {user.createdAt && (
-                <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
+                <p className="mt-1 flex items-center gap-2 text-muted-foreground text-sm">
                   <Calendar className="h-4 w-4" />
                   Member since {format(new Date(user.createdAt), 'MMMM yyyy')}
                 </p>
               )}
             </div>
             <div className="text-right">
-              <Badge variant="outline" className="mb-2">
+              <Badge className="mb-2" variant="outline">
                 Verified Member
               </Badge>
             </div>
@@ -190,77 +211,83 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Items Sold</CardTitle>
+            <CardTitle className="font-medium text-sm">Items Sold</CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.products_sold}</div>
+            <div className="font-bold text-2xl">{stats.products_sold}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Earned</CardTitle>
+            <CardTitle className="font-medium text-sm">Total Earned</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${stats.total_earnings.toFixed(2)}</div>
+            <div className="font-bold text-2xl">
+              ${stats.total_earnings.toFixed(2)}
+            </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Items Bought</CardTitle>
+            <CardTitle className="font-medium text-sm">Items Bought</CardTitle>
             <ShoppingBag className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.products_bought}</div>
+            <div className="font-bold text-2xl">{stats.products_bought}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Spent</CardTitle>
+            <CardTitle className="font-medium text-sm">Total Spent</CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${stats.total_spent.toFixed(2)}</div>
+            <div className="font-bold text-2xl">
+              ${stats.total_spent.toFixed(2)}
+            </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Listings</CardTitle>
+            <CardTitle className="font-medium text-sm">
+              Active Listings
+            </CardTitle>
             <Star className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.active_listings}</div>
+            <div className="font-bold text-2xl">{stats.active_listings}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Followers</CardTitle>
+            <CardTitle className="font-medium text-sm">Followers</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.followers_count}</div>
+            <div className="font-bold text-2xl">{stats.followers_count}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Following</CardTitle>
+            <CardTitle className="font-medium text-sm">Following</CardTitle>
             <UserPlus className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.following_count}</div>
+            <div className="font-bold text-2xl">{stats.following_count}</div>
           </CardContent>
         </Card>
       </div>
 
       {/* Settings Tabs */}
-      <Tabs defaultValue="profile" className="space-y-4">
+      <Tabs className="space-y-4" defaultValue="profile">
         <TabsList className="grid w-full grid-cols-3 md:grid-cols-6">
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="address">Address</TabsTrigger>
@@ -281,7 +308,10 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
             </CardHeader>
             <CardContent>
               <Form {...profileForm}>
-                <form onSubmit={profileForm.handleSubmit(onSubmitProfile)} className="space-y-4">
+                <form
+                  className="space-y-4"
+                  onSubmit={profileForm.handleSubmit(onSubmitProfile)}
+                >
                   <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={profileForm.control}
@@ -337,8 +367,8 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                         <FormLabel>Bio (Optional)</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="Tell us about yourself..."
                             className="min-h-20"
+                            placeholder="Tell us about yourself..."
                             {...field}
                           />
                         </FormControl>
@@ -358,7 +388,11 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                         <FormItem>
                           <FormLabel>Phone Number (Optional)</FormLabel>
                           <FormControl>
-                            <Input type="tel" placeholder="+1 (555) 123-4567" {...field} />
+                            <Input
+                              placeholder="+1 (555) 123-4567"
+                              type="tel"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -372,7 +406,10 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                         <FormItem>
                           <FormLabel>Website (Optional)</FormLabel>
                           <FormControl>
-                            <Input placeholder="https://yourwebsite.com" {...field} />
+                            <Input
+                              placeholder="https://yourwebsite.com"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -380,7 +417,7 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                     />
                   </div>
 
-                  <Button type="submit" disabled={isUpdatingProfile}>
+                  <Button disabled={isUpdatingProfile} type="submit">
                     {isUpdatingProfile ? 'Updating...' : 'Update Profile'}
                   </Button>
                 </form>
@@ -408,38 +445,63 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Monthly Revenue</CardTitle>
+                      <CardTitle className="font-medium text-sm">
+                        Monthly Revenue
+                      </CardTitle>
                       <DollarSign className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">${stats.total_earnings.toFixed(2)}</div>
-                      <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+                      <div className="font-bold text-2xl">
+                        ${stats.total_earnings.toFixed(2)}
+                      </div>
+                      <p className="text-muted-foreground text-xs">
+                        +20.1% from last month
+                      </p>
                     </CardContent>
                   </Card>
 
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Conversion Rate</CardTitle>
+                      <CardTitle className="font-medium text-sm">
+                        Conversion Rate
+                      </CardTitle>
                       <BarChart3 className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">
-                        {stats.active_listings > 0 ? ((stats.products_sold / stats.active_listings) * 100).toFixed(1) : 0}%
+                      <div className="font-bold text-2xl">
+                        {stats.active_listings > 0
+                          ? (
+                              (stats.products_sold / stats.active_listings) *
+                              100
+                            ).toFixed(1)
+                          : 0}
+                        %
                       </div>
-                      <p className="text-xs text-muted-foreground">Views to sales ratio</p>
+                      <p className="text-muted-foreground text-xs">
+                        Views to sales ratio
+                      </p>
                     </CardContent>
                   </Card>
 
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Avg Sale Price</CardTitle>
+                      <CardTitle className="font-medium text-sm">
+                        Avg Sale Price
+                      </CardTitle>
                       <Package className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">
-                        ${stats.products_sold > 0 ? (stats.total_earnings / stats.products_sold).toFixed(2) : '0.00'}
+                      <div className="font-bold text-2xl">
+                        $
+                        {stats.products_sold > 0
+                          ? (
+                              stats.total_earnings / stats.products_sold
+                            ).toFixed(2)
+                          : '0.00'}
                       </div>
-                      <p className="text-xs text-muted-foreground">Per item sold</p>
+                      <p className="text-muted-foreground text-xs">
+                        Per item sold
+                      </p>
                     </CardContent>
                   </Card>
                 </div>
@@ -447,24 +509,28 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                 <div className="space-y-4">
                   <h4 className="font-medium">Business Insights</h4>
                   <div className="grid gap-4">
-                    <div className="flex items-center justify-between p-4 border rounded-[var(--radius-lg)]">
+                    <div className="flex items-center justify-between rounded-[var(--radius-lg)] border p-4">
                       <div>
                         <div className="font-medium">Performance Overview</div>
-                        <div className="text-sm text-muted-foreground">
+                        <div className="text-muted-foreground text-sm">
                           Track your selling metrics and growth
                         </div>
                       </div>
-                      <Button variant="outline" size="sm">View Details</Button>
+                      <Button size="sm" variant="outline">
+                        View Details
+                      </Button>
                     </div>
 
-                    <div className="flex items-center justify-between p-4 border rounded-[var(--radius-lg)]">
+                    <div className="flex items-center justify-between rounded-[var(--radius-lg)] border p-4">
                       <div>
                         <div className="font-medium">Sales Reports</div>
-                        <div className="text-sm text-muted-foreground">
+                        <div className="text-muted-foreground text-sm">
                           Detailed analytics and reporting
                         </div>
                       </div>
-                      <Button variant="outline" size="sm">Generate Report</Button>
+                      <Button size="sm" variant="outline">
+                        Generate Report
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -487,23 +553,31 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                 <div className="grid gap-4 md:grid-cols-2">
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Average Rating</CardTitle>
+                      <CardTitle className="font-medium text-sm">
+                        Average Rating
+                      </CardTitle>
                       <Star className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">4.8</div>
-                      <p className="text-xs text-muted-foreground">Based on 23 reviews</p>
+                      <div className="font-bold text-2xl">4.8</div>
+                      <p className="text-muted-foreground text-xs">
+                        Based on 23 reviews
+                      </p>
                     </CardContent>
                   </Card>
 
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Response Rate</CardTitle>
+                      <CardTitle className="font-medium text-sm">
+                        Response Rate
+                      </CardTitle>
                       <MessageSquare className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">95%</div>
-                      <p className="text-xs text-muted-foreground">Within 24 hours</p>
+                      <div className="font-bold text-2xl">95%</div>
+                      <p className="text-muted-foreground text-xs">
+                        Within 24 hours
+                      </p>
                     </CardContent>
                   </Card>
                 </div>
@@ -511,7 +585,7 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                 <div className="space-y-4">
                   <h4 className="font-medium">Recent Reviews</h4>
                   <div className="space-y-3">
-                    <div className="flex items-start gap-3 p-4 border rounded-[var(--radius-lg)]">
+                    <div className="flex items-start gap-3 rounded-[var(--radius-lg)] border p-4">
                       <Avatar className="h-8 w-8">
                         <AvatarFallback>JD</AvatarFallback>
                       </Avatar>
@@ -520,38 +594,47 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                           <span className="font-medium text-sm">John Doe</span>
                           <div className="flex">
                             {[1, 2, 3, 4, 5].map((star) => (
-                              <Star key={star} className="h-3 w-3 fill-current text-yellow-400" />
+                              <Star
+                                className="h-3 w-3 fill-current text-yellow-400"
+                                key={star}
+                              />
                             ))}
                           </div>
                         </div>
-                        <p className="text-sm text-muted-foreground">
-                          Great seller! Item was exactly as described and shipped quickly.
+                        <p className="text-muted-foreground text-sm">
+                          Great seller! Item was exactly as described and
+                          shipped quickly.
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-3 p-4 border rounded-[var(--radius-lg)]">
+                    <div className="flex items-start gap-3 rounded-[var(--radius-lg)] border p-4">
                       <Avatar className="h-8 w-8">
                         <AvatarFallback>SM</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium text-sm">Sarah Miller</span>
+                          <span className="font-medium text-sm">
+                            Sarah Miller
+                          </span>
                           <div className="flex">
                             {[1, 2, 3, 4].map((star) => (
-                              <Star key={star} className="h-3 w-3 fill-current text-yellow-400" />
+                              <Star
+                                className="h-3 w-3 fill-current text-yellow-400"
+                                key={star}
+                              />
                             ))}
                             <Star className="h-3 w-3 text-gray-300" />
                           </div>
                         </div>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-muted-foreground text-sm">
                           Good quality item. Would buy from this seller again.
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <Button variant="outline" className="w-full">
+                  <Button className="w-full" variant="outline">
                     View All Reviews
                   </Button>
                 </div>
@@ -571,17 +654,24 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
             </CardHeader>
             <CardContent>
               <Form {...notificationForm}>
-                <form onSubmit={notificationForm.handleSubmit(onSubmitNotifications)} className="space-y-6">
+                <form
+                  className="space-y-6"
+                  onSubmit={notificationForm.handleSubmit(
+                    onSubmitNotifications
+                  )}
+                >
                   <div className="space-y-4">
                     <h4 className="font-medium">Email Notifications</h4>
-                    
+
                     <FormField
                       control={notificationForm.control}
                       name="emailOrders"
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-center justify-between rounded-[var(--radius-lg)] border p-4">
                           <div className="space-y-0.5">
-                            <FormLabel className="text-base">Order Updates</FormLabel>
+                            <FormLabel className="text-base">
+                              Order Updates
+                            </FormLabel>
                             <FormDescription>
                               Get notified about order status changes
                             </FormDescription>
@@ -602,7 +692,9 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-center justify-between rounded-[var(--radius-lg)] border p-4">
                           <div className="space-y-0.5">
-                            <FormLabel className="text-base">New Messages</FormLabel>
+                            <FormLabel className="text-base">
+                              New Messages
+                            </FormLabel>
                             <FormDescription>
                               Email when you receive new messages
                             </FormDescription>
@@ -623,7 +715,9 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-center justify-between rounded-[var(--radius-lg)] border p-4">
                           <div className="space-y-0.5">
-                            <FormLabel className="text-base">Marketing Emails</FormLabel>
+                            <FormLabel className="text-base">
+                              Marketing Emails
+                            </FormLabel>
                             <FormDescription>
                               Receive emails about promotions and new features
                             </FormDescription>
@@ -643,14 +737,16 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
 
                   <div className="space-y-4">
                     <h4 className="font-medium">Push Notifications</h4>
-                    
+
                     <FormField
                       control={notificationForm.control}
                       name="pushNotifications"
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-center justify-between rounded-[var(--radius-lg)] border p-4">
                           <div className="space-y-0.5">
-                            <FormLabel className="text-base">Enable Push Notifications</FormLabel>
+                            <FormLabel className="text-base">
+                              Enable Push Notifications
+                            </FormLabel>
                             <FormDescription>
                               Allow notifications on this device
                             </FormDescription>
@@ -671,7 +767,9 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-center justify-between rounded-[var(--radius-lg)] border p-4">
                           <div className="space-y-0.5">
-                            <FormLabel className="text-base">Message Notifications</FormLabel>
+                            <FormLabel className="text-base">
+                              Message Notifications
+                            </FormLabel>
                             <FormDescription>
                               Push notifications for new messages
                             </FormDescription>
@@ -687,8 +785,10 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                     />
                   </div>
 
-                  <Button type="submit" disabled={isUpdatingNotifications}>
-                    {isUpdatingNotifications ? 'Updating...' : 'Save Preferences'}
+                  <Button disabled={isUpdatingNotifications} type="submit">
+                    {isUpdatingNotifications
+                      ? 'Updating...'
+                      : 'Save Preferences'}
                   </Button>
                 </form>
               </Form>
@@ -707,30 +807,30 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 border rounded-[var(--radius-lg)]">
+                <div className="flex items-center justify-between rounded-[var(--radius-lg)] border p-4">
                   <div>
                     <div className="font-medium">Two-Factor Authentication</div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-muted-foreground text-sm">
                       Add an extra layer of security to your account
                     </div>
                   </div>
                   <Badge variant="outline">Managed by Clerk</Badge>
                 </div>
 
-                <div className="flex items-center justify-between p-4 border rounded-[var(--radius-lg)]">
+                <div className="flex items-center justify-between rounded-[var(--radius-lg)] border p-4">
                   <div>
                     <div className="font-medium">Password</div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-muted-foreground text-sm">
                       Change your account password
                     </div>
                   </div>
                   <Badge variant="outline">Managed by Clerk</Badge>
                 </div>
 
-                <div className="flex items-center justify-between p-4 border rounded-[var(--radius-lg)]">
+                <div className="flex items-center justify-between rounded-[var(--radius-lg)] border p-4">
                   <div>
                     <div className="font-medium">Connected Accounts</div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-muted-foreground text-sm">
                       Manage social media connections
                     </div>
                   </div>
@@ -738,8 +838,9 @@ export function ProfileContent({ user, stats }: ProfileContentProps) {
                 </div>
               </div>
 
-              <p className="text-sm text-muted-foreground">
-                Security settings are managed through our authentication provider for enhanced security.
+              <p className="text-muted-foreground text-sm">
+                Security settings are managed through our authentication
+                provider for enhanced security.
               </p>
             </CardContent>
           </Card>

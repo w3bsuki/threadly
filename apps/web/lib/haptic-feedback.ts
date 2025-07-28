@@ -1,6 +1,13 @@
 'use client';
 
-type HapticFeedbackType = 'light' | 'medium' | 'heavy' | 'selection' | 'success' | 'warning' | 'error';
+type HapticFeedbackType =
+  | 'light'
+  | 'medium'
+  | 'heavy'
+  | 'selection'
+  | 'success'
+  | 'warning'
+  | 'error';
 
 interface HapticFeedbackOptions {
   pattern?: number[];
@@ -8,8 +15,8 @@ interface HapticFeedbackOptions {
 }
 
 class HapticFeedback {
-  private isSupported: boolean = false;
-  private isEnabled: boolean = true;
+  private isSupported = false;
+  private isEnabled = true;
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -57,8 +64,11 @@ class HapticFeedback {
     this.trigger(intensity);
   }
 
-  private trigger(type: HapticFeedbackType, options?: HapticFeedbackOptions): void {
-    if (!this.isEnabled || !this.isSupported) return;
+  private trigger(
+    type: HapticFeedbackType,
+    options?: HapticFeedbackOptions
+  ): void {
+    if (!(this.isEnabled && this.isSupported)) return;
 
     const patterns = {
       light: [50],
@@ -67,29 +77,29 @@ class HapticFeedback {
       selection: [25],
       success: [50, 50, 50],
       warning: [100, 100],
-      error: [200, 100, 200]
+      error: [200, 100, 200],
     };
 
     const pattern = options?.pattern || patterns[type];
-    
+
     try {
       if (pattern.length === 1) {
         navigator.vibrate(pattern[0]);
       } else {
         navigator.vibrate(pattern);
       }
-    } catch (error) {
-      console.warn('Haptic feedback failed:', error);
+    } catch {
+      // Silently handle haptic feedback errors
     }
   }
 
   public custom(pattern: number[]): void {
-    if (!this.isEnabled || !this.isSupported) return;
-    
+    if (!(this.isEnabled && this.isSupported)) return;
+
     try {
       navigator.vibrate(pattern);
-    } catch (error) {
-      console.warn('Custom haptic feedback failed:', error);
+    } catch {
+      // Silently handle custom haptic feedback errors
     }
   }
 }
@@ -105,9 +115,10 @@ export function useHapticFeedback() {
     success: () => hapticFeedback.success(),
     warning: () => hapticFeedback.warning(),
     error: () => hapticFeedback.error(),
-    impact: (intensity: 'light' | 'medium' | 'heavy' = 'medium') => hapticFeedback.impact(intensity),
+    impact: (intensity: 'light' | 'medium' | 'heavy' = 'medium') =>
+      hapticFeedback.impact(intensity),
     custom: (pattern: number[]) => hapticFeedback.custom(pattern),
     isSupported: hapticFeedback.isHapticSupported(),
-    setEnabled: (enabled: boolean) => hapticFeedback.setEnabled(enabled)
+    setEnabled: (enabled: boolean) => hapticFeedback.setEnabled(enabled),
   };
 }

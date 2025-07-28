@@ -1,63 +1,64 @@
-import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { UploadThingError } from "uploadthing/server";
-import { currentUser } from "@repo/auth/server";
-import { log } from "@repo/observability/server";
-import { logError } from "@repo/observability/server";
+import { currentUser } from '@repo/auth/server';
+import { log, logError } from '@repo/observability/server';
+import { createUploadthing, type FileRouter } from 'uploadthing/next';
+import { UploadThingError } from 'uploadthing/server';
 
 const f = createUploadthing({
   errorFormatter: (err) => {
-    logError("UploadThing error", { 
-      message: err.message, 
+    logError('UploadThing error', {
+      message: err.message,
       cause: err.cause,
-      stack: err.stack 
+      stack: err.stack,
     });
 
-    return { message: "Upload failed. Please try again." };
+    return { message: 'Upload failed. Please try again.' };
   },
 });
 
 const PRODUCTION_FILE_LIMITS = {
-  maxFileSize: "8MB" as const,
+  maxFileSize: '8MB' as const,
   maxFileCount: 8,
-  
-  allowedTypes: ["image/jpeg", "image/png", "image/webp"] as const,
-  
+
+  allowedTypes: ['image/jpeg', 'image/png', 'image/webp'] as const,
+
   rateLimits: {
     uploads: 20,
-    totalSize: "50MB"
-  }
+    totalSize: '50MB',
+  },
 };
 
 export const ourFileRouter = {
-  productImages: f({ 
-    image: { 
-      maxFileSize: PRODUCTION_FILE_LIMITS.maxFileSize, 
-      maxFileCount: PRODUCTION_FILE_LIMITS.maxFileCount
-    } 
+  productImages: f({
+    image: {
+      maxFileSize: PRODUCTION_FILE_LIMITS.maxFileSize,
+      maxFileCount: PRODUCTION_FILE_LIMITS.maxFileCount,
+    },
   })
     .middleware(async ({ req }) => {
       try {
         const user = await currentUser();
-        
+
         if (!user) {
-          log.warn("Unauthorized upload attempt", { 
-            ip: req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip"),
-            userAgent: req.headers.get("user-agent")
+          log.warn('Unauthorized upload attempt', {
+            ip:
+              req.headers.get('x-forwarded-for') ||
+              req.headers.get('x-real-ip'),
+            userAgent: req.headers.get('user-agent'),
           });
-          throw new UploadThingError("Authentication required");
+          throw new UploadThingError('Authentication required');
         }
 
         const now = new Date();
-        log.info("File upload started", { 
+        log.info('File upload started', {
           userId: user.id,
           timestamp: now.toISOString(),
-          userAgent: req.headers.get("user-agent")
+          userAgent: req.headers.get('user-agent'),
         });
 
-        return { 
+        return {
           userId: user.id,
           userEmail: user.emailAddresses[0]?.emailAddress,
-          uploadTime: now.getTime()
+          uploadTime: now.getTime(),
         };
       } catch (error) {
         throw error;
@@ -65,63 +66,63 @@ export const ourFileRouter = {
     })
     .onUploadComplete(async ({ metadata, file }) => {
       try {
-        log.info("File upload completed", {
+        log.info('File upload completed', {
           userId: metadata.userId,
           fileUrl: file.url,
           fileName: file.name,
           fileSize: file.size,
           fileType: file.type,
-          uploadDuration: Date.now() - metadata.uploadTime
+          uploadDuration: Date.now() - metadata.uploadTime,
         });
 
-        if (!file.url || !file.name) {
-          throw new Error("Invalid file upload response");
+        if (!(file.url && file.name)) {
+          throw new Error('Invalid file upload response');
         }
 
-        return { 
+        return {
           success: true,
           url: file.url,
           name: file.name,
-          size: file.size
+          size: file.size,
         };
       } catch (error) {
-        logError("Upload completion error", { 
-          error, 
+        logError('Upload completion error', {
+          error,
           metadata,
-          file: { url: file.url, name: file.name, size: file.size }
+          file: { url: file.url, name: file.name, size: file.size },
         });
-        
-        return { 
-          success: false, 
-          error: "Upload processing failed" 
+
+        return {
+          success: false,
+          error: 'Upload processing failed',
         };
       }
     }),
 
-  avatarImages: f({ 
-    image: { 
-      maxFileSize: "2MB", 
-      maxFileCount: 1
-    } 
+  avatarImages: f({
+    image: {
+      maxFileSize: '2MB',
+      maxFileCount: 1,
+    },
   })
     .middleware(async ({ req }) => {
       const user = await currentUser();
-      if (!user) throw new UploadThingError("Authentication required");
-      
-      return { 
+      if (!user) throw new UploadThingError('Authentication required');
+
+      return {
         userId: user.id,
-        uploadTime: Date.now()
+        uploadTime: Date.now(),
       };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      log.info("Avatar upload completed", {
+      log.info('Avatar upload completed', {
         userId: metadata.userId,
-        fileUrl: file.url
+        fileUrl: file.url,
       });
 
-      return { 
+      return {
         success: true,
-        url: file.url 
+        url: file.url,
       };
     }),
 } satisfies FileRouter;

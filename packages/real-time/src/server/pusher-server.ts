@@ -1,12 +1,17 @@
-import Pusher from 'pusher';
 import { database } from '@repo/database';
-import type { RealTimeConfig, MessageEvent, NotificationEvent, TypingEvent } from '../types';
+import Pusher from 'pusher';
+import type {
+  MessageEvent,
+  NotificationEvent,
+  RealTimeConfig,
+  TypingEvent,
+} from '../types';
 
 export class PusherServer {
   private pusher: Pusher;
 
   constructor(config: RealTimeConfig) {
-    if (!config.pusherAppId || !config.pusherSecret) {
+    if (!(config.pusherAppId && config.pusherSecret)) {
       throw new Error('PusherServer requires appId and secret');
     }
 
@@ -24,8 +29,11 @@ export class PusherServer {
     // Verify user has access to this channel
     if (channel.startsWith('private-conversation-')) {
       const conversationId = channel.replace('private-conversation-', '');
-      const hasAccess = await this.verifyConversationAccess(userId, conversationId);
-      
+      const hasAccess = await this.verifyConversationAccess(
+        userId,
+        conversationId
+      );
+
       if (!hasAccess) {
         throw new Error('Unauthorized access to conversation');
       }
@@ -65,25 +73,26 @@ export class PusherServer {
     // Send to conversation channel for real-time updates
     const conversationChannel = `private-conversation-${message.conversationId}`;
     await this.pusher.trigger(conversationChannel, 'new-message', message);
-    
+
     // Also get conversation to send notification to recipient's user channel
     const conversation = await database.conversation.findUnique({
       where: { id: message.conversationId },
-      select: { buyerId: true, sellerId: true }
+      select: { buyerId: true, sellerId: true },
     });
-    
+
     if (conversation) {
       // Determine recipient (the user who didn't send the message)
-      const recipientId = message.senderId === conversation.buyerId 
-        ? conversation.sellerId 
-        : conversation.buyerId;
-      
+      const recipientId =
+        message.senderId === conversation.buyerId
+          ? conversation.sellerId
+          : conversation.buyerId;
+
       // Send notification to recipient's user channel for updating conversation list
       const userChannel = `private-user-${recipientId}`;
       await this.pusher.trigger(userChannel, 'new-message-notification', {
         conversationId: message.conversationId,
         senderId: message.senderId,
-        createdAt: message.createdAt
+        createdAt: message.createdAt,
       });
     }
   }
@@ -95,7 +104,10 @@ export class PusherServer {
   }
 
   // Send notification
-  async sendNotification(userId: string, notification: NotificationEvent['data']) {
+  async sendNotification(
+    userId: string,
+    notification: NotificationEvent['data']
+  ) {
     const channel = `private-user-${userId}`;
     await this.pusher.trigger(channel, 'new-notification', notification);
   }
@@ -116,14 +128,14 @@ export class PusherServer {
   }
 
   // Verify user has access to conversation
-  private async verifyConversationAccess(userId: string, conversationId: string): Promise<boolean> {
+  private async verifyConversationAccess(
+    userId: string,
+    conversationId: string
+  ): Promise<boolean> {
     const conversation = await database.conversation.findFirst({
       where: {
         id: conversationId,
-        OR: [
-          { buyer: { clerkId: userId } },
-          { seller: { clerkId: userId } },
-        ],
+        OR: [{ buyer: { clerkId: userId } }, { seller: { clerkId: userId } }],
       },
     });
 
@@ -131,7 +143,9 @@ export class PusherServer {
   }
 
   // Trigger batch events
-  async triggerBatch(batch: Array<{ channel: string; event: string; data: any }>) {
+  async triggerBatch(
+    batch: Array<{ channel: string; event: string; data: any }>
+  ) {
     const triggers = batch.map(({ channel, event, data }) => ({
       channel,
       name: event,
@@ -149,10 +163,10 @@ export function getPusherServer(config?: RealTimeConfig): PusherServer {
   if (!pusherServer && config) {
     pusherServer = new PusherServer(config);
   }
-  
+
   if (!pusherServer) {
     throw new Error('PusherServer not initialized. Call with config first.');
   }
-  
+
   return pusherServer;
 }

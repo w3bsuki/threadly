@@ -1,5 +1,6 @@
 'use client';
 
+import { useClerk, useUser } from '@repo/auth/client';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,12 +11,11 @@ import {
   Separator,
 } from '@repo/design-system/components';
 import { AccountDropdown } from '@repo/design-system/components/navigation';
-import { Fragment, type ReactNode } from 'react';
-import { NotificationBell } from './notification-bell';
-import { LanguageSwitcher } from '@/components/language-switcher';
 import type { Dictionary } from '@repo/internationalization';
-import { useUser, useClerk } from '@repo/auth/client';
 import { useParams, useRouter } from 'next/navigation';
+import { Fragment, type ReactNode } from 'react';
+import { LanguageSwitcher } from '@/components/language-switcher';
+import { NotificationBell } from './notification-bell';
 
 type HeaderProps = {
   pages: string[];
@@ -29,7 +29,7 @@ export function Header({ pages, page, children, dictionary }: HeaderProps) {
   const { signOut } = useClerk();
   const params = useParams();
   const router = useRouter();
-  const locale = params.locale as string || 'en';
+  const locale = (params.locale as string) || 'en';
 
   return (
     <header className="flex h-16 shrink-0 items-center justify-between gap-2">
@@ -38,7 +38,9 @@ export function Header({ pages, page, children, dictionary }: HeaderProps) {
           <BreadcrumbList>
             {pages.map((page, index) => (
               <Fragment key={page}>
-                {index > 0 && <BreadcrumbSeparator className="hidden md:block" />}
+                {index > 0 && (
+                  <BreadcrumbSeparator className="hidden md:block" />
+                )}
                 <BreadcrumbItem className="hidden md:block">
                   <BreadcrumbLink href="#">{page}</BreadcrumbLink>
                 </BreadcrumbItem>
@@ -55,24 +57,33 @@ export function Header({ pages, page, children, dictionary }: HeaderProps) {
         <LanguageSwitcher />
         <NotificationBell />
         <AccountDropdown
-          isSignedIn={isSignedIn}
-          user={user ? {
-            name: user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.username || undefined,
-            email: user.emailAddresses?.[0]?.emailAddress,
-          } : undefined}
-          locale={locale}
           dictionary={{
             profile: dictionary.dashboard?.navigation?.profile || 'Profile',
-            orders: dictionary.dashboard?.navigation?.sellerDashboard || 'Seller Dashboard',
+            orders:
+              dictionary.dashboard?.navigation?.sellerDashboard ||
+              'Seller Dashboard',
             settings: dictionary.dashboard?.navigation?.settings || 'Settings',
             signOut: dictionary.auth?.signOut || 'Sign Out',
             signIn: dictionary.auth?.signIn || 'Sign In',
             createAccount: dictionary.auth?.createAccount || 'Create Account',
           }}
+          isSignedIn={isSignedIn}
+          locale={locale}
           onSignOut={async () => {
             await signOut();
             router.push(`/${locale}/sign-in`);
           }}
+          user={
+            user
+              ? {
+                  name:
+                    user.firstName && user.lastName
+                      ? `${user.firstName} ${user.lastName}`
+                      : user.username || undefined,
+                  email: user.emailAddresses?.[0]?.emailAddress,
+                }
+              : undefined
+          }
         />
         {children}
       </div>

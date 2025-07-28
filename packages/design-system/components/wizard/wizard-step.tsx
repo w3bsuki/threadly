@@ -47,11 +47,7 @@ export function WizardStep({
 
   if (!isActive) return null;
 
-  return (
-    <div className={cn('wizard-step', className)}>
-      {children}
-    </div>
-  );
+  return <div className={cn('wizard-step', className)}>{children}</div>;
 }
 
 interface WizardStepContainerProps {
@@ -59,7 +55,10 @@ interface WizardStepContainerProps {
   className?: string;
 }
 
-export function WizardStepContainer({ children, className }: WizardStepContainerProps) {
+export function WizardStepContainer({
+  children,
+  className,
+}: WizardStepContainerProps) {
   const wizard = useWizard();
   const childrenArray = React.Children.toArray(children);
 
@@ -86,15 +85,15 @@ export function WizardFormStep({
   stepIndex,
 }: WizardFormStepProps) {
   return (
-    <WizardStep stepIndex={stepIndex} className={className}>
+    <WizardStep className={className} stepIndex={stepIndex}>
       <div className="space-y-6">
         {(title || description) && (
           <div className="space-y-2">
             {title && (
-              <h3 className="text-lg font-semibold tracking-tight">{title}</h3>
+              <h3 className="font-semibold text-lg tracking-tight">{title}</h3>
             )}
             {description && (
-              <p className="text-sm text-muted-foreground">{description}</p>
+              <p className="text-muted-foreground text-sm">{description}</p>
             )}
           </div>
         )}
@@ -120,19 +119,19 @@ export function WizardReviewStep({
   const wizard = useWizard();
 
   return (
-    <WizardStep stepIndex={stepIndex} className={className}>
+    <WizardStep className={className} stepIndex={stepIndex}>
       <div className="space-y-6">
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold tracking-tight">{title}</h3>
-          <p className="text-sm text-muted-foreground">
+          <h3 className="font-semibold text-lg tracking-tight">{title}</h3>
+          <p className="text-muted-foreground text-sm">
             Please review your information before submitting
           </p>
         </div>
-        
+
         <div className="wizard-review-content">{children}</div>
 
         <div className="rounded-lg bg-muted/50 p-4">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             By clicking complete, you confirm that all information is accurate.
           </p>
         </div>
@@ -147,11 +146,15 @@ interface WizardStepGroupProps {
   className?: string;
 }
 
-export function WizardStepGroup({ children, title, className }: WizardStepGroupProps) {
+export function WizardStepGroup({
+  children,
+  title,
+  className,
+}: WizardStepGroupProps) {
   return (
     <div className={cn('space-y-4', className)}>
       {title && (
-        <h4 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+        <h4 className="font-medium text-muted-foreground text-sm uppercase tracking-wider">
           {title}
         </h4>
       )}
@@ -173,7 +176,8 @@ export function ConditionalWizardStep({
   fallback,
   stepIndex,
 }: ConditionalWizardStepProps) {
-  const shouldRender = typeof condition === 'function' ? condition() : condition;
+  const shouldRender =
+    typeof condition === 'function' ? condition() : condition;
 
   if (!shouldRender) {
     return fallback ? <>{fallback}</> : null;

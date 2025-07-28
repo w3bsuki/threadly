@@ -76,8 +76,8 @@ nextConfig.webpack = (config, { isServer, dev }) => {
       'C:\\Users\\**\\AppData\\**',
       'C:\\Windows\\**',
       'C:\\Program Files\\**',
-      'C:\\Program Files (x86)\\**'
-    ]
+      'C:\\Program Files (x86)\\**',
+    ],
   };
 
   // Add resolve fallbacks for browser environment
@@ -107,7 +107,7 @@ nextConfig.webpack = (config, { isServer, dev }) => {
   if (!dev) {
     // Enable module concatenation for better tree shaking
     config.optimization.concatenateModules = true;
-    
+
     // Split chunks more aggressively
     config.optimization.splitChunks = {
       chunks: 'all',
@@ -123,8 +123,10 @@ nextConfig.webpack = (config, { isServer, dev }) => {
         },
         lib: {
           test(module) {
-            return module.size() > 160000 &&
-              /node_modules[\\/]/.test(module.identifier());
+            return (
+              module.size() > 160_000 &&
+              /node_modules[\\/]/.test(module.identifier())
+            );
           },
           name(module) {
             const hash = require('crypto').createHash('sha1');
@@ -162,7 +164,12 @@ nextConfig.webpack = (config, { isServer, dev }) => {
 };
 
 // Fix Prisma bundling for Vercel with binary engine
-nextConfig.serverExternalPackages = ['@prisma/engines', '@prisma/client', '@neondatabase/serverless', 'ws'];
+nextConfig.serverExternalPackages = [
+  '@prisma/engines',
+  '@prisma/client',
+  '@neondatabase/serverless',
+  'ws',
+];
 
 // Optimize production builds
 nextConfig.productionBrowserSourceMaps = false;
@@ -171,11 +178,13 @@ nextConfig.compress = true;
 
 // Compiler options
 nextConfig.compiler = {
-  removeConsole: process.env.NODE_ENV === 'production' ? {
-    exclude: ['error', 'warn'],
-  } : false,
+  removeConsole:
+    process.env.NODE_ENV === 'production'
+      ? {
+          exclude: ['error', 'warn'],
+        }
+      : false,
 };
-
 
 // Performance and security headers
 nextConfig.headers = async () => {
@@ -209,7 +218,8 @@ nextConfig.headers = async () => {
         },
         {
           key: 'Content-Security-Policy',
-          value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://maps.googleapis.com https://*.clerk.accounts.dev; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https: https://uploadthing.com https://api.uploadthing.com https://utfs.io wss://uploadthing.com https://*.clerk.accounts.dev; frame-src https://js.stripe.com https://hooks.stripe.com https://*.clerk.accounts.dev;",
+          value:
+            "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://maps.googleapis.com https://*.clerk.accounts.dev; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https: https://uploadthing.com https://api.uploadthing.com https://utfs.io wss://uploadthing.com https://*.clerk.accounts.dev; frame-src https://js.stripe.com https://hooks.stripe.com https://*.clerk.accounts.dev;",
         },
       ],
     },
@@ -236,7 +246,8 @@ nextConfig.headers = async () => {
       headers: [
         {
           key: 'Cache-Control',
-          value: 'public, max-age=300, s-maxage=600, stale-while-revalidate=86400',
+          value:
+            'public, max-age=300, s-maxage=600, stale-while-revalidate=86400',
         },
       ],
     },
@@ -245,7 +256,8 @@ nextConfig.headers = async () => {
       headers: [
         {
           key: 'Cache-Control',
-          value: 'public, max-age=3600, s-maxage=7200, stale-while-revalidate=86400',
+          value:
+            'public, max-age=3600, s-maxage=7200, stale-while-revalidate=86400',
         },
       ],
     },
@@ -254,7 +266,8 @@ nextConfig.headers = async () => {
       headers: [
         {
           key: 'Cache-Control',
-          value: 'public, max-age=60, s-maxage=120, stale-while-revalidate=3600',
+          value:
+            'public, max-age=60, s-maxage=120, stale-while-revalidate=3600',
         },
       ],
     },

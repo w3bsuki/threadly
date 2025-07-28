@@ -11,6 +11,6 @@ test('Sign In Page', async () => {
   // we'll test that it renders without errors
   const { SignIn } = await import('@repo/auth/client');
   render(<SignIn />);
-  
+
   expect(screen.getByText('Sign In Component')).toBeDefined();
 });

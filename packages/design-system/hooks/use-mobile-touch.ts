@@ -13,10 +13,13 @@ export function useMobileTouch() {
   useEffect(() => {
     const checkMobile = () => {
       const userAgent = navigator.userAgent.toLowerCase();
-      const isMobileDevice = /iphone|ipad|ipod|android|blackberry|windows phone|opera mini|iemobile/i.test(userAgent);
+      const isMobileDevice =
+        /iphone|ipad|ipod|android|blackberry|windows phone|opera mini|iemobile/i.test(
+          userAgent
+        );
       const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
       const isSmallScreen = window.innerWidth <= 768;
-      
+
       const mobile = isMobileDevice || (hasTouch && isSmallScreen);
       setIsMobile(mobile);
       setTouchOptimized(mobile || hasTouch);
@@ -24,14 +27,14 @@ export function useMobileTouch() {
 
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   // Get mobile-optimized button size
-  const getMobileButtonSize = (defaultSize: string = 'default') => {
+  const getMobileButtonSize = (defaultSize = 'default') => {
     if (!touchOptimized) return defaultSize;
-    
+
     switch (defaultSize) {
       case 'sm':
         return 'mobile';
@@ -47,11 +50,11 @@ export function useMobileTouch() {
   };
 
   // Get mobile-optimized classes for touch targets
-  const getTouchTargetClasses = (baseClasses: string = '') => {
-    const mobileClasses = touchOptimized 
-      ? 'min-h-[44px] min-w-[44px] touch-manipulation' 
+  const getTouchTargetClasses = (baseClasses = '') => {
+    const mobileClasses = touchOptimized
+      ? 'min-h-[44px] min-w-[44px] touch-manipulation'
       : '';
-    
+
     return `${baseClasses} ${mobileClasses}`.trim();
   };
 
@@ -69,11 +72,11 @@ export function useMobileTouch() {
  */
 export function getMobileSafeSize(size: string, forceOptimize = false) {
   if (!forceOptimize && typeof window === 'undefined') return size;
-  
-  const shouldOptimize = forceOptimize || (
-    typeof window !== 'undefined' && 
-    (window.innerWidth <= 768 || 'ontouchstart' in window)
-  );
+
+  const shouldOptimize =
+    forceOptimize ||
+    (typeof window !== 'undefined' &&
+      (window.innerWidth <= 768 || 'ontouchstart' in window));
 
   if (!shouldOptimize) return size;
 

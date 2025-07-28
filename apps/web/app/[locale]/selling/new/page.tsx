@@ -32,7 +32,6 @@ const SellNewItemPage = async ({
   const user = await currentUser();
 
   try {
-
     // Get template and draft parameters
     const awaitedSearchParams = await searchParams;
     const _templateId =
@@ -49,12 +48,16 @@ const SellNewItemPage = async ({
       return (
         <div className="container mx-auto px-4 py-8">
           <div className="mx-auto w-full max-w-2xl text-center">
-            <h1 className="font-bold text-3xl mb-4">Sign In to Start Selling</h1>
-            <p className="text-muted-foreground mb-8">
+            <h1 className="mb-4 font-bold text-3xl">
+              Sign In to Start Selling
+            </h1>
+            <p className="mb-8 text-muted-foreground">
               You need to be signed in to list items for sale.
             </p>
             <Button asChild size="lg">
-              <Link href={`/${locale}/sign-in?from=${encodeURIComponent(`/${locale}/selling/new`)}`}>
+              <Link
+                href={`/${locale}/sign-in?from=${encodeURIComponent(`/${locale}/selling/new`)}`}
+              >
                 Sign In to Continue
               </Link>
             </Button>
@@ -99,7 +102,7 @@ const SellNewItemPage = async ({
           displayName: `${user.firstName || 'User'}'s Shop`,
           bio: 'Selling quality fashion items',
           processingTime: 3,
-          defaultShippingCost: 5.00,
+          defaultShippingCost: 5.0,
           shippingFrom: 'Bulgaria', // Default, can be updated later
         },
       });
@@ -117,14 +120,21 @@ const SellNewItemPage = async ({
           <div className="space-y-4 sm:space-y-6">
             <div className="flex items-center gap-3 sm:gap-4">
               <Link href={`/${locale}`}>
-                <Button size="icon" variant="ghost" className="h-8 w-8 sm:h-10 sm:w-10">
+                <Button
+                  className="h-8 w-8 sm:h-10 sm:w-10"
+                  size="icon"
+                  variant="ghost"
+                >
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
               </Link>
               <div className="flex-1">
                 <h1 className="font-bold text-xl sm:text-2xl">List New Item</h1>
                 <p className="text-muted-foreground text-sm sm:text-base">
-                  <span className="hidden sm:inline">Fill out the details below to list your fashion item for sale</span>
+                  <span className="hidden sm:inline">
+                    Fill out the details below to list your fashion item for
+                    sale
+                  </span>
                   <span className="sm:hidden">List your fashion item</span>
                 </p>
               </div>

@@ -2,7 +2,9 @@ import { PrismaClient } from '../packages/database/generated/client';
 
 if (!process.env.DATABASE_URL) {
   console.error('❌ DATABASE_URL environment variable is not set');
-  console.error('Please set the DATABASE_URL environment variable before running this script');
+  console.error(
+    'Please set the DATABASE_URL environment variable before running this script'
+  );
   process.exit(1);
 }
 
@@ -11,7 +13,6 @@ const prisma = new PrismaClient({
 });
 
 async function seedProducts() {
-
   try {
     // First, create a test user if it doesn't exist
     const testUser = await prisma.user.upsert({
@@ -26,21 +27,20 @@ async function seedProducts() {
       },
     });
 
-
     // Get some categories
     const womenClothing = await prisma.category.findFirst({
-      where: { slug: 'women-clothing' }
+      where: { slug: 'women-clothing' },
     });
 
     const menClothing = await prisma.category.findFirst({
-      where: { slug: 'men-clothing' }
+      where: { slug: 'men-clothing' },
     });
 
     const designerBags = await prisma.category.findFirst({
-      where: { slug: 'designer-bags' }
+      where: { slug: 'designer-bags' },
     });
 
-    if (!womenClothing || !menClothing || !designerBags) {
+    if (!(womenClothing && menClothing && designerBags)) {
       console.error('❌ Categories not found. Run seed-categories.ts first!');
       return;
     }
@@ -49,19 +49,21 @@ async function seedProducts() {
     const products = [
       {
         title: 'Vintage Denim Jacket',
-        description: 'Classic 90s style denim jacket in excellent condition. Perfect for layering.',
-        price: 45.00,
+        description:
+          'Classic 90s style denim jacket in excellent condition. Perfect for layering.',
+        price: 45.0,
         condition: 'VERY_GOOD' as const,
         categoryId: womenClothing.id,
-        brand: 'Levi\'s',
+        brand: "Levi's",
         size: 'M',
         color: 'Blue',
         sellerId: testUser.id,
       },
       {
         title: 'Designer Leather Handbag',
-        description: 'Authentic luxury handbag with dust bag and authentication card. Minor signs of wear.',
-        price: 850.00,
+        description:
+          'Authentic luxury handbag with dust bag and authentication card. Minor signs of wear.',
+        price: 850.0,
         condition: 'GOOD' as const,
         categoryId: designerBags.id,
         brand: 'Gucci',
@@ -70,8 +72,9 @@ async function seedProducts() {
       },
       {
         title: 'Mens Wool Coat',
-        description: 'Premium wool coat, barely worn. Perfect for winter. Retail $500+',
-        price: 125.00,
+        description:
+          'Premium wool coat, barely worn. Perfect for winter. Retail $500+',
+        price: 125.0,
         condition: 'NEW_WITHOUT_TAGS' as const,
         categoryId: menClothing.id,
         brand: 'Zara',
@@ -81,8 +84,9 @@ async function seedProducts() {
       },
       {
         title: 'Summer Floral Dress',
-        description: 'Beautiful floral print dress, perfect for summer occasions. Worn once.',
-        price: 35.00,
+        description:
+          'Beautiful floral print dress, perfect for summer occasions. Worn once.',
+        price: 35.0,
         condition: 'VERY_GOOD' as const,
         categoryId: womenClothing.id,
         brand: 'H&M',
@@ -92,8 +96,9 @@ async function seedProducts() {
       },
       {
         title: 'Limited Edition Sneakers',
-        description: 'Rare collaboration sneakers, comes with original box. Authenticated.',
-        price: 450.00,
+        description:
+          'Rare collaboration sneakers, comes with original box. Authenticated.',
+        price: 450.0,
         condition: 'NEW_WITH_TAGS' as const,
         categoryId: menClothing.id,
         brand: 'Nike x Off-White',
@@ -109,16 +114,14 @@ async function seedProducts() {
         data: {
           ...productData,
           images: {
-            create: []
-          }
+            create: [],
+          },
         },
       });
     }
 
-    
     // Show summary
     const totalProducts = await prisma.product.count();
-
   } catch (error) {
     console.error('❌ Error seeding products:', error);
   } finally {

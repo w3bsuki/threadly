@@ -43,54 +43,63 @@ const SIZES = [
   { value: '16', label: '16' },
 ];
 
-export function AdvancedFilters({ onClose, categories = [] }: AdvancedFiltersProps) {
+export function AdvancedFilters({
+  onClose,
+  categories = [],
+}: AdvancedFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   const [priceRange, setPriceRange] = useState([
     Number(searchParams.get('minPrice') || '0'),
-    Number(searchParams.get('maxPrice') || '1000')
+    Number(searchParams.get('maxPrice') || '1000'),
   ]);
-  
-  const [selectedCondition, setSelectedCondition] = useState(searchParams.get('condition') || '');
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '');
-  const [selectedSize, setSelectedSize] = useState(searchParams.get('size') || '');
+
+  const [selectedCondition, setSelectedCondition] = useState(
+    searchParams.get('condition') || ''
+  );
+  const [selectedCategory, setSelectedCategory] = useState(
+    searchParams.get('category') || ''
+  );
+  const [selectedSize, setSelectedSize] = useState(
+    searchParams.get('size') || ''
+  );
 
   const applyFilters = () => {
     const params = new URLSearchParams(searchParams);
-    
+
     if (priceRange[0] > 0) {
       params.set('minPrice', priceRange[0].toString());
     } else {
       params.delete('minPrice');
     }
-    
+
     if (priceRange[1] < 1000) {
       params.set('maxPrice', priceRange[1].toString());
     } else {
       params.delete('maxPrice');
     }
-    
+
     if (selectedCondition) {
       params.set('condition', selectedCondition);
     } else {
       params.delete('condition');
     }
-    
+
     if (selectedCategory) {
       params.set('category', selectedCategory);
     } else {
       params.delete('category');
     }
-    
+
     if (selectedSize) {
       params.set('size', selectedSize);
     } else {
       params.delete('size');
     }
-    
+
     params.delete('page');
-    
+
     router.push(`/products?${params.toString()}`);
     onClose?.();
   };
@@ -103,7 +112,7 @@ export function AdvancedFilters({ onClose, categories = [] }: AdvancedFiltersPro
     params.delete('category');
     params.delete('size');
     params.delete('page');
-    
+
     router.push(`/products?${params.toString()}`);
     onClose?.();
   };
@@ -111,9 +120,9 @@ export function AdvancedFilters({ onClose, categories = [] }: AdvancedFiltersPro
   return (
     <div className="space-y-6 p-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Filters</h3>
+        <h3 className="font-semibold text-lg">Filters</h3>
         {onClose && (
-          <Button variant="ghost" size="sm" onClick={onClose}>
+          <Button onClick={onClose} size="sm" variant="ghost">
             <X className="h-4 w-4" />
           </Button>
         )}
@@ -125,21 +134,25 @@ export function AdvancedFilters({ onClose, categories = [] }: AdvancedFiltersPro
         <div className="space-y-2">
           <div className="flex gap-2">
             <input
-              type="number"
-              placeholder="Min"
-              value={priceRange[0]}
-              onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
               className="flex-1 rounded border border-border px-3 py-2 text-sm"
+              onChange={(e) =>
+                setPriceRange([Number(e.target.value), priceRange[1]])
+              }
+              placeholder="Min"
+              type="number"
+              value={priceRange[0]}
             />
             <input
-              type="number"
-              placeholder="Max"
-              value={priceRange[1]}
-              onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
               className="flex-1 rounded border border-border px-3 py-2 text-sm"
+              onChange={(e) =>
+                setPriceRange([priceRange[0], Number(e.target.value)])
+              }
+              placeholder="Max"
+              type="number"
+              value={priceRange[1]}
             />
           </div>
-          <div className="flex justify-between text-sm text-muted-foreground">
+          <div className="flex justify-between text-muted-foreground text-sm">
             <span>${priceRange[0]}</span>
             <span>${priceRange[1]}</span>
           </div>
@@ -149,10 +162,10 @@ export function AdvancedFilters({ onClose, categories = [] }: AdvancedFiltersPro
       {/* Condition */}
       <div className="space-y-3">
         <Label>Condition</Label>
-        <select 
-          value={selectedCondition} 
-          onChange={(e) => setSelectedCondition(e.target.value)}
+        <select
           className="w-full rounded border border-border px-3 py-2 text-sm"
+          onChange={(e) => setSelectedCondition(e.target.value)}
+          value={selectedCondition}
         >
           <option value="">Any condition</option>
           {CONDITIONS.map((condition) => (
@@ -167,10 +180,10 @@ export function AdvancedFilters({ onClose, categories = [] }: AdvancedFiltersPro
       {categories.length > 0 && (
         <div className="space-y-3">
           <Label>Category</Label>
-          <select 
-            value={selectedCategory} 
-            onChange={(e) => setSelectedCategory(e.target.value)}
+          <select
             className="w-full rounded border border-border px-3 py-2 text-sm"
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            value={selectedCategory}
           >
             <option value="">Any category</option>
             {categories.map((category) => (
@@ -185,10 +198,10 @@ export function AdvancedFilters({ onClose, categories = [] }: AdvancedFiltersPro
       {/* Size */}
       <div className="space-y-3">
         <Label>Size</Label>
-        <select 
-          value={selectedSize} 
-          onChange={(e) => setSelectedSize(e.target.value)}
+        <select
           className="w-full rounded border border-border px-3 py-2 text-sm"
+          onChange={(e) => setSelectedSize(e.target.value)}
+          value={selectedSize}
         >
           <option value="">Any size</option>
           {SIZES.map((size) => (
@@ -201,10 +214,10 @@ export function AdvancedFilters({ onClose, categories = [] }: AdvancedFiltersPro
 
       {/* Action Buttons */}
       <div className="flex gap-2 pt-4">
-        <Button onClick={applyFilters} className="flex-1">
+        <Button className="flex-1" onClick={applyFilters}>
           Apply Filters
         </Button>
-        <Button variant="outline" onClick={clearFilters}>
+        <Button onClick={clearFilters} variant="outline">
           Clear
         </Button>
       </div>

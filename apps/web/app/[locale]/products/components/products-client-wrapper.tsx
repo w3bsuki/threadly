@@ -70,11 +70,11 @@ export function ProductsClientWrapper({
           <ProductListView products={products} />
         ) : (
           <ProductGrid
+            containerHeight={800}
             dictionary={dictionary}
+            enableVirtualization={products.length > 50}
             isCompact={viewMode === 'compact'}
             products={products}
-            enableVirtualization={products.length > 50}
-            containerHeight={800}
           />
         )}
       </div>

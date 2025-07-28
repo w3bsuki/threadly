@@ -1,7 +1,8 @@
 'use client';
 
-import React, { Component, ReactNode } from 'react';
 import * as Sentry from '@sentry/nextjs';
+import type React from 'react';
+import { Component, type ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
@@ -35,16 +36,18 @@ export class ErrorBoundary extends Component<Props, State> {
   componentDidUpdate(prevProps: Props) {
     const { resetKeys, resetOnPropsChange } = this.props;
     const { hasError } = this.state;
-    
+
     if (hasError) {
       // Reset on prop changes if enabled
       if (resetOnPropsChange && prevProps.children !== this.props.children) {
         this.resetErrorBoundary();
       }
-      
+
       // Reset if resetKeys changed
       if (resetKeys && prevProps.resetKeys) {
-        const hasResetKeyChanged = resetKeys.some((key, idx) => key !== prevProps.resetKeys![idx]);
+        const hasResetKeyChanged = resetKeys.some(
+          (key, idx) => key !== prevProps.resetKeys![idx]
+        );
         if (hasResetKeyChanged) {
           this.resetErrorBoundary();
         }
@@ -54,14 +57,14 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     const { onError, level = 'component' } = this.props;
-    
+
     // Increment error counter
     this.errorCounter++;
-    
+
     // Log to console in development
     if (process.env.NODE_ENV === 'development') {
     }
-    
+
     // Report to Sentry
     Sentry.withScope((scope) => {
       scope.setTag('errorBoundary', true);
@@ -76,13 +79,13 @@ export class ErrorBoundary extends Component<Props, State> {
       });
       Sentry.captureException(error);
     });
-    
+
     // Call custom error handler
     onError?.(error, errorInfo);
-    
+
     // Update state with error info
     this.setState({ errorInfo });
-    
+
     // Auto-reset after delay for transient errors
     if (this.errorCounter === 1) {
       this.resetTimeoutId = window.setTimeout(() => {
@@ -102,7 +105,7 @@ export class ErrorBoundary extends Component<Props, State> {
       clearTimeout(this.resetTimeoutId);
       this.resetTimeoutId = null;
     }
-    
+
     this.errorCounter = 0;
     this.setState({ hasError: false, error: undefined, errorInfo: undefined });
   };
@@ -117,23 +120,25 @@ export class ErrorBoundary extends Component<Props, State> {
         return (
           <div className={`error-boundary error-boundary--${level}`}>
             <div className="rounded-[var(--radius-lg)] border border-red-200 bg-red-50 p-6 text-center">
-              <h2 className="mb-2 text-lg font-semibold text-red-800">
+              <h2 className="mb-2 font-semibold text-lg text-red-800">
                 {level === 'page' ? 'Page Error' : 'Something went wrong'}
               </h2>
-              <p className="mb-4 text-sm text-red-600">
-                {process.env.NODE_ENV === 'development' 
-                  ? error.message 
+              <p className="mb-4 text-red-600 text-sm">
+                {process.env.NODE_ENV === 'development'
+                  ? error.message
                   : 'An unexpected error occurred. Please try refreshing the page.'}
               </p>
               <button
+                className="rounded-[var(--radius-md)] bg-red-600 px-4 py-2 font-medium text-background text-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                 onClick={this.resetErrorBoundary}
-                className="rounded-[var(--radius-md)] bg-red-600 px-4 py-2 text-sm font-medium text-background hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
               >
                 Try Again
               </button>
               {process.env.NODE_ENV === 'development' && (
                 <details className="mt-4 text-left">
-                  <summary className="cursor-pointer text-sm text-red-700">Error Details</summary>
+                  <summary className="cursor-pointer text-red-700 text-sm">
+                    Error Details
+                  </summary>
                   <pre className="mt-2 overflow-auto rounded bg-red-100 p-2 text-xs">
                     {error.stack}
                   </pre>
@@ -160,7 +165,6 @@ export class ErrorBoundary extends Component<Props, State> {
 // Hook for functional components
 export function useErrorHandler() {
   return (error: Error, errorInfo?: { componentStack?: string }) => {
-    
     Sentry.withScope((scope) => {
       scope.setTag('errorBoundary', false);
       scope.setTag('errorSource', 'useErrorHandler');
@@ -173,15 +177,15 @@ export function useErrorHandler() {
 }
 
 // Async error boundary for Suspense
-export function AsyncErrorBoundary({ 
-  children, 
-  fallback 
-}: { 
-  children: ReactNode; 
+export function AsyncErrorBoundary({
+  children,
+  fallback,
+}: {
+  children: ReactNode;
   fallback?: ReactNode;
 }) {
   return (
-    <ErrorBoundary 
+    <ErrorBoundary
       fallback={fallback || <AsyncErrorFallback />}
       level="component"
       resetOnPropsChange
@@ -195,10 +199,10 @@ function AsyncErrorFallback() {
   return (
     <div className="flex items-center justify-center p-4">
       <div className="text-center">
-        <p className="text-sm text-muted-foreground">Failed to load content</p>
+        <p className="text-muted-foreground text-sm">Failed to load content</p>
         <button
+          className="mt-2 text-blue-600 text-sm hover:text-blue-800"
           onClick={() => window.location.reload()}
-          className="mt-2 text-sm text-blue-600 hover:text-blue-800"
         >
           Refresh Page
         </button>

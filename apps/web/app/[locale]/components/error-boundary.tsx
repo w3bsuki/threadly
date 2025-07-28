@@ -113,7 +113,9 @@ export function ProductErrorFallback({ onRetry }: { onRetry?: () => void }) {
     <div className="flex aspect-square items-center justify-center rounded-[var(--radius-lg)] bg-secondary">
       <div className="p-4 text-center">
         <AlertCircle className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
-        <p className="mb-3 text-muted-foreground text-sm">Failed to load product</p>
+        <p className="mb-3 text-muted-foreground text-sm">
+          Failed to load product
+        </p>
         {onRetry && (
           <Button onClick={onRetry} size="sm" variant="outline">
             <RefreshCw className="mr-1 h-3 w-3" />
@@ -148,7 +150,9 @@ export function SearchErrorFallback({ onRetry }: { onRetry?: () => void }) {
   return (
     <div className="py-12 text-center">
       <AlertCircle className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-      <h3 className="mb-2 font-medium text-foreground text-lg">Search failed</h3>
+      <h3 className="mb-2 font-medium text-foreground text-lg">
+        Search failed
+      </h3>
       <p className="mb-6 text-muted-foreground">
         We couldn't complete your search. Please try again.
       </p>

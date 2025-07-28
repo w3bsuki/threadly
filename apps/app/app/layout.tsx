@@ -1,19 +1,29 @@
 import { env } from '@/env';
 import '@repo/design-system/styles/globals.css';
 import './styles.css';
+import { AnalyticsProvider } from '@repo/analytics';
+import { AuthProvider } from '@repo/auth/provider';
 import { DesignSystemProvider } from '@repo/design-system';
+import { Toaster } from '@repo/design-system/components';
 import { fonts } from '@repo/design-system/lib/fonts';
 import { Toolbar } from '@repo/feature-flags/components/toolbar';
-import { AuthProvider } from '@repo/auth/provider';
-import { AnalyticsProvider } from '@repo/analytics';
-import { Toaster } from '@repo/design-system/components';
-import { AppErrorBoundary } from '@/components/error-boundaries';
-import * as React from 'react';
 import type { Metadata, Viewport } from 'next';
+import type * as React from 'react';
+import { AppErrorBoundary } from '@/components/error-boundaries';
 
 export const metadata: Metadata = {
   title: 'Threadly Dashboard - Manage Your Fashion Business',
-  description: 'Sell unique fashion items, manage your inventory, and grow your sustainable fashion business on Threadly.',
+  description:
+    'Sell unique fashion items, manage your inventory, and grow your sustainable fashion business on Threadly.',
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 export const viewport: Viewport = {
@@ -28,22 +38,32 @@ type RootLayoutProperties = {
 };
 
 const RootLayout = ({ children }: RootLayoutProperties) => (
-  <html lang="en" className={fonts} suppressHydrationWarning>
+  <html className={fonts} lang="en" suppressHydrationWarning>
     <head>
-      <link rel="preconnect" href="https://img.clerk.com" />
-      <link rel="preconnect" href="https://utfs.io" />
-      <link rel="dns-prefetch" href="https://img.clerk.com" />
-      <link rel="dns-prefetch" href="https://utfs.io" />
+      <link rel="icon" href="/favicon.ico" sizes="any" />
+      <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+      <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+      <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+      <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+      <link href="/manifest.json" rel="manifest" />
+      <meta content="#000000" name="theme-color" />
+      <meta content="yes" name="apple-mobile-web-app-capable" />
+      <meta content="default" name="apple-mobile-web-app-status-bar-style" />
+      <meta name="apple-mobile-web-app-title" content="Threadly App" />
+      <link href="https://img.clerk.com" rel="preconnect" />
+      <link href="https://utfs.io" rel="preconnect" />
+      <link href="https://img.clerk.com" rel="dns-prefetch" />
+      <link href="https://utfs.io" rel="dns-prefetch" />
     </head>
     <body>
       <AppErrorBoundary>
         <AuthProvider
+          helpUrl={env.NEXT_PUBLIC_DOCS_URL}
           privacyUrl={new URL(
             '/legal/privacy',
             env.NEXT_PUBLIC_WEB_URL
           ).toString()}
           termsUrl={new URL('/legal/terms', env.NEXT_PUBLIC_WEB_URL).toString()}
-          helpUrl={env.NEXT_PUBLIC_DOCS_URL}
         >
           <AnalyticsProvider>
             <DesignSystemProvider>

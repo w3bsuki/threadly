@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { checkoutSchema, type CheckoutFormData, type CartItem } from '../types';
+import { useCallback, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { type CartItem, type CheckoutFormData, checkoutSchema } from '../types';
 import { calculateOrderCosts } from '../utils/calculate-costs';
 
 interface UseCheckoutOptions {
@@ -70,7 +70,8 @@ export function useCheckout(items: CartItem[], options?: UseCheckoutOptions) {
 
       return data;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to initialize checkout';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to initialize checkout';
       setError(errorMessage);
       options?.onError?.(errorMessage);
       return null;

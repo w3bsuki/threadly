@@ -1,9 +1,9 @@
 'use client';
 
-import { cn } from '../../lib/utils';
-import { ButtonHTMLAttributes, forwardRef } from 'react';
+import type { LucideIcon } from 'lucide-react';
 import Link from 'next/link';
-import { LucideIcon } from 'lucide-react';
+import { type ButtonHTMLAttributes, forwardRef } from 'react';
+import { cn } from '../../lib/utils';
 
 interface NavItem {
   label: string;
@@ -12,7 +12,8 @@ interface NavItem {
   badge?: number;
 }
 
-interface MobileNavProps extends Omit<ButtonHTMLAttributes<HTMLDivElement>, 'children'> {
+interface MobileNavProps
+  extends Omit<ButtonHTMLAttributes<HTMLDivElement>, 'children'> {
   items: NavItem[];
   currentPath?: string;
 }
@@ -21,15 +22,15 @@ export const MobileNav = forwardRef<HTMLDivElement, MobileNavProps>(
   ({ className, items, currentPath, ...props }, ref) => {
     return (
       <nav
-        ref={ref}
         className={cn(
-          'fixed bottom-0 left-0 right-0 z-50',
+          'fixed right-0 bottom-0 left-0 z-50',
           'bg-background/95 backdrop-blur-sm',
-          'border-t border-border',
+          'border-border border-t',
           'shadow-lg',
           'safe-area-pb',
           className
         )}
+        ref={ref}
         {...props}
       >
         <div className="flex h-16 items-center justify-around px-[var(--space-2)]">
@@ -39,8 +40,6 @@ export const MobileNav = forwardRef<HTMLDivElement, MobileNavProps>(
 
             return (
               <Link
-                key={item.href}
-                href={item.href}
                 className={cn(
                   'relative flex flex-col items-center justify-center',
                   'h-full flex-1',
@@ -49,6 +48,8 @@ export const MobileNav = forwardRef<HTMLDivElement, MobileNavProps>(
                   'rounded-[var(--radius-lg)]',
                   isActive && 'text-primary'
                 )}
+                href={item.href}
+                key={item.href}
                 style={{ WebkitTapHighlightColor: 'transparent' }}
               >
                 <div className="relative">
@@ -59,14 +60,14 @@ export const MobileNav = forwardRef<HTMLDivElement, MobileNavProps>(
                     )}
                   />
                   {item.badge && item.badge > 0 && (
-                    <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
+                    <span className="-right-2 -top-2 absolute flex h-5 w-5 items-center justify-center rounded-full bg-destructive font-bold text-[10px] text-destructive-foreground">
                       {item.badge > 99 ? '99+' : item.badge}
                     </span>
                   )}
                 </div>
                 <span
                   className={cn(
-                    'mt-[var(--space-1)] text-[10px] font-medium',
+                    'mt-[var(--space-1)] font-medium text-[10px]',
                     'transition-colors duration-200',
                     isActive ? 'text-primary' : 'text-muted-foreground'
                   )}

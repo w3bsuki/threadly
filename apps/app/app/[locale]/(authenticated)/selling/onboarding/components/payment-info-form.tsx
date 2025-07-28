@@ -1,13 +1,28 @@
 'use client';
 
-import { useState } from 'react';
+import {
+  Alert,
+  AlertDescription,
+} from '@repo/design-system/components/ui/alert';
 import { Button } from '@repo/design-system/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@repo/design-system/components/ui/card';
 import { Input } from '@repo/design-system/components/ui/input';
 import { Label } from '@repo/design-system/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/design-system/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@repo/design-system/components/ui/select';
-import { Alert, AlertDescription } from '@repo/design-system/components/ui/alert';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@repo/design-system/components/ui/select';
 import { Info, Shield } from 'lucide-react';
+import { useState } from 'react';
 
 interface PaymentInfoData {
   bankAccountNumber: string;
@@ -23,7 +38,12 @@ interface PaymentInfoFormProps {
   onBack: () => void;
 }
 
-export function PaymentInfoForm({ data, onUpdate, onNext, onBack }: PaymentInfoFormProps) {
+export function PaymentInfoForm({
+  data,
+  onUpdate,
+  onNext,
+  onBack,
+}: PaymentInfoFormProps) {
   const [formData, setFormData] = useState(data);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -41,26 +61,31 @@ export function PaymentInfoForm({ data, onUpdate, onNext, onBack }: PaymentInfoF
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <Alert>
             <Shield className="h-4 w-4" />
             <AlertDescription>
-              Your payment information is encrypted and secure. We never share your details with buyers.
+              Your payment information is encrypted and secure. We never share
+              your details with buyers.
             </AlertDescription>
           </Alert>
 
           <div className="space-y-2">
             <Label htmlFor="payoutMethod">Payout Method</Label>
             <Select
+              onValueChange={(value) =>
+                setFormData({ ...formData, payoutMethod: value })
+              }
               value={formData.payoutMethod}
-              onValueChange={(value) => setFormData({ ...formData, payoutMethod: value })}
             >
               <SelectTrigger id="payoutMethod">
                 <SelectValue placeholder="Select payout method" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
-                <SelectItem value="paypal" disabled>PayPal (Coming Soon)</SelectItem>
+                <SelectItem disabled value="paypal">
+                  PayPal (Coming Soon)
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -71,10 +96,15 @@ export function PaymentInfoForm({ data, onUpdate, onNext, onBack }: PaymentInfoF
                 <Label htmlFor="accountHolderName">Account Holder Name</Label>
                 <Input
                   id="accountHolderName"
-                  value={formData.accountHolderName}
-                  onChange={(e) => setFormData({ ...formData, accountHolderName: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      accountHolderName: e.target.value,
+                    })
+                  }
                   placeholder="Name on bank account"
                   required
+                  value={formData.accountHolderName}
                 />
               </div>
 
@@ -82,12 +112,17 @@ export function PaymentInfoForm({ data, onUpdate, onNext, onBack }: PaymentInfoF
                 <Label htmlFor="bankRoutingNumber">Routing Number</Label>
                 <Input
                   id="bankRoutingNumber"
-                  value={formData.bankRoutingNumber}
-                  onChange={(e) => setFormData({ ...formData, bankRoutingNumber: e.target.value })}
-                  placeholder="9-digit routing number"
                   maxLength={9}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      bankRoutingNumber: e.target.value,
+                    })
+                  }
                   pattern="[0-9]{9}"
+                  placeholder="9-digit routing number"
                   required
+                  value={formData.bankRoutingNumber}
                 />
               </div>
 
@@ -95,11 +130,16 @@ export function PaymentInfoForm({ data, onUpdate, onNext, onBack }: PaymentInfoF
                 <Label htmlFor="bankAccountNumber">Account Number</Label>
                 <Input
                   id="bankAccountNumber"
-                  type="password"
-                  value={formData.bankAccountNumber}
-                  onChange={(e) => setFormData({ ...formData, bankAccountNumber: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      bankAccountNumber: e.target.value,
+                    })
+                  }
                   placeholder="Bank account number"
                   required
+                  type="password"
+                  value={formData.bankAccountNumber}
                 />
               </div>
             </>
@@ -119,7 +159,7 @@ export function PaymentInfoForm({ data, onUpdate, onNext, onBack }: PaymentInfoF
           </Alert>
 
           <div className="flex justify-between">
-            <Button type="button" variant="outline" onClick={onBack}>
+            <Button onClick={onBack} type="button" variant="outline">
               Back
             </Button>
             <Button type="submit">Continue</Button>

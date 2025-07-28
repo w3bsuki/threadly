@@ -1,10 +1,10 @@
-import { redirect } from 'next/navigation';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
+import { redirect } from 'next/navigation';
 
 export async function checkOnboarding() {
   const user = await currentUser();
-  
+
   if (!user) {
     return false;
   }
@@ -15,10 +15,10 @@ export async function checkOnboarding() {
       select: {
         UserPreferences: {
           select: {
-            onboardingCompleted: true
-          }
-        }
-      }
+            onboardingCompleted: true,
+          },
+        },
+      },
     });
 
     return dbUser?.UserPreferences?.onboardingCompleted ?? false;
@@ -29,7 +29,7 @@ export async function checkOnboarding() {
 
 export async function requireOnboarding() {
   const hasCompleted = await checkOnboarding();
-  
+
   if (!hasCompleted) {
     redirect('/onboarding');
   }

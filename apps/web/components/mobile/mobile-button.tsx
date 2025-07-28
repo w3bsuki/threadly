@@ -1,19 +1,20 @@
 'use client';
 
-import { cn } from '@repo/design-system/lib/utils';
 import { Button, buttonVariants } from '@repo/design-system/components';
-import { hapticFeedback } from '@/lib/mobile/haptic-feedback';
+import { cn } from '@repo/design-system/lib/utils';
 import { forwardRef } from 'react';
+import { hapticFeedback } from '@/lib/mobile/haptic-feedback';
+
 // VariantProps imported via buttonVariants
 
 /**
  * Touch target size constants following CONTEXT.md patterns
  */
 const TOUCH_TARGET_SIZES = {
-  minimum: 36,     // Minimum viable size for less critical actions
-  standard: 44,    // Default size for most interactive elements
+  minimum: 36, // Minimum viable size for less critical actions
+  standard: 44, // Default size for most interactive elements
   comfortable: 48, // Recommended size for primary actions
-  large: 56,       // Maximum size for critical or frequently used actions
+  large: 56, // Maximum size for critical or frequently used actions
 } as const;
 
 export interface MobileButtonProps extends React.ComponentProps<typeof Button> {
@@ -28,24 +29,28 @@ export interface MobileButtonProps extends React.ComponentProps<typeof Button> {
  * Following CONTEXT.md mobile-first patterns
  */
 export const MobileButton = forwardRef<HTMLButtonElement, MobileButtonProps>(
-  ({ 
-    touchSize = 'standard',
-    importance = 'normal',
-    enableHaptic = true,
-    hapticType = 'light',
-    onClick,
-    className,
-    children,
-    ...props 
-  }, ref) => {
+  (
+    {
+      touchSize = 'standard',
+      importance = 'normal',
+      enableHaptic = true,
+      hapticType = 'light',
+      onClick,
+      className,
+      children,
+      ...props
+    },
+    ref
+  ) => {
     // Contextual size calculation
-    const targetSize = touchSize === 'auto'
-      ? importance === 'critical' 
-        ? TOUCH_TARGET_SIZES.large
-        : importance === 'primary'
-        ? TOUCH_TARGET_SIZES.comfortable
-        : TOUCH_TARGET_SIZES.standard
-      : TOUCH_TARGET_SIZES[touchSize];
+    const targetSize =
+      touchSize === 'auto'
+        ? importance === 'critical'
+          ? TOUCH_TARGET_SIZES.large
+          : importance === 'primary'
+            ? TOUCH_TARGET_SIZES.comfortable
+            : TOUCH_TARGET_SIZES.standard
+        : TOUCH_TARGET_SIZES[touchSize];
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (enableHaptic) {
@@ -56,15 +61,15 @@ export const MobileButton = forwardRef<HTMLButtonElement, MobileButtonProps>(
 
     return (
       <Button
-        ref={ref}
         className={cn(
           'relative flex items-center justify-center',
           `min-h-[${targetSize}px] min-w-[${targetSize}px]`,
           'touch-manipulation', // Disable double-tap zoom
-          'active:scale-95 transition-transform duration-100',
+          'transition-transform duration-100 active:scale-95',
           className
         )}
         onClick={handleClick}
+        ref={ref}
         {...props}
       >
         {children}
@@ -73,4 +78,3 @@ export const MobileButton = forwardRef<HTMLButtonElement, MobileButtonProps>(
   }
 );
 MobileButton.displayName = 'MobileButton';
-

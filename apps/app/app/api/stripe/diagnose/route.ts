@@ -1,13 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
+import { type NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { env } from '@/env';
 
 // Initialize Stripe only if key is available
-const stripe = env.STRIPE_SECRET_KEY ? new Stripe(env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-06-30.basil',
-}) : null;
+const stripe = env.STRIPE_SECRET_KEY
+  ? new Stripe(env.STRIPE_SECRET_KEY, {
+      apiVersion: '2025-06-30.basil',
+    })
+  : null;
 
 export async function GET(request: NextRequest) {
   interface Diagnostics {
@@ -85,8 +87,10 @@ export async function GET(request: NextRequest) {
       if (stripe && dbUser?.stripeAccountId) {
         diagnostics.stripe = { step: 'checking account' };
         try {
-          const account = await stripe.accounts.retrieve(dbUser.stripeAccountId);
-          
+          const account = await stripe.accounts.retrieve(
+            dbUser.stripeAccountId
+          );
+
           diagnostics.stripe = {
             account_retrieved: true,
             account_id: account.id,
@@ -99,36 +103,45 @@ export async function GET(request: NextRequest) {
               currently_due: account.requirements?.currently_due?.length || 0,
               eventually_due: account.requirements?.eventually_due?.length || 0,
               past_due: account.requirements?.past_due?.length || 0,
-              pending_verification: account.requirements?.pending_verification?.length || 0,
+              pending_verification:
+                account.requirements?.pending_verification?.length || 0,
               errors: account.requirements?.errors?.length || 0,
             },
             created_timestamp: account.created,
-            created_date: account.created ? new Date(account.created * 1000).toISOString() : 'N/A',
+            created_date: account.created
+              ? new Date(account.created * 1000).toISOString()
+              : 'N/A',
           };
         } catch (stripeError) {
           diagnostics.stripe = {
             account_retrieved: false,
             error: {
-              message: stripeError instanceof Error ? stripeError.message : 'Unknown error',
+              message:
+                stripeError instanceof Error
+                  ? stripeError.message
+                  : 'Unknown error',
               type: (stripeError as { type?: string }).type,
               code: (stripeError as { code?: string }).code,
               statusCode: (stripeError as { statusCode?: number }).statusCode,
             },
           };
-          diagnostics.errors.push(`Stripe account error: ${stripeError instanceof Error ? stripeError.message : 'Unknown error'}`);
+          diagnostics.errors.push(
+            `Stripe account error: ${stripeError instanceof Error ? stripeError.message : 'Unknown error'}`
+          );
         }
-      } else if (!stripe) {
+      } else if (stripe) {
+        diagnostics.stripe = { error: 'User has no Stripe account' };
+      } else {
         diagnostics.stripe = { error: 'Stripe not configured' };
         diagnostics.errors.push('Stripe is not configured');
-      } else {
-        diagnostics.stripe = { error: 'User has no Stripe account' };
       }
 
       // Test creating a new account link if user has account
       if (stripe && dbUser?.stripeAccountId) {
         diagnostics.account_link = { step: 'testing' };
         try {
-          const origin = env.NEXT_PUBLIC_APP_URL || `https://${request.headers.get('host')}`;
+          const origin =
+            env.NEXT_PUBLIC_APP_URL || `https://${request.headers.get('host')}`;
           const accountLink = await stripe.accountLinks.create({
             account: dbUser.stripeAccountId,
             refresh_url: `${origin}/en/selling/onboarding?refresh=true`,
@@ -145,28 +158,41 @@ export async function GET(request: NextRequest) {
           diagnostics.account_link = {
             created: false,
             error: {
-              message: linkError instanceof Error ? linkError.message : 'Unknown error',
+              message:
+                linkError instanceof Error
+                  ? linkError.message
+                  : 'Unknown error',
               type: (linkError as { type?: string }).type,
               code: (linkError as { code?: string }).code,
             },
           };
-          diagnostics.errors.push(`Account link error: ${linkError instanceof Error ? linkError.message : 'Unknown error'}`);
+          diagnostics.errors.push(
+            `Account link error: ${linkError instanceof Error ? linkError.message : 'Unknown error'}`
+          );
         }
       }
-
     } catch (dbError) {
       diagnostics.database = {
         connected: false,
-        error: dbError instanceof Error ? dbError.message : 'Database connection failed',
+        error:
+          dbError instanceof Error
+            ? dbError.message
+            : 'Database connection failed',
       };
-      diagnostics.errors.push(`Database error: ${dbError instanceof Error ? dbError.message : 'Unknown error'}`);
+      diagnostics.errors.push(
+        `Database error: ${dbError instanceof Error ? dbError.message : 'Unknown error'}`
+      );
     }
-
   } catch (error) {
-    diagnostics.errors.push(`Unexpected error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    diagnostics.errors.push(
+      `Unexpected error: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
     diagnostics.unexpected_error = {
       message: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack?.split('\n').slice(0, 5) : undefined,
+      stack:
+        error instanceof Error
+          ? error.stack?.split('\n').slice(0, 5)
+          : undefined,
     };
   }
 

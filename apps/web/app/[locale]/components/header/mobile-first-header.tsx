@@ -1,17 +1,28 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { cn } from '@repo/design-system/lib/utils';
-import { AccountDropdown } from '@repo/design-system/components/navigation/account-dropdown';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@repo/design-system/components';
 import { useUser } from '@repo/auth/client';
-import { Menu, Search as SearchIcon, X, ShoppingBag, Heart } from 'lucide-react';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@repo/design-system/components';
+import { AccountDropdown } from '@repo/design-system/components/navigation/account-dropdown';
+import { cn } from '@repo/design-system/lib/utils';
+import {
+  Heart,
+  Menu,
+  Search as SearchIcon,
+  ShoppingBag,
+  X,
+} from 'lucide-react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { useCallback, useState } from 'react';
+import { MobileButton } from '@/components/mobile/mobile-button';
 import { hapticFeedback } from '@/lib/mobile/haptic-feedback';
 import { platform } from '@/lib/mobile/platform-utils';
 import { useI18n } from '../providers/i18n-provider';
-import Link from 'next/link';
-import { MobileButton } from '@/components/mobile/mobile-button';
 
 export function MobileFirstHeader() {
   const { dictionary, locale } = useI18n();
@@ -32,46 +43,51 @@ export function MobileFirstHeader() {
     setIsSearchOpen(!isSearchOpen);
   }, [isSearchOpen]);
 
-  const handleSearch = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      hapticFeedback.medium();
-      router.push(`/${locale}/search?q=${encodeURIComponent(searchQuery.trim())}`);
-      setIsSearchOpen(false);
-      setSearchQuery('');
-    }
-  }, [searchQuery, router, locale]);
+  const handleSearch = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      if (searchQuery.trim()) {
+        hapticFeedback.medium();
+        router.push(
+          `/${locale}/search?q=${encodeURIComponent(searchQuery.trim())}`
+        );
+        setIsSearchOpen(false);
+        setSearchQuery('');
+      }
+    },
+    [searchQuery, router, locale]
+  );
 
   const isIOS = platform.isIOS;
 
   return (
     <>
       {/* Main Header - Mobile First */}
-      <header 
+      <header
         className={cn(
-          'fixed top-0 left-0 right-0 z-50',
-          'bg-background/95 backdrop-blur-md border-b',
+          'fixed top-0 right-0 left-0 z-50',
+          'border-b bg-background/95 backdrop-blur-md',
           'md:relative md:bg-background',
           isIOS ? 'pt-[env(safe-area-inset-top)]' : ''
         )}
       >
-        <div className="flex items-center justify-between px-4 h-14">
+        <div className="flex h-14 items-center justify-between px-4">
           {/* Left Section */}
           <div className="flex items-center gap-2">
             <MobileButton
-              variant="ghost"
-              size="icon"
-              touchSize="comfortable"
-              onClick={handleMenuToggle}
               aria-label="Open menu"
               className="md:hidden"
+              onClick={handleMenuToggle}
+              size="icon"
+              touchSize="comfortable"
+              variant="ghost"
             >
               <Menu className="h-5 w-5" />
             </MobileButton>
-            
-            <Link 
-              href={`/${locale}`}
+
+            <Link
               className="font-bold text-xl tracking-tight"
+              href={`/${locale}`}
               onClick={() => hapticFeedback.light()}
             >
               Threadly
@@ -81,23 +97,23 @@ export function MobileFirstHeader() {
           {/* Right Section - Mobile Actions */}
           <div className="flex items-center gap-1">
             <MobileButton
-              variant="ghost"
-              size="icon"
-              touchSize="standard"
-              onClick={handleSearchToggle}
               aria-label="Search"
               className="md:hidden"
+              onClick={handleSearchToggle}
+              size="icon"
+              touchSize="standard"
+              variant="ghost"
             >
               <SearchIcon className="h-5 w-5" />
             </MobileButton>
 
-            <Link href={`/${locale}/cart`} className="md:hidden">
+            <Link className="md:hidden" href={`/${locale}/cart`}>
               <MobileButton
-                variant="ghost"
-                size="icon"
-                touchSize="standard"
                 aria-label="Shopping cart"
                 asChild
+                size="icon"
+                touchSize="standard"
+                variant="ghost"
               >
                 <span>
                   <ShoppingBag className="h-5 w-5" />
@@ -106,85 +122,96 @@ export function MobileFirstHeader() {
             </Link>
 
             {/* Desktop Search Bar */}
-            <form 
+            <form
+              className="mx-4 hidden max-w-xl flex-1 items-center md:flex"
               onSubmit={handleSearch}
-              className="hidden md:flex items-center flex-1 max-w-xl mx-4"
             >
               <div className="relative w-full">
-                <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <SearchIcon className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
                 <input
+                  className="h-10 w-full rounded-full border bg-muted/50 pr-4 pl-10 focus:bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={
+                    dictionary.web?.global?.navigation?.searchPlaceholder ||
+                    'Search...'
+                  }
                   type="search"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={dictionary.web?.global?.navigation?.searchPlaceholder || 'Search...'}
-                  className="w-full h-10 pl-10 pr-4 rounded-full border bg-muted/50 focus:bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
                 />
               </div>
             </form>
 
             {/* Account Dropdown */}
-            <div className="hidden md:flex items-center gap-2">
+            <div className="hidden items-center gap-2 md:flex">
               <AccountDropdown />
             </div>
           </div>
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:block border-t">
+        <nav className="hidden border-t md:block">
           <div className="container mx-auto">
-            <div className="flex items-center justify-center gap-8 h-12">
-              {['women', 'men', 'kids', 'accessories', 'shoes', 'bags'].map((category) => (
-                <Link
-                  key={category}
-                  href={`/${locale}/category/${category}`}
-                  className={cn(
-                    'text-sm font-medium transition-colors hover:text-primary',
-                    pathname.includes(`/category/${category}`) && 'text-primary'
-                  )}
-                >
-                  {dictionary.web?.global?.categories?.[category as keyof typeof dictionary.web.global.categories] || category}
-                </Link>
-              ))}
+            <div className="flex h-12 items-center justify-center gap-8">
+              {['women', 'men', 'kids', 'accessories', 'shoes', 'bags'].map(
+                (category) => (
+                  <Link
+                    className={cn(
+                      'font-medium text-sm transition-colors hover:text-primary',
+                      pathname.includes(`/category/${category}`) &&
+                        'text-primary'
+                    )}
+                    href={`/${locale}/category/${category}`}
+                    key={category}
+                  >
+                    {dictionary.web?.global?.categories?.[
+                      category as keyof typeof dictionary.web.global.categories
+                    ] || category}
+                  </Link>
+                )
+              )}
             </div>
           </div>
         </nav>
       </header>
 
       {/* Mobile Search Sheet */}
-      <Sheet open={isSearchOpen} onOpenChange={setIsSearchOpen}>
-        <SheetContent side="top" className="h-auto">
+      <Sheet onOpenChange={setIsSearchOpen} open={isSearchOpen}>
+        <SheetContent className="h-auto" side="top">
           <SheetHeader>
             <SheetTitle>Search</SheetTitle>
           </SheetHeader>
-          <form onSubmit={handleSearch} className="mt-4">
+          <form className="mt-4" onSubmit={handleSearch}>
             <div className="relative">
-              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <SearchIcon className="-translate-y-1/2 absolute top-1/2 left-3 h-5 w-5 text-muted-foreground" />
               <input
-                type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={dictionary.web?.global?.navigation?.searchPlaceholder || 'Search products...'}
-                className="w-full h-12 pl-10 pr-4 text-base rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary"
-                autoFocus
+                autoCapitalize="off"
                 autoComplete="off"
                 autoCorrect="off"
-                autoCapitalize="off"
+                autoFocus
+                className="h-12 w-full rounded-lg border pr-4 pl-10 text-base focus:outline-none focus:ring-2 focus:ring-primary"
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={
+                  dictionary.web?.global?.navigation?.searchPlaceholder ||
+                  'Search products...'
+                }
+                type="search"
+                value={searchQuery}
               />
             </div>
-            <div className="flex gap-2 mt-4">
+            <div className="mt-4 flex gap-2">
               <MobileButton
-                type="submit"
                 className="flex-1"
-                touchSize="comfortable"
                 importance="primary"
+                touchSize="comfortable"
+                type="submit"
               >
                 Search
               </MobileButton>
               <MobileButton
-                type="button"
-                variant="outline"
                 onClick={() => setIsSearchOpen(false)}
                 touchSize="comfortable"
+                type="button"
+                variant="outline"
               >
                 Cancel
               </MobileButton>
@@ -193,16 +220,18 @@ export function MobileFirstHeader() {
 
           {/* Popular Searches */}
           <div className="mt-6">
-            <p className="text-sm text-muted-foreground mb-2">Popular searches</p>
+            <p className="mb-2 text-muted-foreground text-sm">
+              Popular searches
+            </p>
             <div className="flex flex-wrap gap-2">
               {['Vintage', 'Designer', 'Sneakers', 'Dresses'].map((term) => (
                 <button
+                  className="rounded-full bg-muted px-4 py-2 text-sm transition-colors hover:bg-muted/80"
                   key={term}
                   onClick={() => {
                     setSearchQuery(term);
                     handleSearch(new Event('submit') as any);
                   }}
-                  className="px-4 py-2 text-sm rounded-full bg-muted hover:bg-muted/80 transition-colors"
                 >
                   {term}
                 </button>
@@ -213,30 +242,32 @@ export function MobileFirstHeader() {
       </Sheet>
 
       {/* Mobile Menu Sheet */}
-      <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-        <SheetContent side="left" className="w-[85vw] max-w-sm">
+      <Sheet onOpenChange={setIsMenuOpen} open={isMenuOpen}>
+        <SheetContent className="w-[85vw] max-w-sm" side="left">
           <SheetHeader>
             <SheetTitle>Menu</SheetTitle>
           </SheetHeader>
-          
+
           <nav className="mt-6 space-y-1">
             {/* User Section */}
             {isSignedIn && isLoaded && (
-              <div className="pb-4 mb-4 border-b">
+              <div className="mb-4 border-b pb-4">
                 <Link
+                  className="flex items-center gap-3 rounded-lg px-2 py-3 transition-colors hover:bg-muted"
                   href={`/${locale}/account`}
                   onClick={() => {
                     hapticFeedback.light();
                     setIsMenuOpen(false);
                   }}
-                  className="flex items-center gap-3 px-2 py-3 rounded-lg hover:bg-muted transition-colors"
                 >
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="text-primary font-semibold">U</span>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                    <span className="font-semibold text-primary">U</span>
                   </div>
                   <div>
                     <p className="font-medium">My Account</p>
-                    <p className="text-sm text-muted-foreground">View profile & orders</p>
+                    <p className="text-muted-foreground text-sm">
+                      View profile & orders
+                    </p>
                   </div>
                 </Link>
               </div>
@@ -244,38 +275,46 @@ export function MobileFirstHeader() {
 
             {/* Categories */}
             <div className="space-y-1">
-              <p className="px-2 py-1 text-sm font-medium text-muted-foreground">Categories</p>
-              {['women', 'men', 'kids', 'accessories', 'shoes', 'bags'].map((category) => (
-                <Link
-                  key={category}
-                  href={`/${locale}/category/${category}`}
-                  onClick={() => {
-                    hapticFeedback.light();
-                    setIsMenuOpen(false);
-                  }}
-                  className={cn(
-                    'block px-4 py-3 rounded-lg hover:bg-muted transition-colors',
-                    pathname.includes(`/category/${category}`) && 'bg-muted'
-                  )}
-                >
-                  <span className="capitalize">
-                    {dictionary.web?.global?.categories?.[category as keyof typeof dictionary.web.global.categories] || category}
-                  </span>
-                </Link>
-              ))}
+              <p className="px-2 py-1 font-medium text-muted-foreground text-sm">
+                Categories
+              </p>
+              {['women', 'men', 'kids', 'accessories', 'shoes', 'bags'].map(
+                (category) => (
+                  <Link
+                    className={cn(
+                      'block rounded-lg px-4 py-3 transition-colors hover:bg-muted',
+                      pathname.includes(`/category/${category}`) && 'bg-muted'
+                    )}
+                    href={`/${locale}/category/${category}`}
+                    key={category}
+                    onClick={() => {
+                      hapticFeedback.light();
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    <span className="capitalize">
+                      {dictionary.web?.global?.categories?.[
+                        category as keyof typeof dictionary.web.global.categories
+                      ] || category}
+                    </span>
+                  </Link>
+                )
+              )}
             </div>
 
             {/* Quick Links */}
-            <div className="space-y-1 pt-4 border-t">
-              <p className="px-2 py-1 text-sm font-medium text-muted-foreground">Quick Links</p>
-              
+            <div className="space-y-1 border-t pt-4">
+              <p className="px-2 py-1 font-medium text-muted-foreground text-sm">
+                Quick Links
+              </p>
+
               <Link
+                className="flex items-center gap-3 rounded-lg px-4 py-3 transition-colors hover:bg-muted"
                 href={`/${locale}/favorites`}
                 onClick={() => {
                   hapticFeedback.light();
                   setIsMenuOpen(false);
                 }}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors"
               >
                 <Heart className="h-5 w-5" />
                 <span>Favorites</span>
@@ -284,12 +323,12 @@ export function MobileFirstHeader() {
               {isSignedIn ? (
                 <>
                   <Link
+                    className="flex items-center gap-3 rounded-lg px-4 py-3 transition-colors hover:bg-muted"
                     href={`/${locale}/orders`}
                     onClick={() => {
                       hapticFeedback.light();
                       setIsMenuOpen(false);
                     }}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors"
                   >
                     <ShoppingBag className="h-5 w-5" />
                     <span>My Orders</span>
@@ -297,12 +336,12 @@ export function MobileFirstHeader() {
                 </>
               ) : (
                 <Link
+                  className="flex items-center gap-3 rounded-lg px-4 py-3 transition-colors hover:bg-muted"
                   href={`/${locale}/sign-in`}
                   onClick={() => {
                     hapticFeedback.light();
                     setIsMenuOpen(false);
                   }}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors"
                 >
                   <span>Sign In</span>
                 </Link>
@@ -314,9 +353,9 @@ export function MobileFirstHeader() {
               <Link href={`/${locale}/selling/new`}>
                 <MobileButton
                   className="w-full"
-                  touchSize="comfortable"
                   importance="primary"
                   onClick={() => setIsMenuOpen(false)}
+                  touchSize="comfortable"
                 >
                   Start Selling
                 </MobileButton>

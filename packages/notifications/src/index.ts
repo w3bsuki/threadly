@@ -1,22 +1,24 @@
 // Legacy exports - deprecated
-export { 
-  EmailService, 
-  getEmailService, 
-  createProductionEmailService, 
-  createDevelopmentEmailService 
+export {
+  createDevelopmentEmailService,
+  createProductionEmailService,
+  EmailService,
+  getEmailService,
 } from './email-service';
 
 // New exports - use these instead
-export { createEmailService, type EmailServiceClient } from './email-service-client';
-export type { 
-  NotificationPreferences, 
-  User, 
-  Order, 
-  Message, 
-  Conversation, 
-  Payment, 
-  WeeklyReportData,
-  UserRepository 
-} from './types';
-
+export {
+  createEmailService,
+  type EmailServiceClient,
+} from './email-service-client';
 export * from './templates';
+export type {
+  Conversation,
+  Message,
+  NotificationPreferences,
+  Order,
+  Payment,
+  User,
+  UserRepository,
+  WeeklyReportData,
+} from './types';

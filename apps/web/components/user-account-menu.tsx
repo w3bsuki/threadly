@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser, useClerk } from '@clerk/nextjs';
+import { useClerk, useUser } from '@clerk/nextjs';
 import {
   Avatar,
   AvatarFallback,
@@ -13,14 +13,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@repo/design-system/components';
-import { 
-  User, 
-  Settings, 
-  Package, 
-  ShoppingBag, 
-  Plus,
+import {
+  LayoutDashboard,
   LogOut,
-  LayoutDashboard
+  Package,
+  Plus,
+  Settings,
+  ShoppingBag,
+  User,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -30,36 +30,36 @@ export function UserAccountMenu() {
   const { signOut } = useClerk();
   const params = useParams();
   const locale = params.locale as string;
-  
+
   if (!isLoaded) {
-    return (
-      <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
-    );
+    return <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />;
   }
-  
-  if (!isSignedIn || !user) {
+
+  if (!(isSignedIn && user)) {
     return null;
   }
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-  
-  const initials = `${user.firstName?.charAt(0) || ''}${user.lastName?.charAt(0) || ''}`.toUpperCase() || 'U';
-  
+
+  const initials =
+    `${user.firstName?.charAt(0) || ''}${user.lastName?.charAt(0) || ''}`.toUpperCase() ||
+    'U';
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+        <Button className="relative h-8 w-8 rounded-full" variant="ghost">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={user.imageUrl} alt={user.fullName || 'User'} />
+            <AvatarImage alt={user.fullName || 'User'} src={user.imageUrl} />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
+      <DropdownMenuContent align="end" className="w-56" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.fullName}</p>
-            <p className="text-xs leading-none text-muted-foreground">
+            <p className="font-medium text-sm leading-none">{user.fullName}</p>
+            <p className="text-muted-foreground text-xs leading-none">
               {user.emailAddresses[0]?.emailAddress}
             </p>
           </div>

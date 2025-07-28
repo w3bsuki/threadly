@@ -1,7 +1,7 @@
 'use client';
 
-import * as React from 'react';
 import Image from 'next/image';
+import * as React from 'react';
 import { cn } from '../../lib/utils';
 
 export interface LazyImageProps {
@@ -100,18 +100,18 @@ export const LazyImage = ({
   const defaultFallback = (
     <div className="flex h-full w-full items-center justify-center bg-muted text-muted-foreground">
       <div className="text-center">
-        <div className="w-12 h-12 mx-auto mb-2 rounded-[var(--radius-full)] bg-muted-foreground/20 flex items-center justify-center">
+        <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-[var(--radius-full)] bg-muted-foreground/20">
           <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
             fill="none"
+            height="24"
             stroke="currentColor"
-            strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            width="24"
           >
-            <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+            <rect height="18" rx="2" ry="2" width="18" x="3" y="3" />
             <circle cx="9" cy="9" r="2" />
             <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
           </svg>
@@ -129,16 +129,16 @@ export const LazyImage = ({
 
   const imageClasses = cn(
     'transition-all duration-300',
-    isLoading && blur && 'blur-sm scale-105',
-    !isLoading && 'blur-0 scale-100',
+    isLoading && blur && 'scale-105 blur-sm',
+    !isLoading && 'scale-100 blur-0',
     className
   );
 
   // Loading placeholder while not in view
   if (!isInView) {
     return (
-      <div ref={ref} className={containerClasses}>
-        <div className="absolute inset-0 bg-muted animate-pulse" />
+      <div className={containerClasses} ref={ref}>
+        <div className="absolute inset-0 animate-pulse bg-muted" />
       </div>
     );
   }
@@ -146,31 +146,31 @@ export const LazyImage = ({
   // Error state
   if (imageError) {
     return (
-      <div ref={ref} className={containerClasses}>
+      <div className={containerClasses} ref={ref}>
         {fallback || defaultFallback}
       </div>
     );
   }
 
   return (
-    <div ref={ref} className={containerClasses}>
+    <div className={containerClasses} ref={ref}>
       <Image
-        src={src}
         alt={alt}
-        width={fill ? undefined : width}
-        height={fill ? undefined : height}
-        fill={fill}
-        quality={quality}
-        priority={priority}
-        placeholder={placeholder}
         blurDataURL={blurDataURL}
         className={imageClasses}
-        onLoad={handleLoad}
+        fill={fill}
+        height={fill ? undefined : height}
         onError={handleError}
+        onLoad={handleLoad}
+        placeholder={placeholder}
+        priority={priority}
+        quality={quality}
         sizes={sizes}
+        src={src}
+        width={fill ? undefined : width}
       />
       {isLoading && blur && (
-        <div className="absolute inset-0 bg-muted/20 animate-pulse" />
+        <div className="absolute inset-0 animate-pulse bg-muted/20" />
       )}
     </div>
   );
@@ -205,33 +205,39 @@ export const LazyAvatar = ({
 
   const initials = React.useMemo(() => {
     if (fallbackInitials) return fallbackInitials;
-    
+
     return alt
       .split(' ')
       .slice(0, 2)
-      .map(name => name[0] || '')
+      .map((name) => name[0] || '')
       .join('')
       .toUpperCase();
   }, [alt, fallbackInitials]);
 
   const fallback = (
-    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/20 to-primary/40 text-primary-foreground font-medium">
+    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/20 to-primary/40 font-medium text-primary-foreground">
       {initials}
     </div>
   );
 
   return (
-    <div className={cn('rounded-[var(--radius-full)] overflow-hidden', sizeClasses[size], className)}>
+    <div
+      className={cn(
+        'overflow-hidden rounded-[var(--radius-full)]',
+        sizeClasses[size],
+        className
+      )}
+    >
       {src && !imageError ? (
         <LazyImage
-          src={src}
           alt={alt}
-          fill
           aspectRatio="square"
-          priority={priority}
           fallback={fallback}
+          fill
           onError={() => setImageError(true)}
+          priority={priority}
           sizes="(max-width: 768px) 96px, 128px"
+          src={src}
         />
       ) : (
         fallback

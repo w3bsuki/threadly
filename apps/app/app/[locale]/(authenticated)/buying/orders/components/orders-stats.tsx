@@ -15,39 +15,39 @@ export async function OrdersStats({ userId }: OrdersStatsProps) {
   const inProgressOrders = stats.pendingOrders + stats.shippedOrders;
 
   return (
-    <div className="grid gap-3 grid-cols-2 md:grid-cols-4 mt-4">
+    <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
       <Card>
         <CardContent className="p-3">
           <div className="text-center">
-            <p className="text-lg font-bold">{stats.totalOrders}</p>
-            <p className="text-xs text-muted-foreground">Total Orders</p>
+            <p className="font-bold text-lg">{stats.totalOrders}</p>
+            <p className="text-muted-foreground text-xs">Total Orders</p>
           </div>
         </CardContent>
       </Card>
-      
+
       <Card>
         <CardContent className="p-3">
           <div className="text-center">
-            <p className="text-lg font-bold">{stats.deliveredOrders}</p>
-            <p className="text-xs text-muted-foreground">Delivered</p>
+            <p className="font-bold text-lg">{stats.deliveredOrders}</p>
+            <p className="text-muted-foreground text-xs">Delivered</p>
           </div>
         </CardContent>
       </Card>
-      
+
       <Card>
         <CardContent className="p-3">
           <div className="text-center">
-            <p className="text-lg font-bold">{inProgressOrders}</p>
-            <p className="text-xs text-muted-foreground">In Progress</p>
+            <p className="font-bold text-lg">{inProgressOrders}</p>
+            <p className="text-muted-foreground text-xs">In Progress</p>
           </div>
         </CardContent>
       </Card>
-      
+
       <Card>
         <CardContent className="p-3">
           <div className="text-center">
-            <p className="text-lg font-bold">${stats.totalSpent.toFixed(0)}</p>
-            <p className="text-xs text-muted-foreground">Total Spent</p>
+            <p className="font-bold text-lg">${stats.totalSpent.toFixed(0)}</p>
+            <p className="text-muted-foreground text-xs">Total Spent</p>
           </div>
         </CardContent>
       </Card>

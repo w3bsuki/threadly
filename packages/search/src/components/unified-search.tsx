@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { Search, Filter } from 'lucide-react';
-import { Button } from '@repo/design-system/components';
-import { Input } from '@repo/design-system/components';
+import { Button, Input } from '@repo/design-system/components';
+import { Filter, Search } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
 export interface UnifiedSearchProps {
   placeholder?: string;
@@ -52,14 +51,14 @@ export function UnifiedSearch({
         <div className="flex flex-1 items-center px-4">
           <Search className="mr-2 h-5 w-5 flex-shrink-0 text-muted-foreground" />
           <input
-            ref={searchInputRef}
             aria-label="Search products"
             className="w-full bg-transparent py-3 text-foreground placeholder-gray-500 transition-all focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
-            placeholder={placeholder}
-            type="text"
-            value={searchQuery}
             onChange={handleSearchChange}
             onKeyPress={handleKeyPress}
+            placeholder={placeholder}
+            ref={searchInputRef}
+            type="text"
+            value={searchQuery}
           />
         </div>
 
@@ -142,15 +141,15 @@ export function MobileSearch({
     <div className={`relative flex items-center ${className}`}>
       <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
       <input
-        ref={searchInputRef}
         aria-label="Search"
-        className="w-full rounded-[var(--radius-lg)] bg-background/10 py-2 pl-10 pr-4 text-background placeholder-white/60 backdrop-blur-sm transition-all focus:bg-background/20 focus:outline-none focus:ring-2 focus:ring-white/20"
-        placeholder={placeholder}
-        type="text"
-        value={searchQuery}
+        className="w-full rounded-[var(--radius-lg)] bg-background/10 py-2 pr-4 pl-10 text-background placeholder-white/60 backdrop-blur-sm transition-all focus:bg-background/20 focus:outline-none focus:ring-2 focus:ring-white/20"
+        onBlur={handleBlur}
         onChange={handleSearchChange}
         onKeyPress={handleKeyPress}
-        onBlur={handleBlur}
+        placeholder={placeholder}
+        ref={searchInputRef}
+        type="text"
+        value={searchQuery}
       />
     </div>
   );

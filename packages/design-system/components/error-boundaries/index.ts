@@ -1,27 +1,32 @@
 // Error Boundaries for Production-Grade Error Handling
 // Comprehensive error boundary system for Threadly marketplace
 
-export { AppErrorBoundary, AppErrorProvider } from './app-error-boundary';
-export { PaymentErrorBoundary, PaymentErrorProvider } from './payment-error-boundary';
-export { ProductErrorBoundary, ProductErrorProvider } from './product-error-boundary';
-export { APIErrorBoundary, APIErrorProvider } from './api-error-boundary';
-
 // Re-export types for convenience
 export type { ErrorInfo } from 'react';
+export { APIErrorBoundary, APIErrorProvider } from './api-error-boundary';
+export { AppErrorBoundary, AppErrorProvider } from './app-error-boundary';
+export {
+  PaymentErrorBoundary,
+  PaymentErrorProvider,
+} from './payment-error-boundary';
+export {
+  ProductErrorBoundary,
+  ProductErrorProvider,
+} from './product-error-boundary';
 
 // Error boundary utilities
 // Note: These are available as named exports above
 // Usage: import { AppErrorBoundary, PaymentErrorBoundary } from '@repo/design-system';
 
 // Usage examples:
-// 
+//
 // 1. App-level error boundary:
 // <AppErrorProvider>
 //   <YourApp />
 // </AppErrorProvider>
 //
 // 2. Payment flow error boundary:
-// <PaymentErrorProvider 
+// <PaymentErrorProvider
 //   productTitle="Vintage Jacket"
 //   onRetry={handleRetry}
 //   onCancel={handleCancel}
@@ -30,7 +35,7 @@ export type { ErrorInfo } from 'react';
 // </PaymentErrorProvider>
 //
 // 3. Product creation error boundary:
-// <ProductErrorProvider 
+// <ProductErrorProvider
 //   mode="create"
 //   onSaveDraft={handleSaveDraft}
 //   onCancel={handleCancel}
@@ -39,7 +44,7 @@ export type { ErrorInfo } from 'react';
 // </ProductErrorProvider>
 //
 // 4. API error boundary:
-// <APIErrorProvider 
+// <APIErrorProvider
 //   onRetry={refetchData}
 //   fallbackTitle="Unable to load products"
 // >

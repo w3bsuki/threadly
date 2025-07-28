@@ -20,10 +20,7 @@ export function SellerInfoCard({ seller, productId }: SellerInfoCardProps) {
         <div className="flex items-center gap-3">
           {seller.imageUrl ? (
             <Image
-              alt={
-                `${seller.firstName} ${seller.lastName}` ||
-                'Seller'
-              }
+              alt={`${seller.firstName} ${seller.lastName}` || 'Seller'}
               className="rounded-[var(--radius-full)]"
               height={48}
               src={seller.imageUrl}
@@ -35,10 +32,7 @@ export function SellerInfoCard({ seller, productId }: SellerInfoCardProps) {
             </div>
           )}
           <div className="min-w-0 flex-1">
-            <Link
-              className="hover:underline"
-              href={`/seller/${seller.id}`}
-            >
+            <Link className="hover:underline" href={`/seller/${seller.id}`}>
               <h3 className="truncate font-semibold text-foreground text-sm">
                 {seller.firstName && seller.lastName
                   ? `${seller.firstName} ${seller.lastName}`
@@ -59,9 +53,7 @@ export function SellerInfoCard({ seller, productId }: SellerInfoCardProps) {
               <span className="sm:hidden">{memberSince}</span>
             </div>
           </div>
-          <Link
-            href={`/messages?sellerId=${seller.id}&productId=${productId}`}
-          >
+          <Link href={`/messages?sellerId=${seller.id}&productId=${productId}`}>
             <Button className="text-xs" size="sm" variant="outline">
               <MessageCircle className="mr-1 h-3 w-3" />
               Message

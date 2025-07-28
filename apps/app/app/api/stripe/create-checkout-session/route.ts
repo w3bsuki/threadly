@@ -1,16 +1,20 @@
-import { NextRequest } from 'next/server';
+import {
+  createErrorResponse,
+  createSuccessResponse,
+  ErrorCode,
+  validateInput,
+} from '@repo/api-utils';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { stripe, calculatePlatformFee, isStripeConfigured } from '@repo/payments';
-import { paymentRateLimit, checkRateLimit } from '@repo/security';
-import { z } from 'zod';
+import {
+  calculatePlatformFee,
+  isStripeConfigured,
+  stripe,
+} from '@repo/payments';
+import { checkRateLimit, paymentRateLimit } from '@repo/security';
 import { decimalToNumber } from '@repo/utils';
-import { 
-  createSuccessResponse, 
-  createErrorResponse, 
-  validateInput,
-  ErrorCode
-} from '@repo/api-utils';
+import type { NextRequest } from 'next/server';
+import { z } from 'zod';
 
 const createCheckoutSessionSchema = z.object({
   productId: z.string().min(1),
@@ -24,10 +28,10 @@ export async function POST(request: NextRequest) {
     if (!rateLimitResult.allowed) {
       return createErrorResponse(
         new Error(rateLimitResult.error?.message || 'Rate limit exceeded'),
-        { 
+        {
           status: 429,
           headers: rateLimitResult.headers,
-          errorCode: ErrorCode.RATE_LIMIT_EXCEEDED
+          errorCode: ErrorCode.RATE_LIMIT_EXCEEDED,
         }
       );
     }
@@ -42,36 +46,33 @@ export async function POST(request: NextRequest) {
 
     const clerkUser = await currentUser();
     if (!clerkUser) {
-      return createErrorResponse(
-        new Error('Unauthorized'),
-        { status: 401, errorCode: ErrorCode.UNAUTHORIZED }
-      );
+      return createErrorResponse(new Error('Unauthorized'), {
+        status: 401,
+        errorCode: ErrorCode.UNAUTHORIZED,
+      });
     }
 
     // SECURITY: Get database user to ensure proper ID comparison
     const user = await database.user.findUnique({
       where: { clerkId: clerkUser.id },
-      select: { id: true, firstName: true, lastName: true }
+      select: { id: true, firstName: true, lastName: true },
     });
 
     if (!user) {
-      return createErrorResponse(
-        new Error('User not found'),
-        { status: 404, errorCode: ErrorCode.NOT_FOUND }
-      );
+      return createErrorResponse(new Error('User not found'), {
+        status: 404,
+        errorCode: ErrorCode.NOT_FOUND,
+      });
     }
 
     const body = await request.json();
     const validationResult = validateInput(body, createCheckoutSessionSchema);
     if (!validationResult.success) {
-      return createErrorResponse(
-        new Error('Invalid request data'),
-        { 
-          status: 400, 
-          errorCode: ErrorCode.VALIDATION_FAILED,
-          details: validationResult.error.issues
-        }
-      );
+      return createErrorResponse(new Error('Invalid request data'), {
+        status: 400,
+        errorCode: ErrorCode.VALIDATION_FAILED,
+        details: validationResult.error.issues,
+      });
     }
     const { productId, sellerId } = validationResult.data;
 
@@ -91,10 +92,10 @@ export async function POST(request: NextRequest) {
     });
 
     if (!product) {
-      return createErrorResponse(
-        new Error('Product not available'),
-        { status: 404, errorCode: ErrorCode.NOT_FOUND }
-      );
+      return createErrorResponse(new Error('Product not available'), {
+        status: 404,
+        errorCode: ErrorCode.NOT_FOUND,
+      });
     }
 
     // SECURITY: Proper ID comparison - database user ID vs database seller ID
@@ -167,10 +168,14 @@ export async function POST(request: NextRequest) {
 
     // Calculate fees
     const amountInCents = Math.round(decimalToNumber(product.price) * 100);
-    const platformFeeInCents = Math.round(calculatePlatformFee(decimalToNumber(product.price)) * 100);
-    
+    const platformFeeInCents = Math.round(
+      calculatePlatformFee(decimalToNumber(product.price)) * 100
+    );
+
     // Create payment intent parameters
-    const paymentIntentParams: Parameters<typeof stripe.paymentIntents.create>[0] = {
+    const paymentIntentParams: Parameters<
+      typeof stripe.paymentIntents.create
+    >[0] = {
       amount: amountInCents,
       currency: 'usd',
       metadata: {
@@ -194,13 +199,13 @@ export async function POST(request: NextRequest) {
     // Otherwise, the platform will handle manual payouts later
 
     // Create payment intent
-    const paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
+    const paymentIntent =
+      await stripe.paymentIntents.create(paymentIntentParams);
 
     return createSuccessResponse({
       clientSecret: paymentIntent.client_secret,
       orderId: order.id,
     });
-
   } catch (error) {
     return createErrorResponse(error);
   }

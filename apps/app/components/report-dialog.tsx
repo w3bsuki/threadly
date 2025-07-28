@@ -1,20 +1,21 @@
 'use client';
 
-import { useState } from 'react';
-import { Flag } from 'lucide-react';
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Label,
+  RadioGroup,
+  RadioGroupItem,
+  Textarea,
+  toast,
 } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
-import { Label } from '@repo/design-system/components';
-import { RadioGroup, RadioGroupItem } from '@repo/design-system/components';
-import { Textarea } from '@repo/design-system/components';
-import { toast } from '@repo/design-system/components';
+import { Flag } from 'lucide-react';
+import { useState } from 'react';
 
 interface ReportDialogProps {
   type: 'PRODUCT' | 'USER';
@@ -42,7 +43,12 @@ const REPORT_REASONS = {
   ],
 };
 
-export function ReportDialog({ type, targetId, targetName, children }: ReportDialogProps): React.JSX.Element {
+export function ReportDialog({
+  type,
+  targetId,
+  targetName,
+  children,
+}: ReportDialogProps): React.JSX.Element {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState('');
   const [description, setDescription] = useState('');
@@ -83,31 +89,36 @@ export function ReportDialog({ type, targetId, targetName, children }: ReportDia
   const reasons = REPORT_REASONS[type];
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
         {children || (
-          <Button variant="ghost" size="sm" className="text-destructive">
-            <Flag className="h-4 w-4 mr-2" />
+          <Button className="text-destructive" size="sm" variant="ghost">
+            <Flag className="mr-2 h-4 w-4" />
             Report
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Report {type === 'PRODUCT' ? 'Product' : 'User'}</DialogTitle>
+          <DialogTitle>
+            Report {type === 'PRODUCT' ? 'Product' : 'User'}
+          </DialogTitle>
           <DialogDescription>
             Help us understand why you're reporting {targetName}
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-4 py-4">
           <div className="space-y-3">
             <Label>Select a reason</Label>
-            <RadioGroup value={reason} onValueChange={setReason}>
+            <RadioGroup onValueChange={setReason} value={reason}>
               {reasons.map((r) => (
-                <div key={r.value} className="flex items-center space-x-2">
-                  <RadioGroupItem value={r.value} id={r.value} />
-                  <Label htmlFor={r.value} className="font-normal cursor-pointer">
+                <div className="flex items-center space-x-2" key={r.value}>
+                  <RadioGroupItem id={r.value} value={r.value} />
+                  <Label
+                    className="cursor-pointer font-normal"
+                    htmlFor={r.value}
+                  >
                     {r.label}
                   </Label>
                 </div>
@@ -119,26 +130,23 @@ export function ReportDialog({ type, targetId, targetName, children }: ReportDia
             <Label htmlFor="description">Additional details (optional)</Label>
             <Textarea
               id="description"
-              placeholder="Provide more information about your report..."
-              value={description}
               onChange={(e) => setDescription(e.target.value)}
+              placeholder="Provide more information about your report..."
               rows={4}
+              value={description}
             />
           </div>
         </div>
 
         <div className="flex justify-end gap-2">
           <Button
-            variant="outline"
-            onClick={() => setOpen(false)}
             disabled={isSubmitting}
+            onClick={() => setOpen(false)}
+            variant="outline"
           >
             Cancel
           </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={!reason || isSubmitting}
-          >
+          <Button disabled={!reason || isSubmitting} onClick={handleSubmit}>
             {isSubmitting ? 'Submitting...' : 'Submit Report'}
           </Button>
         </div>

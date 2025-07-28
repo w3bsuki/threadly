@@ -1,7 +1,7 @@
 import { auth, currentUser } from '@repo/auth/server';
 import { authenticate } from '@repo/collaboration/auth';
 import { authRateLimit, checkRateLimit } from '@repo/security';
-import { NextRequest } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 const COLORS = [
   'var(--color-red-500)',
@@ -29,7 +29,7 @@ export const POST = async (request: NextRequest) => {
   if (!rateLimitResult.allowed) {
     return new Response(
       rateLimitResult.error?.message || 'Rate limit exceeded',
-      { 
+      {
         status: 429,
         headers: rateLimitResult.headers,
       }
@@ -39,7 +39,7 @@ export const POST = async (request: NextRequest) => {
   const user = await currentUser();
   const { orgId } = await auth();
 
-  if (!user || !orgId) {
+  if (!(user && orgId)) {
     return new Response('Unauthorized', { status: 401 });
   }
 

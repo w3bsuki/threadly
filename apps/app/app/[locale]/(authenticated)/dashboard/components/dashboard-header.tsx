@@ -1,5 +1,5 @@
+import type { currentUser } from '@repo/auth/server';
 import type { Dictionary } from '@repo/internationalization';
-import { currentUser } from '@repo/auth/server';
 
 interface DashboardHeaderProps {
   user: Awaited<ReturnType<typeof currentUser>>;
@@ -20,11 +20,14 @@ export function DashboardHeader({ user, dictionary }: DashboardHeaderProps) {
 
   return (
     <div className="space-y-1">
-      <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+      <h1 className="font-bold text-2xl tracking-tight sm:text-3xl">
         {getGreeting()}, {firstName}
       </h1>
-      <p className="text-sm text-muted-foreground sm:text-base">
-        {dictionary.dashboard.dashboard.welcomeMessage.replace('{{name}}', firstName)}
+      <p className="text-muted-foreground text-sm sm:text-base">
+        {dictionary.dashboard.dashboard.welcomeMessage.replace(
+          '{{name}}',
+          firstName
+        )}
       </p>
     </div>
   );

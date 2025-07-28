@@ -9,7 +9,7 @@ import {
   Separator,
 } from '@repo/design-system/components';
 import { formatCurrency } from '@repo/utils/currency';
-import { Shield, Lock } from 'lucide-react';
+import { Lock, Shield } from 'lucide-react';
 import Image from 'next/image';
 import type { CartItem, OrderCosts } from '../types';
 
@@ -31,14 +31,15 @@ export function OrderSummary({
   // Mobile sticky bottom bar
   if (isMobile) {
     return (
-      <div className="bg-background border-t shadow-lg">
+      <div className="border-t bg-background shadow-lg">
         <div className="flex items-center justify-between px-4 py-3">
           <div>
-            <p className="text-sm text-muted-foreground">Total</p>
-            <p className="text-2xl font-bold">{formatCurrency(costs.total)}</p>
+            <p className="text-muted-foreground text-sm">Total</p>
+            <p className="font-bold text-2xl">{formatCurrency(costs.total)}</p>
           </div>
           <Button
-            className="h-14 px-8 text-base font-semibold"
+            className="h-14 px-8 font-semibold text-base"
+            disabled={isProcessing}
             onClick={(e) => {
               e.preventDefault();
               // Add haptic feedback for mobile
@@ -47,7 +48,6 @@ export function OrderSummary({
               }
               onSubmit();
             }}
-            disabled={isProcessing}
           >
             {isProcessing ? (
               <>
@@ -63,7 +63,7 @@ export function OrderSummary({
           </Button>
         </div>
         <div className="px-4 pb-2 text-center">
-          <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
+          <p className="flex items-center justify-center gap-1 text-muted-foreground text-xs">
             <Shield className="h-3 w-3" />
             Secure checkout powered by Stripe
           </p>
@@ -74,33 +74,33 @@ export function OrderSummary({
 
   // Desktop view
   return (
-    <Card className="h-fit sticky top-4">
+    <Card className="sticky top-4 h-fit">
       <CardHeader>
         <CardTitle>Order Summary</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Cart Items */}
-        <div className="space-y-3 max-h-64 overflow-y-auto">
+        <div className="max-h-64 space-y-3 overflow-y-auto">
           {items.map((item) => (
-            <div key={item.id} className="flex gap-3">
+            <div className="flex gap-3" key={item.id}>
               {(item.image || item.imageUrl) && (
                 <div className="relative h-16 w-16 overflow-hidden rounded-md">
                   <Image
-                    src={item.image || item.imageUrl || ''}
                     alt={item.title}
-                    fill
                     className="object-cover"
+                    fill
+                    src={item.image || item.imageUrl || ''}
                   />
                 </div>
               )}
               <div className="flex-1">
-                <p className="font-medium text-sm line-clamp-1">{item.title}</p>
+                <p className="line-clamp-1 font-medium text-sm">{item.title}</p>
                 {(item.size || item.color) && (
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {[item.size, item.color].filter(Boolean).join(' / ')}
                   </p>
                 )}
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   Qty: {item.quantity}
                 </p>
               </div>
@@ -140,10 +140,10 @@ export function OrderSummary({
 
         {/* Submit Button */}
         <Button
-          className="w-full h-12"
-          size="lg"
-          onClick={onSubmit}
+          className="h-12 w-full"
           disabled={isProcessing}
+          onClick={onSubmit}
+          size="lg"
         >
           {isProcessing ? (
             <>
@@ -159,7 +159,7 @@ export function OrderSummary({
         </Button>
 
         {/* Security Badges */}
-        <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+        <div className="flex items-center justify-center gap-2 text-muted-foreground text-xs">
           <Shield className="h-4 w-4" />
           <span>Secure checkout powered by Stripe</span>
         </div>

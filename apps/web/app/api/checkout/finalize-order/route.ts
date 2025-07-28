@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
       price: number;
       quantity: number;
     }
-    
+
     const productIds = items.map((item: CheckoutItem) => item.productId);
     const products = await database.product.findMany({
       where: {

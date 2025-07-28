@@ -21,7 +21,9 @@ export const env = createEnv({
   // Add error handler for missing environment variables
   onValidationError: (error) => {
     // In production, we want to fail fast
-    throw new Error('Invalid environment variables - check deployment configuration');
+    throw new Error(
+      'Invalid environment variables - check deployment configuration'
+    );
   },
   extends: [
     auth(),
@@ -42,25 +44,29 @@ export const env = createEnv({
   ],
   server: {
     // Seller dashboard server variables
-    PORT: process.env.NODE_ENV === 'production' 
-      ? z.string().optional()
-      : z.string().default('3000'),
+    PORT:
+      process.env.NODE_ENV === 'production'
+        ? z.string().optional()
+        : z.string().default('3000'),
     ADMIN_SECRET: z.string().optional(),
   },
   client: {
     // Client-side variables for seller functionality
-    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NODE_ENV === 'production'
-      ? z.string().startsWith('pk_')
-      : z.string().startsWith('pk_').optional(),
-    NEXT_PUBLIC_APP_URL: process.env.NODE_ENV === 'production'
-      ? z.string().url()
-      : z.string().url().optional(),
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
+      process.env.NODE_ENV === 'production'
+        ? z.string().startsWith('pk_')
+        : z.string().startsWith('pk_').optional(),
+    NEXT_PUBLIC_APP_URL:
+      process.env.NODE_ENV === 'production'
+        ? z.string().url()
+        : z.string().url().optional(),
     NEXT_PUBLIC_API_URL: z.string().url().optional(),
     NEXT_PUBLIC_WEB_URL: z.string().url().optional(),
   },
   runtimeEnv: {
     PORT: process.env.PORT || '3000',
-    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
+      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     NEXT_PUBLIC_WEB_URL: process.env.NEXT_PUBLIC_WEB_URL,

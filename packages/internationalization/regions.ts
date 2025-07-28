@@ -44,7 +44,7 @@ export const regions: Record<string, Region> = {
     currencies: ['GBP', 'EUR'],
     defaultCurrency: 'GBP',
     phonePrefix: '+44',
-    taxRate: 0.20, // 20% VAT
+    taxRate: 0.2, // 20% VAT
     taxName: 'VAT',
     displayPricesIncludeTax: true,
     freeShippingThreshold: 50,
@@ -74,7 +74,7 @@ export const regions: Record<string, Region> = {
     currencies: ['EUR'],
     defaultCurrency: 'EUR',
     phonePrefix: '+33',
-    taxRate: 0.20, // 20% VAT
+    taxRate: 0.2, // 20% VAT
     taxName: 'TVA',
     displayPricesIncludeTax: true,
     freeShippingThreshold: 60,
@@ -119,7 +119,7 @@ export const regions: Record<string, Region> = {
     currencies: ['BGN', 'EUR'],
     defaultCurrency: 'BGN',
     phonePrefix: '+359',
-    taxRate: 0.20, // 20% VAT
+    taxRate: 0.2, // 20% VAT
     taxName: 'ДДС',
     displayPricesIncludeTax: true,
     freeShippingThreshold: 100, // ~50 EUR in BGN
@@ -134,7 +134,7 @@ export const regions: Record<string, Region> = {
     currencies: ['UAH', 'EUR', 'USD'],
     defaultCurrency: 'UAH',
     phonePrefix: '+380',
-    taxRate: 0.20, // 20% VAT
+    taxRate: 0.2, // 20% VAT
     taxName: 'ПДВ',
     displayPricesIncludeTax: true,
     freeShippingThreshold: 2000, // ~50 EUR in UAH
@@ -164,7 +164,7 @@ export const regions: Record<string, Region> = {
     currencies: ['AUD'],
     defaultCurrency: 'AUD',
     phonePrefix: '+61',
-    taxRate: 0.10, // 10% GST
+    taxRate: 0.1, // 10% GST
     taxName: 'GST',
     displayPricesIncludeTax: true,
     freeShippingThreshold: 100,
@@ -209,8 +209,10 @@ export const detectRegionFromLocale = (locale: string): Region => {
   };
 
   const normalizedLocale = locale.split('-')[0];
-  const regionCode = normalizedLocale ? localeToRegion[normalizedLocale] : undefined;
-  
+  const regionCode = normalizedLocale
+    ? localeToRegion[normalizedLocale]
+    : undefined;
+
   if (regionCode && regions[regionCode]) {
     return regions[regionCode] as Region;
   }
@@ -227,7 +229,7 @@ export const getCurrencySymbol = (currency: Currency): string => {
     BGN: 'лв',
     UAH: '₴',
   };
-  
+
   return symbols[currency] || currency;
 };
 
@@ -251,10 +253,7 @@ export const formatCurrency = (
 };
 
 // Tax calculation utilities
-export const calculateTax = (
-  amount: number,
-  region: Region
-): number => {
+export const calculateTax = (amount: number, region: Region): number => {
   return Math.round(amount * region.taxRate * 100) / 100;
 };
 
@@ -305,7 +304,10 @@ export const calculateShippingRate = (
   shippingMethod: 'standard' | 'express' | 'overnight' = 'standard'
 ): number => {
   // Check if eligible for free shipping
-  if (region.freeShippingThreshold && subtotal >= region.freeShippingThreshold) {
+  if (
+    region.freeShippingThreshold &&
+    subtotal >= region.freeShippingThreshold
+  ) {
     return 0;
   }
 
@@ -325,7 +327,7 @@ export const getCheckoutPrice = (
   region: Region
 ): { subtotal: number; tax: number; total: number } => {
   const tax = calculateTax(basePrice, region);
-  
+
   return {
     subtotal: basePrice,
     tax,
@@ -339,14 +341,14 @@ export const formatPriceBreakdown = (
   region: Region,
   currency: Currency,
   locale?: string
-): { 
-  subtotal: string; 
-  tax: string; 
+): {
+  subtotal: string;
+  tax: string;
   taxLabel: string;
   total: string;
 } => {
   const { subtotal, tax, total } = getCheckoutPrice(basePrice, region);
-  
+
   return {
     subtotal: formatCurrency(subtotal, currency, locale),
     tax: formatCurrency(tax, currency, locale),

@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import type React from 'react';
+import { useCallback, useState } from 'react';
 
 interface SearchBoxProps {
   onSearch: (query: string) => void;
@@ -9,35 +10,41 @@ interface SearchBoxProps {
   initialValue?: string;
 }
 
-export function SearchBox({ 
-  onSearch, 
-  placeholder = 'Search products...', 
+export function SearchBox({
+  onSearch,
+  placeholder = 'Search products...',
   className = '',
-  initialValue = ''
+  initialValue = '',
 }: SearchBoxProps) {
   const [query, setQuery] = useState(initialValue);
 
-  const handleSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    onSearch(query);
-  }, [query, onSearch]);
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      onSearch(query);
+    },
+    [query, onSearch]
+  );
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value);
-  }, []);
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setQuery(e.target.value);
+    },
+    []
+  );
 
   return (
-    <form onSubmit={handleSubmit} className={className}>
+    <form className={className} onSubmit={handleSubmit}>
       <input
-        type="text"
-        value={query}
+        className="w-full rounded-[var(--radius-md)] border border-border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         onChange={handleInputChange}
         placeholder={placeholder}
-        className="w-full px-4 py-2 border border-border rounded-[var(--radius-md)] focus:outline-none focus:ring-2 focus:ring-blue-500"
+        type="text"
+        value={query}
       />
-      <button 
+      <button
+        className="ml-2 rounded-[var(--radius-md)] bg-blue-500 px-4 py-2 text-background hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         type="submit"
-        className="ml-2 px-4 py-2 bg-blue-500 text-background rounded-[var(--radius-md)] hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         Search
       </button>

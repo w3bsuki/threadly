@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
 import { logError } from '@repo/observability/server';
+import { NextResponse } from 'next/server';
 import { getSecureResponseHeaders } from './security-utils';
 
 export interface APIResponse<T = unknown> {
@@ -41,7 +41,7 @@ export class APIResponseBuilder {
   static success<T>(
     data: T,
     message?: string,
-    statusCode: number = 200,
+    statusCode = 200,
     pagination?: APIResponse<T>['pagination'],
     processingTime?: string
   ): NextResponse<APIResponse<T>> {
@@ -51,7 +51,7 @@ export class APIResponseBuilder {
       message,
       pagination,
       meta: {
-        version: this.version,
+        version: APIResponseBuilder.version,
         timestamp: new Date().toISOString(),
         processingTime,
       },
@@ -67,10 +67,10 @@ export class APIResponseBuilder {
 
   static error(
     error: string,
-    statusCode: number = 400,
+    statusCode = 400,
     code?: string,
     details?: unknown,
-    logToConsole: boolean = true
+    logToConsole = true
   ): NextResponse<APIErrorResponse> {
     const response: APIErrorResponse = {
       success: false,
@@ -78,7 +78,7 @@ export class APIResponseBuilder {
       code,
       details: process.env.NODE_ENV === 'development' ? details : undefined, // Hide details in production
       meta: {
-        version: this.version,
+        version: APIResponseBuilder.version,
         timestamp: new Date().toISOString(),
       },
     };
@@ -101,31 +101,45 @@ export class APIResponseBuilder {
     return NextResponse.json(response, { status: statusCode, headers });
   }
 
-  static notFound(resource: string = 'Resource'): NextResponse<APIErrorResponse> {
-    return this.error(`${resource} not found`, 404, 'NOT_FOUND');
+  static notFound(resource = 'Resource'): NextResponse<APIErrorResponse> {
+    return APIResponseBuilder.error(`${resource} not found`, 404, 'NOT_FOUND');
   }
 
-  static unauthorized(message: string = 'Authentication required'): NextResponse<APIErrorResponse> {
-    return this.error(message, 401, 'UNAUTHORIZED');
+  static unauthorized(
+    message = 'Authentication required'
+  ): NextResponse<APIErrorResponse> {
+    return APIResponseBuilder.error(message, 401, 'UNAUTHORIZED');
   }
 
-  static forbidden(message: string = 'Access denied'): NextResponse<APIErrorResponse> {
-    return this.error(message, 403, 'FORBIDDEN');
+  static forbidden(message = 'Access denied'): NextResponse<APIErrorResponse> {
+    return APIResponseBuilder.error(message, 403, 'FORBIDDEN');
   }
 
-  static badRequest(message: string = 'Invalid request', details?: unknown): NextResponse<APIErrorResponse> {
-    return this.error(message, 400, 'BAD_REQUEST', details);
+  static badRequest(
+    message = 'Invalid request',
+    details?: unknown
+  ): NextResponse<APIErrorResponse> {
+    return APIResponseBuilder.error(message, 400, 'BAD_REQUEST', details);
   }
 
-  static tooManyRequests(message: string = 'Rate limit exceeded'): NextResponse<APIErrorResponse> {
-    return this.error(message, 429, 'RATE_LIMIT_EXCEEDED');
+  static tooManyRequests(
+    message = 'Rate limit exceeded'
+  ): NextResponse<APIErrorResponse> {
+    return APIResponseBuilder.error(message, 429, 'RATE_LIMIT_EXCEEDED');
   }
 
-  static internalError(message: string = 'Internal server error'): NextResponse<APIErrorResponse> {
-    return this.error(message, 500, 'INTERNAL_ERROR');
+  static internalError(
+    message = 'Internal server error'
+  ): NextResponse<APIErrorResponse> {
+    return APIResponseBuilder.error(message, 500, 'INTERNAL_ERROR');
   }
 
   static validationError(details: unknown): NextResponse<APIErrorResponse> {
-    return this.error('Validation failed', 422, 'VALIDATION_ERROR', details);
+    return APIResponseBuilder.error(
+      'Validation failed',
+      422,
+      'VALIDATION_ERROR',
+      details
+    );
   }
 }

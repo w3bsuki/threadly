@@ -1,26 +1,35 @@
 'use client';
 
-import { useState } from 'react';
-import { Button } from '@repo/design-system/components';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@repo/design-system/components';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@repo/design-system/components';
 import { cn } from '@repo/design-system/lib/utils';
-import { 
-  Plus, 
-  TrendingUp, 
-  MessageSquare,
-  ShoppingBag,
-  Settings,
-  Users,
-  Heart,
-  Eye,
-  MoreHorizontal,
-  History,
+import type { Dictionary } from '@repo/internationalization';
+import {
   ChartBar,
-  Tag
+  Eye,
+  Heart,
+  History,
+  MessageSquare,
+  MoreHorizontal,
+  Plus,
+  Settings,
+  ShoppingBag,
+  Tag,
+  TrendingUp,
+  Users,
 } from 'lucide-react';
 import Link from 'next/link';
-import type { Dictionary } from '@repo/internationalization';
+import { useState } from 'react';
 
 interface QuickActionProps {
   href: string;
@@ -32,26 +41,34 @@ interface QuickActionProps {
   isPrimary?: boolean;
 }
 
-function QuickAction({ href, icon: Icon, label, bgColor, iconColor, badge, isPrimary }: QuickActionProps) {
+function QuickAction({
+  href,
+  icon: Icon,
+  label,
+  bgColor,
+  iconColor,
+  badge,
+  isPrimary,
+}: QuickActionProps) {
   const isExternal = href.startsWith('http');
-  
+
   const content = (
-    <div className={cn(
-      "relative flex flex-col items-center justify-center p-4 rounded-[var(--radius-lg)] border transition-all cursor-pointer touch-manipulation active:scale-95 duration-200",
-      "min-h-[88px] sm:min-h-[80px] md:min-h-[72px] lg:min-h-[64px]",
-      isPrimary
-        ? "border-primary/20 bg-primary/5 hover:bg-primary/10 hover:border-primary/40"
-        : "border-border bg-card hover:bg-accent hover:border-accent-foreground/20"
-    )} style={{ WebkitTapHighlightColor: 'transparent' }}>
-      <div className={cn(
-        "p-2.5 rounded-[var(--radius-lg)] mb-2",
-        bgColor
-      )}>
-        <Icon className={cn("h-6 w-6 sm:h-5 sm:w-5", iconColor)} />
+    <div
+      className={cn(
+        'relative flex cursor-pointer touch-manipulation flex-col items-center justify-center rounded-[var(--radius-lg)] border p-4 transition-all duration-200 active:scale-95',
+        'min-h-[88px] sm:min-h-[80px] md:min-h-[72px] lg:min-h-[64px]',
+        isPrimary
+          ? 'border-primary/20 bg-primary/5 hover:border-primary/40 hover:bg-primary/10'
+          : 'border-border bg-card hover:border-accent-foreground/20 hover:bg-accent'
+      )}
+      style={{ WebkitTapHighlightColor: 'transparent' }}
+    >
+      <div className={cn('mb-2 rounded-[var(--radius-lg)] p-2.5', bgColor)}>
+        <Icon className={cn('h-6 w-6 sm:h-5 sm:w-5', iconColor)} />
       </div>
-      <span className="text-sm sm:text-xs font-medium">{label}</span>
+      <span className="font-medium text-sm sm:text-xs">{label}</span>
       {badge !== undefined && badge > 0 && (
-        <div className="absolute top-2 right-2 h-5 w-5 rounded-[var(--radius-full)] bg-destructive text-destructive-foreground text-xs font-bold flex items-center justify-center">
+        <div className="absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded-[var(--radius-full)] bg-destructive font-bold text-destructive-foreground text-xs">
           {badge > 9 ? '9+' : badge}
         </div>
       )}
@@ -60,14 +77,19 @@ function QuickAction({ href, icon: Icon, label, bgColor, iconColor, badge, isPri
 
   if (isExternal) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className="block">
+      <a
+        className="block"
+        href={href}
+        rel="noopener noreferrer"
+        target="_blank"
+      >
         {content}
       </a>
     );
   }
 
   return (
-    <Link href={href} className="block">
+    <Link className="block" href={href}>
       {content}
     </Link>
   );
@@ -79,7 +101,7 @@ interface ModernQuickActionsProps {
 
 export function ModernQuickActions({ dictionary }: ModernQuickActionsProps) {
   const [moreActionsOpen, setMoreActionsOpen] = useState(false);
-  
+
   // Primary actions - no duplicates from bottom nav
   const primaryActions = [
     {
@@ -114,7 +136,7 @@ export function ModernQuickActions({ dictionary }: ModernQuickActionsProps) {
       iconColor: 'text-pink-600',
     },
   ];
-  
+
   // Secondary actions for the "More" sheet
   const secondaryActions = [
     {
@@ -151,17 +173,19 @@ export function ModernQuickActions({ dictionary }: ModernQuickActionsProps) {
     <Card>
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold">{dictionary.dashboard.dashboard.quickActions}</CardTitle>
+          <CardTitle className="font-semibold text-lg">
+            {dictionary.dashboard.dashboard.quickActions}
+          </CardTitle>
           <div className="flex items-center gap-2">
-            <Sheet open={moreActionsOpen} onOpenChange={setMoreActionsOpen}>
+            <Sheet onOpenChange={setMoreActionsOpen} open={moreActionsOpen}>
               <SheetTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
+                <Button
                   className="min-h-[44px] touch-manipulation transition-all duration-200 active:scale-95"
+                  size="sm"
                   style={{ WebkitTapHighlightColor: 'transparent' }}
+                  variant="ghost"
                 >
-                  <MoreHorizontal className="h-4 w-4 mr-1" />
+                  <MoreHorizontal className="mr-1 h-4 w-4" />
                   More
                 </Button>
               </SheetTrigger>
@@ -169,16 +193,23 @@ export function ModernQuickActions({ dictionary }: ModernQuickActionsProps) {
                 <SheetHeader>
                   <SheetTitle>More Actions</SheetTitle>
                 </SheetHeader>
-                <div className="grid gap-3 mt-6">
+                <div className="mt-6 grid gap-3">
                   {secondaryActions.map((action, index) => (
-                    <Link 
-                      key={index} 
-                      href={action.href} 
+                    <Link
+                      className="flex items-center gap-3 rounded-[var(--radius-lg)] p-3 transition-colors hover:bg-accent"
+                      href={action.href}
+                      key={index}
                       onClick={() => setMoreActionsOpen(false)}
-                      className="flex items-center gap-3 p-3 rounded-[var(--radius-lg)] hover:bg-accent transition-colors"
                     >
-                      <div className={cn("p-2 rounded-[var(--radius-lg)]", action.bgColor)}>
-                        <action.icon className={cn("h-5 w-5", action.iconColor)} />
+                      <div
+                        className={cn(
+                          'rounded-[var(--radius-lg)] p-2',
+                          action.bgColor
+                        )}
+                      >
+                        <action.icon
+                          className={cn('h-5 w-5', action.iconColor)}
+                        />
                       </div>
                       <span className="font-medium">{action.label}</span>
                     </Link>
@@ -186,15 +217,15 @@ export function ModernQuickActions({ dictionary }: ModernQuickActionsProps) {
                 </div>
               </SheetContent>
             </Sheet>
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
               asChild
               className="min-h-[44px] touch-manipulation transition-all duration-200 active:scale-95"
+              size="sm"
               style={{ WebkitTapHighlightColor: 'transparent' }}
+              variant="ghost"
             >
               <Link href="/selling/new">
-                <Plus className="h-4 w-4 mr-1" />
+                <Plus className="mr-1 h-4 w-4" />
                 {dictionary.dashboard.global.create}
               </Link>
             </Button>
@@ -202,7 +233,7 @@ export function ModernQuickActions({ dictionary }: ModernQuickActionsProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-3 grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4">
           {primaryActions.map((action, index) => (
             <QuickAction key={index} {...action} />
           ))}

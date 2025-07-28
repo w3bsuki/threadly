@@ -3,22 +3,39 @@
 import { currentUser } from '@repo/auth/server';
 import { ensureUserExists } from '@repo/auth/sync';
 import { database } from '@repo/database';
+import { log, logError } from '@repo/observability/server';
+import { getAlgoliaSyncService } from '@repo/search';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
-import { getAlgoliaSyncService } from '@repo/search';
 
 // SECURITY: Enhanced validation schema with stricter rules
 const createProductSchema = z.object({
-  title: z.string().trim().min(3).max(100)
-    .refine((val) => !/[<>\"'&]/.test(val), { message: "Title contains invalid characters" }),
+  title: z
+    .string()
+    .trim()
+    .min(3)
+    .max(100)
+    .refine((val) => !/[<>"'&]/.test(val), {
+      message: 'Title contains invalid characters',
+    }),
   description: z.string().trim().min(10).max(2000),
-  price: z.number().min(1).max(99999999),
-  categoryId: z.string().min(1, "Category is required"),
-  condition: z.enum(['NEW_WITH_TAGS', 'NEW_WITHOUT_TAGS', 'VERY_GOOD', 'GOOD', 'SATISFACTORY']),
-  brand: z.string().trim().max(50).optional()
-    .refine((val) => !val || !/[<>\"'&]/.test(val), { message: "Brand contains invalid characters" }),
+  price: z.number().min(1).max(99_999_999),
+  categoryId: z.string().min(1, 'Category is required'),
+  condition: z.enum([
+    'NEW_WITH_TAGS',
+    'NEW_WITHOUT_TAGS',
+    'VERY_GOOD',
+    'GOOD',
+    'SATISFACTORY',
+  ]),
+  brand: z
+    .string()
+    .trim()
+    .max(50)
+    .optional()
+    .refine((val) => !(val && /[<>"'&]/.test(val)), {
+      message: 'Brand contains invalid characters',
+    }),
   size: z.string().max(20).optional(),
   color: z.string().max(30).optional(),
   images: z.array(z.string().url()).min(1).max(10),
@@ -29,9 +46,17 @@ const createProductSchema = z.object({
 const saveDraftSchema = z.object({
   title: z.string().trim().max(100).optional(),
   description: z.string().trim().max(2000).optional(),
-  price: z.number().min(0).max(99999999).optional(),
+  price: z.number().min(0).max(99_999_999).optional(),
   categoryId: z.string().optional(),
-  condition: z.enum(['NEW_WITH_TAGS', 'NEW_WITHOUT_TAGS', 'VERY_GOOD', 'GOOD', 'SATISFACTORY']).optional(),
+  condition: z
+    .enum([
+      'NEW_WITH_TAGS',
+      'NEW_WITHOUT_TAGS',
+      'VERY_GOOD',
+      'GOOD',
+      'SATISFACTORY',
+    ])
+    .optional(),
   brand: z.string().trim().max(50).optional(),
   size: z.string().max(20).optional(),
   color: z.string().max(30).optional(),
@@ -63,7 +88,9 @@ function sanitizeUserInput(input: z.infer<typeof createProductSchema>) {
   };
 }
 
-export async function createProduct(input: z.infer<typeof createProductSchema> & { draftId?: string }) {
+export async function createProduct(
+  input: z.infer<typeof createProductSchema> & { draftId?: string }
+) {
   try {
     // Verify user authentication
     const user = await currentUser();
@@ -89,7 +116,7 @@ export async function createProduct(input: z.infer<typeof createProductSchema> &
         where: {
           id: input.draftId,
           sellerId: dbUser.id,
-          status: 'AVAILABLE'
+          status: 'AVAILABLE',
         },
         data: {
           title: sanitizedData.title,
@@ -163,29 +190,35 @@ export async function createProduct(input: z.infer<typeof createProductSchema> &
       log.info('Product indexed to Algolia', { productId: product.id });
     } catch (algoliaError) {
       // Log error but don't fail product creation
-      logError('Failed to index product to Algolia (non-critical):', algoliaError);
+      logError(
+        'Failed to index product to Algolia (non-critical):',
+        algoliaError
+      );
     }
 
     // Clear cache on web app so new products show immediately
     const webUrl = process.env.NEXT_PUBLIC_WEB_URL || 'http://localhost:3001';
     const adminSecret = process.env.ADMIN_SECRET || 'default-admin-secret';
-    
+
     // Retry logic for cache clearing
     let cacheCleared = false;
     const maxRetries = 3;
     const retryDelay = 1000; // 1 second
-    
+
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        log.info(`Attempting to clear cache on web app (attempt ${attempt}/${maxRetries})`, {
-          webUrl,
-          productId: product.id,
-        });
-        
+        log.info(
+          `Attempting to clear cache on web app (attempt ${attempt}/${maxRetries})`,
+          {
+            webUrl,
+            productId: product.id,
+          }
+        );
+
         const response = await fetch(`${webUrl}/api/admin/clear-cache`, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${adminSecret}`,
+            Authorization: `Bearer ${adminSecret}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ type: 'products' }),
@@ -194,8 +227,12 @@ export async function createProduct(input: z.infer<typeof createProductSchema> &
         });
 
         if (!response.ok) {
-          const responseText = await response.text().catch(() => 'No response body');
-          throw new Error(`Cache clear failed: ${response.status} ${response.statusText} - ${responseText}`);
+          const responseText = await response
+            .text()
+            .catch(() => 'No response body');
+          throw new Error(
+            `Cache clear failed: ${response.status} ${response.statusText} - ${responseText}`
+          );
         }
 
         const result = await response.json();
@@ -208,20 +245,26 @@ export async function createProduct(input: z.infer<typeof createProductSchema> &
         break;
       } catch (cacheError) {
         // Log detailed error information
-        logError(`Failed to clear cache on web app (attempt ${attempt}/${maxRetries})`, {
-          error: cacheError,
-          productId: product.id,
-          webUrl,
-          errorMessage: cacheError instanceof Error ? cacheError.message : String(cacheError),
-        });
-        
+        logError(
+          `Failed to clear cache on web app (attempt ${attempt}/${maxRetries})`,
+          {
+            error: cacheError,
+            productId: product.id,
+            webUrl,
+            errorMessage:
+              cacheError instanceof Error
+                ? cacheError.message
+                : String(cacheError),
+          }
+        );
+
         // If not the last attempt, wait before retrying
         if (attempt < maxRetries) {
-          await new Promise(resolve => setTimeout(resolve, retryDelay));
+          await new Promise((resolve) => setTimeout(resolve, retryDelay));
         }
       }
     }
-    
+
     if (!cacheCleared) {
       // Log final failure with context
       logError('Failed to clear cache after all retry attempts', {
@@ -231,22 +274,23 @@ export async function createProduct(input: z.infer<typeof createProductSchema> &
         note: 'Product was created successfully but may not appear immediately in web app',
       });
     }
-    
+
     return { success: true, productId: product.id };
   } catch (error) {
     logError('Error creating product:', error);
-    
+
     if (error instanceof z.ZodError) {
-      return { 
-        success: false, 
+      return {
+        success: false,
         error: 'Validation failed',
-        details: error.issues 
+        details: error.issues,
       };
     }
-    
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Failed to create product' 
+
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Failed to create product',
     };
   }
 }
@@ -287,51 +331,55 @@ export async function saveDraftProduct(input: z.infer<typeof saveDraftSchema>) {
         where: {
           id: validatedInput.id,
           sellerId: dbUser.id,
-          status: 'AVAILABLE'
+          status: 'AVAILABLE',
         },
         data: {
           ...draftData,
-          images: validatedInput.images ? {
-            deleteMany: {},
-            create: validatedInput.images.map((url, index) => ({
-              imageUrl: url,
-              alt: `${draftData.title} - Image ${index + 1}`,
-              displayOrder: index,
-            })),
-          } : undefined,
-        }
+          images: validatedInput.images
+            ? {
+                deleteMany: {},
+                create: validatedInput.images.map((url, index) => ({
+                  imageUrl: url,
+                  alt: `${draftData.title} - Image ${index + 1}`,
+                  displayOrder: index,
+                })),
+              }
+            : undefined,
+        },
       });
     } else {
       // Create new draft
       product = await database.product.create({
         data: {
           ...draftData,
-          images: validatedInput.images ? {
-            create: validatedInput.images.map((url, index) => ({
-              imageUrl: url,
-              alt: `${draftData.title} - Image ${index + 1}`,
-              displayOrder: index,
-            })),
-          } : undefined,
-        }
+          images: validatedInput.images
+            ? {
+                create: validatedInput.images.map((url, index) => ({
+                  imageUrl: url,
+                  alt: `${draftData.title} - Image ${index + 1}`,
+                  displayOrder: index,
+                })),
+              }
+            : undefined,
+        },
       });
     }
 
     return { success: true, draftId: product.id };
   } catch (error) {
     logError('Error saving draft product:', error);
-    
+
     if (error instanceof z.ZodError) {
-      return { 
-        success: false, 
+      return {
+        success: false,
         error: 'Validation failed',
-        details: error.issues 
+        details: error.issues,
       };
     }
-    
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Failed to save draft' 
+
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to save draft',
     };
   }
 }

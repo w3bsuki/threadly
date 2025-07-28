@@ -1,7 +1,7 @@
 // Temporary types until database schema is updated
 // These should eventually be moved to the Prisma schema
 
-export type BulkOperationType = 
+export type BulkOperationType =
   | 'PRICE_UPDATE'
   | 'STATUS_CHANGE'
   | 'CATEGORY_UPDATE'
@@ -13,7 +13,7 @@ export type BulkOperationType =
   | 'ARCHIVE'
   | 'UNARCHIVE';
 
-export type BulkOperationStatus = 
+export type BulkOperationStatus =
   | 'PENDING'
   | 'PROCESSING'
   | 'COMPLETED'
@@ -29,10 +29,7 @@ export type RecommendationType =
   | 'SEASONAL'
   | 'NEW_ARRIVALS';
 
-export type UserPreferenceRole = 
-  | 'BUYER'
-  | 'SELLER'
-  | 'BOTH';
+export type UserPreferenceRole = 'BUYER' | 'SELLER' | 'BOTH';
 
 export type InteractionType =
   | 'PURCHASE'

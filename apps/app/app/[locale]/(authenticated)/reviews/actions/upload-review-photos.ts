@@ -5,24 +5,37 @@ import { logError } from '@repo/observability/server';
 import { z } from 'zod';
 
 // Mock implementation for @vercel/blob
-const put = async (filename: string, file: File, options: { access: string; contentType: string }) => {
+const put = async (
+  filename: string,
+  file: File,
+  options: { access: string; contentType: string }
+) => {
   // Mock URL for development - in production this would be handled by @vercel/blob
   const mockUrl = `https://mock-storage.example.com/${filename}`;
   return { url: mockUrl };
 };
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+const ALLOWED_FILE_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+];
 
 const uploadSchema = z.object({
-  files: z.array(z.instanceof(File))
+  files: z
+    .array(z.instanceof(File))
     .max(5, 'Maximum 5 photos allowed')
-    .refine(files => files.every(file => file.size <= MAX_FILE_SIZE), {
+    .refine((files) => files.every((file) => file.size <= MAX_FILE_SIZE), {
       message: 'Each file must be less than 5MB',
     })
-    .refine(files => files.every(file => ALLOWED_FILE_TYPES.includes(file.type)), {
-      message: 'Only JPEG, PNG, and WebP images are allowed',
-    }),
+    .refine(
+      (files) => files.every((file) => ALLOWED_FILE_TYPES.includes(file.type)),
+      {
+        message: 'Only JPEG, PNG, and WebP images are allowed',
+      }
+    ),
 });
 
 export async function uploadReviewPhotos(formData: FormData) {
@@ -56,7 +69,7 @@ export async function uploadReviewPhotos(formData: FormData) {
     // Upload files to storage
     const uploadPromises = files.map(async (file) => {
       const filename = `reviews/${user.id}/${Date.now()}-${file.name}`;
-      
+
       return put(filename, file, {
         access: 'public',
         contentType: file.type,
@@ -64,7 +77,7 @@ export async function uploadReviewPhotos(formData: FormData) {
     });
 
     const uploadResults = await Promise.allSettled(uploadPromises);
-    
+
     const urls: string[] = [];
     const errors: string[] = [];
 
@@ -88,7 +101,6 @@ export async function uploadReviewPhotos(formData: FormData) {
       success: true,
       urls,
     };
-
   } catch (error) {
     logError('Failed to upload review photos:', error);
     return {

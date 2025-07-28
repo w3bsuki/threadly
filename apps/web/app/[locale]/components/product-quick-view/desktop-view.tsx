@@ -58,7 +58,6 @@ interface ProductQuickViewDesktopProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-
 export function ProductQuickViewDesktop({
   product,
   trigger,
@@ -197,12 +196,11 @@ export function ProductQuickViewDesktop({
         )}
       </DialogTrigger>
 
-      <DialogContent className="max-w-6xl w-[95vw] p-0 gap-0 max-h-[85vh] overflow-hidden rounded-[var(--radius-xl)]">
-
-        <div className="grid lg:grid-cols-2 h-full min-h-0">
+      <DialogContent className="max-h-[85vh] w-[95vw] max-w-6xl gap-0 overflow-hidden rounded-[var(--radius-xl)] p-0">
+        <div className="grid h-full min-h-0 lg:grid-cols-2">
           {/* Image Section */}
-          <div className="relative bg-muted overflow-hidden">
-            <div className="relative flex flex-col h-full">
+          <div className="relative overflow-hidden bg-muted">
+            <div className="relative flex h-full flex-col">
               {/* Main Image */}
               <div
                 className="relative aspect-square cursor-zoom-in overflow-hidden"
@@ -245,7 +243,9 @@ export function ProductQuickViewDesktop({
                   </>
                 ) : (
                   <div className="flex h-full items-center justify-center bg-accent">
-                    <span className="text-muted-foreground/70">No image available</span>
+                    <span className="text-muted-foreground/70">
+                      No image available
+                    </span>
                   </div>
                 )}
 
@@ -253,7 +253,7 @@ export function ProductQuickViewDesktop({
                 {validImages.length > 1 && (
                   <>
                     <Button
-                      className="absolute top-1/2 left-4 -translate-y-1/2 h-10 w-10 rounded-full bg-background/90 shadow-lg hover:bg-background"
+                      className="-translate-y-1/2 absolute top-1/2 left-4 h-10 w-10 rounded-full bg-background/90 shadow-lg hover:bg-background"
                       onClick={(e) => {
                         e.stopPropagation();
                         setCurrentImageIndex((prev) =>
@@ -267,7 +267,7 @@ export function ProductQuickViewDesktop({
                     </Button>
 
                     <Button
-                      className="absolute top-1/2 right-4 -translate-y-1/2 h-10 w-10 rounded-full bg-background/90 shadow-lg hover:bg-background"
+                      className="-translate-y-1/2 absolute top-1/2 right-4 h-10 w-10 rounded-full bg-background/90 shadow-lg hover:bg-background"
                       onClick={(e) => {
                         e.stopPropagation();
                         setCurrentImageIndex((prev) =>
@@ -399,7 +399,9 @@ export function ProductQuickViewDesktop({
                           <span className="font-semibold text-foreground">
                             {product.seller.rating.toFixed(1)}
                           </span>
-                          <span className="ml-1 text-muted-foreground">rating</span>
+                          <span className="ml-1 text-muted-foreground">
+                            rating
+                          </span>
                         </div>
                         <div className="flex items-center">
                           <MapPin className="mr-1 h-4 w-4 text-muted-foreground/70" />
@@ -429,7 +431,9 @@ export function ProductQuickViewDesktop({
                           <span className="font-semibold text-foreground">
                             {product.favoritesCount}
                           </span>
-                          <span className="ml-1 text-muted-foreground">saves</span>
+                          <span className="ml-1 text-muted-foreground">
+                            saves
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -491,10 +495,7 @@ export function ProductQuickViewDesktop({
                   variant="outline"
                 >
                   <Heart
-                    className={cn(
-                      'mr-2 h-4 w-4',
-                      isLiked && 'fill-current'
-                    )}
+                    className={cn('mr-2 h-4 w-4', isLiked && 'fill-current')}
                   />
                   {isLiked ? 'Saved' : 'Save to Favorites'}
                 </Button>

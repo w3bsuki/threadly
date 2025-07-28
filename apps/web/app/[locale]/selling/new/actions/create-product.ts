@@ -2,11 +2,13 @@
 
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { redirect } from 'next/navigation';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
+import { log, logError } from '@repo/observability/server';
 import { getAlgoliaSyncService } from '@repo/search';
-import { createProductSchema, type CreateProductInput } from '@repo/validation/schemas';
+import {
+  type CreateProductInput,
+  createProductSchema,
+} from '@repo/validation/schemas';
+import { redirect } from 'next/navigation';
 
 function sanitizeUserInput(input: CreateProductInput) {
   const encodeHTML = (str: string) => {
@@ -29,7 +31,9 @@ function sanitizeUserInput(input: CreateProductInput) {
   };
 }
 
-export async function createProduct(input: CreateProductInput & { sellerId: string; draftId?: string }) {
+export async function createProduct(
+  input: CreateProductInput & { sellerId: string; draftId?: string }
+) {
   try {
     const user = await currentUser();
     if (!user) {
@@ -41,7 +45,7 @@ export async function createProduct(input: CreateProductInput & { sellerId: stri
 
     // Find category by name to get the ID
     const category = await database.category.findFirst({
-      where: { name: sanitizedData.category }
+      where: { name: sanitizedData.category },
     });
 
     if (!category) {
@@ -55,7 +59,7 @@ export async function createProduct(input: CreateProductInput & { sellerId: stri
         where: {
           id: input.draftId,
           sellerId: input.sellerId,
-          status: 'AVAILABLE'
+          status: 'AVAILABLE',
         },
         data: {
           title: sanitizedData.title,
@@ -122,29 +126,35 @@ export async function createProduct(input: CreateProductInput & { sellerId: stri
       await algoliaSync.indexProduct(product);
       log.info('Product indexed to Algolia', { productId: product.id });
     } catch (algoliaError) {
-      logError('Failed to index product to Algolia (non-critical):', algoliaError);
+      logError(
+        'Failed to index product to Algolia (non-critical):',
+        algoliaError
+      );
     }
-    
+
     return { success: true, productId: product.id };
   } catch (error) {
     logError('Error creating product:', error);
-    
+
     if (error instanceof Error && 'issues' in error) {
-      return { 
-        success: false, 
+      return {
+        success: false,
         error: 'Validation failed',
-        details: (error as any).issues 
+        details: (error as any).issues,
       };
     }
-    
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Failed to create product' 
+
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Failed to create product',
     };
   }
 }
 
-export async function saveDraftProduct(input: Partial<CreateProductInput> & { sellerId: string; id?: string }) {
+export async function saveDraftProduct(
+  input: Partial<CreateProductInput> & { sellerId: string; id?: string }
+) {
   try {
     const user = await currentUser();
     if (!user) {
@@ -154,7 +164,7 @@ export async function saveDraftProduct(input: Partial<CreateProductInput> & { se
     // Find category by name to get the ID
     const categoryName = input.category || 'WOMEN';
     const category = await database.category.findFirst({
-      where: { name: categoryName }
+      where: { name: categoryName },
     });
 
     if (!category) {
@@ -181,42 +191,46 @@ export async function saveDraftProduct(input: Partial<CreateProductInput> & { se
         where: {
           id: input.id,
           sellerId: input.sellerId,
-          status: 'AVAILABLE'
+          status: 'AVAILABLE',
         },
         data: {
           ...draftData,
-          images: input.images ? {
-            deleteMany: {},
-            create: input.images.map((image, index) => ({
-              imageUrl: image.url,
-              alt: image.alt || `${draftData.title} - Image ${index + 1}`,
-              displayOrder: image.order || index,
-            })),
-          } : undefined,
-        }
+          images: input.images
+            ? {
+                deleteMany: {},
+                create: input.images.map((image, index) => ({
+                  imageUrl: image.url,
+                  alt: image.alt || `${draftData.title} - Image ${index + 1}`,
+                  displayOrder: image.order || index,
+                })),
+              }
+            : undefined,
+        },
       });
     } else {
       product = await database.product.create({
         data: {
           ...draftData,
-          images: input.images ? {
-            create: input.images.map((image, index) => ({
-              imageUrl: image.url,
-              alt: image.alt || `${draftData.title} - Image ${index + 1}`,
-              displayOrder: image.order || index,
-            })),
-          } : undefined,
-        }
+          images: input.images
+            ? {
+                create: input.images.map((image, index) => ({
+                  imageUrl: image.url,
+                  alt: image.alt || `${draftData.title} - Image ${index + 1}`,
+                  displayOrder: image.order || index,
+                })),
+              }
+            : undefined,
+        },
       });
     }
 
     return { success: true, draftId: product.id };
   } catch (error) {
     logError('Error saving draft product:', error);
-    
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Failed to save draft' 
+
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to save draft',
     };
   }
 }

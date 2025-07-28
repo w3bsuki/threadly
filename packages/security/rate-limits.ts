@@ -1,13 +1,16 @@
-import arcjet, { tokenBucket, fixedWindow, type ArcjetNext } from '@arcjet/next';
-import { keys } from './keys';
+import arcjet, {
+  type ArcjetNext,
+  fixedWindow,
+  tokenBucket,
+} from '@arcjet/next';
 import { NextResponse } from 'next/server';
+import { keys } from './keys';
 
 // Lazy load the Arcjet key to avoid initialization errors
 let arcjetKey: string | undefined;
 try {
   arcjetKey = keys().ARCJET_KEY;
-} catch (error) {
-}
+} catch (error) {}
 
 // Production rate limiting requires proper Arcjet configuration
 
@@ -24,7 +27,7 @@ const getArcjet = (): ArcjetNext<Record<string, unknown>> | null => {
   if (!arcjetKey) {
     return null;
   }
-  
+
   try {
     return arcjet({
       key: arcjetKey,
@@ -43,9 +46,11 @@ export const generalApiLimit = {
     if (!_generalApiLimit) {
       const aj = getArcjet();
       if (!aj) {
-        throw new Error('Rate limiting is not configured. Please set ARCJET_KEY environment variable.');
+        throw new Error(
+          'Rate limiting is not configured. Please set ARCJET_KEY environment variable.'
+        );
       }
-      
+
       _generalApiLimit = aj.withRule(
         tokenBucket({
           mode: 'LIVE',
@@ -65,9 +70,11 @@ export const authRateLimit = {
     if (!_authRateLimit) {
       const aj = getArcjet();
       if (!aj) {
-        throw new Error('Rate limiting is not configured. Please set ARCJET_KEY environment variable.');
+        throw new Error(
+          'Rate limiting is not configured. Please set ARCJET_KEY environment variable.'
+        );
       }
-      
+
       _authRateLimit = aj.withRule(
         fixedWindow({
           mode: 'LIVE',
@@ -86,9 +93,11 @@ export const paymentRateLimit = {
     if (!_paymentRateLimit) {
       const aj = getArcjet();
       if (!aj) {
-        throw new Error('Rate limiting is not configured. Please set ARCJET_KEY environment variable.');
+        throw new Error(
+          'Rate limiting is not configured. Please set ARCJET_KEY environment variable.'
+        );
       }
-      
+
       _paymentRateLimit = aj.withRule(
         tokenBucket({
           mode: 'LIVE',
@@ -108,9 +117,11 @@ export const uploadRateLimit = {
     if (!_uploadRateLimit) {
       const aj = getArcjet();
       if (!aj) {
-        throw new Error('Rate limiting is not configured. Please set ARCJET_KEY environment variable.');
+        throw new Error(
+          'Rate limiting is not configured. Please set ARCJET_KEY environment variable.'
+        );
       }
-      
+
       _uploadRateLimit = aj.withRule(
         fixedWindow({
           mode: 'LIVE',
@@ -129,9 +140,11 @@ export const messageRateLimit = {
     if (!_messageRateLimit) {
       const aj = getArcjet();
       if (!aj) {
-        throw new Error('Rate limiting is not configured. Please set ARCJET_KEY environment variable.');
+        throw new Error(
+          'Rate limiting is not configured. Please set ARCJET_KEY environment variable.'
+        );
       }
-      
+
       _messageRateLimit = aj.withRule(
         tokenBucket({
           mode: 'LIVE',
@@ -151,9 +164,11 @@ export const webhookRateLimit = {
     if (!_webhookRateLimit) {
       const aj = getArcjet();
       if (!aj) {
-        throw new Error('Rate limiting is not configured. Please set ARCJET_KEY environment variable.');
+        throw new Error(
+          'Rate limiting is not configured. Please set ARCJET_KEY environment variable.'
+        );
       }
-      
+
       _webhookRateLimit = aj.withRule(
         fixedWindow({
           mode: 'LIVE',
@@ -167,28 +182,29 @@ export const webhookRateLimit = {
 };
 
 // Helper function to handle rate limit responses
-export async function checkRateLimit(
-  rateLimiter: any,
-  request: Request
-) {
+export async function checkRateLimit(rateLimiter: any, request: Request) {
   if (!arcjetKey) {
-    throw new Error('Rate limiting is not configured. Please set ARCJET_KEY environment variable.');
+    throw new Error(
+      'Rate limiting is not configured. Please set ARCJET_KEY environment variable.'
+    );
   }
 
   try {
     const decision = await rateLimiter.protect(request);
 
     if (decision.isDenied()) {
-      
       // Get rate limit headers for the response
       const headers = new Headers();
-      
+
       if (decision.reason?.isRateLimit?.()) {
         // Add standard rate limit headers
         const rateLimit = decision.reason;
         headers.set('X-RateLimit-Limit', rateLimit.max?.toString() || '0');
-        headers.set('X-RateLimit-Remaining', Math.max(0, rateLimit.remaining || 0).toString());
-        
+        headers.set(
+          'X-RateLimit-Remaining',
+          Math.max(0, rateLimit.remaining || 0).toString()
+        );
+
         if (rateLimit.reset) {
           headers.set('X-RateLimit-Reset', rateLimit.reset.toString());
           const retryAfter = Math.ceil((rateLimit.reset - Date.now()) / 1000);
@@ -203,7 +219,7 @@ export async function checkRateLimit(
         error: {
           code: 'RATE_LIMIT_EXCEEDED',
           message: 'Too many requests. Please try again later.',
-        }
+        },
       };
     }
 

@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useRef, useCallback, KeyboardEvent } from 'react';
 import { Button, Textarea } from '@repo/design-system/components';
 import { cn } from '@repo/design-system/lib/utils';
-import { Send, Image, Paperclip, Smile } from 'lucide-react';
+import { Image, Paperclip, Send, Smile } from 'lucide-react';
+import { type KeyboardEvent, useCallback, useRef, useState } from 'react';
 import type { MessageInputProps } from '../types';
 
 export function MessageInput({
@@ -59,58 +59,65 @@ export function MessageInput({
       if (e.shiftKey) {
         // Allow new line with Shift+Enter
         return;
-      } else {
-        // Send message with Enter
-        e.preventDefault();
-        handleSend();
       }
+      // Send message with Enter
+      e.preventDefault();
+      handleSend();
     }
   };
 
   // Handle file upload
-  const handleFileUpload = useCallback(async (file: File) => {
-    if (!file) return;
+  const handleFileUpload = useCallback(
+    async (file: File) => {
+      if (!file) return;
 
-    // Validate file type and size
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    const maxSize = 10 * 1024 * 1024; // 10MB
+      // Validate file type and size
+      const allowedTypes = [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+        'image/webp',
+      ];
+      const maxSize = 10 * 1024 * 1024; // 10MB
 
-    if (!allowedTypes.includes(file.type)) {
-      alert('Please select a valid image file (JPEG, PNG, GIF, or WebP)');
-      return;
-    }
-
-    if (file.size > maxSize) {
-      alert('File size must be less than 10MB');
-      return;
-    }
-
-    setIsUploading(true);
-
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('conversationId', conversationId);
-
-      const response = await fetch('/api/messages/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        onSend('', data.data.imageUrl);
-      } else {
-        throw new Error(data.error || 'Failed to upload image');
+      if (!allowedTypes.includes(file.type)) {
+        alert('Please select a valid image file (JPEG, PNG, GIF, or WebP)');
+        return;
       }
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      alert('Failed to upload image. Please try again.');
-    } finally {
-      setIsUploading(false);
-    }
-  }, [conversationId, onSend]);
+
+      if (file.size > maxSize) {
+        alert('File size must be less than 10MB');
+        return;
+      }
+
+      setIsUploading(true);
+
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('conversationId', conversationId);
+
+        const response = await fetch('/api/messages/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          onSend('', data.data.imageUrl);
+        } else {
+          throw new Error(data.error || 'Failed to upload image');
+        }
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        alert('Failed to upload image. Please try again.');
+      } finally {
+        setIsUploading(false);
+      }
+    },
+    [conversationId, onSend]
+  );
 
   // Handle file input change
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -128,44 +135,46 @@ export function MessageInput({
         {/* Attachment button */}
         <div className="flex flex-col gap-1">
           <Button
-            variant="ghost"
-            size="sm"
             className="h-8 w-8 p-0"
-            onClick={() => fileInputRef.current?.click()}
             disabled={isSending}
+            onClick={() => fileInputRef.current?.click()}
+            size="sm"
+            variant="ghost"
           >
             <Image className="h-4 w-4" />
           </Button>
           <input
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileInputChange}
             ref={fileInputRef}
             type="file"
-            accept="image/*"
-            onChange={handleFileInputChange}
-            className="hidden"
           />
         </div>
 
         {/* Message input */}
-        <div className="flex-1 relative">
+        <div className="relative flex-1">
           <Textarea
-            ref={textareaRef}
-            value={content}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleContentChange(e.target.value)}
+            className={cn(
+              'max-h-[120px] min-h-[40px] resize-none border-border focus:border-blue-500 focus:ring-blue-500',
+              'py-2 pr-12'
+            )}
+            disabled={isSending}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+              handleContentChange(e.target.value)
+            }
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
-            disabled={isSending}
-            className={cn(
-              'min-h-[40px] max-h-[120px] resize-none border-border focus:border-blue-500 focus:ring-blue-500',
-              'pr-12 py-2'
-            )}
+            ref={textareaRef}
             rows={1}
+            value={content}
           />
-          
+
           {/* Character count */}
           {content.length > 0 && (
             <span
               className={cn(
-                'absolute bottom-2 right-2 text-xs',
+                'absolute right-2 bottom-2 text-xs',
                 content.length > 1000 ? 'text-red-500' : 'text-muted-foreground'
               )}
             >
@@ -176,10 +185,10 @@ export function MessageInput({
 
         {/* Send button */}
         <Button
-          onClick={handleSend}
-          disabled={!isValid || isSending}
-          size="sm"
           className="h-8 w-8 p-0"
+          disabled={!isValid || isSending}
+          onClick={handleSend}
+          size="sm"
         >
           <Send className="h-4 w-4" />
         </Button>
@@ -187,14 +196,14 @@ export function MessageInput({
 
       {/* Upload progress */}
       {isUploading && (
-        <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
-          <div className="animate-spin h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-[var(--radius-full)]" />
+        <div className="mt-2 flex items-center gap-2 text-muted-foreground text-sm">
+          <div className="h-4 w-4 animate-spin rounded-[var(--radius-full)] border-2 border-blue-600 border-t-transparent" />
           Uploading image...
         </div>
       )}
 
       {/* Tips */}
-      <div className="mt-2 text-xs text-muted-foreground">
+      <div className="mt-2 text-muted-foreground text-xs">
         Press Enter to send • Shift+Enter for new line
       </div>
     </div>

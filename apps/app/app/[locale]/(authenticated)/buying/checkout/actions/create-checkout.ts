@@ -2,9 +2,8 @@
 
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
+import { log, logError } from '@repo/observability/server';
 import { redirect } from 'next/navigation';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
 
 export async function createCheckoutSession(productId: string) {
   try {
@@ -15,14 +14,14 @@ export async function createCheckoutSession(productId: string) {
 
     // Get product details
     const product = await database.product.findUnique({
-      where: { 
+      where: {
         id: productId,
-        status: 'AVAILABLE'
+        status: 'AVAILABLE',
       },
       include: {
         seller: true,
         images: true,
-      }
+      },
     });
 
     if (!product) {
@@ -86,7 +85,7 @@ export async function createCheckoutSession(productId: string) {
     };
   } catch (error) {
     logError('Failed to create checkout session:', error);
-    
+
     // If product was reserved but order failed, restore it
     try {
       await database.product.update({
@@ -99,7 +98,10 @@ export async function createCheckoutSession(productId: string) {
 
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to create checkout session',
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to create checkout session',
     };
   }
 }

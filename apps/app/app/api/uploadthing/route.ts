@@ -1,8 +1,8 @@
-import { createRouteHandler } from "uploadthing/next";
-import { uploadRateLimit, checkRateLimit } from '@repo/security';
-import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit, uploadRateLimit } from '@repo/security';
+import { type NextRequest, NextResponse } from 'next/server';
+import { createRouteHandler } from 'uploadthing/next';
 
-import { ourFileRouter } from "./core";
+import { ourFileRouter } from './core';
 
 // Create the uploadthing route handler with development configuration
 const uploadthingHandler = createRouteHandler({
@@ -11,7 +11,8 @@ const uploadthingHandler = createRouteHandler({
     // Enable development mode features
     ...(process.env.NODE_ENV === 'development' && {
       logLevel: 'Info' as const,
-      callbackUrl: process.env.UPLOADTHING_URL || 'http://localhost:3000/api/uploadthing',
+      callbackUrl:
+        process.env.UPLOADTHING_URL || 'http://localhost:3000/api/uploadthing',
     }),
   },
 });
@@ -28,7 +29,7 @@ export async function POST(request: NextRequest) {
   if (!rateLimitResult.allowed) {
     return NextResponse.json(
       { error: rateLimitResult.error?.message || 'Rate limit exceeded' },
-      { 
+      {
         status: 429,
         headers: rateLimitResult.headers,
       }

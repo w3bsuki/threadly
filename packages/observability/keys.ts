@@ -28,11 +28,21 @@ export const keys = () =>
       SENTRY_ORG: process.env.SENTRY_ORG || undefined,
       SENTRY_PROJECT: process.env.SENTRY_PROJECT || undefined,
       SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN || undefined,
-      SENTRY_ENVIRONMENT: process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV || 'development',
-      SENTRY_RELEASE: process.env.SENTRY_RELEASE || process.env.VERCEL_GIT_COMMIT_SHA || undefined,
+      SENTRY_ENVIRONMENT:
+        process.env.SENTRY_ENVIRONMENT || process.env.NODE_ENV || 'development',
+      SENTRY_RELEASE:
+        process.env.SENTRY_RELEASE ||
+        process.env.VERCEL_GIT_COMMIT_SHA ||
+        undefined,
       NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN || undefined,
-      NEXT_PUBLIC_SENTRY_ENVIRONMENT: process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT || process.env.NODE_ENV || 'development',
-      NEXT_PUBLIC_SENTRY_RELEASE: process.env.NEXT_PUBLIC_SENTRY_RELEASE || process.env.VERCEL_GIT_COMMIT_SHA || undefined,
+      NEXT_PUBLIC_SENTRY_ENVIRONMENT:
+        process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT ||
+        process.env.NODE_ENV ||
+        'development',
+      NEXT_PUBLIC_SENTRY_RELEASE:
+        process.env.NEXT_PUBLIC_SENTRY_RELEASE ||
+        process.env.VERCEL_GIT_COMMIT_SHA ||
+        undefined,
     },
     skipValidation: !!(
       process.env.SKIP_ENV_VALIDATION ||

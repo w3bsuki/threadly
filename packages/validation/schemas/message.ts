@@ -3,33 +3,28 @@
  */
 
 import { z } from 'zod';
-import { 
-  safeTextSchema, 
-  uuidSchema, 
+import {
   cuidSchema,
   imageFileSchema,
+  safeTextSchema,
+  uuidSchema,
 } from './common';
 
 // Message types
-export const messageTypeSchema = z.enum([
-  'TEXT',
-  'IMAGE',
-  'PRODUCT_LINK',
-  'OFFER',
-  'SYSTEM',
-], {
-  message: 'Invalid message type',
-});
+export const messageTypeSchema = z.enum(
+  ['TEXT', 'IMAGE', 'PRODUCT_LINK', 'OFFER', 'SYSTEM'],
+  {
+    message: 'Invalid message type',
+  }
+);
 
 // Conversation status
-export const conversationStatusSchema = z.enum([
-  'ACTIVE',
-  'ARCHIVED',
-  'BLOCKED',
-  'DELETED',
-], {
-  message: 'Invalid conversation status',
-});
+export const conversationStatusSchema = z.enum(
+  ['ACTIVE', 'ARCHIVED', 'BLOCKED', 'DELETED'],
+  {
+    message: 'Invalid conversation status',
+  }
+);
 
 // Message content validation (with profanity filter applied later)
 export const messageContentSchema = z
@@ -46,23 +41,29 @@ export const createMessageSchema = z.object({
   conversationId: cuidSchema.optional(), // Optional for new conversations
   recipientId: uuidSchema,
   productId: cuidSchema.optional(), // Optional product reference
-  
+
   type: messageTypeSchema.default('TEXT'),
   content: messageContentSchema,
-  
-  attachments: z.array(z.object({
-    url: z.string().url(),
-    type: z.enum(['IMAGE', 'FILE']),
-    name: z.string().max(255),
-    size: z.number().max(10 * 1024 * 1024), // 10MB max
-  })).max(5).optional(),
+
+  attachments: z
+    .array(
+      z.object({
+        url: z.string().url(),
+        type: z.enum(['IMAGE', 'FILE']),
+        name: z.string().max(255),
+        size: z.number().max(10 * 1024 * 1024), // 10MB max
+      })
+    )
+    .max(5)
+    .optional(),
 });
 
 // Offer message schema
 export const createOfferMessageSchema = z.object({
   conversationId: cuidSchema,
   productId: cuidSchema,
-  offerAmount: z.number()
+  offerAmount: z
+    .number()
     .positive('Offer must be positive')
     .multipleOf(0.01, 'Offer must have at most 2 decimal places'),
   message: messageContentSchema.optional(),
@@ -97,25 +98,30 @@ export const conversationFilterSchema = z.object({
 // Report message schema
 export const reportMessageSchema = z.object({
   messageId: cuidSchema,
-  reason: z.enum([
-    'SPAM',
-    'HARASSMENT',
-    'INAPPROPRIATE',
-    'SCAM',
-    'OTHER',
-  ]),
-  description: z.string().trim().min(1).max(500).refine((text) => !/<[^>]*>/.test(text), {
-    message: 'HTML tags are not allowed',
-  }),
+  reason: z.enum(['SPAM', 'HARASSMENT', 'INAPPROPRIATE', 'SCAM', 'OTHER']),
+  description: z
+    .string()
+    .trim()
+    .min(1)
+    .max(500)
+    .refine((text) => !/<[^>]*>/.test(text), {
+      message: 'HTML tags are not allowed',
+    }),
 });
 
 // Block conversation schema
 export const blockConversationSchema = z.object({
   conversationId: cuidSchema,
   blockUserId: uuidSchema,
-  reason: z.string().trim().min(1).max(200).refine((text) => !/<[^>]*>/.test(text), {
-    message: 'HTML tags are not allowed',
-  }).optional(),
+  reason: z
+    .string()
+    .trim()
+    .min(1)
+    .max(200)
+    .refine((text) => !/<[^>]*>/.test(text), {
+      message: 'HTML tags are not allowed',
+    })
+    .optional(),
 });
 
 // Typing indicator schema
@@ -139,9 +145,14 @@ export const conversationSettingsSchema = z.object({
 
 // Automated message templates
 export const messageTemplateSchema = z.object({
-  name: z.string().trim().min(1).max(50).refine((text) => !/<[^>]*>/.test(text), {
-    message: 'HTML tags are not allowed',
-  }),
+  name: z
+    .string()
+    .trim()
+    .min(1)
+    .max(50)
+    .refine((text) => !/<[^>]*>/.test(text), {
+      message: 'HTML tags are not allowed',
+    }),
   content: messageContentSchema,
   category: z.enum([
     'GREETING',
@@ -166,9 +177,14 @@ export const quickReplySchema = z.object({
 
 // Message search schema
 export const messageSearchSchema = z.object({
-  query: z.string().trim().min(1).max(100).refine((text) => !/<[^>]*>/.test(text), {
-    message: 'HTML tags are not allowed',
-  }),
+  query: z
+    .string()
+    .trim()
+    .min(1)
+    .max(100)
+    .refine((text) => !/<[^>]*>/.test(text), {
+      message: 'HTML tags are not allowed',
+    }),
   conversationId: cuidSchema.optional(),
   senderId: uuidSchema.optional(),
   dateFrom: z.coerce.date().optional(),

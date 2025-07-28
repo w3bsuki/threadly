@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useTransition } from 'react';
-import { ThumbsUp } from 'lucide-react';
 import { cn } from '@repo/design-system/lib/utils';
+import { ThumbsUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 
 interface HelpfulButtonProps {
   reviewId: string;
@@ -12,11 +12,11 @@ interface HelpfulButtonProps {
   className?: string;
 }
 
-export function HelpfulButton({ 
-  reviewId, 
-  helpfulCount, 
+export function HelpfulButton({
+  reviewId,
+  helpfulCount,
   isHelpful = false,
-  className 
+  className,
 }: HelpfulButtonProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -27,7 +27,7 @@ export function HelpfulButton({
     // Optimistic update
     const newIsHelpful = !optimisticHelpful;
     setOptimisticHelpful(newIsHelpful);
-    setOptimisticCount(prev => prev + (newIsHelpful ? 1 : -1));
+    setOptimisticCount((prev) => prev + (newIsHelpful ? 1 : -1));
 
     startTransition(async () => {
       try {
@@ -56,24 +56,21 @@ export function HelpfulButton({
 
   return (
     <button
-      onClick={handleVote}
-      disabled={isPending}
       className={cn(
-        "flex items-center gap-2 text-sm transition-colors",
+        'flex items-center gap-2 text-sm transition-colors',
         optimisticHelpful
-          ? "text-primary"
-          : "text-muted-foreground hover:text-foreground",
-        isPending && "opacity-50 cursor-not-allowed",
+          ? 'text-primary'
+          : 'text-muted-foreground hover:text-foreground',
+        isPending && 'cursor-not-allowed opacity-50',
         className
       )}
+      disabled={isPending}
+      onClick={handleVote}
     >
-      <ThumbsUp className={cn(
-        "h-4 w-4",
-        optimisticHelpful && "fill-current"
-      )} />
-      <span>
-        Helpful {optimisticCount > 0 && `(${optimisticCount})`}
-      </span>
+      <ThumbsUp
+        className={cn('h-4 w-4', optimisticHelpful && 'fill-current')}
+      />
+      <span>Helpful {optimisticCount > 0 && `(${optimisticCount})`}</span>
     </button>
   );
 }

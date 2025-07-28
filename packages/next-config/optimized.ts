@@ -9,10 +9,10 @@ export const performanceConfig: Partial<NextConfig> = {
   experimental: {
     // Enable Partial Prerendering for improved performance (requires Next.js canary)
     // ppr: true,
-    
+
     // Enable React Compiler for automatic memoization and optimization
     // reactCompiler: true, // Disabled - requires additional setup and testing
-    
+
     // Optimize package imports for common libraries
     optimizePackageImports: [
       '@repo/design-system',
@@ -59,7 +59,6 @@ export const performanceConfig: Partial<NextConfig> = {
       'd3-shape',
       'react-remove-scroll',
     ],
-    
   },
 
   // Server external packages (moved from experimental)
@@ -79,9 +78,12 @@ export const performanceConfig: Partial<NextConfig> = {
   // Compiler options for better performance
   compiler: {
     // Remove console logs in production
-    removeConsole: process.env.NODE_ENV === 'production' ? {
-      exclude: ['error', 'warn'],
-    } : false,
+    removeConsole:
+      process.env.NODE_ENV === 'production'
+        ? {
+            exclude: ['error', 'warn'],
+          }
+        : false,
   },
 
   // Image optimization
@@ -206,16 +208,16 @@ export function withPerformance(config: NextConfig): NextConfig {
     webpack(webpackConfig, options) {
       // Apply base webpack config
       let finalConfig = webpackConfig;
-      
+
       if (config.webpack) {
         finalConfig = config.webpack(webpackConfig, options);
       }
-      
+
       // Apply performance webpack config
       if (performanceConfig.webpack) {
         finalConfig = performanceConfig.webpack(finalConfig, options);
       }
-      
+
       return finalConfig;
     },
   };

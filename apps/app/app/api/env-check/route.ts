@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs';
+import { NextResponse } from 'next/server';
 
 /**
  * Master environment validation endpoint
@@ -9,15 +9,12 @@ export async function GET() {
   // Check authentication - only allow admin access to env diagnostics
   const { userId } = auth();
   if (!userId) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const isProduction = process.env.NODE_ENV === 'production';
   const vercelEnv = process.env.VERCEL_ENV;
-  
+
   const checks = {
     environment: {
       NODE_ENV: process.env.NODE_ENV || 'not set',
@@ -25,19 +22,19 @@ export async function GET() {
       isProduction,
       isVercel: !!process.env.VERCEL,
     },
-    
+
     // Core environment variables
     core: {
       DATABASE_URL: {
         present: !!process.env.DATABASE_URL,
-        valid: process.env.DATABASE_URL?.startsWith('postgresql://') || false,
+        valid: process.env.DATABASE_URL?.startsWith('postgresql://'),
       },
       NEXT_PUBLIC_APP_URL: {
         present: !!process.env.NEXT_PUBLIC_APP_URL,
         value: process.env.NEXT_PUBLIC_APP_URL || 'not set',
       },
     },
-    
+
     // Authentication
     auth: {
       CLERK_SECRET_KEY: {
@@ -50,30 +47,41 @@ export async function GET() {
       },
       NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: {
         present: !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
-        prefix: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.substring(0, 7) || 'not set',
+        prefix:
+          process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.substring(0, 7) ||
+          'not set',
       },
     },
-    
+
     // Stripe payments
     stripe: {
       STRIPE_SECRET_KEY: {
         present: !!process.env.STRIPE_SECRET_KEY,
         prefix: process.env.STRIPE_SECRET_KEY?.substring(0, 7) || 'not set',
-        isTest: process.env.STRIPE_SECRET_KEY?.startsWith('sk_test_') || false,
-        isLive: process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_') || false,
+        isTest: process.env.STRIPE_SECRET_KEY?.startsWith('sk_test_'),
+        isLive: process.env.STRIPE_SECRET_KEY?.startsWith('sk_live_'),
       },
       STRIPE_WEBHOOK_SECRET: {
         present: !!process.env.STRIPE_WEBHOOK_SECRET,
-        prefix: process.env.STRIPE_WEBHOOK_SECRET?.substring(0, 10) || 'not set',
+        prefix:
+          process.env.STRIPE_WEBHOOK_SECRET?.substring(0, 10) || 'not set',
       },
       NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: {
         present: !!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-        prefix: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.substring(0, 7) || 'not set',
-        isTest: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.startsWith('pk_test_') || false,
-        isLive: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.startsWith('pk_live_') || false,
+        prefix:
+          process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.substring(0, 7) ||
+          'not set',
+        isTest:
+          process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.startsWith(
+            'pk_test_'
+          ),
+        isLive:
+          process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.startsWith(
+            'pk_live_'
+          ),
       },
     },
-    
+
     // Real-time features
     realtime: {
       LIVEBLOCKS_SECRET: {
@@ -89,7 +97,7 @@ export async function GET() {
         value: process.env.NEXT_PUBLIC_PUSHER_CLUSTER || 'not set',
       },
     },
-    
+
     // File uploads
     uploads: {
       UPLOADTHING_SECRET: {
@@ -101,7 +109,7 @@ export async function GET() {
         value: process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID || 'not set',
       },
     },
-    
+
     // Additional services
     services: {
       RESEND_TOKEN: {
@@ -114,7 +122,7 @@ export async function GET() {
       },
     },
   };
-  
+
   // Calculate overall health
   const requiredInProduction = [
     checks.core.DATABASE_URL.present,
@@ -124,26 +132,30 @@ export async function GET() {
     checks.stripe.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY.present,
     checks.core.NEXT_PUBLIC_APP_URL.present,
   ];
-  
+
   const health = {
     isHealthy: requiredInProduction.every(Boolean),
-    missingRequired: requiredInProduction.filter(check => !check).length,
+    missingRequired: requiredInProduction.filter((check) => !check).length,
     warnings: [] as string[],
   };
-  
+
   // Add warnings
   if (isProduction && !checks.stripe.STRIPE_SECRET_KEY.present) {
-    health.warnings.push('Stripe is not configured - payment processing will not work');
+    health.warnings.push(
+      'Stripe is not configured - payment processing will not work'
+    );
   }
-  
+
   if (checks.stripe.STRIPE_SECRET_KEY.isLive && !isProduction) {
-    health.warnings.push('Using LIVE Stripe keys in non-production environment!');
+    health.warnings.push(
+      'Using LIVE Stripe keys in non-production environment!'
+    );
   }
-  
+
   if (isProduction && checks.stripe.STRIPE_SECRET_KEY.isTest) {
     health.warnings.push('Using TEST Stripe keys in production environment');
   }
-  
+
   // Test environment loading
   let envLoadTest: {
     canLoadEnv: boolean;
@@ -155,7 +167,7 @@ export async function GET() {
     canLoadEnv: false,
     error: null,
   };
-  
+
   try {
     // Try to load the env object
     const { env } = await import('@/env');
@@ -172,7 +184,7 @@ export async function GET() {
       },
     };
   }
-  
+
   return NextResponse.json({
     success: health.isHealthy,
     timestamp: new Date().toISOString(),

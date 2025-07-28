@@ -1,6 +1,6 @@
 import { currentUser } from '@repo/auth/server';
 import { getPusherServer } from '@repo/real-time/src/server/pusher-server';
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest): Promise<Response> {
   try {
@@ -14,7 +14,7 @@ export async function POST(request: NextRequest): Promise<Response> {
     const socketId = params.get('socket_id');
     const channel = params.get('channel_name');
 
-    if (!socketId || !channel) {
+    if (!(socketId && channel)) {
       return NextResponse.json(
         { error: 'Missing socket_id or channel_name' },
         { status: 400 }
@@ -28,8 +28,12 @@ export async function POST(request: NextRequest): Promise<Response> {
       pusherCluster: process.env.PUSHER_CLUSTER || '',
     });
 
-    const auth = await pusherServer.authenticateUser(socketId, channel, user.id);
-    
+    const auth = await pusherServer.authenticateUser(
+      socketId,
+      channel,
+      user.id
+    );
+
     return NextResponse.json(auth);
   } catch (error) {
     return NextResponse.json(

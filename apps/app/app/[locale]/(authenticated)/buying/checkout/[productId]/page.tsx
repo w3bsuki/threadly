@@ -1,15 +1,19 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { redirect } from 'next/navigation';
+import { getDictionary } from '@repo/internationalization';
 import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 import { Header } from '../../../components/header';
 import { SingleProductCheckout } from './components/single-product-checkout';
-import { getDictionary } from '@repo/internationalization';
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string; productId: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; productId: string }>;
+}): Promise<Metadata> {
   const { locale } = await params;
   const dictionary = await getDictionary(locale);
-  
+
   return {
     title: 'Checkout',
     description: 'Complete your purchase',
@@ -23,7 +27,9 @@ interface CheckoutPageProps {
   }>;
 }
 
-const CheckoutPage = async ({ params }: CheckoutPageProps): Promise<React.JSX.Element> => {
+const CheckoutPage = async ({
+  params,
+}: CheckoutPageProps): Promise<React.JSX.Element> => {
   const { locale, productId } = await params;
   const dictionary = await getDictionary(locale);
   const user = await currentUser();
@@ -76,20 +82,24 @@ const CheckoutPage = async ({ params }: CheckoutPageProps): Promise<React.JSX.El
 
   return (
     <>
-      <Header pages={['Dashboard', 'Buying', 'Checkout']} page="Checkout" dictionary={dictionary} />
+      <Header
+        dictionary={dictionary}
+        page="Checkout"
+        pages={['Dashboard', 'Buying', 'Checkout']}
+      />
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <div className="mx-auto w-full max-w-4xl">
           <div className="mb-6">
-            <h1 className="text-2xl font-bold">Complete Your Purchase</h1>
+            <h1 className="font-bold text-2xl">Complete Your Purchase</h1>
             <p className="text-muted-foreground">
               Secure checkout powered by Stripe
             </p>
           </div>
-          
-          <SingleProductCheckout 
-            user={user} 
+
+          <SingleProductCheckout
             product={product}
             savedAddress={defaultAddress}
+            user={user}
           />
         </div>
       </div>

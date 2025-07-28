@@ -1,28 +1,28 @@
-'use server'
+'use server';
 
-import { z } from 'zod'
-import { 
-  createServerAction, 
-  withOptions,
+import { prisma } from '@repo/database';
+import { getPusherServer } from '@repo/real-time/server';
+import {
   ActionError,
+  cacheInvalidation,
+  cacheTags,
+  createServerAction,
   idSchema,
   sanitizeString,
-  cacheTags,
-  cacheInvalidation
-} from '@repo/server-actions/server'
-import { prisma } from '@repo/database'
-import { getPusherServer } from '@repo/real-time/server'
+  withOptions,
+} from '@repo/server-actions/server';
+import { z } from 'zod';
 
 // Define schemas with our utilities
 const sendMessageSchema = z.object({
   conversationId: idSchema,
   content: z.string().min(1).max(1000).transform(sanitizeString),
-})
+});
 
 const createConversationSchema = z.object({
   productId: idSchema,
   initialMessage: z.string().min(1).max(1000).transform(sanitizeString),
-})
+});
 
 // Refactored sendMessage action
 export const sendMessage = createServerAction(
@@ -38,17 +38,17 @@ export const sendMessage = createServerAction(
           select: { id: true, title: true },
         },
       },
-    })
+    });
 
     if (!conversation) {
-      throw ActionError.notFound('Conversation')
+      throw ActionError.notFound('Conversation');
     }
 
     if (
       conversation.buyerId !== context.userId &&
       conversation.sellerId !== context.userId
     ) {
-      throw ActionError.forbidden('You are not part of this conversation')
+      throw ActionError.forbidden('You are not part of this conversation');
     }
 
     // Create the message
@@ -68,16 +68,16 @@ export const sendMessage = createServerAction(
           },
         },
       },
-    })
+    });
 
     // Update conversation's last message timestamp
     await prisma.conversation.update({
       where: { id: input.conversationId },
       data: { lastMessageAt: new Date() },
-    })
+    });
 
     // Send real-time update
-    const pusher = getPusherServer()
+    const pusher = getPusherServer();
     await pusher.trigger(
       `conversation-${input.conversationId}`,
       'new-message',
@@ -88,44 +88,37 @@ export const sendMessage = createServerAction(
         createdAt: message.createdAt,
         user: message.User,
       }
-    )
+    );
 
     // Send notification to recipient
-    const recipientId = 
-      conversation.buyerId === context.userId 
-        ? conversation.sellerId 
-        : conversation.buyerId
+    const recipientId =
+      conversation.buyerId === context.userId
+        ? conversation.sellerId
+        : conversation.buyerId;
 
-    await pusher.trigger(
-      `user-${recipientId}`,
-      'notification',
-      {
-        type: 'NEW_MESSAGE',
-        title: 'New message',
-        message: `${message.User.firstName} sent you a message`,
-        conversationId: input.conversationId,
-      }
-    )
+    await pusher.trigger(`user-${recipientId}`, 'notification', {
+      type: 'NEW_MESSAGE',
+      title: 'New message',
+      message: `${message.User.firstName} sent you a message`,
+      conversationId: input.conversationId,
+    });
 
-    return message
+    return message;
   },
   {
     auth: { required: true },
-    rateLimit: { limit: 30, window: 60000 }, // 30 messages per minute
+    rateLimit: { limit: 30, window: 60_000 }, // 30 messages per minute
     auditLog: true,
   }
-)
+);
 
 // Add cache invalidation and revalidation
-export const sendMessageWithRevalidation = withOptions(
-  sendMessage,
-  {
-    revalidateTags: (input) => [
-      cacheTags.byId('conversation', input.conversationId),
-      cacheTags.byUser('messages', input.conversationId),
-    ],
-  }
-)
+export const sendMessageWithRevalidation = withOptions(sendMessage, {
+  revalidateTags: (input) => [
+    cacheTags.byId('conversation', input.conversationId),
+    cacheTags.byUser('messages', input.conversationId),
+  ],
+});
 
 // Refactored createConversation action
 export const createConversation = createServerAction(
@@ -139,18 +132,18 @@ export const createConversation = createServerAction(
           select: { id: true, firstName: true, lastName: true },
         },
       },
-    })
+    });
 
     if (!product) {
-      throw ActionError.notFound('Product')
+      throw ActionError.notFound('Product');
     }
 
     if (product.status !== 'AVAILABLE') {
-      throw ActionError.conflict('Product is not available')
+      throw ActionError.conflict('Product is not available');
     }
 
     if (product.sellerId === context.userId) {
-      throw ActionError.conflict('You cannot message yourself')
+      throw ActionError.conflict('You cannot message yourself');
     }
 
     // Check for existing conversation
@@ -162,16 +155,16 @@ export const createConversation = createServerAction(
           productId: input.productId,
         },
       },
-    })
+    });
 
     if (existingConversation) {
       // Send message to existing conversation
       await sendMessage({
         conversationId: existingConversation.id,
         content: input.initialMessage,
-      })
+      });
 
-      return existingConversation
+      return existingConversation;
     }
 
     // Create new conversation with initial message
@@ -194,34 +187,30 @@ export const createConversation = createServerAction(
           orderBy: { createdAt: 'desc' },
         },
       },
-    })
+    });
 
     // Send notifications
-    const pusher = getPusherServer()
-    await pusher.trigger(
-      `user-${product.sellerId}`,
-      'notification',
-      {
-        type: 'NEW_CONVERSATION',
-        title: 'New conversation',
-        message: `Someone is interested in your ${product.title}`,
-        conversationId: conversation.id,
-      }
-    )
+    const pusher = getPusherServer();
+    await pusher.trigger(`user-${product.sellerId}`, 'notification', {
+      type: 'NEW_CONVERSATION',
+      title: 'New conversation',
+      message: `Someone is interested in your ${product.title}`,
+      conversationId: conversation.id,
+    });
 
     // Invalidate relevant caches
     await cacheInvalidation.invalidateRelated([
       cacheTags.byUser('conversations', context.userId!),
       cacheTags.byUser('conversations', product.sellerId),
-    ])
+    ]);
 
-    return conversation
+    return conversation;
   },
   {
     auth: { required: true },
-    rateLimit: { limit: 10, window: 3600000 }, // 10 new conversations per hour
+    rateLimit: { limit: 10, window: 3_600_000 }, // 10 new conversations per hour
   }
-)
+);
 
 // Mark messages as read
 export const markMessagesAsRead = createServerAction(
@@ -231,17 +220,17 @@ export const markMessagesAsRead = createServerAction(
     const conversation = await prisma.conversation.findUnique({
       where: { id: input.conversationId },
       select: { buyerId: true, sellerId: true },
-    })
+    });
 
     if (!conversation) {
-      throw ActionError.notFound('Conversation')
+      throw ActionError.notFound('Conversation');
     }
 
     if (
       conversation.buyerId !== context.userId &&
       conversation.sellerId !== context.userId
     ) {
-      throw ActionError.forbidden()
+      throw ActionError.forbidden();
     }
 
     // Mark all unread messages as read
@@ -255,11 +244,11 @@ export const markMessagesAsRead = createServerAction(
         read: true,
         readAt: new Date(),
       },
-    })
+    });
 
     // Send read receipt via Pusher
     if (result.count > 0) {
-      const pusher = getPusherServer()
+      const pusher = getPusherServer();
       await pusher.trigger(
         `conversation-${input.conversationId}`,
         'messages-read',
@@ -267,12 +256,12 @@ export const markMessagesAsRead = createServerAction(
           userId: context.userId,
           timestamp: new Date(),
         }
-      )
+      );
     }
 
-    return { count: result.count }
+    return { count: result.count };
   },
   {
     auth: { required: true },
   }
-)
+);

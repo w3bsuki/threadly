@@ -5,7 +5,11 @@ import { z } from '@repo/validation';
 import { type NextRequest, NextResponse } from 'next/server';
 
 const searchSuggestionsSchema = z.object({
-  q: z.string().trim().min(2, 'Query must be at least 2 characters').max(100)
+  q: z
+    .string()
+    .trim()
+    .min(2, 'Query must be at least 2 characters')
+    .max(100)
     .refine((text) => !/<[^>]*>/.test(text), {
       message: 'HTML tags are not allowed',
     }),
@@ -13,16 +17,13 @@ const searchSuggestionsSchema = z.object({
 
 export async function GET(request: NextRequest) {
   const { userId } = auth();
-  
+
   if (!userId) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const { searchParams } = new URL(request.url);
-  
+
   const validation = searchSuggestionsSchema.safeParse({
     q: searchParams.get('q') || '',
   });
@@ -35,7 +36,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const searchTerm = query.toLowerCase().trim();
-    
+
     interface Suggestion {
       id: string;
       title: string;
@@ -43,7 +44,7 @@ export async function GET(request: NextRequest) {
       brand?: string | null;
       category?: string;
     }
-    
+
     const suggestions: Suggestion[] = [];
 
     // Get product suggestions (top 3)

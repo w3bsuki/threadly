@@ -1,14 +1,22 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@repo/auth/server';
-import { z } from 'zod';
 import { database } from '@repo/database';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 const createTemplateSchema = z.object({
   name: z.string().min(1, 'Template name is required'),
   title: z.string().min(1, 'Title is required'),
   description: z.string().min(1, 'Description is required'),
   price: z.number().positive().optional(),
-  condition: z.enum(['NEW_WITH_TAGS', 'NEW_WITHOUT_TAGS', 'VERY_GOOD', 'GOOD', 'SATISFACTORY']).optional(),
+  condition: z
+    .enum([
+      'NEW_WITH_TAGS',
+      'NEW_WITHOUT_TAGS',
+      'VERY_GOOD',
+      'GOOD',
+      'SATISFACTORY',
+    ])
+    .optional(),
   size: z.string().optional(),
   brand: z.string().optional(),
   color: z.string().optional(),
@@ -24,13 +32,13 @@ export async function GET() {
 
     // Get database user ID from Clerk ID
     const dbUser = await database.user.findUnique({
-      where: { clerkId: user.id }
+      where: { clerkId: user.id },
     });
-    
+
     if (!dbUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
-    
+
     const templates = await database.productTemplate.findMany({
       where: { userId: dbUser.id },
       include: {
@@ -47,7 +55,10 @@ export async function GET() {
 
     return NextResponse.json(templates);
   } catch (error) {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -63,9 +74,9 @@ export async function POST(request: NextRequest) {
 
     // Get database user ID from Clerk ID
     const dbUser = await database.user.findUnique({
-      where: { clerkId: user.id }
+      where: { clerkId: user.id },
     });
-    
+
     if (!dbUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -91,6 +102,9 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.issues }, { status: 400 });
     }
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

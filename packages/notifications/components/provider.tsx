@@ -17,8 +17,10 @@ export const NotificationsProvider = ({
   userId,
 }: NotificationsProviderProps) => {
   // Return children directly if Knock is not configured
-  if (!knockApiKey || !knockFeedChannelId) {
-    console.info('[Knock] Notifications disabled - missing API key or feed channel ID');
+  if (!(knockApiKey && knockFeedChannelId)) {
+    console.info(
+      '[Knock] Notifications disabled - missing API key or feed channel ID'
+    );
     return <>{children}</>;
   }
 

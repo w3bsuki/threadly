@@ -1,24 +1,29 @@
 'use client';
 
-import { 
-  MoreVertical, 
-  Shield,
-  UserX,
-  Mail,
-  Eye,
-  UserCheck
-} from 'lucide-react';
 import {
+  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
-import { updateUserRole, suspendUser, unsuspendUser, verifyUser } from './actions';
-import { useState } from 'react';
+import {
+  Eye,
+  Mail,
+  MoreVertical,
+  Shield,
+  UserCheck,
+  UserX,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import {
+  suspendUser,
+  unsuspendUser,
+  updateUserRole,
+  verifyUser,
+} from './actions';
 
 interface UserActionsProps {
   user: {
@@ -49,69 +54,82 @@ export function UserActions({ user }: UserActionsProps): React.JSX.Element {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" disabled={isLoading}>
+        <Button disabled={isLoading} size="icon" variant="ghost">
           <MoreVertical className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>
           <a href={`/profile/${user.clerkId}`} target="_blank">
-            <Eye className="h-4 w-4 mr-2" />
+            <Eye className="mr-2 h-4 w-4" />
             View Profile
           </a>
         </DropdownMenuItem>
-        
+
         <DropdownMenuItem asChild>
           <a href={`mailto:${user.email}`}>
-            <Mail className="h-4 w-4 mr-2" />
+            <Mail className="mr-2 h-4 w-4" />
             Send Email
           </a>
         </DropdownMenuItem>
-        
+
         <DropdownMenuSeparator />
-        
+
         {/* Role Management */}
         {user.role !== 'ADMIN' && (
           <DropdownMenuItem
             onClick={() => handleAction(() => updateUserRole(user.id, 'ADMIN'))}
           >
-            <Shield className="h-4 w-4 mr-2" />
+            <Shield className="mr-2 h-4 w-4" />
             Make Admin
           </DropdownMenuItem>
         )}
-        
+
         {user.role !== 'MODERATOR' && (
           <DropdownMenuItem
-            onClick={() => handleAction(() => updateUserRole(user.id, 'MODERATOR'))}
+            onClick={() =>
+              handleAction(() => updateUserRole(user.id, 'MODERATOR'))
+            }
           >
-            <Shield className="h-4 w-4 mr-2" />
+            <Shield className="mr-2 h-4 w-4" />
             Make Moderator
           </DropdownMenuItem>
         )}
-        
+
         {user.role !== 'USER' && (
           <DropdownMenuItem
             onClick={() => handleAction(() => updateUserRole(user.id, 'USER'))}
           >
-            <UserCheck className="h-4 w-4 mr-2" />
+            <UserCheck className="mr-2 h-4 w-4" />
             Make Regular User
           </DropdownMenuItem>
         )}
-        
+
         <DropdownMenuSeparator />
-        
+
         {/* Verification */}
         {!user.verified && (
           <DropdownMenuItem
             onClick={() => handleAction(() => verifyUser(user.id))}
           >
-            <UserCheck className="h-4 w-4 mr-2" />
+            <UserCheck className="mr-2 h-4 w-4" />
             Verify User
           </DropdownMenuItem>
         )}
-        
+
         {/* Suspension */}
-        {!user.suspended ? (
+        {user.suspended ? (
+          <DropdownMenuItem
+            onClick={() => {
+              if (confirm('Are you sure you want to unsuspend this user?')) {
+                handleAction(() => unsuspendUser(user.id));
+              }
+            }}
+          >
+            <UserCheck className="mr-2 h-4 w-4" />
+            Unsuspend User
+          </DropdownMenuItem>
+        ) : (
           <DropdownMenuItem
             className="text-destructive"
             onClick={() => {
@@ -120,19 +138,8 @@ export function UserActions({ user }: UserActionsProps): React.JSX.Element {
               }
             }}
           >
-            <UserX className="h-4 w-4 mr-2" />
+            <UserX className="mr-2 h-4 w-4" />
             Suspend User
-          </DropdownMenuItem>
-        ) : (
-          <DropdownMenuItem
-            onClick={() => {
-              if (confirm('Are you sure you want to unsuspend this user?')) {
-                handleAction(() => unsuspendUser(user.id));
-              }
-            }}
-          >
-            <UserCheck className="h-4 w-4 mr-2" />
-            Unsuspend User
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>

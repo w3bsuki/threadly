@@ -43,7 +43,9 @@ export function UnifiedHeader() {
             </Button>
 
             <Link className="-translate-x-1/2 absolute left-1/2" href="/">
-              <span className="font-bold text-background text-xl">Threadly</span>
+              <span className="font-bold text-background text-xl">
+                Threadly
+              </span>
             </Link>
 
             <UserActions
@@ -57,9 +59,11 @@ export function UnifiedHeader() {
           <div className="hidden w-full items-center justify-between md:flex">
             <Link className="flex items-center space-x-2" href="/">
               <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-lg)] bg-foreground">
-                <span className="font-bold text-lg text-background">T</span>
+                <span className="font-bold text-background text-lg">T</span>
               </div>
-              <span className="font-bold text-foreground text-xl">Threadly</span>
+              <span className="font-bold text-foreground text-xl">
+                Threadly
+              </span>
             </Link>
 
             <SearchBar

@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Button } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { Eye, Clock, X } from 'lucide-react';
+import { Badge, Button } from '@repo/design-system/components';
+import { Clock, Eye, X } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 interface ViewedProduct {
   id: string;
@@ -30,10 +29,12 @@ export function RecentlyViewed({ className }: RecentlyViewedProps) {
     if (saved) {
       try {
         const parsed = JSON.parse(saved) as ViewedProduct[];
-        setViewedProducts(parsed.map((item) => ({
-          ...item,
-          viewedAt: new Date(item.viewedAt)
-        })));
+        setViewedProducts(
+          parsed.map((item) => ({
+            ...item,
+            viewedAt: new Date(item.viewedAt),
+          }))
+        );
       } catch (error) {
         // Ignore parse errors from invalid localStorage data
       }
@@ -46,7 +47,7 @@ export function RecentlyViewed({ className }: RecentlyViewedProps) {
   }, [viewedProducts]);
 
   const removeProduct = (productId: string) => {
-    setViewedProducts(prev => prev.filter(p => p.id !== productId));
+    setViewedProducts((prev) => prev.filter((p) => p.id !== productId));
   };
 
   const clearAll = () => {
@@ -55,15 +56,18 @@ export function RecentlyViewed({ className }: RecentlyViewedProps) {
 
   // Public function to add a product (called from product detail pages)
   const addProduct = (product: Omit<ViewedProduct, 'viewedAt'>) => {
-    setViewedProducts(prev => {
+    setViewedProducts((prev) => {
       // Remove existing entry if it exists
-      const filtered = prev.filter(p => p.id !== product.id);
-      
+      const filtered = prev.filter((p) => p.id !== product.id);
+
       // Add new entry at the beginning
-      const newViewed = [{
-        ...product,
-        viewedAt: new Date(),
-      }, ...filtered];
+      const newViewed = [
+        {
+          ...product,
+          viewedAt: new Date(),
+        },
+        ...filtered,
+      ];
 
       // Keep only the last 20 products
       return newViewed.slice(0, 20);
@@ -75,18 +79,19 @@ export function RecentlyViewed({ className }: RecentlyViewedProps) {
     interface WindowWithRecentlyViewed extends Window {
       addToRecentlyViewed: typeof addProduct;
     }
-    (window as unknown as WindowWithRecentlyViewed).addToRecentlyViewed = addProduct;
+    (window as unknown as WindowWithRecentlyViewed).addToRecentlyViewed =
+      addProduct;
   }, []);
 
   if (viewedProducts.length === 0) {
     return (
       <div className={`space-y-3 ${className}`}>
-        <h3 className="text-sm font-medium flex items-center gap-2">
+        <h3 className="flex items-center gap-2 font-medium text-sm">
           <Eye className="h-4 w-4" />
           Recently Viewed
         </h3>
-        <div className="text-center py-6 text-sm text-muted-foreground">
-          <Eye className="h-8 w-8 mx-auto mb-2 opacity-50" />
+        <div className="py-6 text-center text-muted-foreground text-sm">
+          <Eye className="mx-auto mb-2 h-8 w-8 opacity-50" />
           <p>No recently viewed products</p>
           <p>Products you view will appear here</p>
         </div>
@@ -97,15 +102,15 @@ export function RecentlyViewed({ className }: RecentlyViewedProps) {
   return (
     <div className={`space-y-3 ${className}`}>
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium flex items-center gap-2">
+        <h3 className="flex items-center gap-2 font-medium text-sm">
           <Eye className="h-4 w-4" />
           Recently Viewed
         </h3>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={clearAll}
+        <Button
           className="text-xs"
+          onClick={clearAll}
+          size="sm"
+          variant="ghost"
         >
           Clear All
         </Button>
@@ -113,42 +118,46 @@ export function RecentlyViewed({ className }: RecentlyViewedProps) {
 
       <div className="space-y-2">
         {viewedProducts.slice(0, 8).map((product) => (
-          <div 
+          <div
+            className="group flex items-center gap-3 rounded-[var(--radius-lg)] border p-3 transition-colors hover:bg-muted/50"
             key={product.id}
-            className="flex items-center gap-3 p-3 border rounded-[var(--radius-lg)] hover:bg-muted/50 transition-colors group"
           >
-            <div className="w-12 h-12 rounded-[var(--radius-md)] overflow-hidden bg-muted flex-shrink-0">
+            <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-[var(--radius-md)] bg-muted">
               {product.image ? (
                 <img
-                  src={product.image}
                   alt={product.title}
-                  className="w-full h-full object-cover"
+                  className="h-full w-full object-cover"
+                  src={product.image}
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
+                <div className="flex h-full w-full items-center justify-center text-muted-foreground text-xs">
                   No image
                 </div>
               )}
             </div>
 
-            <div className="flex-1 min-w-0">
-              <Link 
+            <div className="min-w-0 flex-1">
+              <Link
+                className="block transition-colors hover:text-primary"
                 href={`/product/${product.id}`}
-                className="block hover:text-primary transition-colors"
               >
-                <h4 className="font-medium text-sm truncate">{product.title}</h4>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="font-semibold text-sm">${product.price.toFixed(2)}</span>
-                  <Badge variant="outline" className="text-xs">
+                <h4 className="truncate font-medium text-sm">
+                  {product.title}
+                </h4>
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="font-semibold text-sm">
+                    ${product.price.toFixed(2)}
+                  </span>
+                  <Badge className="text-xs" variant="outline">
                     {product.condition}
                   </Badge>
                   {product.brand && (
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge className="text-xs" variant="secondary">
                       {product.brand}
                     </Badge>
                   )}
                 </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                <div className="mt-1 flex items-center gap-2 text-muted-foreground text-xs">
                   <span>{product.seller}</span>
                   <span>•</span>
                   <span className="flex items-center gap-1">
@@ -160,10 +169,10 @@ export function RecentlyViewed({ className }: RecentlyViewedProps) {
             </div>
 
             <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
               onClick={() => removeProduct(product.id)}
+              size="icon"
+              variant="ghost"
             >
               <X className="h-3 w-3" />
             </Button>
@@ -172,7 +181,7 @@ export function RecentlyViewed({ className }: RecentlyViewedProps) {
       </div>
 
       {viewedProducts.length > 8 && (
-        <Button variant="ghost" size="sm" className="w-full">
+        <Button className="w-full" size="sm" variant="ghost">
           View All ({viewedProducts.length})
         </Button>
       )}

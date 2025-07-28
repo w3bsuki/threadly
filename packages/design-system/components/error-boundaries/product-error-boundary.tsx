@@ -1,10 +1,10 @@
 'use client';
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { AlertTriangle, Package, RefreshCcw, Save, X } from 'lucide-react';
+import React, { Component, type ErrorInfo, type ReactNode } from 'react';
+import { Alert, AlertDescription } from '../ui/alert';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Package, AlertTriangle, RefreshCcw, Save, X } from 'lucide-react';
-import { Alert, AlertDescription } from '../ui/alert';
 
 interface Props {
   children: ReactNode;
@@ -35,14 +35,30 @@ export class ProductErrorBoundary extends Component<Props, State> {
   static getDerivedStateFromError(error: Error): Partial<State> {
     // Classify error type for product operations
     let errorType: State['errorType'] = 'unknown';
-    
-    if (error.message.includes('upload') || error.message.includes('image') || error.message.includes('file')) {
+
+    if (
+      error.message.includes('upload') ||
+      error.message.includes('image') ||
+      error.message.includes('file')
+    ) {
       errorType = 'upload';
-    } else if (error.message.includes('validation') || error.message.includes('required') || error.message.includes('invalid')) {
+    } else if (
+      error.message.includes('validation') ||
+      error.message.includes('required') ||
+      error.message.includes('invalid')
+    ) {
       errorType = 'validation';
-    } else if (error.message.includes('save') || error.message.includes('create') || error.message.includes('update')) {
+    } else if (
+      error.message.includes('save') ||
+      error.message.includes('create') ||
+      error.message.includes('update')
+    ) {
       errorType = 'save';
-    } else if (error.message.includes('network') || error.message.includes('fetch') || error.message.includes('timeout')) {
+    } else if (
+      error.message.includes('network') ||
+      error.message.includes('fetch') ||
+      error.message.includes('timeout')
+    ) {
       errorType = 'network';
     }
 
@@ -54,10 +70,9 @@ export class ProductErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    
     // Report product-specific error
     this.reportProductError(error, errorInfo);
-    
+
     // Call custom error handler
     this.props.onError?.(error, errorInfo);
   }
@@ -73,11 +88,15 @@ export class ProductErrorBoundary extends Component<Props, State> {
         componentStack: errorInfo.componentStack,
         timestamp: new Date().toISOString(),
         productTitle: this.props.productTitle,
-        userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'server',
+        userAgent:
+          typeof window !== 'undefined' ? window.navigator.userAgent : 'server',
         url: typeof window !== 'undefined' ? window.location.href : 'server',
       };
 
-      localStorage.setItem(`product_error_${Date.now()}`, JSON.stringify(productErrorReport));
+      localStorage.setItem(
+        `product_error_${Date.now()}`,
+        JSON.stringify(productErrorReport)
+      );
     }
   };
 
@@ -94,7 +113,7 @@ export class ProductErrorBoundary extends Component<Props, State> {
     const { errorType } = this.state;
     const { mode } = this.props;
     const actionWord = mode === 'edit' ? 'updating' : 'creating';
-    
+
     switch (errorType) {
       case 'upload':
         return {
@@ -106,8 +125,10 @@ export class ProductErrorBoundary extends Component<Props, State> {
       case 'validation':
         return {
           title: 'Invalid Product Information',
-          description: 'Some required product information is missing or invalid.',
-          action: 'Please review all fields and ensure they are completed correctly.',
+          description:
+            'Some required product information is missing or invalid.',
+          action:
+            'Please review all fields and ensure they are completed correctly.',
           canSaveDraft: true,
         };
       case 'save':
@@ -146,10 +167,10 @@ export class ProductErrorBoundary extends Component<Props, State> {
       const { mode, productTitle } = this.props;
 
       return (
-        <div className="min-h-[400px] flex items-center justify-center p-4">
-          <Card className="max-w-md w-full">
+        <div className="flex min-h-[400px] items-center justify-center p-4">
+          <Card className="w-full max-w-md">
             <CardHeader className="text-center">
-              <div className="mx-auto w-12 h-12 bg-destructive/10 rounded-[var(--radius-full)] flex items-center justify-center mb-4">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-[var(--radius-full)] bg-destructive/10">
                 <Package className="h-6 w-6 text-destructive" />
               </div>
               <CardTitle className="text-lg">{errorMessage.title}</CardTitle>
@@ -157,18 +178,16 @@ export class ProductErrorBoundary extends Component<Props, State> {
                 {errorMessage.description}
               </p>
             </CardHeader>
-            
+
             <CardContent className="space-y-4">
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
-                  {errorMessage.action}
-                </AlertDescription>
+                <AlertDescription>{errorMessage.action}</AlertDescription>
               </Alert>
 
               {productTitle && (
-                <div className="text-center p-3 bg-muted rounded-[var(--radius-lg)]">
-                  <p className="text-sm text-muted-foreground">
+                <div className="rounded-[var(--radius-lg)] bg-muted p-3 text-center">
+                  <p className="text-muted-foreground text-sm">
                     {mode === 'edit' ? 'Editing:' : 'Creating:'}
                   </p>
                   <p className="font-medium">{productTitle}</p>
@@ -176,38 +195,40 @@ export class ProductErrorBoundary extends Component<Props, State> {
               )}
 
               <div className="grid grid-cols-1 gap-3">
-                <Button onClick={this.handleRetry} className="w-full">
-                  <RefreshCcw className="h-4 w-4 mr-2" />
+                <Button className="w-full" onClick={this.handleRetry}>
+                  <RefreshCcw className="mr-2 h-4 w-4" />
                   Try Again
                 </Button>
-                
+
                 {errorMessage.canSaveDraft && this.props.onSaveDraft && (
-                  <Button 
-                    variant="outline" 
-                    onClick={this.handleSaveDraft}
+                  <Button
                     className="w-full"
+                    onClick={this.handleSaveDraft}
+                    variant="outline"
                   >
-                    <Save className="h-4 w-4 mr-2" />
+                    <Save className="mr-2 h-4 w-4" />
                     Save as Draft
                   </Button>
                 )}
-                
-                <Button 
-                  variant="ghost" 
-                  onClick={this.props.onCancel}
+
+                <Button
                   className="w-full"
+                  onClick={this.props.onCancel}
+                  variant="ghost"
                 >
-                  <X className="h-4 w-4 mr-2" />
+                  <X className="mr-2 h-4 w-4" />
                   Cancel
                 </Button>
               </div>
 
               <div className="text-center">
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   Lost work? Check your{' '}
-                  <button 
-                    onClick={() => window.location.href = '/selling/listings?tab=drafts'}
+                  <button
                     className="text-primary hover:underline"
+                    onClick={() =>
+                      (window.location.href = '/selling/listings?tab=drafts')
+                    }
                   >
                     drafts
                   </button>
@@ -224,14 +245,14 @@ export class ProductErrorBoundary extends Component<Props, State> {
 }
 
 // Convenience wrapper for product flows
-export function ProductErrorProvider({ 
-  children, 
+export function ProductErrorProvider({
+  children,
   onError,
   onRetry,
   onSaveDraft,
   onCancel,
   mode = 'create',
-  productTitle 
+  productTitle,
 }: {
   children: ReactNode;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
@@ -242,12 +263,12 @@ export function ProductErrorProvider({
   productTitle?: string;
 }) {
   return (
-    <ProductErrorBoundary 
-      onError={onError} 
+    <ProductErrorBoundary
+      mode={mode}
+      onCancel={onCancel}
+      onError={onError}
       onRetry={onRetry}
       onSaveDraft={onSaveDraft}
-      onCancel={onCancel}
-      mode={mode}
       productTitle={productTitle}
     >
       {children}

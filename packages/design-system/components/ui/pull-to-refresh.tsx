@@ -1,6 +1,6 @@
 'use client';
 
-import { RefreshCw, ChevronDown } from 'lucide-react';
+import { ChevronDown, RefreshCw } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface PullToRefreshIndicatorProps {
@@ -20,7 +20,7 @@ export function PullToRefreshIndicator({
   threshold = 80,
   className,
 }: PullToRefreshIndicatorProps) {
-  if (!isPulling && !isRefreshing) {
+  if (!(isPulling || isRefreshing)) {
     return null;
   }
 
@@ -30,7 +30,7 @@ export function PullToRefreshIndicator({
   return (
     <div
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 flex items-center justify-center transition-transform duration-200',
+        'fixed top-0 right-0 left-0 z-50 flex items-center justify-center transition-transform duration-200',
         'bg-gradient-to-b from-white via-white to-transparent backdrop-blur-sm',
         isPulling ? 'translate-y-0' : 'translate-y-0',
         className
@@ -51,7 +51,7 @@ export function PullToRefreshIndicator({
           {isRefreshing ? (
             <RefreshCw className="h-6 w-6 animate-spin" />
           ) : (
-            <ChevronDown 
+            <ChevronDown
               className="h-6 w-6 transition-transform duration-200"
               style={{ transform: `rotate(${rotation}deg)` }}
             />
@@ -62,27 +62,27 @@ export function PullToRefreshIndicator({
         <div className="text-center">
           <p
             className={cn(
-              'text-sm font-medium transition-colors duration-200',
+              'font-medium text-sm transition-colors duration-200',
               isRefreshing
                 ? 'text-blue-600'
                 : canRefresh
-                ? 'text-green-600'
-                : 'text-muted-foreground'
+                  ? 'text-green-600'
+                  : 'text-muted-foreground'
             )}
           >
             {isRefreshing
               ? 'Refreshing...'
               : canRefresh
-              ? 'Release to refresh'
-              : 'Pull to refresh'}
+                ? 'Release to refresh'
+                : 'Pull to refresh'}
           </p>
         </div>
 
         {/* Progress bar */}
-        <div className="w-16 h-1 bg-accent rounded-[var(--radius-full)] overflow-hidden">
+        <div className="h-1 w-16 overflow-hidden rounded-[var(--radius-full)] bg-accent">
           <div
             className={cn(
-              'h-full transition-all duration-200 ease-out rounded-[var(--radius-full)]',
+              'h-full rounded-[var(--radius-full)] transition-all duration-200 ease-out',
               canRefresh ? 'bg-green-500' : 'bg-gray-400'
             )}
             style={{ width: `${progress * 100}%` }}
@@ -112,9 +112,5 @@ export function PullToRefreshWrapper({
 }: PullToRefreshWrapperProps) {
   // This is a placeholder - the actual implementation would use the hook
   // For now, we'll just render the children
-  return (
-    <div className={cn('relative', className)}>
-      {children}
-    </div>
-  );
+  return <div className={cn('relative', className)}>{children}</div>;
 }

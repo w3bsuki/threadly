@@ -1,14 +1,20 @@
-import { Card, CardContent, CardHeader } from '@repo/design-system/components';
-import { Skeleton, SkeletonText, SkeletonAvatar } from '@repo/design-system/components';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Skeleton,
+  SkeletonAvatar,
+  SkeletonText,
+} from '@repo/design-system/components';
 
 export function DashboardHeaderSkeleton() {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="space-y-2">
         <Skeleton className="h-8 w-64" />
         <Skeleton className="h-5 w-80" />
       </div>
-      
+
       <div className="flex items-center gap-2">
         <Skeleton className="h-11 w-11 rounded-[var(--radius-lg)]" />
         <Skeleton className="h-11 w-11 rounded-[var(--radius-lg)]" />
@@ -20,9 +26,9 @@ export function DashboardHeaderSkeleton() {
 
 export function DashboardStatsSkeleton() {
   return (
-    <div className="grid gap-3 grid-cols-2 lg:gap-4 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
       {Array.from({ length: 4 }).map((_, i) => (
-        <Card key={i} className="relative overflow-hidden">
+        <Card className="relative overflow-hidden" key={i}>
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-start justify-between">
               <div className="space-y-2">
@@ -49,9 +55,12 @@ export function QuickActionsSkeleton() {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="p-4 rounded-[var(--radius-lg)] border border-border bg-card min-h-[80px]">
+            <div
+              className="min-h-[80px] rounded-[var(--radius-lg)] border border-border bg-card p-4"
+              key={i}
+            >
               <div className="flex items-start gap-3">
                 <Skeleton className="h-10 w-10 rounded-[var(--radius-lg)]" />
                 <div className="flex-1 space-y-2">
@@ -79,13 +88,16 @@ export function RecentOrdersSkeleton() {
       <CardContent>
         <div className="space-y-4">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="flex items-center gap-3 p-3 rounded-[var(--radius-lg)] min-h-[72px]">
+            <div
+              className="flex min-h-[72px] items-center gap-3 rounded-[var(--radius-lg)] p-3"
+              key={i}
+            >
               <div className="relative flex-shrink-0">
-                <Skeleton className="w-12 h-12 rounded-[var(--radius-lg)]" />
-                <Skeleton className="absolute -bottom-1 -right-1 w-5 h-5 rounded-[var(--radius-full)]" />
+                <Skeleton className="h-12 w-12 rounded-[var(--radius-lg)]" />
+                <Skeleton className="-bottom-1 -right-1 absolute h-5 w-5 rounded-[var(--radius-full)]" />
               </div>
-              
-              <div className="flex-1 min-w-0">
+
+              <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 space-y-1">
                     <Skeleton className="h-4 w-36" />
@@ -94,7 +106,7 @@ export function RecentOrdersSkeleton() {
                       <Skeleton className="h-3 w-16" />
                     </div>
                   </div>
-                  <div className="text-right flex-shrink-0 space-y-1">
+                  <div className="flex-shrink-0 space-y-1 text-right">
                     <Skeleton className="h-4 w-12" />
                     <Skeleton className="h-5 w-16 rounded-[var(--radius-full)]" />
                   </div>
@@ -114,7 +126,7 @@ export function DashboardSkeleton() {
       <DashboardHeaderSkeleton />
       <DashboardStatsSkeleton />
       <QuickActionsSkeleton />
-      
+
       <div className="grid gap-6 lg:grid-cols-2">
         <RecentOrdersSkeleton />
         <div className="space-y-6">
@@ -126,7 +138,7 @@ export function DashboardSkeleton() {
             <CardContent>
               <div className="space-y-4">
                 {Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="flex items-center gap-3">
+                  <div className="flex items-center gap-3" key={i}>
                     <Skeleton className="h-10 w-10 rounded-[var(--radius-lg)]" />
                     <div className="flex-1 space-y-2">
                       <Skeleton className="h-4 w-24" />

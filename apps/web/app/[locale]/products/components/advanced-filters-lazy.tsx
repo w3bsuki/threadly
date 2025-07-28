@@ -1,9 +1,13 @@
 'use client';
 
-import { lazy, Suspense } from 'react';
 import { Skeleton } from '@repo/design-system/components';
+import { lazy, Suspense } from 'react';
 
-const AdvancedFilters = lazy(() => import('./advanced-filters').then(module => ({ default: module.AdvancedFilters })));
+const AdvancedFilters = lazy(() =>
+  import('./advanced-filters').then((module) => ({
+    default: module.AdvancedFilters,
+  }))
+);
 
 interface AdvancedFiltersLazyProps {
   categories: Array<{

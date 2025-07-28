@@ -22,6 +22,7 @@ import {
   Separator,
 } from '@repo/design-system/components';
 import { formatCurrency } from '@repo/utils/currency';
+import type { OrderData } from '@repo/validation/schemas';
 import {
   Elements,
   PaymentElement,
@@ -44,7 +45,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { useCartStore } from '@/lib/stores/cart-store';
-import { OrderData } from '@repo/validation/schemas';
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -645,7 +645,9 @@ export function CheckoutContent() {
       <div className="mx-auto max-w-7xl px-4 py-16">
         <div className="flex items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          <span className="ml-2 text-muted-foreground">Initializing checkout...</span>
+          <span className="ml-2 text-muted-foreground">
+            Initializing checkout...
+          </span>
         </div>
       </div>
     );

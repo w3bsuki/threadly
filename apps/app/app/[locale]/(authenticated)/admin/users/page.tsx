@@ -1,9 +1,18 @@
 import { database } from '@repo/database';
+import {
+  buildCursorWhere,
+  processPaginationResult,
+  validatePaginationParams,
+} from '@repo/design-system/lib/pagination';
 import AdminUsersClient from './admin-users-client';
-import { validatePaginationParams, buildCursorWhere, processPaginationResult } from '@repo/design-system/lib/pagination';
 
 interface PageProps {
-  searchParams: Promise<{ q?: string; role?: string; cursor?: string; limit?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    role?: string;
+    cursor?: string;
+    limit?: string;
+  }>;
 }
 
 const AdminUsersPage: React.FC<PageProps> = async ({ searchParams }) => {
@@ -20,17 +29,17 @@ const AdminUsersPage: React.FC<PageProps> = async ({ searchParams }) => {
     }>;
     role?: string;
   }
-  
+
   const where: WhereClause = {};
-  
+
   if (search) {
     where.OR = [
       { email: { contains: search } },
       { firstName: { contains: search } },
-      { lastName: { contains: search } }
+      { lastName: { contains: search } },
     ];
   }
-  
+
   if (roleFilter !== 'all') {
     where.role = roleFilter.toUpperCase();
   }
@@ -52,21 +61,33 @@ const AdminUsersPage: React.FC<PageProps> = async ({ searchParams }) => {
     where: {
       ...where,
       // Custom cursor for joinedAt field
-      ...(pagination.cursor ? {
-        OR: [
-          {
-            joinedAt: {
-              lt: new Date(Buffer.from(pagination.cursor, 'base64').toString('utf-8').split(':')[0]),
-            },
-          },
-          {
-            joinedAt: new Date(Buffer.from(pagination.cursor, 'base64').toString('utf-8').split(':')[0]),
-            id: {
-              lt: Buffer.from(pagination.cursor, 'base64').toString('utf-8').split(':')[1],
-            },
-          },
-        ],
-      } : {}),
+      ...(pagination.cursor
+        ? {
+            OR: [
+              {
+                joinedAt: {
+                  lt: new Date(
+                    Buffer.from(pagination.cursor, 'base64')
+                      .toString('utf-8')
+                      .split(':')[0]
+                  ),
+                },
+              },
+              {
+                joinedAt: new Date(
+                  Buffer.from(pagination.cursor, 'base64')
+                    .toString('utf-8')
+                    .split(':')[0]
+                ),
+                id: {
+                  lt: Buffer.from(pagination.cursor, 'base64')
+                    .toString('utf-8')
+                    .split(':')[1],
+                },
+              },
+            ],
+          }
+        : {}),
     },
     orderBy: { joinedAt: 'desc' },
     select: {
@@ -84,28 +105,32 @@ const AdminUsersPage: React.FC<PageProps> = async ({ searchParams }) => {
         select: {
           Product: true,
           Order_Order_buyerIdToUser: true,
-          Order_Order_sellerIdToUser: true
-        }
-      }
+          Order_Order_sellerIdToUser: true,
+        },
+      },
     },
-    take: pagination.limit
+    take: pagination.limit,
   });
 
   // Process pagination result (create compatible data for cursor generation)
-  const usersWithCreatedAt = users.map(user => ({
+  const usersWithCreatedAt = users.map((user) => ({
     ...user,
     createdAt: user.joinedAt, // Map joinedAt to createdAt for cursor compatibility
   }));
-  const paginationResult = processPaginationResult(usersWithCreatedAt, pagination.limit, totalCount);
+  const paginationResult = processPaginationResult(
+    usersWithCreatedAt,
+    pagination.limit,
+    totalCount
+  );
 
   return (
-    <AdminUsersClient 
+    <AdminUsersClient
       paginatedData={{
         ...paginationResult,
         items: paginationResult.items.map(({ createdAt, ...user }) => user), // Remove createdAt before passing to client
       }}
-      search={search}
       roleFilter={roleFilter}
+      search={search}
     />
   );
 };

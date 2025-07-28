@@ -1,8 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
+import { log, logError } from '@repo/observability/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,7 +13,7 @@ export async function GET(request: NextRequest) {
     // Get user's database ID
     const dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!dbUser) {
@@ -32,7 +31,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ searchHistory });
   } catch (error) {
     logError('Error fetching search history:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -53,7 +55,7 @@ export async function POST(request: NextRequest) {
     // Get user's database ID
     const dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!dbUser) {
@@ -81,15 +83,18 @@ export async function POST(request: NextRequest) {
     if (oldEntries.length > 0) {
       await database.searchHistory.deleteMany({
         where: {
-          id: { in: oldEntries.map(e => e.id) }
-        }
+          id: { in: oldEntries.map((e) => e.id) },
+        },
       });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     logError('Error creating search history:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -103,7 +108,7 @@ export async function DELETE(request: NextRequest) {
     // Get user's database ID
     const dbUser = await database.user.findUnique({
       where: { clerkId: user.id },
-      select: { id: true }
+      select: { id: true },
     });
 
     if (!dbUser) {
@@ -112,12 +117,15 @@ export async function DELETE(request: NextRequest) {
 
     // Clear all search history for the user
     await database.searchHistory.deleteMany({
-      where: { userId: dbUser.id }
+      where: { userId: dbUser.id },
     });
 
     return NextResponse.json({ success: true });
   } catch (error) {
     logError('Error clearing search history:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

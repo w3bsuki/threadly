@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
 import { ErrorPage } from '@repo/error-handling/error-pages';
 import * as Sentry from '@sentry/nextjs';
+import { useEffect } from 'react';
 
 export default function DashboardError({
   error,
@@ -17,12 +17,12 @@ export default function DashboardError({
 
   return (
     <ErrorPage
+      description="Something went wrong while loading your dashboard. Please try again."
       error={error}
       errorId={error.digest || null}
       level="section"
       onReset={reset}
       title="Dashboard Error"
-      description="Something went wrong while loading your dashboard. Please try again."
     />
   );
 }

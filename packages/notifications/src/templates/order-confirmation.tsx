@@ -1,11 +1,5 @@
-import * as React from 'react';
-import {
-  Button,
-  Column,
-  Row,
-  Section,
-  Text,
-} from '@react-email/components';
+import { Button, Column, Row, Section, Text } from '@react-email/components';
+import type * as React from 'react';
 import { BaseTemplate } from './base-template';
 
 interface OrderConfirmationEmailProps {
@@ -32,28 +26,29 @@ export function OrderConfirmationEmail({
 }: OrderConfirmationEmailProps): React.ReactElement {
   return (
     <BaseTemplate
-      preview={`Order #${orderId} confirmed`}
       heading={`Hi ${buyerName}, your order is confirmed!`}
+      preview={`Order #${orderId} confirmed`}
     >
       <Section style={content}>
         <Text style={text}>
-          Thank you for your order! We've received your payment and your seller has been notified.
-          You'll receive shipping updates as your order progresses.
+          Thank you for your order! We've received your payment and your seller
+          has been notified. You'll receive shipping updates as your order
+          progresses.
         </Text>
 
         <Section style={orderDetails}>
           <Text style={orderHeader}>Order Details</Text>
           <Text style={orderNumber}>Order #{orderId}</Text>
-          
+
           {items.map((item, index) => (
             <Row key={index} style={itemRow}>
               <Column style={itemImage}>
                 <img
-                  src={item.product.images[0]?.url || '/placeholder.jpg'}
-                  width="60"
-                  height="60"
-                  style={{ borderRadius: '4px' }}
                   alt={item.product.title}
+                  height="60"
+                  src={item.product.images[0]?.url || '/placeholder.jpg'}
+                  style={{ borderRadius: '4px' }}
+                  width="60"
                 />
               </Column>
               <Column style={itemDetails}>
@@ -65,7 +60,7 @@ export function OrderConfirmationEmail({
               </Column>
             </Row>
           ))}
-          
+
           <Row style={totalRow}>
             <Column>
               <Text style={totalText}>Total: ${total}</Text>

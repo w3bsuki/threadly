@@ -1,50 +1,182 @@
 import { readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
 import { glob } from 'glob';
+import { join } from 'path';
 
 // Define the design system violations we're looking for
 const violations = [
   // Colors
-  { pattern: /bg-white(?![a-z-])/g, replacement: 'bg-background', type: 'color' },
+  {
+    pattern: /bg-white(?![a-z-])/g,
+    replacement: 'bg-background',
+    type: 'color',
+  },
   { pattern: /bg-gray-50(?![a-z-])/g, replacement: 'bg-muted', type: 'color' },
-  { pattern: /bg-gray-100(?![a-z-])/g, replacement: 'bg-secondary', type: 'color' },
-  { pattern: /bg-gray-200(?![a-z-])/g, replacement: 'bg-accent', type: 'color' },
-  { pattern: /bg-gray-300(?![a-z-])/g, replacement: 'bg-accent', type: 'color' },
-  { pattern: /bg-gray-800(?![a-z-])/g, replacement: 'bg-secondary-foreground', type: 'color' },
-  { pattern: /bg-gray-900(?![a-z-])/g, replacement: 'bg-foreground', type: 'color' },
-  { pattern: /bg-gray-950(?![a-z-])/g, replacement: 'bg-foreground', type: 'color' },
-  { pattern: /bg-black(?![a-z-])/g, replacement: 'bg-foreground', type: 'color' },
-  
-  { pattern: /text-white(?![a-z-])/g, replacement: 'text-background', type: 'color' },
-  { pattern: /text-gray-300(?![a-z-])/g, replacement: 'text-muted-foreground', type: 'color' },
-  { pattern: /text-gray-400(?![a-z-])/g, replacement: 'text-muted-foreground', type: 'color' },
-  { pattern: /text-gray-500(?![a-z-])/g, replacement: 'text-muted-foreground', type: 'color' },
-  { pattern: /text-gray-600(?![a-z-])/g, replacement: 'text-muted-foreground', type: 'color' },
-  { pattern: /text-gray-700(?![a-z-])/g, replacement: 'text-secondary-foreground', type: 'color' },
-  { pattern: /text-gray-800(?![a-z-])/g, replacement: 'text-secondary-foreground', type: 'color' },
-  { pattern: /text-gray-900(?![a-z-])/g, replacement: 'text-foreground', type: 'color' },
-  { pattern: /text-gray-950(?![a-z-])/g, replacement: 'text-foreground', type: 'color' },
-  { pattern: /text-black(?![a-z-])/g, replacement: 'text-foreground', type: 'color' },
-  
-  { pattern: /border-white(?![a-z-])/g, replacement: 'border-background', type: 'color' },
-  { pattern: /border-gray-100(?![a-z-])/g, replacement: 'border-border', type: 'color' },
-  { pattern: /border-gray-200(?![a-z-])/g, replacement: 'border-border', type: 'color' },
-  { pattern: /border-gray-300(?![a-z-])/g, replacement: 'border-border', type: 'color' },
-  { pattern: /border-black(?![a-z-])/g, replacement: 'border-foreground', type: 'color' },
-  
-  { pattern: /hover:bg-gray-50(?![a-z-])/g, replacement: 'hover:bg-muted', type: 'color' },
-  { pattern: /hover:bg-gray-100(?![a-z-])/g, replacement: 'hover:bg-secondary', type: 'color' },
-  { pattern: /hover:bg-gray-800(?![a-z-])/g, replacement: 'hover:bg-secondary-foreground', type: 'color' },
-  { pattern: /hover:text-gray-900(?![a-z-])/g, replacement: 'hover:text-foreground', type: 'color' },
-  
-  { pattern: /focus:ring-black(?![a-z-])/g, replacement: 'focus:ring-ring', type: 'color' },
-  { pattern: /ring-gray-300(?![a-z-])/g, replacement: 'ring-ring', type: 'color' },
-  
+  {
+    pattern: /bg-gray-100(?![a-z-])/g,
+    replacement: 'bg-secondary',
+    type: 'color',
+  },
+  {
+    pattern: /bg-gray-200(?![a-z-])/g,
+    replacement: 'bg-accent',
+    type: 'color',
+  },
+  {
+    pattern: /bg-gray-300(?![a-z-])/g,
+    replacement: 'bg-accent',
+    type: 'color',
+  },
+  {
+    pattern: /bg-gray-800(?![a-z-])/g,
+    replacement: 'bg-secondary-foreground',
+    type: 'color',
+  },
+  {
+    pattern: /bg-gray-900(?![a-z-])/g,
+    replacement: 'bg-foreground',
+    type: 'color',
+  },
+  {
+    pattern: /bg-gray-950(?![a-z-])/g,
+    replacement: 'bg-foreground',
+    type: 'color',
+  },
+  {
+    pattern: /bg-black(?![a-z-])/g,
+    replacement: 'bg-foreground',
+    type: 'color',
+  },
+
+  {
+    pattern: /text-white(?![a-z-])/g,
+    replacement: 'text-background',
+    type: 'color',
+  },
+  {
+    pattern: /text-gray-300(?![a-z-])/g,
+    replacement: 'text-muted-foreground',
+    type: 'color',
+  },
+  {
+    pattern: /text-gray-400(?![a-z-])/g,
+    replacement: 'text-muted-foreground',
+    type: 'color',
+  },
+  {
+    pattern: /text-gray-500(?![a-z-])/g,
+    replacement: 'text-muted-foreground',
+    type: 'color',
+  },
+  {
+    pattern: /text-gray-600(?![a-z-])/g,
+    replacement: 'text-muted-foreground',
+    type: 'color',
+  },
+  {
+    pattern: /text-gray-700(?![a-z-])/g,
+    replacement: 'text-secondary-foreground',
+    type: 'color',
+  },
+  {
+    pattern: /text-gray-800(?![a-z-])/g,
+    replacement: 'text-secondary-foreground',
+    type: 'color',
+  },
+  {
+    pattern: /text-gray-900(?![a-z-])/g,
+    replacement: 'text-foreground',
+    type: 'color',
+  },
+  {
+    pattern: /text-gray-950(?![a-z-])/g,
+    replacement: 'text-foreground',
+    type: 'color',
+  },
+  {
+    pattern: /text-black(?![a-z-])/g,
+    replacement: 'text-foreground',
+    type: 'color',
+  },
+
+  {
+    pattern: /border-white(?![a-z-])/g,
+    replacement: 'border-background',
+    type: 'color',
+  },
+  {
+    pattern: /border-gray-100(?![a-z-])/g,
+    replacement: 'border-border',
+    type: 'color',
+  },
+  {
+    pattern: /border-gray-200(?![a-z-])/g,
+    replacement: 'border-border',
+    type: 'color',
+  },
+  {
+    pattern: /border-gray-300(?![a-z-])/g,
+    replacement: 'border-border',
+    type: 'color',
+  },
+  {
+    pattern: /border-black(?![a-z-])/g,
+    replacement: 'border-foreground',
+    type: 'color',
+  },
+
+  {
+    pattern: /hover:bg-gray-50(?![a-z-])/g,
+    replacement: 'hover:bg-muted',
+    type: 'color',
+  },
+  {
+    pattern: /hover:bg-gray-100(?![a-z-])/g,
+    replacement: 'hover:bg-secondary',
+    type: 'color',
+  },
+  {
+    pattern: /hover:bg-gray-800(?![a-z-])/g,
+    replacement: 'hover:bg-secondary-foreground',
+    type: 'color',
+  },
+  {
+    pattern: /hover:text-gray-900(?![a-z-])/g,
+    replacement: 'hover:text-foreground',
+    type: 'color',
+  },
+
+  {
+    pattern: /focus:ring-black(?![a-z-])/g,
+    replacement: 'focus:ring-ring',
+    type: 'color',
+  },
+  {
+    pattern: /ring-gray-300(?![a-z-])/g,
+    replacement: 'ring-ring',
+    type: 'color',
+  },
+
   // Border radius (less critical)
-  { pattern: /rounded-lg(?![a-z-])/g, replacement: 'rounded-[var(--radius-lg)]', type: 'radius' },
-  { pattern: /rounded-md(?![a-z-])/g, replacement: 'rounded-[var(--radius-md)]', type: 'radius' },
-  { pattern: /rounded-xl(?![a-z-])/g, replacement: 'rounded-[var(--radius-xl)]', type: 'radius' },
-  { pattern: /rounded-full(?![a-z-])/g, replacement: 'rounded-[var(--radius-full)]', type: 'radius' },
+  {
+    pattern: /rounded-lg(?![a-z-])/g,
+    replacement: 'rounded-[var(--radius-lg)]',
+    type: 'radius',
+  },
+  {
+    pattern: /rounded-md(?![a-z-])/g,
+    replacement: 'rounded-[var(--radius-md)]',
+    type: 'radius',
+  },
+  {
+    pattern: /rounded-xl(?![a-z-])/g,
+    replacement: 'rounded-[var(--radius-xl)]',
+    type: 'radius',
+  },
+  {
+    pattern: /rounded-full(?![a-z-])/g,
+    replacement: 'rounded-[var(--radius-full)]',
+    type: 'radius',
+  },
 ];
 
 interface FileViolation {
@@ -61,7 +193,7 @@ interface FileViolation {
 
 async function auditPhase3Files(): Promise<void> {
   console.log('🔍 Starting Phase 3 design system audit...');
-  
+
   // Get all tsx/ts files, excluding node_modules, .next, dist
   const files = await glob('**/*.{ts,tsx}', {
     ignore: [
@@ -71,7 +203,7 @@ async function auditPhase3Files(): Promise<void> {
       '**/*.d.ts',
       'scripts/**',
       'packages/design-system/stories/**',
-      'apps/storybook/**'
+      'apps/storybook/**',
     ],
     cwd: process.cwd(),
   });
@@ -89,7 +221,7 @@ async function auditPhase3Files(): Promise<void> {
     'apps/web/app/[locale]/messages/components/messages-content.tsx',
     'apps/web/app/[locale]/search/components/search-results.tsx',
     'apps/web/app/[locale]/components/footer.tsx',
-    
+
     // Phase 2 completed files
     'apps/app/app/[locale]/(authenticated)/dashboard/components/active-listings.tsx',
     'apps/web/components/navigation/components/category-menu.tsx',
@@ -114,7 +246,7 @@ async function auditPhase3Files(): Promise<void> {
 
       for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
         const line = lines[lineIndex];
-        
+
         for (const violation of violations) {
           let match;
           while ((match = violation.pattern.exec(line)) !== null) {
@@ -149,31 +281,42 @@ async function auditPhase3Files(): Promise<void> {
   // Sort by violation count (highest first)
   fileViolations.sort((a, b) => b.violationCount - a.violationCount);
 
-  console.log(`\n📊 Phase 3 Audit Results:`);
+  console.log('\n📊 Phase 3 Audit Results:');
   console.log(`Total files with <20 violations: ${fileViolations.length}`);
-  console.log(`Total violations found: ${fileViolations.reduce((sum, f) => sum + f.violationCount, 0)}`);
+  console.log(
+    `Total violations found: ${fileViolations.reduce((sum, f) => sum + f.violationCount, 0)}`
+  );
 
   // Group files by violation count
-  const highPriority = fileViolations.filter(f => f.violationCount >= 15);
-  const mediumPriority = fileViolations.filter(f => f.violationCount >= 10 && f.violationCount < 15);
-  const lowPriority = fileViolations.filter(f => f.violationCount < 10);
+  const highPriority = fileViolations.filter((f) => f.violationCount >= 15);
+  const mediumPriority = fileViolations.filter(
+    (f) => f.violationCount >= 10 && f.violationCount < 15
+  );
+  const lowPriority = fileViolations.filter((f) => f.violationCount < 10);
 
-  console.log(`\n📈 Priority Breakdown:`);
+  console.log('\n📈 Priority Breakdown:');
   console.log(`High Priority (15-19 violations): ${highPriority.length} files`);
-  console.log(`Medium Priority (10-14 violations): ${mediumPriority.length} files`);
+  console.log(
+    `Medium Priority (10-14 violations): ${mediumPriority.length} files`
+  );
   console.log(`Low Priority (1-9 violations): ${lowPriority.length} files`);
 
   // Show top files for manual review
-  console.log(`\n🎯 Top Phase 3 Files (15+ violations):`);
+  console.log('\n🎯 Top Phase 3 Files (15+ violations):');
   highPriority.slice(0, 10).forEach((fileViolation, index) => {
-    console.log(`${index + 1}. ${fileViolation.file} (${fileViolation.violationCount} violations)`);
+    console.log(
+      `${index + 1}. ${fileViolation.file} (${fileViolation.violationCount} violations)`
+    );
   });
 
   // Save detailed results
   const auditResults = {
     summary: {
       totalFiles: fileViolations.length,
-      totalViolations: fileViolations.reduce((sum, f) => sum + f.violationCount, 0),
+      totalViolations: fileViolations.reduce(
+        (sum, f) => sum + f.violationCount,
+        0
+      ),
       highPriority: highPriority.length,
       mediumPriority: mediumPriority.length,
       lowPriority: lowPriority.length,
@@ -181,9 +324,16 @@ async function auditPhase3Files(): Promise<void> {
     files: fileViolations,
   };
 
-  writeFileSync('PHASE_3_AUDIT_RESULTS.json', JSON.stringify(auditResults, null, 2));
-  console.log(`\n✅ Phase 3 audit complete! Results saved to PHASE_3_AUDIT_RESULTS.json`);
-  console.log(`\n🚀 Ready for automated migration of ${fileViolations.length} files`);
+  writeFileSync(
+    'PHASE_3_AUDIT_RESULTS.json',
+    JSON.stringify(auditResults, null, 2)
+  );
+  console.log(
+    '\n✅ Phase 3 audit complete! Results saved to PHASE_3_AUDIT_RESULTS.json'
+  );
+  console.log(
+    `\n🚀 Ready for automated migration of ${fileViolations.length} files`
+  );
 }
 
 auditPhase3Files().catch(console.error);

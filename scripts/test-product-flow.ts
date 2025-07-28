@@ -14,7 +14,7 @@ async function testProductFlow() {
 
     // 2. Check available products
     const availableProducts = await prisma.product.count({
-      where: { status: 'AVAILABLE' }
+      where: { status: 'AVAILABLE' },
     });
     console.log(`✅ Available products: ${availableProducts}`);
 
@@ -22,8 +22,8 @@ async function testProductFlow() {
     const productsWithImages = await prisma.product.count({
       where: {
         status: 'AVAILABLE',
-        images: { some: {} }
-      }
+        images: { some: {} },
+      },
     });
     console.log(`📸 Available products with images: ${productsWithImages}`);
 
@@ -37,7 +37,7 @@ async function testProductFlow() {
     console.log('\n📁 Products by category:');
     for (const cat of productsByCategory) {
       const category = await prisma.category.findUnique({
-        where: { id: cat.categoryId }
+        where: { id: cat.categoryId },
       });
       console.log(`  - ${category?.name || 'Unknown'}: ${cat._count} products`);
     }
@@ -45,12 +45,12 @@ async function testProductFlow() {
     // 5. Check recent products (last 24 hours)
     const oneDayAgo = new Date();
     oneDayAgo.setDate(oneDayAgo.getDate() - 1);
-    
+
     const recentProducts = await prisma.product.count({
       where: {
         status: 'AVAILABLE',
-        createdAt: { gte: oneDayAgo }
-      }
+        createdAt: { gte: oneDayAgo },
+      },
     });
     console.log(`\n🆕 Products added in last 24 hours: ${recentProducts}`);
 
@@ -69,16 +69,18 @@ async function testProductFlow() {
         seller: true,
         category: true,
         images: true,
-        _count: { select: { favorites: true, cartItems: true, orders: true } }
+        _count: { select: { favorites: true, cartItems: true, orders: true } },
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
 
     console.log('\n📋 Sample product details:');
     sampleProducts.forEach((product, index) => {
       console.log(`\nProduct ${index + 1}: ${product.title}`);
       console.log(`  - ID: ${product.id}`);
-      console.log(`  - Seller: ${product.seller?.firstName} ${product.seller?.lastName} (${product.seller?.email})`);
+      console.log(
+        `  - Seller: ${product.seller?.firstName} ${product.seller?.lastName} (${product.seller?.email})`
+      );
       console.log(`  - Category: ${product.category?.name}`);
       console.log(`  - Images: ${product.images.length}`);
       console.log(`  - Favorites: ${product._count.favorites}`);
@@ -89,7 +91,6 @@ async function testProductFlow() {
     // 8. Check if there are any users who can see products
     const users = await prisma.user.count();
     console.log(`\n👥 Total users in database: ${users}`);
-
   } catch (error) {
     console.error('❌ Error testing product flow:', error);
   } finally {

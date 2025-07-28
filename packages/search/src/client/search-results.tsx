@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import type React from 'react';
 
 export interface SearchResult {
   id: string;
@@ -21,18 +21,18 @@ interface SearchResultsProps {
   renderResult?: (result: SearchResult) => React.ReactNode;
 }
 
-export function SearchResults({ 
-  results, 
+export function SearchResults({
+  results,
   isLoading = false,
   error = null,
   onResultClick,
   className = '',
-  renderResult
+  renderResult,
 }: SearchResultsProps) {
   if (isLoading) {
     return (
-      <div className={`flex justify-center items-center py-8 ${className}`}>
-        <div className="animate-spin rounded-[var(--radius-full)] h-8 w-8 border-b-2 border-blue-500"></div>
+      <div className={`flex items-center justify-center py-8 ${className}`}>
+        <div className="h-8 w-8 animate-spin rounded-[var(--radius-full)] border-blue-500 border-b-2" />
         <span className="ml-2 text-muted-foreground">Searching...</span>
       </div>
     );
@@ -40,10 +40,10 @@ export function SearchResults({
 
   if (error) {
     return (
-      <div className={`text-center py-8 ${className}`}>
-        <div className="text-red-600 bg-red-50 border border-red-200 rounded-[var(--radius-md)] p-4">
+      <div className={`py-8 text-center ${className}`}>
+        <div className="rounded-[var(--radius-md)] border border-red-200 bg-red-50 p-4 text-red-600">
           <p className="font-medium">Search Error</p>
-          <p className="text-sm mt-1">{error}</p>
+          <p className="mt-1 text-sm">{error}</p>
         </div>
       </div>
     );
@@ -51,10 +51,12 @@ export function SearchResults({
 
   if (results.length === 0) {
     return (
-      <div className={`text-center py-8 ${className}`}>
+      <div className={`py-8 text-center ${className}`}>
         <div className="text-muted-foreground">
-          <p className="text-lg font-medium">No results found</p>
-          <p className="text-sm mt-1">Try adjusting your search terms or filters</p>
+          <p className="font-medium text-lg">No results found</p>
+          <p className="mt-1 text-sm">
+            Try adjusting your search terms or filters
+          </p>
         </div>
       </div>
     );
@@ -62,15 +64,15 @@ export function SearchResults({
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <div className="text-sm text-muted-foreground mb-4">
+      <div className="mb-4 text-muted-foreground text-sm">
         {results.length} result{results.length !== 1 ? 's' : ''} found
       </div>
-      
+
       <div className="grid gap-4">
         {results.map((result) => (
           <div
+            className="cursor-pointer rounded-[var(--radius-lg)] border border-border p-4 transition-shadow hover:shadow-md"
             key={result.id}
-            className="border border-border rounded-[var(--radius-lg)] p-4 hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => onResultClick?.(result)}
           >
             {renderResult ? (
@@ -90,28 +92,28 @@ function DefaultResultCard({ result }: { result: SearchResult }) {
     <div className="flex items-start space-x-4">
       {result.imageUrl && (
         <img
-          src={result.imageUrl}
           alt={result.title}
-          className="w-16 h-16 object-cover rounded-[var(--radius-md)] flex-shrink-0"
+          className="h-16 w-16 flex-shrink-0 rounded-[var(--radius-md)] object-cover"
+          src={result.imageUrl}
         />
       )}
-      <div className="flex-1 min-w-0">
-        <h3 className="text-lg font-medium text-foreground truncate">
+      <div className="min-w-0 flex-1">
+        <h3 className="truncate font-medium text-foreground text-lg">
           {result.title}
         </h3>
         {result.description && (
-          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+          <p className="mt-1 line-clamp-2 text-muted-foreground text-sm">
             {result.description}
           </p>
         )}
-        <div className="flex items-center justify-between mt-2">
+        <div className="mt-2 flex items-center justify-between">
           {result.category && (
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-[var(--radius-full)] text-xs font-medium bg-secondary text-secondary-foreground">
+            <span className="inline-flex items-center rounded-[var(--radius-full)] bg-secondary px-2.5 py-0.5 font-medium text-secondary-foreground text-xs">
               {result.category}
             </span>
           )}
           {result.price && (
-            <span className="text-lg font-bold text-green-600">
+            <span className="font-bold text-green-600 text-lg">
               ${result.price.toFixed(2)}
             </span>
           )}

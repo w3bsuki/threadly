@@ -1,9 +1,9 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
+import { stripe } from '@repo/payments';
 import { checkRateLimit, paymentRateLimit } from '@repo/security';
 import { type NextRequest, NextResponse } from 'next/server';
-import { stripe } from '@repo/payments';
 import { env } from '../../../../env';
 
 // POST /api/stripe/connect - Create Stripe Connect onboarding link

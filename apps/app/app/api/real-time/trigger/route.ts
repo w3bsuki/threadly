@@ -1,9 +1,8 @@
 import { currentUser } from '@repo/auth/server';
+import { log, logError } from '@repo/observability/server';
 import { getPusherServer } from '@repo/real-time/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
 
 const triggerSchema = z.object({
   channel: z.string(),
@@ -14,7 +13,7 @@ const triggerSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const user = await currentUser();
-    
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -35,7 +34,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if Pusher is configured
-    if (!process.env.PUSHER_APP_ID || !process.env.PUSHER_SECRET) {
+    if (!(process.env.PUSHER_APP_ID && process.env.PUSHER_SECRET)) {
       return NextResponse.json(
         { error: 'Real-time service not configured' },
         { status: 503 }
@@ -48,7 +47,7 @@ export async function POST(request: NextRequest) {
       pusherAppId: process.env.PUSHER_APP_ID!,
       pusherSecret: process.env.PUSHER_SECRET!,
     });
-    
+
     await pusherServer.broadcast([channel], event, data);
 
     return NextResponse.json({ success: true });

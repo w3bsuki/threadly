@@ -7,18 +7,18 @@ export class TimeTestUtils {
 
   // Mock current date
   static setMockDate(date: string | Date) {
-    this.mockDate = typeof date === 'string' ? new Date(date) : date;
-    
+    TimeTestUtils.mockDate = typeof date === 'string' ? new Date(date) : date;
+
     global.Date = class extends Date {
       constructor(...args: any[]) {
         if (args.length === 0) {
           super(TimeTestUtils.mockDate!);
         } else {
-          // @ts-ignore - TypeScript doesn't like spreading args in Date constructor
+          // @ts-expect-error - TypeScript doesn't like spreading args in Date constructor
           super(...args);
         }
       }
-      
+
       static now() {
         return TimeTestUtils.mockDate!.getTime();
       }
@@ -27,34 +27,34 @@ export class TimeTestUtils {
 
   // Restore original Date
   static restoreDate() {
-    global.Date = this.originalDate;
-    this.mockDate = null;
+    global.Date = TimeTestUtils.originalDate;
+    TimeTestUtils.mockDate = null;
   }
 
   // Create date relative to mock date
   static addDays(days: number): Date {
-    if (!this.mockDate) {
+    if (!TimeTestUtils.mockDate) {
       throw new Error('Mock date not set. Call setMockDate first.');
     }
-    const newDate = new Date(this.mockDate);
+    const newDate = new Date(TimeTestUtils.mockDate);
     newDate.setDate(newDate.getDate() + days);
     return newDate;
   }
 
   static addHours(hours: number): Date {
-    if (!this.mockDate) {
+    if (!TimeTestUtils.mockDate) {
       throw new Error('Mock date not set. Call setMockDate first.');
     }
-    const newDate = new Date(this.mockDate);
+    const newDate = new Date(TimeTestUtils.mockDate);
     newDate.setHours(newDate.getHours() + hours);
     return newDate;
   }
 
   static addMinutes(minutes: number): Date {
-    if (!this.mockDate) {
+    if (!TimeTestUtils.mockDate) {
       throw new Error('Mock date not set. Call setMockDate first.');
     }
-    const newDate = new Date(this.mockDate);
+    const newDate = new Date(TimeTestUtils.mockDate);
     newDate.setMinutes(newDate.getMinutes() + minutes);
     return newDate;
   }
@@ -62,8 +62,7 @@ export class TimeTestUtils {
 
 // Console utilities
 export class ConsoleTestUtils {
-  private static originalConsole = {
-  };
+  private static originalConsole = {};
 
   static mockConsole() {
     const mocks = {
@@ -73,23 +72,23 @@ export class ConsoleTestUtils {
       info: vi.fn(),
     };
 
-
     return mocks;
   }
 
-  static restoreConsole() {
-  }
+  static restoreConsole() {}
 
-  static suppressConsole(types: ('log' | 'error' | 'warn' | 'info')[] = ['error']) {
+  static suppressConsole(
+    types: ('log' | 'error' | 'warn' | 'info')[] = ['error']
+  ) {
     const mocks: Record<string, any> = {};
-    
-    types.forEach(type => {
+
+    types.forEach((type) => {
       mocks[type] = console[type];
       console[type] = vi.fn();
     });
 
     return () => {
-      types.forEach(type => {
+      types.forEach((type) => {
         console[type] = mocks[type];
       });
     };
@@ -109,7 +108,7 @@ export class AsyncTestUtils {
     while (Date.now() - startTime < timeout) {
       const result = await condition();
       if (result) return;
-      await this.sleep(interval);
+      await AsyncTestUtils.sleep(interval);
     }
 
     throw new Error(`Condition not met within ${timeout}ms`);
@@ -117,12 +116,12 @@ export class AsyncTestUtils {
 
   // Sleep for specified milliseconds
   static sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   // Wait for next tick
   static nextTick(): Promise<void> {
-    return new Promise(resolve => process.nextTick(resolve));
+    return new Promise((resolve) => process.nextTick(resolve));
   }
 
   // Wait for multiple promises with timeout
@@ -134,10 +133,7 @@ export class AsyncTestUtils {
       setTimeout(() => reject(new Error(`Timeout after ${timeout}ms`)), timeout)
     );
 
-    return Promise.race([
-      Promise.all(promises),
-      timeoutPromise,
-    ]);
+    return Promise.race([Promise.all(promises), timeoutPromise]);
   }
 
   // Retry operation with exponential backoff
@@ -165,12 +161,12 @@ export class AsyncTestUtils {
         return await operation();
       } catch (error) {
         lastError = error as Error;
-        
+
         if (attempt === maxAttempts) {
           throw lastError;
         }
 
-        await this.sleep(Math.min(delay, maxDelay));
+        await AsyncTestUtils.sleep(Math.min(delay, maxDelay));
         delay *= backoffMultiplier;
       }
     }
@@ -186,21 +182,21 @@ export class EnvTestUtils {
   // Set environment variables for test
   static setEnv(vars: Record<string, string>) {
     Object.entries(vars).forEach(([key, value]) => {
-      this.originalEnv[key] = process.env[key];
+      EnvTestUtils.originalEnv[key] = process.env[key];
       process.env[key] = value;
     });
   }
 
   // Restore original environment
   static restoreEnv() {
-    Object.entries(this.originalEnv).forEach(([key, value]) => {
+    Object.entries(EnvTestUtils.originalEnv).forEach(([key, value]) => {
       if (value === undefined) {
         delete process.env[key];
       } else {
         process.env[key] = value;
       }
     });
-    this.originalEnv = {};
+    EnvTestUtils.originalEnv = {};
   }
 
   // Create test environment
@@ -221,7 +217,8 @@ export class EnvTestUtils {
 export class DataGenerators {
   // Generate random string
   static randomString(length = 8): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const chars =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     for (let i = 0; i < length; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -231,40 +228,51 @@ export class DataGenerators {
 
   // Generate random email
   static randomEmail(): string {
-    return `test-${this.randomString(8)}@example.com`;
+    return `test-${DataGenerators.randomString(8)}@example.com`;
   }
 
   // Generate random phone
   static randomPhone(): string {
-    return `+1${Math.floor(Math.random() * 9000000000) + 1000000000}`;
+    return `+1${Math.floor(Math.random() * 9_000_000_000) + 1_000_000_000}`;
   }
 
   // Generate random price
-  static randomPrice(min = 1000, max = 100000): number {
+  static randomPrice(min = 1000, max = 100_000): number {
     return Math.floor(Math.random() * (max - min) + min);
   }
 
   // Generate random date
   static randomDate(start = new Date(2020, 0, 1), end = new Date()): Date {
-    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+    return new Date(
+      start.getTime() + Math.random() * (end.getTime() - start.getTime())
+    );
   }
 
   // Generate random user data
   static randomUser() {
-    const firstName = ['John', 'Jane', 'Mike', 'Sarah', 'David', 'Lisa'][Math.floor(Math.random() * 6)];
-    const lastName = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia'][Math.floor(Math.random() * 6)];
-    
+    const firstName = ['John', 'Jane', 'Mike', 'Sarah', 'David', 'Lisa'][
+      Math.floor(Math.random() * 6)
+    ];
+    const lastName = [
+      'Smith',
+      'Johnson',
+      'Williams',
+      'Brown',
+      'Jones',
+      'Garcia',
+    ][Math.floor(Math.random() * 6)];
+
     return {
-      id: `user_${this.randomString(12)}`,
-      clerkId: `clerk_${this.randomString(12)}`,
-      email: this.randomEmail(),
+      id: `user_${DataGenerators.randomString(12)}`,
+      clerkId: `clerk_${DataGenerators.randomString(12)}`,
+      email: DataGenerators.randomEmail(),
       firstName,
       lastName,
-      imageUrl: `https://example.com/avatar-${this.randomString(8)}.jpg`,
+      imageUrl: `https://example.com/avatar-${DataGenerators.randomString(8)}.jpg`,
       location: 'Test City, TC',
       averageRating: Math.round((Math.random() * 2 + 3) * 10) / 10, // 3.0 - 5.0
       totalSales: Math.floor(Math.random() * 100),
-      createdAt: this.randomDate(),
+      createdAt: DataGenerators.randomDate(),
       updatedAt: new Date(),
     };
   }
@@ -279,19 +287,25 @@ export class DataGenerators {
       'Adidas Sneakers',
       'iPad Air',
     ];
-    
-    const conditions = ['NEW_WITH_TAGS', 'NEW_WITHOUT_TAGS', 'VERY_GOOD', 'GOOD', 'SATISFACTORY'];
-    
+
+    const conditions = [
+      'NEW_WITH_TAGS',
+      'NEW_WITHOUT_TAGS',
+      'VERY_GOOD',
+      'GOOD',
+      'SATISFACTORY',
+    ];
+
     return {
-      id: `prod_${this.randomString(12)}`,
+      id: `prod_${DataGenerators.randomString(12)}`,
       title: titles[Math.floor(Math.random() * titles.length)],
       description: `High quality ${titles[Math.floor(Math.random() * titles.length)]?.toLowerCase() || 'item'} in excellent condition.`,
-      price: this.randomPrice(),
+      price: DataGenerators.randomPrice(),
       condition: conditions[Math.floor(Math.random() * conditions.length)],
       status: 'AVAILABLE',
-      sellerId: sellerId || `user_${this.randomString(12)}`,
-      categoryId: categoryId || `cat_${this.randomString(12)}`,
-      createdAt: this.randomDate(),
+      sellerId: sellerId || `user_${DataGenerators.randomString(12)}`,
+      categoryId: categoryId || `cat_${DataGenerators.randomString(12)}`,
+      createdAt: DataGenerators.randomDate(),
       updatedAt: new Date(),
     };
   }
@@ -326,7 +340,9 @@ export class FileTestUtils {
 // Performance test utilities
 export class PerformanceTestUtils {
   // Measure execution time
-  static async measureTime<T>(operation: () => Promise<T>): Promise<{ result: T; time: number }> {
+  static async measureTime<T>(
+    operation: () => Promise<T>
+  ): Promise<{ result: T; time: number }> {
     const start = performance.now();
     const result = await operation();
     const time = performance.now() - start;
@@ -339,14 +355,15 @@ export class PerformanceTestUtils {
     maxTime: number,
     message?: string
   ): Promise<T> {
-    const { result, time } = await this.measureTime(operation);
-    
+    const { result, time } = await PerformanceTestUtils.measureTime(operation);
+
     if (time > maxTime) {
       throw new Error(
-        message || `Operation took ${time.toFixed(2)}ms, expected < ${maxTime}ms`
+        message ||
+          `Operation took ${time.toFixed(2)}ms, expected < ${maxTime}ms`
       );
     }
-    
+
     return result;
   }
 
@@ -368,32 +385,33 @@ export class ErrorTestUtils {
     expectedMessage?: string | RegExp
   ): Promise<T> {
     let thrownError: any;
-    
+
     try {
       await operation();
       throw new Error('Expected operation to throw an error');
     } catch (error) {
       thrownError = error;
     }
-    
+
     if (expectedError && !(thrownError instanceof expectedError)) {
       throw new Error(
         `Expected error of type ${expectedError.name}, got ${thrownError.constructor.name}`
       );
     }
-    
+
     if (expectedMessage) {
-      const messageMatches = typeof expectedMessage === 'string'
-        ? thrownError.message === expectedMessage
-        : expectedMessage.test(thrownError.message);
-        
+      const messageMatches =
+        typeof expectedMessage === 'string'
+          ? thrownError.message === expectedMessage
+          : expectedMessage.test(thrownError.message);
+
       if (!messageMatches) {
         throw new Error(
           `Expected error message "${expectedMessage}", got "${thrownError.message}"`
         );
       }
     }
-    
+
     return thrownError;
   }
 
@@ -413,25 +431,24 @@ export class TestCleanup {
 
   // Register cleanup function
   static register(cleanup: () => void | Promise<void>) {
-    this.cleanupFunctions.push(cleanup);
+    TestCleanup.cleanupFunctions.push(cleanup);
   }
 
   // Run all cleanup functions
   static async runAll() {
     await Promise.all(
-      this.cleanupFunctions.map(async cleanup => {
+      TestCleanup.cleanupFunctions.map(async (cleanup) => {
         try {
           await cleanup();
-        } catch (error) {
-        }
+        } catch (error) {}
       })
     );
-    this.cleanupFunctions = [];
+    TestCleanup.cleanupFunctions = [];
   }
 
   // Clear all registered cleanup functions
   static clear() {
-    this.cleanupFunctions = [];
+    TestCleanup.cleanupFunctions = [];
   }
 }
 

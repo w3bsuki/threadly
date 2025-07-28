@@ -1,10 +1,10 @@
+import { database } from '@repo/database';
 import { getDictionary } from '@repo/internationalization';
 import { createMetadata } from '@repo/seo/metadata';
-import { database } from '@repo/database';
 import type { Metadata } from 'next';
+import { cache } from 'react';
 import { CategoryGrid } from './components/category-grid';
 import { CategorySearch } from './components/category-search';
-import { cache } from 'react';
 
 export const revalidate = 3600; // 1 hour
 
@@ -23,25 +23,25 @@ const getCategoriesWithCounts = cache(async (search?: string) => {
       _count: {
         select: {
           Product: {
-            where: { status: 'AVAILABLE' }
-          }
-        }
+            where: { status: 'AVAILABLE' },
+          },
+        },
       },
       children: {
         include: {
           _count: {
             select: {
               Product: {
-                where: { status: 'AVAILABLE' }
-              }
-            }
-          }
-        }
-      }
+                where: { status: 'AVAILABLE' },
+              },
+            },
+          },
+        },
+      },
     },
     orderBy: {
-      Product: { _count: 'desc' }
-    }
+      Product: { _count: 'desc' },
+    },
   });
 });
 
@@ -77,9 +77,9 @@ const CategoriesPage = async ({ params, searchParams }: CategoriesProps) => {
     <main className="min-h-screen bg-background">
       <div className="mx-auto max-w-7xl px-4 py-12">
         <h1 className="mb-8 font-semibold text-3xl">Browse Categories</h1>
-        
+
         <CategorySearch />
-        
+
         <CategoryGrid categories={categories} />
       </div>
     </main>

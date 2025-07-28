@@ -8,26 +8,31 @@ import { z } from '@repo/validation';
 import { type NextRequest, NextResponse } from 'next/server';
 
 const searchQuerySchema = z.object({
-  q: z.string().trim().max(100)
+  q: z
+    .string()
+    .trim()
+    .max(100)
     .refine((text) => !/<[^>]*>/.test(text), {
       message: 'HTML tags are not allowed',
-    }).optional(),
+    })
+    .optional(),
   refresh: z.enum(['true', 'false']).optional(),
-  category: z.string().trim().max(50)
+  category: z
+    .string()
+    .trim()
+    .max(50)
     .refine((text) => !/<[^>]*>/.test(text), {
       message: 'HTML tags are not allowed',
-    }).optional(),
+    })
+    .optional(),
 });
 
 export async function GET(request: NextRequest) {
   try {
     const { userId } = auth();
-    
+
     if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check rate limit
@@ -43,7 +48,7 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    
+
     const validation = searchQuerySchema.safeParse({
       q: searchParams.get('q') || undefined,
       refresh: searchParams.get('refresh') || undefined,

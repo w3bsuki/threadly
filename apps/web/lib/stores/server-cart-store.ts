@@ -64,7 +64,9 @@ export const useServerCartStore = create<ServerCartState>((set, get) => ({
         get().openCart();
       }
     } catch (error: unknown) {
-      toast.error(error instanceof Error ? error.message : 'Failed to add to cart');
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to add to cart'
+      );
     } finally {
       set({ isLoading: false });
     }

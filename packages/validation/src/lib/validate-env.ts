@@ -1,5 +1,10 @@
-import { validateEnv, safeValidateEnv, type ServerEnv, type ClientEnv } from '../schemas/env';
 import type { ZodError } from 'zod';
+import {
+  type ClientEnv,
+  type ServerEnv,
+  safeValidateEnv,
+  validateEnv,
+} from '../schemas/env';
 
 /**
  * Environment validation utility for Threadly applications
@@ -29,11 +34,11 @@ interface EnvValidationOptions {
  * Formats Zod validation errors for better readability
  */
 function formatValidationErrors(error: ZodError): string {
-  const errors = error.errors.map(err => {
+  const errors = error.errors.map((err) => {
     const path = err.path.join('.');
     return `  - ${path}: ${err.message}`;
   });
-  
+
   return `Environment validation failed:\n${errors.join('\n')}`;
 }
 
@@ -42,7 +47,9 @@ function formatValidationErrors(error: ZodError): string {
  * @param options - Validation options
  * @returns Validated environment variables
  */
-export function validateEnvironment(options: EnvValidationOptions = {}): ServerEnv | ClientEnv {
+export function validateEnvironment(
+  options: EnvValidationOptions = {}
+): ServerEnv | ClientEnv {
   const {
     skipValidation = process.env.SKIP_ENV_VALIDATION === 'true',
     isServer = typeof window === 'undefined',
@@ -52,44 +59,46 @@ export function validateEnvironment(options: EnvValidationOptions = {}): ServerE
 
   // Skip validation if explicitly disabled
   if (skipValidation) {
-    console.warn('⚠️  Environment validation is disabled. This is not recommended for production.');
+    console.warn(
+      '⚠️  Environment validation is disabled. This is not recommended for production.'
+    );
     return process.env as any;
   }
 
   try {
     // Validate environment variables
     const validated = validateEnv(process.env, isServer);
-    
+
     // Log success in development
     if (process.env.NODE_ENV === 'development') {
       console.log('✅ Environment variables validated successfully');
     }
-    
+
     return validated;
   } catch (error) {
     if (error instanceof Error && 'errors' in error) {
       const zodError = error as ZodError;
       const formattedError = formatValidationErrors(zodError);
-      
+
       // Call custom error handler if provided
       if (onError) {
         onError(zodError);
       }
-      
+
       // Log the error
       console.error(formattedError);
-      
+
       // Exit process if configured
       if (exitOnFailure && process.env.NODE_ENV === 'production') {
         process.exit(1);
       }
-      
+
       // Re-throw in development
       if (process.env.NODE_ENV === 'development') {
         throw error;
       }
     }
-    
+
     // Return unvalidated env as fallback
     return process.env as any;
   }
@@ -113,12 +122,12 @@ export function safeValidateEnvironment(options: EnvValidationOptions = {}) {
   }
 
   const result = safeValidateEnv(process.env, isServer);
-  
+
   if (!result.success) {
     const formattedError = formatValidationErrors(result.error);
     console.error(formattedError);
   }
-  
+
   return result;
 }
 
@@ -141,7 +150,7 @@ export function checkRequiredEnvVars(required: string[]): {
 } {
   const missing: string[] = [];
   const present: string[] = [];
-  
+
   for (const key of required) {
     if (process.env[key]) {
       present.push(key);
@@ -149,7 +158,7 @@ export function checkRequiredEnvVars(required: string[]): {
       missing.push(key);
     }
   }
-  
+
   return { missing, present };
 }
 
@@ -164,9 +173,13 @@ export function getEnvConfig<T extends Record<string, any>>(configs: {
 }): T {
   const env = process.env.NODE_ENV || 'development';
   const vercelEnv = process.env.VERCEL_ENV;
-  
+
   // Map Vercel environments to our config keys
   const environment = vercelEnv === 'preview' ? 'staging' : env;
-  
-  return configs[environment as keyof typeof configs] || configs.development || {} as T;
+
+  return (
+    configs[environment as keyof typeof configs] ||
+    configs.development ||
+    ({} as T)
+  );
 }

@@ -115,17 +115,18 @@ let searchWebhookClient: SearchWebhookClient | null = null;
 export function getSearchWebhookClient(baseUrl?: string): SearchWebhookClient {
   if (!searchWebhookClient && baseUrl) {
     const isEnabled = !!(
-      process.env.NEXT_PUBLIC_ALGOLIA_APP_ID && 
-      process.env.ALGOLIA_ADMIN_KEY
+      process.env.NEXT_PUBLIC_ALGOLIA_APP_ID && process.env.ALGOLIA_ADMIN_KEY
     );
-    
+
     searchWebhookClient = new SearchWebhookClient(baseUrl, isEnabled);
   }
-  
+
   if (!searchWebhookClient) {
-    throw new Error('SearchWebhookClient not initialized. Call with baseUrl first.');
+    throw new Error(
+      'SearchWebhookClient not initialized. Call with baseUrl first.'
+    );
   }
-  
+
   return searchWebhookClient;
 }
 

@@ -1,5 +1,5 @@
-import { captureRequestError } from '@sentry/nextjs';
 import { initializeSentry } from '@repo/observability/instrumentation';
+import { captureRequestError } from '@sentry/nextjs';
 
 // Initialize Sentry
 export const register = initializeSentry();

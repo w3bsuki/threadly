@@ -1,16 +1,15 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { Button, Card, CardContent } from '@repo/design-system/components';
 import { useChannel, useTypingIndicator } from '@repo/real-time/client';
-import { Card, CardContent } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
 import { MessageCircle } from 'lucide-react';
 import Link from 'next/link';
-import { sendMessage, markMessagesAsRead } from '../actions/message-actions';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import { ErrorBoundary } from '@/components/error-boundary';
-import { ConversationList } from './conversation-list';
+import { markMessagesAsRead, sendMessage } from '../actions/message-actions';
 import { ChatArea } from './chat-area';
+import { ConversationList } from './conversation-list';
 import { NewConversationCard } from './new-conversation-card';
 
 interface User {
@@ -90,17 +89,19 @@ interface MessagesContentProps {
   existingConversation?: { id: string } | null;
 }
 
-export function MessagesContent({ 
-  conversations, 
-  currentUserId, 
+export function MessagesContent({
+  conversations,
+  currentUserId,
   filterType,
   targetUser,
   targetProduct,
-  existingConversation 
+  existingConversation,
 }: MessagesContentProps): React.JSX.Element {
   const router = useRouter();
-  const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
-  const [conversationsList, setConversationsList] = useState<Conversation[]>(conversations);
+  const [selectedConversation, setSelectedConversation] =
+    useState<Conversation | null>(null);
+  const [conversationsList, setConversationsList] =
+    useState<Conversation[]>(conversations);
   const [messageInput, setMessageInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSending, setIsSending] = useState(false);
@@ -112,12 +113,14 @@ export function MessagesContent({
 
   // Real-time features for selected conversation
   const { bind: bindMessages } = useChannel(
-    selectedConversation ? `private-conversation-${selectedConversation.id}` : ''
+    selectedConversation
+      ? `private-conversation-${selectedConversation.id}`
+      : ''
   );
-  
+
   // User channel for notifications about new messages in any conversation
   const { bind: bindUserChannel } = useChannel(`private-user-${currentUserId}`);
-  
+
   const { typingUsers, sendTyping } = useTypingIndicator(
     selectedConversation?.id || ''
   );
@@ -126,7 +129,6 @@ export function MessagesContent({
   useEffect(() => {
     setConversationsList(conversations);
   }, [conversations]);
-
 
   // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = () => {
@@ -139,7 +141,7 @@ export function MessagesContent({
 
   // Listen for real-time messages
   useEffect(() => {
-    if (!selectedConversation || !bindMessages) return;
+    if (!(selectedConversation && bindMessages)) return;
 
     const unsubscribe = bindMessages('new-message', (data: NewMessageData) => {
       // Update the selected conversation with the new message
@@ -149,27 +151,27 @@ export function MessagesContent({
           content: data.content,
           senderId: data.senderId,
           createdAt: new Date(data.createdAt),
-          read: data.senderId === currentUserId ? true : false
+          read: data.senderId === currentUserId ? true : false,
         };
 
         // Update selected conversation
-        setSelectedConversation(prev => {
+        setSelectedConversation((prev) => {
           if (!prev) return null;
           return {
             ...prev,
             messages: [...prev.messages, newMessage],
-            updatedAt: new Date(data.createdAt)
+            updatedAt: new Date(data.createdAt),
           };
         });
 
         // Update conversations list
-        setConversationsList(prevList => 
-          prevList.map(conv => 
+        setConversationsList((prevList) =>
+          prevList.map((conv) =>
             conv.id === selectedConversation.id
               ? {
                   ...conv,
                   messages: [...conv.messages, newMessage],
-                  updatedAt: new Date(data.createdAt)
+                  updatedAt: new Date(data.createdAt),
                 }
               : conv
           )
@@ -177,8 +179,7 @@ export function MessagesContent({
 
         // Mark as read if the message is from another user
         if (data.senderId !== currentUserId) {
-          markMessagesAsRead(selectedConversation.id).catch(error => {
-          });
+          markMessagesAsRead(selectedConversation.id).catch((error) => {});
         }
       }
     });
@@ -190,33 +191,37 @@ export function MessagesContent({
   useEffect(() => {
     if (!bindUserChannel) return;
 
-    const unsubscribe = bindUserChannel('new-message-notification', (data: MessageNotificationData) => {
-      // Update the conversation list with new message notification
-      setConversationsList(prevList => {
-        const updatedList = prevList.map(conv => {
-          if (conv.id === data.conversationId) {
-            // If this is the selected conversation, don't update here as it's handled above
-            if (selectedConversation?.id === conv.id) return conv;
-            
-            // Update conversation's last message and timestamp
-            return {
-              ...conv,
-              updatedAt: new Date(data.createdAt),
-              _count: {
-                ...conv._count,
-                messages: conv._count.messages + 1
-              }
-            };
-          }
-          return conv;
+    const unsubscribe = bindUserChannel(
+      'new-message-notification',
+      (data: MessageNotificationData) => {
+        // Update the conversation list with new message notification
+        setConversationsList((prevList) => {
+          const updatedList = prevList.map((conv) => {
+            if (conv.id === data.conversationId) {
+              // If this is the selected conversation, don't update here as it's handled above
+              if (selectedConversation?.id === conv.id) return conv;
+
+              // Update conversation's last message and timestamp
+              return {
+                ...conv,
+                updatedAt: new Date(data.createdAt),
+                _count: {
+                  ...conv._count,
+                  messages: conv._count.messages + 1,
+                },
+              };
+            }
+            return conv;
+          });
+
+          // Sort conversations by most recent first
+          return updatedList.sort(
+            (a, b) =>
+              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+          );
         });
-        
-        // Sort conversations by most recent first
-        return updatedList.sort((a, b) => 
-          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-        );
-      });
-    });
+      }
+    );
 
     return unsubscribe;
   }, [bindUserChannel, selectedConversation?.id]);
@@ -226,7 +231,9 @@ export function MessagesContent({
     if (targetUser && targetProduct) {
       if (existingConversation) {
         // Find and select existing conversation
-        const existing = conversations.find(c => c.id === existingConversation.id);
+        const existing = conversations.find(
+          (c) => c.id === existingConversation.id
+        );
         if (existing) {
           setSelectedConversation(existing);
         }
@@ -240,7 +247,7 @@ export function MessagesContent({
   // Handle typing indicator
   const handleTyping = (value: string) => {
     setMessageInput(value);
-    
+
     if (!selectedConversation) return;
 
     // Send typing start
@@ -271,7 +278,7 @@ export function MessagesContent({
   }, [selectedConversation, router]);
 
   const handleCreateConversation = async (initialMessage: string) => {
-    if (!targetUser || !targetProduct || !initialMessage.trim()) return;
+    if (!(targetUser && targetProduct && initialMessage.trim())) return;
 
     setIsCreatingConversation(true);
     try {
@@ -294,7 +301,7 @@ export function MessagesContent({
   };
 
   const handleSendMessage = async () => {
-    if (!selectedConversation || !messageInput.trim()) return;
+    if (!(selectedConversation && messageInput.trim())) return;
 
     setIsSending(true);
     try {
@@ -313,26 +320,21 @@ export function MessagesContent({
     }
   };
 
-
   if (conversations.length === 0 && !showNewConversation) {
     return (
       <Card>
-        <CardContent className="text-center py-12">
-          <MessageCircle className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
-          <h3 className="text-lg font-semibold mb-2">No messages yet</h3>
-          <p className="text-muted-foreground mb-6">
+        <CardContent className="py-12 text-center">
+          <MessageCircle className="mx-auto mb-4 h-12 w-12 text-muted-foreground/50" />
+          <h3 className="mb-2 font-semibold text-lg">No messages yet</h3>
+          <p className="mb-6 text-muted-foreground">
             Your conversations with buyers and sellers will appear here.
           </p>
-          <div className="flex gap-2 justify-center">
+          <div className="flex justify-center gap-2">
             <Button asChild>
-              <Link href="/browse">
-                Browse Items
-              </Link>
+              <Link href="/browse">Browse Items</Link>
             </Button>
-            <Button variant="outline" asChild>
-              <Link href="/selling/new">
-                Sell an Item
-              </Link>
+            <Button asChild variant="outline">
+              <Link href="/selling/new">Sell an Item</Link>
             </Button>
           </div>
         </CardContent>
@@ -342,44 +344,46 @@ export function MessagesContent({
 
   return (
     <ErrorBoundary>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-12rem)]">
+      <div className="grid h-[calc(100vh-12rem)] grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-1">
           <ConversationList
             conversations={conversationsList}
             currentUserId={currentUserId}
-            selectedConversationId={selectedConversation?.id}
+            filterType={filterType}
+            onSearchChange={setSearchQuery}
             onSelectConversation={setSelectedConversation}
             searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            filterType={filterType}
+            selectedConversationId={selectedConversation?.id}
           />
         </div>
 
         <div className="lg:col-span-2">
           {showNewConversation && targetUser && targetProduct ? (
-            <NewConversationCard 
-              targetUser={targetUser}
-              targetProduct={targetProduct}
-              onCreateConversation={handleCreateConversation}
+            <NewConversationCard
               isCreating={isCreatingConversation}
               onCancel={() => setShowNewConversation(false)}
+              onCreateConversation={handleCreateConversation}
+              targetProduct={targetProduct}
+              targetUser={targetUser}
             />
           ) : selectedConversation ? (
             <ChatArea
               conversation={selectedConversation}
               currentUserId={currentUserId}
+              isSending={isSending}
               messageInput={messageInput}
+              messagesEndRef={messagesEndRef}
               onMessageInputChange={handleTyping}
               onSendMessage={handleSendMessage}
-              isSending={isSending}
               typingUsers={typingUsers}
-              messagesEndRef={messagesEndRef}
             />
           ) : (
-            <Card className="h-full flex items-center justify-center">
+            <Card className="flex h-full items-center justify-center">
               <CardContent className="text-center">
-                <MessageCircle className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Select a conversation</h3>
+                <MessageCircle className="mx-auto mb-4 h-12 w-12 text-muted-foreground/50" />
+                <h3 className="mb-2 font-semibold text-lg">
+                  Select a conversation
+                </h3>
                 <p className="text-muted-foreground">
                   Choose a conversation from the list to start chatting
                 </p>

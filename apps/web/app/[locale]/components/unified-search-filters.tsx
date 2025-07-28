@@ -11,7 +11,6 @@ interface UnifiedSearchFiltersProps {
   totalCount?: number;
 }
 
-
 export const UnifiedSearchFilters = ({
   totalCount,
 }: UnifiedSearchFiltersProps) => {
@@ -22,15 +21,15 @@ export const UnifiedSearchFilters = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const categories = CATEGORIES.map((category) => {
-    const translatedName = 
+    const translatedName =
       dictionary?.web?.global?.categories?.[
         category.name.toLowerCase() as keyof typeof dictionary.web.global.categories
-      ] || 
+      ] ||
       dictionary?.web?.global?.collections?.[
         category.name.toLowerCase() as keyof typeof dictionary.web.global.collections
-      ] || 
+      ] ||
       category.name;
-    
+
     return {
       ...category,
       name: translatedName,

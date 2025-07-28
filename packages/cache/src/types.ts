@@ -34,9 +34,10 @@ export const CACHE_KEYS = {
   CATEGORY_PRODUCTS: (category: string) => `category:${category}:products`,
   USER_PROFILE: (userId: string) => `user:${userId}:profile`,
   USER_FAVORITES: (userId: string) => `user:${userId}:favorites`,
-  USER_LISTINGS: (userId: string, cursor?: string, limit?: number) => 
+  USER_LISTINGS: (userId: string, cursor?: string, limit?: number) =>
     `user:${userId}:listings${cursor ? `:${cursor}` : ':first'}${limit ? `:${limit}` : ':20'}`,
-  SEARCH_RESULTS: (query: string) => `search:${Buffer.from(query).toString('base64')}`,
+  SEARCH_RESULTS: (query: string) =>
+    `search:${Buffer.from(query).toString('base64')}`,
   TRENDING_PRODUCTS: 'trending:products',
   FEATURED_CATEGORIES: 'featured:categories',
   NEW_ARRIVALS: 'new:arrivals',

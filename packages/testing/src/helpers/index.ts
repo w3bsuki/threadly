@@ -1,65 +1,63 @@
 // Export render utilities
-export {
-  render,
-  renderWithUser,
-  renderAsync,
-  renderWithViewport,
-  renderWithRouter,
-  getByTestId,
-  waitForLoading,
-  testAccessibility,
-  screen,
-  fireEvent,
-  waitFor,
-  act,
-  within,
-  cleanup as rtlCleanup,
-  queryByTestId,
-  findByTestId,
-  getByRole,
-  queryByRole,
-  findByRole,
-  getByText,
-  queryByText,
-  findByText,
-  getByLabelText,
-  queryByLabelText,
-  findByLabelText,
-  getByPlaceholderText,
-  queryByPlaceholderText,
-  findByPlaceholderText,
-  getByDisplayValue,
-  queryByDisplayValue,
-  findByDisplayValue
-} from './render';
-
-// Export database utilities
-export * from './database';
-
-// Export auth utilities
-export * from './auth';
 
 // Export API utilities
 export * from './api';
+// Export auth utilities
+export * from './auth';
+// Export database utilities
+export * from './database';
+export {
+  act,
+  cleanup as rtlCleanup,
+  findByDisplayValue,
+  findByLabelText,
+  findByPlaceholderText,
+  findByRole,
+  findByTestId,
+  findByText,
+  fireEvent,
+  getByDisplayValue,
+  getByLabelText,
+  getByPlaceholderText,
+  getByRole,
+  getByTestId,
+  getByText,
+  queryByDisplayValue,
+  queryByLabelText,
+  queryByPlaceholderText,
+  queryByRole,
+  queryByTestId,
+  queryByText,
+  render,
+  renderAsync,
+  renderWithRouter,
+  renderWithUser,
+  renderWithViewport,
+  screen,
+  testAccessibility,
+  waitFor,
+  waitForLoading,
+  within,
+} from './render';
 
 // Export test utilities with renamed cleanup
 export {
-  TimeTestUtils,
-  ConsoleTestUtils,
   AsyncTestUtils,
-  EnvTestUtils,
-  DataGenerators,
-  FileTestUtils,
-  PerformanceTestUtils,
-  ErrorTestUtils,
-  TestCleanup,
-  time,
-  console,
   async,
+  ConsoleTestUtils,
+  cleanup as testCleanup,
+  console,
+  DataGenerators,
+  EnvTestUtils,
+  ErrorTestUtils,
   env,
-  generate,
-  file,
-  performance,
   error,
-  cleanup as testCleanup
+  FileTestUtils,
+  file,
+  generate,
+  PerformanceTestUtils,
+  performance,
+  TestCleanup,
+  TimeTestUtils,
+  time,
 } from './utils';

@@ -1,13 +1,13 @@
 import { useCallback, useMemo } from 'react';
 import tokens, {
-  TouchTargetSize,
-  SpacingSize,
-  FontSize,
-  ShadowSize,
-  BorderRadiusSize,
-  AnimationDuration,
-  AnimationEasing,
+  type AnimationDuration,
+  type AnimationEasing,
   applyTokens,
+  type BorderRadiusSize,
+  type FontSize,
+  type ShadowSize,
+  type SpacingSize,
+  type TouchTargetSize,
 } from '../lib/tokens';
 
 /**
@@ -16,65 +16,87 @@ import tokens, {
  */
 export function useTokens() {
   // Memoize token objects to prevent recreating on each render
-  const tokenValues = useMemo(() => ({
-    touchTargets: tokens.touchTargets,
-    spacing: tokens.spacing,
-    mobileInteractions: tokens.mobileInteractions,
-    typography: tokens.typography,
-    borderRadius: tokens.borderRadius,
-    shadows: tokens.shadows,
-    animations: tokens.animations,
-    breakpoints: tokens.breakpoints,
-    zIndex: tokens.zIndex,
-  }), []);
+  const tokenValues = useMemo(
+    () => ({
+      touchTargets: tokens.touchTargets,
+      spacing: tokens.spacing,
+      mobileInteractions: tokens.mobileInteractions,
+      typography: tokens.typography,
+      borderRadius: tokens.borderRadius,
+      shadows: tokens.shadows,
+      animations: tokens.animations,
+      breakpoints: tokens.breakpoints,
+      zIndex: tokens.zIndex,
+    }),
+    []
+  );
 
   // Helper to get touch target styles
-  const getTouchTarget = useCallback((size: TouchTargetSize) => 
-    applyTokens.touchTarget(size), []);
+  const getTouchTarget = useCallback(
+    (size: TouchTargetSize) => applyTokens.touchTarget(size),
+    []
+  );
 
   // Helper to get spacing value
-  const getSpacing = useCallback((size: SpacingSize) => 
-    applyTokens.spacing(size), []);
+  const getSpacing = useCallback(
+    (size: SpacingSize) => applyTokens.spacing(size),
+    []
+  );
 
   // Helper to get safe area value
-  const getSafeArea = useCallback((side?: 'top' | 'bottom' | 'left' | 'right') => 
-    applyTokens.safeArea(side), []);
+  const getSafeArea = useCallback(
+    (side?: 'top' | 'bottom' | 'left' | 'right') => applyTokens.safeArea(side),
+    []
+  );
 
   // Helper to get font size
-  const getFontSize = useCallback((size: FontSize) => 
-    applyTokens.fontSize(size), []);
+  const getFontSize = useCallback(
+    (size: FontSize) => applyTokens.fontSize(size),
+    []
+  );
 
   // Helper to get shadow
-  const getShadow = useCallback((size: ShadowSize) => 
-    applyTokens.shadow(size), []);
+  const getShadow = useCallback(
+    (size: ShadowSize) => applyTokens.shadow(size),
+    []
+  );
 
   // Helper to get border radius
-  const getRadius = useCallback((size: BorderRadiusSize) => 
-    applyTokens.radius(size), []);
+  const getRadius = useCallback(
+    (size: BorderRadiusSize) => applyTokens.radius(size),
+    []
+  );
 
   // Helper to get animation properties
   const getAnimation = useCallback(
-    (duration: AnimationDuration, easing?: AnimationEasing) => 
-      applyTokens.animation(duration, easing), 
+    (duration: AnimationDuration, easing?: AnimationEasing) =>
+      applyTokens.animation(duration, easing),
     []
   );
 
   // Check if current viewport matches breakpoint
-  const matchesBreakpoint = useCallback((breakpoint: keyof typeof tokens.breakpoints) => {
-    if (typeof window === 'undefined') return false;
-    return window.matchMedia(`(min-width: ${tokens.breakpoints[breakpoint]}px)`).matches;
-  }, []);
+  const matchesBreakpoint = useCallback(
+    (breakpoint: keyof typeof tokens.breakpoints) => {
+      if (typeof window === 'undefined') return false;
+      return window.matchMedia(
+        `(min-width: ${tokens.breakpoints[breakpoint]}px)`
+      ).matches;
+    },
+    []
+  );
 
   // Get CSS variable value
   const getCSSVariable = useCallback((variable: string) => {
     if (typeof window === 'undefined') return '';
-    return getComputedStyle(document.documentElement).getPropertyValue(`--${variable}`);
+    return getComputedStyle(document.documentElement).getPropertyValue(
+      `--${variable}`
+    );
   }, []);
 
   return {
     // Token values
     ...tokenValues,
-    
+
     // Helper functions
     getTouchTarget,
     getSpacing,
@@ -85,7 +107,7 @@ export function useTokens() {
     getAnimation,
     matchesBreakpoint,
     getCSSVariable,
-    
+
     // Tailwind classes
     tailwind: tokens.tailwindTokens,
   };
@@ -111,10 +133,13 @@ export function useSafeAnimation() {
   const prefersReducedMotion = usePrefersReducedMotion();
   const { animations } = useTokens();
 
-  const getSafeDuration = useCallback((duration: AnimationDuration) => {
-    if (prefersReducedMotion) return 0;
-    return animations.duration[duration];
-  }, [prefersReducedMotion, animations.duration]);
+  const getSafeDuration = useCallback(
+    (duration: AnimationDuration) => {
+      if (prefersReducedMotion) return 0;
+      return animations.duration[duration];
+    },
+    [prefersReducedMotion, animations.duration]
+  );
 
   return { getSafeDuration, prefersReducedMotion };
 }

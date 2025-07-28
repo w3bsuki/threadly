@@ -96,21 +96,27 @@ export const NewArrivals = async () => {
           take: 4,
         });
 
-        return newArrivals.map((product): TransformedArrival => ({
-          id: product.id,
-          title: product.title,
-          brand: product.brand || 'Unknown',
-          price: product.price.toString(),
-          condition: product.condition,
-          size: product.size || 'One Size',
-          images: product.images.map((img) => img.imageUrl).filter((url): url is string => Boolean(url)),
-          seller: product.seller
-            ? `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() ||
-              'Anonymous'
-            : 'Anonymous',
-          timeAgo: formatTimeAgo(product.createdAt),
-          isNew: Date.now() - new Date(product.createdAt).getTime() < 24 * 60 * 60 * 1000, // Less than 24 hours old
-        }));
+        return newArrivals.map(
+          (product): TransformedArrival => ({
+            id: product.id,
+            title: product.title,
+            brand: product.brand || 'Unknown',
+            price: product.price.toString(),
+            condition: product.condition,
+            size: product.size || 'One Size',
+            images: product.images
+              .map((img) => img.imageUrl)
+              .filter((url): url is string => Boolean(url)),
+            seller: product.seller
+              ? `${product.seller.firstName || ''} ${product.seller.lastName || ''}`.trim() ||
+                'Anonymous'
+              : 'Anonymous',
+            timeAgo: formatTimeAgo(product.createdAt),
+            isNew:
+              Date.now() - new Date(product.createdAt).getTime() <
+              24 * 60 * 60 * 1000, // Less than 24 hours old
+          })
+        );
       },
       300, // Cache for 5 minutes
       ['products'] // Cache tags

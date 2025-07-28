@@ -36,9 +36,11 @@ export default defineConfig({
     },
   ],
 
-  webServer: process.env.CI ? undefined : {
-    command: 'pnpm dev',
-    port: 3000,
-    reuseExistingServer: !process.env.CI,
-  },
+  webServer: process.env.CI
+    ? undefined
+    : {
+        command: 'pnpm dev',
+        port: 3000,
+        reuseExistingServer: !process.env.CI,
+      },
 });

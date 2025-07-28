@@ -22,11 +22,11 @@ interface SearchFiltersProps {
   className?: string;
 }
 
-export function SearchFilters({ 
-  filters, 
-  selectedFilters, 
+export function SearchFilters({
+  filters,
+  selectedFilters,
   onFilterChange,
-  className = ''
+  className = '',
 }: SearchFiltersProps) {
   const handleFilterChange = (filterKey: string, value: any) => {
     onFilterChange(filterKey, value);
@@ -35,26 +35,33 @@ export function SearchFilters({
   return (
     <div className={`space-y-6 ${className}`}>
       {filters.map((filterGroup) => (
-        <div key={filterGroup.key} className="border-b border-border pb-4">
-          <h3 className="font-medium text-foreground mb-3">{filterGroup.label}</h3>
-          
+        <div className="border-border border-b pb-4" key={filterGroup.key}>
+          <h3 className="mb-3 font-medium text-foreground">
+            {filterGroup.label}
+          </h3>
+
           {filterGroup.type === 'checkbox' && (
             <div className="space-y-2">
               {filterGroup.options.map((option) => (
-                <label key={option.key} className="flex items-center">
+                <label className="flex items-center" key={option.key}>
                   <input
-                    type="checkbox"
-                    checked={selectedFilters[filterGroup.key]?.includes(option.value) || false}
+                    checked={selectedFilters[filterGroup.key]?.includes(
+                      option.value
+                    )}
+                    className="h-4 w-4 rounded border-border text-blue-600"
                     onChange={(e) => {
-                      const currentValues = selectedFilters[filterGroup.key] || [];
+                      const currentValues =
+                        selectedFilters[filterGroup.key] || [];
                       const newValues = e.target.checked
                         ? [...currentValues, option.value]
                         : currentValues.filter((v: any) => v !== option.value);
                       handleFilterChange(filterGroup.key, newValues);
                     }}
-                    className="h-4 w-4 text-blue-600 border-border rounded"
+                    type="checkbox"
                   />
-                  <span className="ml-2 text-sm text-secondary-foreground">{option.label}</span>
+                  <span className="ml-2 text-secondary-foreground text-sm">
+                    {option.label}
+                  </span>
                 </label>
               ))}
             </div>
@@ -63,15 +70,19 @@ export function SearchFilters({
           {filterGroup.type === 'radio' && (
             <div className="space-y-2">
               {filterGroup.options.map((option) => (
-                <label key={option.key} className="flex items-center">
+                <label className="flex items-center" key={option.key}>
                   <input
-                    type="radio"
-                    name={filterGroup.key}
                     checked={selectedFilters[filterGroup.key] === option.value}
-                    onChange={() => handleFilterChange(filterGroup.key, option.value)}
-                    className="h-4 w-4 text-blue-600 border-border"
+                    className="h-4 w-4 border-border text-blue-600"
+                    name={filterGroup.key}
+                    onChange={() =>
+                      handleFilterChange(filterGroup.key, option.value)
+                    }
+                    type="radio"
                   />
-                  <span className="ml-2 text-sm text-secondary-foreground">{option.label}</span>
+                  <span className="ml-2 text-secondary-foreground text-sm">
+                    {option.label}
+                  </span>
                 </label>
               ))}
             </div>
@@ -80,16 +91,23 @@ export function SearchFilters({
           {filterGroup.type === 'range' && (
             <div className="space-y-2">
               <input
-                type="range"
+                className="h-2 w-full cursor-pointer appearance-none rounded-[var(--radius-lg)] bg-accent"
+                max={
+                  filterGroup.options[filterGroup.options.length - 1]?.value ||
+                  100
+                }
                 min={filterGroup.options[0]?.value || 0}
-                max={filterGroup.options[filterGroup.options.length - 1]?.value || 100}
+                onChange={(e) =>
+                  handleFilterChange(filterGroup.key, Number(e.target.value))
+                }
+                type="range"
                 value={selectedFilters[filterGroup.key] || 0}
-                onChange={(e) => handleFilterChange(filterGroup.key, Number(e.target.value))}
-                className="w-full h-2 bg-accent rounded-[var(--radius-lg)] appearance-none cursor-pointer"
               />
-              <div className="flex justify-between text-xs text-muted-foreground">
+              <div className="flex justify-between text-muted-foreground text-xs">
                 <span>{filterGroup.options[0]?.label}</span>
-                <span>{filterGroup.options[filterGroup.options.length - 1]?.label}</span>
+                <span>
+                  {filterGroup.options[filterGroup.options.length - 1]?.label}
+                </span>
               </div>
             </div>
           )}

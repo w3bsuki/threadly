@@ -55,7 +55,7 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
       const touch = e.touches[0];
       const deltaY = startY - touch.clientY;
       const deltaX = Math.abs(touch.clientX - startX);
-      
+
       // Swipe up detection
       if (deltaY > 50 && deltaX < 30 && startY > window.innerHeight - 100) {
         triggerHapticFeedback();
@@ -63,7 +63,9 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
       }
     };
 
-    document.addEventListener('touchstart', handleTouchStart, { passive: true });
+    document.addEventListener('touchstart', handleTouchStart, {
+      passive: true,
+    });
     document.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     return () => {
@@ -94,7 +96,7 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
   };
 
   return (
-    <motion.div 
+    <motion.div
       animate={controls}
       className="fixed inset-0 z-50 flex flex-col bg-background"
       drag="y"
@@ -133,7 +135,7 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
           aria-expanded={showCategories}
           aria-label="Toggle categories"
           className={cn(
-            "h-11 w-11 rounded-[var(--radius-lg)] transition-all",
+            'h-11 w-11 rounded-[var(--radius-lg)] transition-all',
             showCategories ? 'bg-secondary' : 'hover:bg-muted'
           )}
           onClick={() => {
@@ -217,9 +219,7 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
                             <Link
                               aria-label={`Browse ${sub.name} in ${category.name}${sub.popular ? ' - Popular' : ''}`}
                               className={`flex min-h-[44px] items-center gap-2 bg-muted p-3 transition-colors hover:bg-background ${
-                                sub.popular
-                                  ? 'ring-1 ring-blue-200'
-                                  : ''
+                                sub.popular ? 'ring-1 ring-blue-200' : ''
                               }`}
                               href={sub.href}
                               key={sub.name}

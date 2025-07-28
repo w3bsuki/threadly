@@ -1,6 +1,10 @@
-import { render as rtlRender, type RenderOptions, type RenderResult } from '@testing-library/react';
+import {
+  type RenderOptions,
+  type RenderResult,
+  render as rtlRender,
+} from '@testing-library/react';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
-import { ReactElement, ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
 // Custom providers wrapper
 interface ProvidersProps {
@@ -29,36 +33,36 @@ function customRender(
 
 // Export specific items to avoid conflicts
 export {
-  screen,
-  fireEvent,
-  waitFor,
   act,
-  within,
   cleanup,
-  queryByTestId,
-  findByTestId,
-  getByRole,
-  queryByRole,
-  findByRole,
-  getByText,
-  queryByText,
-  findByText,
-  getByLabelText,
-  queryByLabelText,
+  findByDisplayValue,
   findByLabelText,
-  getByPlaceholderText,
-  queryByPlaceholderText,
   findByPlaceholderText,
+  findByRole,
+  findByTestId,
+  findByText,
+  fireEvent,
   getByDisplayValue,
+  getByLabelText,
+  getByPlaceholderText,
+  getByRole,
+  getByText,
   queryByDisplayValue,
-  findByDisplayValue
+  queryByLabelText,
+  queryByPlaceholderText,
+  queryByRole,
+  queryByTestId,
+  queryByText,
+  screen,
+  waitFor,
+  within,
 } from '@testing-library/react';
 
 export { customRender as render };
 
 // Helper to render with user event
 export function renderWithUser(
-  ui: ReactElement, 
+  ui: ReactElement,
   options?: Omit<RenderOptions, 'wrapper'>
 ): RenderResult & { user: UserEvent } {
   return {
@@ -69,14 +73,14 @@ export function renderWithUser(
 
 // Helper to render async components
 export async function renderAsync(
-  ui: ReactElement, 
+  ui: ReactElement,
   options?: Omit<RenderOptions, 'wrapper'>
 ): Promise<RenderResult & { user: UserEvent }> {
   const result = customRender(ui, options);
-  
+
   // Wait for any async operations to complete
-  await new Promise(resolve => setTimeout(resolve, 0));
-  
+  await new Promise((resolve) => setTimeout(resolve, 0));
+
   return result;
 }
 
@@ -92,7 +96,7 @@ export function renderWithViewport(
     configurable: true,
     value: viewport.width,
   });
-  
+
   Object.defineProperty(window, 'innerHeight', {
     writable: true,
     configurable: true,
@@ -122,9 +126,11 @@ export function getByTestId(container: HTMLElement, testId: string) {
   if (!element) {
     throw new Error(
       `Unable to find element with data-testid="${testId}". ` +
-      `Available test ids: ${Array.from(container.querySelectorAll('[data-testid]'))
-        .map(el => el.getAttribute('data-testid'))
-        .join(', ')}`
+        `Available test ids: ${Array.from(
+          container.querySelectorAll('[data-testid]')
+        )
+          .map((el) => el.getAttribute('data-testid'))
+          .join(', ')}`
     );
   }
   return element;
@@ -133,20 +139,20 @@ export function getByTestId(container: HTMLElement, testId: string) {
 // Helper to wait for loading states to complete
 export async function waitForLoading(container: HTMLElement) {
   const { findByTestId, queryByTestId } = rtlRender(<div />, { container });
-  
+
   // Wait for loading indicators to disappear
   const loadingIndicators = [
     'loading',
     'spinner',
     'skeleton',
     'loading-spinner',
-    'loading-indicator'
+    'loading-indicator',
   ];
 
   for (const indicator of loadingIndicators) {
     const element = queryByTestId(indicator);
     if (element) {
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         const observer = new MutationObserver(() => {
           if (!container.contains(element)) {
             observer.disconnect();
@@ -167,8 +173,8 @@ export async function testAccessibility(container: HTMLElement) {
     'button, input, select, textarea, a[href]'
   );
 
-  interactiveElements.forEach(element => {
-    if (!element.getAttribute('aria-label') && !element.textContent?.trim()) {
+  interactiveElements.forEach((element) => {
+    if (!(element.getAttribute('aria-label') || element.textContent?.trim())) {
     }
   });
 

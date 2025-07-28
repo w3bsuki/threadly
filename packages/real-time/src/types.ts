@@ -41,7 +41,11 @@ export type PresenceEvent = {
   };
 };
 
-export type RealTimeEvent = MessageEvent | TypingEvent | NotificationEvent | PresenceEvent;
+export type RealTimeEvent =
+  | MessageEvent
+  | TypingEvent
+  | NotificationEvent
+  | PresenceEvent;
 
 export interface RealTimeConfig {
   pusherKey: string;
@@ -58,7 +62,11 @@ export interface ChannelSubscription {
 }
 
 export interface RealTimeClient {
-  subscribe(channel: string, event: string, callback: (data: any) => void): ChannelSubscription;
+  subscribe(
+    channel: string,
+    event: string,
+    callback: (data: any) => void
+  ): ChannelSubscription;
   trigger(channel: string, event: string, data: any): void;
   presence: {
     subscribe(channel: string): Promise<void>;

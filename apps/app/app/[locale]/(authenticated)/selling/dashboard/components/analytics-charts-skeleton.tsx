@@ -1,6 +1,10 @@
-import { Card, CardContent, CardHeader } from '@repo/design-system/components';
-import { Skeleton } from '@repo/design-system/components';
-import { BarChart3, TrendingUp, Activity } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Skeleton,
+} from '@repo/design-system/components';
+import { Activity, BarChart3, TrendingUp } from 'lucide-react';
 
 export function AnalyticsChartsSkeleton() {
   return (
@@ -12,15 +16,15 @@ export function AnalyticsChartsSkeleton() {
           <BarChart3 className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <Skeleton className="h-8 w-24 mb-1" />
-          <Skeleton className="h-3 w-28 mb-4" />
-          <div className="h-[120px] relative">
+          <Skeleton className="mb-1 h-8 w-24" />
+          <Skeleton className="mb-4 h-3 w-28" />
+          <div className="relative h-[120px]">
             {/* Chart area skeleton */}
             <div className="absolute inset-0 flex items-end justify-between gap-1">
               {Array.from({ length: 7 }).map((_, i) => (
-                <div key={i} className="flex-1 flex flex-col justify-end">
-                  <Skeleton 
-                    className="w-full" 
+                <div className="flex flex-1 flex-col justify-end" key={i}>
+                  <Skeleton
+                    className="w-full"
                     style={{ height: `${Math.random() * 60 + 40}%` }}
                   />
                 </div>
@@ -37,15 +41,15 @@ export function AnalyticsChartsSkeleton() {
           <TrendingUp className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <Skeleton className="h-8 w-16 mb-1" />
-          <Skeleton className="h-3 w-28 mb-4" />
-          <div className="h-[120px] relative">
+          <Skeleton className="mb-1 h-8 w-16" />
+          <Skeleton className="mb-4 h-3 w-28" />
+          <div className="relative h-[120px]">
             {/* Bar chart skeleton */}
             <div className="absolute inset-0 flex items-end justify-between gap-1">
               {Array.from({ length: 7 }).map((_, i) => (
-                <div key={i} className="flex-1 flex flex-col justify-end">
-                  <Skeleton 
-                    className="w-full rounded-t-sm" 
+                <div className="flex flex-1 flex-col justify-end" key={i}>
+                  <Skeleton
+                    className="w-full rounded-t-sm"
                     style={{ height: `${Math.random() * 60 + 40}%` }}
                   />
                 </div>
@@ -62,13 +66,14 @@ export function AnalyticsChartsSkeleton() {
           <Activity className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <Skeleton className="h-8 w-20 mb-1" />
-          <Skeleton className="h-3 w-28 mb-4" />
-          <div className="h-[120px] relative">
+          <Skeleton className="mb-1 h-8 w-20" />
+          <Skeleton className="mb-4 h-3 w-28" />
+          <div className="relative h-[120px]">
             {/* Line chart skeleton */}
             <div className="absolute inset-0">
-              <svg className="w-full h-full">
+              <svg className="h-full w-full">
                 <path
+                  className="text-muted-foreground/20"
                   d={`M 0 ${60 + Math.random() * 40} 
                       Q ${100 / 6} ${40 + Math.random() * 40} ${200 / 6} ${50 + Math.random() * 40}
                       T ${300 / 6} ${45 + Math.random() * 40}
@@ -78,7 +83,6 @@ export function AnalyticsChartsSkeleton() {
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
-                  className="text-muted-foreground/20"
                   transform="scale(3.5, 1)"
                 />
               </svg>

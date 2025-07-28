@@ -1,35 +1,41 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Button } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { Input } from '@repo/design-system/components';
-import { Checkbox } from '@repo/design-system/components';
-import { LazyAvatar } from '@repo/design-system/components';
-import { 
-  MoreVertical, 
-  Search,
-  Shield,
-  UserX,
-  Mail,
-  Eye,
-  UserMinus,
-  UserCheck,
-  Users
-} from 'lucide-react';
 import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Checkbox,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  Input,
+  LazyAvatar,
 } from '@repo/design-system/components';
-import Link from 'next/link';
-import { UserActions } from './user-actions';
-import { bulkUpdateUsers } from './actions';
-import { CursorPagination, useCursorPagination } from '@repo/design-system/components/marketplace';
+import {
+  CursorPagination,
+  useCursorPagination,
+} from '@repo/design-system/components/marketplace';
 import type { CursorPaginationResult } from '@repo/design-system/lib/pagination';
+import {
+  Eye,
+  Mail,
+  MoreVertical,
+  Search,
+  Shield,
+  UserCheck,
+  UserMinus,
+  Users,
+  UserX,
+} from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useCallback, useState } from 'react';
+import { bulkUpdateUsers } from './actions';
+import { UserActions } from './user-actions';
 
 interface UserWithDetails {
   id: string;
@@ -69,7 +75,7 @@ function UserTable({ users }: { users: UserWithDetails[] }) {
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedUsers(users.map(u => u.id));
+      setSelectedUsers(users.map((u) => u.id));
     } else {
       setSelectedUsers([]);
     }
@@ -77,15 +83,17 @@ function UserTable({ users }: { users: UserWithDetails[] }) {
 
   const handleSelectUser = (userId: string, checked: boolean) => {
     if (checked) {
-      setSelectedUsers(prev => [...prev, userId]);
+      setSelectedUsers((prev) => [...prev, userId]);
     } else {
-      setSelectedUsers(prev => prev.filter(id => id !== userId));
+      setSelectedUsers((prev) => prev.filter((id) => id !== userId));
     }
   };
 
-  const handleBulkAction = async (action: 'suspend' | 'unsuspend' | 'verify') => {
+  const handleBulkAction = async (
+    action: 'suspend' | 'unsuspend' | 'verify'
+  ) => {
     if (selectedUsers.length === 0) return;
-    
+
     setIsUpdating(true);
     try {
       await bulkUpdateUsers({
@@ -105,36 +113,36 @@ function UserTable({ users }: { users: UserWithDetails[] }) {
     <div className="space-y-4">
       {/* Bulk Actions */}
       {selectedUsers.length > 0 && (
-        <div className="flex items-center gap-2 p-4 bg-muted/50 rounded-[var(--radius-lg)]">
-          <span className="text-sm font-medium">
+        <div className="flex items-center gap-2 rounded-[var(--radius-lg)] bg-muted/50 p-4">
+          <span className="font-medium text-sm">
             {selectedUsers.length} users selected
           </span>
           <div className="flex gap-2">
             <Button
+              disabled={isUpdating}
+              onClick={() => handleBulkAction('suspend')}
               size="sm"
               variant="destructive"
-              onClick={() => handleBulkAction('suspend')}
-              disabled={isUpdating}
             >
-              <UserMinus className="h-4 w-4 mr-1" />
+              <UserMinus className="mr-1 h-4 w-4" />
               Suspend
             </Button>
             <Button
+              disabled={isUpdating}
+              onClick={() => handleBulkAction('unsuspend')}
               size="sm"
               variant="outline"
-              onClick={() => handleBulkAction('unsuspend')}
-              disabled={isUpdating}
             >
-              <UserCheck className="h-4 w-4 mr-1" />
+              <UserCheck className="mr-1 h-4 w-4" />
               Unsuspend
             </Button>
             <Button
+              disabled={isUpdating}
+              onClick={() => handleBulkAction('verify')}
               size="sm"
               variant="outline"
-              onClick={() => handleBulkAction('verify')}
-              disabled={isUpdating}
             >
-              <Shield className="h-4 w-4 mr-1" />
+              <Shield className="mr-1 h-4 w-4" />
               Verify
             </Button>
           </div>
@@ -145,53 +153,61 @@ function UserTable({ users }: { users: UserWithDetails[] }) {
         <table className="w-full">
           <thead>
             <tr className="border-b">
-              <th className="text-left p-2 font-medium w-12">
+              <th className="w-12 p-2 text-left font-medium">
                 <Checkbox
-                  checked={selectedUsers.length === users.length && users.length > 0}
+                  checked={
+                    selectedUsers.length === users.length && users.length > 0
+                  }
                   onCheckedChange={handleSelectAll}
                 />
               </th>
-              <th className="text-left p-2 font-medium">User</th>
-              <th className="text-left p-2 font-medium">Role</th>
-              <th className="text-left p-2 font-medium">Stats</th>
-              <th className="text-left p-2 font-medium">Joined</th>
-              <th className="text-left p-2 font-medium">Status</th>
-              <th className="text-right p-2 font-medium">Actions</th>
+              <th className="p-2 text-left font-medium">User</th>
+              <th className="p-2 text-left font-medium">Role</th>
+              <th className="p-2 text-left font-medium">Stats</th>
+              <th className="p-2 text-left font-medium">Joined</th>
+              <th className="p-2 text-left font-medium">Status</th>
+              <th className="p-2 text-right font-medium">Actions</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
-              <tr key={user.id} className="border-b hover:bg-muted/50">
+              <tr className="border-b hover:bg-muted/50" key={user.id}>
                 <td className="p-2">
                   <Checkbox
                     checked={selectedUsers.includes(user.id)}
-                    onCheckedChange={(checked) => handleSelectUser(user.id, checked as boolean)}
+                    onCheckedChange={(checked) =>
+                      handleSelectUser(user.id, checked as boolean)
+                    }
                   />
                 </td>
                 <td className="p-2">
                   <div className="flex items-center gap-3">
                     <LazyAvatar
-                      src={user.imageUrl}
                       alt={`${user.firstName || ''} ${user.lastName || ''}`}
-                      size="md"
                       fallbackInitials={`${user.firstName?.[0] || user.email[0] || ''}${user.lastName?.[0] || ''}`}
+                      size="md"
+                      src={user.imageUrl}
                     />
                     <div>
                       <p className="font-medium">
                         {user.firstName || ''} {user.lastName || ''}
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         {user.email}
                       </p>
                     </div>
                   </div>
                 </td>
                 <td className="p-2">
-                  <Badge variant={
-                    user.role === 'ADMIN' ? 'destructive' : 
-                    user.role === 'MODERATOR' ? 'default' : 
-                    'secondary'
-                  }>
+                  <Badge
+                    variant={
+                      user.role === 'ADMIN'
+                        ? 'destructive'
+                        : user.role === 'MODERATOR'
+                          ? 'default'
+                          : 'secondary'
+                    }
+                  >
                     {user.role}
                   </Badge>
                 </td>
@@ -199,7 +215,8 @@ function UserTable({ users }: { users: UserWithDetails[] }) {
                   <div className="text-sm">
                     <p>{user._count.Product} listings</p>
                     <p className="text-muted-foreground">
-                      {user._count.Order_Order_sellerIdToUser} sales • {user._count.Order_Order_buyerIdToUser} purchases
+                      {user._count.Order_Order_sellerIdToUser} sales •{' '}
+                      {user._count.Order_Order_buyerIdToUser} purchases
                     </p>
                   </div>
                 </td>
@@ -211,9 +228,7 @@ function UserTable({ users }: { users: UserWithDetails[] }) {
                 <td className="p-2">
                   <div className="flex gap-2">
                     {user.suspended && (
-                      <Badge variant="destructive">
-                        Suspended
-                      </Badge>
+                      <Badge variant="destructive">Suspended</Badge>
                     )}
                     <Badge variant={user.verified ? 'default' : 'outline'}>
                       {user.verified ? 'Verified' : 'Unverified'}
@@ -232,7 +247,11 @@ function UserTable({ users }: { users: UserWithDetails[] }) {
   );
 }
 
-export default function AdminUsersClient({ paginatedData, search, roleFilter }: AdminUsersClientProps): React.JSX.Element {
+export default function AdminUsersClient({
+  paginatedData,
+  search,
+  roleFilter,
+}: AdminUsersClientProps): React.JSX.Element {
   const [users, setUsers] = useState(paginatedData.items);
   const { state, updateState } = useCursorPagination({
     cursor: paginatedData.nextCursor,
@@ -256,7 +275,7 @@ export default function AdminUsersClient({ paginatedData, search, roleFilter }: 
       const response = await fetch(`/api/admin/users?${params}`);
       const data = await response.json();
 
-      setUsers(prev => [...prev, ...data.items]);
+      setUsers((prev) => [...prev, ...data.items]);
       updateState({
         cursor: data.nextCursor,
         hasNextPage: data.hasNextPage,
@@ -265,60 +284,67 @@ export default function AdminUsersClient({ paginatedData, search, roleFilter }: 
     } catch (error) {
       updateState({ isLoading: false });
     }
-  }, [state.cursor, state.hasNextPage, state.isLoading, search, roleFilter, updateState]);
+  }, [
+    state.cursor,
+    state.hasNextPage,
+    state.isLoading,
+    search,
+    roleFilter,
+    updateState,
+  ]);
 
   // Calculate stats from current page users only (admin needs total stats in future)
   const roleStats: RoleStats = {
     total: paginatedData.totalCount || users.length,
-    admins: users.filter(u => u.role === 'ADMIN').length,
-    moderators: users.filter(u => u.role === 'MODERATOR').length,
-    users: users.filter(u => u.role === 'USER').length
+    admins: users.filter((u) => u.role === 'ADMIN').length,
+    moderators: users.filter((u) => u.role === 'MODERATOR').length,
+    users: users.filter((u) => u.role === 'USER').length,
   };
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">User Management</h1>
-        <p className="text-muted-foreground mt-2">
+        <h1 className="font-bold text-3xl">User Management</h1>
+        <p className="mt-2 text-muted-foreground">
           Manage users, roles, and permissions
         </p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+            <CardTitle className="font-medium text-sm">Total Users</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{roleStats.total}</div>
+            <div className="font-bold text-2xl">{roleStats.total}</div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Admins</CardTitle>
+            <CardTitle className="font-medium text-sm">Admins</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{roleStats.admins}</div>
+            <div className="font-bold text-2xl">{roleStats.admins}</div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Moderators</CardTitle>
+            <CardTitle className="font-medium text-sm">Moderators</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{roleStats.moderators}</div>
+            <div className="font-bold text-2xl">{roleStats.moderators}</div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">Regular Users</CardTitle>
+            <CardTitle className="font-medium text-sm">Regular Users</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{roleStats.users}</div>
+            <div className="font-bold text-2xl">{roleStats.users}</div>
           </CardContent>
         </Card>
       </div>
@@ -330,18 +356,18 @@ export default function AdminUsersClient({ paginatedData, search, roleFilter }: 
             <CardTitle>Users</CardTitle>
             <div className="flex items-center gap-2">
               <form className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-muted-foreground" />
                 <Input
-                  placeholder="Search users..."
-                  name="q"
+                  className="w-[300px] pl-10"
                   defaultValue={search}
-                  className="pl-10 w-[300px]"
+                  name="q"
+                  placeholder="Search users..."
                 />
               </form>
-              
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm">
+                  <Button size="sm" variant="outline">
                     Role: {roleFilter === 'all' ? 'All' : roleFilter}
                   </Button>
                 </DropdownMenuTrigger>
@@ -369,11 +395,11 @@ export default function AdminUsersClient({ paginatedData, search, roleFilter }: 
       </Card>
 
       <CursorPagination
-        state={state}
-        onLoadMore={loadMore}
-        loadMoreText="Load More Users"
         currentCount={users.length}
+        loadMoreText="Load More Users"
+        onLoadMore={loadMore}
         showStats={true}
+        state={state}
       />
     </div>
   );

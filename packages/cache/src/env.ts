@@ -7,10 +7,10 @@ export const keys = () =>
       // Upstash Redis configuration (recommended for production)
       UPSTASH_REDIS_REST_URL: z.string().url().optional(),
       UPSTASH_REDIS_REST_TOKEN: z.string().min(1).optional(),
-      
+
       // Alternative Redis URL (standard Redis connection)
       REDIS_URL: z.string().url().optional(),
-      
+
       // Cache configuration
       CACHE_TTL_DEFAULT: z.coerce.number().default(3600), // 1 hour
       CACHE_ENABLED: z.coerce.boolean().default(true),

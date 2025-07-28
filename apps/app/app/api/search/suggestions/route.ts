@@ -1,7 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { log, logError } from '@repo/observability/server';
 import { getSearchService } from '@repo/search';
-import { log } from '@repo/observability/server';
-import { logError } from '@repo/observability/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 let searchService: ReturnType<typeof getSearchService> | null = null;
 
@@ -14,8 +13,11 @@ export async function GET(request: NextRequest) {
       const searchOnlyApiKey = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY;
       const indexName = process.env.ALGOLIA_INDEX_NAME;
 
-      if (!appId || !apiKey || !searchOnlyApiKey || !indexName) {
-        logError('[Search Suggestions API] Missing required environment variables', new Error('Missing Algolia environment variables'));
+      if (!(appId && apiKey && searchOnlyApiKey && indexName)) {
+        logError(
+          '[Search Suggestions API] Missing required environment variables',
+          new Error('Missing Algolia environment variables')
+        );
         return NextResponse.json(
           { error: 'Search service not configured' },
           { status: 503 }
@@ -32,7 +34,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q');
-    const limit = parseInt(searchParams.get('limit') || '5');
+    const limit = Number.parseInt(searchParams.get('limit') || '5');
 
     if (!query || query.length < 2) {
       return NextResponse.json([]);

@@ -1,7 +1,7 @@
 'use client';
 
+import { forwardRef, type HTMLAttributes } from 'react';
 import { cn } from '../../lib/utils';
-import { HTMLAttributes, forwardRef } from 'react';
 
 interface HeaderActionsProps extends HTMLAttributes<HTMLDivElement> {
   spacing?: 'tight' | 'normal' | 'loose';
@@ -17,12 +17,8 @@ export const HeaderActions = forwardRef<HTMLDivElement, HeaderActionsProps>(
 
     return (
       <div
+        className={cn('flex items-center', spacingClasses[spacing], className)}
         ref={ref}
-        className={cn(
-          'flex items-center',
-          spacingClasses[spacing],
-          className
-        )}
         {...props}
       >
         {children}

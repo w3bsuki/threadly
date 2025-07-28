@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface UseTypingIndicatorOptions {
   conversationId: string;
@@ -12,10 +12,10 @@ interface UseTypingIndicatorOptions {
 /**
  * Hook for managing typing indicators in conversations
  */
-export function useTypingIndicator({ 
-  conversationId, 
+export function useTypingIndicator({
+  conversationId,
   enabled = true,
-  debounceMs = 1000 
+  debounceMs = 1000,
 }: UseTypingIndicatorOptions) {
   const { user } = useUser();
   const [isTyping, setIsTyping] = useState(false);
@@ -24,22 +24,25 @@ export function useTypingIndicator({
   const isUserTypingRef = useRef(false);
 
   // Send typing status to server
-  const sendTypingStatus = useCallback(async (typing: boolean) => {
-    if (!enabled || !user?.id) return;
+  const sendTypingStatus = useCallback(
+    async (typing: boolean) => {
+      if (!(enabled && user?.id)) return;
 
-    try {
-      await fetch('/api/messages/typing', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          conversationId,
-          isTyping: typing,
-        }),
-      });
-    } catch (error) {
-      console.error('Failed to send typing status:', error);
-    }
-  }, [conversationId, enabled, user]);
+      try {
+        await fetch('/api/messages/typing', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            conversationId,
+            isTyping: typing,
+          }),
+        });
+      } catch (error) {
+        console.error('Failed to send typing status:', error);
+      }
+    },
+    [conversationId, enabled, user]
+  );
 
   // Start typing
   const startTyping = useCallback(() => {
@@ -62,7 +65,7 @@ export function useTypingIndicator({
 
   // Stop typing
   const stopTyping = useCallback(() => {
-    if (!enabled || !isUserTypingRef.current) return;
+    if (!(enabled && isUserTypingRef.current)) return;
 
     isUserTypingRef.current = false;
     setIsTyping(false);
@@ -75,38 +78,44 @@ export function useTypingIndicator({
   }, [enabled, sendTypingStatus]);
 
   // Handle input change (automatically manages typing state)
-  const handleInputChange = useCallback((value: string) => {
-    if (!enabled) return;
+  const handleInputChange = useCallback(
+    (value: string) => {
+      if (!enabled) return;
 
-    if (value.trim() && !isUserTypingRef.current) {
-      startTyping();
-    } else if (!value.trim() && isUserTypingRef.current) {
-      stopTyping();
-    } else if (value.trim() && isUserTypingRef.current) {
-      // Reset timeout
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-      timeoutRef.current = setTimeout(() => {
+      if (value.trim() && !isUserTypingRef.current) {
+        startTyping();
+      } else if (!value.trim() && isUserTypingRef.current) {
         stopTyping();
-      }, debounceMs);
-    }
-  }, [enabled, startTyping, stopTyping, debounceMs]);
+      } else if (value.trim() && isUserTypingRef.current) {
+        // Reset timeout
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+        timeoutRef.current = setTimeout(() => {
+          stopTyping();
+        }, debounceMs);
+      }
+    },
+    [enabled, startTyping, stopTyping, debounceMs]
+  );
 
   // Handle typing events from other users
-  const handleUserTyping = useCallback((userId: string, typing: boolean) => {
-    if (userId === user?.id) return; // Ignore own typing events
+  const handleUserTyping = useCallback(
+    (userId: string, typing: boolean) => {
+      if (userId === user?.id) return; // Ignore own typing events
 
-    setTypingUsers(prev => {
-      const newSet = new Set(prev);
-      if (typing) {
-        newSet.add(userId);
-      } else {
-        newSet.delete(userId);
-      }
-      return newSet;
-    });
-  }, [user?.id]);
+      setTypingUsers((prev) => {
+        const newSet = new Set(prev);
+        if (typing) {
+          newSet.add(userId);
+        } else {
+          newSet.delete(userId);
+        }
+        return newSet;
+      });
+    },
+    [user?.id]
+  );
 
   // Get typing users with their info
   const getTypingUsersInfo = useCallback(async () => {
@@ -166,7 +175,7 @@ export function useTypingIndicator({
     startTyping,
     stopTyping,
     handleInputChange,
-    
+
     // Other users typing state
     typingUsers,
     typingUsersCount: typingUsers.size,
@@ -174,7 +183,7 @@ export function useTypingIndicator({
     getTypingText,
     getTypingUsersInfo,
     handleUserTyping,
-    
+
     // Utilities
     enabled,
   };

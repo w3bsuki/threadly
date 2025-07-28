@@ -1,18 +1,21 @@
 'use client';
 
-import { useSearch, type SearchFilters } from '@/lib/hooks/use-search';
-import { AddToCartButton } from '@/components/add-to-cart-button';
-import { Button } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { LazyImage } from '@repo/design-system/components';
-import { AlertCircle, Loader2, Search } from 'lucide-react';
-import { Alert, AlertDescription } from '@repo/design-system/components';
-import { SearchFilters as SearchFiltersComponent } from './search-filters';
-import { SavedSearches } from './saved-searches';
-import { SearchHistory } from './search-history';
-import { RecentlyViewed } from './recently-viewed';
-import { SearchResultsSkeleton } from '@repo/design-system/components';
+import {
+  Alert,
+  AlertDescription,
+  Badge,
+  Button,
+  LazyImage,
+  SearchResultsSkeleton,
+} from '@repo/design-system/components';
 import type { Dictionary } from '@repo/internationalization';
+import { AlertCircle, Loader2, Search } from 'lucide-react';
+import { AddToCartButton } from '@/components/add-to-cart-button';
+import { type SearchFilters, useSearch } from '@/lib/hooks/use-search';
+import { RecentlyViewed } from './recently-viewed';
+import { SavedSearches } from './saved-searches';
+import { SearchFilters as SearchFiltersComponent } from './search-filters';
+import { SearchHistory } from './search-history';
 
 interface SearchResultsProps {
   initialQuery?: string;
@@ -20,7 +23,11 @@ interface SearchResultsProps {
   dictionary: Dictionary;
 }
 
-export function SearchResults({ initialQuery = '', initialFilters, dictionary }: SearchResultsProps) {
+export function SearchResults({
+  initialQuery = '',
+  initialFilters,
+  dictionary,
+}: SearchResultsProps) {
   const {
     filters,
     results,
@@ -62,20 +69,22 @@ export function SearchResults({ initialQuery = '', initialFilters, dictionary }:
       <div className="space-y-8">
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <Search className="h-12 w-12 text-muted-foreground" />
-          <h3 className="mt-4 text-lg font-semibold">{dictionary.dashboard.search.title}</h3>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <h3 className="mt-4 font-semibold text-lg">
+            {dictionary.dashboard.search.title}
+          </h3>
+          <p className="mt-2 text-muted-foreground text-sm">
             {dictionary.dashboard.search.searchPlaceholder}
           </p>
         </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          <SavedSearches 
-            currentQuery={filters.query}
+
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 lg:grid-cols-3">
+          <SavedSearches
             currentFilters={filters}
+            currentQuery={filters.query}
           />
           <SearchHistory
-            onSearchSelect={(query) => updateFilters({ query })}
             currentQuery={filters.query}
+            onSearchSelect={(query) => updateFilters({ query })}
           />
           <RecentlyViewed />
         </div>
@@ -88,9 +97,12 @@ export function SearchResults({ initialQuery = '', initialFilters, dictionary }:
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <Search className="h-12 w-12 text-muted-foreground" />
-        <h3 className="mt-4 text-lg font-semibold">{dictionary.dashboard.search.noResults}</h3>
-        <p className="mt-2 text-sm text-muted-foreground">
-          {dictionary.dashboard.search.noResults} "{filters.query}". {dictionary.dashboard.validation.tryAgain}.
+        <h3 className="mt-4 font-semibold text-lg">
+          {dictionary.dashboard.search.noResults}
+        </h3>
+        <p className="mt-2 text-muted-foreground text-sm">
+          {dictionary.dashboard.search.noResults} "{filters.query}".{' '}
+          {dictionary.dashboard.validation.tryAgain}.
         </p>
       </div>
     );
@@ -100,17 +112,17 @@ export function SearchResults({ initialQuery = '', initialFilters, dictionary }:
     <div className="space-y-4">
       {/* Search filters */}
       <SearchFiltersComponent
-        filters={filters}
-        onFiltersChange={updateFilters}
-        onClearFilters={clearFilters}
-        facets={results?.facets}
         dictionary={dictionary}
+        facets={results?.facets}
+        filters={filters}
+        onClearFilters={clearFilters}
+        onFiltersChange={updateFilters}
       />
 
       {/* Search metadata */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {totalResults.toLocaleString()} results
             {filters.query && ` for "${filters.query}"`}
           </p>
@@ -118,16 +130,16 @@ export function SearchResults({ initialQuery = '', initialFilters, dictionary }:
             {source === 'algolia' ? 'Fast Search' : 'Database'}
           </Badge>
         </div>
-        
+
         <div className="flex items-center gap-2">
           {filters.query && (
-            <SavedSearches 
-              currentQuery={filters.query}
+            <SavedSearches
               currentFilters={filters}
+              currentQuery={filters.query}
             />
           )}
           {results && (
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               Found in {results.processingTimeMS}ms
             </p>
           )}
@@ -137,37 +149,40 @@ export function SearchResults({ initialQuery = '', initialFilters, dictionary }:
       {/* Results grid */}
       <div className="grid auto-rows-min gap-4 md:grid-cols-3 lg:grid-cols-4">
         {results?.hits.map((product) => (
-          <div 
-            key={product.id} 
-            className="group cursor-pointer rounded-[var(--radius-xl)] border bg-card text-card-foreground shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+          <div
+            className="group cursor-pointer overflow-hidden rounded-[var(--radius-xl)] border bg-card text-card-foreground shadow-sm transition-shadow hover:shadow-md"
+            key={product.id}
           >
             <LazyImage
-              src={product.images[0] || ''}
               alt={product.title}
               aspectRatio="square"
-              fill
-              className="object-cover w-full h-full"
-              quality={80}
               blur={true}
+              className="h-full w-full object-cover"
+              fill
+              quality={80}
+              src={product.images[0] || ''}
             />
             <div className="p-3">
-              <h3 className="font-medium text-sm truncate">{product.title}</h3>
-              <p className="text-xs text-muted-foreground truncate">
+              <h3 className="truncate font-medium text-sm">{product.title}</h3>
+              <p className="truncate text-muted-foreground text-xs">
                 {product.sellerName}
               </p>
-              <div className="flex items-center gap-1 mt-1">
-                <Badge variant="outline" className="text-xs">
+              <div className="mt-1 flex items-center gap-1">
+                <Badge className="text-xs" variant="outline">
                   {product.condition}
                 </Badge>
                 {product.brand && (
-                  <Badge variant="secondary" className="text-xs">
+                  <Badge className="text-xs" variant="secondary">
                     {product.brand}
                   </Badge>
                 )}
               </div>
-              <div className="flex items-center justify-between mt-2">
-                <p className="font-semibold text-sm">${product.price.toFixed(2)}</p>
-                <AddToCartButton 
+              <div className="mt-2 flex items-center justify-between">
+                <p className="font-semibold text-sm">
+                  ${product.price.toFixed(2)}
+                </p>
+                <AddToCartButton
+                  className="touch-target"
                   product={{
                     id: product.id,
                     title: product.title,
@@ -176,21 +191,23 @@ export function SearchResults({ initialQuery = '', initialFilters, dictionary }:
                     sellerId: `seller-${product.id}`, // Generate sellerId since it's not in search results
                     seller: {
                       firstName: product.sellerName.split(' ')[0],
-                      lastName: product.sellerName.split(' ').slice(1).join(' '),
+                      lastName: product.sellerName
+                        .split(' ')
+                        .slice(1)
+                        .join(' '),
                     },
-                    images: product.images.map(url => ({ url })),
+                    images: product.images.map((url) => ({ url })),
                     size: product.size,
                     color: product.color,
                     status: 'AVAILABLE',
-                  }} 
-                  size="sm" 
+                  }}
                   showText={false}
-                  className="touch-target"
+                  size="sm"
                 />
               </div>
-              
+
               {/* Additional metadata */}
-              <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
+              <div className="mt-2 flex items-center justify-between text-muted-foreground text-xs">
                 <span>{product.views} views</span>
                 <span>{product.favorites} favorites</span>
               </div>
@@ -202,11 +219,7 @@ export function SearchResults({ initialQuery = '', initialFilters, dictionary }:
       {/* Load more button */}
       {hasMore && (
         <div className="flex justify-center pt-4">
-          <Button 
-            onClick={loadMore}
-            variant="outline"
-            disabled={loading}
-          >
+          <Button disabled={loading} onClick={loadMore} variant="outline">
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

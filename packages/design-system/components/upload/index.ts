@@ -1,14 +1,13 @@
-export { ImageUpload } from './image-upload';
-export { ImagePreview } from './image-preview';
 export { ImageGallery } from './image-gallery';
-export { UploadProgress } from './upload-progress';
-
+export { ImagePreview } from './image-preview';
+export { ImageUpload } from './image-upload';
 export type {
   ImageData,
-  UploadResult,
-  UploadFile,
-  ImageUploadProps,
-  ImagePreviewProps,
   ImageGalleryProps,
+  ImagePreviewProps,
+  ImageUploadProps,
+  UploadFile,
   UploadProgressProps,
+  UploadResult,
 } from './types';
+export { UploadProgress } from './upload-progress';

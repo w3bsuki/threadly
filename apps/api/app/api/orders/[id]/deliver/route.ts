@@ -157,7 +157,10 @@ export async function POST(
         metadata: JSON.stringify({
           orderId: order.id,
           action: 'delivered',
-          deliveryNotes: 'deliveryNotes' in validatedData ? validatedData.deliveryNotes : undefined,
+          deliveryNotes:
+            'deliveryNotes' in validatedData
+              ? validatedData.deliveryNotes
+              : undefined,
         }),
       },
     });

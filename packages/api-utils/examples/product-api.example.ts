@@ -1,30 +1,41 @@
-import { NextRequest } from 'next/server'
-import { z } from 'zod'
 import {
   createApiHandler,
-  ResponseBuilder,
   RequestValidator,
-  Sanitizer,
-  requireAuth,
+  ResponseBuilder,
   rateLimitPresets,
-} from '@repo/api-utils'
-import { prisma } from '@repo/database'
+  requireAuth,
+  Sanitizer,
+} from '@repo/api-utils';
+import { prisma } from '@repo/database';
+import { NextRequest } from 'next/server';
+import { z } from 'zod';
 
 // Define schemas
 const createProductSchema = z.object({
   title: z.string().min(3).max(255),
   description: z.string().min(10).max(5000),
-  price: z.number().positive().max(100000),
-  condition: z.enum(['NEW_WITH_TAGS', 'NEW_WITHOUT_TAGS', 'VERY_GOOD', 'GOOD', 'SATISFACTORY']),
+  price: z.number().positive().max(100_000),
+  condition: z.enum([
+    'NEW_WITH_TAGS',
+    'NEW_WITHOUT_TAGS',
+    'VERY_GOOD',
+    'GOOD',
+    'SATISFACTORY',
+  ]),
   size: z.string().optional(),
   brand: z.string().optional(),
   color: z.string().optional(),
   categoryId: z.string().cuid(),
-  images: z.array(z.object({
-    url: z.string().url(),
-    alt: z.string().optional(),
-  })).min(1).max(10),
-})
+  images: z
+    .array(
+      z.object({
+        url: z.string().url(),
+        alt: z.string().optional(),
+      })
+    )
+    .min(1)
+    .max(10),
+});
 
 const listProductsSchema = z.object({
   page: z.coerce.number().int().positive().default(1),
@@ -33,24 +44,34 @@ const listProductsSchema = z.object({
   categoryId: z.string().cuid().optional(),
   minPrice: z.coerce.number().positive().optional(),
   maxPrice: z.coerce.number().positive().optional(),
-  condition: z.enum(['NEW_WITH_TAGS', 'NEW_WITHOUT_TAGS', 'VERY_GOOD', 'GOOD', 'SATISFACTORY']).optional(),
+  condition: z
+    .enum([
+      'NEW_WITH_TAGS',
+      'NEW_WITHOUT_TAGS',
+      'VERY_GOOD',
+      'GOOD',
+      'SATISFACTORY',
+    ])
+    .optional(),
   sortBy: z.enum(['price', 'createdAt', 'views']).default('createdAt'),
   sortOrder: z.enum(['asc', 'desc']).default('desc'),
-})
+});
 
 // Example 1: Create Product Endpoint
 export const POST = createApiHandler(
   requireAuth(async (req, params, user) => {
     // Validate request body
-    const data = await RequestValidator.validateBody(req, createProductSchema)
-    
+    const data = await RequestValidator.validateBody(req, createProductSchema);
+
     // Sanitize text fields
     const sanitizedData = {
       ...data,
       title: Sanitizer.sanitizeString(data.title),
-      description: Sanitizer.sanitizeString(data.description, { maxLength: 5000 }),
+      description: Sanitizer.sanitizeString(data.description, {
+        maxLength: 5000,
+      }),
       brand: data.brand ? Sanitizer.sanitizeString(data.brand) : undefined,
-    }
+    };
 
     // Create product in database
     const product = await prisma.product.create({
@@ -77,22 +98,22 @@ export const POST = createApiHandler(
         },
         category: true,
       },
-    })
+    });
 
-    return ResponseBuilder.created(product)
+    return ResponseBuilder.created(product);
   }),
   {
     rateLimit: rateLimitPresets.standard,
     auth: { requireAuth: true, auditLog: true },
   }
-)
+);
 
 // Example 2: List Products Endpoint
 export const GET = createApiHandler(
   async (req) => {
     // Validate query parameters
-    const filters = RequestValidator.validateQuery(req, listProductsSchema)
-    
+    const filters = RequestValidator.validateQuery(req, listProductsSchema);
+
     // Build query conditions
     const where = {
       status: 'AVAILABLE',
@@ -105,13 +126,13 @@ export const GET = createApiHandler(
       }),
       ...(filters.categoryId && { categoryId: filters.categoryId }),
       ...(filters.condition && { condition: filters.condition }),
-      ...(filters.minPrice || filters.maxPrice) && {
+      ...((filters.minPrice || filters.maxPrice) && {
         price: {
           ...(filters.minPrice && { gte: filters.minPrice }),
           ...(filters.maxPrice && { lte: filters.maxPrice }),
         },
-      },
-    }
+      }),
+    };
 
     // Execute queries in parallel
     const [products, total] = await Promise.all([
@@ -139,43 +160,44 @@ export const GET = createApiHandler(
         take: filters.limit,
       }),
       prisma.product.count({ where }),
-    ])
+    ]);
 
     return ResponseBuilder.paginated(products, {
       page: filters.page,
       limit: filters.limit,
       total,
-    })
+    });
   },
   {
-    rateLimit: { windowMs: 60000, maxRequests: 100 },
+    rateLimit: { windowMs: 60_000, maxRequests: 100 },
     auth: false,
   }
-)
+);
 
 // Example 3: Update Product Endpoint with Versioning
 export const PUT = createApiHandler(
   requireAuth(async (req, params, user) => {
-    const { id } = params
-    
+    const { id } = params;
+
     // Check ownership
     const product = await prisma.product.findUnique({
       where: { id },
       select: { sellerId: true },
-    })
+    });
 
     if (!product) {
-      throw ApiError.notFound('Product')
+      throw ApiError.notFound('Product');
     }
 
     if (product.sellerId !== user.id) {
-      throw ApiError.forbidden('You can only update your own products')
+      throw ApiError.forbidden('You can only update your own products');
     }
 
     // Validate update data
-    const updateData = await RequestValidator.validateBody(req, 
+    const updateData = await RequestValidator.validateBody(
+      req,
       createProductSchema.partial()
-    )
+    );
 
     // Update product
     const updatedProduct = await prisma.product.update({
@@ -185,9 +207,9 @@ export const PUT = createApiHandler(
         images: true,
         category: true,
       },
-    })
+    });
 
-    return ResponseBuilder.success(updatedProduct)
+    return ResponseBuilder.success(updatedProduct);
   }),
   {
     auth: { requireAuth: true, auditLog: true },
@@ -196,4 +218,4 @@ export const PUT = createApiHandler(
       supportedVersions: ['v1', 'v2'],
     },
   }
-)
+);

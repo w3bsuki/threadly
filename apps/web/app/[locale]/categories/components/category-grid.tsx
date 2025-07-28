@@ -25,12 +25,9 @@ type CategoryGridProps = {
 
 export const CategoryGrid = ({ categories }: CategoryGridProps) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
       {categories.map((category) => (
-        <CategoryCard
-          key={category.id}
-          category={category}
-        />
+        <CategoryCard category={category} key={category.id} />
       ))}
     </div>
   );

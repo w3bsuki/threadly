@@ -6,24 +6,24 @@ export default defineConfig({
     'src/setup.ts',
     'src/helpers/index.ts',
     'src/mocks/index.ts',
-    'src/a11y/index.ts'
+    'src/a11y/index.ts',
   ],
   format: ['esm'],
   dts: {
     compilerOptions: {
       incremental: false,
       composite: false,
-      tsBuildInfoFile: undefined
+      tsBuildInfoFile: undefined,
     },
-    resolve: true
+    resolve: true,
   },
   splitting: true,
   sourcemap: true,
   clean: true,
   external: [
-    'react', 
-    'react-dom', 
-    'vitest', 
+    'react',
+    'react-dom',
+    'vitest',
     '@testing-library/react',
     '@testing-library/dom',
     '@testing-library/jest-dom',
@@ -37,7 +37,7 @@ export default defineConfig({
     '@repo/database',
     '@repo/error-handling',
     '@prisma/client',
-    '.prisma/client'
+    '.prisma/client',
   ],
   loader: {
     '.tsx': 'tsx',

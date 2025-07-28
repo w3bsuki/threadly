@@ -1,11 +1,11 @@
 export {
-  ProductCardSkeleton,
-  ProductGridSkeleton,
-  ProductDetailSkeleton,
   CartSkeleton,
-  CheckoutSkeleton,
-  OrderListSkeleton,
   CategoryGridSkeleton,
+  CheckoutSkeleton,
+  HeroSkeleton,
+  OrderListSkeleton,
+  ProductCardSkeleton,
+  ProductDetailSkeleton,
+  ProductGridSkeleton,
   TrendingProductsSkeleton,
-  HeroSkeleton
 } from './skeletons';

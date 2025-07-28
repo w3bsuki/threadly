@@ -1,11 +1,23 @@
 'use client';
 
-import { Component, ErrorInfo, ReactNode } from 'react';
-import { Button } from '@repo/design-system/components';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { AlertCircle, RefreshCw, Home, BarChart3, CreditCard, Package } from 'lucide-react';
-import Link from 'next/link';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@repo/design-system/components';
 import { logError, parseError } from '@repo/observability/error';
+import {
+  AlertCircle,
+  BarChart3,
+  CreditCard,
+  Home,
+  Package,
+  RefreshCw,
+} from 'lucide-react';
+import Link from 'next/link';
+import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -19,7 +31,10 @@ interface ErrorBoundaryState {
 }
 
 // Main Application Error Boundary
-export class AppErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class AppErrorBoundary extends Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -48,32 +63,33 @@ export class AppErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundar
       }
 
       return (
-        <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="flex min-h-screen items-center justify-center bg-background p-4">
           <Card className="w-full max-w-md">
             <CardHeader className="text-center">
-              <div className="mx-auto mb-4 h-12 w-12 rounded-[var(--radius-full)] bg-red-100 flex items-center justify-center">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-[var(--radius-full)] bg-red-100">
                 <AlertCircle className="h-6 w-6 text-red-600" />
               </div>
               <CardTitle className="text-xl">Something went wrong</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground text-center">
-                We're sorry, but something unexpected happened. Our team has been notified and is working on a fix.
+              <p className="text-center text-muted-foreground text-sm">
+                We're sorry, but something unexpected happened. Our team has
+                been notified and is working on a fix.
               </p>
-              
+
               <div className="space-y-2">
                 <Button
-                  onClick={() => window.location.reload()}
                   className="w-full"
+                  onClick={() => window.location.reload()}
                   variant="default"
                 >
-                  <RefreshCw className="h-4 w-4 mr-2" />
+                  <RefreshCw className="mr-2 h-4 w-4" />
                   Refresh Page
                 </Button>
-                
-                <Link href="/" className="block">
-                  <Button variant="outline" className="w-full">
-                    <Home className="h-4 w-4 mr-2" />
+
+                <Link className="block" href="/">
+                  <Button className="w-full" variant="outline">
+                    <Home className="mr-2 h-4 w-4" />
                     Go to Dashboard
                   </Button>
                 </Link>
@@ -81,10 +97,10 @@ export class AppErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundar
 
               {process.env.NODE_ENV === 'development' && this.state.error && (
                 <details className="mt-4">
-                  <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground">
+                  <summary className="cursor-pointer text-muted-foreground text-sm hover:text-foreground">
                     Error Details (Development)
                   </summary>
-                  <pre className="mt-2 text-xs bg-muted p-3 rounded overflow-auto max-h-40">
+                  <pre className="mt-2 max-h-40 overflow-auto rounded bg-muted p-3 text-xs">
                     {this.state.error.stack}
                   </pre>
                 </details>
@@ -100,7 +116,10 @@ export class AppErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundar
 }
 
 // Analytics Error Boundary
-export class AnalyticsErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class AnalyticsErrorBoundary extends Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -125,22 +144,23 @@ export class AnalyticsErrorBoundary extends Component<ErrorBoundaryProps, ErrorB
       return (
         <Card>
           <CardContent className="p-6">
-            <div className="text-center space-y-4">
-              <div className="mx-auto h-12 w-12 rounded-[var(--radius-full)] bg-orange-100 flex items-center justify-center">
+            <div className="space-y-4 text-center">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[var(--radius-full)] bg-orange-100">
                 <BarChart3 className="h-6 w-6 text-orange-600" />
               </div>
               <div>
-                <h3 className="text-sm font-medium">Analytics Unavailable</h3>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Unable to load analytics data. This won't affect your core functionality.
+                <h3 className="font-medium text-sm">Analytics Unavailable</h3>
+                <p className="mt-1 text-muted-foreground text-xs">
+                  Unable to load analytics data. This won't affect your core
+                  functionality.
                 </p>
               </div>
-              <Button 
-                size="sm" 
-                variant="outline"
+              <Button
                 onClick={() => window.location.reload()}
+                size="sm"
+                variant="outline"
               >
-                <RefreshCw className="h-3 w-3 mr-1" />
+                <RefreshCw className="mr-1 h-3 w-3" />
                 Retry
               </Button>
             </div>
@@ -154,7 +174,10 @@ export class AnalyticsErrorBoundary extends Component<ErrorBoundaryProps, ErrorB
 }
 
 // Payment Error Boundary
-export class PaymentErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class PaymentErrorBoundary extends Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -181,27 +204,30 @@ export class PaymentErrorBoundary extends Component<ErrorBoundaryProps, ErrorBou
       return (
         <Card className="border-red-200">
           <CardContent className="p-6">
-            <div className="text-center space-y-4">
-              <div className="mx-auto h-12 w-12 rounded-[var(--radius-full)] bg-red-100 flex items-center justify-center">
+            <div className="space-y-4 text-center">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[var(--radius-full)] bg-red-100">
                 <CreditCard className="h-6 w-6 text-red-600" />
               </div>
               <div>
-                <h3 className="text-sm font-medium text-red-900">Payment System Error</h3>
-                <p className="text-xs text-red-700 mt-1">
-                  There's an issue with the payment system. Please contact support if this persists.
+                <h3 className="font-medium text-red-900 text-sm">
+                  Payment System Error
+                </h3>
+                <p className="mt-1 text-red-700 text-xs">
+                  There's an issue with the payment system. Please contact
+                  support if this persists.
                 </p>
               </div>
               <div className="space-y-2">
-                <Button 
-                  size="sm" 
-                  variant="outline"
+                <Button
                   onClick={() => window.location.reload()}
+                  size="sm"
+                  variant="outline"
                 >
-                  <RefreshCw className="h-3 w-3 mr-1" />
+                  <RefreshCw className="mr-1 h-3 w-3" />
                   Retry Payment
                 </Button>
                 <Link href="/support">
-                  <Button size="sm" variant="secondary" className="w-full">
+                  <Button className="w-full" size="sm" variant="secondary">
                     Contact Support
                   </Button>
                 </Link>
@@ -217,7 +243,10 @@ export class PaymentErrorBoundary extends Component<ErrorBoundaryProps, ErrorBou
 }
 
 // Product Error Boundary
-export class ProductErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ProductErrorBoundary extends Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -242,22 +271,22 @@ export class ProductErrorBoundary extends Component<ErrorBoundaryProps, ErrorBou
       return (
         <Card>
           <CardContent className="p-6">
-            <div className="text-center space-y-4">
-              <div className="mx-auto h-12 w-12 rounded-[var(--radius-full)] bg-secondary flex items-center justify-center">
+            <div className="space-y-4 text-center">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[var(--radius-full)] bg-secondary">
                 <Package className="h-6 w-6 text-muted-foreground" />
               </div>
               <div>
-                <h3 className="text-sm font-medium">Product Load Error</h3>
-                <p className="text-xs text-muted-foreground mt-1">
+                <h3 className="font-medium text-sm">Product Load Error</h3>
+                <p className="mt-1 text-muted-foreground text-xs">
                   Unable to load product information.
                 </p>
               </div>
-              <Button 
-                size="sm" 
-                variant="outline"
+              <Button
                 onClick={() => window.location.reload()}
+                size="sm"
+                variant="outline"
               >
-                <RefreshCw className="h-3 w-3 mr-1" />
+                <RefreshCw className="mr-1 h-3 w-3" />
                 Reload
               </Button>
             </div>
@@ -271,7 +300,10 @@ export class ProductErrorBoundary extends Component<ErrorBoundaryProps, ErrorBou
 }
 
 // Form Error Boundary
-export class FormErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class FormErrorBoundary extends Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -294,21 +326,21 @@ export class FormErrorBoundary extends Component<ErrorBoundaryProps, ErrorBounda
   render() {
     if (this.state.hasError) {
       return (
-        <div className="p-4 border border-red-200 rounded-[var(--radius-lg)] bg-red-50">
-          <div className="text-center space-y-3">
-            <AlertCircle className="h-8 w-8 text-red-600 mx-auto" />
+        <div className="rounded-[var(--radius-lg)] border border-red-200 bg-red-50 p-4">
+          <div className="space-y-3 text-center">
+            <AlertCircle className="mx-auto h-8 w-8 text-red-600" />
             <div>
-              <h3 className="text-sm font-medium text-red-900">Form Error</h3>
-              <p className="text-xs text-red-700 mt-1">
+              <h3 className="font-medium text-red-900 text-sm">Form Error</h3>
+              <p className="mt-1 text-red-700 text-xs">
                 There was an issue with the form. Please refresh and try again.
               </p>
             </div>
-            <Button 
-              size="sm" 
-              variant="outline"
+            <Button
               onClick={() => window.location.reload()}
+              size="sm"
+              variant="outline"
             >
-              <RefreshCw className="h-3 w-3 mr-1" />
+              <RefreshCw className="mr-1 h-3 w-3" />
               Refresh
             </Button>
           </div>
@@ -321,15 +353,19 @@ export class FormErrorBoundary extends Component<ErrorBoundaryProps, ErrorBounda
 }
 
 // Generic Error Fallback Components for specific scenarios
-export function ChartErrorFallback({ onRetry }: { onRetry?: () => void }): React.JSX.Element {
+export function ChartErrorFallback({
+  onRetry,
+}: {
+  onRetry?: () => void;
+}): React.JSX.Element {
   return (
-    <div className="h-[120px] flex items-center justify-center border border-dashed border-muted-foreground/25 rounded-[var(--radius-lg)]">
-      <div className="text-center space-y-2">
-        <BarChart3 className="h-6 w-6 text-muted-foreground mx-auto" />
-        <p className="text-xs text-muted-foreground">Chart unavailable</p>
+    <div className="flex h-[120px] items-center justify-center rounded-[var(--radius-lg)] border border-muted-foreground/25 border-dashed">
+      <div className="space-y-2 text-center">
+        <BarChart3 className="mx-auto h-6 w-6 text-muted-foreground" />
+        <p className="text-muted-foreground text-xs">Chart unavailable</p>
         {onRetry && (
-          <Button size="sm" variant="ghost" onClick={onRetry}>
-            <RefreshCw className="h-3 w-3 mr-1" />
+          <Button onClick={onRetry} size="sm" variant="ghost">
+            <RefreshCw className="mr-1 h-3 w-3" />
             Retry
           </Button>
         )}
@@ -338,34 +374,38 @@ export function ChartErrorFallback({ onRetry }: { onRetry?: () => void }): React
   );
 }
 
-export function ImageErrorFallback({ 
-  alt, 
-  className 
-}: { 
-  alt: string; 
-  className?: string; 
+export function ImageErrorFallback({
+  alt,
+  className,
+}: {
+  alt: string;
+  className?: string;
 }): React.JSX.Element {
   return (
-    <div className={`bg-muted flex items-center justify-center ${className}`}>
-      <div className="text-center p-2">
-        <Package className="h-4 w-4 text-muted-foreground mx-auto mb-1" />
-        <p className="text-xs text-muted-foreground">Image unavailable</p>
+    <div className={`flex items-center justify-center bg-muted ${className}`}>
+      <div className="p-2 text-center">
+        <Package className="mx-auto mb-1 h-4 w-4 text-muted-foreground" />
+        <p className="text-muted-foreground text-xs">Image unavailable</p>
       </div>
     </div>
   );
 }
 
-export function LoadingErrorFallback({ onRetry }: { onRetry?: () => void }): React.JSX.Element {
+export function LoadingErrorFallback({
+  onRetry,
+}: {
+  onRetry?: () => void;
+}): React.JSX.Element {
   return (
-    <div className="text-center py-8">
-      <AlertCircle className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-      <h3 className="text-sm font-medium mb-1">Loading failed</h3>
-      <p className="text-xs text-muted-foreground mb-3">
+    <div className="py-8 text-center">
+      <AlertCircle className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
+      <h3 className="mb-1 font-medium text-sm">Loading failed</h3>
+      <p className="mb-3 text-muted-foreground text-xs">
         Unable to load content. Please try again.
       </p>
       {onRetry && (
-        <Button size="sm" variant="outline" onClick={onRetry}>
-          <RefreshCw className="h-3 w-3 mr-1" />
+        <Button onClick={onRetry} size="sm" variant="outline">
+          <RefreshCw className="mr-1 h-3 w-3" />
           Retry
         </Button>
       )}

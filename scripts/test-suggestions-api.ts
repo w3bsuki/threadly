@@ -2,7 +2,9 @@ import { PrismaClient } from '../packages/database/generated/client';
 
 if (!process.env.DATABASE_URL) {
   console.error('❌ DATABASE_URL environment variable is not set');
-  console.error('Please set the DATABASE_URL environment variable before running this script');
+  console.error(
+    'Please set the DATABASE_URL environment variable before running this script'
+  );
   process.exit(1);
 }
 
@@ -11,12 +13,10 @@ const database = new PrismaClient({
 });
 
 async function testSuggestionsLogic() {
-
   try {
     const query = 'leather';
     const searchTerm = query.toLowerCase().trim();
     const suggestions: any[] = [];
-
 
     // Get product suggestions (top 3)
     const products = await database.product.findMany({
@@ -33,14 +33,11 @@ async function testSuggestionsLogic() {
           },
         },
       },
-      orderBy: [
-        { views: 'desc' },
-        { createdAt: 'desc' },
-      ],
+      orderBy: [{ views: 'desc' }, { createdAt: 'desc' }],
       take: 3,
     });
 
-    products.forEach(product => {
+    products.forEach((product) => {
       suggestions.push({
         id: product.id,
         title: product.title,
@@ -105,7 +102,7 @@ async function testSuggestionsLogic() {
       take: 2,
     });
 
-    categories.forEach(category => {
+    categories.forEach((category) => {
       suggestions.push({
         id: category.id,
         title: category.name,
@@ -114,8 +111,6 @@ async function testSuggestionsLogic() {
     });
 
     const finalSuggestions = suggestions.slice(0, 7);
-
-
   } catch (error) {
     console.error('❌ Error testing suggestions:', error);
   } finally {

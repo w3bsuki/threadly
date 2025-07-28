@@ -1,30 +1,44 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useCartStore } from '@repo/commerce';
-import { useCheckout } from '@/lib/hooks/use-checkout';
-import { Button } from '@repo/design-system/components';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/design-system/components';
-import { Input } from '@repo/design-system/components';
-import { Label } from '@repo/design-system/components';
-import { Textarea } from '@repo/design-system/components';
-import { Separator } from '@repo/design-system/components';
-import { Badge } from '@repo/design-system/components';
-import { RadioGroup, RadioGroupItem } from '@repo/design-system/components';
-import { Checkbox } from '@repo/design-system/components';
-import { ShoppingBag, CreditCard, Truck, Shield } from 'lucide-react';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@repo/design-system/components';
-import { checkoutFormSchema, type CheckoutFormData } from '@repo/commerce';
-import { PaymentErrorBoundary } from '@/components/error-boundaries';
+import {
+  type CheckoutFormData,
+  checkoutFormSchema,
+  useCartStore,
+} from '@repo/commerce';
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Checkbox,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+  Label,
+  RadioGroup,
+  RadioGroupItem,
+  Separator,
+  Textarea,
+} from '@repo/design-system/components';
 import { formatCurrency } from '@repo/utils';
-import Link from 'next/link';
-import Image from 'next/image';
-import { createOrder } from '../actions/create-order';
 import { loadStripe } from '@stripe/stripe-js';
+import { CreditCard, Shield, ShoppingBag, Truck } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { PaymentErrorBoundary } from '@/components/error-boundaries';
 import { env } from '@/env';
+import { useCheckout } from '@/lib/hooks/use-checkout';
+import { createOrder } from '../actions/create-order';
 
 const stripePromise = loadStripe(env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -39,7 +53,9 @@ interface CheckoutContentProps {
   };
 }
 
-export function CheckoutContent({ user }: CheckoutContentProps): React.JSX.Element {
+export function CheckoutContent({
+  user,
+}: CheckoutContentProps): React.JSX.Element {
   const router = useRouter();
   const { items, getTotalPrice, clearCart } = useCartStore();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -81,7 +97,7 @@ export function CheckoutContent({ user }: CheckoutContentProps): React.JSX.Eleme
     try {
       // First, create the orders
       const orderData = {
-        items: items.map(item => ({
+        items: items.map((item) => ({
           productId: item.productId,
           quantity: item.quantity,
           price: item.price,
@@ -107,7 +123,7 @@ export function CheckoutContent({ user }: CheckoutContentProps): React.JSX.Eleme
 
       const orderResult = await createOrder(orderData);
 
-      if (!orderResult.success || !orderResult.order) {
+      if (!(orderResult.success && orderResult.order)) {
         throw new Error(orderResult.error || 'Failed to create order');
       }
 
@@ -121,7 +137,7 @@ export function CheckoutContent({ user }: CheckoutContentProps): React.JSX.Eleme
           amount: total,
           currency: 'usd',
           orderId: orderResult.order.id, // Pass the created order ID
-          orderItems: items.map(item => ({
+          orderItems: items.map((item) => ({
             productId: item.productId,
             title: item.title,
             quantity: item.quantity,
@@ -135,7 +151,7 @@ export function CheckoutContent({ user }: CheckoutContentProps): React.JSX.Eleme
       }
 
       const { clientSecret } = await paymentResponse.json();
-      
+
       // Get Stripe instance
       const stripe = await stripePromise;
       if (!stripe) {
@@ -143,27 +159,28 @@ export function CheckoutContent({ user }: CheckoutContentProps): React.JSX.Eleme
       }
 
       // Confirm payment
-      const { error: paymentError, paymentIntent } = await stripe.confirmPayment({
-        clientSecret,
-        confirmParams: {
-          return_url: `${window.location.origin}/buying/checkout/success`,
-          payment_method_data: {
-            billing_details: {
-              name: `${data.firstName} ${data.lastName}`,
-              email: data.email,
-              phone: data.phone,
-              address: {
-                line1: data.address,
-                city: data.city,
-                state: data.state,
-                postal_code: data.zipCode,
-                country: 'US',
+      const { error: paymentError, paymentIntent } =
+        await stripe.confirmPayment({
+          clientSecret,
+          confirmParams: {
+            return_url: `${window.location.origin}/buying/checkout/success`,
+            payment_method_data: {
+              billing_details: {
+                name: `${data.firstName} ${data.lastName}`,
+                email: data.email,
+                phone: data.phone,
+                address: {
+                  line1: data.address,
+                  city: data.city,
+                  state: data.state,
+                  postal_code: data.zipCode,
+                  country: 'US',
+                },
               },
             },
           },
-        },
-        redirect: 'if_required',
-      });
+          redirect: 'if_required',
+        });
 
       if (paymentError) {
         // TODO: Add proper error tracking service
@@ -185,16 +202,14 @@ export function CheckoutContent({ user }: CheckoutContentProps): React.JSX.Eleme
 
   if (items.length === 0) {
     return (
-      <div className="text-center py-12">
-        <ShoppingBag className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
-        <h3 className="text-lg font-semibold mb-2">Your cart is empty</h3>
-        <p className="text-muted-foreground mb-6">
+      <div className="py-12 text-center">
+        <ShoppingBag className="mx-auto mb-4 h-12 w-12 text-muted-foreground/50" />
+        <h3 className="mb-2 font-semibold text-lg">Your cart is empty</h3>
+        <p className="mb-6 text-muted-foreground">
           Add some items to your cart before checking out
         </p>
         <Button asChild>
-          <Link href="/buying/cart">
-            Go to Cart
-          </Link>
+          <Link href="/buying/cart">Go to Cart</Link>
         </Button>
       </div>
     );
@@ -205,16 +220,16 @@ export function CheckoutContent({ user }: CheckoutContentProps): React.JSX.Eleme
       {/* Checkout Form */}
       <div className="lg:col-span-2">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
             {/* Error Display */}
             {error && (
               <Card className="border-red-200 bg-red-50">
                 <CardContent className="p-4">
-                  <p className="text-sm text-red-800">{error}</p>
+                  <p className="text-red-800 text-sm">{error}</p>
                 </CardContent>
               </Card>
             )}
-            
+
             {/* Contact Information */}
             <Card>
               <CardHeader>
@@ -379,7 +394,9 @@ export function CheckoutContent({ user }: CheckoutContentProps): React.JSX.Eleme
                         />
                       </FormControl>
                       <div className="space-y-1 leading-none">
-                        <FormLabel>Save this address for future orders</FormLabel>
+                        <FormLabel>
+                          Save this address for future orders
+                        </FormLabel>
                       </div>
                     </FormItem>
                   )}
@@ -400,17 +417,24 @@ export function CheckoutContent({ user }: CheckoutContentProps): React.JSX.Eleme
                     <FormItem className="space-y-3">
                       <FormControl>
                         <RadioGroup
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
                           className="grid gap-4"
+                          defaultValue={field.value}
+                          onValueChange={field.onChange}
                         >
-                          <div className="flex items-center space-x-3 p-3 border rounded-[var(--radius-lg)]">
-                            <RadioGroupItem value="standard" id="standard" />
-                            <Label htmlFor="standard" className="flex-1 cursor-pointer">
-                              <div className="flex justify-between items-center">
+                          <div className="flex items-center space-x-3 rounded-[var(--radius-lg)] border p-3">
+                            <RadioGroupItem id="standard" value="standard" />
+                            <Label
+                              className="flex-1 cursor-pointer"
+                              htmlFor="standard"
+                            >
+                              <div className="flex items-center justify-between">
                                 <div>
-                                  <div className="font-medium">Standard Shipping</div>
-                                  <div className="text-sm text-muted-foreground">5-7 business days</div>
+                                  <div className="font-medium">
+                                    Standard Shipping
+                                  </div>
+                                  <div className="text-muted-foreground text-sm">
+                                    5-7 business days
+                                  </div>
                                 </div>
                                 <div className="font-medium">
                                   {subtotal > 100 ? 'Free' : '$9.99'}
@@ -419,26 +443,40 @@ export function CheckoutContent({ user }: CheckoutContentProps): React.JSX.Eleme
                             </Label>
                           </div>
 
-                          <div className="flex items-center space-x-3 p-3 border rounded-[var(--radius-lg)]">
-                            <RadioGroupItem value="express" id="express" />
-                            <Label htmlFor="express" className="flex-1 cursor-pointer">
-                              <div className="flex justify-between items-center">
+                          <div className="flex items-center space-x-3 rounded-[var(--radius-lg)] border p-3">
+                            <RadioGroupItem id="express" value="express" />
+                            <Label
+                              className="flex-1 cursor-pointer"
+                              htmlFor="express"
+                            >
+                              <div className="flex items-center justify-between">
                                 <div>
-                                  <div className="font-medium">Express Shipping</div>
-                                  <div className="text-sm text-muted-foreground">2-3 business days</div>
+                                  <div className="font-medium">
+                                    Express Shipping
+                                  </div>
+                                  <div className="text-muted-foreground text-sm">
+                                    2-3 business days
+                                  </div>
                                 </div>
                                 <div className="font-medium">$19.99</div>
                               </div>
                             </Label>
                           </div>
 
-                          <div className="flex items-center space-x-3 p-3 border rounded-[var(--radius-lg)]">
-                            <RadioGroupItem value="overnight" id="overnight" />
-                            <Label htmlFor="overnight" className="flex-1 cursor-pointer">
-                              <div className="flex justify-between items-center">
+                          <div className="flex items-center space-x-3 rounded-[var(--radius-lg)] border p-3">
+                            <RadioGroupItem id="overnight" value="overnight" />
+                            <Label
+                              className="flex-1 cursor-pointer"
+                              htmlFor="overnight"
+                            >
+                              <div className="flex items-center justify-between">
                                 <div>
-                                  <div className="font-medium">Overnight Shipping</div>
-                                  <div className="text-sm text-muted-foreground">Next business day</div>
+                                  <div className="font-medium">
+                                    Overnight Shipping
+                                  </div>
+                                  <div className="text-muted-foreground text-sm">
+                                    Next business day
+                                  </div>
                                 </div>
                                 <div className="font-medium">$39.99</div>
                               </div>
@@ -466,8 +504,8 @@ export function CheckoutContent({ user }: CheckoutContentProps): React.JSX.Eleme
                     <FormItem>
                       <FormControl>
                         <Textarea
-                          placeholder="Special delivery instructions or notes..."
                           className="min-h-20"
+                          placeholder="Special delivery instructions or notes..."
                           {...field}
                         />
                       </FormControl>
@@ -491,21 +529,23 @@ export function CheckoutContent({ user }: CheckoutContentProps): React.JSX.Eleme
             {/* Items */}
             <div className="space-y-3">
               {items.map((item) => (
-                <div key={item.id} className="flex gap-3">
-                  <div className="relative w-12 h-12 flex-shrink-0">
+                <div className="flex gap-3" key={item.id}>
+                  <div className="relative h-12 w-12 flex-shrink-0">
                     <Image
-                      src={item.imageUrl}
                       alt={item.title}
+                      className="rounded-[var(--radius-md)] object-cover"
                       fill
-                      className="object-cover rounded-[var(--radius-md)]"
+                      src={item.imageUrl}
                     />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-sm line-clamp-1">{item.title}</h4>
-                    <p className="text-xs text-muted-foreground">
+                  <div className="min-w-0 flex-1">
+                    <h4 className="line-clamp-1 font-medium text-sm">
+                      {item.title}
+                    </h4>
+                    <p className="text-muted-foreground text-xs">
                       Qty: {item.quantity}
                     </p>
-                    <p className="text-sm font-medium">
+                    <p className="font-medium text-sm">
                       ${(item.price * item.quantity).toFixed(2)}
                     </p>
                   </div>
@@ -542,17 +582,19 @@ export function CheckoutContent({ user }: CheckoutContentProps): React.JSX.Eleme
               </div>
             </div>
 
-            <Button 
-              className="w-full" 
-              size="lg"
-              onClick={form.handleSubmit(onSubmit)}
+            <Button
+              className="w-full"
               disabled={isProcessing}
+              onClick={form.handleSubmit(onSubmit)}
+              size="lg"
             >
-              <Shield className="h-4 w-4 mr-2" />
-              {isProcessing ? 'Processing...' : `Complete Order - $${total.toFixed(2)}`}
+              <Shield className="mr-2 h-4 w-4" />
+              {isProcessing
+                ? 'Processing...'
+                : `Complete Order - $${total.toFixed(2)}`}
             </Button>
 
-            <div className="text-xs text-muted-foreground text-center">
+            <div className="text-center text-muted-foreground text-xs">
               Your payment information is secure and encrypted
             </div>
           </CardContent>

@@ -10,13 +10,13 @@ const notificationQuerySchema = z.object({
 export async function GET(request: Request) {
   try {
     const { userId } = auth();
-    
+
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    
+
     const validation = notificationQuerySchema.safeParse({
       page: searchParams.get('page') || '1',
       limit: searchParams.get('limit') || '50',

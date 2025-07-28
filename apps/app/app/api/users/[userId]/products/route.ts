@@ -1,7 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { validatePaginationParams, buildCursorWhere, processPaginationResult } from '@repo/design-system/lib/pagination';
+import {
+  buildCursorWhere,
+  processPaginationResult,
+  validatePaginationParams,
+} from '@repo/design-system/lib/pagination';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
   request: NextRequest,
@@ -56,12 +60,18 @@ export async function GET(
     });
 
     // Get total count for first request
-    const totalCount = pagination.cursor ? undefined : await database.product.count({
-      where: { sellerId: userId },
-    });
+    const totalCount = pagination.cursor
+      ? undefined
+      : await database.product.count({
+          where: { sellerId: userId },
+        });
 
     // Process pagination result
-    const result = processPaginationResult(products, pagination.limit, totalCount);
+    const result = processPaginationResult(
+      products,
+      pagination.limit,
+      totalCount
+    );
 
     return NextResponse.json(result);
   } catch (error) {
