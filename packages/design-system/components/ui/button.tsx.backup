@@ -6,7 +6,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import type * as React from 'react';
 
 const buttonVariants = cva(
-  'relative inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-md)] font-medium text-sm outline-none transition-colors duration-150 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*="size-"])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0',
+  'relative inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-md)] font-medium text-sm outline-none transition-colors duration-150 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0',
   {
     variants: {
       variant: {
@@ -44,13 +44,13 @@ const buttonVariants = cva(
       },
       size: {
         // Mobile-first touch target sizes
-        xs: 'h-9 min-h-[36px] gap-1.5 px-3 text-xs before:absolute before:inset-[-4px] before:content-[""] has-[>svg]:px-2.5',
+        xs: 'h-9 min-h-[36px] gap-1.5 px-3 text-xs before:absolute before:inset-[-4px] before:content-[''] has-[>svg]:px-2.5',
         sm: 'h-10 min-h-[40px] gap-2 px-3.5 text-sm has-[>svg]:px-3',
         default: 'h-11 min-h-[44px] px-4 text-sm has-[>svg]:px-3.5',
         lg: 'h-12 min-h-[48px] px-5 text-base has-[>svg]:px-4',
         xl: 'h-14 min-h-[56px] px-6 text-base has-[>svg]:px-5',
         // Icon sizes with minimum tap targets
-        "icon-xs": 'size-9 min-h-[36px] min-w-[36px] before:absolute before:inset-[-4px] before:content-[""]',
+        "icon-xs": 'size-9 min-h-[36px] min-w-[36px] before:absolute before:inset-[-4px] before:content-['']',
         "icon-sm": "size-10 min-h-[40px] min-w-[40px]",
         "icon": "size-11 min-h-[44px] min-w-[44px]",
         "icon-lg": "size-12 min-h-[48px] min-w-[48px]", 

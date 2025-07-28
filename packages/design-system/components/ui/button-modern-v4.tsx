@@ -6,7 +6,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 
 const buttonVariants = cva(
-  'inline-flex shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-md font-medium outline-none transition-all duration-fast focus-visible:ring-2 focus-visible:ring-ring/20 focus-visible:ring-offset-1 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0',
+  'inline-flex shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-md font-medium outline-none transition-all duration-fast focus-visible:ring-2 focus-visible:ring-ring/20 focus-visible:ring-offset-1 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*="size-"])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0',
   {
     variants: {
       variant: {
@@ -29,17 +29,17 @@ const buttonVariants = cva(
       },
       size: {
         // Modern compact sizes - 36px default
-        xs: 'h-7 gap-1 px-2.5 text-xs [&_svg:not([class*='size-'])]:size-3.5',
-        sm: 'h-8 gap-1.5 px-3 text-sm [&_svg:not([class*='size-'])]:size-3.5',
+        xs: 'h-7 gap-1 px-2.5 text-xs [&_svg:not([class*="size-"])]:size-3.5',
+        sm: 'h-8 gap-1.5 px-3 text-sm [&_svg:not([class*="size-"])]:size-3.5',
         default: "h-9 px-4 text-sm",
         lg: "h-10 px-5 text-base",
         xl: 'h-11 gap-2 px-6 text-base',
         // Icon sizes - matching height variants
-        "icon-xs": "size-7 p-0 [&_svg:not([class*='size-'])]:size-3.5",
-        "icon-sm": "size-8 p-0 [&_svg:not([class*='size-'])]:size-4",
+        "icon-xs": "size-7 p-0 [&_svg:not([class*="size-"])]:size-3.5",
+        "icon-sm": "size-8 p-0 [&_svg:not([class*="size-"])]:size-4",
         "icon": "size-9 p-0",
-        "icon-lg": "size-10 p-0 [&_svg:not([class*='size-'])]:size-5",
-        "icon-xl": "size-11 p-0 [&_svg:not([class*='size-'])]:size-5",
+        "icon-lg": "size-10 p-0 [&_svg:not([class*="size-"])]:size-5",
+        "icon-xl": "size-11 p-0 [&_svg:not([class*="size-"])]:size-5",
         // Touch-optimized sizes
         "touch": 'touch-comfortable h-10 px-4 text-sm',
         "touch-lg": 'touch-large h-11 px-5 text-base',
