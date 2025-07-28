@@ -52,7 +52,10 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
     ...order,
     orderNumber: `ORD-${order.id.slice(-8).toUpperCase()}`,
     totalAmount: Number(order.totalAmount),
-    product: order.Product,
+    product: {
+      ...order.Product,
+      price: Number(order.Product.price),
+    },
     buyer: order.buyer,
     seller: order.seller,
   };
