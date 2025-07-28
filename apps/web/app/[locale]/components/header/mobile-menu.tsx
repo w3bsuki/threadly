@@ -60,6 +60,7 @@ export const MobileMenu = memo(({ isOpen, onClose }: MobileMenuProps) => {
 
     const handleTouchStart = (e: TouchEvent) => {
       const touch = e.touches[0];
+      if (!touch) return;
       startX = touch.clientX;
       startY = touch.clientY;
       isSwipeDetected = startX < 20; // Edge threshold
@@ -69,6 +70,7 @@ export const MobileMenu = memo(({ isOpen, onClose }: MobileMenuProps) => {
       if (!isSwipeDetected || isOpen) return;
 
       const touch = e.touches[0];
+      if (!touch) return;
       const deltaX = touch.clientX - startX;
       const deltaY = Math.abs(touch.clientY - startY);
 

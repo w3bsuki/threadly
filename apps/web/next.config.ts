@@ -7,6 +7,7 @@ import { env } from '@/env';
 
 let nextConfig: NextConfig = withToolbar(config);
 
+
 // Performance optimizations
 nextConfig.experimental = {
   ...nextConfig.experimental,

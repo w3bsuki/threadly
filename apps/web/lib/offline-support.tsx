@@ -31,7 +31,7 @@ export function useOnlineStatus() {
 
   return {
     isOnline,
-    isOffline: \!isOnline,
+    isOffline: !isOnline,
     lastOnlineTime,
   };
 }
@@ -48,7 +48,7 @@ interface OfflineQueueItem {
 
 class OfflineQueue {
   private queue: OfflineQueueItem[] = [];
-  private storage = typeof window \!== 'undefined' ? window.localStorage : null;
+  private storage = typeof window !== 'undefined' ? window.localStorage : null;
   private isProcessing = false;
 
   constructor() {
@@ -56,7 +56,7 @@ class OfflineQueue {
   }
 
   private loadFromStorage() {
-    if (\!this.storage) return;
+    if (!this.storage) return;
 
     try {
       const stored = this.storage.getItem('offline-queue');
@@ -70,7 +70,7 @@ class OfflineQueue {
   }
 
   private saveToStorage() {
-    if (\!this.storage) return;
+    if (!this.storage) return;
 
     try {
       this.storage.setItem('offline-queue', JSON.stringify(this.queue));
@@ -94,7 +94,7 @@ class OfflineQueue {
   }
 
   remove(id: string) {
-    this.queue = this.queue.filter((item) => item.id \!== id);
+    this.queue = this.queue.filter((item) => item.id !== id);
     this.saveToStorage();
   }
 
@@ -108,7 +108,7 @@ class OfflineQueue {
   }
 
   async processQueue() {
-    if (this.isProcessing || \!navigator.onLine) return;
+    if (this.isProcessing || !navigator.onLine) return;
 
     this.isProcessing = true;
     const failedItems: OfflineQueueItem[] = [];
@@ -124,7 +124,7 @@ class OfflineQueue {
           body: item.data ? JSON.stringify(item.data) : undefined,
         });
 
-        if (\!response.ok) {
+        if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
         }
       } catch {
@@ -191,7 +191,7 @@ export function offlineCapableFetch(
   options: RequestInit = {}
 ): Promise<Response> {
   if (
-    \!navigator.onLine &&
+    !navigator.onLine &&
     (options.method === 'POST' ||
       options.method === 'PUT' ||
       options.method === 'DELETE' ||
@@ -219,7 +219,7 @@ export function OfflineIndicator(): React.ReactElement | null {
   const { isOffline } = useOnlineStatus();
   const { queueSize } = useOfflineQueue();
 
-  if (\!isOffline && queueSize === 0) return null;
+  if (!isOffline && queueSize === 0) return null;
 
   return (
     <div className="fixed top-4 right-4 left-4 z-50 mx-auto max-w-sm">
@@ -233,7 +233,7 @@ export function OfflineIndicator(): React.ReactElement | null {
               {isOffline ? 'You are offline' : 'Back online'}
               {queueSize > 0 && (
                 <span className="ml-1">
-                  ({queueSize} pending request{queueSize \!== 1 ? 's' : ''})
+                  ({queueSize} pending request{queueSize !== 1 ? 's' : ''})
                 </span>
               )}
             </p>

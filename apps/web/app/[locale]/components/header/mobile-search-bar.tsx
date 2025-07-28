@@ -47,12 +47,14 @@ export const MobileSearchBar = ({ onClose }: MobileSearchBarProps) => {
 
     const handleTouchStart = (e: TouchEvent) => {
       const touch = e.touches[0];
+      if (!touch) return;
       startY = touch.clientY;
       startX = touch.clientX;
     };
 
     const handleTouchMove = (e: TouchEvent) => {
       const touch = e.touches[0];
+      if (!touch) return;
       const deltaY = startY - touch.clientY;
       const deltaX = Math.abs(touch.clientX - startX);
 
