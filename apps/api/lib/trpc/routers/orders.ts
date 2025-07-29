@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { createTRPCRouter, protectedProcedure, adminProcedure } from '../config';
+import { createTRPCRouter, protectedProcedure } from '../config';
 
 /**
  * Orders router
@@ -15,7 +15,7 @@ export const ordersRouter = createTRPCRouter({
       cursor: z.string().optional(),
       limit: z.number().min(1).max(50).default(20),
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async () => {
       // Implementation will be added in next phase
       return {
         orders: [],
@@ -29,7 +29,7 @@ export const ordersRouter = createTRPCRouter({
    */
   byId: protectedProcedure
     .input(z.object({ id: z.string().cuid() }))
-    .query(async ({ ctx, input }) => {
+    .query(async () => {
       // Implementation will be added in next phase
       return null;
     }),
@@ -42,7 +42,7 @@ export const ordersRouter = createTRPCRouter({
       addressId: z.string().cuid(),
       paymentMethodId: z.string(),
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async () => {
       // Implementation will be added in next phase
       return { success: true, orderId: 'temp' };
     }),

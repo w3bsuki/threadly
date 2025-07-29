@@ -284,7 +284,6 @@ export const POST = async (request: Request): Promise<Response> => {
   }
 
   // Get the ID and type
-  const { id } = event.data;
   const eventType = event.type;
 
   let response: Response = new Response('', { status: 201 });

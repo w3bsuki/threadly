@@ -3,7 +3,7 @@ import { withToolbar } from '@repo/feature-flags/lib/toolbar';
 import { config, withAnalyzer } from '@repo/next-config';
 import { withSentry } from '@repo/observability/next-config';
 import type { NextConfig } from 'next';
-import { env } from '@/env';
+// import { env } from '@/env';
 
 let nextConfig: NextConfig = withToolbar(config);
 

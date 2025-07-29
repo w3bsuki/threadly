@@ -5,7 +5,7 @@ import { database, checkDatabaseHealth } from '@repo/database';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 // Example Next.js API route
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(_req: NextApiRequest, res: NextApiResponse) {
   try {
     const health = await checkDatabaseHealth(database);
     
@@ -52,7 +52,7 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
 
 // Example Express endpoint
 export function createHealthEndpoint(app: any) {
-  app.get('/health/database', async (req: any, res: any) => {
+  app.get('/health/database', async (_req: any, res: any) => {
     try {
       const health = await checkDatabaseHealth(database);
       

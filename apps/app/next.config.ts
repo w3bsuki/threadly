@@ -2,7 +2,7 @@ import { withToolbar } from '@repo/feature-flags/lib/toolbar';
 import { config, withAnalyzer } from '@repo/next-config';
 import { withLogging, withSentry } from '@repo/observability/next-config';
 import type { NextConfig } from 'next';
-import { env } from './env';
+// import { env } from './env';
 
 // Start with base configuration
 let nextConfig: NextConfig = withToolbar(config);
@@ -242,7 +242,7 @@ try {
 } catch {
 }
 
-if (env.ANALYZE === 'true') {
+if (process.env.ANALYZE === 'true') {
   nextConfig = withAnalyzer(nextConfig);
 }
 

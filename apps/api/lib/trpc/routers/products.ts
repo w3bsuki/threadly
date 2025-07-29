@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import { createTRPCRouter, publicProcedure, protectedProcedure, rateLimitedProcedure } from '../config';
+import { createTRPCRouter, protectedProcedure, rateLimitedProcedure } from '../config';
 import { ProductStatus } from '@repo/database';
 
 // Input validation schemas
@@ -9,7 +9,7 @@ const createProductSchema = z.object({
   description: z.string().min(10).max(2000),
   price: z.number().positive().max(999999),
   categoryId: z.string().cuid(),
-  condition: z.enum(['NEW', 'LIKE_NEW', 'GOOD', 'FAIR', 'POOR']),
+  condition: z.enum(['NEW_WITH_TAGS', 'NEW_WITHOUT_TAGS', 'VERY_GOOD', 'GOOD', 'SATISFACTORY']),
   images: z.array(z.string().url()).min(1).max(10),
   brand: z.string().min(1).max(50).optional(),
   model: z.string().min(1).max(50).optional(),
@@ -27,7 +27,7 @@ const listProductsSchema = z.object({
   cursor: z.string().optional(),
   limit: z.number().min(1).max(50).default(20),
   categoryId: z.string().cuid().optional(),
-  condition: z.enum(['NEW', 'LIKE_NEW', 'GOOD', 'FAIR', 'POOR']).optional(),
+  condition: z.enum(['NEW_WITH_TAGS', 'NEW_WITHOUT_TAGS', 'VERY_GOOD', 'GOOD', 'SATISFACTORY']).optional(),
   minPrice: z.number().positive().optional(),
   maxPrice: z.number().positive().optional(),
   sellerId: z.string().cuid().optional(),
@@ -93,7 +93,7 @@ export const productsRouter = createTRPCRouter({
         orderBy: { [sortBy]: sortOrder },
         include: {
           images: {
-            select: { url: true },
+            select: { imageUrl: true },
             take: 1, // Only first image for list view
           },
           category: {
@@ -118,7 +118,7 @@ export const productsRouter = createTRPCRouter({
       return {
         products: products.map(product => ({
           ...product,
-          imageUrl: product.images[0]?.url || null,
+          imageUrl: product.images[0]?.imageUrl || null,
           favoriteCount: product._count.favorites,
         })),
         nextCursor,
@@ -142,23 +142,23 @@ export const productsRouter = createTRPCRouter({
               id: true,
               firstName: true,
               lastName: true,
-              createdAt: true,
               _count: {
-                select: { products: true },
+                select: { Product: true },
               },
             },
           },
-          reviews: {
-            include: {
-              reviewer: {
-                select: { firstName: true, lastName: true },
-              },
-            },
-            orderBy: { createdAt: 'desc' },
-            take: 5,
-          },
+          // Reviews will be added when schema is confirmed
+          // ProductReview: {
+          //   include: {
+          //     reviewer: {
+          //       select: { firstName: true, lastName: true },
+          //     },
+          //   },
+          //   orderBy: { createdAt: 'desc' },
+          //   take: 5,
+          // },
           _count: {
-            select: { favorites: true, reviews: true },
+            select: { favorites: true },
           },
         },
       });
@@ -173,10 +173,8 @@ export const productsRouter = createTRPCRouter({
       return {
         ...product,
         favoriteCount: product._count.favorites,
-        reviewCount: product._count.reviews,
-        averageRating: product.reviews.length > 0
-          ? product.reviews.reduce((sum, review) => sum + review.rating, 0) / product.reviews.length
-          : null,
+        reviewCount: 0, // Will be implemented when schema is confirmed
+        averageRating: null, // Will be implemented when schema is confirmed
       };
     }),
 
@@ -196,8 +194,8 @@ export const productsRouter = createTRPCRouter({
             sellerId: dbUser.id,
             images: {
               create: images.map((url, index) => ({
-                url,
-                order: index,
+                imageUrl: url,
+                displayOrder: index,
               })),
             },
           },
@@ -223,7 +221,12 @@ export const productsRouter = createTRPCRouter({
     .input(updateProductSchema)
     .mutation(async ({ ctx, input }) => {
       const { dbUser } = ctx;
-      const { id, images, ...updateData } = input;
+      const { id, images, ...rawUpdateData } = input;
+      
+      // Remove any undefined values from updateData
+      const updateData = Object.fromEntries(
+        Object.entries(rawUpdateData).filter(([_, value]) => value !== undefined)
+      );
 
       // Check ownership
       const existingProduct = await ctx.database.product.findUnique({
@@ -254,8 +257,8 @@ export const productsRouter = createTRPCRouter({
               images: {
                 deleteMany: {},
                 create: images.map((url, index) => ({
-                  url,
-                  order: index,
+                  imageUrl: url,
+                  displayOrder: index,
                 })),
               },
             }),
@@ -347,7 +350,7 @@ export const productsRouter = createTRPCRouter({
         orderBy: { createdAt: 'desc' },
         include: {
           images: {
-            select: { url: true },
+            select: { imageUrl: true },
             take: 1,
           },
           category: {
@@ -368,7 +371,7 @@ export const productsRouter = createTRPCRouter({
       return {
         products: products.map(product => ({
           ...product,
-          imageUrl: product.images[0]?.url || null,
+          imageUrl: product.images[0]?.imageUrl || null,
           favoriteCount: product._count.favorites,
         })),
         nextCursor,

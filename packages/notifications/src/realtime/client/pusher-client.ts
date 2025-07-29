@@ -26,7 +26,7 @@ export class PusherClient implements RealTimeClient {
     // Connection state monitoring
     this.pusher.connection.bind('connected', () => {});
 
-    this.pusher.connection.bind('error', (err: any) => {});
+    this.pusher.connection.bind('error', (_err: any) => {});
   }
 
   subscribe(

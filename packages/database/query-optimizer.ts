@@ -159,7 +159,7 @@ export class DatabaseOptimizer {
     return database.conversation.findMany({
       where,
       include: {
-        User_Conversation_buyerIdToUser: {
+        buyer: {
           select: {
             id: true,
             firstName: true,
@@ -167,7 +167,7 @@ export class DatabaseOptimizer {
             imageUrl: true,
           },
         },
-        User_Conversation_sellerIdToUser: {
+        seller: {
           select: {
             id: true,
             firstName: true,
@@ -210,7 +210,7 @@ export class DatabaseOptimizer {
     return database.order.findMany({
       where,
       include: {
-        User_Order_buyerIdToUser: {
+        buyer: {
           select: {
             id: true,
             firstName: true,
@@ -218,7 +218,7 @@ export class DatabaseOptimizer {
             imageUrl: true,
           },
         },
-        User_Order_sellerIdToUser: {
+        seller: {
           select: {
             id: true,
             firstName: true,

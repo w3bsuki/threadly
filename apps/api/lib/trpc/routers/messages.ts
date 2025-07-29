@@ -11,7 +11,7 @@ export const messagesRouter = createTRPCRouter({
    * Get user's conversations
    */
   conversations: protectedProcedure
-    .query(async ({ ctx }) => {
+    .query(async () => {
       // Implementation will be added in next phase
       return { conversations: [] };
     }),
@@ -25,7 +25,7 @@ export const messagesRouter = createTRPCRouter({
       cursor: z.string().optional(),
       limit: z.number().min(1).max(50).default(30),
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async () => {
       // Implementation will be added in next phase
       return {
         messages: [],
@@ -43,7 +43,7 @@ export const messagesRouter = createTRPCRouter({
       recipientId: z.string().cuid().optional(),
       content: z.string().min(1).max(1000),
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async () => {
       // Implementation will be added in next phase
       return { success: true, messageId: 'temp' };
     }),

@@ -2,9 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type {
-  MessageEvent,
   NotificationEvent,
-  PresenceEvent,
   TypingEvent,
 } from '../types';
 import { useRealTime } from './provider';
@@ -54,7 +52,7 @@ export function useChannel(channelName: string) {
 export function usePresence(channelName: string) {
   const { client } = useRealTime();
   const [members, setMembers] = useState<Map<string, any>>(new Map());
-  const [myId, setMyId] = useState<string | null>(null);
+  const [myId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!(client && channelName)) return;

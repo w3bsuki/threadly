@@ -2,20 +2,20 @@ import { auth } from '@repo/auth/server';
 import { database, type Prisma } from '@repo/database';
 import { logError } from '@repo/observability/server';
 import { checkRateLimit, generalApiLimit } from '@repo/security';
-import { validateBody, validateQuery } from '@repo/validation/middleware';
+import { validateBody, validateQuery } from '@repo/utils/validation/middleware';
 import {
   containsProfanity,
   filterProfanity,
   sanitizeForDisplay,
   sanitizeHtml,
-} from '@repo/validation/sanitize';
-import { paginationSchema, priceSchema } from '@repo/validation/schemas/common';
-import { productConditionSchema } from '@repo/validation/schemas/product';
+} from '@repo/utils/validation/sanitize';
+import { paginationSchema, priceSchema } from '@repo/utils/validation/schemas/common';
+import { productConditionSchema } from '@repo/utils/validation/schemas/product';
 import {
   isAllowedImageUrl,
   isPriceInRange,
   isValidProductTitle,
-} from '@repo/validation/validators';
+} from '@repo/utils/validation/validators';
 import type { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { APIResponseBuilder } from '../../../../lib/api-response';

@@ -1,6 +1,5 @@
-import { z } from 'zod';
 import { createTRPCRouter, publicProcedure } from '../config';
-import { checkDatabaseHealth } from '@repo/database';
+import { database } from '@repo/database';
 
 /**
  * Health check router for system monitoring
@@ -29,24 +28,32 @@ export const healthRouter = createTRPCRouter({
    * Used by monitoring systems and load balancers
    */
   detailed: publicProcedure
-    .query(async ({ ctx }) => {
+    .query(async () => {
       const startTime = Date.now();
       
       // Check database health
-      const dbHealth = await checkDatabaseHealth();
+      let dbStatus = 'healthy';
+      let dbResponseTime = 0;
+      
+      try {
+        const dbStart = Date.now();
+        await database.$queryRaw`SELECT 1`;
+        dbResponseTime = Date.now() - dbStart;
+      } catch (error) {
+        dbStatus = 'unhealthy';
+      }
       
       // Calculate response time
       const responseTime = Date.now() - startTime;
       
       return {
-        status: dbHealth.status === 'healthy' ? 'healthy' : 'unhealthy',
+        status: dbStatus === 'healthy' ? 'healthy' : 'unhealthy',
         timestamp: new Date().toISOString(),
         responseTime,
         checks: {
           database: {
-            status: dbHealth.status,
-            connectionCount: dbHealth.connectionCount,
-            responseTime: dbHealth.responseTime,
+            status: dbStatus,
+            responseTime: dbResponseTime,
           },
           memory: {
             used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),

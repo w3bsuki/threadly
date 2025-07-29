@@ -6,7 +6,7 @@ import type { NextConfig } from 'next';
 
 const otelRegex = /@opentelemetry\/instrumentation/;
 
-import { withPerformance } from './optimized';
+import { withPerformance } from './optimized.js';
 
 const baseConfig: NextConfig = {
   images: {
@@ -75,7 +75,7 @@ const baseConfig: NextConfig = {
 
     // Point to the correct Prisma client location
     const path = require('path');
-    const databasePackagePath = path.resolve(__dirname, '../database');
+    const databasePackagePath = path.resolve(process.cwd(), 'packages/database');
     config.resolve.alias['@prisma/client'] = path.join(
       databasePackagePath,
       'generated/client'

@@ -22,7 +22,7 @@ export const cartRouter = createTRPCRouter({
           product: {
             include: {
               images: {
-                select: { url: true },
+                select: { imageUrl: true },
                 take: 1,
               },
               seller: {
@@ -37,7 +37,7 @@ export const cartRouter = createTRPCRouter({
       // Calculate totals
       const subtotal = cartItems.reduce((sum, item) => {
         if (item.product.status === ProductStatus.AVAILABLE) {
-          return sum + (item.product.price * item.quantity);
+          return sum + (Number(item.product.price) * item.quantity);
         }
         return sum;
       }, 0);
@@ -52,7 +52,7 @@ export const cartRouter = createTRPCRouter({
           quantity: item.quantity,
           product: {
             ...item.product,
-            imageUrl: item.product.images[0]?.url || null,
+            imageUrl: item.product.images[0]?.imageUrl || null,
           },
         })),
         subtotal,
@@ -124,7 +124,7 @@ export const cartRouter = createTRPCRouter({
             include: {
               product: {
                 include: {
-                  images: { select: { url: true }, take: 1 },
+                  images: { select: { imageUrl: true }, take: 1 },
                 },
               },
             },
@@ -134,7 +134,7 @@ export const cartRouter = createTRPCRouter({
             ...updatedItem,
             product: {
               ...updatedItem.product,
-              imageUrl: updatedItem.product.images[0]?.url || null,
+              imageUrl: updatedItem.product.images[0]?.imageUrl || null,
             },
           };
         } else {
@@ -148,7 +148,7 @@ export const cartRouter = createTRPCRouter({
             include: {
               product: {
                 include: {
-                  images: { select: { url: true }, take: 1 },
+                  images: { select: { imageUrl: true }, take: 1 },
                 },
               },
             },
@@ -158,7 +158,7 @@ export const cartRouter = createTRPCRouter({
             ...cartItem,
             product: {
               ...cartItem.product,
-              imageUrl: cartItem.product.images[0]?.url || null,
+              imageUrl: cartItem.product.images[0]?.imageUrl || null,
             },
           };
         }
@@ -208,7 +208,7 @@ export const cartRouter = createTRPCRouter({
           include: {
             product: {
               include: {
-                images: { select: { url: true }, take: 1 },
+                images: { select: { imageUrl: true }, take: 1 },
               },
             },
           },
@@ -218,7 +218,7 @@ export const cartRouter = createTRPCRouter({
           ...updatedItem,
           product: {
             ...updatedItem.product,
-            imageUrl: updatedItem.product.images[0]?.url || null,
+            imageUrl: updatedItem.product.images[0]?.imageUrl || null,
           },
         };
       } catch (error) {

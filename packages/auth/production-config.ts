@@ -248,7 +248,7 @@ export function validateProductionReadiness(): {
   } catch (error) {
     return {
       ready: false,
-      issues: [`Configuration validation failed: ${error.message}`],
+      issues: [`Configuration validation failed: ${error instanceof Error ? error.message : String(error)}`],
       recommendations: [
         'Fix configuration errors before deploying to production',
       ],

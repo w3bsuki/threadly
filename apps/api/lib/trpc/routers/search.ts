@@ -19,7 +19,7 @@ export const searchRouter = createTRPCRouter({
       minPrice: z.number().positive().optional(),
       maxPrice: z.number().positive().optional(),
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async () => {
       // Implementation will be added in next phase
       return {
         products: [],
@@ -36,7 +36,7 @@ export const searchRouter = createTRPCRouter({
       query: z.string().min(1).max(100),
       limit: z.number().min(1).max(10).default(5),
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async () => {
       // Implementation will be added in next phase
       return { suggestions: [] };
     }),
@@ -45,7 +45,7 @@ export const searchRouter = createTRPCRouter({
    * Get popular searches
    */
   popular: rateLimitedProcedure
-    .query(async ({ ctx }) => {
+    .query(async () => {
       // Implementation will be added in next phase
       return { searches: [] };
     }),

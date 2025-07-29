@@ -4,18 +4,22 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Alert,
   AlertDescription,
+} from '../../../components/ui/alert';
+import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  Checkbox,
+} from '../../../components/ui/card';
+import { Checkbox } from '../../../components/ui/checkbox';
+import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  Textarea,
-} from '@repo/ui/components';
+} from '../../../components/ui/form';
+import { Textarea } from '../../../components/ui/textarea';
 import { Elements, useElements, useStripe } from '@stripe/react-stripe-js';
 import type { Stripe } from '@stripe/stripe-js';
 import { AlertCircle, Truck } from 'lucide-react';

@@ -12,7 +12,7 @@ export async function applyRateLimit(request: NextRequest): Promise<NextResponse
     return NextResponse.json(
       { 
         error: rateLimitResult.error?.message || 'Rate limit exceeded',
-        retryAfter: rateLimitResult.headers?.['Retry-After']
+        retryAfter: rateLimitResult.headers?.get?.('Retry-After')
       },
       { 
         status: 429,

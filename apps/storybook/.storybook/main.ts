@@ -25,9 +25,37 @@ const config: StorybookConfig = {
   ],
   framework: {
     name: getAbsolutePath('@storybook/nextjs'),
-    options: {},
+    options: {
+      builder: {
+        useSWC: true,
+      },
+    },
   },
   staticDirs: ['../public'],
+  webpackFinal: async (config) => {
+    // Disable CSS handling conflicts
+    config.module = config.module || {};
+    config.module.rules = config.module.rules || [];
+    
+    // Filter out conflicting CSS rules
+    config.module.rules = config.module.rules.filter((rule) => {
+      if (typeof rule !== 'object' || !rule.test) return true;
+      const testString = rule.test.toString();
+      return !testString.includes('css') && !testString.includes('scss') && !testString.includes('sass');
+    });
+
+    // Add custom CSS handling
+    config.module.rules.push({
+      test: /\.css$/,
+      use: ['style-loader', 'css-loader', 'postcss-loader'],
+    });
+
+    return config;
+  },
+  typescript: {
+    reactDocgen: 'react-docgen-typescript',
+    check: false,
+  },
 };
 
 export default config;

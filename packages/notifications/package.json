@@ -28,6 +28,12 @@
       "require": "./dist/realtime/server/index.js",
       "default": "./dist/realtime/server/index.js"
     },
+    "./realtime/server": {
+      "types": "./dist/realtime/server/index.d.ts",
+      "import": "./dist/realtime/server/index.js",
+      "require": "./dist/realtime/server/index.js",
+      "default": "./dist/realtime/server/index.js"
+    },
     "./keys": {
       "types": "./keys.ts",
       "import": "./keys.ts",

@@ -7,7 +7,7 @@ async function testConnectionPool() {
   try {
     // Test 1: Basic connectivity
     console.log('1. Testing basic connectivity...');
-    const testQuery = await database.$queryRaw`SELECT 1 as test`;
+    await database.$queryRaw`SELECT 1 as test`;
     console.log('✓ Basic connectivity test passed\n');
 
     // Test 2: Check health

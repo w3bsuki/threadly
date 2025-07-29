@@ -73,7 +73,7 @@ const handlePaymentIntentSucceeded = async (
       return;
     }
 
-    const { buyerId, type, orderId, productId, productIds, sellerIds } =
+    const { buyerId, type, orderId, productId, productIds } =
       paymentIntent.metadata;
 
     if (!buyerId) {
@@ -114,7 +114,7 @@ const handlePaymentIntentSucceeded = async (
       const parsedProductIds = JSON.parse(productIds) as string[];
 
       // Start a transaction to update all orders and products
-      const result = await database.$transaction(async (tx) => {
+      await database.$transaction(async (tx) => {
         // Find all orders for this buyer with these products in PENDING status
         const orders = await tx.order.findMany({
           where: {
@@ -198,7 +198,7 @@ const handlePaymentIntentSucceeded = async (
       });
     } else if (orderId && productId) {
       // Single product purchase
-      const result = await database.$transaction(async (tx) => {
+      await database.$transaction(async (tx) => {
         // Update order status to PAID
         const order = await tx.order.update({
           where: { id: orderId },
@@ -353,7 +353,7 @@ export const POST = async (request: Request): Promise<Response> => {
 
     return NextResponse.json({ result: event, ok: true });
   } catch (error) {
-    const message = parseError(error);
+    parseError(error);
 
     logError('Webhook processing error', error);
 

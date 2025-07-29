@@ -12,7 +12,7 @@ export const usersRouter = createTRPCRouter({
    */
   profile: rateLimitedProcedure
     .input(z.object({ id: z.string().cuid() }))
-    .query(async ({ ctx, input }) => {
+    .query(async () => {
       // Implementation will be added in next phase
       return null;
     }),
@@ -25,7 +25,7 @@ export const usersRouter = createTRPCRouter({
       query: z.string().min(1).max(100),
       limit: z.number().min(1).max(20).default(10),
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async () => {
       // Implementation will be added in next phase
       return { users: [] };
     }),
@@ -35,7 +35,7 @@ export const usersRouter = createTRPCRouter({
    */
   toggleFollow: protectedProcedure
     .input(z.object({ userId: z.string().cuid() }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async () => {
       // Implementation will be added in next phase
       return { following: false };
     }),

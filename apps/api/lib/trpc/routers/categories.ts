@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { createTRPCRouter, publicProcedure, rateLimitedProcedure } from '../config';
+import { createTRPCRouter, rateLimitedProcedure } from '../config';
 
 /**
  * Categories router
@@ -16,7 +16,7 @@ export const categoriesRouter = createTRPCRouter({
         orderBy: { name: 'asc' },
         include: {
           _count: {
-            select: { products: true },
+            select: { Product: true },
           },
         },
       });
@@ -24,7 +24,7 @@ export const categoriesRouter = createTRPCRouter({
       return {
         categories: categories.map(category => ({
           ...category,
-          productCount: category._count.products,
+          productCount: category._count.Product,
         })),
       };
     }),
@@ -39,7 +39,7 @@ export const categoriesRouter = createTRPCRouter({
         where: { id: input.id },
         include: {
           _count: {
-            select: { products: true },
+            select: { Product: true },
           },
         },
       });
@@ -50,7 +50,7 @@ export const categoriesRouter = createTRPCRouter({
 
       return {
         ...category,
-        productCount: category._count.products,
+        productCount: category._count.Product,
       };
     }),
 });

@@ -584,7 +584,7 @@ async function main() {
           brand: productInfo.brand,
           color: productInfo.color,
           categoryId: productInfo.categoryId!,
-          sellerId: productInfo.sellerId,
+          sellerId: productInfo.sellerId!,
           status: 'AVAILABLE',
         },
       });

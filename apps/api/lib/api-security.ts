@@ -3,7 +3,7 @@ import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
 import { checkRateLimit, generalApiLimit } from '@repo/security';
 import { type NextRequest, NextResponse } from 'next/server';
-import { ZodError, type ZodSchema } from 'zod';
+import { type ZodSchema } from 'zod';
 
 // Standard error responses
 export const ErrorResponses = {
@@ -34,7 +34,7 @@ export const ErrorResponses = {
 };
 
 // Authentication helper with user lookup
-export async function authenticateUser(request: NextRequest) {
+export async function authenticateUser(_request: NextRequest) {
   const { userId } = await auth();
   
   if (!userId) {
@@ -67,8 +67,7 @@ export async function checkApiRateLimit(request: NextRequest) {
     return {
       allowed: false as const,
       response: ErrorResponses.rateLimit(
-        rateLimitResult.error?.message || 'Rate limit exceeded',
-        rateLimitResult.headers
+        rateLimitResult.error?.message || 'Rate limit exceeded'
       ),
     };
   }
@@ -119,7 +118,7 @@ export function withApiSecurity<T extends (...args: any[]) => Promise<NextRespon
     }
   ) => Promise<NextResponse>
 ): T {
-  return (async (request: NextRequest, ...args: any[]) => {
+  return (async (request: NextRequest, ..._args: any[]) => {
     try {
       // Check rate limit
       const rateLimitCheck = await checkApiRateLimit(request);
@@ -145,7 +144,7 @@ export function withApiSecurity<T extends (...args: any[]) => Promise<NextRespon
 export function withPublicApiSecurity<T extends (...args: any[]) => Promise<NextResponse>>(
   handler: T
 ): T {
-  return (async (request: NextRequest, ...args: any[]) => {
+  return (async (request: NextRequest, ..._args: any[]) => {
     try {
       // Check rate limit
       const rateLimitCheck = await checkApiRateLimit(request);
@@ -154,7 +153,7 @@ export function withPublicApiSecurity<T extends (...args: any[]) => Promise<Next
       }
 
       // Call the handler
-      return await handler(request, ...args);
+      return await handler(request, ..._args);
     } catch (error) {
       return ErrorResponses.serverError(error);
     }

@@ -227,7 +227,7 @@ export async function DELETE(
     }
 
     // Soft delete by updating content
-    const _deletedMessage = await database.message.update({
+    await database.message.update({
       where: { id: resolvedParams.messageId },
       data: {
         content: '[Message deleted]',

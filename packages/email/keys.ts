@@ -1,7 +1,7 @@
 import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 
-export const emailEnv = createEnv({
+export const keys = () => createEnv({
   server: {
     EMAIL_PROVIDER: z.enum(['resend', 'sendgrid']).default('resend'),
     RESEND_API_KEY: z.string().optional(),

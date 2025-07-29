@@ -15,7 +15,7 @@ export const favoritesRouter = createTRPCRouter({
       cursor: z.string().optional(),
       limit: z.number().min(1).max(50).default(20),
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async () => {
       // Implementation will be added in next phase
       return {
         favorites: [],
@@ -29,7 +29,7 @@ export const favoritesRouter = createTRPCRouter({
    */
   toggle: protectedProcedure
     .input(z.object({ productId: z.string().cuid() }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async () => {
       // Implementation will be added in next phase
       return { isFavorite: false };
     }),
@@ -39,7 +39,7 @@ export const favoritesRouter = createTRPCRouter({
    */
   check: protectedProcedure
     .input(z.object({ productId: z.string().cuid() }))
-    .query(async ({ ctx, input }) => {
+    .query(async () => {
       // Implementation will be added in next phase
       return { isFavorite: false };
     }),

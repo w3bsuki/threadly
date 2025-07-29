@@ -40,7 +40,7 @@ export function getClientIP(request: NextRequest): string {
   const cfConnectingIP = request.headers.get('cf-connecting-ip');
   
   if (forwarded) {
-    return forwarded.split(',')[0].trim();
+    return forwarded.split(',')[0]?.trim() || 'unknown';
   }
   
   if (realIP) {

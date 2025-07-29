@@ -1,8 +1,8 @@
 // Re-export cart store hook
-export { useCartStore } from '@repo/cart';
+export { useCartStore } from './store';
 
 // Additional commerce-specific cart hooks
-import { useCartStore } from '@repo/cart';
+import { useCartStore } from './store';
 import { useMemo } from 'react';
 import type { CartSummary } from './types';
 

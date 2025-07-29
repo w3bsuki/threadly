@@ -2,17 +2,11 @@ import { TRPCError, initTRPC } from '@trpc/server';
 import { NextRequest } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { log, logError } from '@repo/observability/server';
-import type { User } from '@clerk/nextjs/server';
+import { logError } from '@repo/observability/server';
+// import type { User } from '@clerk/nextjs/server';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
 
-// Context interface
-interface CreateContextOptions {
-  req: NextRequest;
-  user: User | null;
-  dbUser: any | null;
-}
 
 // Create context for tRPC requests
 export async function createTRPCContext(opts: { req: NextRequest }) {
@@ -56,7 +50,7 @@ export async function createTRPCContext(opts: { req: NextRequest }) {
           }
         });
         
-        log('Auto-created database user', { userId: user.id, dbUserId: dbUser.id });
+        console.log('Auto-created database user', { userId: user.id, dbUserId: dbUser.id });
       }
     } catch (error) {
       logError('Failed to fetch/create database user', error);
@@ -129,17 +123,13 @@ export const loggedProcedure = publicProcedure.use(async ({ path, type, next }) 
   const durationMs = Date.now() - start;
   
   if (result.ok) {
-    log('tRPC procedure success', { 
+    console.log('tRPC procedure success', { 
       path, 
       type, 
       durationMs 
     });
   } else {
-    logError('tRPC procedure error', result.error, {
-      path,
-      type,
-      durationMs
-    });
+    logError('tRPC procedure error', result.error);
   }
   
   return result;

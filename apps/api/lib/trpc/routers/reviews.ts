@@ -16,7 +16,7 @@ export const reviewsRouter = createTRPCRouter({
       cursor: z.string().optional(),
       limit: z.number().min(1).max(20).default(10),
     }))
-    .query(async ({ ctx, input }) => {
+    .query(async () => {
       // Implementation will be added in next phase
       return {
         reviews: [],
@@ -34,7 +34,7 @@ export const reviewsRouter = createTRPCRouter({
       rating: z.number().int().min(1).max(5),
       comment: z.string().min(1).max(500),
     }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async () => {
       // Implementation will be added in next phase
       return { success: true, reviewId: 'temp' };
     }),
