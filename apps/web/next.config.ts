@@ -81,6 +81,24 @@ nextConfig.webpack = (config, { isServer, dev }) => {
     ],
   };
 
+  // Fix Windows directory scanning issues during build
+  if (process.platform === 'win32') {
+    // Override resolve.modules to prevent scanning system directories
+    config.resolve.modules = [
+      'node_modules',
+      ...(config.resolve.modules || []).filter(
+        (dir) => typeof dir === 'string' && !dir.includes('AppData') && !dir.includes('Windows')
+      ),
+    ];
+
+    // Add snapshot management options to prevent scanning
+    config.snapshot = {
+      ...(config.snapshot || {}),
+      managedPaths: [/^(.+?[\\/]node_modules[\\/])/],
+      immutablePaths: [],
+    };
+  }
+
   // Add resolve fallbacks for browser environment
   if (!isServer) {
     config.resolve.fallback = {

@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "buildCommand": "cd ../.. && rm -rf node_modules apps/web/node_modules && pnpm install && turbo build --filter=@repo/threadly-web --filter=!@repo/testing --force",
+  "buildCommand": "cd ../.. && turbo build --filter=@repo/threadly-web --filter=!@repo/testing",
   "devCommand": "next dev"
 }
