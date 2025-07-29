@@ -1,7 +1,7 @@
 'use client';
 
-import { Badge } from '@repo/design-system/components/ui/badge';
-import { Input } from '@repo/design-system/components/ui/input';
+import { Badge } from '@repo/ui/components/ui/badge';
+import { Input } from '@repo/ui/components/ui/input';
 import { Plus, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 

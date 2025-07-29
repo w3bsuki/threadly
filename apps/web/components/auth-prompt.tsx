@@ -4,7 +4,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { Lock, LogIn, UserPlus } from 'lucide-react';
 import Link from 'next/link';
 

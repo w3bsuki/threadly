@@ -1,4 +1,4 @@
-import { Skeleton } from '@repo/design-system/components';
+import { Skeleton } from '@repo/ui/components';
 import type { Meta, StoryObj } from '@storybook/react';
 
 /**

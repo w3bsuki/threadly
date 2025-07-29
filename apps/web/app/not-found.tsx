@@ -1,4 +1,4 @@
-import { Button } from '@repo/design-system/components';
+import { Button } from '@repo/ui/components';
 import { ArrowLeft, Home, Search } from 'lucide-react';
 import Link from 'next/link';
 

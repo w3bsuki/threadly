@@ -20,7 +20,7 @@ import {
   RadioGroup,
   RadioGroupItem,
   Separator,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { formatCurrency } from '@repo/utils/currency';
 import type { OrderData } from '@repo/validation/schemas';
 import {

@@ -6,9 +6,9 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-} from '@repo/design-system/components';
-import { AccountDropdown } from '@repo/design-system/components/navigation/account-dropdown';
-import { cn } from '@repo/design-system/lib/utils';
+} from '@repo/ui/components';
+import { AccountDropdown } from '@repo/ui/components/navigation/account-dropdown';
+import { cn } from '@repo/ui/lib/utils';
 import {
   Heart,
   Menu,

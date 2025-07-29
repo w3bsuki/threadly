@@ -4,7 +4,7 @@ import {
   buildCursorWhere,
   processPaginationResult,
   validatePaginationParams,
-} from '@repo/design-system/lib/pagination';
+} from '@repo/ui/lib/pagination';
 import type { ReactElement } from 'react';
 import { AdminProductsClient } from './admin-products-client';
 

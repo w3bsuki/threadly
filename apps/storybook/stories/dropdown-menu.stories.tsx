@@ -14,7 +14,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Mail, Plus, PlusCircle, Search, UserPlus } from 'lucide-react';
 

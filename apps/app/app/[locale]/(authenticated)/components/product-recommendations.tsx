@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
   Skeleton,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';

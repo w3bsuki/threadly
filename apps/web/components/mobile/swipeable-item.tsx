@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@repo/design-system/lib/utils';
+import { cn } from '@repo/ui/lib/utils';
 import { Trash2 } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import { hapticFeedback } from '@/lib/mobile/haptic-feedback';

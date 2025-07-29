@@ -1,8 +1,8 @@
 import {
   type Button,
   buttonVariants,
-} from '@repo/design-system/components/ui/button';
-import { cn } from '@repo/design-system/lib/utils';
+} from '@repo/ui/components/ui/button';
+import { cn } from '@repo/ui/lib/utils';
 import {
   ChevronLeftIcon,
   ChevronRightIcon,

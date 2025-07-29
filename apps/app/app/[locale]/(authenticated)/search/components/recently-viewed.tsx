@@ -1,6 +1,6 @@
 'use client';
 
-import { Badge, Button } from '@repo/design-system/components';
+import { Badge, Button } from '@repo/ui/components';
 import { Clock, Eye, X } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';

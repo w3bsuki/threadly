@@ -12,7 +12,7 @@ import {
   Label,
   Switch,
   toast,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { Bell, BellOff, Save } from 'lucide-react';
 import { useState } from 'react';
 

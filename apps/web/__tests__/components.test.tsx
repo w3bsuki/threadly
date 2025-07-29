@@ -41,7 +41,7 @@ vi.mock('next/link', () => ({
 }));
 
 // Mock UI components
-vi.mock('@repo/design-system/components', () => ({
+vi.mock('@repo/ui/components', () => ({
   Button: ({
     children,
     onClick,

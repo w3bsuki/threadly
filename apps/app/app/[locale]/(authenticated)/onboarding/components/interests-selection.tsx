@@ -1,7 +1,7 @@
 'use client';
 
-import { Badge } from '@repo/design-system/components/ui/badge';
-import { cn } from '@repo/design-system/lib/utils';
+import { Badge } from '@repo/ui/components/ui/badge';
+import { cn } from '@repo/ui/lib/utils';
 import { useEffect, useState } from 'react';
 import { getCategories } from '../actions';
 

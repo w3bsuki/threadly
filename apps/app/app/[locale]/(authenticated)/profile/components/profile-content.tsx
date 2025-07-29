@@ -27,7 +27,7 @@ import {
   TabsList,
   TabsTrigger,
   Textarea,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { format } from 'date-fns';
 import {
   BarChart3,

@@ -10,7 +10,7 @@ import {
   ErrorBoundary,
   Input,
   MessagesSkeleton,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { useChannel, useTypingIndicator } from '@repo/real-time/client';
 import {
   createMessageSchema,

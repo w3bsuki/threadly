@@ -8,7 +8,7 @@ import {
   calculateTotal,
   useCheckoutStore,
 } from '@repo/commerce';
-import { toast } from '@repo/design-system';
+import { toast } from '@repo/ui';
 import { useCallback } from 'react';
 
 export function useCheckout() {

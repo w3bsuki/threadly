@@ -1,15 +1,15 @@
 'use client';
 
 import { SignOutButton, UserButton } from '@repo/auth/client';
-import { Button } from '@repo/design-system/components';
-import { ModeToggle } from '@repo/design-system/components/mode-toggle';
+import { Button } from '@repo/ui/components';
+import { ModeToggle } from '@repo/ui/components/mode-toggle';
 import {
   Header,
   HeaderActions,
   MobileDrawerNav,
   MobileMenu,
   StickyHeader,
-} from '@repo/design-system/components/navigation';
+} from '@repo/ui/components/navigation';
 import type { Dictionary } from '@repo/internationalization';
 import {
   BarChart3,

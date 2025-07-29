@@ -10,7 +10,7 @@ import {
   CardContent,
   CardHeader,
   ScrollArea,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { format } from 'date-fns';
 import { Check, CheckCheck, MessageCircle } from 'lucide-react';
 import Image from 'next/image';

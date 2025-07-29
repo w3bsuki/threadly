@@ -3,7 +3,7 @@ import {
   CardContent,
   CardHeader,
   Skeleton,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { Activity, BarChart3, TrendingUp } from 'lucide-react';
 
 export function AnalyticsChartsSkeleton() {

@@ -27,7 +27,7 @@ import {
   WizardStepContainer,
   WizardSuccess,
   WizardSummary,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';

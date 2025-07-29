@@ -1,4 +1,4 @@
-import { CheckoutSkeleton } from '@repo/design-system/components';
+import { CheckoutSkeleton } from '@repo/ui/components';
 
 export default function Loading() {
   return (

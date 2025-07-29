@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@repo/design-system/components';
+import { Button } from '@repo/ui/components';
 import { AlertCircle } from 'lucide-react';
 
 export default function SellingError({

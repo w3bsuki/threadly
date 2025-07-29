@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Input } from '@repo/design-system/components';
+import { Button, Input } from '@repo/ui/components';
 import { Send } from 'lucide-react';
 import { memo } from 'react';
 

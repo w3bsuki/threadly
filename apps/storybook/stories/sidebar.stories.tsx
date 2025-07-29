@@ -37,7 +37,7 @@ import {
   SidebarProvider,
   SidebarRail,
   SidebarTrigger,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import type { Meta, StoryObj } from '@storybook/react';
 import {
   AudioWaveform,

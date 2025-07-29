@@ -893,6 +893,205 @@ pnpm typecheck || exit 1
 
 This refactoring established a solid foundation for scalable development with clear patterns and best practices.
 
+## tRPC Infrastructure Implementation
+
+### [2025-01-25] tRPC Server Setup - COMPLETED ✅
+
+**Context**: Need for type-safe API layer to replace REST endpoints
+**Solution**: Complete tRPC infrastructure with modular router structure
+
+**Implementation Pattern**:
+```typescript
+// tRPC context with auth and database integration
+export async function createTRPCContext(opts: { req: NextRequest }) {
+  const user = await currentUser();
+  let dbUser = null;
+  
+  if (user) {
+    dbUser = await database.user.findUnique({
+      where: { clerkId: user.id }
+    });
+    
+    // Auto-create database user if doesn't exist
+    if (!dbUser) {
+      dbUser = await database.user.create({
+        data: {
+          clerkId: user.id,
+          email: user.emailAddresses[0]?.emailAddress || '',
+          firstName: user.firstName || null,
+          lastName: user.lastName || null,
+        }
+      });
+    }
+  }
+
+  return { req, user, dbUser, database };
+}
+```
+
+**Security and Procedure Types**:
+```typescript
+// Public procedure (no authentication)
+export const publicProcedure = t.procedure;
+
+// Authenticated procedure (requires valid user)
+export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
+  if (!ctx.user || !ctx.dbUser) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
+  }
+  return next({ ctx: { ...ctx, user: ctx.user, dbUser: ctx.dbUser } });
+});
+
+// Admin procedure (requires admin role)
+export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
+  if (ctx.dbUser.role !== 'ADMIN') {
+    throw new TRPCError({ code: 'FORBIDDEN' });
+  }
+  return next({ ctx });
+});
+
+// Rate limited procedure (for public endpoints)
+export const rateLimitedProcedure = publicProcedure.use(async ({ ctx, next }) => {
+  const { checkRateLimit, generalApiLimit } = await import('@repo/security');
+  const rateLimitResult = await checkRateLimit(generalApiLimit, ctx.req);
+  if (!rateLimitResult.allowed) {
+    throw new TRPCError({ 
+      code: 'TOO_MANY_REQUESTS',
+      message: rateLimitResult.error?.message || 'Rate limit exceeded'
+    });
+  }
+  return next();
+});
+```
+
+**Router Structure**:
+```typescript
+// Main application router
+export const appRouter = createTRPCRouter({
+  // Core functionality
+  auth: authRouter,        // Authentication and user profiles
+  products: productsRouter, // Product CRUD operations
+  cart: cartRouter,        // Shopping cart functionality
+  orders: ordersRouter,    // Order management (stub)
+  
+  // Communication
+  messages: messagesRouter, // User messaging (stub)
+  users: usersRouter,      // User profiles and social (stub)
+  
+  // Content and discovery
+  categories: categoriesRouter, // Product categories
+  reviews: reviewsRouter,      // Product reviews (stub)
+  favorites: favoritesRouter,  // User favorites (stub)
+  search: searchRouter,        // Search functionality (stub)
+  
+  // System
+  health: healthRouter,    // System monitoring
+});
+```
+
+**Completed Implementations**:
+
+1. **Health Router**: System monitoring endpoints
+   - `health.status` - Basic health check
+   - `health.detailed` - Comprehensive health with database status
+
+2. **Auth Router**: Authentication and profile management
+   - `auth.me` - Get current user session
+   - `auth.updateProfile` - Update user profile
+   - `auth.checkUser` - Check if user exists (onboarding)
+   - `auth.createUser` - Create user (webhook helper)
+
+3. **Products Router**: Complete product management
+   - `products.list` - Paginated product listing with filtering
+   - `products.byId` - Single product with full details
+   - `products.create` - Create new product (authenticated)
+   - `products.update` - Update product (owner only)
+   - `products.delete` - Delete product (owner only)
+   - `products.bySeller` - Get seller's products
+
+4. **Cart Router**: Shopping cart functionality
+   - `cart.get` - Get user's cart items
+   - `cart.add` - Add item to cart
+   - `cart.updateQuantity` - Update item quantity
+   - `cart.remove` - Remove item from cart
+   - `cart.clear` - Clear entire cart
+   - `cart.count` - Get cart item count for badges
+
+5. **Categories Router**: Product categories
+   - `categories.list` - Get all categories with product counts
+   - `categories.byId` - Get category by ID
+
+**Integration Points**:
+
+1. **Next.js App Router**: 
+   - Handler at `/api/trpc/[trpc]/route.ts`
+   - Supports both GET and POST requests
+   - Proper error handling and logging
+
+2. **Authentication**: 
+   - Clerk integration with automatic database user creation
+   - Role-based access control (USER, ADMIN)
+   - Proper user ownership validation
+
+3. **Security**:
+   - Rate limiting using existing `@repo/security` package
+   - Input validation with Zod schemas
+   - CORS handling through existing middleware
+
+4. **Database**:
+   - Prisma integration with `@repo/database`
+   - Proper connection handling and error management
+   - Cursor-based pagination for performance
+
+**Type Safety**:
+```typescript
+// Client-side usage
+import type { AppRouter } from 'api';
+
+// Server-side usage
+import { appRouter, createTRPCContext } from './lib/trpc';
+```
+
+**Benefits Achieved**:
+- End-to-end type safety from database to client
+- Reduced boilerplate compared to REST endpoints
+- Automatic error handling and validation
+- Integrated authentication and authorization
+- Performance optimizations (cursor pagination, etc.)
+- Consistent error formatting across all endpoints
+
+**Stub Routers Created**:
+- Orders router (for order management)
+- Messages router (for user messaging)
+- Users router (for user profiles and social features)
+- Reviews router (for product reviews)
+- Favorites router (for user favorites)
+- Search router (for search functionality)
+
+These stub routers contain:
+- Complete input/output type definitions
+- Proper procedure structure
+- Placeholder implementations
+- Ready for endpoint migration in next phase
+
+**Files Created**:
+- `apps/api/lib/trpc/config.ts` - Main tRPC configuration
+- `apps/api/lib/trpc/routers/_app.ts` - Main router
+- `apps/api/lib/trpc/routers/*.ts` - Individual domain routers
+- `apps/api/app/api/trpc/[trpc]/route.ts` - Next.js handler
+- `apps/api/lib/trpc/types.ts` - Type exports
+- `apps/api/lib/trpc/index.ts` - Main exports
+- `apps/api/index.ts` - App-level exports
+- Test file with infrastructure validation
+
+**Production Readiness**: ✅
+- Comprehensive error handling
+- Security middleware integration
+- Rate limiting on public endpoints
+- Proper logging and monitoring
+- Type-safe throughout
+- Compatible with existing patterns
+
 ## Mobile-First UI/UX Patterns
 
 ### [2025-01-25] Mobile Touch Target Sizing Strategy

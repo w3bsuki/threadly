@@ -4,8 +4,8 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@repo/design-system/components/ui/tabs';
-import { cn } from '@repo/design-system/lib/utils';
+} from '@repo/ui/components/ui/tabs';
+import { cn } from '@repo/ui/lib/utils';
 import type { Dictionary } from '@repo/internationalization';
 import {
   DollarSign,

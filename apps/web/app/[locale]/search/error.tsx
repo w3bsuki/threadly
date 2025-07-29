@@ -4,8 +4,8 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
-} from '@repo/design-system/components/ui/alert';
-import { Button } from '@repo/design-system/components/ui/button';
+} from '@repo/ui/components/ui/alert';
+import { Button } from '@repo/ui/components/ui/button';
 import { AlertCircle, RefreshCw, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect } from 'react';

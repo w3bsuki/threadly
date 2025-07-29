@@ -1,4 +1,4 @@
-import { ProductDetailSkeleton } from '@repo/design-system/components';
+import { ProductDetailSkeleton } from '@repo/ui/components';
 
 export default function Loading() {
   return (

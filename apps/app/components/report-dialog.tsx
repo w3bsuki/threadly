@@ -13,7 +13,7 @@ import {
   RadioGroupItem,
   Textarea,
   toast,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { Flag } from 'lucide-react';
 import { useState } from 'react';
 

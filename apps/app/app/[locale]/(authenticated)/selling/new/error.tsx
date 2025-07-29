@@ -5,7 +5,7 @@ import {
   AlertDescription,
   AlertTitle,
   Button,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 
 export default function Error({

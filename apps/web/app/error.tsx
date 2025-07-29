@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@repo/design-system/components';
+import { Button } from '@repo/ui/components';
 import { AlertTriangle, Home, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect } from 'react';

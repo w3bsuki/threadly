@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@repo/design-system/lib/utils';
+import { cn } from '@repo/ui/lib/utils';
 import { algoliasearch } from 'algoliasearch';
 import { Clock, Search, X } from 'lucide-react';
 import Image from 'next/image';

@@ -1,5 +1,5 @@
-import { Card } from '@repo/design-system/components';
-import { cn } from '@repo/design-system/lib/utils';
+import { Card } from '@repo/ui/components';
+import { cn } from '@repo/ui/lib/utils';
 import { getDictionary } from '@repo/internationalization';
 import {
   Activity,

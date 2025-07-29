@@ -7,7 +7,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { getCookie } from 'cookies-next';
 import { useState } from 'react';
 import { useCurrency } from '../../components/providers/currency-provider';

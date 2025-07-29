@@ -1,4 +1,4 @@
-import { Card, CardContent } from '@repo/design-system/components';
+import { Card, CardContent } from '@repo/ui/components';
 import { getBuyerOrderStats } from '../../../../../../lib/queries/order-stats';
 
 interface OrdersStatsProps {

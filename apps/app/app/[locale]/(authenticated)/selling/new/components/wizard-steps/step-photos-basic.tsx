@@ -13,7 +13,7 @@ import {
   FormLabel,
   FormMessage,
   Input,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import type {
   CreateProductInput,
   SellerTemplate,

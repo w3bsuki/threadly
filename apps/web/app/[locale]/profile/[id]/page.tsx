@@ -4,7 +4,7 @@ import {
   Button,
   Card,
   CardContent,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { Calendar, Heart, MapPin, Package, Star } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';

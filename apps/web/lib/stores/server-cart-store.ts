@@ -1,6 +1,6 @@
 'use client';
 
-import { toast } from '@repo/design-system/components';
+import { toast } from '@repo/ui/components';
 import { create } from 'zustand';
 import { type CartItem, cartService } from '../services/cart-service';
 

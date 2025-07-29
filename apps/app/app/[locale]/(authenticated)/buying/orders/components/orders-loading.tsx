@@ -5,7 +5,7 @@ import {
   SkeletonAvatar,
   SkeletonShimmer,
   SkeletonText,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 
 export function OrdersListSkeleton() {
   return (

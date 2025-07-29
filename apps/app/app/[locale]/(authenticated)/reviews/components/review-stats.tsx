@@ -4,7 +4,7 @@ import {
   CardHeader,
   CardTitle,
   Progress,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { Award, Star, TrendingUp, Users } from 'lucide-react';
 
 interface ReviewStatsProps {

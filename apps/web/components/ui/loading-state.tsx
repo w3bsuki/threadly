@@ -1,7 +1,7 @@
 'use client';
 
-import { Skeleton } from '@repo/design-system/components';
-import { cn } from '@repo/design-system/lib/utils';
+import { Skeleton } from '@repo/ui/components';
+import { cn } from '@repo/ui/lib/utils';
 import { Loader2 } from 'lucide-react';
 
 interface LoadingStateProps {

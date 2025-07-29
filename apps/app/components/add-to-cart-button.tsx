@@ -1,9 +1,9 @@
 'use client';
 
 import { type CartItem, useCartStore } from '@repo/commerce';
-import { useMobileTouch } from '@repo/design-system';
-import { Button } from '@repo/design-system/components';
-import { cn } from '@repo/design-system/lib/utils';
+import { useMobileTouch } from '@repo/ui';
+import { Button } from '@repo/ui/components';
+import { cn } from '@repo/ui/lib/utils';
 import { Check, ShoppingCart } from 'lucide-react';
 import { useState } from 'react';
 

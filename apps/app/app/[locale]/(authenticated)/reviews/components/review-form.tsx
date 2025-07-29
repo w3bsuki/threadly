@@ -16,7 +16,7 @@ import {
   FormLabel,
   FormMessage,
   Textarea,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { AlertCircle, Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';

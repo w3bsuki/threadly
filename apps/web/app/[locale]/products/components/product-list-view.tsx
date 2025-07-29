@@ -1,7 +1,7 @@
 'use client';
 
-import { Badge, Button } from '@repo/design-system/components';
-import { cn } from '@repo/design-system/lib/utils';
+import { Badge, Button } from '@repo/ui/components';
+import { cn } from '@repo/ui/lib/utils';
 import { Crown, Eye, Heart } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';

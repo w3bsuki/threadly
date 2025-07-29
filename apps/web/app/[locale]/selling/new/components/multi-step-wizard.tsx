@@ -10,7 +10,7 @@ import {
   Form,
   Progress,
   toast,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import {
   type CreateProductInput,
   createProductSchema,

@@ -1,8 +1,8 @@
 'use client';
 
 import { useUser } from '@repo/auth/client';
-import { Badge } from '@repo/design-system/components';
-import { cn } from '@repo/design-system/lib/utils';
+import { Badge } from '@repo/ui/components';
+import { cn } from '@repo/ui/lib/utils';
 import { Home, Plus, Search, ShoppingCart, User } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

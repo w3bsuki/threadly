@@ -1,4 +1,4 @@
-import { Badge, Button } from '@repo/design-system/components';
+import { Badge, Button } from '@repo/ui/components';
 import { getDictionary } from '@repo/internationalization';
 import { createMetadata } from '@repo/seo/metadata';
 import { Award, ChevronRight, Crown, Shield, Star } from 'lucide-react';

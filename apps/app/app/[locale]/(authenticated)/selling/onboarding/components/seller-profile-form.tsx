@@ -4,18 +4,18 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from '@repo/design-system/components/ui/avatar';
-import { Button } from '@repo/design-system/components/ui/button';
+} from '@repo/ui/components/ui/avatar';
+import { Button } from '@repo/ui/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@repo/design-system/components/ui/card';
-import { Input } from '@repo/design-system/components/ui/input';
-import { Label } from '@repo/design-system/components/ui/label';
-import { Textarea } from '@repo/design-system/components/ui/textarea';
+} from '@repo/ui/components/ui/card';
+import { Input } from '@repo/ui/components/ui/input';
+import { Label } from '@repo/ui/components/ui/label';
+import { Textarea } from '@repo/ui/components/ui/textarea';
 import { Camera, User } from 'lucide-react';
 import { useState } from 'react';
 import { ErrorBoundary } from '@/components/error-boundary';

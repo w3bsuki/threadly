@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@repo/design-system/lib/utils';
+import { cn } from '@repo/ui/lib/utils';
 import { RefreshCw } from 'lucide-react';
 import { type ReactNode, useEffect, useState } from 'react';
 

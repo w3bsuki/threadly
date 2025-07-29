@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   NotificationSkeleton,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { useNotifications } from '@repo/real-time/client';
 import { formatDistanceToNow } from 'date-fns';
 import { Bell, Check, CheckCheck } from 'lucide-react';

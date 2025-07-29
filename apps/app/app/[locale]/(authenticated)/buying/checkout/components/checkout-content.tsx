@@ -26,7 +26,7 @@ import {
   RadioGroupItem,
   Separator,
   Textarea,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { formatCurrency } from '@repo/utils';
 import { loadStripe } from '@stripe/stripe-js';
 import { CreditCard, Shield, ShoppingBag, Truck } from 'lucide-react';

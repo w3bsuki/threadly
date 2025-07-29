@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@repo/design-system/components';
+import { Button } from '@repo/ui/components';
 import { Grid3x3, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';

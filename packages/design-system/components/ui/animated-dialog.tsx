@@ -1,8 +1,8 @@
 'use client';
 
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { animations } from '@repo/design-system/lib/animations';
-import { cn } from '@repo/design-system/lib/utils';
+import { animations } from '@repo/ui/lib/animations';
+import { cn } from '@repo/ui/lib/utils';
 import { X } from 'lucide-react';
 import * as React from 'react';
 

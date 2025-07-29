@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from '@repo/design-system/components';
-import { cn } from '@repo/design-system/lib/utils';
+import { Button } from '@repo/ui/components';
+import { cn } from '@repo/ui/lib/utils';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useI18n } from '../../components/providers/i18n-provider';

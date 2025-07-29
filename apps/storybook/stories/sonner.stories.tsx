@@ -1,4 +1,4 @@
-import { Toaster } from '@repo/design-system/components';
+import { Toaster } from '@repo/ui/components';
 import { action } from '@storybook/addon-actions';
 import type { Meta, StoryObj } from '@storybook/react';
 import { toast } from 'sonner';

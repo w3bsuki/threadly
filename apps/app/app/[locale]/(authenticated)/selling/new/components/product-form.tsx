@@ -22,7 +22,7 @@ import {
   SelectValue,
   Textarea,
   toast,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';

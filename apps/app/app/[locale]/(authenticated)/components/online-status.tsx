@@ -1,6 +1,6 @@
 'use client';
 
-import { Badge } from '@repo/design-system/components';
+import { Badge } from '@repo/ui/components';
 import { usePresence } from '@repo/real-time/client';
 import { Dot } from 'lucide-react';
 

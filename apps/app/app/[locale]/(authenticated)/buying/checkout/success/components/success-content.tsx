@@ -11,7 +11,7 @@ import {
   CardTitle,
   Separator,
   Skeleton,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { formatDistanceToNow } from 'date-fns';
 import {
   AlertCircle,

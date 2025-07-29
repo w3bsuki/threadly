@@ -4,8 +4,8 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from '@repo/design-system/components';
-import { cn } from '@repo/design-system/lib/utils';
+} from '@repo/ui/components';
+import { cn } from '@repo/ui/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { Camera, ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import Image from 'next/image';

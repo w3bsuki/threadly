@@ -9,7 +9,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { getDictionary } from '@repo/internationalization';
 import { decimalToNumber } from '@repo/utils/decimal';
 import {

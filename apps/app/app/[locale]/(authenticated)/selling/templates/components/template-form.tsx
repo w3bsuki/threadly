@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
   Textarea,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { Plus, X } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';

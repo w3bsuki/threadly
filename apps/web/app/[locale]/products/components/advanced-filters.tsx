@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Label } from '@repo/design-system/components';
+import { Button, Label } from '@repo/ui/components';
 import { X } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';

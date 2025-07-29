@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
   Separator,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { getDictionary } from '@repo/internationalization';
 import {
   Clock,

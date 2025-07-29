@@ -4,7 +4,7 @@ import {
   buildCursorWhere,
   processPaginationResult,
   validatePaginationParams,
-} from '@repo/design-system/lib/pagination';
+} from '@repo/ui/lib/pagination';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(

@@ -12,6 +12,22 @@ export * from './responses/api-response';
 export * from './validation/request-validator';
 export * from './validation/sanitizer';
 
+// Server Actions (merged from @repo/server-actions)
+export * from './actions/client';
+export * from './actions/server';
+export * from './actions/types';
+export * from './actions/errors/action-error';
+export * from './actions/hooks/use-server-action';
+export * from './actions/components/action-error-boundary';
+export * from './actions/components/loading-states';
+export * from './actions/utils/cache-strategies';
+export * from './actions/utils/create-action';
+export * from './actions/utils/data-fetching';
+export * from './actions/validation/schemas';
+
+// tRPC Client Integration
+export * from './trpc';
+
 // Composite middleware
 import type { NextRequest, NextResponse } from 'next/server';
 import { withErrorHandler } from './errors/error-handler';

@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, toast } from '@repo/design-system/components';
+import { Button, toast } from '@repo/ui/components';
 import { Clock, Loader2, Search, TrendingUp, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 

@@ -1,5 +1,5 @@
 import { SignInButton, useUser } from '@repo/auth/client';
-import { Button } from '@repo/design-system/components';
+import { Button } from '@repo/ui/components';
 import { Heart, Plus, ShoppingBag, User, X } from 'lucide-react';
 import Link from 'next/link';
 import { env } from '@/env';

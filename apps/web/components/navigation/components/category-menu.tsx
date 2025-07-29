@@ -1,4 +1,4 @@
-import { Button } from '@repo/design-system/components';
+import { Button } from '@repo/ui/components';
 import Link from 'next/link';
 
 interface Category {

@@ -8,7 +8,7 @@ import {
   Card,
   CardContent,
   CardHeader,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import Image from 'next/image';
 import { memo, useState } from 'react';
 

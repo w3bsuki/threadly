@@ -8,12 +8,12 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import {
   buildCursorWhere,
   processPaginationResult,
   validatePaginationParams,
-} from '@repo/design-system/lib/pagination';
+} from '@repo/ui/lib/pagination';
 import { getDictionary } from '@repo/internationalization';
 import { decimalToNumber } from '@repo/utils';
 import { Edit, Eye, MoreHorizontal, Plus, Trash2 } from 'lucide-react';

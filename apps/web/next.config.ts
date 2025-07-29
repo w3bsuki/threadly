@@ -12,7 +12,7 @@ let nextConfig: NextConfig = withToolbar(config);
 nextConfig.experimental = {
   ...nextConfig.experimental,
   optimizePackageImports: [
-    '@repo/design-system',
+    '@repo/ui',
     '@repo/database',
     'lucide-react',
     '@tanstack/react-query',

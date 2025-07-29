@@ -5,8 +5,8 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from '@repo/design-system/components';
-import { cn } from '@repo/design-system/lib/utils';
+} from '@repo/ui/components';
+import { cn } from '@repo/ui/lib/utils';
 import type { Dictionary } from '@repo/internationalization';
 import {
   Crown,

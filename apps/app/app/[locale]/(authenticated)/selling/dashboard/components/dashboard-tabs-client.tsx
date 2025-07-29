@@ -10,7 +10,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { decimalToNumber } from '@repo/utils/decimal';
 import dynamic from 'next/dynamic';
 import { AnalyticsErrorBoundary } from '@/components/error-boundaries';

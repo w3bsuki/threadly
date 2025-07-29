@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card, CardContent } from '@repo/design-system/components';
+import { Button, Card, CardContent } from '@repo/ui/components';
 import { useChannel, useTypingIndicator } from '@repo/real-time/client';
 import { MessageCircle } from 'lucide-react';
 import Link from 'next/link';

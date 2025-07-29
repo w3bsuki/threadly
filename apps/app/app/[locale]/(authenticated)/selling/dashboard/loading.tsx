@@ -3,7 +3,7 @@ import {
   CardContent,
   CardHeader,
   Skeleton,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { AnalyticsChartsSkeleton } from './components/analytics-charts-skeleton';
 
 export default function SellingDashboardLoading(): React.JSX.Element {

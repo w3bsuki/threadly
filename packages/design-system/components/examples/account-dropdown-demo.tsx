@@ -114,7 +114,7 @@ export function AccountDropdownDemo() {
         <div className="space-y-2 rounded-lg bg-muted/30 p-4">
           <h3 className="font-medium text-sm">Usage Example</h3>
           <pre className="overflow-x-auto text-xs">
-            {`import { AccountDropdown } from '@repo/design-system/components/navigation';
+            {`import { AccountDropdown } from '@repo/ui/components/navigation';
 
 <AccountDropdown
   isSignedIn={isSignedIn}

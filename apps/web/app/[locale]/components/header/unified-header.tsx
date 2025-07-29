@@ -1,14 +1,14 @@
 'use client';
 
 import { UserButton, useUser } from '@repo/auth/client';
-import { Button } from '@repo/design-system/components';
-import { ModeToggle } from '@repo/design-system/components/mode-toggle';
+import { Button } from '@repo/ui/components';
+import { ModeToggle } from '@repo/ui/components/mode-toggle';
 import {
   Header,
   HeaderActions,
   MobileDropdownMenu,
   StickyHeader,
-} from '@repo/design-system/components/navigation';
+} from '@repo/ui/components/navigation';
 import {
   Bell,
   Heart,

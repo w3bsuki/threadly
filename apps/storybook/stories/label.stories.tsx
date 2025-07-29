@@ -1,4 +1,4 @@
-import { Label } from '@repo/design-system/components';
+import { Label } from '@repo/ui/components';
 import type { Meta, StoryObj } from '@storybook/react';
 
 /**

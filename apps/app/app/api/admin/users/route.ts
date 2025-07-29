@@ -1,6 +1,6 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { validatePaginationParams } from '@repo/design-system/lib/pagination';
+import { validatePaginationParams } from '@repo/ui/lib/pagination';
 import { checkRateLimit, generalApiLimit } from '@repo/security';
 import { type NextRequest, NextResponse } from 'next/server';
 

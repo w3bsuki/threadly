@@ -5,7 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { Home, RefreshCw, Search, WifiOff } from 'lucide-react';
 import Link from 'next/link';
 

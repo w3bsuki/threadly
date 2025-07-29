@@ -6,7 +6,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { AlertCircle } from 'lucide-react';
 
 export default function SuspendedPage(): React.JSX.Element {

@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@repo/design-system/lib/utils';
+import { cn } from '@repo/ui/lib/utils';
 import { AlertCircle, CheckCircle, Info, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 

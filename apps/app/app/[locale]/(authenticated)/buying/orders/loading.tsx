@@ -1,4 +1,4 @@
-import { OrderListSkeleton } from '@repo/design-system/components';
+import { OrderListSkeleton } from '@repo/ui/components';
 
 export default function Loading(): React.JSX.Element {
   return <OrderListSkeleton />;

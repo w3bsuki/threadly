@@ -1,4 +1,4 @@
-import { Button } from '@repo/design-system/components/ui/button';
+import { Button } from '@repo/ui/components/ui/button';
 import type { Meta, StoryObj } from '@storybook/react';
 import {
   AlertCircle,

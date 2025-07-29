@@ -4,7 +4,7 @@ import {
   Badge,
   ConditionBadge,
   ProductGridSkeleton,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import type { Dictionary } from '@repo/internationalization';
 import { ErrorBoundary } from '@repo/utils';
 import { useVirtualizer } from '@tanstack/react-virtual';

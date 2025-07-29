@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
   ScrollArea,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import {
   type Currency,
   getCurrencySymbol,

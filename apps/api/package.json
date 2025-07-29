@@ -1,6 +1,13 @@
 {
   "name": "api",
   "private": true,
+  "prettier": "@repo/prettier-config",
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "default": "./index.ts"
+    }
+  },
   "scripts": {
     "dev": "concurrently \"npm:next\" \"npm:stripe\"",
     "next": "next dev -p 3002 --turbopack",
@@ -10,40 +17,41 @@
     "test": "cross-env NODE_ENV=test vitest run",
     "stripe": "stripe listen --forward-to localhost:3002/webhooks/payments",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
     "@repo/analytics": "workspace:*",
     "@repo/auth": "workspace:*",
     "@repo/cache": "workspace:*",
     "@repo/database": "workspace:*",
-    "@repo/design-system": "workspace:*",
-    "@repo/email": "workspace:*",
+    "@repo/ui": "workspace:*",
+    "@repo/notifications": "workspace:*",
     "@repo/feature-flags": "workspace:*",
-    "@repo/next-config": "workspace:*",
     "@repo/observability": "workspace:*",
     "@repo/payments": "workspace:*",
     "@repo/real-time": "workspace:*",
-    "@repo/search": "workspace:*",
     "@repo/security": "workspace:*",
-    "@repo/testing": "workspace:*",
-    "@repo/validation": "workspace:*",
+    "@repo/utils": "workspace:*",
     "@repo/webhooks": "workspace:*",
     "@sentry/nextjs": "^9.36.0",
     "@t3-oss/env-nextjs": "^0.13.8",
-    "next": "15.3.5",
+    "next": "15.4.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "svix": "^1.69.0",
     "vitest": "^3.2.4",
-    "zod": "^4.0.2"
+    "zod": "^4.0.2",
+    "@repo/config": "workspace:*"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/config": "workspace:*",
     "@types/node": "24.0.12",
     "@types/react": "19.1.8",
-    "@types/react-dom": "19.1.6",
     "concurrently": "^9.2.0",
+    "eslint": "^8.57.0",
     "typescript": "^5.8.3"
   }
 }

@@ -7,7 +7,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { decimalToNumber } from '@repo/utils';
 import { ExternalLink, Eye, Package, ShoppingCart, Star } from 'lucide-react';
 import Image from 'next/image';

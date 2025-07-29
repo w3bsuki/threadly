@@ -1,4 +1,4 @@
-import { ProfileSkeleton } from '@repo/design-system/components';
+import { ProfileSkeleton } from '@repo/ui/components';
 
 export default function Loading(): React.JSX.Element {
   return <ProfileSkeleton />;

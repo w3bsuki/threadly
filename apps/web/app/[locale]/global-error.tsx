@@ -1,6 +1,6 @@
 'use client';
 
-import { fonts } from '@repo/design-system/lib/fonts';
+import { fonts } from '@repo/ui/lib/fonts';
 import { ErrorPage } from '@repo/error-handling/error-pages';
 import { captureException } from '@sentry/nextjs';
 import type NextError from 'next/error';

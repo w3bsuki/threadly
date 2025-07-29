@@ -1,11 +1,13 @@
 {
   "name": "docs",
   "private": true,
+  "prettier": "@repo/prettier-config",
   "scripts": {
     "dev": "mintlify dev --port 3004",
     "lint": "mintlify broken-links"
   },
   "devDependencies": {
+    "@repo/prettier-config": "workspace:*",
     "typescript": "^5.8.3"
   }
 }

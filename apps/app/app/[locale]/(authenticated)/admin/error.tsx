@@ -6,7 +6,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { AlertTriangle, Shield } from 'lucide-react';
 
 export default function AdminError({

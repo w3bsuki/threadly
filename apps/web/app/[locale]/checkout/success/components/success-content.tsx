@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@repo/design-system/components';
+import { Button } from '@repo/ui/components';
 import { ArrowRight, CheckCircle, Mail, Package } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect } from 'react';

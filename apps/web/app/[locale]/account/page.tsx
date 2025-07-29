@@ -1,7 +1,7 @@
 import { UserButton } from '@repo/auth/client';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { Button } from '@repo/design-system/components';
+import { Button } from '@repo/ui/components';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';

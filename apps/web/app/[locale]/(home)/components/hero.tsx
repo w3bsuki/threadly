@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@repo/design-system/components';
+import { Button } from '@repo/ui/components';
 import type { Dictionary } from '@repo/internationalization';
 import { Heart, Search, ShoppingBag, Sparkles } from 'lucide-react';
 import Link from 'next/link';

@@ -1,0 +1,6 @@
+{
+  "extends": ["@repo/eslint-config/next"],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  }
+}

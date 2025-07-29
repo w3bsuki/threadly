@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@repo/design-system/components';
+import { Button } from '@repo/ui/components';
 import { Filter, Search, SlidersHorizontal } from 'lucide-react';
 import { InstantSearch } from '../../../../components/instant-search';
 import { SortDropdown } from './sort-dropdown';

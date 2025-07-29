@@ -5,8 +5,8 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-} from '@repo/design-system/components';
-import { cn } from '@repo/design-system/lib/utils';
+} from '@repo/ui/components';
+import { cn } from '@repo/ui/lib/utils';
 import { hapticFeedback } from '@/lib/mobile/haptic-feedback';
 import { MobileButton } from './mobile-button';
 

@@ -4,9 +4,9 @@ import { AuthProvider } from '@repo/auth/provider';
 import {
   DesignSystemProvider,
   ServiceWorkerRegistration,
-} from '@repo/design-system';
-import { fonts } from '@repo/design-system/lib/fonts';
-import { cn } from '@repo/design-system/lib/utils';
+} from '@repo/ui';
+import { fonts } from '@repo/ui/lib/fonts';
+import { cn } from '@repo/ui/lib/utils';
 import { Toolbar } from '@repo/feature-flags/components/toolbar';
 import { getDictionary } from '@repo/internationalization';
 import { ErrorBoundary } from '@repo/utils/src/error-boundary';
@@ -18,6 +18,7 @@ import { PerformanceMonitor } from './components/performance-monitor';
 import { CurrencyProvider } from './components/providers/currency-provider';
 import { I18nProvider } from './components/providers/i18n-provider';
 import { PromotionalBanner } from './products/components/promotional-banner';
+import { WebTRPCProvider } from '../../lib/trpc';
 
 type RootLayoutProperties = {
   readonly children: ReactNode;
@@ -57,8 +58,9 @@ const RootLayout = async ({ children, params }: RootLayoutProperties) => {
         <DesignSystemProvider>
           <AuthProvider>
             <AnalyticsProvider>
-              <I18nProvider dictionary={dictionary} locale={locale}>
-                <CurrencyProvider>
+              <WebTRPCProvider>
+                <I18nProvider dictionary={dictionary} locale={locale}>
+                  <CurrencyProvider>
                   <ServiceWorkerRegistration />
                   <PerformanceMonitor
                     debug={process.env.NODE_ENV === 'development'}
@@ -74,8 +76,9 @@ const RootLayout = async ({ children, params }: RootLayoutProperties) => {
                   </main>
                   <Footer dictionary={dictionary} />
                   <MobileBottomNav />
-                </CurrencyProvider>
-              </I18nProvider>
+                  </CurrencyProvider>
+                </I18nProvider>
+              </WebTRPCProvider>
             </AnalyticsProvider>
           </AuthProvider>
         </DesignSystemProvider>

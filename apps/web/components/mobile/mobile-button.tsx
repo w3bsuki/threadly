@@ -1,7 +1,7 @@
 'use client';
 
-import { Button, buttonVariants } from '@repo/design-system/components';
-import { cn } from '@repo/design-system/lib/utils';
+import { Button, buttonVariants } from '@repo/ui/components';
+import { cn } from '@repo/ui/lib/utils';
 import { forwardRef } from 'react';
 import { hapticFeedback } from '@/lib/mobile/haptic-feedback';
 

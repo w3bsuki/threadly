@@ -1,6 +1,6 @@
 'use client';
 
-import { MobileNav } from '@repo/design-system/components/navigation';
+import { MobileNav } from '@repo/ui/components/navigation';
 import type { Dictionary } from '@repo/internationalization';
 import {
   LayoutDashboard,

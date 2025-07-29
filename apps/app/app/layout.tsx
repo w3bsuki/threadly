@@ -1,11 +1,11 @@
 import { env } from '@/env';
-import '@repo/design-system/styles/globals.css';
+import '@repo/ui/styles/globals.css';
 import './styles.css';
 import { AnalyticsProvider } from '@repo/analytics';
 import { AuthProvider } from '@repo/auth/provider';
-import { DesignSystemProvider } from '@repo/design-system';
-import { Toaster } from '@repo/design-system/components';
-import { fonts } from '@repo/design-system/lib/fonts';
+import { DesignSystemProvider } from '@repo/ui';
+import { Toaster } from '@repo/ui/components';
+import { fonts } from '@repo/ui/lib/fonts';
 import { Toolbar } from '@repo/feature-flags/components/toolbar';
 import type { Metadata, Viewport } from 'next';
 import type * as React from 'react';

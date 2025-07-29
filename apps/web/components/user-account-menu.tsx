@@ -12,7 +12,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import {
   LayoutDashboard,
   LogOut,

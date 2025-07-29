@@ -7,7 +7,7 @@ import {
   CartItem,
   CartSummary,
   Trash2,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';

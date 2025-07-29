@@ -14,7 +14,7 @@ import {
   Tabs,
   TabsList,
   TabsTrigger,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { format } from 'date-fns';
 import { Search } from 'lucide-react';

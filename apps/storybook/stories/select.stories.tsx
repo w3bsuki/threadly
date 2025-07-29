@@ -7,7 +7,7 @@ import {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import type { Meta, StoryObj } from '@storybook/react';
 
 /**

@@ -1,7 +1,7 @@
 import {
   AccountDropdown,
   MobileAccountDropdown,
-} from '@repo/design-system/components/navigation/account-dropdown';
+} from '@repo/ui/components/navigation/account-dropdown';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 

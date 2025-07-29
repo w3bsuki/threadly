@@ -6,7 +6,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 // GET /api/cart - Get user's cart
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   // Check rate limit first
   const rateLimitResult = await checkRateLimit(generalApiLimit, request);
   if (!rateLimitResult.allowed) {
@@ -84,7 +84,7 @@ const addToCartSchema = z.object({
   productId: z.string(),
 });
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   // Check rate limit first
   const rateLimitResult = await checkRateLimit(generalApiLimit, request);
   if (!rateLimitResult.allowed) {
@@ -214,7 +214,7 @@ export async function POST(request: NextRequest) {
 }
 
 // DELETE /api/cart/:productId - Remove item from cart
-export async function DELETE(request: NextRequest) {
+export async function DELETE(request: NextRequest): Promise<NextResponse> {
   // Check rate limit first
   const rateLimitResult = await checkRateLimit(generalApiLimit, request);
   if (!rateLimitResult.allowed) {
@@ -271,7 +271,7 @@ export async function DELETE(request: NextRequest) {
 }
 
 // PATCH /api/cart/clear - Clear entire cart
-export async function PATCH(request: NextRequest) {
+export async function PATCH(request: NextRequest): Promise<NextResponse> {
   // Check rate limit first
   const rateLimitResult = await checkRateLimit(generalApiLimit, request);
   if (!rateLimitResult.allowed) {

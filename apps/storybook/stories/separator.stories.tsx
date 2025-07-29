@@ -1,4 +1,4 @@
-import { Separator } from '@repo/design-system/components';
+import { Separator } from '@repo/ui/components';
 import type { Meta, StoryObj } from '@storybook/react';
 
 /**

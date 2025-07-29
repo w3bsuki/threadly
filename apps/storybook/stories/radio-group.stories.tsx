@@ -1,4 +1,4 @@
-import { RadioGroup, RadioGroupItem } from '@repo/design-system/components';
+import { RadioGroup, RadioGroupItem } from '@repo/ui/components';
 import type { Meta, StoryObj } from '@storybook/react';
 
 /**

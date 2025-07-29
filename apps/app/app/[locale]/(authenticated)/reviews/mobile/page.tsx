@@ -6,7 +6,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { ArrowLeft, Edit3, Package, Star } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';

@@ -5,7 +5,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import {
   AlertTriangle,
   CheckCircle,
@@ -47,7 +47,7 @@ const AdminDashboard: React.FC = async () => {
           take: 5,
           orderBy: { createdAt: 'desc' },
           include: {
-            User_Order_buyerIdToUser: {
+            buyer: {
               select: { firstName: true, lastName: true },
             },
             Product: { select: { title: true, price: true } },
@@ -222,13 +222,13 @@ const AdminDashboard: React.FC = async () => {
                   <div>
                     <p className="font-medium">{order.Product.title}</p>
                     <p className="text-muted-foreground">
-                      {order.User_Order_buyerIdToUser.firstName}{' '}
-                      {order.User_Order_buyerIdToUser.lastName}
+                      {order.buyer.firstName}{' '}
+                      {order.buyer.lastName}
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="font-medium">
-                      ${order.Product.price.toFixed(2)}
+                      ${order.amount.toFixed()}
                     </p>
                     <p className="text-muted-foreground text-xs">
                       {new Date(order.createdAt).toLocaleDateString()}

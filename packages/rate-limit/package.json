@@ -23,7 +23,9 @@
     "zod": "^4.0.2"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/config": "workspace:*",
     "typescript": "^5.8.3"
-  }
+  },
+  "prettier": "@repo/prettier-config"
 }

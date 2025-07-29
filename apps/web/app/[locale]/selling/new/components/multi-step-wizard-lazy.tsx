@@ -1,6 +1,6 @@
 'use client';
 
-import { Skeleton } from '@repo/design-system/components';
+import { Skeleton } from '@repo/ui/components';
 import { lazy, Suspense } from 'react';
 
 const MultiStepWizard = lazy(() =>

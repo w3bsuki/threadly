@@ -1,5 +1,5 @@
-import { Card, CardContent } from '@repo/design-system/components';
-import { cn } from '@repo/design-system/lib/utils';
+import { Card, CardContent } from '@repo/ui/components';
+import { cn } from '@repo/ui/lib/utils';
 import type { Dictionary } from '@repo/internationalization';
 import { DollarSign, MessageSquare, Package, ShoppingBag } from 'lucide-react';
 

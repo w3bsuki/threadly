@@ -1,7 +1,7 @@
 'use client';
 
-import { Badge, Button } from '@repo/design-system/components';
-import { cn } from '@repo/design-system/lib/utils';
+import { Badge, Button } from '@repo/ui/components';
+import { cn } from '@repo/ui/lib/utils';
 import { Baby, Crown, Sparkles, Tag, User, Users } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 

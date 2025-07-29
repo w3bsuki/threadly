@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, toast } from '@repo/design-system/components';
+import { Button, toast } from '@repo/ui/components';
 import { Zap } from 'lucide-react';
 import { useState } from 'react';
 

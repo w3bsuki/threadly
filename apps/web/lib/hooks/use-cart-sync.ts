@@ -2,7 +2,7 @@
 
 import { useUser } from '@repo/auth/client';
 import { useCartStore } from '@repo/commerce';
-import { toast } from '@repo/design-system';
+import { toast } from '@repo/ui';
 import { useCallback, useEffect } from 'react';
 import {
   addToCart as addToCartAction,

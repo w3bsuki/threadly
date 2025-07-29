@@ -3,7 +3,7 @@ import {
   buildCursorWhere,
   processPaginationResult,
   validatePaginationParams,
-} from '@repo/design-system/lib/pagination';
+} from '@repo/ui/lib/pagination';
 import AdminUsersClient from './admin-users-client';
 
 interface PageProps {

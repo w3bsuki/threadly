@@ -18,9 +18,9 @@ import {
   LazyImage,
   Separator,
   toast,
-} from '@repo/design-system/components';
-import { ProductImageGallery } from '@repo/design-system/components/marketplace/product-image';
-import { cn } from '@repo/design-system/lib/utils';
+} from '@repo/ui/components';
+import { ProductImageGallery } from '@repo/ui/components/marketplace/product-image';
+import { cn } from '@repo/ui/lib/utils';
 import {
   ArrowLeft,
   Calendar,

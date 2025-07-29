@@ -19,7 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import {
   Copy,
   DollarSign,

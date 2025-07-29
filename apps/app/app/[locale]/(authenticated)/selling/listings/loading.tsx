@@ -1,4 +1,4 @@
-import { ProductGridSkeleton } from '@repo/design-system/components';
+import { ProductGridSkeleton } from '@repo/ui/components';
 
 export default function Loading(): React.JSX.Element {
   return (

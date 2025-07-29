@@ -7,7 +7,7 @@ import {
   toast,
   useDoubleTap,
   useLongPress,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { useState } from 'react';
 
 export function MobileInteractionsExample() {

@@ -1,23 +1,23 @@
 'use client';
 
-import { Button } from '@repo/design-system/components/ui/button';
+import { Button } from '@repo/ui/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@repo/design-system/components/ui/card';
-import { Input } from '@repo/design-system/components/ui/input';
-import { Label } from '@repo/design-system/components/ui/label';
+} from '@repo/ui/components/ui/card';
+import { Input } from '@repo/ui/components/ui/input';
+import { Label } from '@repo/ui/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@repo/design-system/components/ui/select';
-import { Textarea } from '@repo/design-system/components/ui/textarea';
+} from '@repo/ui/components/ui/select';
+import { Textarea } from '@repo/ui/components/ui/textarea';
 import { Package, Truck } from 'lucide-react';
 import { useState } from 'react';
 

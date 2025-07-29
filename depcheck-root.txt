@@ -1,0 +1,22 @@
+Unused dependencies
+* @emotion/is-prop-valid
+* cross-env
+* next
+Unused devDependencies
+* @auto-it/first-time-contributor
+* @axe-core/react
+* @biomejs/biome
+* @prisma/nextjs-monorepo-workaround-plugin
+* @repo/typescript-config
+* @turbo/gen
+* axe-core
+* eslint-plugin-jsx-a11y
+* lint-staged
+* vitest
+Missing dependencies
+* @repo/database: .\scripts\check-db.ts
+* sharp: .\scripts\generate-favicons-sharp.js
+* @repo/observability: .\scripts\migrate-production.ts
+* @repo/cache: .\scripts\performance-benchmark.ts
+* @repo/search: .\scripts\sync-algolia.ts
+* chalk: .\scripts\validate-production.ts

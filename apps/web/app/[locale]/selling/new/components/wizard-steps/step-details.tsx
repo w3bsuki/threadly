@@ -13,7 +13,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import type { CreateProductInput } from '@repo/validation/schemas';
 import type { UseFormReturn } from 'react-hook-form';
 

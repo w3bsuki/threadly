@@ -6,7 +6,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { useEffect, useState } from 'react';
 import {
   type CategoryOption,

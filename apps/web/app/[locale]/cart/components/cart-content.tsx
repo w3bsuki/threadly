@@ -6,8 +6,8 @@ import {
   CartItem,
   CartQuantitySelector,
   CartSummary,
-} from '@repo/design-system/components';
-import { cn } from '@repo/design-system/lib/utils';
+} from '@repo/ui/components';
+import { cn } from '@repo/ui/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowLeft,

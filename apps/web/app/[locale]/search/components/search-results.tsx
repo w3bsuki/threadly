@@ -6,7 +6,7 @@ import {
   Button,
   Card,
   CardContent,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { ErrorBoundary } from '@repo/utils';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Heart, Search } from 'lucide-react';

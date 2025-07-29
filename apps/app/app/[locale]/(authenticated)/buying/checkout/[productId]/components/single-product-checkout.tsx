@@ -22,7 +22,7 @@ import {
   RadioGroup,
   RadioGroupItem,
   Separator,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { formatCurrency } from '@repo/payments/client';
 import { decimalToNumber } from '@repo/utils';
 import {

@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { AlertTriangle, Check, Eye, MoreVertical, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';

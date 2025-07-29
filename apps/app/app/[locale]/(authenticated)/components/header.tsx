@@ -9,8 +9,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
   Separator,
-} from '@repo/design-system/components';
-import { AccountDropdown } from '@repo/design-system/components/navigation';
+} from '@repo/ui/components';
+import { AccountDropdown } from '@repo/ui/components/navigation';
 import type { Dictionary } from '@repo/internationalization';
 import { useParams, useRouter } from 'next/navigation';
 import { Fragment, type ReactNode } from 'react';

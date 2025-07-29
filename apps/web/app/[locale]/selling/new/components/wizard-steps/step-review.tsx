@@ -7,7 +7,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import type { CreateProductInput } from '@repo/validation/schemas';
 import {
   DollarSign,

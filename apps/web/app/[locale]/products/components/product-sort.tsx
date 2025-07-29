@@ -5,7 +5,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { ArrowUpDown, Clock, DollarSign, TrendingUp } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 

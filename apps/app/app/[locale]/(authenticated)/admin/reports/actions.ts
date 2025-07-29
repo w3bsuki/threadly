@@ -1,6 +1,6 @@
 'use server';
 
-import { canModerate } from '@repo/auth/admin';
+import { canModerate } from '@/lib/auth/admin';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { randomUUID } from 'crypto';

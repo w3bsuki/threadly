@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@repo/design-system/components';
+import { Button } from '@repo/ui/components';
 import { Menu } from 'lucide-react';
 import Link from 'next/link';
 import { CategoryMenu } from './components/category-menu';

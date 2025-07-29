@@ -1,9 +1,9 @@
 'use client';
 
-import { Button } from '@repo/design-system/components/ui/button';
-import { Card, CardContent } from '@repo/design-system/components/ui/card';
-import { Progress } from '@repo/design-system/components/ui/progress';
-import { cn } from '@repo/design-system/lib/utils';
+import { Button } from '@repo/ui/components/ui/button';
+import { Card, CardContent } from '@repo/ui/components/ui/card';
+import { Progress } from '@repo/ui/components/ui/progress';
+import { cn } from '@repo/ui/lib/utils';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';

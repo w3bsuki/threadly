@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   toast,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import {
   Bell,
   BellOff,

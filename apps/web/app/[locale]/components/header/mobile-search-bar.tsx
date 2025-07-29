@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from '@repo/design-system/components';
-import { cn } from '@repo/design-system/lib/utils';
+import { Button } from '@repo/ui/components';
+import { cn } from '@repo/ui/lib/utils';
 import { motion, useAnimation, useMotionValue } from 'framer-motion';
 import { Filter, Search, X } from 'lucide-react';
 import Link from 'next/link';

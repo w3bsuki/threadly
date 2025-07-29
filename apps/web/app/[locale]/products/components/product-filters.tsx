@@ -10,7 +10,7 @@ import {
   Input,
   Label,
   Slider,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import type { Dictionary } from '@repo/internationalization';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';

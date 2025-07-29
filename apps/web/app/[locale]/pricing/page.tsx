@@ -1,4 +1,4 @@
-import { Button } from '@repo/design-system/components';
+import { Button } from '@repo/ui/components';
 import { getDictionary } from '@repo/internationalization';
 import { createMetadata } from '@repo/seo/metadata';
 import { Heart, HelpCircle, Shield, Zap } from 'lucide-react';

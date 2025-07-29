@@ -1,5 +1,5 @@
-import { Badge, Card, CardContent } from '@repo/design-system/components';
-import { OptimizedImage } from '@repo/design-system/components/optimized-image';
+import { Badge, Card, CardContent } from '@repo/ui/components';
+import { OptimizedImage } from '@repo/ui/components/optimized-image';
 import { formatCurrency } from '@repo/utils';
 import Link from 'next/link';
 

@@ -15,7 +15,7 @@ import {
   SheetTitle,
   SheetTrigger,
   Slider,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import type { Dictionary } from '@repo/internationalization';
 import { Filter, X } from 'lucide-react';
 import { useState } from 'react';

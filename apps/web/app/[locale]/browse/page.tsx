@@ -1,6 +1,6 @@
 import type { Category, Product, ProductImage, User } from '@repo/database';
 import { database } from '@repo/database';
-import { Badge, Card, CardContent } from '@repo/design-system/components';
+import { Badge, Card, CardContent } from '@repo/ui/components';
 import { getDictionary } from '@repo/internationalization';
 import { Package, Star, TrendingUp, Users } from 'lucide-react';
 import type { Metadata } from 'next';

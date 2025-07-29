@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
   Progress,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import {
   Activity,
   AlertTriangle,
@@ -91,12 +91,12 @@ const PlatformHealthPage: React.FC = async () => {
       where: {
         OR: [
           {
-            Order_Order_sellerIdToUser: {
+            ordersAsSeller: {
               some: { createdAt: { gte: startOfDay } },
             },
           },
           {
-            Order_Order_buyerIdToUser: {
+            ordersAsBuyer: {
               some: { createdAt: { gte: startOfDay } },
             },
           },
@@ -107,12 +107,12 @@ const PlatformHealthPage: React.FC = async () => {
       where: {
         OR: [
           {
-            Order_Order_sellerIdToUser: {
+            ordersAsSeller: {
               some: { createdAt: { gte: startOfWeek } },
             },
           },
           {
-            Order_Order_buyerIdToUser: {
+            ordersAsBuyer: {
               some: { createdAt: { gte: startOfWeek } },
             },
           },

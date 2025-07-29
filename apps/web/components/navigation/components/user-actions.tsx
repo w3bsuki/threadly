@@ -1,5 +1,5 @@
 import { SignInButton, useUser } from '@repo/auth/client';
-import { Button } from '@repo/design-system/components';
+import { Button } from '@repo/ui/components';
 import { Heart, Plus, User } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

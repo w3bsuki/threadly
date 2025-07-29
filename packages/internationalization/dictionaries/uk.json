@@ -35,7 +35,9 @@
         "howItWorks": "How It Works",
         "helpAndSupport": "Help & Support",
         "home": "Home",
-        "search": "Search"
+        "search": "Search",
+        "account": "Account",
+        "close": "Close"
       },
       "promotionalBanner": {
         "freeShipping": "Free shipping on orders over $50",

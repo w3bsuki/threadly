@@ -30,6 +30,14 @@
     "./hooks": {
       "types": "./src/hooks/index.ts",
       "default": "./src/hooks/index.ts"
+    },
+    "./error-handling": {
+      "types": "./src/error-handling/index.ts",
+      "default": "./src/error-handling/index.ts"
+    },
+    "./search": {
+      "types": "./src/search/index.ts",
+      "default": "./src/search/index.ts"
     }
   },
   "dependencies": {
@@ -37,8 +45,10 @@
     "react": "19.1.0"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/config": "workspace:*",
     "@types/react": "19.1.8",
     "typescript": "^5.8.3"
-  }
+  },
+  "prettier": "@repo/prettier-config"
 }

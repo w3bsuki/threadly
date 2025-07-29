@@ -14,12 +14,12 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import {
   CursorPagination,
   useCursorPagination,
-} from '@repo/design-system/components/marketplace';
-import type { CursorPaginationResult } from '@repo/design-system/lib/pagination';
+} from '@repo/ui/components/marketplace';
+import type { CursorPaginationResult } from '@repo/ui/lib/pagination';
 import { decimalToNumber } from '@repo/utils';
 import { Archive, RefreshCw, Search, Trash2 } from 'lucide-react';
 import Image from 'next/image';

@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@repo/design-system/lib/utils';
+import { cn } from '@repo/ui/lib/utils';
 import { ChevronRight, Home } from 'lucide-react';
 import Link from 'next/link';
 

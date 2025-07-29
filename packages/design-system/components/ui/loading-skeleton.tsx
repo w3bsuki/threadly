@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@repo/design-system/lib/utils';
+import { cn } from '@repo/ui/lib/utils';
 import { Card, CardContent, CardHeader } from './card';
 import { Skeleton } from './skeleton';
 

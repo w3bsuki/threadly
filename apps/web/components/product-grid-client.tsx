@@ -4,8 +4,8 @@ import {
   Badge,
   Button,
   PullToRefreshIndicator,
-} from '@repo/design-system/components';
-import { usePullToRefresh } from '@repo/design-system/hooks/use-pull-to-refresh';
+} from '@repo/ui/components';
+import { usePullToRefresh } from '@repo/ui/hooks/use-pull-to-refresh';
 import { Filter, Heart, ShoppingCart, X } from 'lucide-react';
 import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -47,7 +47,7 @@ const ProductPlaceholder = ({
   );
 };
 
-import { toast } from '@repo/design-system';
+import { toast } from '@repo/ui';
 import type { FilterValue } from '@repo/validation/schemas';
 import { ProductQuickView } from '../app/[locale]/components/product-quick-view';
 import { useFavorites } from '../lib/hooks/use-favorites';

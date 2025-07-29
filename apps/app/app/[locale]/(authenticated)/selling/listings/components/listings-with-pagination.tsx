@@ -6,12 +6,12 @@ import {
   Button,
   Card,
   CardContent,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import {
   CursorPagination,
   useCursorPagination,
-} from '@repo/design-system/components/marketplace';
-import type { CursorPaginationResult } from '@repo/design-system/lib/pagination';
+} from '@repo/ui/components/marketplace';
+import type { CursorPaginationResult } from '@repo/ui/lib/pagination';
 import { decimalToNumber } from '@repo/utils';
 import type { Dictionary } from '@repo/validation/schemas';
 import { Edit, Eye, MoreHorizontal, Plus } from 'lucide-react';

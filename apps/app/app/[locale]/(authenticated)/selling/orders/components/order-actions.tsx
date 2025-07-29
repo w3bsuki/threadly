@@ -12,7 +12,7 @@ import {
   Input,
   Label,
   toast,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { CheckCircle, Eye, MessageCircle, Package, Truck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';

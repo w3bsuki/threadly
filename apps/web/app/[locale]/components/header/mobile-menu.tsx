@@ -1,8 +1,8 @@
 'use client';
 
 import { SignInButton, useUser } from '@repo/auth/client';
-import { Button } from '@repo/design-system/components';
-import { cn } from '@repo/design-system/lib/utils';
+import { Button } from '@repo/ui/components';
+import { cn } from '@repo/ui/lib/utils';
 import {
   motion,
   useAnimation,

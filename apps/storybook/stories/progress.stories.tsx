@@ -1,4 +1,4 @@
-import { Progress } from '@repo/design-system/components';
+import { Progress } from '@repo/ui/components';
 import type { Meta, StoryObj } from '@storybook/react';
 
 /**

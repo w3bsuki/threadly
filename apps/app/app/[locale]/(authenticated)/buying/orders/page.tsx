@@ -1,7 +1,7 @@
 import { currentUser } from '@repo/auth/server';
 import { cache } from '@repo/cache';
 import { database } from '@repo/database';
-import { Button } from '@repo/design-system/components';
+import { Button } from '@repo/ui/components';
 import { getDictionary } from '@repo/internationalization';
 import { ExternalLink, ShoppingCart } from 'lucide-react';
 import type { Metadata } from 'next';

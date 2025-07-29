@@ -1,8 +1,8 @@
 'use client';
 
 import { useCartStore } from '@repo/commerce';
-import { Badge, Button } from '@repo/design-system/components';
-import { cn } from '@repo/design-system/lib/utils';
+import { Badge, Button } from '@repo/ui/components';
+import { cn } from '@repo/ui/lib/utils';
 import type { Dictionary } from '@repo/internationalization';
 import {
   Heart,

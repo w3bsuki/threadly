@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from '@repo/design-system/components';
-import { cn } from '@repo/design-system/lib/utils';
+import { Button } from '@repo/ui/components';
+import { cn } from '@repo/ui/lib/utils';
 import { Grid2X2, Grid3X3, List } from 'lucide-react';
 import { useEffect } from 'react';
 

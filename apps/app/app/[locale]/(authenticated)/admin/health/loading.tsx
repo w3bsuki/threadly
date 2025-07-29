@@ -4,7 +4,7 @@ import {
   CardHeader,
   CardTitle,
   Skeleton,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 
 const Loading: React.FC = () => {
   return (

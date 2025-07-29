@@ -23,7 +23,7 @@ import {
   SelectValue,
   Textarea,
   toast,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { Eye, EyeOff, Save, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';

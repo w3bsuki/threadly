@@ -4,7 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   Button,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import type { Dictionary } from '@repo/internationalization';
 import { PhoneCall } from 'lucide-react';
 import Link from 'next/link';

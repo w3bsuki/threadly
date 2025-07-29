@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
   Textarea,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import {
   Bug,
   Heart,

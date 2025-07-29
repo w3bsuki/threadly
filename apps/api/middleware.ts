@@ -1,22 +1,33 @@
 import type { NextMiddleware, NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import { securityHeaders, isAllowedOrigin } from './lib/security-config';
 
-// Minimal middleware for API routes
+// Enhanced middleware for API routes with security
 export const middleware: NextMiddleware = async (req: NextRequest) => {
   const startTime = Date.now();
 
   try {
     const response = NextResponse.next();
 
-    // Add security headers
-    response.headers.set('X-Content-Type-Options', 'nosniff');
-    response.headers.set('X-Frame-Options', 'DENY');
-    response.headers.set('X-XSS-Protection', '1; mode=block');
-    response.headers.set(
-      'Strict-Transport-Security',
-      'max-age=31536000; includeSubDomains'
-    );
-    response.headers.set('Referrer-Policy', 'origin-when-cross-origin');
+    // Add all security headers
+    Object.entries(securityHeaders).forEach(([key, value]) => {
+      response.headers.set(key, value);
+    });
+
+    // Add CORS headers for API routes
+    const origin = req.headers.get('origin');
+    if (origin && isAllowedOrigin(origin)) {
+      response.headers.set('Access-Control-Allow-Origin', origin);
+      response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-CSRF-Token');
+      response.headers.set('Access-Control-Max-Age', '86400');
+      response.headers.set('Access-Control-Allow-Credentials', 'true');
+    }
+
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+      return new NextResponse(null, { status: 200, headers: response.headers });
+    }
 
     // Add timing header
     const processingTime = Date.now() - startTime;

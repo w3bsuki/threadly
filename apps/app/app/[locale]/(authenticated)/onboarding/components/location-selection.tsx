@@ -1,5 +1,5 @@
-import { Input } from '@repo/design-system/components/ui/input';
-import { Label } from '@repo/design-system/components/ui/label';
+import { Input } from '@repo/ui/components/ui/input';
+import { Label } from '@repo/ui/components/ui/label';
 import { Info, MapPin } from 'lucide-react';
 
 interface LocationSelectionProps {

@@ -1,4 +1,4 @@
-import { CartSkeleton } from '@repo/design-system/components';
+import { CartSkeleton } from '@repo/ui/components';
 
 export default function Loading() {
   return (

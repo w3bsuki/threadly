@@ -1,4 +1,4 @@
-import { ScrollArea } from '@repo/design-system/components';
+import { ScrollArea } from '@repo/ui/components';
 import type { Meta, StoryObj } from '@storybook/react';
 
 /**

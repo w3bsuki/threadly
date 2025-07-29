@@ -5,7 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { AlertCircle, Ban, CheckCircle2, Clock, XCircle } from 'lucide-react';
 
 type AccountStatus = {

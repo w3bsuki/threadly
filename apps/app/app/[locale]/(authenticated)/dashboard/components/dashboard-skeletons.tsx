@@ -5,7 +5,7 @@ import {
   Skeleton,
   SkeletonAvatar,
   SkeletonText,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 
 export function DashboardHeaderSkeleton() {
   return (

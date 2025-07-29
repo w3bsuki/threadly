@@ -4,8 +4,8 @@ import {
   animationDelays,
   animations,
   staggerAnimation,
-} from '@repo/design-system/lib/animations';
-import { cn } from '@repo/design-system/lib/utils';
+} from '@repo/ui/lib/animations';
+import { cn } from '@repo/ui/lib/utils';
 import {
   forwardRef,
   type HTMLAttributes,

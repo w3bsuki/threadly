@@ -1,7 +1,7 @@
 'use client';
 
 import * as MenubarPrimitive from '@radix-ui/react-menubar';
-import { cn } from '@repo/design-system/lib/utils';
+import { cn } from '@repo/ui/lib/utils';
 import { CheckIcon, ChevronRightIcon, CircleIcon } from 'lucide-react';
 import type * as React from 'react';
 

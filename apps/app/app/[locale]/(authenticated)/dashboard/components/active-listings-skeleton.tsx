@@ -3,7 +3,7 @@ import {
   CardContent,
   CardHeader,
   Skeleton,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 
 export function ActiveListingsSkeleton() {
   return (

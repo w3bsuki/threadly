@@ -1,8 +1,8 @@
 'use client';
 
 import { UserButton } from '@repo/auth/client';
-import { ModeToggle } from '@repo/design-system/components/mode-toggle';
-import { cn } from '@repo/design-system/lib/utils';
+import { ModeToggle } from '@repo/ui/components/mode-toggle';
+import { cn } from '@repo/ui/lib/utils';
 import type { Dictionary } from '@repo/internationalization';
 import {
   BarChart3,

@@ -1,7 +1,7 @@
 'use client';
 
 import { useUser } from '@repo/auth/client';
-import { Button } from '@repo/design-system/components';
+import { Button } from '@repo/ui/components';
 import { User } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

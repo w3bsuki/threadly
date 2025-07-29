@@ -1,4 +1,4 @@
-import { Button } from '@repo/design-system/components';
+import { Button } from '@repo/ui/components';
 import {
   Header,
   HeaderActions,
@@ -10,7 +10,7 @@ import {
   MobileMenu,
   MobileNav,
   StickyHeader,
-} from '@repo/design-system/components/navigation';
+} from '@repo/ui/components/navigation';
 import type { Meta, StoryObj } from '@storybook/react';
 import {
   Bell,

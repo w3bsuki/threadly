@@ -1,4 +1,4 @@
-import { ToggleGroup, ToggleGroupItem } from '@repo/design-system/components';
+import { ToggleGroup, ToggleGroupItem } from '@repo/ui/components';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Bold, Italic, Underline } from 'lucide-react';
 

@@ -1,4 +1,4 @@
-import { Switch } from '@repo/design-system/components';
+import { Switch } from '@repo/ui/components';
 import type { Meta, StoryObj } from '@storybook/react';
 
 /**

@@ -16,7 +16,7 @@ export {
 
 // Error boundary utilities
 // Note: These are available as named exports above
-// Usage: import { AppErrorBoundary, PaymentErrorBoundary } from '@repo/design-system';
+// Usage: import { AppErrorBoundary, PaymentErrorBoundary } from '@repo/ui';
 
 // Usage examples:
 //

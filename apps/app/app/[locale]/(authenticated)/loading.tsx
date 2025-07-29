@@ -1,4 +1,4 @@
-import { DashboardSkeleton } from '@repo/design-system/components';
+import { DashboardSkeleton } from '@repo/ui/components';
 
 export default function Loading(): React.JSX.Element {
   return <DashboardSkeleton />;

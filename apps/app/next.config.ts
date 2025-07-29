@@ -10,7 +10,7 @@ let nextConfig: NextConfig = withToolbar(config);
 // Transpile packages that might cause issues
 nextConfig.transpilePackages = [
   '@clerk/nextjs',
-  '@repo/design-system',
+  '@repo/ui',
   '@repo/ui',
   '@knocklabs/react',
 ];
@@ -23,7 +23,7 @@ nextConfig = {
     optimizePackageImports: [
       'lucide-react',
       '@radix-ui/react-icons',
-      '@repo/design-system',
+      '@repo/ui',
       '@repo/database',
       'date-fns',
       'react-hook-form',

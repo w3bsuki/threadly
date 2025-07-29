@@ -1,6 +1,6 @@
 import { blog } from '@repo/cms';
 import { Image } from '@repo/cms/components/image';
-import { cn } from '@repo/design-system/lib/utils';
+import { cn } from '@repo/ui/lib/utils';
 import { getDictionary } from '@repo/internationalization';
 import type { Blog, WithContext } from '@repo/seo/json-ld';
 import { JsonLd } from '@repo/seo/json-ld';

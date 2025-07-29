@@ -35,7 +35,9 @@
         "howItWorks": "Как работи",
         "helpAndSupport": "Помощ и поддръжка",
         "home": "Начало",
-        "search": "Търси"
+        "search": "Търси",
+        "account": "Акаунт",
+        "close": "Затвори"
       },
       "promotionalBanner": {
         "freeShipping": "Безплатна доставка над 100 лв.",

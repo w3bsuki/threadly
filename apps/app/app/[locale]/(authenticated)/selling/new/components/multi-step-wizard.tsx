@@ -10,7 +10,7 @@ import {
   Form,
   Progress,
   toast,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { ValidationErrorDetail } from '@repo/validation/schemas';
 import { ChevronLeft, ChevronRight, Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';

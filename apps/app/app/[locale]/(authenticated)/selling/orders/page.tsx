@@ -7,7 +7,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { getDictionary } from '@repo/internationalization';
 import { decimalToNumber } from '@repo/utils';
 import { AlertCircle, CheckCircle, Package, Truck } from 'lucide-react';

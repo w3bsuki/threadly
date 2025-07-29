@@ -6,7 +6,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import { Globe } from 'lucide-react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 

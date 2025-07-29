@@ -1,7 +1,7 @@
 'use client';
 
-import { Button, Card } from '@repo/design-system/components';
-import { cn } from '@repo/design-system/lib/utils';
+import { Button, Card } from '@repo/ui/components';
+import { cn } from '@repo/ui/lib/utils';
 import { Image as ImageIcon, Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';

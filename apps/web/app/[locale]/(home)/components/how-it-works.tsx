@@ -1,4 +1,4 @@
-import { Button } from '@repo/design-system/components';
+import { Button } from '@repo/ui/components';
 import type { Dictionary } from '@repo/internationalization';
 import {
   Camera,

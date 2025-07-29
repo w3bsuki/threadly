@@ -7,7 +7,7 @@ import {
   Button,
   LazyImage,
   SearchResultsSkeleton,
-} from '@repo/design-system/components';
+} from '@repo/ui/components';
 import type { Dictionary } from '@repo/internationalization';
 import { AlertCircle, Loader2, Search } from 'lucide-react';
 import { AddToCartButton } from '@/components/add-to-cart-button';
