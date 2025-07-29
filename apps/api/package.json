@@ -29,7 +29,6 @@
     "@repo/feature-flags": "workspace:*",
     "@repo/observability": "workspace:*",
     "@repo/payments": "workspace:*",
-    "@repo/real-time": "workspace:*",
     "@repo/security": "workspace:*",
     "@repo/utils": "workspace:*",
     "@repo/webhooks": "workspace:*",
@@ -40,13 +39,10 @@
     "react-dom": "19.1.0",
     "svix": "^1.69.0",
     "vitest": "^3.2.4",
-    "zod": "^4.0.2",
-    "@repo/config": "workspace:*"
+    "zod": "^4.0.2"
   },
   "devDependencies": {
-    "@repo/next-config/eslint": "workspace:*",
-    "@repo/next-config/prettier": "workspace:*",
-    "@repo/config": "workspace:*",
+    "@repo/next-config": "workspace:*",
     "@types/node": "24.0.12",
     "@types/react": "19.1.8",
     "concurrently": "^9.2.0",

@@ -29,7 +29,7 @@ ALL modified code across apps/web, apps/app, apps/api, and packages
 - Proper error handling
 - Async patterns: `const { id } = await params`
 
-### Project Rules (CLAUDE.md)
+### Project Rules (.claude/CLAUDE.md)
 - All rules strictly enforced
 - Pattern consistency verified
 - No deviations allowed

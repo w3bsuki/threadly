@@ -79,7 +79,7 @@ Transform Threadly from a next-forge template into a world-class, production-rea
 **Status: COMPLETED**
 
 **Remove all code quality violations:**
-- [x] Eliminate all `console.log` statements (violates CLAUDE.md) ✅
+- [x] Eliminate all `console.log` statements (violates .claude/CLAUDE.md) ✅
   - Removed from offline-support.tsx, uploadthing routes, sign-in-client.tsx
 - [x] Remove all commented-out code blocks ✅
   - Cleaned up seller profile route, create-order.ts, address-management.tsx, message-actions.ts
@@ -659,7 +659,7 @@ mkdir -p packages/messaging/src/{components,hooks,lib,types}
 - [ ] `scripts/utils.ts` - Update GitHub URL and tempDirName
 - [ ] `scripts/update.ts`, `scripts/initialize.ts`, `scripts/index.ts` - Update user messages
 - [ ] `packages/rate-limit/index.ts` - Change default prefix
-- [ ] `CLAUDE.md` - Update documentation references
+- [ ] `.claude/CLAUDE.md` - Update documentation references
 - [ ] `docs/` directory - Update all next-forge references
 - [ ] All component names and file references
 - [ ] Environment variable names

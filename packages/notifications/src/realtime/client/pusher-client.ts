@@ -1,4 +1,4 @@
-import { withRetry } from '@repo/error-handling';
+import { withRetry } from '@repo/utils/error-handling';
 import Pusher, { type Channel, type PresenceChannel } from 'pusher-js';
 import type {
   ChannelSubscription,

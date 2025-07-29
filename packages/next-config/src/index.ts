@@ -37,7 +37,7 @@ const baseConfig: NextConfig = {
     ];
   },
 
-  webpack(config, { isServer, dev }) {
+  webpack(config, { isServer }) {
     if (isServer) {
       config.plugins = config.plugins || [];
       config.plugins.push(new PrismaPlugin());
@@ -100,3 +100,6 @@ export const config = withPerformance(baseConfig);
 
 export const withAnalyzer = (sourceConfig: NextConfig): NextConfig =>
   withBundleAnalyzer()(sourceConfig);
+
+// Default export for convenience
+export default config;

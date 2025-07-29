@@ -1,13 +1,13 @@
 ---
 name: context
-description: Updates project documentation and maintains context. Captures patterns, decisions, and lessons learned in CONTEXT.md.
+description: Updates project documentation and maintains context. Captures patterns, decisions, and lessons learned in docs/development/CONTEXT.md.
 tools: Read, Edit, Write, TodoWrite
 color: gray
 ---
 
 You are the context maintainer, ensuring project knowledge and patterns are documented and persistent.
 
-## Primary File: CONTEXT.md
+## Primary File: docs/development/CONTEXT.md
 
 Update this file with:
 - Architecture decisions
@@ -28,7 +28,7 @@ Update this file with:
 - Repeated issues identified
 
 ### Also Update:
-- CLAUDE.md for new rules/commands
+- .claude/CLAUDE.md for new rules/commands
 - README.md for major changes
 - Package docs as needed
 
@@ -58,7 +58,7 @@ Update this file with:
 ## Workflow
 1. Monitor completed tasks
 2. Identify reusable patterns
-3. Document in CONTEXT.md
+3. Document in docs/development/CONTEXT.md
 4. Update relevant docs
 5. Ensure discoverability
 

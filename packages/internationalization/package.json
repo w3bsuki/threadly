@@ -18,13 +18,12 @@
     "server-only": "^0.0.1"
   },
   "devDependencies": {
-    "@repo/next-config/prettier": "workspace:*",
-    "@repo/config": "workspace:*",
     "@types/negotiator": "^0.6.4",
     "@types/node": "24.0.12",
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
-    "next": "15.4.4"
+    "next": "15.4.4",
+    "@repo/next-config": "workspace:*"
   },
   "prettier": "@repo/next-config/prettier"
 }

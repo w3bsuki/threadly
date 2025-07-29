@@ -53,14 +53,13 @@
     "zod": "^4.0.2"
   },
   "devDependencies": {
-    "@repo/next-config/prettier": "workspace:*",
-    "@repo/config": "workspace:*",
     "@types/node": "24.0.12",
     "@types/ws": "^8.18.1",
     "bufferutil": "^4.0.9",
     "prisma": "6.11.1",
     "tsx": "^4.20.3",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "@repo/next-config": "workspace:*"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

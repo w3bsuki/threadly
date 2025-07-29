@@ -24,8 +24,8 @@ const buttonVariants = cva(
         // Modern gradient variants
         gradient:
           'bg-gradient-to-r from-brand-primary to-brand-accent text-white shadow-md hover:opacity-90 hover:shadow-lg active:opacity-95',
-        "gradient-subtle":
-          "bg-gradient-to-r from-gray-50 to-gray-100 text-gray-900 hover:from-gray-100 hover:to-gray-200 dark:from-gray-800 dark:to-gray-900 dark:text-gray-100 dark:hover:from-gray-700 dark:hover:to-gray-800",
+        'gradient-subtle':
+          'bg-gradient-to-r from-gray-50 to-gray-100 text-gray-900 hover:from-gray-100 hover:to-gray-200 dark:from-gray-800 dark:to-gray-900 dark:text-gray-100 dark:hover:from-gray-700 dark:hover:to-gray-800',
       },
       size: {
         // Modern compact sizes - 36px default
@@ -35,14 +35,14 @@ const buttonVariants = cva(
         lg: "h-10 px-5 text-base",
         xl: 'h-11 gap-2 px-6 text-base',
         // Icon sizes - matching height variants
-        "icon-xs": "size-7 p-0 [&_svg:not([class*="size-"])]:size-3.5",
-        "icon-sm": "size-8 p-0 [&_svg:not([class*="size-"])]:size-4",
-        "icon": "size-9 p-0",
-        "icon-lg": "size-10 p-0 [&_svg:not([class*="size-"])]:size-5",
-        "icon-xl": "size-11 p-0 [&_svg:not([class*="size-"])]:size-5",
+        'icon-xs': 'size-7 p-0 [&_svg:not([class*="size-"])]:size-3.5',
+        'icon-sm': 'size-8 p-0 [&_svg:not([class*="size-"])]:size-4',
+        icon: 'size-9 p-0',
+        'icon-lg': 'size-10 p-0 [&_svg:not([class*="size-"])]:size-5',
+        'icon-xl': 'size-11 p-0 [&_svg:not([class*="size-"])]:size-5',
         // Touch-optimized sizes
-        "touch": 'touch-comfortable h-10 px-4 text-sm',
-        "touch-lg": 'touch-large h-11 px-5 text-base',
+        touch: 'touch-comfortable h-10 px-4 text-sm',
+        'touch-lg': 'touch-large h-11 px-5 text-base',
       },
       // Roundness options
       rounded: {

@@ -11,7 +11,7 @@ import {
   Input,
   MessagesSkeleton,
 } from '@repo/ui/components';
-import { useChannel, useTypingIndicator } from '@repo/real-time/client';
+import { useChannel, useTypingIndicator } from '@repo/notifications/client';
 import {
   createMessageSchema,
   messageContentSchema,

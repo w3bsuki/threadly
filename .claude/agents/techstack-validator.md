@@ -42,7 +42,7 @@ Your primary responsibilities:
 When validating:
 - First scan for import statements and cross-reference with allowed patterns
 - Check package.json files to understand the dependency structure
-- Look for project configuration files (CLAUDE.md, tsconfig.json) to understand rules
+- Look for project configuration files (.claude/CLAUDE.md, tsconfig.json) to understand rules
 - Provide specific examples of violations with corrected versions
 - Suggest alternative approaches using existing stack components
 - Run or recommend running 'pnpm typecheck' after suggesting changes

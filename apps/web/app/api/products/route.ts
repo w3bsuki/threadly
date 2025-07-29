@@ -3,7 +3,7 @@ import {
   createErrorResponse,
   createPaginationMeta,
   createSuccessResponse,
-} from '@repo/api-utils';
+} from '@repo/utils';
 import { getCacheService } from '@repo/database';
 import type { Prisma } from '@repo/database';
 import { database } from '@repo/database';

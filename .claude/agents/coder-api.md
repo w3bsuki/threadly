@@ -49,7 +49,7 @@ export async function POST(request: Request) {
 - Proper async handling
 
 ## Workflow
-1. Check CONTEXT.md for API patterns FIRST
+1. Check docs/development/CONTEXT.md for API patterns FIRST
 2. Design endpoint structure
 3. Implement with validation
 4. Run `pnpm typecheck` after EACH change

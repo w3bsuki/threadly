@@ -1,11 +1,11 @@
 import { currentUser } from '@repo/auth/server';
-import { getPusherServer } from '@repo/real-time/src/server/pusher-server';
+import { getPusherServer } from '@repo/notifications/src/realtime/server/pusher-server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { POST } from '../app/api/real-time/auth/route';
 
 // Mock dependencies
 vi.mock('@repo/auth/server');
-vi.mock('@repo/real-time/src/server/pusher-server');
+vi.mock('@repo/notifications/src/realtime/server/pusher-server');
 
 describe('POST /api/real-time/auth', () => {
   const mockUser = {

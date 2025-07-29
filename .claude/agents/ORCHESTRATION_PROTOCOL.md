@@ -83,7 +83,7 @@ context agent updates documentation
 - Catch errors immediately
 
 ### 3. Rich Context Passing
-- Include CONTEXT.md patterns in every task
+- Include docs/development/CONTEXT.md patterns in every task
 - Reference similar implementations
 - Flag cross-domain impacts
 
@@ -111,9 +111,9 @@ context agent updates documentation
 - Share findings proactively
 
 ### Context References
-- Every task MUST check CONTEXT.md
+- Every task MUST check docs/development/CONTEXT.md
 - Reference pattern names in implementations
-- Update CONTEXT.md after major features
+- Update docs/development/CONTEXT.md after major features
 
 ### Cross-Domain Coordination
 - Flag when changes affect multiple apps

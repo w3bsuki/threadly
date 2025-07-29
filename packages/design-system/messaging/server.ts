@@ -4,7 +4,7 @@
 
 import { database } from '@repo/database';
 import { log, logError } from '@repo/observability/server';
-import { getPusherServer } from '@repo/real-time/server';
+import { getPusherServer } from '@repo/notifications/realtime/server';
 import { sanitizeForDisplay } from '@repo/validation/sanitize';
 import {
   createConversationRequestSchema,

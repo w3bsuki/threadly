@@ -2,7 +2,7 @@
 
 ## Critical Issues Found
 
-### 1. **Type Safety Violations (FORBIDDEN by CLAUDE.md)**
+### 1. **Type Safety Violations (FORBIDDEN by .claude/CLAUDE.md)**
 
 Multiple files contain `any` types which are explicitly forbidden:
 
@@ -32,7 +32,7 @@ Multiple files contain `any` types which are explicitly forbidden:
 - **K:\threadly\apps\app\app\api\search\route.ts** (Line 27)
   - `const sortBy = searchParams.get('sortBy') as any`
 
-### 2. **Console.log Usage (FORBIDDEN by CLAUDE.md)**
+### 2. **Console.log Usage (FORBIDDEN by .claude/CLAUDE.md)**
 
 Found in multiple files:
 - K:\threadly\apps\app\app\api\seller\analytics\customers\route.ts
@@ -103,7 +103,7 @@ No CORS headers found in any API routes. This is a security concern for:
 
 ### Immediate Actions Required:
 
-1. **Remove ALL `any` types** - This violates CLAUDE.md rules
+1. **Remove ALL `any` types** - This violates .claude/CLAUDE.md rules
 2. **Replace ALL console.log with proper logging** using `@repo/observability/server`
 3. **Add CORS headers** to API routes that need cross-origin access
 4. **Implement webhook signature validation** for all webhook endpoints

@@ -25,8 +25,11 @@ export async function generateAnthropic(
     temperature: options?.temperature || aiEnv.AI_TEMPERATURE,
   });
 
+  const firstContent = response.content[0];
+  const textContent = firstContent && firstContent.type === 'text' ? firstContent.text : '';
+
   return {
-    content: response.content[0].type === 'text' ? response.content[0].text : '',
+    content: textContent,
     model: response.model,
     usage: {
       promptTokens: response.usage.input_tokens,

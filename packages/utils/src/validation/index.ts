@@ -13,18 +13,13 @@ export * from './middleware';
 // Export sanitization utilities
 export * from './sanitize';
 export * from './schemas/common';
-// Export all schemas
+// Export all schemas (includes message, product, user types)
 export * from './schemas/index';
-export * from './schemas/message';
-export * from './schemas/product';
-export * from './schemas/user';
 // Export security middleware
 export * from './security-middleware';
-export * from './src/lib/feature-flags';
+export * from './lib/feature-flags';
 // Export environment validation utilities
-export * from './src/lib/validate-env';
-export * from './src/schemas/env';
-// Export new comprehensive schemas
-export * from './src/schemas/index';
+export * from './lib/validate-env';
+export * from './schemas/env';
 // Export custom validators
 export * from './validators';

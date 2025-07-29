@@ -24,7 +24,7 @@ const buttonVariants = cva(
         // Modern gradient variants
         gradient:
           'bg-gradient-to-r from-[oklch(var(--brand-primary))] to-[oklch(var(--brand-accent))] text-white shadow-md transition-all duration-200 hover:opacity-90 hover:shadow-lg active:opacity-95',
-        "gradient-outline":
+        'gradient-outline':
           'before:-z-10 relative border bg-background bg-clip-padding before:absolute before:inset-0 before:rounded-[inherit] before:bg-gradient-to-r before:from-[oklch(var(--brand-primary))] before:to-[oklch(var(--brand-accent))] before:p-[1px] hover:bg-accent',
       },
       size: {
@@ -35,11 +35,11 @@ const buttonVariants = cva(
         lg: "h-10 px-5 text-base",
         xl: "h-11 px-6 text-base",
         // Icon sizes
-        "icon-xs": "size-7 [&_svg:not([class*="size-"])]:size-3.5",
-        "icon-sm": "size-8",
-        "icon": "size-9",
-        "icon-lg": "size-10",
-        "icon-xl": "size-11",
+        'icon-xs': 'size-7 [&_svg:not([class*="size-"])]:size-3.5',
+        'icon-sm': 'size-8',
+        icon: 'size-9',
+        'icon-lg': 'size-10',
+        'icon-xl': 'size-11',
       },
       // Modern roundness options
       rounded: {

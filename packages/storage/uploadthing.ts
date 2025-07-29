@@ -1,12 +1,10 @@
 import { createUploadthing, type FileRouter } from 'uploadthing/next';
-import { UploadThingError } from 'uploadthing/server';
-import { storageEnv } from './keys';
 
 const f = createUploadthing();
 
 export const uploadthingRouter = {
   imageUploader: f({ image: { maxFileSize: '4MB', maxFileCount: 10 } })
-    .middleware(async ({ req }) => {
+    .middleware(async () => {
       // Add authentication logic here
       // const user = await auth(req);
       // if (!user) throw new UploadThingError("Unauthorized");
@@ -21,7 +19,7 @@ export const uploadthingRouter = {
     pdf: { maxFileSize: '16MB' },
     text: { maxFileSize: '8MB' }
   })
-    .middleware(async ({ req }) => {
+    .middleware(async () => {
       // Add authentication logic here
       return { userId: 'user-id' };
     })
@@ -30,7 +28,7 @@ export const uploadthingRouter = {
     }),
 
   avatarUploader: f({ image: { maxFileSize: '2MB', maxFileCount: 1 } })
-    .middleware(async ({ req }) => {
+    .middleware(async () => {
       // Add authentication logic here
       return { userId: 'user-id' };
     })

@@ -20,6 +20,10 @@ export async function generateOpenAI(
   });
 
   const choice = completion.choices[0];
+  if (!choice) {
+    throw new Error('No completion choice returned');
+  }
+  
   const usage = completion.usage!;
 
   return {

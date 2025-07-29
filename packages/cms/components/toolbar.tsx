@@ -9,9 +9,7 @@ try {
 } catch (error) {}
 
 // Fallback Toolbar component
-const FallbackToolbar: React.FC<{ children?: React.ReactNode }> = ({
-  children,
-}) => {
+const FallbackToolbar: React.FC<{ children?: React.ReactNode }> = () => {
   // Return null in production, only show in development
   if (process.env.NODE_ENV === 'production') {
     return null;

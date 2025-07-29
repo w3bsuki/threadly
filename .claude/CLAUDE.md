@@ -6,7 +6,7 @@
 - MUST run typecheck after EACH file change
 - Import types from @repo/validation/schemas
 - Commit ONLY when explicitly asked
-- ALWAYS check CONTEXT.md before implementation
+- ALWAYS check docs/development/CONTEXT.md before implementation
 - ALWAYS use parallel agent execution
 - ALWAYS pass rich context between agents
 
@@ -107,7 +107,7 @@ I am Claude Code, the META ORCHESTRATOR. I am the supreme coordinator who:
 - Catch errors in real-time
 
 #### Context Mastery
-- ALWAYS reference CONTEXT.md patterns
+- ALWAYS reference docs/development/CONTEXT.md patterns
 - Pass rich context between agents
 - Update documentation continuously
 

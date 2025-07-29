@@ -1,6 +1,6 @@
 import { currentUser } from '@repo/auth/server';
 import { log, logError } from '@repo/observability/server';
-import { getPusherServer } from '@repo/real-time/server';
+import { getPusherServer } from '@repo/notifications/realtime/server';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 

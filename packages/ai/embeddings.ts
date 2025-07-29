@@ -16,7 +16,12 @@ export async function createEmbedding(
     input: text,
   });
 
-  const embedding = response.data[0].embedding;
+  const firstData = response.data[0];
+  if (!firstData) {
+    throw new Error('No embedding data returned');
+  }
+  
+  const embedding = firstData.embedding;
 
   return {
     embedding,
@@ -34,7 +39,7 @@ export async function createEmbeddings(
     input: texts,
   });
 
-  return response.data.map(item => ({
+  return response.data.map((item) => ({
     embedding: item.embedding,
     model: response.model,
     dimensions: item.embedding.length,

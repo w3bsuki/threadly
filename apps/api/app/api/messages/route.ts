@@ -1,7 +1,7 @@
 import { auth } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';
-import { getPusherServer } from '@repo/real-time/server';
+import { getPusherServer } from '@repo/notifications/realtime/server';
 import { checkRateLimit, messageRateLimit } from '@repo/security';
 import { sanitizeForDisplay } from '@repo/validation/sanitize';
 import { type NextRequest, NextResponse } from 'next/server';

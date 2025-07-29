@@ -1,6 +1,6 @@
 'use client';
 
-import { TRPCProvider } from '@repo/api-utils/trpc';
+import { TRPCProvider } from '@repo/utils/trpc';
 import type { ReactNode } from 'react';
 
 interface WebTRPCProviderProps {

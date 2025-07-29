@@ -37,7 +37,7 @@ You will analyze code and write appropriate tests following these principles:
 - Ensure async operations are properly handled in tests
 
 **Project Alignment**:
-- Follow any project-specific testing conventions from CLAUDE.md
+- Follow any project-specific testing conventions from .claude/CLAUDE.md
 - Use appropriate type imports from @repo/validation/schemas when available
 - Respect the NO console.log rule in test files
 - Run pnpm typecheck after creating tests to ensure type safety

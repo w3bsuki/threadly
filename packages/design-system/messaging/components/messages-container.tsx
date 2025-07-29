@@ -6,7 +6,7 @@ import {
   ErrorBoundary,
   MessagesSkeleton,
 } from '@repo/ui/components';
-import { useChannel, useTypingIndicator } from '@repo/real-time/client';
+import { useChannel, useTypingIndicator } from '@repo/notifications/realtime/client';
 import { messageContentSchema } from '@repo/validation/schemas';
 import { MessageCircle } from 'lucide-react';
 import { Suspense, useEffect, useRef, useState } from 'react';

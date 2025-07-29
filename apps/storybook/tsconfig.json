@@ -1,5 +1,5 @@
 {
-  "extends": "@repo/next-config/typescript/nextjs.json",
+  "extends": "../../packages/next-config/typescript/nextjs.json",
   "compilerOptions": {
     "baseUrl": "."
   },

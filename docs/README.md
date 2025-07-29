@@ -4,7 +4,7 @@
 
 ### Core Documentation
 - **[/PROJECT_CONTEXT.md](/PROJECT_CONTEXT.md)** - Single source of truth for project status
-- **[/CLAUDE.md](/CLAUDE.md)** - AI assistant instructions and patterns
+- **[/.claude/CLAUDE.md](/.claude/CLAUDE.md)** - AI assistant instructions and patterns
 - **[/README.md](/README.md)** - Public project overview
 
 ### Technical References

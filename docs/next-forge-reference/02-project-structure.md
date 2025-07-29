@@ -42,7 +42,8 @@ threadly/
 ├── package.json               # Root package.json with workspaces
 ├── pnpm-workspace.yaml        # pnpm workspace configuration
 ├── turbo.json                 # Turborepo configuration
-├── CLAUDE.md                  # AI assistant instructions
+├── .claude/
+│   └── CLAUDE.md              # AI assistant instructions
 └── README.md                  # Project overview
 ```
 

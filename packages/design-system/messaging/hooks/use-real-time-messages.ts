@@ -1,7 +1,7 @@
 'use client';
 
 import { useUser } from '@clerk/nextjs';
-import { useChannel } from '@repo/real-time/client';
+import { useChannel } from '@repo/notifications/realtime/client';
 import { useCallback, useEffect, useRef } from 'react';
 import type { MessageEvent, TypingEvent } from '../types';
 

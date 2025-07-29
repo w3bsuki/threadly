@@ -5,7 +5,6 @@ import {
   AnalyticsEvents,
   createOrderProperties,
   createProductProperties,
-  createSearchProperties,
   createUserProperties,
   trackAddToCart as trackAddToCartUtil,
   trackError as trackErrorUtil,

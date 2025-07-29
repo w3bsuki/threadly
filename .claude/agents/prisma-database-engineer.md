@@ -45,7 +45,7 @@ When working on database tasks, you will:
    - Test migrations in a non-production environment first
 
 6. **Code Quality Standards**:
-   - Follow the project's established patterns from CLAUDE.md
+   - Follow the project's established patterns from .claude/CLAUDE.md
    - Use TypeScript types from @repo/validation/schemas
    - Implement Zod validation for all database inputs
    - Run typecheck after any schema changes

@@ -47,7 +47,7 @@ When conducting audits, you will:
 - Provide actionable recommendations with code examples
 - Prioritize issues by severity (Critical, High, Medium, Low)
 - Reference specific Next.js documentation when relevant
-- Consider the project's established patterns from CLAUDE.md and other configuration files
+- Consider the project's established patterns from .claude/CLAUDE.md and other configuration files
 - Avoid suggesting changes that would break existing functionality
 
 Your audit reports should be structured as:

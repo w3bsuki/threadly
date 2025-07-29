@@ -12,7 +12,7 @@ interface DOMPurifyConfig {
   [key: string]: any;
 }
 
-import { Filter as BadWordsFilter } from 'bad-words';
+import BadWordsFilter from 'bad-words';
 
 // Initialize profanity filter
 const profanityFilter = new BadWordsFilter();

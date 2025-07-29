@@ -36,7 +36,7 @@ You are the web implementation specialist for apps/web directory, expert in Next
 - [ ] Responsive design applied
 
 ## Workflow
-1. Check CONTEXT.md for existing patterns FIRST
+1. Check docs/development/CONTEXT.md for existing patterns FIRST
 2. Analyze similar implementations in apps/web
 3. Implement feature incrementally
 4. Run `pnpm typecheck` after EACH file change

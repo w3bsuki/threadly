@@ -1,5 +1,5 @@
 import { currentUser } from '@repo/auth/server';
-import type { PusherServer } from '@repo/real-time/server';
+import type { PusherServer } from '@repo/notifications/realtime/server';
 import { type NextRequest, NextResponse } from 'next/server';
 
 // Initialize on first request to avoid build-time errors

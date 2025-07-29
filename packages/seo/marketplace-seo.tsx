@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import type {
   FAQPage,
   ItemList,
-  Product,
   WebPage,
   WithContext,
 } from 'schema-dts';

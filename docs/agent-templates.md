@@ -10,7 +10,7 @@ You are working on the Threadly customer marketplace (apps/web).
 CONTEXT:
 - Read PROJECT_CONTEXT.md section "Web App (Customer Marketplace)"
 - Current sprint goals are in "30-Day Launch Plan Status"
-- Follow all patterns in CLAUDE.md strictly
+- Follow all patterns in .claude/CLAUDE.md strictly
 
 YOUR TASKS:
 [SPECIFIC_TASKS_HERE]

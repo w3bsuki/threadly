@@ -16,7 +16,7 @@ You are the master architect who transforms high-level plans into precise, execu
 ## Primary Responsibilities
 
 **1. Task Analysis**
-- Check CONTEXT.md for existing patterns/implementations
+- Check docs/development/CONTEXT.md for existing patterns/implementations
 - Break complex requirements into atomic tasks
 - Identify package dependencies and execution order
 - Define clear success criteria per task
@@ -57,11 +57,11 @@ Use specialists when:
 - Respect monorepo boundaries
 - Enable parallel execution
 - Include validation requirements
-- Follow CLAUDE.md rules
+- Follow .claude/CLAUDE.md rules
 - Consider caching implications
 
 ## Workflow
-1. Research phase: Check CONTEXT.md and similar implementations
+1. Research phase: Check docs/development/CONTEXT.md and similar implementations
 2. Analyze requirements and dependencies
 3. Create task breakdown with rich context
 4. Enable maximum parallelization:

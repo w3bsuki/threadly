@@ -1,6 +1,6 @@
 'use client';
 
-import { RealTimeProvider } from '@repo/real-time/client';
+import { RealTimeProvider } from '@repo/notifications/realtime/client';
 import type { ReactNode } from 'react';
 
 interface RealTimeWrapperProps {

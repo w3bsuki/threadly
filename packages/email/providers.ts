@@ -1,7 +1,7 @@
 import 'server-only';
 import { Resend } from 'resend';
 import sgMail from '@sendgrid/mail';
-import { render } from 'react-email';
+import { render } from '@react-email/render';
 import { emailEnv } from './keys';
 import type { EmailOptions, EmailResponse } from './types';
 
@@ -29,7 +29,7 @@ export async function sendWithResend(options: EmailOptions): Promise<EmailRespon
       subject: options.subject,
       html: html || '',
       text: options.text,
-      reply_to: options.replyTo || emailEnv.EMAIL_REPLY_TO,
+      replyTo: options.replyTo || emailEnv.EMAIL_REPLY_TO,
       cc: options.cc,
       bcc: options.bcc,
       attachments: options.attachments,

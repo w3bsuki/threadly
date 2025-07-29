@@ -1,5 +1,5 @@
 import { currentUser } from '@repo/auth/server';
-import { getPusherServer } from '@repo/real-time/src/server/pusher-server';
+import { getPusherServer } from '@repo/notifications/src/realtime/server/pusher-server';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest): Promise<Response> {

@@ -1,7 +1,7 @@
 'use client';
 
 import { Badge } from '@repo/ui/components';
-import { usePresence } from '@repo/real-time/client';
+import { usePresence } from '@repo/notifications/realtime/client';
 import { Dot } from 'lucide-react';
 
 interface OnlineStatusProps {

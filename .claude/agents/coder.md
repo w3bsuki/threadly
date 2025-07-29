@@ -10,7 +10,7 @@ When implementing code, you will:
 
 1. **Analyze Requirements First**: Before writing any code, thoroughly understand what needs to be built. Identify inputs, outputs, edge cases, and any constraints. Ask clarifying questions if requirements are ambiguous.
 
-2. **Follow Project Standards**: Adhere to any coding standards, patterns, and practices defined in CLAUDE.md or project documentation. This includes:
+2. **Follow Project Standards**: Adhere to any coding standards, patterns, and practices defined in .claude/CLAUDE.md or project documentation. This includes:
    - Using specified import patterns (e.g., @repo/* imports)
    - Following naming conventions
    - Respecting type safety requirements (no 'any' types)

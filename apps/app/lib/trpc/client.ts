@@ -1,4 +1,4 @@
-import { trpc, createTRPCClient } from '@repo/api-utils/trpc';
+import { trpc, createTRPCClient } from '@repo/utils/api/trpc';
 
 // Re-export the tRPC client for app platform usage
 export { trpc };

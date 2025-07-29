@@ -1,7 +1,9 @@
 {
-  "extends": "@repo/next-config/typescript/nextjs.json",
+  "extends": "../../packages/next-config/typescript/base.json",
   "compilerOptions": {
-    "baseUrl": "."
+    "baseUrl": ".",
+    "lib": ["ES2022"],
+    "target": "ES2022"
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]

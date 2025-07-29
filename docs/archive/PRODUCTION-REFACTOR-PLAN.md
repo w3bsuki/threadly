@@ -54,7 +54,7 @@ I need to transform my Threadly turborepo from a next-forge template into a prod
 - `scripts/utils.ts`: Update GitHub URL and tempDirName
 - `scripts/update.ts`, `scripts/initialize.ts`, `scripts/index.ts`: Update user messages
 - `packages/rate-limit/index.ts`: Change default prefix
-- `CLAUDE.md`: Update documentation references
+- `.claude/CLAUDE.md`: Update documentation references
 - `docs/` directory: Update all next-forge references
 
 ## Phase 4: Performance & Polish
@@ -80,7 +80,7 @@ I need to transform my Threadly turborepo from a next-forge template into a prod
 5. **Performance optimization** - Memoization, error boundaries, loading states
 
 ## Project Rules (CRITICAL)
-- NO `any` types allowed (violates CLAUDE.md)
+- NO `any` types allowed (violates .claude/CLAUDE.md)
 - NO console.log statements
 - MUST run `pnpm typecheck` after changes
 - Use @repo/* imports exclusively

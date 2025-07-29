@@ -81,13 +81,12 @@
     "zod": "^4.0.2"
   },
   "devDependencies": {
-    "@repo/next-config/prettier": "workspace:*",
-    "@repo/config": "workspace:*",
     "@types/bad-words": "^3.0.3",
     "@types/node": "24.0.12",
     "@types/react": "19.1.8",
     "@types/validator": "^13.12.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "@repo/next-config": "workspace:*"
   },
   "prettier": "@repo/next-config/prettier"
 }

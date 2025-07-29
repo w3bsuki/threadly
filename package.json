@@ -39,12 +39,12 @@
     "typecheck": "turbo typecheck",
     "design-system:audit": "tsx scripts/design-system-audit.ts",
     "design-system:migrate": "tsx scripts/migrate-to-design-system.ts",
-    "design-system:migrate:dry": "tsx scripts/migrate-to-design-system.ts --dry-run --verbose"
+    "design-system:migrate:dry": "tsx scripts/migrate-to-design-system.ts --dry-run --verbose",
+    "verify-imports": "node scripts/verify-imports.cjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.1",
     "@prisma/nextjs-monorepo-workaround-plugin": "^6.11.1",
-    "@repo/next-config/prettier": "workspace:*",
     "@types/node": "^24.0.12",
     "dotenv": "^17.2.0",
     "glob": "^11.0.3",
@@ -54,7 +54,7 @@
     "turbo": "^2.5.4",
     "typescript": "^5.8.3",
     "ultracite": "^5.0.32",
-    "@repo/config": "workspace:*"
+    "@repo/next-config": "workspace:*"
   },
   "engines": {
     "node": ">=18"

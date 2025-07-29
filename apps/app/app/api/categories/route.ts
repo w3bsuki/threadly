@@ -1,4 +1,4 @@
-import { createErrorResponse, createSuccessResponse } from '@repo/api-utils';
+import { createErrorResponse, createSuccessResponse } from '@repo/utils/api';
 import { database } from '@repo/database';
 
 export async function GET() {

@@ -172,7 +172,7 @@ export const performanceConfig: Partial<NextConfig> = {
   },
 
   // Webpack optimizations
-  webpack(config, { isServer, dev }) {
+  webpack(config, { dev }) {
     // Only apply optimizations in production
     if (!dev) {
       // Optimize chunks

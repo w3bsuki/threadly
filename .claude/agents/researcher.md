@@ -18,7 +18,7 @@ Prevent rework by researching:
 ## Research Areas
 
 **1. Codebase Patterns**
-- Check CONTEXT.md for documented patterns
+- Check docs/development/CONTEXT.md for documented patterns
 - Find similar implementations across apps
 - Identify reusable components in packages
 - Document anti-patterns to avoid
@@ -59,7 +59,7 @@ Prevent rework by researching:
 
 ## Workflow
 1. Receive feature requirement
-2. Search CONTEXT.md for patterns
+2. Search docs/development/CONTEXT.md for patterns
 3. Find similar implementations
 4. Research current best practices
 5. Identify cross-cutting concerns

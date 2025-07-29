@@ -36,7 +36,7 @@ You are the application implementation specialist for apps/app directory, buildi
 - Responsive design
 
 ## Workflow
-1. Check CONTEXT.md for existing patterns FIRST
+1. Check docs/development/CONTEXT.md for existing patterns FIRST
 2. Study similar implementations in apps/app
 3. Implement features incrementally
 4. Run `pnpm typecheck` after EACH file change

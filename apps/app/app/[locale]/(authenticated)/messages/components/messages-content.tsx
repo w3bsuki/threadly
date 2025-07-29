@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, Card, CardContent } from '@repo/ui/components';
-import { useChannel, useTypingIndicator } from '@repo/real-time/client';
+import { useChannel, useTypingIndicator } from '@repo/notifications/realtime/client';
 import { MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

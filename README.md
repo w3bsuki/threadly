@@ -10,7 +10,7 @@
 ## 📋 Documentation
 
 - **[PROJECT_CONTEXT.md](PROJECT_CONTEXT.md)** - Current project status and priorities
-- **[CLAUDE.md](CLAUDE.md)** - Development patterns and AI assistant guidelines  
+- **[CLAUDE.md](.claude/CLAUDE.md)** - Development patterns and AI assistant guidelines  
 - **[docs/](docs/)** - Technical documentation and deployment guides
 
 ## 🚀 Quick Start
