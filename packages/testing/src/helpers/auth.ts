@@ -124,7 +124,7 @@ export function createUnauthenticatedState() {
 
 // Mock authentication middleware
 export function mockAuthMiddleware(isAuthenticated = true) {
-  const middleware = vi.fn((req: any, res: any, next: any) => {
+  const middleware = vi.fn((req: any, _res: any, next: any) => {
     if (isAuthenticated) {
       req.user = mockDatabaseUser;
       req.auth = { userId: mockClerkUser.id };

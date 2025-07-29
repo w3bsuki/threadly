@@ -62,7 +62,7 @@ export class TimeTestUtils {
 
 // Console utilities
 export class ConsoleTestUtils {
-  private static originalConsole = {};
+  private static _originalConsole = {};
 
   static mockConsole() {
     const mocks = {

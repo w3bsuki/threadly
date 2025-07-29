@@ -55,9 +55,7 @@ export class ApiTestHelper {
   static mockApiPaginated<T>(
     method: 'get' | 'post',
     url: string,
-    items: T[],
-    page = 0,
-    limit = 20
+    items: T[]
   ) {
     const handler = http[method](url, ({ request }) => {
       const url = new URL(request.url);
@@ -93,7 +91,7 @@ export class ApiTestHelper {
   static createRequestMatcher(
     method: string,
     url: string,
-    body?: any,
+    _body?: any,
     headers?: Record<string, string>
   ) {
     return (req: Request) => {
@@ -118,9 +116,9 @@ export class ApiTestHelper {
 
   // Verify API call was made
   static async verifyApiCall(
-    method: string,
-    url: string,
-    options?: {
+    _method: string,
+    _url: string,
+    _options?: {
       body?: any;
       headers?: Record<string, string>;
       times?: number;

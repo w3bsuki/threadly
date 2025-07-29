@@ -120,7 +120,7 @@ export const createSearchConditions = (
 
   const normalizedSearch = searchTerm.trim().toLowerCase();
 
-  return fields.map((field) => ({
+  return fields.map(() => ({
     contains: normalizedSearch,
     mode: 'insensitive' as const,
   }));
@@ -225,7 +225,7 @@ export const optimizeIncludes = <T>(
   return optimized as T;
 };
 
-export class QueryBuilder<T> {
+export class QueryBuilder {
   private whereConditions: any = {};
   private orderByConditions: any[] = [];
   private includeRelations: any = {};

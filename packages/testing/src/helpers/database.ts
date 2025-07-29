@@ -315,7 +315,7 @@ export class TestDatabase {
 
     // Create orders
     const orders = await Promise.all(
-      Array.from({ length: orderCount }, async (_, i) => {
+      Array.from({ length: orderCount }, async () => {
         const productWithImages =
           products[Math.floor(Math.random() * products.length)];
         const buyer = users[Math.floor(Math.random() * users.length)];

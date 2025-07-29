@@ -26,7 +26,7 @@ class ErrorLogger {
     context: ErrorContext;
     timestamp: Date;
   }> = [];
-  private _isInitialized = false;
+  private isInitialized = false;
 
   private constructor() {
     this.initialize();
@@ -55,7 +55,7 @@ class ErrorLogger {
       process.on('uncaughtException', this.handleUncaughtException);
     }
 
-    this._isInitialized = true;
+    this.isInitialized = true;
   }
 
   private handleUnhandledRejection = (event: PromiseRejectionEvent | any) => {

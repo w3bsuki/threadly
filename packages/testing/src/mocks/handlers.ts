@@ -1,5 +1,5 @@
 import { HttpResponse, http } from 'msw';
-import { mockConversations, mockOrders, mockProducts, mockUsers } from './data';
+import { mockConversations, mockOrders, mockProducts } from './data';
 
 export const handlers = [
   // Search API
@@ -220,13 +220,12 @@ export const handlers = [
     });
   }),
 
-  http.patch('/api/notifications/:id/read', ({ params }) => {
+  http.patch('/api/notifications/:id/read', () => {
     return HttpResponse.json({ success: true });
   }),
 
   // Stripe payment intents
-  http.post('/api/stripe/create-payment-intent', async ({ request }) => {
-    const { amount } = (await request.json()) as any;
+  http.post('/api/stripe/create-payment-intent', async () => {
 
     return HttpResponse.json({
       clientSecret: `pi_test_${Date.now()}_secret_test`,
@@ -250,7 +249,7 @@ export const handlers = [
   }),
 
   // Fallback for unhandled requests
-  http.all('*', ({ request }) => {
+  http.all('*', () => {
     return HttpResponse.json({ error: 'Endpoint not mocked' }, { status: 404 });
   }),
 ];

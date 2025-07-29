@@ -112,7 +112,7 @@ export function renderWithViewport(
 // Helper to render with mock router
 export function renderWithRouter(
   ui: ReactElement,
-  initialRoute = '/',
+  _initialRoute = '/',
   options?: Omit<RenderOptions, 'wrapper'>
 ): RenderResult & { user: UserEvent } {
   // This would be implemented with Next.js router mock
@@ -138,7 +138,7 @@ export function getByTestId(container: HTMLElement, testId: string) {
 
 // Helper to wait for loading states to complete
 export async function waitForLoading(container: HTMLElement) {
-  const { findByTestId, queryByTestId } = rtlRender(<div />, { container });
+  const { queryByTestId } = rtlRender(<div />, { container });}
 
   // Wait for loading indicators to disappear
   const loadingIndicators = [

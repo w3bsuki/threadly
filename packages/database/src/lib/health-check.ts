@@ -82,7 +82,11 @@ export async function checkDatabaseHealth(prisma: PrismaClient): Promise<Databas
         maxConnections: metrics.stats.maxConnections,
         utilizationPercent: Math.round(utilizationPercent * 100) / 100,
       },
-      recentErrors: metrics.errors,
+      recentErrors: {
+        connection: metrics.errors.connectionErrors,
+        timeout: metrics.errors.timeoutErrors,
+        query: metrics.errors.queryErrors,
+      },
       performance: {
         avgQueryTime: Math.round(metrics.queryDuration.avg),
         p95QueryTime: Math.round(metrics.queryDuration.p95),
