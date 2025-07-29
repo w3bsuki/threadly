@@ -34,7 +34,8 @@
         "myCart": "My Cart",
         "howItWorks": "How It Works",
         "helpAndSupport": "Help & Support",
-        "home": "Home"
+        "home": "Home",
+        "search": "Search"
       },
       "promotionalBanner": {
         "freeShipping": "Free shipping on orders over $50",
