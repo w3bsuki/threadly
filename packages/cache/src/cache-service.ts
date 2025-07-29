@@ -264,7 +264,7 @@ export class MarketplaceCacheService {
     await Promise.all(promises);
   }
 
-  async invalidateUserListings(userId: string): Promise<void> {
+  async invalidateUserListings(_userId: string): Promise<void> {
     // Invalidate all pagination variants for this user's listings
     if (this.cache.invalidateByTag) {
       await this.cache.invalidateByTag(CACHE_TAGS.USERS);

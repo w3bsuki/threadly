@@ -26,7 +26,7 @@ class ErrorLogger {
     context: ErrorContext;
     timestamp: Date;
   }> = [];
-  private isInitialized = false;
+  private _isInitialized = false;
 
   private constructor() {
     this.initialize();
@@ -55,7 +55,7 @@ class ErrorLogger {
       process.on('uncaughtException', this.handleUncaughtException);
     }
 
-    this.isInitialized = true;
+    this._isInitialized = true;
   }
 
   private handleUnhandledRejection = (event: PromiseRejectionEvent | any) => {
@@ -67,7 +67,7 @@ class ErrorLogger {
     });
   };
 
-  private handleGlobalError = (event: ErrorEvent) => {
+  private handleGlobalError = (event: any) => {
     this.logError(event.error || new Error(event.message), {
       level: 'error',
       tags: { type: 'global-error' },
@@ -151,7 +151,7 @@ class ErrorLogger {
   }
 
   private async sendBatchToMonitoring(
-    errors: Array<{ error: Error; context: ErrorContext; timestamp: Date }>
+    _errors: Array<{ error: Error; context: ErrorContext; timestamp: Date }>
   ) {
     // This would send to your monitoring service
     // For now, we'll just log
@@ -194,7 +194,7 @@ class ErrorLogger {
     }
 
     this.clearErrorQueue();
-    this.isInitialized = false;
+    this._isInitialized = false;
   }
 }
 

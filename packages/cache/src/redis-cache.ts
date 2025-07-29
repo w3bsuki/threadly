@@ -1,4 +1,4 @@
-import { withRetry } from '@repo/error-handling';
+import { withRetry } from '@repo/utils/error-handling';
 import { Redis } from '@upstash/redis';
 import type {
   CacheConfig,
@@ -167,7 +167,7 @@ export class RedisCache implements CacheService {
         minTimeout: 100,
       });
 
-      return results.map((result, index) => {
+      return results.map((result, _index) => {
         if (result === null) {
           this.stats.misses++;
           return null;

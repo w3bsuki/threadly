@@ -113,7 +113,7 @@ export async function withRetry<T>(
 
 // Retry decorator for class methods
 export function Retry(options: RetryOptions = {}) {
-  return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+  return (_target: any, _propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
@@ -148,7 +148,7 @@ export async function withBatchRetry<T>(
 // Create a retry-enabled fetch wrapper
 export function createRetryFetch(defaultOptions?: RetryOptions) {
   return async function retryFetch(
-    input: RequestInfo | URL,
+    input: string | URL,
     init?: RequestInit,
     retryOptions?: RetryOptions
   ): Promise<Response> {

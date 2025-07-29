@@ -59,7 +59,7 @@ export class MemoryCache {
     return this.delete(key);
   }
 
-  async invalidateByTag(tag: string): Promise<void> {
+  async invalidateByTag(_tag: string): Promise<void> {
     // Memory cache doesn't support tags, so we'll just skip this
   }
 

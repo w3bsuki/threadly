@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { getCacheService } from './cache-service';
 
 /**
  * Next.js middleware helper for cache headers

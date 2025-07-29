@@ -20,6 +20,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@repo/utils": "workspace:*",
     "@t3-oss/env-nextjs": "^0.13.8",
     "@upstash/redis": "^1.35.1",
     "next": "^15.4.4",

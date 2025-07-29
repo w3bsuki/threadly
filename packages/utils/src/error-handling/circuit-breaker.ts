@@ -232,7 +232,7 @@ export function CircuitBreakerProtected(
   name: string,
   options?: CircuitBreakerOptions
 ) {
-  return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+  return (_target: any, _propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
