@@ -7,6 +7,7 @@
   "files": [
     "dist/index.js"
   ],
+  "prettier": "@repo/prettier-config",
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
@@ -41,26 +42,19 @@
     "design-system:migrate:dry": "tsx scripts/migrate-to-design-system.ts --dry-run --verbose"
   },
   "devDependencies": {
-    "@auto-it/first-time-contributor": "^11.3.0",
-    "@axe-core/react": "^4.10.2",
-    "@biomejs/biome": "2.1.1",
     "@playwright/test": "^1.54.1",
     "@prisma/nextjs-monorepo-workaround-plugin": "^6.11.1",
-    "@repo/typescript-config": "workspace:*",
-    "@turbo/gen": "^2.5.4",
+    "@repo/prettier-config": "workspace:*",
     "@types/node": "^24.0.12",
-    "axe-core": "^4.10.3",
     "dotenv": "^17.2.0",
-    "eslint-plugin-jsx-a11y": "^6.10.2",
     "glob": "^11.0.3",
     "husky": "^9.0.11",
-    "lint-staged": "^15.2.2",
     "tsup": "^8.5.0",
     "tsx": "^4.20.3",
     "turbo": "^2.5.4",
     "typescript": "^5.8.3",
     "ultracite": "^5.0.32",
-    "vitest": "^3.2.4"
+    "@repo/config": "workspace:*"
   },
   "engines": {
     "node": ">=18"
@@ -68,10 +62,7 @@
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
     "@clack/prompts": "^0.11.0",
-    "@emotion/is-prop-valid": "^1.2.1",
-    "commander": "^14.0.0",
-    "cross-env": "^7.0.3",
-    "next": "15.3.5"
+    "commander": "^14.0.0"
   },
   "type": "module",
   "pnpm": {
