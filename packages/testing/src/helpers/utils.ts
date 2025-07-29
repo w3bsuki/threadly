@@ -62,8 +62,6 @@ export class TimeTestUtils {
 
 // Console utilities
 export class ConsoleTestUtils {
-  private static _originalConsole = {};
-
   static mockConsole() {
     const mocks = {
       log: vi.fn(),
