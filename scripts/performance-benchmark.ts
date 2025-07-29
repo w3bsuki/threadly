@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { getCacheService } from '@repo/cache';
+import { getCacheService } from '@repo/database';
 import { database } from '@repo/database';
 import { performance } from 'perf_hooks';
 

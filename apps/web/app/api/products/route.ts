@@ -4,7 +4,7 @@ import {
   createPaginationMeta,
   createSuccessResponse,
 } from '@repo/api-utils';
-import { getCacheService } from '@repo/cache';
+import { getCacheService } from '@repo/database';
 import type { Prisma } from '@repo/database';
 import { database } from '@repo/database';
 import { checkRateLimit, generalApiLimit } from '@repo/security';

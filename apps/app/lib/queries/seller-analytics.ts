@@ -1,4 +1,4 @@
-import { cache } from '@repo/cache';
+import { cache } from '@repo/database';
 import { database, ProductStatus } from '@repo/database';
 
 export interface CategoryBreakdown {

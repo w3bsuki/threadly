@@ -1,4 +1,4 @@
-import { cache } from '@repo/cache';
+import { cache } from '@repo/database';
 import { database, OrderStatus } from '@repo/database';
 
 export interface DashboardStats {

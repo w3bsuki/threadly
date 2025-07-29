@@ -1,5 +1,5 @@
 {
-  "extends": "@repo/config/typescript/base.json",
+  "extends": "@repo/next-config/typescript/base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
     "lib": ["DOM", "DOM.Iterable", "ES2020"],

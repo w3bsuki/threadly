@@ -1,4 +1,4 @@
-import { cache } from '@repo/cache';
+import { cache } from '@repo/database';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { ImageOptimizationService } from '../../../../lib/image-optimization';

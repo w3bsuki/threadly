@@ -1,5 +1,5 @@
 import { auth } from '@clerk/nextjs/server';
-import { getCacheService } from '@repo/cache';
+import { getCacheService } from '@repo/database';
 import type { Prisma } from '@repo/database';
 import { database } from '@repo/database';
 import { logError } from '@repo/observability/server';

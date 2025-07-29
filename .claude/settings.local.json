@@ -1,1 +1,14 @@
-{}
+{
+  "enabledMcpjsonServers": [
+    "postgres",
+    "filesystem",
+    "git",
+    "github",
+    "brave-search",
+    "memory",
+    "sequential-thinking",
+    "vercel",
+    "puppeteer"
+  ],
+  "enableAllProjectMcpServers": true
+}

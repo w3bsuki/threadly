@@ -3,7 +3,7 @@
  * Combines Algolia and database search with fallback capabilities
  */
 
-import { getCacheService } from '@repo/cache';
+import { getCacheService } from '@repo/database';
 import { database } from '@repo/database';
 import { AlgoliaSearchService } from './algolia-search';
 import { SearchHistoryService } from './history';

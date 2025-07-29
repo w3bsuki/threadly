@@ -1,4 +1,4 @@
-import { getCacheService } from '@repo/cache';
+import { getCacheService } from '@repo/database';
 import type { Prisma, Product, ProductImage } from '@repo/database';
 import { database } from '@repo/database';
 import { logError, parseError } from '@repo/observability/server';

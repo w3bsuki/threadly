@@ -16,6 +16,18 @@
       "require": "./dist/templates/index.js",
       "default": "./dist/templates/index.js"
     },
+    "./client": {
+      "types": "./dist/realtime/client/index.d.ts",
+      "import": "./dist/realtime/client/index.js",
+      "require": "./dist/realtime/client/index.js",
+      "default": "./dist/realtime/client/index.js"
+    },
+    "./server": {
+      "types": "./dist/realtime/server/index.d.ts",
+      "import": "./dist/realtime/server/index.js",
+      "require": "./dist/realtime/server/index.js",
+      "default": "./dist/realtime/server/index.js"
+    },
     "./keys": {
       "types": "./keys.ts",
       "import": "./keys.ts",
@@ -57,14 +69,15 @@
     "@react-email/components": "^0.2.0",
     "@repo/database": "workspace:*",
     "@repo/observability": "workspace:*",
-    "@repo/real-time": "workspace:*",
     "@t3-oss/env-nextjs": "^0.13.8",
+    "pusher": "^5.2.0",
+    "pusher-js": "^8.4.0",
     "react": "19.1.0",
     "resend": "^4.6.0",
     "zod": "^4.0.2"
   },
   "devDependencies": {
-    "@repo/prettier-config": "workspace:*",
+    "@repo/next-config/prettier": "workspace:*",
     "@repo/config": "workspace:*",
     "@types/node": "24.0.12",
     "@types/react": "19.1.8",
@@ -72,5 +85,5 @@
     "tsup": "^8.5.0",
     "typescript": "^5.8.3"
   },
-  "prettier": "@repo/prettier-config"
+  "prettier": "@repo/next-config/prettier"
 }

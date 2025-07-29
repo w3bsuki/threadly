@@ -1,13 +1,13 @@
 {
   "name": "docs",
   "private": true,
-  "prettier": "@repo/prettier-config",
+  "prettier": "@repo/next-config/prettier",
   "scripts": {
     "dev": "mintlify dev --port 3004",
     "lint": "mintlify broken-links"
   },
   "devDependencies": {
-    "@repo/prettier-config": "workspace:*",
+    "@repo/next-config/prettier": "workspace:*",
     "typescript": "^5.8.3"
   }
 }

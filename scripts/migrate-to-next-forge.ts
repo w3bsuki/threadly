@@ -22,7 +22,7 @@ const IMPORT_MAPPINGS: Record<string, string> = {
   // Utils Package Mappings
   '@repo/analytics': '@repo/utils/analytics',
   '@repo/api-utils': '@repo/utils/api',
-  '@repo/cache': '@repo/utils/cache',
+  '@repo/database': '@repo/utils/cache',
   '@repo/cms': '@repo/utils/cms',
   '@repo/collaboration': '@repo/utils/collaboration',
   '@repo/commerce': '@repo/utils/commerce',

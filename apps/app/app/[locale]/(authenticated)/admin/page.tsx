@@ -1,4 +1,4 @@
-import { CACHE_KEYS, getCacheService } from '@repo/cache';
+import { CACHE_KEYS, getCacheService } from '@repo/database';
 import { database } from '@repo/database';
 import {
   Card,

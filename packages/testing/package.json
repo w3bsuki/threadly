@@ -32,7 +32,7 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@repo/cache": "workspace:*",
+    "@repo/database": "workspace:*",
     "@repo/database": "workspace:*",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
@@ -48,7 +48,7 @@
     "vitest": "^3.0.0"
   },
   "devDependencies": {
-    "@repo/prettier-config": "workspace:*",
+    "@repo/next-config/prettier": "workspace:*",
     "@repo/config": "workspace:*",
     "@types/node": "24.0.12",
     "@types/react": "19.1.8",
@@ -60,5 +60,5 @@
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
   },
-  "prettier": "@repo/prettier-config"
+  "prettier": "@repo/next-config/prettier"
 }

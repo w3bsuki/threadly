@@ -1,5 +1,5 @@
 import { auth } from '@repo/auth/server';
-import { getCacheService } from '@repo/cache';
+import { getCacheService } from '@repo/database';
 import { database, type Prisma } from '@repo/database';
 import { logError } from '@repo/observability/server';
 import { checkRateLimit, generalApiLimit } from '@repo/security';

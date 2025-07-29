@@ -1,5 +1,5 @@
 import { currentUser } from '@repo/auth/server';
-import { cache } from '@repo/cache';
+import { cache } from '@repo/database';
 import { database } from '@repo/database';
 import { Button } from '@repo/ui/components';
 import { getDictionary } from '@repo/internationalization';

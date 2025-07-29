@@ -42,7 +42,7 @@ vi.mock('@repo/database', () => ({
   },
 }));
 
-vi.mock('@repo/cache', () => ({
+vi.mock('@repo/database', () => ({
   getCacheService: vi.fn(() => ({
     remember: vi.fn(),
     invalidateProduct: vi.fn(),
@@ -542,7 +542,7 @@ describe('Product CRUD Tests', () => {
     });
 
     it('should return 404 for non-existent product', async () => {
-      const { getCacheService } = await import('@repo/cache');
+      const { getCacheService } = await import('@repo/database');
       const { validateParams } = await import('@repo/validation/middleware');
 
       vi.mocked(validateParams).mockReturnValue({

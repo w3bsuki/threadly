@@ -5,9 +5,25 @@ export const keys = () =>
   createEnv({
     server: {
       DATABASE_URL: z.string().url(),
+      
+      // Upstash Redis configuration (recommended for production)
+      UPSTASH_REDIS_REST_URL: z.string().url().optional(),
+      UPSTASH_REDIS_REST_TOKEN: z.string().min(1).optional(),
+
+      // Alternative Redis URL (standard Redis connection)
+      REDIS_URL: z.string().url().optional(),
+
+      // Cache configuration
+      CACHE_TTL_DEFAULT: z.coerce.number().default(3600), // 1 hour
+      CACHE_ENABLED: z.coerce.boolean().default(true),
     },
     runtimeEnv: {
       DATABASE_URL: process.env.DATABASE_URL,
+      UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
+      UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
+      REDIS_URL: process.env.REDIS_URL,
+      CACHE_TTL_DEFAULT: process.env.CACHE_TTL_DEFAULT || 3600,
+      CACHE_ENABLED: process.env.CACHE_ENABLED !== 'false',
     },
     skipValidation: !!(
       process.env.SKIP_ENV_VALIDATION ||

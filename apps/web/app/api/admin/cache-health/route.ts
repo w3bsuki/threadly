@@ -1,4 +1,4 @@
-import { getCacheService } from '@repo/cache';
+import { getCacheService } from '@repo/database';
 import { type NextRequest, NextResponse } from 'next/server';
 import { env } from '@/env';
 

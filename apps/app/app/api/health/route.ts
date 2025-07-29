@@ -1,4 +1,4 @@
-import { cache } from '@repo/cache';
+import { cache } from '@repo/database';
 import { database } from '@repo/database';
 import { NextResponse } from 'next/server';
 

@@ -1,10 +1,10 @@
-import { cache } from '@repo/cache';
+import { cache } from '@repo/database';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ImageOptimizationService } from '../lib/image-optimization';
 import { GET } from '../app/api/images/optimize/route';
 
 // Mock dependencies
-vi.mock('@repo/cache');
+vi.mock('@repo/database');
 vi.mock('../lib/image-optimization', () => ({
   ImageOptimizationService: {
     optimizeImage: vi.fn(),

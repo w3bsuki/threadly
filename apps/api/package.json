@@ -1,7 +1,7 @@
 {
   "name": "api",
   "private": true,
-  "prettier": "@repo/prettier-config",
+  "prettier": "@repo/next-config/prettier",
   "exports": {
     ".": {
       "types": "./index.ts",
@@ -23,7 +23,6 @@
   "dependencies": {
     "@repo/analytics": "workspace:*",
     "@repo/auth": "workspace:*",
-    "@repo/cache": "workspace:*",
     "@repo/database": "workspace:*",
     "@repo/ui": "workspace:*",
     "@repo/notifications": "workspace:*",
@@ -45,8 +44,8 @@
     "@repo/config": "workspace:*"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@repo/prettier-config": "workspace:*",
+    "@repo/next-config/eslint": "workspace:*",
+    "@repo/next-config/prettier": "workspace:*",
     "@repo/config": "workspace:*",
     "@types/node": "24.0.12",
     "@types/react": "19.1.8",

@@ -1,5 +1,5 @@
 import { auth } from '@clerk/nextjs/server';
-import { getCacheService } from '@repo/cache';
+import { getCacheService } from '@repo/database';
 import { NextResponse } from 'next/server';
 
 export async function POST() {

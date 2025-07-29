@@ -1,0 +1,42 @@
+{
+  "name": "@repo/storage",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "default": "./index.ts"
+    },
+    "./s3": {
+      "types": "./s3.ts",
+      "default": "./s3.ts"
+    },
+    "./uploadthing": {
+      "types": "./uploadthing.ts",
+      "default": "./uploadthing.ts"
+    },
+    "./keys": {
+      "types": "./keys.ts",
+      "default": "./keys.ts"
+    }
+  },
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.729.0",
+    "@aws-sdk/s3-request-presigner": "^3.729.0",
+    "@t3-oss/env-nextjs": "^0.13.8",
+    "@uploadthing/react": "^7.0.3",
+    "server-only": "^0.0.1",
+    "uploadthing": "^7.7.3",
+    "zod": "^4.0.2"
+  },
+  "devDependencies": {
+    "@repo/next-config/prettier": "workspace:*",
+    "@repo/config": "workspace:*",
+    "typescript": "^5.8.3"
+  },
+  "prettier": "@repo/next-config/prettier"
+}

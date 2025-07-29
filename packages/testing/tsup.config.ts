@@ -33,7 +33,7 @@ export default defineConfig({
     'jsdom',
     'msw',
     'supertest',
-    '@repo/cache',
+    '@repo/database',
     '@repo/database',
     '@repo/error-handling',
     '@prisma/client',

@@ -1,7 +1,7 @@
 {
   "name": "@repo/threadly-web",
   "private": true,
-  "prettier": "@repo/prettier-config",
+  "prettier": "@repo/next-config/prettier",
   "scripts": {
     "dev": "next dev --port 3001 --hostname 0.0.0.0",
     "build": "prisma generate --schema=../../packages/database/prisma/schema.prisma && next build",
@@ -27,7 +27,7 @@
     "@repo/analytics": "workspace:*",
     "@repo/api-utils": "workspace:*",
     "@repo/auth": "workspace:*",
-    "@repo/cache": "workspace:*",
+    "@repo/database": "workspace:*",
     "@repo/cms": "workspace:*",
     "@repo/database": "workspace:*",
     "@repo/ui": "workspace:*",
@@ -64,8 +64,8 @@
     "@repo/config": "workspace:*"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@repo/prettier-config": "workspace:*",
+    "@repo/next-config/eslint": "workspace:*",
+    "@repo/next-config/prettier": "workspace:*",
     "@repo/testing": "workspace:*",
     "@types/canvas-confetti": "^1.9.0",
     "@types/node": "24.0.12",

@@ -1,5 +1,5 @@
 import { currentUser } from '@repo/auth/server';
-import { getCacheService } from '@repo/cache';
+import { getCacheService } from '@repo/database';
 import { database } from '@repo/database';
 import { getDictionary } from '@repo/internationalization';
 import { logError } from '@repo/observability/server';

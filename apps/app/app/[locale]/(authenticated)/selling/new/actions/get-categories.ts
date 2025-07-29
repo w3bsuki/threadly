@@ -1,6 +1,6 @@
 'use server';
 
-import { CACHE_KEYS, getCacheService } from '@repo/cache';
+import { CACHE_KEYS, getCacheService } from '@repo/database';
 import { database } from '@repo/database';
 
 export interface CategoryOption {

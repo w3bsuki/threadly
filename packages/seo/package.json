@@ -26,7 +26,7 @@
     }
   },
   "devDependencies": {
-    "@repo/prettier-config": "workspace:*",
+    "@repo/next-config/prettier": "workspace:*",
     "@repo/config": "workspace:*",
     "@types/lodash.merge": "^4.6.9",
     "@types/node": "24.0.12",
@@ -34,5 +34,5 @@
     "@types/react-dom": "19.1.6",
     "next": "15.4.4"
   },
-  "prettier": "@repo/prettier-config"
+  "prettier": "@repo/next-config/prettier"
 }

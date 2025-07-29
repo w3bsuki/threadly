@@ -1,0 +1,9 @@
+{
+  "extends": "@repo/next-config/typescript/nextjs.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "jsx": "react-jsx"
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}

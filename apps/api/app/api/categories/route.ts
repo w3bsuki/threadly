@@ -1,4 +1,4 @@
-import { getCacheService } from '@repo/cache';
+import { getCacheService } from '@repo/database';
 import { database } from '@repo/database';
 import { checkRateLimit, generalApiLimit } from '@repo/security';
 import { type NextRequest, NextResponse } from 'next/server';

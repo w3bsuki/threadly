@@ -1,6 +1,5 @@
 import { keys as analytics } from '@repo/analytics/keys';
 import { keys as auth } from '@repo/auth/keys';
-import { keys as cache } from '@repo/cache/keys';
 import { keys as cms } from '@repo/cms/keys';
 import { keys as database } from '@repo/database/keys';
 import { keys as email } from '@repo/email/keys';
@@ -19,7 +18,6 @@ export const env = createEnv({
   extends: [
     analytics(),
     auth(),
-    cache(),
     cms(),
     core(),
     database(),

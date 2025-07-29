@@ -3,7 +3,7 @@ import {
   CACHE_TAGS,
   CACHE_TTL,
   getCacheService,
-} from '@repo/cache';
+} from '@repo/database';
 import { database, type Prisma } from '@repo/database';
 import { getAlgoliaSearch } from './algolia-search';
 import type {
