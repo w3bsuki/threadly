@@ -57,7 +57,7 @@
     "server-only": "^0.0.1",
     "svix": "^1.69.0",
     "zod": "^4.0.2",
-    "flags": "^1.0.0"
+    "flags": "^4.0.1"
   },
   "devDependencies": {
     "@types/node": "24.0.12",
