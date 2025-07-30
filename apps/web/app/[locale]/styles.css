@@ -1,4 +1,4 @@
-@import "@repo/design-system/styles/globals.css";
+@import "@repo/ui/styles/globals.css";
 
 /* Source paths for web app - be specific to avoid scanning unnecessary files */
 @source "../**/*.{ts,tsx}";
