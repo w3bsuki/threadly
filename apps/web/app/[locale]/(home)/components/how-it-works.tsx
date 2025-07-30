@@ -1,5 +1,4 @@
 import { Button } from '@repo/ui/components';
-import type { Dictionary } from '@repo/content/internationalization';
 import {
   Camera,
   Heart,
@@ -10,9 +9,6 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-type HowItWorksProps = {
-  dictionary: Dictionary;
-};
 
 const steps = [
   {
@@ -77,7 +73,7 @@ const sellingSteps = [
   },
 ];
 
-export const HowItWorks = async ({ dictionary }: HowItWorksProps) => {
+export const HowItWorks = async () => {
   return (
     <section className="w-full bg-gradient-to-br from-gray-50 to-white py-16 lg:py-24">
       <div className="container mx-auto px-4">
