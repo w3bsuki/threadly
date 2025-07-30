@@ -1,14 +1,14 @@
 {
   "name": "studio",
   "version": "0.0.0",
-  "prettier": "@repo/api/next-config/prettier",
+  "prettier": "@repo/api-next-config/prettier",
   "scripts": {
     "dev": "prisma studio --schema ../../packages/database/prisma/schema.prisma --port 3005",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "devDependencies": {
-    "@repo/api/next-config": "workspace:*",
+    "@repo/api-next-config": "workspace:*",
     "@types/node": "^24.0.12",
     "prisma": "6.11.1",
     "typescript": "^5.8.3"

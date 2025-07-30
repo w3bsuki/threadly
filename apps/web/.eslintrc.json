@@ -1,5 +1,5 @@
 {
-  "extends": ["@repo/api/next-config/eslint/next"],
+  "extends": ["@repo/api-next-config/eslint/next"],
   "parserOptions": {
     "project": "./tsconfig.json"
   }

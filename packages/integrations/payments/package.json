@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "typescript": "^5.8.3",
-    "@repo/api/next-config": "workspace:*"
+    "@repo/api-next-config": "workspace:*"
   },
-  "prettier": "@repo/api/next-config/prettier"
+  "prettier": "@repo/api-next-config/prettier"
 }

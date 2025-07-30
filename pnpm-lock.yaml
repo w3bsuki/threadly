@@ -28,7 +28,7 @@ importers:
       '@prisma/nextjs-monorepo-workaround-plugin':
         specifier: ^6.11.1
         version: 6.13.0
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:packages/api/next-config
       '@types/node':
@@ -110,7 +110,7 @@ importers:
         specifier: ^4.0.2
         version: 4.0.13
     devDependencies:
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:../../packages/api/next-config
       '@types/node':
@@ -252,7 +252,7 @@ importers:
 
   apps/docs:
     devDependencies:
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:../../packages/api/next-config
       typescript:
@@ -304,7 +304,7 @@ importers:
       '@chromatic-com/storybook':
         specifier: ^2.0.0
         version: 2.0.2(react@19.1.0)
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:../../packages/api/next-config
       '@storybook/addon-essentials':
@@ -603,7 +603,7 @@ importers:
         specifier: ^4.0.2
         version: 4.0.13
     devDependencies:
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:../next-config
       '@types/bad-words':
@@ -664,7 +664,7 @@ importers:
       '@clerk/types':
         specifier: ^4.64.0
         version: 4.71.0
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:../api/next-config
       '@types/node':
@@ -713,7 +713,7 @@ importers:
         specifier: ^4.0.2
         version: 4.0.13
     devDependencies:
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:../api/next-config
       '@types/lodash.merge':
@@ -750,7 +750,7 @@ importers:
         specifier: ^4.0.2
         version: 4.0.13
     devDependencies:
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:../../api/next-config
       '@types/node':
@@ -781,7 +781,7 @@ importers:
         specifier: ^0.0.1
         version: 0.0.1
     devDependencies:
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:../../api/next-config
       '@types/negotiator':
@@ -812,7 +812,7 @@ importers:
         specifier: ^1.1.5
         version: 1.1.5
     devDependencies:
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:../../api/next-config
       '@types/lodash.merge':
@@ -858,7 +858,7 @@ importers:
         specifier: ^4.0.2
         version: 4.0.13
     devDependencies:
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:../api/next-config
       '@types/node':
@@ -1042,7 +1042,7 @@ importers:
         specifier: ^4.0.2
         version: 4.0.13
     devDependencies:
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:../api/next-config
       '@tailwindcss/postcss':
@@ -1121,7 +1121,7 @@ importers:
         specifier: ^4.0.2
         version: 4.0.13
     devDependencies:
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:../api/next-config
       '@types/node':
@@ -1188,7 +1188,7 @@ importers:
         specifier: ^4.0.2
         version: 4.0.13
     devDependencies:
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:../api/next-config
       '@types/react':
@@ -1216,7 +1216,7 @@ importers:
         specifier: ^4.0.2
         version: 4.0.13
     devDependencies:
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:../../api/next-config
       typescript:
@@ -1253,7 +1253,7 @@ importers:
         specifier: ^4.0.2
         version: 4.0.13
     devDependencies:
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:../../api/next-config
       '@types/react':
@@ -1281,7 +1281,7 @@ importers:
         specifier: ^4.0.2
         version: 4.0.13
     devDependencies:
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:../../api/next-config
       typescript:
@@ -1312,7 +1312,7 @@ importers:
         specifier: ^4.0.2
         version: 4.0.13
     devDependencies:
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:../../api/next-config
       typescript:
@@ -1370,7 +1370,7 @@ importers:
         specifier: ^4.0.2
         version: 4.0.13
     devDependencies:
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:../api/next-config
       '@types/node':
@@ -1410,7 +1410,7 @@ importers:
         specifier: 4.1.0
         version: 4.1.0(bufferutil@4.0.9)
     devDependencies:
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:../../packages/api/next-config
       '@types/node':
@@ -1428,7 +1428,7 @@ importers:
 
   tools/studio:
     devDependencies:
-      '@repo/api/next-config':
+      '@repo/api-next-config':
         specifier: workspace:*
         version: link:../../packages/api/next-config
       '@types/node':

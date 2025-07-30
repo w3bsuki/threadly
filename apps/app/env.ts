@@ -2,7 +2,7 @@ import { keys as auth } from '@repo/auth/auth/keys';
 import { keys as database } from '@repo/database/keys';
 import { keys as email } from '@repo/integrations/email/keys';
 import { keys as flags } from '@repo/features/feature-flags/keys';
-import { keys as core } from '@repo/api/next-config/src/keys';
+import { keys as core } from '@repo/api-next-config/keys';
 import { keys as notifications } from '@repo/features/notifications/keys';
 import { keys as observability } from '@repo/tooling/observability/keys';
 import { keys as payments } from '@repo/integrations/payments/keys';

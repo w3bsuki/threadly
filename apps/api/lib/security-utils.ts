@@ -1,5 +1,5 @@
 import { logError } from '@repo/tooling/observability/server';
-import { sanitizeForDisplay } from '@repo/api/utils/src/validation/sanitize';
+import { sanitizeForDisplay } from '@repo/api/utils/validation/sanitize';
 
 // Security validation utilities for API endpoints
 

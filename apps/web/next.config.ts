@@ -1,6 +1,6 @@
 import { withCMS } from '@repo/content/cms/next-config';
 import { withToolbar } from '@repo/features/feature-flags/lib/toolbar';
-import { config, withAnalyzer } from '@repo/api/next-config';
+import { config, withAnalyzer } from '@repo/api-next-config';
 import { withSentry } from '@repo/tooling/observability/next-config';
 import type { NextConfig } from 'next';
 import { env } from '@/env';

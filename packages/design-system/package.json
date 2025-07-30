@@ -121,11 +121,11 @@
     "@types/node": "24.0.12",
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
-    "@repo/api/next-config": "workspace:*",
+    "@repo/api-next-config": "workspace:*",
     "tailwindcss": "^4.1.11",
     "@tailwindcss/postcss": "^4.1.11",
     "@tailwindcss/typography": "^0.5.16",
     "autoprefixer": "^10.4.21"
   },
-  "prettier": "@repo/api/next-config/prettier"
+  "prettier": "@repo/api-next-config/prettier"
 }

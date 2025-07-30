@@ -3,7 +3,7 @@ import { keys as cms } from '@repo/content/cms/keys';
 import { keys as database } from '@repo/database/keys';
 import { keys as email } from '@repo/integrations/email/keys';
 import { keys as flags } from '@repo/features/feature-flags/keys';
-import { keys as core } from '@repo/api/next-config/src/keys';
+import { keys as core } from '@repo/api-next-config/keys';
 import { keys as observability } from '@repo/tooling/observability/keys';
 import { keys as payments } from '@repo/integrations/payments/keys';
 import { keys as security } from '@repo/auth/security/keys';

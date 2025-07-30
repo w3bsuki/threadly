@@ -1,7 +1,7 @@
 {
   "name": "@repo/threadly-web",
   "private": true,
-  "prettier": "@repo/api/next-config/prettier",
+  "prettier": "@repo/api-next-config/prettier",
   "scripts": {
     "dev": "next dev --port 3001 --hostname 0.0.0.0",
     "build": "prisma generate --schema=../../packages/database/prisma/schema.prisma && next build",

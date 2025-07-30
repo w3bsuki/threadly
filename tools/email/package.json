@@ -2,7 +2,7 @@
   "name": "email",
   "version": "0.0.0",
   "private": true,
-  "prettier": "@repo/api/next-config/prettier",
+  "prettier": "@repo/api-next-config/prettier",
   "scripts": {
     "build": "email build --dir ../../packages/email/templates",
     "dev": "email dev --port 3003 --dir ../../packages/email/templates",
@@ -21,6 +21,6 @@
     "@types/react": "19.1.8",
     "next": "15.4.4",
     "typescript": "^5.8.3",
-    "@repo/api/next-config": "workspace:*"
+    "@repo/api-next-config": "workspace:*"
   }
 }
