@@ -7,7 +7,7 @@ type CTAProps = {
   dictionary: Dictionary;
 };
 
-export const CTA = async ({ dictionary }: CTAProps) => (
+export const CTA = async ({ dictionary: _dictionary }: CTAProps) => (
   <section className="w-full bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 py-16 lg:py-24">
     <div className="container mx-auto px-4">
       <div className="grid items-center gap-12 lg:grid-cols-2">

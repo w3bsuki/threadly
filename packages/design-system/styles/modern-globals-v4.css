@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
 /* Source paths for design system components */
 @source "../components/**/*.{ts,tsx}";
