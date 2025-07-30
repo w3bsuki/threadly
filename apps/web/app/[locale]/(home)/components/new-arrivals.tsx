@@ -21,24 +21,6 @@ type TransformedArrival = {
   isNew: boolean;
 };
 
-type ProductWithRelations = {
-  id: string;
-  title: string;
-  brand: string | null;
-  price: string;
-  condition: string;
-  size: string | null;
-  createdAt: Date;
-  images: {
-    imageUrl: string | null;
-  }[];
-  seller: {
-    id: string;
-    firstName: string | null;
-    lastName: string | null;
-  } | null;
-};
-
 const formatTimeAgo = (date: Date | string) => {
   const now = new Date();
   const dateObj = date instanceof Date ? date : new Date(date);
