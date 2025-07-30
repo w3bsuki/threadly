@@ -7,7 +7,7 @@ import {
   getNotificationService,
   getPusherServer,
 } from '@repo/features/notifications/realtime/server';
-import { sanitizeForDisplay } from '@repo/tooling/utils/src/validation/sanitize';
+import { sanitizeForDisplay } from '@repo/api/utils/validation/sanitize';
 // Email imports will be dynamically imported when needed
 import { redirect } from 'next/navigation';
 import { z } from 'zod';

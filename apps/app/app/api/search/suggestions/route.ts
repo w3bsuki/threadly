@@ -1,5 +1,5 @@
 import { log, logError } from '@repo/tooling/observability/server';
-import { getSearchService } from '@repo/tooling/utils/src/search';
+import { getSearchService } from '@repo/api/utils/search';
 import { type NextRequest, NextResponse } from 'next/server';
 
 let searchService: ReturnType<typeof getSearchService> | null = null;

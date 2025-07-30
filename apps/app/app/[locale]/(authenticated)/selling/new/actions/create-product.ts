@@ -4,7 +4,7 @@ import { currentUser } from '@repo/auth/server';
 import { ensureUserExists } from '@repo/auth/sync';
 import { database } from '@repo/database';
 import { log, logError } from '@repo/tooling/observability/server';
-import { getAlgoliaSyncService } from '@repo/tooling/utils/src/search';
+import { getAlgoliaSyncService } from '@repo/api/utils/search';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 

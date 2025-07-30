@@ -1,6 +1,6 @@
 import { auth } from '@repo/auth/server';
 import { log, logError } from '@repo/tooling/observability/server';
-import { type AlgoliaSearchService, getSearchService } from '@repo/tooling/utils/src/search';
+import { type AlgoliaSearchService, getSearchService } from '@repo/api/utils/search';
 import { z } from 'zod';
 import { type NextRequest, NextResponse } from 'next/server';
 

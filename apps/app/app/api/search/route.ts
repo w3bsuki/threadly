@@ -4,8 +4,8 @@ import {
   createSuccessResponse,
   ErrorCode,
   validateInput,
-} from '@repo/tooling/utils/src/api';
-import { getSearchService } from '@repo/tooling/utils/src/search';
+} from '@repo/api/utils/api';
+import { getSearchService } from '@repo/api/utils/search';
 import { checkRateLimit, generalApiLimit } from '@repo/auth/security';
 import type { NextRequest } from 'next/server';
 import { z } from 'zod';

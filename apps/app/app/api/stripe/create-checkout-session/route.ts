@@ -3,7 +3,7 @@ import {
   createSuccessResponse,
   ErrorCode,
   validateInput,
-} from '@repo/tooling/utils/src/api';
+} from '@repo/api/utils/api';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import {

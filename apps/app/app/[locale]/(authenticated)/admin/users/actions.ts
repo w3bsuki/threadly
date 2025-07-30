@@ -7,7 +7,7 @@ import {
   sanitizeForDisplay,
   suspendUserSchema,
   updateUserRoleSchema,
-} from '@repo/tooling/utils/src/validation';
+} from '@repo/api/utils/validation';
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/admin';
 

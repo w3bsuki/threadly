@@ -3,13 +3,13 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { log, logError } from '@repo/tooling/observability/server';
-import { getAlgoliaSyncService, MarketplaceSearchService } from '@repo/tooling/utils/src/search';
+import { getAlgoliaSyncService, MarketplaceSearchService } from '@repo/api/utils/search';
 import {
   containsProfanity,
   filterProfanity,
   sanitizeForDisplay,
   sanitizeHtml,
-} from '@repo/tooling/utils/src/validation/sanitize';
+} from '@repo/api/utils/validation/sanitize';
 import {
   cuidSchema,
   priceCentsSchema,
@@ -20,7 +20,7 @@ import {
   isAllowedImageUrl,
   isPriceInRange,
   isValidProductTitle,
-} from '@repo/tooling/utils/src/validation/validators';
+} from '@repo/api/utils/validation/validators';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
