@@ -2,14 +2,51 @@
   "name": "@repo/auth",
   "version": "0.0.0",
   "private": true,
+  "exports": {
+    ".": {
+      "types": "./auth/index.ts",
+      "default": "./auth/index.ts"
+    },
+    "./server": {
+      "types": "./auth/server.ts",
+      "default": "./auth/server.ts"
+    },
+    "./client": {
+      "types": "./auth/client.tsx",
+      "default": "./auth/client.tsx"
+    },
+    "./provider": {
+      "types": "./auth/provider.tsx",
+      "default": "./auth/provider.tsx"
+    },
+    "./security": {
+      "types": "./security/index.ts",
+      "default": "./security/index.ts"
+    },
+    "./security/csrf": {
+      "types": "./security/csrf.ts",
+      "default": "./security/csrf.ts"
+    },
+    "./security/middleware": {
+      "types": "./security/middleware.ts",
+      "default": "./security/middleware.ts"
+    },
+    "./rate-limit": {
+      "types": "./rate-limit/index.ts",
+      "default": "./rate-limit/index.ts"
+    }
+  },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
+    "@arcjet/next": "1.0.0-beta.9",
     "@clerk/nextjs": "^6.24.0",
     "@clerk/themes": "^2.2.55",
-    "@repo/observability": "workspace:*",
+    "@nosecone/next": "1.0.0-beta.9",
+    "@repo/database": "workspace:*",
+    "@repo/tooling": "workspace:*",
     "@t3-oss/env-nextjs": "^0.13.8",
     "next": "^15.4.4",
     "next-themes": "^0.4.6",
@@ -17,43 +54,13 @@
     "server-only": "^0.0.1",
     "zod": "^4.0.2"
   },
-  "exports": {
-    ".": {
-      "types": "./index.ts",
-      "default": "./index.ts"
-    },
-    "./server": {
-      "types": "./server.ts",
-      "default": "./server.ts"
-    },
-    "./client": {
-      "types": "./client.tsx",
-      "default": "./client.tsx"
-    },
-    "./keys": {
-      "types": "./keys.ts",
-      "default": "./keys.ts"
-    },
-    "./middleware": {
-      "types": "./middleware.ts",
-      "default": "./middleware.ts"
-    },
-    "./db": {
-      "types": "./db.ts",
-      "default": "./db.ts"
-    },
-    "./sync": {
-      "types": "./src/sync.ts",
-      "default": "./src/sync.ts"
-    }
-  },
   "devDependencies": {
     "@clerk/types": "^4.64.0",
     "@types/node": "24.0.12",
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
     "typescript": "^5.8.3",
-    "@repo/next-config": "workspace:*"
+    "@repo/api/next-config": "workspace:*"
   },
-  "prettier": "@repo/next-config/prettier"
+  "prettier": "@repo/api/next-config/prettier"
 }

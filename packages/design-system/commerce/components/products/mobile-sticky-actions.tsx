@@ -5,7 +5,7 @@ import { cn } from '@repo/ui/lib/utils';
 import {
   formatPriceForDisplay,
   type Region,
-} from '@repo/internationalization/client';
+} from '@repo/content/internationalization/client';
 import { Heart, Share2, ShoppingCart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { formatCurrency } from '../../utils/currency';

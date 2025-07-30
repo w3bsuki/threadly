@@ -1,5 +1,5 @@
 import type { currentUser } from '@repo/auth/server';
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 
 interface DashboardHeaderProps {
   user: Awaited<ReturnType<typeof currentUser>>;

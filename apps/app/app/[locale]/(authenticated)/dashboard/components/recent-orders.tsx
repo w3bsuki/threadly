@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@repo/ui/components';
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 import { Package } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';

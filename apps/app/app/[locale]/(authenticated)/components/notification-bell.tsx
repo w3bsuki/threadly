@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
   NotificationSkeleton,
 } from '@repo/ui/components';
-import { useNotifications } from '@repo/notifications/realtime/client';
+import { useNotifications } from '@repo/features/notifications/src/realtime/client';
 import { formatDistanceToNow } from 'date-fns';
 import { Bell, Check, CheckCheck } from 'lucide-react';
 

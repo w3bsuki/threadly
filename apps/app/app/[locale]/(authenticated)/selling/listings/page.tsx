@@ -14,8 +14,8 @@ import {
   processPaginationResult,
   validatePaginationParams,
 } from '@repo/ui/lib/pagination';
-import { getDictionary } from '@repo/internationalization';
-import { decimalToNumber } from '@repo/utils';
+import { getDictionary } from '@repo/content/internationalization';
+import { decimalToNumber } from '@repo/api/utils';
 import { Edit, Eye, MoreHorizontal, Plus, Trash2 } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';

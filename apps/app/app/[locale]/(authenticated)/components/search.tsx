@@ -1,7 +1,7 @@
 'use client';
 
 import { Badge, Button, Input } from '@repo/ui/components';
-import { useAutocomplete, useSearchHistory } from '@repo/search/client';
+import { useAutocomplete, useSearchHistory } from '@repo/tooling/utils/src/search/client';
 import { ArrowRightIcon, Clock, SearchIcon, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';

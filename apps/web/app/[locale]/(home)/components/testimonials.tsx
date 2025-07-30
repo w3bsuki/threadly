@@ -1,4 +1,4 @@
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 import { Heart, Recycle, Shield, Sparkles } from 'lucide-react';
 
 type TestimonialsProps = {

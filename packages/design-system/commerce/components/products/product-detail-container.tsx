@@ -1,11 +1,11 @@
 'use client';
 
-import { useAnalyticsEvents } from '@repo/analytics';
+import { useAnalyticsEvents } from '@repo/features/analytics';
 import { toast } from '@repo/ui';
 import {
   getRegionByCountryCode,
   type Region,
-} from '@repo/internationalization/client';
+} from '@repo/content/internationalization/client';
 import { getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';

@@ -1,5 +1,5 @@
-import type { Currency, Language } from '@repo/internationalization/client';
-import { databaseDollarsToStripeCents, formatPrice } from '@repo/utils/price';
+import type { Currency, Language } from '@repo/content/internationalization/client';
+import { databaseDollarsToStripeCents, formatPrice } from '@repo/api/utils/price';
 import { getCookie } from 'cookies-next';
 
 /**

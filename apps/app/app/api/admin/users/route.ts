@@ -1,7 +1,7 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { validatePaginationParams } from '@repo/ui/lib/pagination';
-import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { checkRateLimit, generalApiLimit } from '@repo/auth/security';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {

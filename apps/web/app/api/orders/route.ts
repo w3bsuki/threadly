@@ -1,11 +1,11 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { log, logError } from '@repo/observability/server';
+import { log, logError } from '@repo/tooling/observability/server';
 import {
   calculatePlatformFee,
   isStripeConfigured,
   stripe,
-} from '@repo/payments';
+} from '@repo/integrations/payments';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 

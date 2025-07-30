@@ -10,7 +10,7 @@ import {
   MobileMenu,
   StickyHeader,
 } from '@repo/ui/components/navigation';
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 import {
   BarChart3,
   Crown,

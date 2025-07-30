@@ -1,11 +1,8 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { log, logError } from '@repo/observability/server';
-import {
-  queryParamsSchema,
-  reportSchema,
-  sanitizeForDisplay,
-} from '@repo/validation';
+import { log, logError } from '@repo/tooling/observability/server';
+// TODO: Fix validation imports after consolidation
+// import { sanitizeForDisplay } from '@repo/api/utils/validation/sanitize';
 import { randomUUID } from 'crypto';
 import { type NextRequest, NextResponse } from 'next/server';
 

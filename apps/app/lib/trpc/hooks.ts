@@ -5,7 +5,7 @@ import {
   useTRPCInfiniteQuery,
   useMigrationFlag,
   migrationConfig
-} from '@repo/api-utils/trpc';
+} from '@repo/tooling/utils/src/api/trpc';
 import { trpc } from './client';
 
 // Re-export common hooks

@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from '@repo/ui/components';
 import { cn } from '@repo/ui/lib/utils';
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 import {
   Crown,
   Eye,

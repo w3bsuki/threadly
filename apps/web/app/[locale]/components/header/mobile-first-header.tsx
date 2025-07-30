@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from '@repo/auth/client';
+import { useUser } from '@repo/auth/auth/client';
 import {
   Sheet,
   SheetContent,

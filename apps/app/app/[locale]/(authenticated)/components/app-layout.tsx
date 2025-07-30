@@ -1,7 +1,7 @@
 'use client';
 
 import { MobileNav } from '@repo/ui/components/navigation';
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 import {
   LayoutDashboard,
   MessageCircle,

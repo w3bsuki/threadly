@@ -1,9 +1,9 @@
 import { auth } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { logError } from '@repo/observability/server';
-import { getPusherServer } from '@repo/notifications/realtime/server';
-import { checkRateLimit, messageRateLimit } from '@repo/security';
-import { sanitizeForDisplay } from '@repo/utils/validation/sanitize';
+import { logError } from '@repo/tooling/observability/server';
+import { getPusherServer } from '@repo/features/notifications/src/realtime/server';
+import { checkRateLimit, messageRateLimit } from '@repo/auth/security';
+import { sanitizeForDisplay } from '@repo/api/utils/src/validation/sanitize';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 

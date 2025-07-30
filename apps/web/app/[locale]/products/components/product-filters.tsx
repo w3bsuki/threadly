@@ -11,7 +11,7 @@ import {
   Label,
   Slider,
 } from '@repo/ui/components';
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 

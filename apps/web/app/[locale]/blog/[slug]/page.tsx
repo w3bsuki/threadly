@@ -1,11 +1,11 @@
 import { ArrowLeftIcon } from '@radix-ui/react-icons';
-import { blog } from '@repo/cms';
-import { Body } from '@repo/cms/components/body';
-import { CodeBlock } from '@repo/cms/components/code-block';
-import { Image } from '@repo/cms/components/image';
-import { TableOfContents } from '@repo/cms/components/toc';
-import { JsonLd } from '@repo/seo/json-ld';
-import { createMetadata } from '@repo/seo/metadata';
+import { blog } from '@repo/content/cms';
+import { Body } from '@repo/content/cms/components/body';
+import { CodeBlock } from '@repo/content/cms/components/code-block';
+import { Image } from '@repo/content/cms/components/image';
+import { TableOfContents } from '@repo/content/cms/components/toc';
+import { JsonLd } from '@repo/content/seo/json-ld';
+import { createMetadata } from '@repo/content/seo/metadata';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';

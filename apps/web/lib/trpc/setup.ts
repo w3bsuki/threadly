@@ -1,4 +1,4 @@
-import { logMigrationStatus } from '@repo/utils/api/trpc';
+import { logMigrationStatus } from '@repo/api/utils/api/trpc';
 
 // Initialize tRPC migration logging in development
 export function initializeTRPCMigration() {

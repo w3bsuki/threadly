@@ -8,7 +8,7 @@ import {
   CardTitle,
   Separator,
 } from '@repo/ui/components';
-import { getDictionary } from '@repo/internationalization';
+import { getDictionary } from '@repo/content/internationalization';
 import {
   Clock,
   CreditCard,

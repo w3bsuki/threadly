@@ -1,9 +1,9 @@
 import { database } from '@repo/database';
-import { getDictionary } from '@repo/internationalization';
+import { getDictionary } from '@repo/content/internationalization';
 import {
   generateBreadcrumbStructuredData,
   generateProductStructuredData,
-} from '@repo/seo/structured-data';
+} from '@repo/content/seo/structured-data';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';

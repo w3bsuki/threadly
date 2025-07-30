@@ -9,8 +9,8 @@ import {
   ErrorBoundary,
   LoadingSkeleton,
 } from '@repo/ui/components';
-import type { Dictionary } from '@repo/internationalization';
-import { decimalToNumber } from '@repo/utils';
+import type { Dictionary } from '@repo/content/internationalization';
+import { decimalToNumber } from '@repo/api/utils';
 import { ExternalLink, Eye, Package, Plus } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';

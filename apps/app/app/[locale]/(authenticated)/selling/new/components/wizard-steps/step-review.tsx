@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@repo/ui/components';
-import type { Category, CreateProductInput } from '@repo/validation/schemas';
+import type { Category, CreateProductInput } from '@repo/api/utils/validation/schemas';
 import {
   DollarSign,
   Edit2,

@@ -1,5 +1,5 @@
 import { currentUser } from '@repo/auth/server';
-import { formatPrice } from '@repo/commerce/utils';
+import { formatPrice } from '@repo/design-system/commerce/utils';
 import { database } from '@repo/database';
 import {
   Badge,
@@ -9,8 +9,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@repo/ui/components';
-import { getDictionary } from '@repo/internationalization';
-import { decimalToNumber } from '@repo/utils';
+import { getDictionary } from '@repo/content/internationalization';
+import { decimalToNumber } from '@repo/api/utils';
 import { ExternalLink, Heart, Package, ShoppingCart } from 'lucide-react';
 import type { Metadata } from 'next';
 import Image from 'next/image';

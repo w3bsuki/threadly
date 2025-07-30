@@ -1,5 +1,5 @@
 import './styles.css';
-import { AnalyticsProvider } from '@repo/analytics';
+import { AnalyticsProvider } from '@repo/features/analytics';
 import { AuthProvider } from '@repo/auth/provider';
 import {
   DesignSystemProvider,
@@ -7,9 +7,9 @@ import {
 } from '@repo/ui';
 import { fonts } from '@repo/ui/lib/fonts';
 import { cn } from '@repo/ui/lib/utils';
-import { Toolbar } from '@repo/feature-flags/components/toolbar';
-import { getDictionary } from '@repo/internationalization';
-import { ErrorBoundary } from '@repo/utils/src/error-boundary';
+import { Toolbar } from '@repo/features/feature-flags/components/toolbar';
+import { getDictionary } from '@repo/content/internationalization';
+import { ErrorBoundary } from '@repo/api/utils/error-handling';
 import type { ReactNode } from 'react';
 import { Footer } from './components/footer';
 import { Header } from './components/header';

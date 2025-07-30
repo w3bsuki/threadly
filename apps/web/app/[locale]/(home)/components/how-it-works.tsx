@@ -1,5 +1,5 @@
 import { Button } from '@repo/ui/components';
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 import {
   Camera,
   Heart,

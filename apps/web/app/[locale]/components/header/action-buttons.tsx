@@ -1,6 +1,6 @@
 'use client';
 
-import { SignInButton, useClerk, useUser } from '@repo/auth/client';
+import { SignInButton, useClerk, useUser } from '@repo/auth/auth/client';
 import { Button } from '@repo/ui/components';
 import { AccountDropdown } from '@repo/ui/components/navigation';
 import { Heart, Plus, User } from 'lucide-react';

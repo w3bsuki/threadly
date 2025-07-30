@@ -1,13 +1,13 @@
 'use server';
 
 import { database } from '@repo/database';
-import { log, logError } from '@repo/observability/server';
+import { log, logError } from '@repo/tooling/observability/server';
 import {
   bulkOperationSchema,
   sanitizeForDisplay,
   suspendUserSchema,
   updateUserRoleSchema,
-} from '@repo/validation';
+} from '@repo/tooling/utils/src/validation';
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/admin';
 

@@ -3,12 +3,12 @@ import {
   createErrorResponse,
   createPaginationMeta,
   createSuccessResponse,
-} from '@repo/utils';
+} from '@repo/api/utils';
 import { getCacheService } from '@repo/database';
 import type { Prisma } from '@repo/database';
 import { database } from '@repo/database';
-import { checkRateLimit, generalApiLimit } from '@repo/security';
-import { z } from '@repo/validation';
+import { checkRateLimit, generalApiLimit } from '@repo/auth/security';
+import { z } from 'zod';
 import type { NextRequest } from 'next/server';
 
 // Input validation schema

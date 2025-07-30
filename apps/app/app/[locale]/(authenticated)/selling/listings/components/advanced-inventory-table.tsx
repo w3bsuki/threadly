@@ -35,7 +35,7 @@ import {
   useCursorPagination,
 } from '@repo/ui/components/marketplace';
 import type { CursorPaginationResult } from '@repo/ui/lib/pagination';
-import { decimalToNumber } from '@repo/utils';
+import { decimalToNumber } from '@repo/api/utils';
 import {
   Calendar,
   Check,

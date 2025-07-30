@@ -3,7 +3,7 @@
 import { UserButton } from '@repo/auth/client';
 import { ModeToggle } from '@repo/ui/components/mode-toggle';
 import { cn } from '@repo/ui/lib/utils';
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 import {
   BarChart3,
   Crown,

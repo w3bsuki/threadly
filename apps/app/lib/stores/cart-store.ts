@@ -1,8 +1,8 @@
 // Export types and hook from commerce package
-export { type CartItem, type CartState, useCartStore } from '@repo/commerce';
+export { type CartItem, type CartState, useCartStore } from '@repo/design-system/commerce';
 
 // For backward compatibility, re-export legacy interface
-import type { CartItem as UnifiedCartItem } from '@repo/commerce';
+import type { CartItem as UnifiedCartItem } from '@repo/design-system/commerce';
 
 // Migration helper for legacy code that expects 'image' instead of 'imageUrl'
 export interface LegacyCartItem extends Omit<UnifiedCartItem, 'imageUrl'> {

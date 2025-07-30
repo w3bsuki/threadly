@@ -1,5 +1,5 @@
 {
-  "extends": "../../packages/next-config/typescript/nextjs.json",
+  "extends": "../../packages/api/next-config/typescript/nextjs.json",
   "compilerOptions": {
     "baseUrl": ".",
     "module": "ESNext",
@@ -7,6 +7,18 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@repo/ui": [
+        "../../packages/design-system"
+      ],
+      "@repo/ui/*": [
+        "../../packages/design-system/*"
+      ],
+      "@repo/api/utils": [
+        "../../packages/api/utils/src"
+      ],
+      "@repo/api/utils/*": [
+        "../../packages/api/utils/src/*"
       ],
       "@repo/*": [
         "../../packages/*"
@@ -23,11 +35,12 @@
     "../../packages/*/src/**/*.tsx",
     "../../packages/*/*.ts",
     "../../packages/*/*.tsx",
-    "../../packages/cms/**/*.ts",
-    "../../packages/cms/**/*.tsx",
+    "../../packages/content/**/*.ts",
+    "../../packages/content/**/*.tsx",
     "../../packages/design-system/components/**/*.ts",
     "../../packages/design-system/components/**/*.tsx",
-    "../../packages/webhooks/**/*.ts"
+    "../../packages/api/**/*.ts",
+    "../../packages/api/**/*.tsx"
   ],
   "exclude": [
     "node_modules",

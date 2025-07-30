@@ -1,4 +1,4 @@
-import { initializeSentry } from '@repo/observability/instrumentation';
+import { initializeSentry } from '@repo/tooling/observability/instrumentation';
 import { captureRequestError } from '@sentry/nextjs';
 
 // Initialize Sentry

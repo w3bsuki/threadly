@@ -1,4 +1,4 @@
-import { createErrorResponse, createSuccessResponse } from '@repo/utils/api';
+import { createErrorResponse, createSuccessResponse } from '@repo/api/utils/api/responses';
 import { database } from '@repo/database';
 
 export async function GET() {
@@ -18,6 +18,10 @@ export async function GET() {
       meta: { count: categories.length },
     });
   } catch (error) {
-    return createErrorResponse(error);
+    return createErrorResponse(
+      error instanceof Error ? error.message : 'An error occurred',
+      500,
+      'INTERNAL_SERVER_ERROR'
+    );
   }
 }

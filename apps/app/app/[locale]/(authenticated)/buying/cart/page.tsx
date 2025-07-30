@@ -1,5 +1,5 @@
 import { currentUser } from '@repo/auth/server';
-import { getDictionary } from '@repo/internationalization';
+import { getDictionary } from '@repo/content/internationalization';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { Header } from '../../components/header';

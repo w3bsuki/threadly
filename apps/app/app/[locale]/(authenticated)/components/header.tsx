@@ -11,7 +11,7 @@ import {
   Separator,
 } from '@repo/ui/components';
 import { AccountDropdown } from '@repo/ui/components/navigation';
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 import { useParams, useRouter } from 'next/navigation';
 import { Fragment, type ReactNode } from 'react';
 import { LanguageSwitcher } from '@/components/language-switcher';

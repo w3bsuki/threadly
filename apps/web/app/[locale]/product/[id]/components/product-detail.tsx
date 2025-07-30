@@ -1,8 +1,8 @@
 'use client';
 
-import type { Product, SimilarProduct } from '@repo/commerce';
-import { ProductDetailContainer } from '@repo/commerce';
-import type { Dictionary } from '@repo/internationalization';
+import type { Product, SimilarProduct } from '@repo/ui/commerce';
+import { ProductDetailContainer } from '@repo/ui/commerce';
+import type { Dictionary } from '@repo/content/internationalization';
 import { useFavorites } from '../../../../../lib/hooks/use-favorites';
 import { useCartStore } from '../../../../../lib/stores/cart-store';
 

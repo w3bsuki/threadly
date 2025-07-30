@@ -1,12 +1,12 @@
 import { env } from '@/env';
 import '@repo/ui/styles/globals.css';
 import './styles.css';
-import { AnalyticsProvider } from '@repo/analytics';
+import { AnalyticsProvider } from '@repo/features/analytics';
 import { AuthProvider } from '@repo/auth/provider';
 import { DesignSystemProvider } from '@repo/ui';
 import { Toaster } from '@repo/ui/components';
 import { fonts } from '@repo/ui/lib/fonts';
-import { Toolbar } from '@repo/feature-flags/components/toolbar';
+import { Toolbar } from '@repo/features/feature-flags/components/toolbar';
 import type { Metadata, Viewport } from 'next';
 import type * as React from 'react';
 import { AppErrorBoundary } from '@/components/error-boundaries';

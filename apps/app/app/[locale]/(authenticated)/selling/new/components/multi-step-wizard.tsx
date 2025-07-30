@@ -11,7 +11,7 @@ import {
   Progress,
   toast,
 } from '@repo/ui/components';
-import { ValidationErrorDetail } from '@repo/validation/schemas';
+import { ValidationErrorDetail } from '@repo/api/utils/validation/schemas';
 import { ChevronLeft, ChevronRight, Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';

@@ -1,6 +1,6 @@
 import { Button } from '@repo/ui/components';
-import { getDictionary } from '@repo/internationalization';
-import { createMetadata } from '@repo/seo/metadata';
+import { getDictionary } from '@repo/content/internationalization';
+import { createMetadata } from '@repo/content/seo/metadata';
 import { Heart, HelpCircle, Shield, Zap } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';

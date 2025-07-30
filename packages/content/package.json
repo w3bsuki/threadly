@@ -1,0 +1,69 @@
+{
+  "name": "@repo/content",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "default": "./index.ts"
+    },
+    "./cms": {
+      "types": "./cms/index.ts",
+      "default": "./cms/index.ts"
+    },
+    "./cms/keys": {
+      "types": "./cms/keys.ts",
+      "default": "./cms/keys.ts"
+    },
+    "./seo": {
+      "types": "./seo/index.ts",
+      "default": "./seo/index.ts"
+    },
+    "./seo/metadata": {
+      "types": "./seo/metadata.ts",
+      "default": "./seo/metadata.ts"
+    },
+    "./seo/structured-data": {
+      "types": "./seo/structured-data.ts",
+      "default": "./seo/structured-data.ts"
+    },
+    "./internationalization": {
+      "types": "./internationalization/index.ts",
+      "default": "./internationalization/index.ts"
+    },
+    "./internationalization/client": {
+      "types": "./internationalization/client.ts",
+      "default": "./internationalization/client.ts"
+    }
+  },
+  "scripts": {
+    "dev": "node cms/scripts/conditional-dev.js",
+    "build": "node cms/scripts/conditional-build.js",
+    "analyze": "basehub",
+    "translate": "npx -y languine@latest translate",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@t3-oss/env-nextjs": "^0.13.8",
+    "basehub": "^9.0.21",
+    "react": "19.1.0",
+    "zod": "^4.0.2",
+    "lodash.merge": "^4.6.2",
+    "schema-dts": "^1.1.5",
+    "@formatjs/intl-localematcher": "^0.6.1",
+    "negotiator": "^1.0.0",
+    "next-international": "^1.3.1",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@types/lodash.merge": "^4.6.9",
+    "@types/negotiator": "^0.6.4",
+    "@types/node": "24.0.12",
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
+    "next": "15.4.4",
+    "@repo/api/next-config": "workspace:*"
+  },
+  "prettier": "@repo/api/next-config/prettier"
+}

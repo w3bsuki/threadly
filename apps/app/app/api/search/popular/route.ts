@@ -1,7 +1,7 @@
-import { auth } from '@clerk/nextjs';
-import { log, logError } from '@repo/observability/server';
-import { type AlgoliaSearchService, getSearchService } from '@repo/search';
-import { z } from '@repo/validation';
+import { auth } from '@repo/auth/server';
+import { log, logError } from '@repo/tooling/observability/server';
+import { type AlgoliaSearchService, getSearchService } from '@repo/tooling/utils/src/search';
+import { z } from 'zod';
 import { type NextRequest, NextResponse } from 'next/server';
 
 let searchService: AlgoliaSearchService;

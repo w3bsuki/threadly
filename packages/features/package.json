@@ -1,0 +1,63 @@
+{
+  "name": "@repo/features",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "default": "./index.ts"
+    },
+    "./analytics": {
+      "types": "./analytics/index.ts",
+      "default": "./analytics/index.ts"
+    },
+    "./notifications": {
+      "types": "./notifications/index.ts",
+      "default": "./notifications/index.ts"
+    },
+    "./notifications/client": {
+      "types": "./notifications/src/realtime/client/index.ts",
+      "default": "./notifications/src/realtime/client/index.ts"
+    },
+    "./notifications/realtime/server": {
+      "types": "./notifications/src/realtime/server/index.ts",
+      "default": "./notifications/src/realtime/server/index.ts"
+    },
+    "./webhooks": {
+      "types": "./webhooks/index.ts",
+      "default": "./webhooks/index.ts"
+    },
+    "./feature-flags": {
+      "types": "./feature-flags/index.ts",
+      "default": "./feature-flags/index.ts"
+    }
+  },
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@knocklabs/node": "^1.10.3",
+    "@knocklabs/react": "^0.7.19",
+    "@react-email/components": "^0.2.0",
+    "@repo/database": "workspace:*",
+    "@repo/tooling": "workspace:*",
+    "@repo/api/utils": "workspace:*",
+    "@t3-oss/env-nextjs": "^0.13.8",
+    "@vercel/toolbar": "^0.1.30",
+    "posthog-node": "^4.1.2",
+    "pusher": "^5.2.0",
+    "pusher-js": "^8.4.0",
+    "react": "19.1.0",
+    "server-only": "^0.0.1",
+    "svix": "^1.69.0",
+    "zod": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "24.0.12",
+    "@types/react": "19.1.8",
+    "typescript": "^5.8.3",
+    "@repo/api/next-config": "workspace:*"
+  },
+  "prettier": "@repo/api/next-config/prettier"
+}

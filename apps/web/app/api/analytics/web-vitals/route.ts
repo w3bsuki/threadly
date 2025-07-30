@@ -1,4 +1,4 @@
-import { log } from '@repo/observability/server';
+import { log } from '@repo/tooling/observability/server';
 import { type NextRequest, NextResponse } from 'next/server';
 
 interface WebVitalsPayload {

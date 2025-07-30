@@ -6,7 +6,7 @@ import {
   AlertTitle,
   Button,
 } from '@repo/ui/components';
-import { log, logError } from '@repo/observability/server';
+import { log, logError } from '@repo/tooling/observability/server';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';

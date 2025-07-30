@@ -1,6 +1,6 @@
 'use client';
 
-import { SignUp } from '@repo/auth/client';
+import { SignUp } from '@repo/auth/auth/client';
 
 export function SignUpClient({
   redirectUrl,

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCartStore } from '@repo/cart';
+import { useCartStore } from '../cart';
 import { useCallback, useEffect } from 'react';
 import type { ShippingAddress } from '../types';
 import { useCheckoutStore } from './store';

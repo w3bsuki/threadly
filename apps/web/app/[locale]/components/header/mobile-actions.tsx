@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from '@repo/auth/client';
+import { useUser } from '@repo/auth/auth/client';
 import { Button } from '@repo/ui/components';
 import { User } from 'lucide-react';
 import Link from 'next/link';

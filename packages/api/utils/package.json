@@ -1,0 +1,129 @@
+{
+  "name": "@repo/api/utils",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./price": {
+      "types": "./src/price.ts",
+      "default": "./src/price.ts"
+    },
+    "./currency": {
+      "types": "./src/currency.ts",
+      "default": "./src/currency.ts"
+    },
+    "./decimal": {
+      "types": "./src/decimal.ts",
+      "default": "./src/decimal.ts"
+    },
+    "./decimal-server": {
+      "types": "./src/decimal-server.ts",
+      "default": "./src/decimal-server.ts"
+    },
+    "./hooks": {
+      "types": "./src/hooks/index.ts",
+      "default": "./src/hooks/index.ts"
+    },
+    "./error-handling": {
+      "types": "./src/error-handling/index.ts",
+      "default": "./src/error-handling/index.ts"
+    },
+    "./search": {
+      "types": "./src/search/index.ts",
+      "default": "./src/search/index.ts"
+    },
+    "./api": {
+      "types": "./src/api/index.ts",
+      "default": "./src/api/index.ts"
+    },
+    "./api/errors": {
+      "types": "./src/api/errors/index.ts",
+      "default": "./src/api/errors/index.ts"
+    },
+    "./api/responses": {
+      "types": "./src/api/responses/index.ts",
+      "default": "./src/api/responses/index.ts"
+    },
+    "./api/validation": {
+      "types": "./src/api/validation/index.ts",
+      "default": "./src/api/validation/index.ts"
+    },
+    "./api/middleware": {
+      "types": "./src/api/middleware/index.ts",
+      "default": "./src/api/middleware/index.ts"
+    },
+    "./api/middleware/rate-limiter": {
+      "types": "./src/api/middleware/rate-limiter.ts",
+      "default": "./src/api/middleware/rate-limiter.ts"
+    },
+    "./api/actions": {
+      "types": "./src/api/actions/index.ts",
+      "default": "./src/api/actions/index.ts"
+    },
+    "./api/trpc": {
+      "types": "./src/api/trpc/index.ts",
+      "default": "./src/api/trpc/index.ts"
+    },
+    "./trpc": {
+      "types": "./src/api/trpc/index.ts",
+      "default": "./src/api/trpc/index.ts"
+    },
+    "./validation": {
+      "types": "./src/validation/index.ts",
+      "default": "./src/validation/index.ts"
+    },
+    "./validation/sanitize": {
+      "types": "./src/validation/sanitize.ts",
+      "default": "./src/validation/sanitize.ts"
+    },
+    "./validation/middleware": {
+      "types": "./src/validation/middleware.ts",
+      "default": "./src/validation/middleware.ts"
+    },
+    "./validation/schemas/common": {
+      "types": "./src/validation/schemas/common.ts",
+      "default": "./src/validation/schemas/common.ts"
+    },
+    "./validation/schemas/product": {
+      "types": "./src/validation/schemas/product.ts",
+      "default": "./src/validation/schemas/product.ts"
+    },
+    "./validation/validators": {
+      "types": "./src/validation/validators.ts",
+      "default": "./src/validation/validators.ts"
+    }
+  },
+  "dependencies": {
+    "@clerk/nextjs": "^6.14.1",
+    "@sentry/nextjs": "^9.36.0",
+    "@tanstack/react-query": "^5.70.7",
+    "@tanstack/react-query-devtools": "^5.70.8",
+    "@trpc/client": "^11.0.9",
+    "@trpc/react-query": "^11.0.9",
+    "@trpc/server": "^11.0.9",
+    "bad-words": "^3.0.4",
+    "circuit-breaker-js": "^0.0.1",
+    "isomorphic-dompurify": "^2.20.0",
+    "next": "15.4.4",
+    "p-retry": "^6.2.1",
+    "react": "19.1.0",
+    "validator": "^13.12.0",
+    "zod": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/bad-words": "^3.0.3",
+    "@types/node": "24.0.12",
+    "@types/react": "19.1.8",
+    "@types/validator": "^13.12.2",
+    "typescript": "^5.8.3",
+    "@repo/api/next-config": "workspace:*"
+  },
+  "prettier": "@repo/api/next-config/prettier"
+}

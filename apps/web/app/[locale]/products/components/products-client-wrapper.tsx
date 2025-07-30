@@ -1,6 +1,6 @@
 'use client';
 
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 import { useState } from 'react';
 import { LayoutSwitcher, type ViewMode } from './layout-switcher';
 import { ProductGrid } from './product-grid';

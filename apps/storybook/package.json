@@ -44,7 +44,7 @@
     "storybook": "^8.6.14",
     "tailwindcss": "^4.1.11",
     "typescript": "^5",
-    "@repo/next-config": "workspace:*"
+    "@repo/api/next-config": "workspace:*"
   },
-  "prettier": "@repo/next-config/prettier"
+  "prettier": "@repo/api/next-config/prettier"
 }

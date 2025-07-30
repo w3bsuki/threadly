@@ -1,6 +1,6 @@
 'use client';
 
-import { useOthers, useSelf } from '@repo/collaboration/hooks';
+import { useOthers, useSelf } from '@repo/ui/hooks';
 import {
   Avatar,
   AvatarFallback,

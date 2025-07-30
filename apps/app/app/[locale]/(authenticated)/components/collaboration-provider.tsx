@@ -1,6 +1,6 @@
 'use client';
 
-import { Room } from '@repo/collaboration/room';
+import { Room } from '@repo/ui/room';
 import type { ReactNode } from 'react';
 import { getUsers } from '@/app/actions/users/get';
 import { searchUsers } from '@/app/actions/users/search';

@@ -1,4 +1,4 @@
-import { withRetry } from '@repo/utils/error-handling';
+import { withRetry } from '@repo/api/utils/src/error-handling';
 import { Redis } from '@upstash/redis';
 import type {
   CacheConfig,

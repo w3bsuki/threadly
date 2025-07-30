@@ -5,8 +5,8 @@ import {
   ConditionBadge,
   ProductGridSkeleton,
 } from '@repo/ui/components';
-import type { Dictionary } from '@repo/internationalization';
-import { ErrorBoundary } from '@repo/utils';
+import type { Dictionary } from '@repo/content/internationalization';
+import { AppErrorBoundary as ErrorBoundary } from '@repo/ui';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Crown, Eye, Heart } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';

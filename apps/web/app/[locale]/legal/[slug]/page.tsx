@@ -1,8 +1,8 @@
 import { ArrowLeftIcon } from '@radix-ui/react-icons';
-import { legal } from '@repo/cms';
-import { Body } from '@repo/cms/components/body';
-import { TableOfContents } from '@repo/cms/components/toc';
-import { createMetadata } from '@repo/seo/metadata';
+import { legal } from '@repo/content/cms';
+import { Body } from '@repo/content/cms/components/body';
+import { TableOfContents } from '@repo/content/cms/components/toc';
+import { createMetadata } from '@repo/content/seo/metadata';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';

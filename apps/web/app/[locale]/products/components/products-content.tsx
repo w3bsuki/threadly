@@ -1,6 +1,6 @@
 import type { Prisma } from '@repo/database';
 import { database } from '@repo/database';
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 import { UnifiedSearchFilters } from '../../components/unified-search-filters';
 import { CollapsibleFilters } from './collapsible-filters';
 import { EnhancedHeader } from './enhanced-header';

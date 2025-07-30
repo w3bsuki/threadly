@@ -8,8 +8,8 @@ import {
   CardTitle,
 } from '@repo/ui/components';
 import { cn } from '@repo/ui/lib/utils';
-import type { Dictionary } from '@repo/internationalization';
-import { decimalToNumber } from '@repo/utils';
+import type { Dictionary } from '@repo/content/internationalization';
+import { decimalToNumber } from '@repo/api/utils';
 import { Package, ShoppingBag } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';

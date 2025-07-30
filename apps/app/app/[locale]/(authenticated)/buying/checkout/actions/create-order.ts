@@ -2,8 +2,8 @@
 
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { log, logError } from '@repo/observability/server';
-import { decimalToNumber } from '@repo/utils';
+import { log, logError } from '@repo/integrations/observability/server';
+import { decimalToNumber } from '@repo/tooling/utils';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
@@ -237,7 +237,7 @@ export async function createOrder(input: z.infer<typeof createOrderSchema>) {
 
     // Send confirmation email to buyer
     try {
-      const { sendOrderConfirmationEmail } = await import('@repo/email');
+      const { sendOrderConfirmationEmail } = await import('@repo/api/email');
       if (user.emailAddresses?.[0]?.emailAddress && orders.length > 0) {
         const primaryOrder = orders[0];
         await sendOrderConfirmationEmail(user.emailAddresses[0].emailAddress, {

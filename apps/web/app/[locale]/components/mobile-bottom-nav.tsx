@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from '@repo/auth/client';
+import { useUser } from '@repo/auth/auth/client';
 import { cn } from '@repo/ui/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import {

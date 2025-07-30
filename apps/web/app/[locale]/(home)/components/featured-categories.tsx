@@ -1,7 +1,7 @@
 import { getCacheService } from '@repo/database';
 import { database } from '@repo/database';
 import { Button } from '@repo/ui/components';
-import { logError } from '@repo/observability/server';
+import { logError } from '@repo/tooling/observability/server';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';

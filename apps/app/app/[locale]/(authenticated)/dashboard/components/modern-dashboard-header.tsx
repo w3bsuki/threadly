@@ -1,6 +1,6 @@
 import type { currentUser } from '@repo/auth/server';
 import { Button } from '@repo/ui/components';
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 import { Bell, Plus, Search } from 'lucide-react';
 import Link from 'next/link';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { SignInButton, useUser } from '@repo/auth/client';
+import { SignInButton, useUser } from '@repo/auth/auth/client';
 import { Button } from '@repo/ui/components';
 import { cn } from '@repo/ui/lib/utils';
 import {

@@ -1,5 +1,5 @@
 import { auth } from '@clerk/nextjs/server';
-import { z } from '@repo/validation';
+import { z } from 'zod';
 import { NextResponse } from 'next/server';
 
 const notificationQuerySchema = z.object({

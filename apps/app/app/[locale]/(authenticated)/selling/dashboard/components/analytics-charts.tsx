@@ -1,6 +1,6 @@
 'use client';
 
-import { formatPrice } from '@repo/commerce/utils';
+import { formatPrice } from '@repo/design-system/commerce/utils';
 import {
   Card,
   CardContent,

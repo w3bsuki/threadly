@@ -7,7 +7,7 @@
 
 import { createCartStore } from '@repo/cart/store';
 import type { CartConfig, CartItem } from '@repo/cart/types';
-import { act, cleanup, renderHook } from '@repo/testing';
+import { act, cleanup, renderHook } from '@repo/tooling/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock browser APIs

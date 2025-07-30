@@ -47,7 +47,7 @@ vi.mock('@repo/observability/server', () => ({
 // Import mocked modules
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { stripe } from '@repo/payments';
+import { stripe } from '@repo/integrations/payments';
 import { POST } from '../app/api/checkout/finalize-order/route';
 
 describe('POST /api/checkout/finalize-order', () => {

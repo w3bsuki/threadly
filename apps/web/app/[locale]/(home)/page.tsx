@@ -1,9 +1,9 @@
-import { getDictionary } from '@repo/internationalization';
-import { createMetadata } from '@repo/seo/metadata';
+import { getDictionary } from '@repo/content/internationalization';
+import { createMetadata } from '@repo/content/seo/metadata';
 import {
   organizationStructuredData,
   websiteStructuredData,
-} from '@repo/seo/structured-data';
+} from '@repo/content/seo/structured-data';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { ProductGridServer } from '../../../components/product-grid-server';

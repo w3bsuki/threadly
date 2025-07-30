@@ -1,7 +1,7 @@
 'use client';
 
-import { useUser } from '@repo/auth/client';
-import { useCartStore } from '@repo/commerce';
+import { useUser } from '@repo/auth/auth/client';
+import { useCartStore } from '@repo/ui/commerce';
 import { toast } from '@repo/ui';
 import { useCallback, useEffect } from 'react';
 import {

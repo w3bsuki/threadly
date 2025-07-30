@@ -5,7 +5,7 @@ import { cn } from '@repo/ui/lib/utils';
 import {
   formatPriceForDisplay,
   type Region,
-} from '@repo/internationalization/client';
+} from '@repo/content/internationalization/client';
 import { Heart } from 'lucide-react';
 import { conditionColors, conditionLabels, type Product } from '../../types';
 import { formatCurrency } from '../../utils/currency';

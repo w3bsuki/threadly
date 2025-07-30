@@ -5,7 +5,7 @@
  * ProductCard, CheckoutForm, Dashboard, and mobile components.
  */
 
-import { cleanup, fireEvent, render, screen } from '@repo/testing';
+import { cleanup, fireEvent, render, screen } from '@repo/tooling/testing';
 import React, {
   type ButtonHTMLAttributes,
   type HTMLAttributes,

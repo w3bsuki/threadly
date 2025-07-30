@@ -1,4 +1,4 @@
-import { a11yTestHelpers, renderNavigationWithA11y } from '@repo/testing/a11y';
+import { a11yTestHelpers, renderNavigationWithA11y } from '@repo/tooling/testing/a11y';
 import { describe, it } from 'vitest';
 import '@repo/testing/a11y/axe-matchers';
 

@@ -1,13 +1,13 @@
 'use client';
 
-import { useAnalyticsEvents } from '@repo/analytics';
+import { useAnalyticsEvents } from '@repo/features/analytics';
 import {
   Badge,
   Button,
   Card,
   CardContent,
 } from '@repo/ui/components';
-import { ErrorBoundary } from '@repo/utils';
+import { AppErrorBoundary as ErrorBoundary } from '@repo/ui';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { Heart, Search } from 'lucide-react';
 import Image from 'next/image';

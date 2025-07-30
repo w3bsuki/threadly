@@ -1,4 +1,4 @@
-import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { checkRateLimit, generalApiLimit } from '@repo/auth/security';
 import { type NextRequest, NextResponse } from 'next/server';
 
 // Simple stub implementation - search functionality will be implemented later

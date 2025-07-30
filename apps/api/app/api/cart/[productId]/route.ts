@@ -1,6 +1,6 @@
 import { auth } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { checkRateLimit, generalApiLimit } from '@repo/auth/security';
 import { type NextRequest, NextResponse } from 'next/server';
 
 // DELETE /api/cart/:productId - Remove specific item from cart
@@ -52,8 +52,8 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    const { log } = await import('@repo/observability/server');
-    log.error('Error removing from cart', { error, userId, productId });
+    const { logError } = await import('@repo/tooling/observability/server');
+    logError('Error removing from cart', { error, userId, productId });
     return NextResponse.json(
       { error: 'Failed to remove from cart' },
       { status: 500 }

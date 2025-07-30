@@ -1,4 +1,4 @@
-import { generalApiLimit, checkRateLimit } from '@repo/security';
+import { generalApiLimit, checkRateLimit } from '@repo/auth/security';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**

@@ -1,6 +1,12 @@
 packages:
   - apps/*
   - packages/*
+  - packages/api/*
+  - packages/auth/*
+  - packages/content/*
+  - packages/features/*
+  - packages/integrations/*
+  - packages/tooling/*
   - tools/*
 overrides:
   path-to-regexp@>=4.0.0 <6.3.0: '>=6.3.0'

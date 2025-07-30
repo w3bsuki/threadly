@@ -1,10 +1,10 @@
 'use client';
 
 // Export types and hook from commerce package
-export { type CartItem, useCartStore } from '@repo/commerce';
+export { type CartItem, useCartStore } from '@repo/ui/commerce';
 
 // For backward compatibility, keep legacy interface as alias
-import type { CartItem as UnifiedCartItem } from '@repo/commerce';
+import type { CartItem as UnifiedCartItem } from '@repo/ui/commerce';
 
 // Legacy interface mapping for existing code
 export interface LegacyCartItem extends Omit<UnifiedCartItem, 'productId'> {

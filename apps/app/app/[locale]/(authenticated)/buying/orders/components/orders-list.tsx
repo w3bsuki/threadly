@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@repo/ui/components';
-import { decimalToNumber } from '@repo/utils';
+import { decimalToNumber } from '@repo/api/utils';
 import { ExternalLink, Eye, Package, ShoppingCart, Star } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';

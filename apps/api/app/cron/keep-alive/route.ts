@@ -1,4 +1,4 @@
-import { log, logError } from '@repo/observability/server';
+import { log, logError } from '@repo/tooling/observability/server';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export const POST = async (request: NextRequest): Promise<Response> => {

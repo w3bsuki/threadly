@@ -1,6 +1,6 @@
 import { Badge, Card, CardContent } from '@repo/ui/components';
 import { OptimizedImage } from '@repo/ui/components/optimized-image';
-import { formatCurrency } from '@repo/utils';
+import { formatCurrency } from '@repo/api/utils';
 import Link from 'next/link';
 
 interface OptimizedProductCardProps {

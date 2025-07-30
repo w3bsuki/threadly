@@ -2,7 +2,7 @@
 
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { logError } from '@repo/observability/server';
+import { logError } from '@repo/tooling/observability/server';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 

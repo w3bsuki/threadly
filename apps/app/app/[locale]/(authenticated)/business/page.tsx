@@ -1,7 +1,7 @@
 import { currentUser } from '@repo/auth/server';
 import { cache } from '@repo/database';
 import { database } from '@repo/database';
-import { getDictionary, type Locale } from '@repo/internationalization';
+import { getDictionary, type Locale } from '@repo/content/internationalization';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 

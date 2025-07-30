@@ -45,7 +45,7 @@
   "dependencies": {
     "@prisma/client": "6.11.1",
     "@prisma/engines": "6.11.1",
-    "@repo/utils": "workspace:*",
+    "@repo/api/utils": "workspace:*",
     "@t3-oss/env-nextjs": "^0.13.8",
     "@upstash/redis": "^1.35.1",
     "next": "^15.4.4",
@@ -59,10 +59,10 @@
     "prisma": "6.11.1",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",
-    "@repo/next-config": "workspace:*"
+    "@repo/api/next-config": "workspace:*"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
-  "prettier": "@repo/next-config/prettier"
+  "prettier": "@repo/api/next-config/prettier"
 }

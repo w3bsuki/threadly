@@ -1,11 +1,12 @@
-import { withCMS } from '@repo/cms/next-config';
-import { withToolbar } from '@repo/feature-flags/lib/toolbar';
-import { config, withAnalyzer } from '@repo/next-config';
-import { withSentry } from '@repo/observability/next-config';
+import { withCMS } from '@repo/content/cms/next-config';
+import { withToolbar } from '@repo/features/feature-flags/lib/toolbar';
+import { config, withAnalyzer } from '@repo/api/next-config';
+import { withSentry } from '@repo/tooling/observability/next-config';
 import type { NextConfig } from 'next';
-// import { env } from '@/env';
+import { env } from '@/env';
 
-let nextConfig: NextConfig = withToolbar(config);
+// Temporarily disable toolbar due to missing @vercel/toolbar dependency
+let nextConfig: NextConfig = config; // withToolbar(config);
 
 
 // Performance optimizations
@@ -65,8 +66,22 @@ nextConfig.images = {
   ],
 };
 
+// Add transpile packages to handle workspace packages
+nextConfig.transpilePackages = [
+  '@repo/ui',
+  '@repo/api/utils', 
+  '@repo/database',
+  '@repo/auth',
+  '@repo/content',
+  '@repo/features',
+  '@repo/tooling',
+  '@repo/integrations'
+];
+
 // Fix webpack issues and Prisma bundling
 nextConfig.webpack = (config, { isServer, dev }) => {
+  // Let Next.js handle package resolution naturally
+
   // Exclude Windows system directories from webpack scanning
   config.watchOptions = {
     ...config.watchOptions,

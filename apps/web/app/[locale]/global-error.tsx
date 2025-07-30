@@ -1,7 +1,7 @@
 'use client';
 
 import { fonts } from '@repo/ui/lib/fonts';
-import { ErrorPage } from '@repo/error-handling/error-pages';
+import { ErrorPage } from '@repo/api/utils/error-handling';
 import { captureException } from '@sentry/nextjs';
 import type NextError from 'next/error';
 import { useEffect } from 'react';

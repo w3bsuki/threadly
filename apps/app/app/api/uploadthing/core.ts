@@ -1,5 +1,5 @@
 import { currentUser } from '@repo/auth/server';
-import { log, logError } from '@repo/observability/server';
+import { log, logError } from '@repo/tooling/observability/server';
 import { createUploadthing, type FileRouter } from 'uploadthing/next';
 import { UploadThingError } from 'uploadthing/server';
 

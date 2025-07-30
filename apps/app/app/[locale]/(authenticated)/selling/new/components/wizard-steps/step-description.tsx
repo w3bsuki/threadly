@@ -8,7 +8,7 @@ import {
   FormMessage,
   Textarea,
 } from '@repo/ui/components';
-import type { Category, CreateProductInput } from '@repo/validation/schemas';
+import type { Category, CreateProductInput } from '@repo/api/utils/validation/schemas';
 import type { UseFormReturn } from 'react-hook-form';
 import { CategorySelector } from '../category-selector';
 

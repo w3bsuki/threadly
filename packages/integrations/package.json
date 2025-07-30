@@ -1,0 +1,92 @@
+{
+  "name": "@repo/integrations",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "default": "./index.ts"
+    },
+    "./ai": {
+      "types": "./ai/index.ts",
+      "default": "./ai/index.ts"
+    },
+    "./ai/anthropic": {
+      "types": "./ai/anthropic.ts",
+      "default": "./ai/anthropic.ts"
+    },
+    "./ai/embeddings": {
+      "types": "./ai/embeddings.ts",
+      "default": "./ai/embeddings.ts"
+    },
+    "./ai/keys": {
+      "types": "./ai/keys.ts",
+      "default": "./ai/keys.ts"
+    },
+    "./email": {
+      "types": "./email/index.ts",
+      "default": "./email/index.ts"
+    },
+    "./email/templates": {
+      "types": "./email/templates/index.ts",
+      "default": "./email/templates/index.ts"
+    },
+    "./email/keys": {
+      "types": "./email/keys.ts",
+      "default": "./email/keys.ts"
+    },
+    "./storage": {
+      "types": "./storage/index.ts",
+      "default": "./storage/index.ts"
+    },
+    "./storage/s3": {
+      "types": "./storage/s3.ts",
+      "default": "./storage/s3.ts"
+    },
+    "./storage/uploadthing": {
+      "types": "./storage/uploadthing.ts",
+      "default": "./storage/uploadthing.ts"
+    },
+    "./storage/keys": {
+      "types": "./storage/keys.ts",
+      "default": "./storage/keys.ts"
+    },
+    "./payments": {
+      "types": "./payments/index.ts",
+      "default": "./payments/index.ts"
+    },
+    "./payments/keys": {
+      "types": "./payments/keys.ts",
+      "default": "./payments/keys.ts"
+    }
+  },
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.35.0",
+    "@aws-sdk/client-s3": "^3.729.0",
+    "@aws-sdk/s3-request-presigner": "^3.729.0",
+    "@react-email/components": "^0.0.33",
+    "@react-email/render": "^1.0.6",
+    "@sendgrid/mail": "^8.1.4",
+    "@stripe/agent-toolkit": "^0.7.10",
+    "@t3-oss/env-nextjs": "^0.13.8",
+    "@uploadthing/react": "^7.0.3",
+    "openai": "^5.4.0",
+    "react": "19.1.0",
+    "react-email": "^4.2.5",
+    "resend": "^4.7.0",
+    "server-only": "^0.0.1",
+    "stripe": "^18.3.0",
+    "uploadthing": "^7.7.3",
+    "zod": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.8",
+    "typescript": "^5.8.3",
+    "@repo/api/next-config": "workspace:*"
+  },
+  "prettier": "@repo/api/next-config/prettier"
+}

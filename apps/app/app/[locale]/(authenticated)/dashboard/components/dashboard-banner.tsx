@@ -6,7 +6,7 @@ import {
   TabsTrigger,
 } from '@repo/ui/components/ui/tabs';
 import { cn } from '@repo/ui/lib/utils';
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 import {
   DollarSign,
   MessageSquare,

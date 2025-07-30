@@ -1,4 +1,4 @@
-import { addCSRFHeader, getCSRFTokenFromCookie } from '@repo/security';
+import { addCSRFHeader, getCSRFTokenFromCookie } from '@repo/auth/security';
 import { useCallback, useEffect, useState } from 'react';
 
 /**

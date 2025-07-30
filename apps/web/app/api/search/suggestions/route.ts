@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { database } from '@repo/database';
-import { logError } from '@repo/observability/server';
-import { z } from '@repo/validation';
+import { logError } from '@repo/tooling/observability/server';
+import { z } from 'zod';
 import { type NextRequest, NextResponse } from 'next/server';
 
 const searchSuggestionsSchema = z.object({

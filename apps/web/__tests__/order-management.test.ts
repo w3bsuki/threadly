@@ -5,7 +5,7 @@
  * including order creation, updates, shipping, delivery, and tracking.
  */
 
-import { cleanup } from '@repo/testing';
+import { cleanup } from '@repo/tooling/testing';
 import { NextRequest, NextResponse } from 'next/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { POST as shipOrder } from '../../api/app/api/orders/[id]/ship/route';

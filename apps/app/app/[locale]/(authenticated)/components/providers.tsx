@@ -1,8 +1,8 @@
 'use client';
 
 import { Toaster } from '@repo/ui/components';
-import type { Dictionary } from '@repo/internationalization';
-import { NotificationsProvider } from '@repo/notifications/components/provider';
+import type { Dictionary } from '@repo/content/internationalization';
+import { NotificationsProvider } from '@repo/features/notifications/components/provider';
 import type { ReactNode } from 'react';
 import { I18nProvider } from './i18n-provider';
 import { PostHogIdentifier } from './posthog-identifier';

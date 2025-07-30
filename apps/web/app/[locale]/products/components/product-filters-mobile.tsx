@@ -18,7 +18,7 @@ import {
   SheetTrigger,
   Slider,
 } from '@repo/ui/components';
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';

@@ -1,6 +1,6 @@
 'use client';
 
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 import { createContext, type ReactNode, useContext } from 'react';
 
 const TranslationContext = createContext<Dictionary | null>(null);

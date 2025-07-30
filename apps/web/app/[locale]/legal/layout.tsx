@@ -1,4 +1,4 @@
-import { Toolbar } from '@repo/cms/components/toolbar';
+import { Toolbar } from '@repo/content/cms/components/toolbar';
 
 export default async function LegalLayout({
   children,

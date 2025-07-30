@@ -1,7 +1,7 @@
 'use server';
 
 import { currentUser } from '@repo/auth/server';
-import { logError } from '@repo/observability/server';
+import { logError } from '@repo/tooling/observability/server';
 import { z } from 'zod';
 
 // Mock implementation for @vercel/blob

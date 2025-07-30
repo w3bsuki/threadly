@@ -2,12 +2,12 @@
 
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { log, logError } from '@repo/observability/server';
+import { log, logError } from '@repo/tooling/observability/server';
 import {
   getNotificationService,
   getPusherServer,
-} from '@repo/real-time/server';
-import { sanitizeForDisplay } from '@repo/validation/sanitize';
+} from '@repo/features/notifications/realtime/server';
+import { sanitizeForDisplay } from '@repo/tooling/utils/src/validation/sanitize';
 // Email imports will be dynamically imported when needed
 import { redirect } from 'next/navigation';
 import { z } from 'zod';

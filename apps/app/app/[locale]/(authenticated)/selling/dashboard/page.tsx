@@ -1,6 +1,6 @@
 import { currentUser } from '@repo/auth/server';
 // Import proper commerce utilities
-import { formatPrice, toNumber } from '@repo/commerce/utils';
+import { formatPrice, toNumber } from '@repo/design-system/commerce/utils';
 import { database } from '@repo/database';
 import {
   Badge,
@@ -10,8 +10,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@repo/ui/components';
-import { getDictionary } from '@repo/internationalization';
-import { decimalToNumber } from '@repo/utils/decimal';
+import { getDictionary } from '@repo/content/internationalization';
+import { decimalToNumber } from '@repo/api/utils/decimal';
 import {
   ArrowDownRight,
   ArrowUpRight,

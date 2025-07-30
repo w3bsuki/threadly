@@ -1,0 +1,40 @@
+{
+  "name": "@repo/integrations/email",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "default": "./index.ts"
+    },
+    "./templates": {
+      "types": "./templates/index.ts",
+      "default": "./templates/index.ts"
+    },
+    "./keys": {
+      "types": "./keys.ts",
+      "default": "./keys.ts"
+    }
+  },
+  "scripts": {
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@react-email/components": "^0.0.33",
+    "@react-email/render": "^1.0.6",
+    "@sendgrid/mail": "^8.1.4",
+    "@t3-oss/env-nextjs": "^0.13.8",
+    "react": "19.1.0",
+    "react-email": "^4.2.5",
+    "resend": "^4.7.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.8",
+    "typescript": "^5.8.3",
+    "@repo/api/next-config": "workspace:*"
+  },
+  "prettier": "@repo/api/next-config/prettier"
+}

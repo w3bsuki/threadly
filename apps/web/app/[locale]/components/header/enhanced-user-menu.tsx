@@ -1,6 +1,6 @@
 'use client';
 
-import { UserButton as ClerkUserButton } from '@repo/auth/client';
+import { UserButton as ClerkUserButton } from '@repo/auth/auth/client';
 import {
   DropdownMenu,
   DropdownMenuContent,

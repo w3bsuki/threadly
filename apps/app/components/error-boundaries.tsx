@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@repo/ui/components';
-import { logError, parseError } from '@repo/observability/error';
+import { logError, parseError } from '@repo/tooling/observability/error';
 import {
   AlertCircle,
   BarChart3,

@@ -5,7 +5,7 @@
  * including create, read, update, delete operations with validation.
  */
 
-import { cleanup } from '@repo/testing';
+import { cleanup } from '@repo/tooling/testing';
 import { NextRequest } from 'next/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
@@ -61,7 +61,7 @@ vi.mock('@repo/observability/server', () => ({
   logError: vi.fn(),
 }));
 
-vi.mock('@repo/validation/middleware', () => ({
+vi.mock('@repo/api/utils/validation/middleware', () => ({
   withValidation: vi.fn((handler, _schema, _type) => handler),
   validateQuery: vi.fn(),
   validateBody: vi.fn(),
@@ -69,14 +69,14 @@ vi.mock('@repo/validation/middleware', () => ({
   formatZodErrors: vi.fn(),
 }));
 
-vi.mock('@repo/validation/sanitize', () => ({
+vi.mock('@repo/api/utils/validation/sanitize', () => ({
   sanitizeForDisplay: vi.fn((text) => text),
   sanitizeHtml: vi.fn((text) => text),
   filterProfanity: vi.fn((text) => text),
   containsProfanity: vi.fn(() => false),
 }));
 
-vi.mock('@repo/validation/validators', () => ({
+vi.mock('@repo/api/utils/validation/validators', () => ({
   isValidProductTitle: vi.fn(() => true),
   isAllowedImageUrl: vi.fn(() => true),
   isPriceInRange: vi.fn(() => true),
@@ -97,7 +97,7 @@ describe('Product CRUD Tests', () => {
     it('should create product successfully', async () => {
       const { auth } = await import('@repo/auth/server');
       const { database } = await import('@repo/database');
-      const { validateBody } = await import('@repo/validation/middleware');
+      const { validateBody } = await import('@repo/api/utils/validation/middleware');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_user_1' });
       vi.mocked(database.user.findUnique).mockResolvedValue({
@@ -224,7 +224,7 @@ describe('Product CRUD Tests', () => {
     it('should reject creation with invalid category', async () => {
       const { auth } = await import('@repo/auth/server');
       const { database } = await import('@repo/database');
-      const { validateBody } = await import('@repo/validation/middleware');
+      const { validateBody } = await import('@repo/api/utils/validation/middleware');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_user_1' });
       vi.mocked(database.user.findUnique).mockResolvedValue({
@@ -265,7 +265,7 @@ describe('Product CRUD Tests', () => {
 
     it('should handle validation errors', async () => {
       const { auth } = await import('@repo/auth/server');
-      const { validateBody } = await import('@repo/validation/middleware');
+      const { validateBody } = await import('@repo/api/utils/validation/middleware');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_user_1' });
       vi.mocked(validateBody).mockResolvedValue({
@@ -308,7 +308,7 @@ describe('Product CRUD Tests', () => {
   describe('Product Retrieval', () => {
     it('should get products with pagination', async () => {
       const { database } = await import('@repo/database');
-      const { validateQuery } = await import('@repo/validation/middleware');
+      const { validateQuery } = await import('@repo/api/utils/validation/middleware');
 
       const mockProducts = [
         {
@@ -365,7 +365,7 @@ describe('Product CRUD Tests', () => {
 
     it('should filter products by category', async () => {
       const { database } = await import('@repo/database');
-      const { validateQuery } = await import('@repo/validation/middleware');
+      const { validateQuery } = await import('@repo/api/utils/validation/middleware');
 
       vi.mocked(validateQuery).mockReturnValue({
         success: true,
@@ -402,7 +402,7 @@ describe('Product CRUD Tests', () => {
 
     it('should filter products by price range', async () => {
       const { database } = await import('@repo/database');
-      const { validateQuery } = await import('@repo/validation/middleware');
+      const { validateQuery } = await import('@repo/api/utils/validation/middleware');
 
       vi.mocked(validateQuery).mockReturnValue({
         success: true,
@@ -438,7 +438,7 @@ describe('Product CRUD Tests', () => {
 
     it('should search products by text', async () => {
       const { database } = await import('@repo/database');
-      const { validateQuery } = await import('@repo/validation/middleware');
+      const { validateQuery } = await import('@repo/api/utils/validation/middleware');
 
       vi.mocked(validateQuery).mockReturnValue({
         success: true,
@@ -479,7 +479,7 @@ describe('Product CRUD Tests', () => {
   describe('Single Product Retrieval', () => {
     it('should get single product successfully', async () => {
       const { database, getCacheService } = await import('@repo/database');
-      const { validateParams } = await import('@repo/validation/middleware');
+      const { validateParams } = await import('@repo/api/utils/validation/middleware');
 
       const mockProduct = {
         id: 'prod_1',
@@ -543,7 +543,7 @@ describe('Product CRUD Tests', () => {
 
     it('should return 404 for non-existent product', async () => {
       const { getCacheService } = await import('@repo/database');
-      const { validateParams } = await import('@repo/validation/middleware');
+      const { validateParams } = await import('@repo/api/utils/validation/middleware');
 
       vi.mocked(validateParams).mockReturnValue({
         success: true,
@@ -571,7 +571,7 @@ describe('Product CRUD Tests', () => {
     });
 
     it('should handle invalid product ID', async () => {
-      const { validateParams } = await import('@repo/validation/middleware');
+      const { validateParams } = await import('@repo/api/utils/validation/middleware');
 
       vi.mocked(validateParams).mockReturnValue({
         success: false,
@@ -604,7 +604,7 @@ describe('Product CRUD Tests', () => {
       const { auth } = await import('@repo/auth/server');
       const { database, getCacheService } = await import('@repo/database');
       const { validateParams, validateBody } = await import(
-        '@repo/validation/middleware'
+        '@repo/api/utils/validation/middleware'
       );
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_user_1' });
@@ -689,7 +689,7 @@ describe('Product CRUD Tests', () => {
       const { auth } = await import('@repo/auth/server');
       const { database } = await import('@repo/database');
       const { validateParams, validateBody } = await import(
-        '@repo/validation/middleware'
+        '@repo/api/utils/validation/middleware'
       );
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_user_2' });
@@ -735,7 +735,7 @@ describe('Product CRUD Tests', () => {
       const { auth } = await import('@repo/auth/server');
       const { database } = await import('@repo/database');
       const { validateParams, validateBody } = await import(
-        '@repo/validation/middleware'
+        '@repo/api/utils/validation/middleware'
       );
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_user_1' });
@@ -802,7 +802,7 @@ describe('Product CRUD Tests', () => {
     it('should delete product successfully', async () => {
       const { auth } = await import('@repo/auth/server');
       const { database, getCacheService } = await import('@repo/database');
-      const { validateParams } = await import('@repo/validation/middleware');
+      const { validateParams } = await import('@repo/api/utils/validation/middleware');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_user_1' });
       vi.mocked(database.user.findUnique).mockResolvedValue({
@@ -854,7 +854,7 @@ describe('Product CRUD Tests', () => {
     it('should reject deletion by non-owner', async () => {
       const { auth } = await import('@repo/auth/server');
       const { database } = await import('@repo/database');
-      const { validateParams } = await import('@repo/validation/middleware');
+      const { validateParams } = await import('@repo/api/utils/validation/middleware');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_user_2' });
       vi.mocked(database.user.findUnique).mockResolvedValue({
@@ -894,7 +894,7 @@ describe('Product CRUD Tests', () => {
     it('should reject deletion with active orders', async () => {
       const { auth } = await import('@repo/auth/server');
       const { database } = await import('@repo/database');
-      const { validateParams } = await import('@repo/validation/middleware');
+      const { validateParams } = await import('@repo/api/utils/validation/middleware');
 
       vi.mocked(auth).mockResolvedValue({ userId: 'clerk_user_1' });
       vi.mocked(database.user.findUnique).mockResolvedValue({
@@ -935,7 +935,7 @@ describe('Product CRUD Tests', () => {
       const {
         isValidProductTitle,
         containsProfanity,
-      } = require('@repo/validation/validators');
+      } = require('@repo/api/utils/validation/validators');
 
       // Mock the validators to test validation logic
       vi.mocked(isValidProductTitle).mockImplementation((title: string) => {
@@ -962,7 +962,7 @@ describe('Product CRUD Tests', () => {
     });
 
     it('should validate price ranges', () => {
-      const { isPriceInRange } = require('@repo/validation/validators');
+      const { isPriceInRange } = require('@repo/api/utils/validation/validators');
 
       vi.mocked(isPriceInRange).mockImplementation((price: number) => {
         return price >= 1 && price <= 99_999_999; // $0.01 to $999,999.99 in cents
@@ -976,7 +976,7 @@ describe('Product CRUD Tests', () => {
     });
 
     it('should validate image URLs', () => {
-      const { isAllowedImageUrl } = require('@repo/validation/validators');
+      const { isAllowedImageUrl } = require('@repo/api/utils/validation/validators');
 
       vi.mocked(isAllowedImageUrl).mockImplementation(
         (url: string, allowedDomains: string[]) => {
@@ -1001,7 +1001,7 @@ describe('Product CRUD Tests', () => {
   describe('Search and Filtering', () => {
     it('should handle complex filtering combinations', async () => {
       const { database } = await import('@repo/database');
-      const { validateQuery } = await import('@repo/validation/middleware');
+      const { validateQuery } = await import('@repo/api/utils/validation/middleware');
 
       vi.mocked(validateQuery).mockReturnValue({
         success: true,
@@ -1061,7 +1061,7 @@ describe('Product CRUD Tests', () => {
   describe('Error Handling', () => {
     it('should handle database connection errors', async () => {
       const { database } = await import('@repo/database');
-      const { validateQuery } = await import('@repo/validation/middleware');
+      const { validateQuery } = await import('@repo/api/utils/validation/middleware');
 
       vi.mocked(validateQuery).mockReturnValue({
         success: true,

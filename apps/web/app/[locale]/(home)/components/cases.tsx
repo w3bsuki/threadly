@@ -1,4 +1,4 @@
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 
 type CasesProps = {
   dictionary: Dictionary;

@@ -7,7 +7,7 @@ import {
   calculateTax,
   calculateTotal,
   useCheckoutStore,
-} from '@repo/commerce';
+} from '@repo/design-system/commerce';
 import { toast } from '@repo/ui';
 import { useCallback } from 'react';
 

@@ -14,7 +14,7 @@ import {
 import {
   type CreateProductInput,
   createProductSchema,
-} from '@repo/validation/schemas';
+} from '@repo/api/utils/validation';
 import { ChevronLeft, ChevronRight, Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';

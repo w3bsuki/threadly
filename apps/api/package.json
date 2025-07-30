@@ -1,7 +1,7 @@
 {
   "name": "api",
   "private": true,
-  "prettier": "@repo/next-config/prettier",
+  "prettier": "@repo/api/next-config/prettier",
   "exports": {
     ".": {
       "types": "./index.ts",
@@ -21,32 +21,29 @@
     "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
-    "@repo/analytics": "workspace:*",
+    "@repo/features": "workspace:*",
     "@repo/auth": "workspace:*",
     "@repo/database": "workspace:*",
     "@repo/ui": "workspace:*",
-    "@repo/notifications": "workspace:*",
-    "@repo/feature-flags": "workspace:*",
-    "@repo/observability": "workspace:*",
-    "@repo/payments": "workspace:*",
-    "@repo/security": "workspace:*",
-    "@repo/utils": "workspace:*",
-    "@repo/webhooks": "workspace:*",
+    "@repo/tooling": "workspace:*",
+    "@repo/integrations": "workspace:*",
     "@sentry/nextjs": "^9.36.0",
     "@t3-oss/env-nextjs": "^0.13.8",
     "next": "15.4.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "superjson": "^2.2.2",
+    "posthog-node": "^4.1.2",
     "svix": "^1.69.0",
     "vitest": "^3.2.4",
     "zod": "^4.0.2"
   },
   "devDependencies": {
-    "@repo/next-config": "workspace:*",
     "@types/node": "24.0.12",
     "@types/react": "19.1.8",
     "concurrently": "^9.2.0",
     "eslint": "^8.57.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "@repo/api/next-config": "workspace:*"
   }
 }

@@ -5,7 +5,7 @@
  * including Stripe integration, webhooks, and payment verification.
  */
 
-import { cleanup } from '@repo/testing';
+import { cleanup } from '@repo/tooling/testing';
 import { NextRequest } from 'next/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { POST as verifyPayment } from '../../app/app/api/stripe/verify-payment/route';

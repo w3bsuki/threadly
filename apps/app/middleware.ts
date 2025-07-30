@@ -1,6 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from '@repo/auth/server';
-import { internationalizationMiddleware } from '@repo/internationalization/middleware';
-import { createRateLimiter, slidingWindow } from '@repo/rate-limit';
+import { internationalizationMiddleware } from '@repo/content/internationalization/middleware';
+import { createRateLimiter, slidingWindow } from '@repo/auth/rate-limit';
 import { type NextRequest, NextResponse } from 'next/server';
 
 const isPublicRoute = createRouteMatcher([

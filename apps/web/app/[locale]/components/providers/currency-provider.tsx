@@ -4,7 +4,7 @@ import {
   type Currency,
   formatCurrency as formatCurrencyUtil,
   getCurrencySymbol,
-} from '@repo/internationalization/client';
+} from '@repo/content/internationalization/client';
 import { getCookie, setCookie } from 'cookies-next';
 import {
   createContext,

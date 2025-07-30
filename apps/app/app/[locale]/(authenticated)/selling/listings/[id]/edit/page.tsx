@@ -1,7 +1,7 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { getDictionary } from '@repo/internationalization';
-import { decimalToNumber } from '@repo/utils';
+import { getDictionary } from '@repo/content/internationalization';
+import { decimalToNumber } from '@repo/api/utils';
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 import { Header } from '../../../../components/header';

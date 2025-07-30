@@ -1,7 +1,7 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { log, logError } from '@repo/observability/server';
-import { getNotificationService } from '@repo/notifications/realtime/server';
+import { log, logError } from '@repo/tooling/observability/server';
+import { getNotificationService } from '@repo/features/notifications/src/realtime/server';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export async function PATCH(

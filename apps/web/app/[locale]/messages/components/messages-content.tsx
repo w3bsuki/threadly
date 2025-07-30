@@ -11,11 +11,11 @@ import {
   Input,
   MessagesSkeleton,
 } from '@repo/ui/components';
-import { useChannel, useTypingIndicator } from '@repo/notifications/client';
+import { useChannel, useTypingIndicator } from '@repo/features/notifications/client';
 import {
   createMessageSchema,
   messageContentSchema,
-} from '@repo/validation/schemas';
+} from '@repo/api/utils/validation';
 import {
   CheckCheck,
   MessageCircle,

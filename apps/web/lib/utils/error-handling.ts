@@ -1,5 +1,5 @@
 import type { Prisma } from '@repo/database';
-import { logError, parseError } from '@repo/observability/server';
+import { logError, parseError } from '@repo/tooling/observability/server';
 
 export interface ErrorResponse {
   error: string;

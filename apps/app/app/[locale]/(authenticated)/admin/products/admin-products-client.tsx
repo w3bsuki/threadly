@@ -20,7 +20,7 @@ import {
   useCursorPagination,
 } from '@repo/ui/components/marketplace';
 import type { CursorPaginationResult } from '@repo/ui/lib/pagination';
-import { decimalToNumber } from '@repo/utils';
+import { decimalToNumber } from '@repo/api/utils';
 import { Archive, RefreshCw, Search, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';

@@ -8,7 +8,7 @@ import {
   FormMessage,
   Input,
 } from '@repo/ui/components';
-import type { CreateProductInput } from '@repo/validation/schemas';
+import type { CreateProductInput } from '@repo/api/utils/validation';
 import type { UseFormReturn } from 'react-hook-form';
 import { ImageUploadLazy } from '../../../../../../components/image-upload-lazy';
 

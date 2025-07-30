@@ -1,5 +1,5 @@
 import { currentUser } from '@repo/auth/server';
-import { getPusherServer } from '@repo/notifications/src/realtime/server/pusher-server';
+import { getPusherServer } from '@repo/features/notifications/src/realtime/server/pusher-server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { POST } from '../app/api/real-time/auth/route';
 

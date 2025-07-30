@@ -6,7 +6,7 @@
  * and security vulnerability prevention.
  */
 
-import { cleanup } from '@repo/testing';
+import { cleanup } from '@repo/tooling/testing';
 import { NextRequest, NextResponse } from 'next/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -20,7 +20,7 @@ vi.mock('@repo/security', () => ({
   csrfProtection: vi.fn(),
 }));
 
-vi.mock('@repo/validation', () => ({
+vi.mock('@repo/api/utils/validation', () => ({
   sanitizeInput: vi.fn(),
   validateInput: vi.fn(),
   containsSQLInjection: vi.fn(),
@@ -222,7 +222,7 @@ describe('Security Tests', () => {
 
   describe('Input Validation and Sanitization', () => {
     it('should detect and prevent SQL injection attacks', async () => {
-      const { containsSQLInjection } = await import('@repo/validation');
+      const { containsSQLInjection } = await import('@repo/api/utils/validation');
 
       const maliciousInputs = [
         "'; DROP TABLE users; --",
@@ -262,7 +262,7 @@ describe('Security Tests', () => {
     });
 
     it('should detect and prevent XSS attacks', async () => {
-      const { containsXSS } = await import('@repo/validation');
+      const { containsXSS } = await import('@repo/api/utils/validation');
 
       const xssInputs = [
         '<script>alert("xss")</script>',
@@ -306,7 +306,7 @@ describe('Security Tests', () => {
     });
 
     it('should sanitize HTML content safely', async () => {
-      const { sanitizeHtml } = await import('@repo/validation');
+      const { sanitizeHtml } = await import('@repo/api/utils/validation');
 
       vi.mocked(sanitizeHtml).mockImplementation(
         (input: string, options: any) => {
@@ -360,7 +360,7 @@ describe('Security Tests', () => {
     });
 
     it('should validate file uploads securely', async () => {
-      const { validateFileUpload } = await import('@repo/validation');
+      const { validateFileUpload } = await import('@repo/api/utils/validation');
 
       vi.mocked(validateFileUpload).mockImplementation(
         (filename: string, size: number, mimeType: string) => {
@@ -441,7 +441,7 @@ describe('Security Tests', () => {
     });
 
     it('should detect profanity and inappropriate content', async () => {
-      const { containsProfanity } = await import('@repo/validation');
+      const { containsProfanity } = await import('@repo/api/utils/validation');
 
       vi.mocked(containsProfanity).mockImplementation((text: string) => {
         const profanityList = ['spam', 'scam', 'fake', 'fraud', 'stolen'];
@@ -727,7 +727,7 @@ describe('Security Tests', () => {
 
   describe('Password Security', () => {
     it('should validate password strength', async () => {
-      const { isValidPassword } = await import('@repo/validation');
+      const { isValidPassword } = await import('@repo/api/utils/validation');
 
       vi.mocked(isValidPassword).mockImplementation((password: string) => {
         const minLength = 8;
@@ -789,7 +789,7 @@ describe('Security Tests', () => {
 
   describe('Email Validation', () => {
     it('should validate email addresses securely', async () => {
-      const { isValidEmail } = await import('@repo/validation');
+      const { isValidEmail } = await import('@repo/api/utils/validation');
 
       vi.mocked(isValidEmail).mockImplementation((email: string) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

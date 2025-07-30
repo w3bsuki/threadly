@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@repo/ui/components';
 import { cn } from '@repo/ui/lib/utils';
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 import { DollarSign, MessageSquare, Package, ShoppingBag } from 'lucide-react';
 
 interface DashboardStatsProps {

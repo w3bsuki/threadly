@@ -1,4 +1,4 @@
-import { getDictionary } from '@repo/internationalization';
+import { getDictionary } from '@repo/content/internationalization';
 
 // Force dynamic rendering to avoid client reference manifest issues
 export const dynamic = 'force-dynamic';

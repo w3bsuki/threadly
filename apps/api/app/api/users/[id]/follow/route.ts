@@ -1,8 +1,8 @@
 import { auth } from '@repo/auth/server';
 import { getCacheService } from '@repo/database';
 import { database } from '@repo/database';
-import { logError } from '@repo/observability/server';
-import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { logError } from '@repo/tooling/observability/server';
+import { checkRateLimit, generalApiLimit } from '@repo/auth/security';
 import { type NextRequest, NextResponse } from 'next/server';
 
 // Initialize cache service

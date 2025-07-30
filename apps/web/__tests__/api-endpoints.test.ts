@@ -5,7 +5,7 @@
  * including payment, user, product, order, and address endpoints.
  */
 
-import { cleanup } from '@repo/testing';
+import { cleanup } from '@repo/tooling/testing';
 import { NextRequest, NextResponse } from 'next/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 

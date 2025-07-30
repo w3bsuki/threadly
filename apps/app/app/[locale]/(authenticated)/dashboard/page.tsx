@@ -1,9 +1,9 @@
 import { currentUser } from '@repo/auth/server';
 import { getCacheService } from '@repo/database';
 import { database } from '@repo/database';
-import { getDictionary } from '@repo/internationalization';
-import { logError } from '@repo/observability/server';
-import { decimalToNumber } from '@repo/utils';
+import { getDictionary } from '@repo/content/internationalization';
+import { logError } from '@repo/tooling/observability/server';
+import { decimalToNumber } from '@repo/api/utils';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { z } from 'zod';

@@ -2,7 +2,7 @@ import { TRPCError, initTRPC } from '@trpc/server';
 import { NextRequest } from 'next/server';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { logError } from '@repo/observability/server';
+import { logError } from '@repo/tooling/observability/server';
 // import type { User } from '@clerk/nextjs/server';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
@@ -138,7 +138,7 @@ export const loggedProcedure = publicProcedure.use(async ({ path, type, next }) 
 // Rate limited procedure (for public endpoints)
 export const rateLimitedProcedure = publicProcedure.use(async ({ ctx, next }) => {
   // Import rate limiting
-  const { checkRateLimit, generalApiLimit } = await import('@repo/security');
+  const { checkRateLimit, generalApiLimit } = await import('@repo/auth/security');
   
   const rateLimitResult = await checkRateLimit(generalApiLimit, ctx.req);
   if (!rateLimitResult.allowed) {

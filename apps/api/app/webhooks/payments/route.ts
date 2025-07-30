@@ -1,12 +1,12 @@
-import { analytics } from '@repo/analytics/posthog/server';
+import { analytics } from '@repo/features/analytics/posthog/server';
 import { clerkClient } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { logError, parseError } from '@repo/observability/server';
-import type { Stripe } from '@repo/payments';
-import { stripe } from '@repo/payments';
-import { checkRateLimit, webhookRateLimit } from '@repo/security';
+import { logError, parseError } from '@repo/tooling/observability/server';
+import type { Stripe } from '@repo/integrations/payments';
+import { stripe } from '@repo/integrations/payments';
+import { checkRateLimit, webhookRateLimit } from '@repo/auth/security';
 import { headers } from 'next/headers';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { env } from '../../../env';
 
 const getUserFromCustomerId = async (customerId: string) => {
@@ -280,7 +280,7 @@ const handlePaymentIntentSucceeded = async (
   }
 };
 
-export const POST = async (request: Request): Promise<Response> => {
+export const POST = async (request: NextRequest): Promise<Response> => {
   if (
     !env.STRIPE_WEBHOOK_SECRET ||
     env.STRIPE_WEBHOOK_SECRET.includes('placeholder')

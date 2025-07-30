@@ -1,7 +1,7 @@
 import { getCacheService } from '@repo/database';
 import type { Prisma, Product, ProductImage } from '@repo/database';
 import { database } from '@repo/database';
-import { logError, parseError } from '@repo/observability/server';
+import { logError, parseError } from '@repo/tooling/observability/server';
 import { ProductGridClient } from './product-grid-client';
 
 // Define ProductStatus enum values

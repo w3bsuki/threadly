@@ -1,6 +1,6 @@
 'use client';
 
-import { useCartStore } from '@repo/commerce';
+import { useCartStore } from '@repo/design-system/commerce';
 import {
   Button,
   CartEmpty,

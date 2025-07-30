@@ -1,0 +1,36 @@
+{
+  "name": "@repo/content/cms",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "default": "./index.ts"
+    },
+    "./keys": {
+      "types": "./keys.ts",
+      "default": "./keys.ts"
+    }
+  },
+  "scripts": {
+    "dev": "node scripts/conditional-dev.js",
+    "build": "node scripts/conditional-build.js",
+    "analyze": "basehub",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@t3-oss/env-nextjs": "^0.13.8",
+    "basehub": "^9.0.21",
+    "react": "19.1.0",
+    "zod": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "24.0.12",
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
+    "next": "15.4.4",
+    "@repo/api/next-config": "workspace:*"
+  },
+  "prettier": "@repo/api/next-config/prettier"
+}

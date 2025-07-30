@@ -1,7 +1,7 @@
 'use client';
 
 import { useUser } from '@clerk/nextjs';
-import { RealTimeProvider } from '@repo/notifications/src/realtime/client/provider';
+import { RealTimeProvider } from '@repo/features/notifications/src/realtime/client/provider';
 import type { ReactNode } from 'react';
 
 interface RealTimeWrapperProps {

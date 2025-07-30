@@ -5,7 +5,7 @@ import {
   AccordionTrigger,
   Button,
 } from '@repo/ui/components';
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 import { PhoneCall } from 'lucide-react';
 import Link from 'next/link';
 import type { FC } from 'react';

@@ -1,14 +1,14 @@
 'use server';
 
 import { auth } from '@clerk/nextjs/server';
-import type { CartItem } from '@repo/commerce';
+import type { CartItem } from '@repo/ui/commerce';
 import { database } from '@repo/database';
 import {
   parseError,
   setProductContext,
   setUserContext,
   trackDatabaseOperation,
-} from '@repo/observability/server';
+} from '@repo/tooling/observability/server';
 import { revalidateTag } from 'next/cache';
 import { z } from 'zod';
 

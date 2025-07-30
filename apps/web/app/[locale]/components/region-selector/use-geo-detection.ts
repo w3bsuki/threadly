@@ -1,7 +1,7 @@
 import {
   getRegionByCountryCode,
   type Region,
-} from '@repo/internationalization/client';
+} from '@repo/content/internationalization/client';
 import { getCookie } from 'cookies-next';
 import { useEffect, useState } from 'react';
 

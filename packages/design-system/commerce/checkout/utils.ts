@@ -1,9 +1,9 @@
-import type { CartItem } from '@repo/cart';
+import type { CartItem } from '../cart';
 import {
   calculateShippingRate as calculateRegionalShipping,
   getRegionByCountryCode,
   type Region,
-} from '@repo/internationalization/regions';
+} from '@repo/content/internationalization/regions';
 import type { CheckoutItem, CheckoutSession, ShippingAddress } from '../types';
 
 // Legacy constants for backward compatibility

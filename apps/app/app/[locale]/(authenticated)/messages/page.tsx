@@ -1,7 +1,7 @@
 import { currentUser } from '@repo/auth/server';
 import { getCacheService } from '@repo/database';
 import { database } from '@repo/database';
-import { decimalToNumber } from '@repo/utils';
+import { decimalToNumber } from '@repo/api/utils';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';

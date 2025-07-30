@@ -1,9 +1,9 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { showBetaFeature } from '@repo/feature-flags';
-import { getDictionary } from '@repo/internationalization';
-import { log, logError } from '@repo/observability/server';
-import { ErrorBoundary } from '@repo/utils/src/error-boundary';
+import { showBetaFeature } from '@repo/features/feature-flags';
+import { getDictionary } from '@repo/content/internationalization';
+import { log, logError } from '@repo/tooling/observability/server';
+import { ErrorBoundary } from '@repo/api/utils/error-handling';
 import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { AppLayout } from './components/app-layout';

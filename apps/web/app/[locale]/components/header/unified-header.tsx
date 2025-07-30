@@ -1,6 +1,6 @@
 'use client';
 
-import { UserButton, useUser } from '@repo/auth/client';
+import { UserButton, useUser } from '@repo/auth/auth/client';
 import { Button } from '@repo/ui/components';
 import { ModeToggle } from '@repo/ui/components/mode-toggle';
 import {

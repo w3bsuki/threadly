@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@repo/ui/components';
-import { getDictionary } from '@repo/internationalization';
+import { getDictionary } from '@repo/content/internationalization';
 import { formatDistanceToNow } from 'date-fns';
 import { Calendar, Package, Star } from 'lucide-react';
 import type { Metadata } from 'next';

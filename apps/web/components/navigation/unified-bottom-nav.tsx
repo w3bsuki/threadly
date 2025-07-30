@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from '@repo/auth/client';
+import { useUser } from '@repo/auth/auth/client';
 import { Badge } from '@repo/ui/components';
 import { cn } from '@repo/ui/lib/utils';
 import { Home, Plus, Search, ShoppingCart, User } from 'lucide-react';

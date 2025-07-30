@@ -1,7 +1,7 @@
 import fs from 'node:fs';
-import { blog, legal } from '@repo/cms';
+import { blog, legal } from '@repo/content/cms';
 import { database } from '@repo/database';
-import { log, logError, parseError } from '@repo/observability/server';
+import { log, logError, parseError } from '@repo/tooling/observability/server';
 import type { MetadataRoute } from 'next';
 import { env } from '@/env';
 

@@ -1,7 +1,7 @@
 'use server';
 
 import { currentUser } from '@repo/auth/server';
-import { log, logError } from '@repo/observability/server';
+import { log, logError } from '@repo/tooling/observability/server';
 import { redirect } from 'next/navigation';
 
 interface CreateProductInput {

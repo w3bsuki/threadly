@@ -16,7 +16,7 @@ import {
   SheetTrigger,
   Slider,
 } from '@repo/ui/components';
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 import { Filter, X } from 'lucide-react';
 import { useState } from 'react';
 import type { SearchFilters } from '@/lib/hooks/use-search';

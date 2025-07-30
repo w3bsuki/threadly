@@ -1,4 +1,4 @@
-import { UserButton } from '@repo/auth/client';
+import { UserButton } from '@repo/auth/auth/client';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import { Button } from '@repo/ui/components';

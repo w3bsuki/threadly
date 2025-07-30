@@ -5,7 +5,7 @@
  * including Clerk integration, middleware, and protected routes.
  */
 
-import { cleanup, fireEvent, render, screen, waitFor } from '@repo/testing';
+import { cleanup, fireEvent, render, screen, waitFor } from '@repo/tooling/testing';
 import { NextRequest, NextResponse } from 'next/server';
 import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

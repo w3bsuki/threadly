@@ -5,7 +5,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['@repo/testing/setup'],
+    setupFiles: ['@repo/tooling/testing/setup'],
     coverage: {
       reporter: ['text', 'json', 'html'],
       exclude: [

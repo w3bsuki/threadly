@@ -1,5 +1,5 @@
 {
-  "name": "@repo/commerce",
+  "name": "@repo/ui/commerce",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -9,7 +9,7 @@
   "dependencies": {
     "@repo/cart": "workspace:*",
     "@repo/database": "workspace:*",
-    "@repo/utils": "workspace:*",
+    "@repo/api/utils": "workspace:*",
     "react": "19.1.0",
     "zod": "^4.0.2",
     "zustand": "^5.0.6"
@@ -47,7 +47,7 @@
   "devDependencies": {
     "@types/react": "19.1.8",
     "typescript": "^5.8.3",
-    "@repo/next-config": "workspace:*"
+    "@repo/api/next-config": "workspace:*"
   },
-  "prettier": "@repo/next-config/prettier"
+  "prettier": "@repo/api/next-config/prettier"
 }

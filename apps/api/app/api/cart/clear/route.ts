@@ -1,6 +1,6 @@
 import { auth } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { checkRateLimit, generalApiLimit } from '@repo/auth/security';
 import { type NextRequest, NextResponse } from 'next/server';
 
 // DELETE /api/cart/clear - Clear entire cart
@@ -35,8 +35,8 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    const { log } = await import('@repo/observability/server');
-    log.error('Error clearing cart', { error, userId });
+    const { logError } = await import('@repo/tooling/observability/server');
+    logError('Error clearing cart', { error, userId });
     return NextResponse.json(
       { error: 'Failed to clear cart' },
       { status: 500 }

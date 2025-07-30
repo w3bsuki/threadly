@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@repo/ui/components';
-import type { CreateProductInput } from '@repo/validation/schemas';
+import type { CreateProductInput } from '@repo/api/utils/validation/schemas';
 import type { UseFormReturn } from 'react-hook-form';
 
 interface StepDetailsProps {

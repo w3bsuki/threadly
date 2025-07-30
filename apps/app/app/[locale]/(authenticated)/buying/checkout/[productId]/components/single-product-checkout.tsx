@@ -23,8 +23,8 @@ import {
   RadioGroupItem,
   Separator,
 } from '@repo/ui/components';
-import { formatCurrency } from '@repo/payments/client';
-import { decimalToNumber } from '@repo/utils';
+import { formatCurrency } from '@repo/integrations/payments/client';
+import { decimalToNumber } from '@repo/api/utils';
 import {
   Elements,
   PaymentElement,

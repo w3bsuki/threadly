@@ -1,6 +1,6 @@
 'use client';
 
-import type { Dictionary } from '@repo/internationalization';
+import type { Dictionary } from '@repo/content/internationalization';
 import { createContext, useContext } from 'react';
 
 interface I18nContextValue {

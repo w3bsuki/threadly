@@ -1,7 +1,7 @@
 {
   "name": "@repo/threadly-app",
   "private": true,
-  "prettier": "@repo/next-config/prettier",
+  "prettier": "@repo/api/next-config/prettier",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "prisma generate --schema=../../packages/database/prisma/schema.prisma && next build",
@@ -15,20 +15,12 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
-    "@repo/analytics": "workspace:*",
-    "@repo/auth": "workspace:*",
+    "@repo/features": "workspace:*",
     "@repo/database": "workspace:*",
-    "@repo/collaboration": "workspace:*",
     "@repo/ui": "workspace:*",
-    "@repo/feature-flags": "workspace:*",
-    "@repo/internationalization": "workspace:*",
-    "@repo/notifications": "workspace:*",
-    "@repo/observability": "workspace:*",
-    "@repo/payments": "workspace:*",
-    "@repo/security": "workspace:*",
-    "@repo/seo": "workspace:*",
-    "@repo/utils": "workspace:*",
-    "@repo/webhooks": "workspace:*",
+    "@repo/content": "workspace:*",
+    "@repo/tooling": "workspace:*",
+    "@repo/integrations": "workspace:*",
     "@sentry/nextjs": "^9.36.0",
     "@stripe/react-stripe-js": "^3.7.0",
     "@stripe/stripe-js": "^7.4.0",
@@ -47,10 +39,10 @@
     "svix": "^1.69.0",
     "uploadthing": "^7.7.3",
     "zod": "^4.0.2",
-    "zustand": "^5.0.6"
+    "zustand": "^5.0.6",
+    "@repo/auth": "workspace:*"
   },
   "devDependencies": {
-    "@repo/next-config": "workspace:*",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.3.0",
     "@types/node": "24.0.12",

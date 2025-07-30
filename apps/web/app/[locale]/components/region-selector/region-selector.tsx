@@ -15,7 +15,7 @@ import {
   type Language,
   type Region,
   regions,
-} from '@repo/internationalization/client';
+} from '@repo/content/internationalization/client';
 import { getCookie, setCookie } from 'cookies-next';
 import { Globe } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';

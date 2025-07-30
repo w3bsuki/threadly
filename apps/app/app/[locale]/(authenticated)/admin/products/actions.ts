@@ -4,8 +4,8 @@ import { canModerate } from '@/lib/auth/admin';
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
 import type { ProductStatus } from '@repo/database/generated/client';
-import { log } from '@repo/observability/server';
-import type { BulkUpdateData } from '@repo/validation/schemas';
+import { log } from '@repo/tooling/observability/server';
+import type { BulkUpdateData } from '@repo/api/utils/validation/schemas';
 import { randomUUID } from 'crypto';
 import { revalidatePath } from 'next/cache';
 import type {

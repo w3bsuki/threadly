@@ -1,6 +1,6 @@
 import { auth, currentUser } from '@repo/auth/server';
-import { authenticate } from '@repo/collaboration/auth';
-import { authRateLimit, checkRateLimit } from '@repo/security';
+import { authenticate } from '@repo/ui/auth';
+import { authRateLimit, checkRateLimit } from '@repo/auth/security';
 import type { NextRequest } from 'next/server';
 
 const COLORS = [

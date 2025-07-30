@@ -1,6 +1,6 @@
 'use client';
 
-import { type CartItem, useCartStore } from '@repo/commerce';
+import { type CartItem, useCartStore } from '@repo/design-system/commerce';
 import { useMobileTouch } from '@repo/ui';
 import { Button } from '@repo/ui/components';
 import { cn } from '@repo/ui/lib/utils';

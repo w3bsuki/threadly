@@ -1,12 +1,12 @@
-import { auth } from '@clerk/nextjs';
+import { auth } from '@repo/auth/server';
 import {
   createErrorResponse,
   createSuccessResponse,
   ErrorCode,
   validateInput,
-} from '@repo/api-utils';
-import { getSearchService } from '@repo/search';
-import { checkRateLimit, generalApiLimit } from '@repo/security';
+} from '@repo/tooling/utils/src/api';
+import { getSearchService } from '@repo/tooling/utils/src/search';
+import { checkRateLimit, generalApiLimit } from '@repo/auth/security';
 import type { NextRequest } from 'next/server';
 import { z } from 'zod';
 
@@ -47,7 +47,7 @@ const searchRequestSchema = z.object({
 
 export async function POST(request: NextRequest) {
   // Check authentication
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) {
     return createErrorResponse(new Error('Unauthorized'), {
       status: 401,
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   // Check authentication
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) {
     return createErrorResponse(new Error('Unauthorized'), {
       status: 401,

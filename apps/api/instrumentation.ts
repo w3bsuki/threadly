@@ -1,3 +1,3 @@
-import { initializeSentry } from '@repo/observability/instrumentation';
+import { initializeSentry } from '@repo/tooling/observability/instrumentation';
 
 export const register = initializeSentry();

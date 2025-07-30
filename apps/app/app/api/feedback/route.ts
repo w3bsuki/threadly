@@ -1,6 +1,6 @@
 import { auth } from '@repo/auth/server';
-import { log, logError } from '@repo/observability/server';
-import { checkRateLimit, generalApiLimit } from '@repo/security';
+import { log, logError } from '@repo/tooling/observability/server';
+import { checkRateLimit, generalApiLimit } from '@repo/auth/security';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 

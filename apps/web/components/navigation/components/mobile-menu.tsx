@@ -1,4 +1,4 @@
-import { SignInButton, useUser } from '@repo/auth/client';
+import { SignInButton, useUser } from '@repo/auth/auth/client';
 import { Button } from '@repo/ui/components';
 import { Heart, Plus, ShoppingBag, User, X } from 'lucide-react';
 import Link from 'next/link';

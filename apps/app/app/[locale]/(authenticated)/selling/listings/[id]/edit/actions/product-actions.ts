@@ -2,25 +2,25 @@
 
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { log, logError } from '@repo/observability/server';
-import { getAlgoliaSyncService, MarketplaceSearchService } from '@repo/search';
+import { log, logError } from '@repo/tooling/observability/server';
+import { getAlgoliaSyncService, MarketplaceSearchService } from '@repo/tooling/utils/src/search';
 import {
   containsProfanity,
   filterProfanity,
   sanitizeForDisplay,
   sanitizeHtml,
-} from '@repo/validation/sanitize';
+} from '@repo/tooling/utils/src/validation/sanitize';
 import {
   cuidSchema,
   priceCentsSchema,
   safeTextSchema,
-} from '@repo/validation/schemas/common';
-import { productConditionSchema } from '@repo/validation/schemas/product';
+} from '@repo/api/utils/validation/schemas/common';
+import { productConditionSchema } from '@repo/api/utils/validation/schemas/product';
 import {
   isAllowedImageUrl,
   isPriceInRange,
   isValidProductTitle,
-} from '@repo/validation/validators';
+} from '@repo/tooling/utils/src/validation/validators';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 

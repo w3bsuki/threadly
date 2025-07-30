@@ -11,7 +11,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@repo/ui/components';
-import { decimalToNumber } from '@repo/utils/decimal';
+import { decimalToNumber } from '@repo/api/utils/decimal';
 import dynamic from 'next/dynamic';
 import { AnalyticsErrorBoundary } from '@/components/error-boundaries';
 import { formatCurrency, formatNumber } from '@/lib/locale-format';

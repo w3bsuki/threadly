@@ -1,7 +1,7 @@
 import { currentUser } from '@repo/auth/server';
 import { database } from '@repo/database';
-import { log, logError } from '@repo/observability/server';
-import { checkRateLimit, paymentRateLimit } from '@repo/security';
+import { log, logError } from '@repo/tooling/observability/server';
+import { checkRateLimit, paymentRateLimit } from '@repo/auth/security';
 import { type NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { z } from 'zod';

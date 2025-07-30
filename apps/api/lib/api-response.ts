@@ -1,4 +1,4 @@
-import { logError } from '@repo/observability/server';
+import { logError } from '@repo/tooling/observability/server';
 import { NextResponse } from 'next/server';
 import { getSecureResponseHeaders } from './security-utils';
 

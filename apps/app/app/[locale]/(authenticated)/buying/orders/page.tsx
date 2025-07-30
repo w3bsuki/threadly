@@ -2,7 +2,7 @@ import { currentUser } from '@repo/auth/server';
 import { cache } from '@repo/database';
 import { database } from '@repo/database';
 import { Button } from '@repo/ui/components';
-import { getDictionary } from '@repo/internationalization';
+import { getDictionary } from '@repo/content/internationalization';
 import { ExternalLink, ShoppingCart } from 'lucide-react';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';

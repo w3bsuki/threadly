@@ -1,6 +1,6 @@
 import { database } from '@repo/database';
-import { getDictionary } from '@repo/internationalization';
-import { createMetadata } from '@repo/seo/metadata';
+import { getDictionary } from '@repo/content/internationalization';
+import { createMetadata } from '@repo/content/seo/metadata';
 import type { Metadata } from 'next';
 import { cache } from 'react';
 import { CategoryGrid } from './components/category-grid';

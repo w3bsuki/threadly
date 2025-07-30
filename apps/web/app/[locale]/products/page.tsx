@@ -1,4 +1,4 @@
-import { getDictionary } from '@repo/internationalization';
+import { getDictionary } from '@repo/content/internationalization';
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 

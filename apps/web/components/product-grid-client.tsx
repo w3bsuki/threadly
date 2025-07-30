@@ -48,7 +48,7 @@ const ProductPlaceholder = ({
 };
 
 import { toast } from '@repo/ui';
-import type { FilterValue } from '@repo/validation/schemas';
+import type { FilterValue } from '@repo/api/utils/validation';
 import { ProductQuickView } from '../app/[locale]/components/product-quick-view';
 import { useFavorites } from '../lib/hooks/use-favorites';
 import { useCartStore } from '../lib/stores/cart-store';

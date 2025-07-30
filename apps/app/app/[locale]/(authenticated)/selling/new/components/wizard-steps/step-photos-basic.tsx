@@ -17,7 +17,7 @@ import {
 import type {
   CreateProductInput,
   SellerTemplate,
-} from '@repo/validation/schemas';
+} from '@repo/api/utils/validation/schemas';
 import { FileText as Template } from 'lucide-react';
 import type { UseFormReturn } from 'react-hook-form';
 import { ImageUpload } from '../image-upload';

@@ -1,12 +1,12 @@
 import { auth } from '@clerk/nextjs/server';
 import { database } from '@repo/database';
-import { logError } from '@repo/observability/server';
+import { logError } from '@repo/tooling/observability/server';
 import {
   calculatePlatformFee,
   isStripeConfigured,
   stripe,
-} from '@repo/payments';
-import { checkRateLimit, paymentRateLimit } from '@repo/security';
+} from '@repo/integrations/payments';
+import { checkRateLimit, paymentRateLimit } from '@repo/auth/security';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 

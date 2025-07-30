@@ -1,4 +1,4 @@
-import { checkRateLimit, uploadRateLimit } from '@repo/security';
+import { checkRateLimit, uploadRateLimit } from '@repo/auth/security';
 import { type NextRequest, NextResponse } from 'next/server';
 import { createRouteHandler } from 'uploadthing/next';
 

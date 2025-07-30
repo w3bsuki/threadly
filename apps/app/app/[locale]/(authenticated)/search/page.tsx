@@ -1,7 +1,7 @@
 import { currentUser } from '@repo/auth/server';
 import { cache } from '@repo/database';
 import { database } from '@repo/database';
-import { getDictionary } from '@repo/internationalization';
+import { getDictionary } from '@repo/content/internationalization';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';

@@ -5,7 +5,7 @@ import {
   type CheckoutFormData,
   checkoutFormSchema,
   useCartStore,
-} from '@repo/commerce';
+} from '@repo/design-system/commerce';
 import {
   Badge,
   Button,
@@ -27,7 +27,7 @@ import {
   Separator,
   Textarea,
 } from '@repo/ui/components';
-import { formatCurrency } from '@repo/utils';
+import { formatCurrency } from '@repo/api/utils';
 import { loadStripe } from '@stripe/stripe-js';
 import { CreditCard, Shield, ShoppingBag, Truck } from 'lucide-react';
 import Image from 'next/image';

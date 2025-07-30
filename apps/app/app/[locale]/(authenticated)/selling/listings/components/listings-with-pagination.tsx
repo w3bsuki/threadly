@@ -12,8 +12,8 @@ import {
   useCursorPagination,
 } from '@repo/ui/components/marketplace';
 import type { CursorPaginationResult } from '@repo/ui/lib/pagination';
-import { decimalToNumber } from '@repo/utils';
-import type { Dictionary } from '@repo/validation/schemas';
+import { decimalToNumber } from '@repo/api/utils';
+import type { Dictionary } from '@repo/api/utils/validation/schemas';
 import { Edit, Eye, MoreHorizontal, Plus } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';

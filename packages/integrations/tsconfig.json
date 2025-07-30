@@ -1,0 +1,6 @@
+{
+  "extends": "@repo/next-config/typescript/base",
+  "compilerOptions": {},
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
+}
