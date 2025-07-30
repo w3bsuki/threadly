@@ -8,18 +8,27 @@
       ],
       "@repo/*": [
         "../../packages/*"
+      ],
+      "@repo/api/utils": [
+        "../../packages/api/utils/src/index.ts"
+      ],
+      "@repo/api/utils/*": [
+        "../../packages/api/utils/src/*"
       ]
     }
   },
   "include": [
     "next-env.d.ts",
     "next.config.ts",
-    "**/*.ts",
-    "**/*.tsx",
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "components/**/*.ts",
+    "components/**/*.tsx",
+    "lib/**/*.ts",
+    "lib/**/*.tsx",
     ".next/types/**/*.ts",
-    "../../packages/**/*.ts",
-    "../../packages/**/*.tsx",
-    "../../packages/**/*.d.ts"
+    "../../packages/api/utils/src/**/*.ts",
+    "../../packages/api/utils/src/**/*.tsx"
   ],
   "exclude": [
     "node_modules",

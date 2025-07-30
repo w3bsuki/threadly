@@ -21,6 +21,7 @@
     "@repo/content": "workspace:*",
     "@repo/tooling": "workspace:*",
     "@repo/integrations": "workspace:*",
+    "@repo/api/utils": "workspace:*",
     "@sentry/nextjs": "^9.36.0",
     "@stripe/react-stripe-js": "^3.7.0",
     "@stripe/stripe-js": "^7.4.0",
