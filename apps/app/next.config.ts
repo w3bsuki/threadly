@@ -2,7 +2,6 @@ import { withToolbar } from '@repo/features/feature-flags/lib/toolbar';
 import { config, withAnalyzer } from '@repo/api-next-config';
 import { withLogging, withSentry } from '@repo/tooling/observability/next-config';
 import type { NextConfig } from 'next';
-// import { env } from './env';
 
 // Start with base configuration
 let nextConfig: NextConfig = withToolbar(config);
@@ -11,7 +10,14 @@ let nextConfig: NextConfig = withToolbar(config);
 nextConfig.transpilePackages = [
   '@clerk/nextjs',
   '@repo/ui',
-  '@repo/ui',
+  '@repo/auth',
+  '@repo/database',
+  '@repo/features',
+  '@repo/content',
+  '@repo/tooling',
+  '@repo/integrations',
+  '@repo/api/utils',
+  '@repo/api-next-config',
   '@knocklabs/react',
 ];
 

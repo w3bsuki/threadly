@@ -1,27 +1,27 @@
-import { keys as auth } from '@repo/auth/auth/keys';
-import { keys as cms } from '@repo/content/cms/keys';
-import { keys as database } from '@repo/database/keys';
-import { keys as email } from '@repo/integrations/email/keys';
-import { keys as flags } from '@repo/features/feature-flags/keys';
-import { keys as core } from '@repo/api-next-config/keys';
-import { keys as observability } from '@repo/tooling/observability/keys';
-import { keys as payments } from '@repo/integrations/payments/keys';
-import { keys as security } from '@repo/auth/security/keys';
+// import { keys as auth } from '@repo/auth/auth/keys';
+// import { keys as cms } from '@repo/content/cms/keys';
+// import { keys as database } from '@repo/database/keys';
+// import { keys as email } from '@repo/integrations/email/keys';
+// import { keys as flags } from '@repo/features/feature-flags/keys';
+// import { keys as core } from '@repo/api-next-config/keys';
+// import { keys as observability } from '@repo/tooling/observability/keys';
+// import { keys as payments } from '@repo/integrations/payments/keys';
+// import { keys as security } from '@repo/auth/security/keys';
 import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 
 // Web app environment configuration - Customer-facing marketplace
 export const env = createEnv({
   extends: [
-    auth(),
-    cms(),
-    core(),
-    database(),
-    email(),
-    flags(),
-    observability(),
-    payments(),
-    security(),
+    // auth(),
+    // cms(),
+    // core(),
+    // database(),
+    // email(),
+    // flags(),
+    // observability(),
+    // payments(),
+    // security(),
   ],
   server: {
     // Web-specific server variables
