@@ -1,5 +1,5 @@
 import { type NextRequest } from 'next/server';
-import { RateLimiter, type RateLimitConfig } from '@repo/api/utils/src/api/middleware/rate-limiter';
+import { RateLimiter, type RateLimitConfig } from '@repo/api/utils';
 
 // Rate limit configurations for different API endpoints
 export const generalApiLimit: RateLimitConfig = {
