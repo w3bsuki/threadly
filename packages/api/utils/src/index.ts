@@ -16,9 +16,41 @@ export * from './validation/schemas';
 // API utilities (merged from @repo/api-utils)
 export * from './api/errors';
 export * from './api/responses';
-export * from './api/validation';  
-export * from './api/middleware';
 export * from './api/trpc';
+
+// Export specific middleware to avoid conflicts
+export { 
+  withAuth,
+  type AuthConfig 
+} from './api/middleware/auth';
+
+export {
+  RateLimiter,
+  createRateLimiter,
+  withRateLimit,
+  rateLimitPresets,
+  type RateLimitConfig
+} from './api/middleware/rate-limiter';
+
+export {
+  withSecurityHeaders,
+  apiSecurityHeaders,
+  type SecurityHeadersConfig
+} from './api/middleware/security-headers';
+
+export {
+  withApiVersion,
+  defaultVersionConfig,
+  type VersionConfig
+} from './api/middleware/api-versioning';
+
+// Export API validation with specific names to avoid conflicts
+export {
+  RequestValidator,
+  createValidator,
+  type ValidationResult,
+  type ValidationError,
+} from './api/validation/request-validator';
 
 // Export API index without conflicts
 export {

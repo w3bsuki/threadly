@@ -13,7 +13,7 @@ type HeroProps = {
   dictionary: Dictionary;
 };
 
-export const Hero = ({ dictionary }: HeroProps) => {
+export const Hero = ({ dictionary: _ }: HeroProps) => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
 
