@@ -46,6 +46,10 @@
     "./config": {
       "types": "./config.ts",
       "default": "./config.ts"
+    },
+    "./components/mode-toggle": {
+      "types": "./components/mode-toggle.tsx",
+      "default": "./components/mode-toggle.tsx"
     }
   },
   "scripts": {

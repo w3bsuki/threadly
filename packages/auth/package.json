@@ -34,6 +34,18 @@
     "./rate-limit": {
       "types": "./rate-limit/index.ts",
       "default": "./rate-limit/index.ts"
+    },
+    "./sync": {
+      "types": "./auth/src/sync.ts",
+      "default": "./auth/src/sync.ts"
+    },
+    "./components/sign-in": {
+      "types": "./auth/components/sign-in.tsx",
+      "default": "./auth/components/sign-in.tsx"
+    },
+    "./components/sign-up": {
+      "types": "./auth/components/sign-up.tsx",
+      "default": "./auth/components/sign-up.tsx"
     }
   },
   "scripts": {
