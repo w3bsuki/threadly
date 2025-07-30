@@ -11,6 +11,10 @@
       "types": "./analytics/index.ts",
       "default": "./analytics/index.ts"
     },
+    "./analytics/client": {
+      "types": "./analytics/client.ts",
+      "default": "./analytics/client.ts"
+    },
     "./notifications": {
       "types": "./notifications/index.ts",
       "default": "./notifications/index.ts"
@@ -47,11 +51,13 @@
     "@vercel/toolbar": "^0.1.30",
     "posthog-node": "^4.1.2",
     "pusher": "^5.2.0",
+    "posthog-js": "^1.201.0",
     "pusher-js": "^8.4.0",
     "react": "19.1.0",
     "server-only": "^0.0.1",
     "svix": "^1.69.0",
-    "zod": "^4.0.2"
+    "zod": "^4.0.2",
+    "flags": "^1.0.0"
   },
   "devDependencies": {
     "@types/node": "24.0.12",

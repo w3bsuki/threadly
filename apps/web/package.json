@@ -51,7 +51,8 @@
     "web-vitals": "^5.0.3",
     "zod": "^4.0.2",
     "zustand": "^5.0.6",
-    "@repo/api/utils": "workspace:*"
+    "@repo/api/utils": "workspace:*",
+    "posthog-js": "^1.201.0"
   },
   "devDependencies": {
     "@types/canvas-confetti": "^1.9.0",
@@ -61,6 +62,7 @@
     "prisma": "6.11.1",
     "sharp": "^0.34.2",
     "tailwindcss": "^4.1.11",
+    "autoprefixer": "^10.4.21",
     "typescript": "^5.8.3"
   }
 }

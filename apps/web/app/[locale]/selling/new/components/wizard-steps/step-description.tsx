@@ -13,7 +13,7 @@ import {
   SelectValue,
   Textarea,
 } from '@repo/ui/components';
-import type { CreateProductInput } from '@repo/api/utils/validation';
+import type { CreateProductInput } from '@repo/api/utils/validation/client';
 import type { UseFormReturn } from 'react-hook-form';
 
 interface Category {

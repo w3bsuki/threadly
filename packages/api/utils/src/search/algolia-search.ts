@@ -1,4 +1,4 @@
-import { withRetry } from '@repo/error-handling';
+import { withRetry } from '@repo/api/utils/error-handling';
 import { algoliasearch } from 'algoliasearch';
 import type {
   SearchAnalytics,

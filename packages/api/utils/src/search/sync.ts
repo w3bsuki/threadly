@@ -1,5 +1,5 @@
 import type { Product } from '@repo/database';
-import { logError } from '@repo/observability';
+import { logError } from '@repo/tooling/observability';
 import type { SearchClient } from 'algoliasearch';
 import { algoliasearch } from 'algoliasearch';
 

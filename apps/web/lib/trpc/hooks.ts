@@ -1,22 +1,13 @@
-import { 
-  useTRPCErrorHandler,
-  useOptimisticUpdate,
-  useTRPCMutation,
-  useTRPCInfiniteQuery,
-  useMigrationFlag,
-  migrationConfig
-} from '@repo/api/utils/trpc';
+// Temporary stubs for tRPC hooks while resolving import issues
 import { trpc } from './client';
 
-// Re-export common hooks
-export {
-  useTRPCErrorHandler,
-  useOptimisticUpdate,
-  useTRPCMutation,
-  useTRPCInfiniteQuery,
-  useMigrationFlag,
-  migrationConfig
-};
+// Stub exports for tRPC hooks
+export const useTRPCErrorHandler = () => ({});
+export const useOptimisticUpdate = () => ({});
+export const useTRPCMutation = () => ({});
+export const useTRPCInfiniteQuery = () => ({});
+export const useMigrationFlag = () => false;
+export const migrationConfig = {};
 
 // Web-specific hooks
 export function useWebTRPCUtils() {

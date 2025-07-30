@@ -98,6 +98,14 @@
     "./validation/validators": {
       "types": "./src/validation/validators.ts",
       "default": "./src/validation/validators.ts"
+    },
+    "./validation/client": {
+      "types": "./src/validation/client.ts",
+      "default": "./src/validation/client.ts"
+    },
+    "./trpc/client": {
+      "types": "./src/api/trpc/client-exports.ts",
+      "default": "./src/api/trpc/client-exports.ts"
     }
   },
   "dependencies": {
@@ -108,6 +116,7 @@
     "@trpc/client": "^11.0.9",
     "@trpc/react-query": "^11.0.9",
     "@trpc/server": "^11.0.9",
+    "algoliasearch": "^5.12.0",
     "bad-words": "^3.0.4",
     "circuit-breaker-js": "^0.0.1",
     "isomorphic-dompurify": "^2.20.0",

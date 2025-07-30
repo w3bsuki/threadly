@@ -13,7 +13,7 @@ import type {
   ServerActionResult,
 } from '../types';
 
-export function createServerAction<TInput, TOutput>(
+export async function createServerAction<TInput, TOutput>(
   inputSchema: ZodSchema<TInput>,
   handler: (input: TInput, context: ActionContext) => Promise<TOutput>,
   options?: CreateActionOptions
@@ -219,7 +219,7 @@ async function logAction(
   // For now, do nothing as placeholder
 }
 
-export function withOptions<TInput, TOutput>(
+export async function withOptions<TInput, TOutput>(
   action: (input: TInput) => Promise<ServerActionResult<TOutput>>,
   options: ActionOptions
 ) {

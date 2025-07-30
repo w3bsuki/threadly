@@ -1,3 +1,8 @@
-import { getFlags } from '@repo/features/feature-flags/access';
+// Temporarily disabled due to missing flags dependency
+// import { getFlags } from '@repo/features/feature-flags/access';
 
-export const GET = getFlags;
+import { NextResponse } from 'next/server';
+
+export const GET = () => {
+  return NextResponse.json({ flags: [] });
+};

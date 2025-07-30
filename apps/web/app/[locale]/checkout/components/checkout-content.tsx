@@ -22,7 +22,7 @@ import {
   Separator,
 } from '@repo/ui/components';
 import { formatCurrency } from '@repo/api/utils/currency';
-import type { OrderData } from '@repo/api/utils/validation';
+import type { OrderData } from '@repo/api/utils/validation/client';
 import {
   Elements,
   PaymentElement,

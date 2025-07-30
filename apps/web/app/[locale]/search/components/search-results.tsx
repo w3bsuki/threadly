@@ -1,6 +1,6 @@
 'use client';
 
-import { useAnalyticsEvents } from '@repo/features/analytics';
+import { useAnalyticsEvents } from '@repo/features/analytics/client';
 import {
   Badge,
   Button,
