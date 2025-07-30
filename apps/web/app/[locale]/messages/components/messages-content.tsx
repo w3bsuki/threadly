@@ -12,10 +12,10 @@ import {
   MessagesSkeleton,
 } from '@repo/ui/components';
 import { useChannel, useTypingIndicator } from '@repo/features/notifications/client';
-import {
-  createMessageSchema,
-  messageContentSchema,
-} from '@repo/api/utils/validation';
+import { z } from 'zod';
+
+// Define validation schemas locally to avoid server-only imports
+const messageContentSchema = z.string().min(1).max(5000);
 import {
   CheckCheck,
   MessageCircle,
