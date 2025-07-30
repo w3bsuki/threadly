@@ -32,6 +32,12 @@ export const authRateLimit: RateLimitConfig = {
   message: 'Too many authentication attempts, please try again later',
 };
 
+export const uploadRateLimit: RateLimitConfig = {
+  windowMs: 60 * 1000, // 1 minute
+  maxRequests: 10,
+  message: 'Too many upload requests, please try again later',
+};
+
 // Store instances for each rate limiter
 const rateLimiters = new Map<string, RateLimiter>();
 

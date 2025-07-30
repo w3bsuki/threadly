@@ -11,8 +11,11 @@ export * from './schemas/common-types';
 export * from './schemas/message-types';
 export * from './schemas/order-types';
 export * from './schemas/product-types';
+export * from './schemas/product';
 export * from './schemas/search-filters';
 export * from './schemas/user-types';
+export * from './schemas/user';
+export * from './schemas/message';
 export * from './schemas/common';
 export * from './schemas/index';
 

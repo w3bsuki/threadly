@@ -20,6 +20,7 @@ export function SignInClient({
       path={`/${locale}/sign-in`}
       routing="path"
       signUpUrl={`/${locale}/sign-up`}
+      redirectUrl={redirectUrl}
     />
   );
 }

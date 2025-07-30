@@ -6,6 +6,7 @@ export {
   webhookRateLimit,
   paymentRateLimit,
   authRateLimit,
+  uploadRateLimit,
   
   // Core functions
   checkRateLimit,

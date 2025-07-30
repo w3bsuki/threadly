@@ -53,6 +53,9 @@
     },
     "./postcss.config.mjs": {
       "default": "./postcss.config.mjs"
+    },
+    "./styles/globals.css": {
+      "default": "./styles/globals.css"
     }
   },
   "scripts": {
