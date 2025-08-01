@@ -347,8 +347,8 @@ importers:
         specifier: ^10.4.21
         version: 10.4.21(postcss@8.5.6)
       chromatic:
-        specifier: ^13.1.2
-        version: 13.1.2
+        specifier: ^13.1.3
+        version: 13.1.3
       postcss:
         specifier: ^8
         version: 8.5.6
@@ -6646,8 +6646,8 @@ packages:
       '@chromatic-com/playwright':
         optional: true
 
-  chromatic@13.1.2:
-    resolution: {integrity: sha512-jgVptQabJHOnzmmvLjbtfutREkWGhDDk2gVqMH6N+V7z56oIy4Sd2/U7ZxNvnVFPinZQMSjSdUce4b6JIP64Dg==}
+  chromatic@13.1.3:
+    resolution: {integrity: sha512-aOZDwg1PsDe9/UhiXqS6EJPoCGK91hYbj3HaunV/0Ij492eWLkXIzku/e5cF1t7Ma7cAuGpCQDo0vGHg0UO91w==}
     hasBin: true
     peerDependencies:
       '@chromatic-com/cypress': ^0.*.* || ^1.0.0
@@ -8468,8 +8468,8 @@ packages:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
     engines: {node: '>=6'}
 
-  langsmith@0.3.49:
-    resolution: {integrity: sha512-hVLpGzTDq4dFffScKuF9yIuwXqp6LJCsvxK4UjmLae+oEodfnFIQ6yVmNyhxFnm3QuRl1NY8qLFul3k+R1YnGQ==}
+  langsmith@0.3.50:
+    resolution: {integrity: sha512-yosW6sR0EFnMnYKKyBmcqTNknDVOs+dUfcswWk80JoRxox6WEyel7hmSkSzabP/GmTs0hXbrtc+lZwpJWSnI0w==}
     peerDependencies:
       '@opentelemetry/api': '*'
       '@opentelemetry/exporter-trace-otlp-proto': '*'
@@ -13543,7 +13543,7 @@ snapshots:
       camelcase: 6.3.0
       decamelize: 1.2.0
       js-tiktoken: 1.0.20
-      langsmith: 0.3.49(@opentelemetry/api@1.9.0)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(openai@5.10.2(ws@8.18.3(bufferutil@4.0.9))(zod@4.0.13))
+      langsmith: 0.3.50(@opentelemetry/api@1.9.0)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(openai@5.10.2(ws@8.18.3(bufferutil@4.0.9))(zod@4.0.13))
       mustache: 4.2.0
       p-queue: 6.6.2
       p-retry: 4.6.2
@@ -17583,7 +17583,7 @@ snapshots:
 
   chromatic@11.29.0: {}
 
-  chromatic@13.1.2: {}
+  chromatic@13.1.3: {}
 
   chrome-trace-event@1.0.4: {}
 
@@ -19607,7 +19607,7 @@ snapshots:
 
   kleur@3.0.3: {}
 
-  langsmith@0.3.49(@opentelemetry/api@1.9.0)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(openai@5.10.2(ws@8.18.3(bufferutil@4.0.9))(zod@4.0.13)):
+  langsmith@0.3.50(@opentelemetry/api@1.9.0)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(openai@5.10.2(ws@8.18.3(bufferutil@4.0.9))(zod@4.0.13)):
     dependencies:
       '@types/uuid': 10.0.0
       chalk: 4.1.2
