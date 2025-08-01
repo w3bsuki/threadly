@@ -37,7 +37,7 @@
     "react-hook-form": "^7.60.0",
     "recharts": "^3.1.0",
     "stripe": "^18.3.0",
-    "svix": "^1.69.0",
+    "svix": "^1.70.0",
     "uploadthing": "^7.7.3",
     "zod": "^4.0.2",
     "zustand": "^5.0.6",
