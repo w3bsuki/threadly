@@ -41,7 +41,7 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@knocklabs/node": "^1.10.3",
+    "@knocklabs/node": "^1.11.2",
     "@knocklabs/react": "^0.7.19",
     "@react-email/components": "^0.2.0",
     "@repo/database": "workspace:*",
