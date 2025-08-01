@@ -81,7 +81,7 @@
     "server-only": "^0.0.1",
     "stripe": "^18.3.0",
     "uploadthing": "^7.7.3",
-    "zod": "^4.0.2"
+    "zod": "^4.0.14"
   },
   "devDependencies": {
     "@types/react": "19.1.8",

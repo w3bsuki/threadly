@@ -56,7 +56,7 @@
     "react": "19.1.0",
     "server-only": "^0.0.1",
     "svix": "^1.69.0",
-    "zod": "^4.0.2",
+    "zod": "^4.0.14",
     "flags": "^4.0.1"
   },
   "devDependencies": {
