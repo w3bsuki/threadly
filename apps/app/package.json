@@ -36,7 +36,7 @@
     "react-dom": "19.1.0",
     "react-hook-form": "^7.60.0",
     "recharts": "^3.1.0",
-    "stripe": "^18.3.0",
+    "stripe": "^18.4.0",
     "svix": "^1.69.0",
     "uploadthing": "^7.7.3",
     "zod": "^4.0.2",

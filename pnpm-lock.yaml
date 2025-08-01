@@ -201,8 +201,8 @@ importers:
         specifier: ^3.1.0
         version: 3.1.0(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react-is@18.3.1)(react@19.1.0)(redux@5.0.1)
       stripe:
-        specifier: ^18.3.0
-        version: 18.3.0(@types/node@24.0.12)
+        specifier: ^18.4.0
+        version: 18.4.0(@types/node@24.0.12)
       svix:
         specifier: ^1.69.0
         version: 1.69.0
@@ -1179,8 +1179,8 @@ importers:
         specifier: ^0.0.1
         version: 0.0.1
       stripe:
-        specifier: ^18.3.0
-        version: 18.3.0(@types/node@24.0.12)
+        specifier: ^18.4.0
+        version: 18.4.0(@types/node@24.0.12)
       uploadthing:
         specifier: ^7.7.3
         version: 7.7.3(express@5.1.0)(next@15.4.4(@opentelemetry/api@1.9.0)(@playwright/test@1.54.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(tailwindcss@4.1.11)
@@ -1275,8 +1275,8 @@ importers:
         specifier: ^0.0.1
         version: 0.0.1
       stripe:
-        specifier: ^18.3.0
-        version: 18.3.0(@types/node@24.0.12)
+        specifier: ^18.4.0
+        version: 18.4.0(@types/node@24.0.12)
       zod:
         specifier: ^4.0.2
         version: 4.0.13
@@ -8468,8 +8468,8 @@ packages:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
     engines: {node: '>=6'}
 
-  langsmith@0.3.49:
-    resolution: {integrity: sha512-hVLpGzTDq4dFffScKuF9yIuwXqp6LJCsvxK4UjmLae+oEodfnFIQ6yVmNyhxFnm3QuRl1NY8qLFul3k+R1YnGQ==}
+  langsmith@0.3.50:
+    resolution: {integrity: sha512-yosW6sR0EFnMnYKKyBmcqTNknDVOs+dUfcswWk80JoRxox6WEyel7hmSkSzabP/GmTs0hXbrtc+lZwpJWSnI0w==}
     peerDependencies:
       '@opentelemetry/api': '*'
       '@opentelemetry/exporter-trace-otlp-proto': '*'
@@ -10395,8 +10395,8 @@ packages:
     resolution: {integrity: sha512-aT2BU9KkizY9SATf14WhhYVv2uOapBWX0OFWF4xvcj1mPaNotlSc2CsxpS4DS46ZueSppmCF5BX1sNYBtwBvfw==}
     engines: {node: '>=12.*'}
 
-  stripe@18.3.0:
-    resolution: {integrity: sha512-FkxrTUUcWB4CVN2yzgsfF/YHD6WgYHduaa7VmokCy5TLCgl5UNJkwortxcedrxSavQ8Qfa4Ir4JxcbIYiBsyLg==}
+  stripe@18.4.0:
+    resolution: {integrity: sha512-LKFeDnDYo4U/YzNgx2Lc9PT9XgKN0JNF1iQwZxgkS4lOw5NunWCnzyH5RhTlD3clIZnf54h7nyMWkS8VXPmtTQ==}
     engines: {node: '>=12.*'}
     peerDependencies:
       '@types/node': '>=12.x.x'
@@ -13543,7 +13543,7 @@ snapshots:
       camelcase: 6.3.0
       decamelize: 1.2.0
       js-tiktoken: 1.0.20
-      langsmith: 0.3.49(@opentelemetry/api@1.9.0)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(openai@5.10.2(ws@8.18.3(bufferutil@4.0.9))(zod@4.0.13))
+      langsmith: 0.3.50(@opentelemetry/api@1.9.0)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(openai@5.10.2(ws@8.18.3(bufferutil@4.0.9))(zod@4.0.13))
       mustache: 4.2.0
       p-queue: 6.6.2
       p-retry: 4.6.2
@@ -19607,7 +19607,7 @@ snapshots:
 
   kleur@3.0.3: {}
 
-  langsmith@0.3.49(@opentelemetry/api@1.9.0)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(openai@5.10.2(ws@8.18.3(bufferutil@4.0.9))(zod@4.0.13)):
+  langsmith@0.3.50(@opentelemetry/api@1.9.0)(@opentelemetry/sdk-trace-base@1.30.1(@opentelemetry/api@1.9.0))(openai@5.10.2(ws@8.18.3(bufferutil@4.0.9))(zod@4.0.13)):
     dependencies:
       '@types/uuid': 10.0.0
       chalk: 4.1.2
@@ -21794,7 +21794,7 @@ snapshots:
       '@types/node': 24.0.12
       qs: 6.14.0
 
-  stripe@18.3.0(@types/node@24.0.12):
+  stripe@18.4.0(@types/node@24.0.12):
     dependencies:
       qs: 6.14.0
     optionalDependencies:
