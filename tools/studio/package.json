@@ -10,7 +10,7 @@
   "devDependencies": {
     "@repo/api-next-config": "workspace:*",
     "@types/node": "^24.0.12",
-    "prisma": "6.11.1",
+    "prisma": "6.13.0",
     "typescript": "^5.8.3"
   }
 }
