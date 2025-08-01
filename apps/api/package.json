@@ -33,7 +33,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "superjson": "^2.2.2",
-    "posthog-node": "^4.1.2",
+    "posthog-node": "^5.6.0",
     "svix": "^1.69.0",
     "vitest": "^3.2.4",
     "zod": "^4.0.2"
