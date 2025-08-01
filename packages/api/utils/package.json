@@ -124,7 +124,7 @@
     "p-retry": "^6.2.1",
     "react": "19.1.0",
     "validator": "^13.12.0",
-    "zod": "^4.0.2"
+    "zod": "^4.0.14"
   },
   "devDependencies": {
     "@types/bad-words": "^3.0.3",
